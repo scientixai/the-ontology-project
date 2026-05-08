@@ -139,7 +139,8 @@
       "crosswalks": {
         "fhir": "fhir:Organization",
         "usdm": "usdm:Organization (with type=Code(Site))",
-        "cdash": "cdash:DM.SITEID"
+        "cdash": "cdash:DM.SITEID",
+        "omop": "omop:CARE_SITE + omop:LOCATION"
       },
       "attributes": [
         { "name": "siteId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
@@ -331,7 +332,8 @@
       "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX Person object. Required by both Site and StudySite person relationships; could not be flagged-missing for the Site spec (R3 Section 2.3.3 GCP-required Delegation of Authority Log needs real Person targets). USDM crosswalk: usdm:AssignedPerson (the operational/participation lens) plus usdm:StudyRole (the role-typing lens). PersonRole is currently embedded as a per-relationship attribute (role enum on delegatesAuthorityTo); a separate PersonRole sub-object lifts in v0.3 if the role taxonomy grows beyond what an enum can carry.",
       "crosswalks": {
         "fhir": "fhir:Practitioner",
-        "usdm": "usdm:AssignedPerson"
+        "usdm": "usdm:AssignedPerson",
+        "omop": "omop:PROVIDER"
       },
       "attributes": [
         { "name": "personId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
@@ -424,7 +426,9 @@
       "description": "Equipment represents physical devices used in clinical-trial conduct: refrigerators, freezers, centrifuges, scales, ECG machines, ultrasound, blood pressure devices, glucometers, pulse oximeters, etc. Equipment is distinct from System (computerised systems): a freezer with IoT temperature monitoring is Equipment + a System (the monitoring platform), linked via Equipment.monitoredBySystem. Under R3, Equipment carries qualification, calibration, maintenance, and training discipline; computerised-systems aspects (validation, audit trails, access controls per R3 Section 4.3) live on the linked System.",
       "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX Equipment object. equipmentBinding enum locked from OOUX hierarchy boundary decision (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Added equipmentClass enum to discriminate freezer vs centrifuge vs ECG vs participant-loaned wearable, etc. Added monitoredBySystem to capture the Equipment+System interaction for IoT-monitored Equipment (the freezer-with-cloud-temp-monitor pattern, ISF section 14.5). Equipment is the physical asset (calibration, maintenance, qualification); System is the computerised layer (R3 Section 4.3 obligations); Log captures the temporal trail (R3 Section 4.2.2 audit trail).",
       "crosswalks": {
-        "fhir": "fhir:Device"
+        "fhir": "fhir:Device",
+        "omop": "omop:DEVICE_EXPOSURE (per-use event at Visit-occurrence; Equipment entity itself has no direct OMOP table)",
+        "obo": "obi:device (partial; OBI covers some equipment classes but coverage is fragmentary)"
       },
       "attributes": [
         { "name": "equipmentId", "type": "ngsi-ld:URI", "unique": true },

@@ -38,6 +38,43 @@ The Sponsor spec template + Site spec extensions form the pattern for the remain
 
 **Horizontal completions in parallel.** Lifted as of v0.2.0: Organization, Document (R3 Appendix C-aligned), StudySite, Person, System (R3 Section 4.3-aligned), Log (with logType discriminator covering CommunicationLog), Equipment, StorageLocation, Credential. Still flagged-missing as of v0.2.0 (lifting in v0.3 or as their referencing top-level lifts): RegulatoryAuthority, Contract, MonitoringVisit, Audit, TrainingRecord, Enrollment, StudyStartupPackage, OversightBody, Visit, Participant, CRF, Sample, Shipment, Meeting, Publication, SOP, TrainingProgram, CRO, Country, DataTransferAgreement.
 
+## Projections and the open substrate / commercial validated deployment split
+
+A central architectural pattern of TOP: operator-grounded reference graphs are the source of truth; *projections* into adjacent standards (FHIR R5, USDM v3, CDISC SDTM/CDASH, **OMOP CDM v5.4**, ICH/GCP ISF, and others) are first-class artifacts emitted alongside the source intermediate. Each projection is declarative (SPARQL CONSTRUCT or equivalent), versioned with the source it derives from, and tested against worked examples. The pattern earns its keep on the OMOP target specifically: TOP-conformant operational data projects into OMOP CDM without the multi-month custom-ETL pipelines that today's "raw data → OMOP" architectures (e.g., the AWS reference architecture published December 2025) require. Schema mapping is declarative; value-level transformations (de-identification, date shifting, tokenization) remain the domain of established privacy-engineering vendors (Datavant, John Snow Labs) and integrate at the deployment layer.
+
+**The open substrate / commercial validated deployment split.** TOP draws a clean line:
+
+- **Open (Apache 2.0, in this repo):** the reference graphs, the cross-walk metadata at every entity, the architectural pattern of declarative projection, the source intermediate, the translator scaffold, reference / proof-of-concept projection examples. This is what federal grants fund and what the manifesto commits to.
+- **Commercial (Scientix.ai product, separate from this repo):** GxP-validated, GAMP5 Cat 5-qualified, SOC 2 Type II-audited, HIPAA-BAA-covered, 21 CFR Part 11-compliant production-grade runtime that executes the open mappings against PHI in a regulated clinical-operations environment. Plus complete production-grade SPARQL CONSTRUCT mappings (performance-optimized, error-handled), the OMOP CDM loader and version-migration tooling (v5.4 → v6), Datavant / John Snow Labs integration connectors, monitoring, multi-tenant operation, customer support.
+
+Schemas don't get validated; deployable systems do. The compliance burden is the moat. This is the same Red Hat / Elastic / MongoDB / HashiCorp open-core + commercial-services pattern that has historically sustained open-source-led infrastructure companies. It allows TOP to be maximally open at the substrate (manifesto-aligned, federation-friendly, grant-fundable) while preserving Scientix.ai's commercial value capture in the validated production layer.
+
+## OBO Foundry alignment
+
+OBO Foundry (Open Biological and Biomedical Ontology Foundry) is the convening precedent TOP emulates: 175+ community-governed biomedical ontologies, federated authoring, decades of NIH / academic / commercial investment, formal-logic-based semantic interoperability. The critical distinction: OBO Foundry is **research-shaped** (genes, phenotypes, anatomy, chemistry, organisms, diseases). TOP is **operator-shaped** (workflow, sponsorship, sites, visits, delegation, audit trail). The two stacks are complementary, not competing. Together they form a complete chain:
+
+```
+Operator-grounded ontology (TOP)            ← OPERATOR layer
+    ↓ projects to
+Observational data warehouse (OMOP CDM)     ← OBSERVATIONAL layer
+    ↓ bridges via OMOP2OBO (Callahan et al. 2023, Apache 2.0)
+Biomedical knowledge ontology (OBO Foundry) ← RESEARCH layer
+```
+
+**The OMOP2OBO bridge is built and public.** Callahan et al. published OMOP2OBO in npj Digital Medicine (May 2023; <https://github.com/callahantiff/OMOP2OBO>; PyPI `omop2obo`; Zenodo-archived mappings). It maps 92K SNOMED-CT conditions to HPO + Mondo, 8.6K RxNorm drug ingredients to ChEBI / NCBITaxon / PRO / VO, 10K LOINC measurements to HPO / Uberon / NCBITaxon / PRO / ChEBI / CL — covering 68–99% of concepts used across 24 hospital systems. **TOP does not need to do this work itself.** Once TOP→OMOP projection lands, TOP→OBO is a free transitive bridge through the OMOP2OBO mappings. This means TOP-grounded data immediately becomes available to HPO-based rare disease phenotyping, Mondo-based disease classification, ChEBI-based pharmacogenomic analysis, and the broader OBO Foundry-driven deep phenotyping ecosystem.
+
+For TOP's own entity-level OBO cross-walks: deferred until top-levels with biological domain semantics lift. Site, Sponsor, StudySite, Person, Equipment, Document, Log, StorageLocation, Credential have no direct OBO equivalents (operator-side, not biological-side). Future Adverse Event, Sample (when it lifts to top-level in specialty graphs), Lab Result / Measurement, Diagnosis, IP active ingredient WILL get direct OBO cross-walks (HPO, Mondo, Uberon, CL, ChEBI, PRO) — discoverable through OMOP2OBO once those entities lift in v0.3+.
+
+## Tooling alignments
+
+Three community-standard infrastructure pieces TOP should adopt rather than reinvent:
+
+- **SSSOM (Simple Standard for Sharing Ontological Mappings)** — the canonical format for ontology-to-ontology mappings. When TOP publishes its OMOP / FHIR / USDM / OBO cross-walks as machine-readable mapping artifacts, they should be SSSOM-formatted. Aligns TOP with the OBO Foundry / Mondo / Bioregistry tooling ecosystem; lets community contributors review and contribute mappings using already-known tooling. Tracked as a v0.3 deliverable.
+
+- **Bioregistry** (<https://bioregistry.io>) — community-governed registry of prefixes and identifiers used across the biomedical-ontology ecosystem. TOP's prefixes (`top:`, `topc:`, future `topcmc:`, `topdh:`, etc.) should be registered there as TOP graduates from strawman to public release. Aligns identifier governance with OBO Foundry conventions. Tracked as a v0.2 publish-time deliverable.
+
+- **OWL2 + SKOS for hierarchical concepts** — TOP's enums (siteType, equipmentClass, documentType, organizationType, essentialRecordPurpose) currently flat. Promoting selected enums to SKOS concept schemes with broader/narrower relationships allows transitive ancestry queries (the OMOP CONCEPT_ANCESTOR pattern) without OMOP's pre-computed-table approach. Tracked as a v0.3 enhancement.
+
 ## Roadmap item: reference architecture for role-specific projections and views
 
 This is the item Bo asked to be tracked separately, captured here as a placeholder until the core objects are done. The substance:
