@@ -1,0 +1,167 @@
+@prefix top:   <https://top.scientix.ai/onto/clinical/v1#> .
+@prefix topc:  <https://top.scientix.ai/onto/commons/v1#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# Worked example: Investigator-Initiated Trial (IIT) at MSKCC.
+# Dr. Kim runs IIT-ONCO-001 with departmental funds. MSKCC plays both
+# Site and Sponsor roles via the same Organization. Demonstrates the
+# IIT pattern (no special schema relationship) and the SHACL invariant 9
+# IIT exception (System sponsor-critical oversight allows SITE-type Org
+# when same Org also plays Sponsor role).
+
+# === Organization (plays both Site and Sponsor roles) ===
+
+<urn:ngsi-ld:Organization:mskcc> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:mskcc"^^xsd:anyURI ;
+    topc:organizationName    "Memorial Sloan Kettering Cancer Center" ;
+    topc:legalName           "Memorial Sloan Kettering Cancer Center" ;
+    topc:organizationType    "ACADEMIC_INSTITUTION" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "064931884" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" ;
+    topc:managesSite         <urn:ngsi-ld:Site:mskcc-main> ;
+    topc:playsSponsorRole    <urn:ngsi-ld:Sponsor:mskcc-iit-onco001-fda> .
+
+# === Sponsor (Investigator-Sponsor for IIT) ===
+
+<urn:ngsi-ld:Sponsor:mskcc-iit-onco001-fda> a top:Sponsor ;
+    top:sponsorId                    "urn:ngsi-ld:Sponsor:mskcc-iit-onco001-fda"^^xsd:anyURI ;
+    top:sponsorName                  "MSKCC (Investigator-Sponsor, IIT-ONCO-001)" ;
+    top:legalName                    "Memorial Sloan Kettering Cancer Center" ;
+    top:sponsorType                  "ACADEMIC" ;
+    top:address                      "{ \"line1\": \"1275 York Avenue\", \"city\": \"New York\" }" ;
+    top:country                      "USA" ;
+    top:phone                        "+1-212-639-2000" ;
+    top:email                        "regulatory@mskcc.org" ;
+    top:website                      "https://www.mskcc.org"^^xsd:anyURI ;
+    top:status                       "ACTIVE" ;
+    top:isSponsorOfRecord            true ;
+    top:hasRegulatoryResponsibility  true ;
+    top:hasFinancialResponsibility   true ;
+    top:hasOperationalResponsibility true ;
+    top:isInitiator                  true ;
+    top:belongsToOrganization        <urn:ngsi-ld:Organization:mskcc> ;
+    top:runs                         <urn:ngsi-ld:Study:IIT-ONCO-001> ;
+    top:engages                      <urn:ngsi-ld:Site:mskcc-main> .
+
+# === Study + minimum chain ===
+
+<urn:ngsi-ld:Study:IIT-ONCO-001> a top:Study ;
+    top:studyId             "urn:ngsi-ld:Study:IIT-ONCO-001"^^xsd:anyURI ;
+    top:sponsorProtocolId   "MSKCC-IIT-ONCO-001" ;
+    top:studyStatus         "active" ;
+    top:hasProtocol         <urn:ngsi-ld:Protocol:IIT-ONCO-001-v1> ;
+    top:hasArm              <urn:ngsi-ld:Arm:IIT-ONCO-001-treatment> .
+
+<urn:ngsi-ld:Protocol:IIT-ONCO-001-v1> a top:Protocol ;
+    top:protocolVersion     "1.0.0" ;
+    top:protocolStatus      "approved" .
+
+<urn:ngsi-ld:Arm:IIT-ONCO-001-treatment> a top:Arm ;
+    top:armName             "Treatment" ;
+    top:armType             "treatment" .
+
+# === Site (operational, study-independent) ===
+
+<urn:ngsi-ld:Site:mskcc-main> a top:Site ;
+    top:siteId                   "urn:ngsi-ld:Site:mskcc-main"^^xsd:anyURI ;
+    top:siteName                 "Memorial Sloan Kettering — Main Campus" ;
+    top:siteType                 "ACADEMIC_MEDICAL_CENTER" ;
+    top:city                     "New York" ;
+    top:state                    "NY" ;
+    top:country                  "USA" ;
+    top:postalCode               "10065" ;
+    top:gcpQualified             true ;
+    top:facilitiesAdequate       true ;
+    top:therapeuticAreasExperienced "ONCOLOGY,HEMATOLOGY" ;
+    top:dctCapable               false ;
+    top:irbType                  "LOCAL" ;
+    top:belongsToOrganization    <urn:ngsi-ld:Organization:mskcc> ;
+    top:hasStaff                 <urn:ngsi-ld:Person:kim> ,
+                                  <urn:ngsi-ld:Person:taylor-coord> ;
+    top:usesSystem               <urn:ngsi-ld:System:mskcc-iit-edc> .
+
+# === StudySite (per-Study pivot) ===
+# In the IIT pattern, Sponsor and Site are backed by the same Organization (MSKCC).
+# Same Person (Dr. Kim) is hasPrincipalInvestigator on StudySite AND on Sponsor.
+
+<urn:ngsi-ld:StudySite:mskcc-iit-onco001> a topc:StudySite ;
+    topc:studySiteId              "urn:ngsi-ld:StudySite:mskcc-iit-onco001"^^xsd:anyURI ;
+    topc:siteNumber               "US-001" ;
+    topc:studySiteStatus          "ACTIVE" ;
+    topc:activationDate           "2026-03-01"^^xsd:date ;
+    topc:enrollmentTarget         15 ;
+    topc:actualEnrollment         4 ;
+    topc:oversightTier            "MEDIUM" ;
+    topc:irbApprovalStatus        "APPROVED" ;
+    topc:irbApprovalDate          "2026-02-12"^^xsd:date ;
+    topc:forSite                  <urn:ngsi-ld:Site:mskcc-main> ;
+    topc:forStudy                 <urn:ngsi-ld:Study:IIT-ONCO-001> ;
+    topc:hasPrincipalInvestigator <urn:ngsi-ld:Person:kim> ;
+    topc:delegatesAuthorityTo     <urn:ngsi-ld:Person:kim> ,
+                                   <urn:ngsi-ld:Person:taylor-coord> ;
+    topc:reportsTo                <urn:ngsi-ld:Sponsor:mskcc-iit-onco001-fda> ;
+    topc:usesSystem               <urn:ngsi-ld:System:mskcc-iit-edc> .
+
+# === Persons ===
+
+<urn:ngsi-ld:Person:kim> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:kim"^^xsd:anyURI ;
+    topc:firstName          "Sung-Ho" ;
+    topc:lastName           "Kim" ;
+    topc:title              "MD, PhD" ;
+    topc:jobTitle           "Investigator-Sponsor, Department of Medical Oncology" ;
+    topc:email              "kims@mskcc.org" ;
+    topc:gcpTrainingStatus  "CURRENT" ;
+    topc:gcpTrainingExpiry  "2027-04-15"^^xsd:date ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> .
+
+<urn:ngsi-ld:Person:taylor-coord> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:taylor-coord"^^xsd:anyURI ;
+    topc:firstName          "Jamie" ;
+    topc:lastName           "Taylor" ;
+    topc:title              "RN" ;
+    topc:jobTitle           "Study Coordinator" ;
+    topc:email              "taylorj@mskcc.org" ;
+    topc:gcpTrainingStatus  "CURRENT" ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> .
+
+# === System: Site-operated EDC for IIT ===
+# In the IIT case, MSKCC operates its own EDC (not a Sponsor-provisioned one).
+# SHACL invariant 9 (sponsor-critical Systems should have Sponsor oversight)
+# would normally fire here because oversightHeldBy is a SITE-type Org.
+# IIT exception applies: the Organization (MSKCC) ALSO plays a Sponsor role
+# (via playsSponsorRole) on a Study (IIT-ONCO-001) using this System.
+# The SPARQL FILTER NOT EXISTS clause in invariant 9 catches this case.
+
+<urn:ngsi-ld:System:mskcc-iit-edc> a topc:System ;
+    topc:systemId             "urn:ngsi-ld:System:mskcc-iit-edc"^^xsd:anyURI ;
+    topc:vendor               "REDCap Consortium" ;
+    topc:productName          "REDCap" ;
+    topc:instanceId           "mskcc-iit-prod" ;
+    topc:baseUrl              "https://redcap.mskcc.org/iit-onco-001/"^^xsd:anyURI ;
+    topc:systemType           "EDC" ;
+    topc:version              "13.7" ;
+    topc:validatedFor21CfrPart11 true ;
+    topc:validationStatus     "VALIDATED" ;
+    topc:validationApproach   "RISK_BASED" ;
+    topc:lastValidationDate   "2025-11-15"^^xsd:date ;
+    topc:releaseStatus        "PRODUCTION" ;
+    topc:auditTrailEnabled    true ;
+    topc:operatedBy           <urn:ngsi-ld:Organization:mskcc> ;
+    topc:usedBy               <urn:ngsi-ld:Organization:mskcc> ;
+    topc:oversightHeldBy      <urn:ngsi-ld:Organization:mskcc> .
+
+# Note on SHACL invariant 9: the System above has systemType=EDC (sponsor-critical)
+# and oversightHeldBy points at MSKCC (organizationType=ACADEMIC_INSTITUTION, not
+# strictly SITE). The invariant 9 SPARQL filter checks for organizationType="SITE"
+# specifically — so this case doesn't even hit the IIT exception path; the
+# invariant doesn't fire because organizationType is ACADEMIC_INSTITUTION, not SITE.
+# This is also an architecturally valid case: ACADEMIC_INSTITUTION-scoped
+# Organizations regularly run IITs and operate their own systems; the SITE-only
+# constraint targets specifically the case where a research-site Organization
+# (organizationType=SITE) tries to claim oversight of sponsor-critical Systems
+# without playing the Sponsor role itself.

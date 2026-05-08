@@ -1,0 +1,213 @@
+@prefix top:   <https://top.scientix.ai/onto/clinical/v1#> .
+@prefix topc:  <https://top.scientix.ai/onto/commons/v1#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# Worked example: SMO-managed multi-site network (Elevate Research) running
+# Pfizer ONCO-423 across three sites (Boston, Phoenix, Miami).
+# Demonstrates the SHACL invariant 6 (partOfSiteNetwork target organizationType
+# in {SITE_NETWORK, SMO}) and the multi-StudySite-per-Sponsor pattern.
+
+# === Organizations ===
+
+<urn:ngsi-ld:Organization:pfizer> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:pfizer"^^xsd:anyURI ;
+    topc:organizationName    "Pfizer Inc" ;
+    topc:legalName           "Pfizer Inc." ;
+    topc:organizationType    "PARENT_CORPORATION" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "002472129" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" ;
+    topc:playsSponsorRole    <urn:ngsi-ld:Sponsor:pfizer-onco423-fda> .
+
+<urn:ngsi-ld:Organization:elevate-research> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:elevate-research"^^xsd:anyURI ;
+    topc:organizationName    "Elevate Research Network" ;
+    topc:legalName           "Elevate Research, LLC" ;
+    topc:organizationType    "SMO" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "079123456" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" ;
+    topc:managesSite         <urn:ngsi-ld:Site:elevate-boston> ,
+                              <urn:ngsi-ld:Site:elevate-phoenix> ,
+                              <urn:ngsi-ld:Site:elevate-miami> .
+
+# === Study + minimum chain ===
+
+<urn:ngsi-ld:Study:ONCO-423> a top:Study ;
+    top:studyId             "urn:ngsi-ld:Study:ONCO-423"^^xsd:anyURI ;
+    top:sponsorProtocolId   "ONCO-423-001" ;
+    top:clinicalTrialsGovId "NCT99999423" ;
+    top:studyStatus         "active" ;
+    top:hasProtocol         <urn:ngsi-ld:Protocol:ONCO-423-v3> ;
+    top:hasArm              <urn:ngsi-ld:Arm:ONCO-423-treatment> .
+
+<urn:ngsi-ld:Protocol:ONCO-423-v3> a top:Protocol ;
+    top:protocolVersion     "3.0.0" ;
+    top:protocolStatus      "approved" .
+
+<urn:ngsi-ld:Arm:ONCO-423-treatment> a top:Arm ;
+    top:armName             "Treatment" ;
+    top:armType             "treatment" .
+
+<urn:ngsi-ld:Sponsor:pfizer-onco423-fda> a top:Sponsor ;
+    top:sponsorId                    "urn:ngsi-ld:Sponsor:pfizer-onco423-fda"^^xsd:anyURI ;
+    top:sponsorName                  "Pfizer (US sponsor of record, ONCO-423)" ;
+    top:legalName                    "Pfizer Inc." ;
+    top:sponsorType                  "PHARMACEUTICAL" ;
+    top:address                      "{ \"line1\": \"66 Hudson Boulevard\", \"city\": \"New York\" }" ;
+    top:country                      "USA" ;
+    top:phone                        "+1-212-733-2323" ;
+    top:email                        "regulatory@pfizer.com" ;
+    top:website                      "https://www.pfizer.com"^^xsd:anyURI ;
+    top:status                       "ACTIVE" ;
+    top:isSponsorOfRecord            true ;
+    top:hasRegulatoryResponsibility  true ;
+    top:hasFinancialResponsibility   true ;
+    top:hasOperationalResponsibility true ;
+    top:isInitiator                  true ;
+    top:belongsToOrganization        <urn:ngsi-ld:Organization:pfizer> ;
+    top:runs                         <urn:ngsi-ld:Study:ONCO-423> ;
+    top:engages                      <urn:ngsi-ld:Site:elevate-boston> ,
+                                      <urn:ngsi-ld:Site:elevate-phoenix> ,
+                                      <urn:ngsi-ld:Site:elevate-miami> .
+
+# === Three Sites in the network ===
+
+<urn:ngsi-ld:Site:elevate-boston> a top:Site ;
+    top:siteId                   "urn:ngsi-ld:Site:elevate-boston"^^xsd:anyURI ;
+    top:siteName                 "Elevate Research — Boston" ;
+    top:siteType                 "RESEARCH_CENTER" ;
+    top:city                     "Boston" ;
+    top:state                    "MA" ;
+    top:country                  "USA" ;
+    top:gcpQualified             true ;
+    top:facilitiesAdequate       true ;
+    top:therapeuticAreasExperienced "ONCOLOGY,IMMUNOLOGY" ;
+    top:totalTrialsConducted     87 ;
+    top:averageEnrollmentRate    4.2 ;
+    top:dctCapable               true ;
+    top:irbType                  "CENTRAL" ;
+    top:subInvestigatorCount     3 ;
+    top:coordinatorCount         5 ;
+    top:belongsToOrganization    <urn:ngsi-ld:Organization:elevate-research> ;
+    top:partOfSiteNetwork        <urn:ngsi-ld:Organization:elevate-research> .
+
+<urn:ngsi-ld:Site:elevate-phoenix> a top:Site ;
+    top:siteId                   "urn:ngsi-ld:Site:elevate-phoenix"^^xsd:anyURI ;
+    top:siteName                 "Elevate Research — Phoenix" ;
+    top:siteType                 "RESEARCH_CENTER" ;
+    top:city                     "Phoenix" ;
+    top:state                    "AZ" ;
+    top:country                  "USA" ;
+    top:gcpQualified             true ;
+    top:facilitiesAdequate       true ;
+    top:therapeuticAreasExperienced "ONCOLOGY,DERMATOLOGY" ;
+    top:totalTrialsConducted     54 ;
+    top:averageEnrollmentRate    3.8 ;
+    top:irbType                  "CENTRAL" ;
+    top:subInvestigatorCount     2 ;
+    top:coordinatorCount         4 ;
+    top:belongsToOrganization    <urn:ngsi-ld:Organization:elevate-research> ;
+    top:partOfSiteNetwork        <urn:ngsi-ld:Organization:elevate-research> .
+
+<urn:ngsi-ld:Site:elevate-miami> a top:Site ;
+    top:siteId                   "urn:ngsi-ld:Site:elevate-miami"^^xsd:anyURI ;
+    top:siteName                 "Elevate Research — Miami" ;
+    top:siteType                 "RESEARCH_CENTER" ;
+    top:city                     "Miami" ;
+    top:state                    "FL" ;
+    top:country                  "USA" ;
+    top:gcpQualified             true ;
+    top:facilitiesAdequate       true ;
+    top:therapeuticAreasExperienced "ONCOLOGY,CARDIOLOGY" ;
+    top:totalTrialsConducted     38 ;
+    top:averageEnrollmentRate    3.1 ;
+    top:irbType                  "CENTRAL" ;
+    top:subInvestigatorCount     2 ;
+    top:coordinatorCount         3 ;
+    top:belongsToOrganization    <urn:ngsi-ld:Organization:elevate-research> ;
+    top:partOfSiteNetwork        <urn:ngsi-ld:Organization:elevate-research> .
+
+# === Three StudySites (one per Site) ===
+
+<urn:ngsi-ld:StudySite:elevate-boston-onco423> a topc:StudySite ;
+    topc:studySiteId              "urn:ngsi-ld:StudySite:elevate-boston-onco423"^^xsd:anyURI ;
+    topc:siteNumber               "US-101" ;
+    topc:studySiteStatus          "ACTIVE" ;
+    topc:activationDate           "2026-02-01"^^xsd:date ;
+    topc:enrollmentTarget         12 ;
+    topc:actualEnrollment         9 ;
+    topc:oversightTier            "MEDIUM" ;
+    topc:irbApprovalStatus        "APPROVED" ;
+    topc:forSite                  <urn:ngsi-ld:Site:elevate-boston> ;
+    topc:forStudy                 <urn:ngsi-ld:Study:ONCO-423> ;
+    topc:hasPrincipalInvestigator <urn:ngsi-ld:Person:walsh-pi> ;
+    topc:delegatesAuthorityTo     <urn:ngsi-ld:Person:walsh-pi> ,
+                                   <urn:ngsi-ld:Person:gomez-coord> .
+
+<urn:ngsi-ld:StudySite:elevate-phoenix-onco423> a topc:StudySite ;
+    topc:studySiteId              "urn:ngsi-ld:StudySite:elevate-phoenix-onco423"^^xsd:anyURI ;
+    topc:siteNumber               "US-102" ;
+    topc:studySiteStatus          "ACTIVE" ;
+    topc:activationDate           "2026-02-15"^^xsd:date ;
+    topc:enrollmentTarget         10 ;
+    topc:actualEnrollment         5 ;
+    topc:oversightTier            "MEDIUM" ;
+    topc:irbApprovalStatus        "APPROVED" ;
+    topc:forSite                  <urn:ngsi-ld:Site:elevate-phoenix> ;
+    topc:forStudy                 <urn:ngsi-ld:Study:ONCO-423> ;
+    topc:hasPrincipalInvestigator <urn:ngsi-ld:Person:choi-pi> ;
+    topc:delegatesAuthorityTo     <urn:ngsi-ld:Person:choi-pi> ,
+                                   <urn:ngsi-ld:Person:nguyen-coord> .
+
+<urn:ngsi-ld:StudySite:elevate-miami-onco423> a topc:StudySite ;
+    topc:studySiteId              "urn:ngsi-ld:StudySite:elevate-miami-onco423"^^xsd:anyURI ;
+    topc:siteNumber               "US-103" ;
+    topc:studySiteStatus          "IN_QUALIFICATION" ;
+    topc:enrollmentTarget         8 ;
+    topc:actualEnrollment         0 ;
+    topc:oversightTier            "LOW" ;
+    topc:irbApprovalStatus        "PENDING" ;
+    topc:forSite                  <urn:ngsi-ld:Site:elevate-miami> ;
+    topc:forStudy                 <urn:ngsi-ld:Study:ONCO-423> ;
+    topc:hasPrincipalInvestigator <urn:ngsi-ld:Person:rodriguez-pi> ;
+    topc:delegatesAuthorityTo     <urn:ngsi-ld:Person:rodriguez-pi> .
+
+# === Persons (PIs and coordinators across the network) ===
+
+<urn:ngsi-ld:Person:walsh-pi> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:walsh-pi"^^xsd:anyURI ;
+    topc:firstName          "Sarah" ; topc:lastName "Walsh" ; topc:title "MD" ;
+    topc:jobTitle           "Principal Investigator" ;
+    topc:gcpTrainingStatus  "CURRENT" ; topc:status "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:elevate-research> .
+
+<urn:ngsi-ld:Person:gomez-coord> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:gomez-coord"^^xsd:anyURI ;
+    topc:firstName          "Maria" ; topc:lastName "Gomez" ; topc:title "RN" ;
+    topc:jobTitle           "Study Coordinator" ;
+    topc:gcpTrainingStatus  "CURRENT" ; topc:status "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:elevate-research> .
+
+<urn:ngsi-ld:Person:choi-pi> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:choi-pi"^^xsd:anyURI ;
+    topc:firstName          "Daniel" ; topc:lastName "Choi" ; topc:title "MD" ;
+    topc:jobTitle           "Principal Investigator" ;
+    topc:gcpTrainingStatus  "CURRENT" ; topc:status "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:elevate-research> .
+
+<urn:ngsi-ld:Person:nguyen-coord> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:nguyen-coord"^^xsd:anyURI ;
+    topc:firstName          "Linh" ; topc:lastName "Nguyen" ; topc:title "RN" ;
+    topc:jobTitle           "Study Coordinator" ;
+    topc:gcpTrainingStatus  "CURRENT" ; topc:status "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:elevate-research> .
+
+<urn:ngsi-ld:Person:rodriguez-pi> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:rodriguez-pi"^^xsd:anyURI ;
+    topc:firstName          "Carlos" ; topc:lastName "Rodriguez" ; topc:title "MD" ;
+    topc:jobTitle           "Principal Investigator" ;
+    topc:gcpTrainingStatus  "CURRENT" ; topc:status "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:elevate-research> .

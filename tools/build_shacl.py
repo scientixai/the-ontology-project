@@ -370,6 +370,164 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === Site / StudySite / System / Credential invariants (v0.2.0) ===
+    invariants.append("# === Site / StudySite / System / Credential invariants (v0.2.0) ===")
+    invariants.append("")
+
+    hor_prefix = source.get("horizontal_prefix", cls_prefix)
+    hor_namespaces = source.get("namespaces", {})
+    hor_iri = hor_namespaces.get(hor_prefix, "https://top.scientix.ai/onto/commons/v1#")
+
+    def sub2(text):
+        """Substitute placeholders, including the horizontals namespace."""
+        return (text
+                .replace("__P__", cls_prefix)
+                .replace("__IRI__", cls_iri)
+                .replace("__C__", hor_prefix)
+                .replace("__CIRI__", hor_iri))
+
+    # 5. Hard: a DECENTRALIZED_HUB Site must have belongsToOrganization populated.
+    #    A decentralized hub without a backing institution is structurally broken — there's
+    #    no legal entity to file regulatory documents under, no entity to hold the IRB
+    #    record, no entity to engage in CTAs.
+    invariants.append(sub2("""__P__:SiteDecentralizedHubNeedsOrgShape a sh:NodeShape ;
+    sh:targetClass __P__:Site ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Site has siteType=DECENTRALIZED_HUB but no belongsToOrganization. A decentralized hub still requires a legal/operational Organization to anchor regulatory and contractual responsibility." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Site .
+                $this __P__:siteType "DECENTRALIZED_HUB" .
+                FILTER NOT EXISTS { $this __P__:belongsToOrganization ?org }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 6. Hard: when Site.partOfSiteNetwork is populated, the target Organization's type
+    #    must be SITE_NETWORK or SMO. Pointing at a SPONSOR or VENDOR organization as the
+    #    "site network" is a modeling error caught early.
+    invariants.append(sub2("""__P__:SiteNetworkOrgTypeShape a sh:NodeShape ;
+    sh:targetClass __P__:Site ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Site.partOfSiteNetwork points at an Organization whose organizationType is not SITE_NETWORK or SMO. The relationship is intended for site-network or SMO Organizations only; pointing at other types is a modeling error." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            PREFIX __C__: <__CIRI__>
+            SELECT $this ?org ?orgType WHERE {
+                $this __P__:partOfSiteNetwork ?org .
+                ?org __C__:organizationType ?orgType .
+                FILTER (?orgType != "SITE_NETWORK" && ?orgType != "SMO")
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 7. Hard: a StudySite with studySiteStatus=ACTIVE must have a hasPrincipalInvestigator.
+    #    R3 Section 2.1 GCP-required. A Site cannot be operationally active on a Study
+    #    without a qualified Principal Investigator named on the StudySite record.
+    invariants.append(sub2("""__C__:StudySiteActiveNeedsPIShape a sh:NodeShape ;
+    sh:targetClass __C__:StudySite ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "StudySite has studySiteStatus=ACTIVE but no hasPrincipalInvestigator. ICH E6(R3) Section 2.1 requires a qualified Principal Investigator for any active Site participation." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __C__: <__CIRI__>
+            SELECT $this WHERE {
+                $this a __C__:StudySite .
+                $this __C__:studySiteStatus "ACTIVE" .
+                FILTER NOT EXISTS { $this __C__:hasPrincipalInvestigator ?pi }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 8. Hard: a StudySite with studySiteStatus=ACTIVE must have at least one
+    #    delegatesAuthorityTo entry. R3 Section 2.3.3 GCP-requires the Delegation of
+    #    Authority Log; an active Site participation with zero delegations is not
+    #    GCP-compliant.
+    invariants.append(sub2("""__C__:StudySiteActiveNeedsDelegationShape a sh:NodeShape ;
+    sh:targetClass __C__:StudySite ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "StudySite has studySiteStatus=ACTIVE but no delegatesAuthorityTo entries. ICH E6(R3) Section 2.3.3 GCP-requires a Delegation of Authority Log for any active Site participation." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __C__: <__CIRI__>
+            SELECT $this WHERE {
+                $this a __C__:StudySite .
+                $this __C__:studySiteStatus "ACTIVE" .
+                FILTER NOT EXISTS { $this __C__:delegatesAuthorityTo ?p }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 9. Hard: for sponsor-critical Systems (EDC, CTMS, IRT, SAFETY_DB), the
+    #    oversightHeldBy Organization must not be a SITE-type Organization (under R3
+    #    Section 3.9 sponsor oversight obligation). IIT exception: if the SITE-type
+    #    Organization also plays a Sponsor role on a Study using this System, the
+    #    constraint does not fire (Site=Sponsor in IIT case).
+    invariants.append(sub2("""__C__:SystemSponsorCriticalOversightShape a sh:NodeShape ;
+    sh:targetClass __C__:System ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "System has systemType in {EDC, CTMS, IRT, SAFETY_DB} (sponsor-critical) but oversightHeldBy points at an Organization with organizationType=SITE. ICH E6(R3) Section 3.9 places oversight on the Sponsor for sponsor-critical systems. IIT exception applies when the same Organization also plays a Sponsor role on a Study using this System (checked via playsSponsorRole)." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            PREFIX __C__: <__CIRI__>
+            SELECT $this ?org WHERE {
+                $this a __C__:System .
+                $this __C__:systemType ?type .
+                FILTER (?type IN ("EDC", "CTMS", "IRT", "SAFETY_DB"))
+                $this __C__:oversightHeldBy ?org .
+                ?org __C__:organizationType "SITE" .
+                FILTER NOT EXISTS {
+                    ?org __C__:playsSponsorRole ?sponsor .
+                    ?studySite __C__:usesSystem $this .
+                    ?studySite __C__:forStudy ?study .
+                    ?sponsor __P__:runs ?study .
+                }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 10. Hard: a Credential must have exactly one of forPerson, forSite, forEquipment
+    #     populated. The polymorphic-target pattern requires single-target discipline;
+    #     a Credential pointing at both a Person and a Site is a modeling error.
+    invariants.append(sub2("""__C__:CredentialExactlyOneTargetShape a sh:NodeShape ;
+    sh:targetClass __C__:Credential ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Credential must have exactly one of forPerson, forSite, forEquipment populated. Polymorphic-target discipline requires single-target binding; a Credential cannot apply to multiple subject types." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __C__: <__CIRI__>
+            SELECT $this WHERE {
+                $this a __C__:Credential .
+                {
+                    SELECT $this (COUNT(?t) AS ?cnt) WHERE {
+                        $this a __C__:Credential .
+                        OPTIONAL { $this __C__:forPerson ?p . BIND(?p AS ?t) }
+                        OPTIONAL { $this __C__:forSite ?s . BIND(?s AS ?t) }
+                        OPTIONAL { $this __C__:forEquipment ?e . BIND(?e AS ?t) }
+                    }
+                    GROUP BY $this
+                }
+                FILTER (?cnt != 1)
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -437,7 +595,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 4 (1 soft warning + 3 hard violations)")
+    print(f"  domain invariants: 10 (1 soft warning + 9 hard violations)")
 
 
 if __name__ == "__main__":

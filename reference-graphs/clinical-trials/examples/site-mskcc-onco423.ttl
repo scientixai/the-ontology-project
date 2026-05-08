@@ -1,0 +1,363 @@
+@prefix top:   <https://top.scientix.ai/onto/clinical/v1#> .
+@prefix topc:  <https://top.scientix.ai/onto/commons/v1#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# Worked example: Traditional academic medical center site (MSKCC) running Pfizer ONCO-423.
+# Demonstrates the v0.2.0 Site / StudySite split, the System three-axis pattern
+# (Sponsor-operated EDC + Site-operated ISF), the Equipment-System distinction
+# (freezer + IoT temp monitor + temperature log), and the full Delegation Log
+# (PI + sub-I + coordinator + pharmacist).
+
+# === Organizations ===
+
+<urn:ngsi-ld:Organization:pfizer> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:pfizer"^^xsd:anyURI ;
+    topc:organizationName    "Pfizer Inc" ;
+    topc:legalName           "Pfizer Inc." ;
+    topc:organizationType    "PARENT_CORPORATION" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "002472129" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" ;
+    topc:playsSponsorRole    <urn:ngsi-ld:Sponsor:pfizer-onco423-fda> .
+
+<urn:ngsi-ld:Organization:mskcc> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:mskcc"^^xsd:anyURI ;
+    topc:organizationName    "Memorial Sloan Kettering Cancer Center" ;
+    topc:legalName           "Memorial Sloan Kettering Cancer Center" ;
+    topc:organizationType    "ACADEMIC_INSTITUTION" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "064931884" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" ;
+    topc:managesSite         <urn:ngsi-ld:Site:mskcc-main> .
+
+<urn:ngsi-ld:Organization:veeva> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:veeva"^^xsd:anyURI ;
+    topc:organizationName    "Veeva Systems" ;
+    topc:legalName           "Veeva Systems Inc." ;
+    topc:organizationType    "VENDOR" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "967450832" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" .
+
+<urn:ngsi-ld:Organization:iron-mountain> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:iron-mountain"^^xsd:anyURI ;
+    topc:organizationName    "Iron Mountain" ;
+    topc:legalName           "Iron Mountain Incorporated" ;
+    topc:organizationType    "VENDOR" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "112000186" ;
+    topc:country             "USA" ;
+    topc:status              "ACTIVE" .
+
+# === Sponsor + Study + minimum chain ===
+
+<urn:ngsi-ld:Study:ONCO-423> a top:Study ;
+    top:studyId             "urn:ngsi-ld:Study:ONCO-423"^^xsd:anyURI ;
+    top:sponsorProtocolId   "ONCO-423-001" ;
+    top:clinicalTrialsGovId "NCT99999423" ;
+    top:studyStatus         "active" ;
+    top:hasProtocol         <urn:ngsi-ld:Protocol:ONCO-423-v3> ;
+    top:hasArm              <urn:ngsi-ld:Arm:ONCO-423-treatment> .
+
+<urn:ngsi-ld:Protocol:ONCO-423-v3> a top:Protocol ;
+    top:protocolVersion     "3.0.0" ;
+    top:protocolStatus      "approved" .
+
+<urn:ngsi-ld:Arm:ONCO-423-treatment> a top:Arm ;
+    top:armName             "Treatment" ;
+    top:armType             "treatment" .
+
+<urn:ngsi-ld:Sponsor:pfizer-onco423-fda> a top:Sponsor ;
+    top:sponsorId                    "urn:ngsi-ld:Sponsor:pfizer-onco423-fda"^^xsd:anyURI ;
+    top:sponsorName                  "Pfizer (US sponsor of record, ONCO-423)" ;
+    top:legalName                    "Pfizer Inc." ;
+    top:sponsorType                  "PHARMACEUTICAL" ;
+    top:address                      "{ \"line1\": \"66 Hudson Boulevard\", \"city\": \"New York\" }" ;
+    top:country                      "USA" ;
+    top:phone                        "+1-212-733-2323" ;
+    top:email                        "regulatory@pfizer.com" ;
+    top:website                      "https://www.pfizer.com"^^xsd:anyURI ;
+    top:status                       "ACTIVE" ;
+    top:isSponsorOfRecord            true ;
+    top:hasRegulatoryResponsibility  true ;
+    top:hasFinancialResponsibility   true ;
+    top:hasOperationalResponsibility true ;
+    top:isInitiator                  true ;
+    top:belongsToOrganization        <urn:ngsi-ld:Organization:pfizer> ;
+    top:runs                         <urn:ngsi-ld:Study:ONCO-423> ;
+    top:engages                      <urn:ngsi-ld:Site:mskcc-main> .
+
+# === Site (operational, study-independent) ===
+
+<urn:ngsi-ld:Site:mskcc-main> a top:Site ;
+    top:siteId                   "urn:ngsi-ld:Site:mskcc-main"^^xsd:anyURI ;
+    top:siteName                 "Memorial Sloan Kettering — Main Campus" ;
+    top:siteType                 "ACADEMIC_MEDICAL_CENTER" ;
+    top:address                  "{ \"line1\": \"1275 York Avenue\", \"city\": \"New York\" }" ;
+    top:city                     "New York" ;
+    top:state                    "NY" ;
+    top:country                  "USA" ;
+    top:postalCode               "10065" ;
+    top:phone                    "+1-212-639-2000" ;
+    top:email                    "research@mskcc.org" ;
+    top:website                  "https://www.mskcc.org"^^xsd:anyURI ;
+    top:gcpQualified             true ;
+    top:facilitiesAdequate       true ;
+    top:therapeuticAreasExperienced "ONCOLOGY,HEMATOLOGY,IMMUNOTHERAPY" ;
+    top:patientReferralSources   "HOSPITAL_OWN,REFERRAL_NETWORK" ;
+    top:totalTrialsConducted     412 ;
+    top:averageEnrollmentRate    8.5 ;
+    top:firstPatientInToActivationDays 45 ;
+    top:queryResponseTimeHours   18.0 ;
+    top:sponsorRetentionRate     0.78 ;
+    top:imagingCapabilities      "XRAY,CT,MRI,ULTRASOUND,PET" ;
+    top:labCapabilities          "CLIA,CAP,CENTRAL,SPECIALTY" ;
+    top:pharmacyOnSite           true ;
+    top:dctCapable               true ;
+    top:econsentCapable          true ;
+    top:eproCapable              true ;
+    top:edcVendorExperience      "Veeva,Medidata,Castor" ;
+    top:irbType                  "LOCAL" ;
+    top:typicalIrbApprovalDays   28 ;
+    top:regulatoryAuthorityExperience "FDA,EMA" ;
+    top:sopsAvailable            true ;
+    top:sopLibrarySize           1240 ;
+    top:insuranceCarrier         "MSK Insurance Trust" ;
+    top:insuranceCoverageAmount  50000000.00 ;
+    top:insuranceCurrency        "USD" ;
+    top:insuranceExpiry          "2027-06-30"^^xsd:date ;
+    top:subInvestigatorCount     14 ;
+    top:coordinatorCount         22 ;
+    top:regulatoryCoordinatorCount 5 ;
+    top:studyNurseCount          18 ;
+    top:labTechCount             12 ;
+    top:languagesSupported       "en,es,zh,ru" ;
+    top:gcpTrainingCurrencyRate  0.94 ;
+    top:belongsToOrganization    <urn:ngsi-ld:Organization:mskcc> ;
+    top:hasStaff                 <urn:ngsi-ld:Person:patel> ,
+                                  <urn:ngsi-ld:Person:jones> ,
+                                  <urn:ngsi-ld:Person:martinez> ,
+                                  <urn:ngsi-ld:Person:chen> ;
+    top:headOfClinicalResearch   <urn:ngsi-ld:Person:director-research> ;
+    top:hostsEquipment           <urn:ngsi-ld:Equipment:mskcc-freezer-f12> ;
+    top:hasStorageLocation       <urn:ngsi-ld:StorageLocation:f12-rack-3-slot-a4> ;
+    top:hasInstitutionalDocument <urn:ngsi-ld:Document:mskcc-institutional-license> ;
+    top:hasInstitutionalCredential <urn:ngsi-ld:Credential:mskcc-clia-cert> ;
+    top:usesSystem               <urn:ngsi-ld:System:mskcc-isf-iron-mountain> .
+
+# === StudySite (per-Study pivot) ===
+
+<urn:ngsi-ld:StudySite:mskcc-onco423> a topc:StudySite ;
+    topc:studySiteId              "urn:ngsi-ld:StudySite:mskcc-onco423"^^xsd:anyURI ;
+    topc:siteNumber               "US-002" ;
+    topc:studySiteStatus          "ACTIVE" ;
+    topc:activationDate           "2026-01-15"^^xsd:date ;
+    topc:enrollmentTarget         24 ;
+    topc:actualEnrollment         18 ;
+    topc:lastMonitoringVisitDate  "2026-04-22"^^xsd:date ;
+    topc:oversightTier            "MEDIUM" ;
+    topc:recruitmentPotential     30 ;
+    topc:staffingAdequate         true ;
+    topc:essentialRecordsRetentionUntil "2041-12-31"^^xsd:date ;
+    topc:irbApprovalStatus        "APPROVED" ;
+    topc:irbApprovalDate          "2025-12-12"^^xsd:date ;
+    topc:regulatoryAuthorizationStatus "APPROVED" ;
+    topc:forSite                  <urn:ngsi-ld:Site:mskcc-main> ;
+    topc:forStudy                 <urn:ngsi-ld:Study:ONCO-423> ;
+    topc:hasPrincipalInvestigator <urn:ngsi-ld:Person:patel> ;
+    topc:delegatesAuthorityTo     <urn:ngsi-ld:Person:patel> ,
+                                   <urn:ngsi-ld:Person:jones> ,
+                                   <urn:ngsi-ld:Person:martinez> ,
+                                   <urn:ngsi-ld:Person:chen> ;
+    topc:reportsTo                <urn:ngsi-ld:Sponsor:pfizer-onco423-fda> ;
+    topc:usesSystem               <urn:ngsi-ld:System:pfizer-veeva-onco423> .
+
+# === Persons (Site staff, study-independent roster) ===
+
+<urn:ngsi-ld:Person:patel> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:patel"^^xsd:anyURI ;
+    topc:firstName          "Anjali" ;
+    topc:lastName           "Patel" ;
+    topc:title              "MD" ;
+    topc:jobTitle           "Attending Physician, Medical Oncology" ;
+    topc:email              "patela@mskcc.org" ;
+    topc:gcpTrainingStatus  "CURRENT" ;
+    topc:gcpTrainingExpiry  "2027-08-15"^^xsd:date ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> ;
+    topc:hasCredential      <urn:ngsi-ld:Credential:patel-md-license> .
+
+<urn:ngsi-ld:Person:jones> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:jones"^^xsd:anyURI ;
+    topc:firstName          "Marcus" ;
+    topc:lastName           "Jones" ;
+    topc:title              "MD" ;
+    topc:jobTitle           "Sub-Investigator, Medical Oncology" ;
+    topc:email              "jonesm@mskcc.org" ;
+    topc:gcpTrainingStatus  "CURRENT" ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> .
+
+<urn:ngsi-ld:Person:martinez> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:martinez"^^xsd:anyURI ;
+    topc:firstName          "Elena" ;
+    topc:lastName           "Martinez" ;
+    topc:title              "RN" ;
+    topc:jobTitle           "Senior Study Coordinator" ;
+    topc:email              "martineze@mskcc.org" ;
+    topc:gcpTrainingStatus  "CURRENT" ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> .
+
+<urn:ngsi-ld:Person:chen> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:chen"^^xsd:anyURI ;
+    topc:firstName          "Wei" ;
+    topc:lastName           "Chen" ;
+    topc:title              "PharmD" ;
+    topc:jobTitle           "Investigational Drug Pharmacist" ;
+    topc:email              "chenw@mskcc.org" ;
+    topc:gcpTrainingStatus  "CURRENT" ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> .
+
+<urn:ngsi-ld:Person:director-research> a topc:Person ;
+    topc:personId           "urn:ngsi-ld:Person:director-research"^^xsd:anyURI ;
+    topc:firstName          "Robert" ;
+    topc:lastName           "Lin" ;
+    topc:title              "MD, PhD" ;
+    topc:jobTitle           "Director of Clinical Research" ;
+    topc:email              "linr@mskcc.org" ;
+    topc:status             "ACTIVE" ;
+    topc:employedBy         <urn:ngsi-ld:Organization:mskcc> .
+
+# === System: Sponsor-operated EDC (Pfizer's Veeva Vault) ===
+
+<urn:ngsi-ld:System:pfizer-veeva-onco423> a topc:System ;
+    topc:systemId             "urn:ngsi-ld:System:pfizer-veeva-onco423"^^xsd:anyURI ;
+    topc:vendor               "Veeva" ;
+    topc:productName          "Vault EDC" ;
+    topc:instanceId           "pfizer-onco423-prod" ;
+    topc:baseUrl              "https://veeva.pfizer.com/onco423/"^^xsd:anyURI ;
+    topc:systemType           "EDC" ;
+    topc:version              "24.2" ;
+    topc:validatedFor21CfrPart11 true ;
+    topc:validatedForEuAnnex11 true ;
+    topc:validationStatus     "VALIDATED" ;
+    topc:validationApproach   "RISK_BASED" ;
+    topc:lastValidationDate   "2025-09-30"^^xsd:date ;
+    topc:releaseStatus        "PRODUCTION" ;
+    topc:auditTrailEnabled    true ;
+    topc:operatedBy           <urn:ngsi-ld:Organization:pfizer> ;
+    topc:usedBy               <urn:ngsi-ld:Organization:pfizer> ,
+                               <urn:ngsi-ld:Organization:mskcc> ;
+    topc:oversightHeldBy      <urn:ngsi-ld:Organization:pfizer> ;
+    topc:supportContact       <urn:ngsi-ld:Person:director-research> .
+
+# === System: Site-operated ISF (MSKCC's local Iron Mountain repository) ===
+# Pfizer has NO triple linking to this System — Pfizer doesn't see this URL.
+# Pfizer accesses MSKCC essential records via monitoring visits (R3 2.3.5),
+# not via direct System access.
+
+<urn:ngsi-ld:System:mskcc-isf-iron-mountain> a topc:System ;
+    topc:systemId             "urn:ngsi-ld:System:mskcc-isf-iron-mountain"^^xsd:anyURI ;
+    topc:vendor               "Iron Mountain" ;
+    topc:productName          "Iron Mountain Document Management" ;
+    topc:instanceId           "mskcc-isf-prod" ;
+    topc:baseUrl              "https://imdc.mskcc.org/isf/"^^xsd:anyURI ;
+    topc:systemType           "ISF" ;
+    topc:validatedFor21CfrPart11 true ;
+    topc:validationStatus     "VALIDATED" ;
+    topc:releaseStatus        "PRODUCTION" ;
+    topc:auditTrailEnabled    true ;
+    topc:operatedBy           <urn:ngsi-ld:Organization:mskcc> ;
+    topc:usedBy               <urn:ngsi-ld:Organization:mskcc> ;
+    topc:oversightHeldBy      <urn:ngsi-ld:Organization:mskcc> .
+
+# === Equipment + StorageLocation + Log (the freezer-with-IoT-monitor pattern) ===
+
+<urn:ngsi-ld:Equipment:mskcc-freezer-f12> a topc:Equipment ;
+    topc:equipmentId          "urn:ngsi-ld:Equipment:mskcc-freezer-f12"^^xsd:anyURI ;
+    topc:equipmentName        "Freezer F-12 (Pharmacy)" ;
+    topc:equipmentClass       "FREEZER" ;
+    topc:equipmentBinding     "SITE_BOUND" ;
+    topc:manufacturer         "Thermo Scientific" ;
+    topc:model                "TSU-700A" ;
+    topc:serialNumber         "TS24X-887122" ;
+    topc:installationDate     "2024-03-15"^^xsd:date ;
+    topc:lastCalibrationDate  "2026-01-10"^^xsd:date ;
+    topc:nextCalibrationDueDate "2027-01-10"^^xsd:date ;
+    topc:calibrationFrequency "ANNUAL" ;
+    topc:lastMaintenanceDate  "2026-03-04"^^xsd:date ;
+    topc:maintenanceSchedule  "QUARTERLY" ;
+    topc:status               "OPERATIONAL" ;
+    topc:locationDescription  "Pharmacy Room 3, Wall B" ;
+    topc:temperatureRange     "{ \"minTempC\": -85, \"maxTempC\": -75, \"units\": \"C\" }" ;
+    topc:atSite               <urn:ngsi-ld:Site:mskcc-main> ;
+    topc:hasCredential        <urn:ngsi-ld:Credential:f12-cal-2026> .
+
+<urn:ngsi-ld:StorageLocation:f12-rack-3-slot-a4> a topc:StorageLocation ;
+    topc:storageLocationId   "urn:ngsi-ld:StorageLocation:f12-rack-3-slot-a4"^^xsd:anyURI ;
+    topc:locationName        "Freezer F-12 / Rack 3 / Slot A4" ;
+    topc:storageType         "FREEZER_SLOT" ;
+    topc:temperatureRangeC   "MINUS_80" ;
+    topc:capacity            81 ;
+    topc:capacityUnit        "vials" ;
+    topc:currentOccupancy    34 ;
+    topc:accessRestriction   "PHARMACY_ONLY" ;
+    topc:securityLevel       "HIGH" ;
+    topc:status              "ACTIVE" ;
+    topc:atSite              <urn:ngsi-ld:Site:mskcc-main> ;
+    topc:inEquipment         <urn:ngsi-ld:Equipment:mskcc-freezer-f12> .
+
+# === Credentials ===
+
+<urn:ngsi-ld:Credential:patel-md-license> a topc:Credential ;
+    topc:credentialId         "urn:ngsi-ld:Credential:patel-md-license"^^xsd:anyURI ;
+    topc:credentialType       "MEDICAL_LICENSE" ;
+    topc:credentialNumber     "NY-MD-247811" ;
+    topc:issuingAuthorityName "New York State Education Department, Office of the Professions" ;
+    topc:issueDate            "2014-06-30"^^xsd:date ;
+    topc:expirationDate       "2028-06-30"^^xsd:date ;
+    topc:status               "ACTIVE" ;
+    topc:verificationStatus   "VERIFIED" ;
+    topc:verificationDate     "2026-01-12"^^xsd:date ;
+    topc:forPerson            <urn:ngsi-ld:Person:patel> .
+
+<urn:ngsi-ld:Credential:mskcc-clia-cert> a topc:Credential ;
+    topc:credentialId         "urn:ngsi-ld:Credential:mskcc-clia-cert"^^xsd:anyURI ;
+    topc:credentialType       "CLIA_CERTIFICATION" ;
+    topc:credentialNumber     "33D2156172" ;
+    topc:issuingAuthorityName "Centers for Medicare & Medicaid Services (CMS)" ;
+    topc:issueDate            "2024-05-01"^^xsd:date ;
+    topc:expirationDate       "2026-05-01"^^xsd:date ;
+    topc:status               "ACTIVE" ;
+    topc:verificationStatus   "VERIFIED" ;
+    topc:forSite              <urn:ngsi-ld:Site:mskcc-main> .
+
+<urn:ngsi-ld:Credential:f12-cal-2026> a topc:Credential ;
+    topc:credentialId         "urn:ngsi-ld:Credential:f12-cal-2026"^^xsd:anyURI ;
+    topc:credentialType       "CALIBRATION_CERTIFICATE" ;
+    topc:credentialNumber     "TS-CAL-26-0118" ;
+    topc:issuingAuthorityName "Thermo Scientific Field Service" ;
+    topc:issueDate            "2026-01-10"^^xsd:date ;
+    topc:expirationDate       "2027-01-10"^^xsd:date ;
+    topc:status               "ACTIVE" ;
+    topc:verificationStatus   "VERIFIED" ;
+    topc:forEquipment         <urn:ngsi-ld:Equipment:mskcc-freezer-f12> .
+
+# === Document (institutional license, study-independent) ===
+
+<urn:ngsi-ld:Document:mskcc-institutional-license> a topc:Document ;
+    topc:documentId            "urn:ngsi-ld:Document:mskcc-institutional-license"^^xsd:anyURI ;
+    topc:documentTitle         "MSKCC Institutional Operating License" ;
+    topc:documentType          "OTHER" ;
+    topc:documentVersion       "2024.1" ;
+    topc:documentStatus        "EFFECTIVE" ;
+    topc:essentialRecordPurpose "QUALIFICATION" ;
+    topc:responsibleParty      "INVESTIGATOR_INSTITUTION" ;
+    topc:effectiveDate         "2024-01-01"^^xsd:date ;
+    topc:expirationDate        "2027-12-31"^^xsd:date ;
+    topc:language              "en" .
