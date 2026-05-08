@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Namespaces</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 24px 28px 36px;
+    line-height: 1.55;
+    font-size: 14px;
+  }
+  .page { max-width: 920px; margin: 0 auto; }
+
+  h2.section {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #111;
+    margin: 28px 0 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #c8c8c0;
+  }
+  p { margin-bottom: 12px; }
+  p.lead {
+    background: #fff;
+    border-left: 3px solid #0e7490;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; background: #eef0ed; padding: 1px 5px; border-radius: 2px; color: #0e7490; }
+
+  .ns {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .ns .prefix { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #888; margin-bottom: 4px; }
+  .ns .name { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .ns .name a { color: #0e7490; text-decoration: none; }
+  .ns .desc { color: #2a2a2a; font-size: 13.5px; line-height: 1.55; margin-bottom: 10px; }
+  .ns .links { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #555; }
+  .ns .links a { color: #0e7490; text-decoration: none; margin-right: 14px; }
+  .ns .status {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .status-shipped { background: #e8f5ec; color: #1e8e6f; }
+  .status-strawman { background: #e8f0fc; color: #0e7490; }
+  .status-queued { background: #f0f0e9; color: #777; }
+
+  .ns-queued {
+    background: #fafaf6;
+    border: 1px dashed #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .ns-queued .prefix { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #888; margin-right: 8px; }
+  .ns-queued .name { font-weight: 600; color: #1a1a1a; }
+  .ns-queued .desc { color: #555; font-size: 12.5px; margin-top: 3px; line-height: 1.5; }
+
+  .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
+  .footer a { color: #888; text-decoration: underline; }
+
+  /* Brand link color (sitewide), keep color on hover, 2px underline appears */
+  a { color: #0e7490; }
+  a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  /* Site-wide header */
+  .site-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid #c8c8c0; }
+  .site-header .site-logo { display: block; flex-shrink: 0; }
+  .site-header .site-logo img { display: block; height: auto; max-width: 210px; }
+  .site-header .site-meta { text-align: right; }
+  .site-header .site-meta-primary { font-size: 13px; font-weight: 700; color: #111; }
+  .site-header .site-meta-secondary { font-size: 10.5px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+
+  /* Site-wide footer */
+  .site-footer { margin-top: 40px; padding-top: 22px; border-top: 1px solid #e0e0d8; text-align: center; }
+  .site-footer .site-footer-links { font-size: 12px; margin-bottom: 14px; }
+  .site-footer .site-footer-links a { color: #0e7490; text-decoration: none; font-weight: 600; margin: 0 6px; }
+  .site-footer .site-footer-links a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .site-footer .site-footer-sponsor { margin: 18px 0 14px; }
+  .site-footer .site-footer-sponsor a { display: inline-block; transition: opacity 0.15s ease; }
+  .site-footer .site-footer-sponsor a:hover { opacity: 0.75; }
+  .site-footer .site-footer-sponsor img { max-width: 200px; height: auto; }
+  .site-footer .site-footer-license { font-size: 10.5px; color: #888; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="site-header">
+  <a href="../index.html" class="site-logo" aria-label="The Ontology Project — home">
+    <img src="../images/top-logo.svg" alt="The Ontology Project" width="210">
+  </a>
+  <div class="site-meta">
+    <div class="site-meta-primary">Namespaces</div>
+    <div class="site-meta-secondary">resolution targets for every TOP class</div>
+  </div>
+</header>
+
+<p class="lead">The Ontology Project federates by namespace. Each reference graph (clinical research, future CMC, future energy, future manufacturing) gets its own prefix and its own resolution target; cross-cutting concepts shared across every domain live in the commons. Every URI of the form <span class="inline">https://top.scientix.ai/onto/&lt;namespace&gt;/&lt;version&gt;#ClassName</span> resolves to the matching namespace page below, with the fragment scrolling to the class definition.</p>
+
+<h2 class="section">Active namespaces</h2>
+
+<div class="ns">
+  <div class="prefix">top:</div>
+  <div class="name"><a href="clinical/v1/">Clinical Research</a> <span class="status status-strawman">v1 strawman</span></div>
+  <div class="desc">The founding reference graph. Eight top-levels (Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event) plus the StudySite operational pivot. Sponsor is sealed at v0.1.4; Site has lifted to v0.2.0; Study, Visit, Event, Participant, IP, and Oversight Body queued.</div>
+  <div class="links">
+    <a href="clinical/v1/">Browse classes</a>
+    <a href="clinical/v1/context.jsonld">context.jsonld</a>
+    <a href="clinical/v1/shapes.ttl">shapes.ttl</a>
+  </div>
+</div>
+
+<div class="ns">
+  <div class="prefix">topc:</div>
+  <div class="name"><a href="commons/v1/">Commons</a> <span class="status status-strawman">v1 strawman</span></div>
+  <div class="desc">Cross-cutting horizontals shared across every reference graph: Organization, Document, Person, Audit Trail Entry, Contract, Budget, Sample, Shipment, Equipment, System, StorageLocation, Action Item. The same Organization is the same Organization whether it shows up in clinical research, energy, or manufacturing.</div>
+  <div class="links">
+    <a href="commons/v1/">Browse horizontals</a>
+    <a href="commons/v1/context.jsonld">context.jsonld</a>
+    <a href="commons/v1/shapes.ttl">shapes.ttl</a>
+  </div>
+</div>
+
+<h2 class="section">Future namespaces</h2>
+
+<p>Each of the namespaces below is a candidate for a separate working group. Each domain converges on its strawman first; the schema follows. The pattern is the same across all of them: hand-write a strawman intermediate, run the translator scaffold, ship the artifacts.</p>
+
+<div class="ns-queued">
+  <span class="prefix">topcmc:</span><span class="name">Clinical CMC</span> <span class="status status-queued">Queued</span>
+  <div class="desc">Chemistry, Manufacturing, and Controls reference graph for biologics and small molecules in clinical development.</div>
+</div>
+
+<div class="ns-queued">
+  <span class="prefix">topdd:</span><span class="name">Drug Discovery</span> <span class="status status-queued">Queued</span>
+  <div class="desc">Target identification, lead optimization, preclinical, and IND-enabling work, upstream of clinical.</div>
+</div>
+
+<div class="ns-queued">
+  <span class="prefix">topct:</span><span class="name">Cell &amp; Gene Therapy</span> <span class="status status-queued">Queued</span>
+  <div class="desc">Cell-therapy and gene-therapy operations, with Sample and Supply / Logistics elevated to top-level given their primacy in this domain.</div>
+</div>
+
+<div class="ns-queued">
+  <span class="prefix">toprd:</span><span class="name">Rare Disease</span> <span class="status status-queued">Queued</span>
+  <div class="desc">Rare-disease operations with Participant elevated and patient-registry mechanics first-class.</div>
+</div>
+
+<div class="ns-queued">
+  <span class="prefix">topenergy:</span><span class="name">Energy &amp; Process Industries</span> <span class="status status-queued">Queued</span>
+  <div class="desc">Operator-grounded reference graph analogous to ISO 15926 and CFIHOS in coverage, but built on the same OOUX-first pattern.</div>
+</div>
+
+<div class="ns-queued">
+  <span class="prefix">topmfg:</span><span class="name">Manufacturing</span> <span class="status status-queued">Queued</span>
+  <div class="desc">Batch processing, supply chain, and master-batch-record operations.</div>
+</div>
+
+<h2 class="section">How a URI resolves</h2>
+
+<p>Every class in TOP has a hash URI of the form <span class="inline">https://top.scientix.ai/onto/&lt;namespace&gt;/&lt;version&gt;#&lt;ClassName&gt;</span>. When a JSON-LD or RDF tool follows that URI, it lands on the namespace page; the fragment scrolls to the matching class definition. Examples:</p>
+
+<p style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; line-height: 1.7; padding-left: 12px;">
+  <a href="clinical/v1/#Sponsor">https://top.scientix.ai/onto/clinical/v1#Sponsor</a><br>
+  <a href="clinical/v1/#Site">https://top.scientix.ai/onto/clinical/v1#Site</a><br>
+  <a href="commons/v1/#Organization">https://top.scientix.ai/onto/commons/v1#Organization</a><br>
+  <a href="commons/v1/#Document">https://top.scientix.ai/onto/commons/v1#Document</a>
+</p>
+
+<p>The same fragment-on-page pattern applies to every future namespace. Versions stay in the URI so a graph that pinned to <span class="inline">v1</span> is never silently retargeted at a later version; new versions resolve at <span class="inline">v2</span>, <span class="inline">v3</span>, and so on, alongside their predecessors.</p>
+
+<div class="footer">
+  Resolution index for the TOP namespaces · governed by The Ontology Project under Apache 2.0
+</div>
+
+<footer class="site-footer">
+  <div class="site-footer-links">
+    <a href="../index.html">Home</a> ·
+    <a href="../MANIFESTO.html">Manifesto</a> ·
+    <a href="../ROADMAP.html">Roadmap</a> ·
+    <a href="./">Namespaces</a> ·
+    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
+  </div>
+  <div class="site-footer-sponsor">
+    <a href="https://scientix.ai">
+      <img src="../images/sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
+    </a>
+  </div>
+  <div class="site-footer-license">Apache License 2.0</div>
+</footer>
+
+</div>
+
+</body>
+</html>

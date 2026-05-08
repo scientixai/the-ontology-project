@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="top-logo.svg" alt="The Ontology Project" width="420">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="images/top-logo-inverse.svg">
+    <img src="images/top-logo-readme.png" alt="The Ontology Project" width="420">
+  </picture>
 </p>
 
 # The Ontology Project
@@ -84,6 +87,9 @@ The Ontology Project is convened by Bo Lora at Scientix.ai Inc.
 
 <p align="center">
   <a href="https://scientix.ai">
-    <img src="sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai" width="240">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="images/sponsored-by-scientixai-inverse.svg">
+      <img src="images/sponsored-readme.png" alt="Sponsored by Scientix.ai" width="240">
+    </picture>
   </a>
 </p>

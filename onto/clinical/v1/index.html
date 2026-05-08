@@ -20,7 +20,7 @@
   header { border-bottom: 1px solid #c8c8c0; padding-bottom: 12px; margin-bottom: 18px; }
   header .title { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; color: #111; }
   header .meta { font-size: 11px; color: #6a6a64; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
-  header .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #1e6fd9; margin-top: 6px; }
+  header .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #0e7490; margin-top: 6px; }
 
   h2.section {
     font-size: 12px;
@@ -35,13 +35,13 @@
   p { margin-bottom: 12px; }
   p.lead {
     background: #fff;
-    border-left: 3px solid #1e6fd9;
+    border-left: 3px solid #0e7490;
     padding: 12px 16px;
     margin-bottom: 14px;
     font-size: 14px;
   }
 
-  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; background: #eef0ed; padding: 1px 5px; border-radius: 2px; color: #1e6fd9; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; background: #eef0ed; padding: 1px 5px; border-radius: 2px; color: #0e7490; }
 
   .downloads {
     background: #fff;
@@ -52,8 +52,8 @@
     font-size: 13px;
   }
   .downloads h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; }
-  .downloads a { color: #1e6fd9; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
-  .downloads a:hover { text-decoration: underline; }
+  .downloads a { color: #0e7490; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+  .downloads a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
   .downloads .row { padding: 4px 0; }
 
   .class {
@@ -67,7 +67,7 @@
   .class .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
   .class .name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
   .class .name a { color: #888; text-decoration: none; font-weight: 400; font-size: 12px; margin-left: 8px; }
-  .class .name a:hover { color: #1e6fd9; }
+  .class .name a:hover { color: #0e7490; }
   .class .desc { color: #2a2a2a; font-size: 13px; line-height: 1.55; margin-bottom: 8px; }
   .class .meta-row { font-size: 11.5px; color: #555; }
   .class .meta-row strong { color: #111; }
@@ -87,19 +87,51 @@
   .status-queued { background: #f0f0e9; color: #777; }
 
   .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
-  .footer a { color: #1e6fd9; text-decoration: none; }
-  .footer a:hover { text-decoration: underline; }
+  .footer a { color: #888; text-decoration: underline; }
+
+  /* Brand link color (sitewide), keep color on hover, 2px underline appears */
+  a { color: #0e7490; }
+  a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  /* Site-wide header */
+  .site-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid #c8c8c0; }
+  .site-header .site-logo { display: block; flex-shrink: 0; }
+  .site-header .site-logo img { display: block; height: auto; max-width: 210px; }
+  .site-header .site-meta { text-align: right; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .site-header .site-meta-primary { font-size: 13px; font-weight: 700; color: #111; }
+  .site-header .site-meta-secondary { font-size: 10.5px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+
+  /* Site-wide footer */
+  .site-footer { margin-top: 40px; padding-top: 22px; border-top: 1px solid #e0e0d8; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .site-footer .site-footer-links { font-size: 12px; margin-bottom: 14px; }
+  .site-footer .site-footer-links a { color: #0e7490; text-decoration: none; font-weight: 600; margin: 0 6px; }
+  .site-footer .site-footer-links a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .site-footer .site-footer-sponsor { margin: 18px 0 14px; }
+  .site-footer .site-footer-sponsor a { display: inline-block; transition: opacity 0.15s ease; }
+  .site-footer .site-footer-sponsor a:hover { opacity: 0.75; }
+  .site-footer .site-footer-sponsor img { max-width: 200px; height: auto; }
+  .site-footer .site-footer-license { font-size: 10.5px; color: #888; font-style: italic; }
 </style>
 </head>
 <body>
 
 <div class="page">
 
-<header>
-  <div class="title">The Ontology Project · Clinical Research Reference Graph · v1</div>
-  <div class="meta">Namespace landing page · resolves URIs of the form top:ClassName</div>
-  <div class="uri">https://top.scientix.ai/onto/clinical/v1#</div>
+<header class="site-header">
+  <a href="../../../index.html" class="site-logo" aria-label="The Ontology Project — home">
+    <img src="../../../images/top-logo.svg" alt="The Ontology Project" width="210">
+  </a>
+  <div class="site-meta">
+    <div class="site-meta-primary">Clinical Research Reference Graph · v1</div>
+    <div class="site-meta-secondary">top: namespace · resolves top:ClassName</div>
+  </div>
 </header>
+
+<div class="uri" style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #0e7490; margin-bottom: 18px;">https://top.scientix.ai/onto/clinical/v1#</div>
 
 <p class="lead">This page is the resolution target for every class in the <span class="inline">top:</span> namespace. When a JSON-LD or RDF tool follows a URI like <span class="inline">https://top.scientix.ai/onto/clinical/v1#Sponsor</span>, it lands here, and the fragment <span class="inline">#Sponsor</span> scrolls to the matching section below. Eight top-level classes form the founding clinical-research reference graph: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. The full set of attributes, relationships, and SHACL invariants for each class lives in the source intermediate and the emitted artifacts linked below; this page is the operator-readable index.</p>
 
@@ -199,14 +231,27 @@
 
 <h2 class="section">Status</h2>
 
-<p>This namespace is at <strong>v1.0.0-strawman</strong> as of May 2026. Sponsor is the first complete top-level. The remaining seven top-levels are queued; lift order is documented in <a href="../../../ROADMAP.md">ROADMAP.md</a>. Cross-cutting horizontals (Organization, Document, Person, Audit Trail Entry, Contract, etc.) live in the commons namespace at <a href="../../commons/v1/">https://top.scientix.ai/onto/commons/v1#</a>.</p>
+<p>This namespace is at <strong>v1.0.0-strawman</strong> as of May 2026. Sponsor is the first complete top-level. The remaining seven top-levels are queued; lift order is documented in <a href="../../../ROADMAP.html">the roadmap</a>. Cross-cutting horizontals (Organization, Document, Person, Audit Trail Entry, Contract, etc.) live in the commons namespace at <a href="../../commons/v1/">https://top.scientix.ai/onto/commons/v1#</a>.</p>
 
 <div class="footer">
-  Resolution target for the top: namespace · v1 of the clinical-research reference graph · governed by The Ontology Project under Apache 2.0 ·
-  <a href="../../../">repository root</a> ·
-  <a href="../../../MANIFESTO.html">manifesto</a> ·
-  <a href="../../../ROADMAP.md">roadmap</a>
+  Resolution target for the top: namespace · v1 of the clinical-research reference graph · governed by The Ontology Project under Apache 2.0
 </div>
+
+<footer class="site-footer">
+  <div class="site-footer-links">
+    <a href="../../../index.html">Home</a> ·
+    <a href="../../../MANIFESTO.html">Manifesto</a> ·
+    <a href="../../../ROADMAP.html">Roadmap</a> ·
+    <a href="../../">Namespaces</a> ·
+    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
+  </div>
+  <div class="site-footer-sponsor">
+    <a href="https://scientix.ai">
+      <img src="../../../images/sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
+    </a>
+  </div>
+  <div class="site-footer-license">Apache License 2.0</div>
+</footer>
 
 </div>
 </body>
