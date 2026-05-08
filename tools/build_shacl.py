@@ -528,6 +528,142 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === Study invariants (v0.3.0) ===
+    invariants.append("# === Study invariants (v0.3.0) ===")
+    invariants.append("")
+
+    # 11. Hard: a Study with studyStatus in {RECRUITING, ENROLLING_BY_INVITATION,
+    #     ACTIVE_NOT_RECRUITING, COMPLETED} must have at least one Endpoint defined.
+    #     A study without endpoints has nothing to measure; permissible only in PLANNED
+    #     state where the protocol is still being designed.
+    invariants.append(sub("""__P__:StudyActiveNeedsEndpointShape a sh:NodeShape ;
+    sh:targetClass __P__:Study ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Study has studyStatus in {RECRUITING, ENROLLING_BY_INVITATION, ACTIVE_NOT_RECRUITING, COMPLETED} but no hasEndpoint. A study at or past activation must have at least one defined endpoint to measure." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Study .
+                $this __P__:studyStatus ?status .
+                FILTER (?status IN ("RECRUITING", "ENROLLING_BY_INVITATION", "ACTIVE_NOT_RECRUITING", "COMPLETED"))
+                FILTER NOT EXISTS { $this __P__:hasEndpoint ?ep }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 12. Hard: a Study with studyStatus in {RECRUITING, ENROLLING_BY_INVITATION,
+    #     ACTIVE_NOT_RECRUITING, COMPLETED} must have at least one InclusionCriterion.
+    #     A recruiting study without inclusion criteria cannot define eligibility.
+    invariants.append(sub("""__P__:StudyActiveNeedsInclusionCriterionShape a sh:NodeShape ;
+    sh:targetClass __P__:Study ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Study has studyStatus in {RECRUITING, ENROLLING_BY_INVITATION, ACTIVE_NOT_RECRUITING, COMPLETED} but no hasInclusionCriterion. A study at or past recruitment must have at least one inclusion criterion to define eligibility." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Study .
+                $this __P__:studyStatus ?status .
+                FILTER (?status IN ("RECRUITING", "ENROLLING_BY_INVITATION", "ACTIVE_NOT_RECRUITING", "COMPLETED"))
+                FILTER NOT EXISTS { $this __P__:hasInclusionCriterion ?ic }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 13. Hard: a Study with studyStatus in {RECRUITING, ENROLLING_BY_INVITATION,
+    #     ACTIVE_NOT_RECRUITING, COMPLETED} must have at least one ScheduleOfAssessments.
+    #     The SOA is the visit-by-procedure matrix that drives operational conduct;
+    #     a recruiting study without an SOA cannot guide site activities.
+    invariants.append(sub("""__P__:StudyActiveNeedsScheduleShape a sh:NodeShape ;
+    sh:targetClass __P__:Study ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Study has studyStatus in {RECRUITING, ENROLLING_BY_INVITATION, ACTIVE_NOT_RECRUITING, COMPLETED} but no hasSchedule (Schedule of Assessments). A study at or past recruitment must have a defined SOA to guide site operations." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Study .
+                $this __P__:studyStatus ?status .
+                FILTER (?status IN ("RECRUITING", "ENROLLING_BY_INVITATION", "ACTIVE_NOT_RECRUITING", "COMPLETED"))
+                FILTER NOT EXISTS { $this __P__:hasSchedule ?soa }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 14. Hard: an INTERVENTIONAL Study must have studyPhase populated. Observational,
+    #     expanded-access, and registry studies are exempt from this requirement
+    #     (they don't have phases in the regulatory sense).
+    invariants.append(sub("""__P__:InterventionalStudyNeedsPhaseShape a sh:NodeShape ;
+    sh:targetClass __P__:Study ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Study has studyType=INTERVENTIONAL but no studyPhase populated. Interventional studies must declare their phase per ICH E8 / ClinicalTrials.gov. Observational, expanded-access, and registry studies are exempt." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Study .
+                $this __P__:studyType "INTERVENTIONAL" .
+                FILTER NOT EXISTS { $this __P__:studyPhase ?phase }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 15. Soft warning: a Study with studyStatus=COMPLETED should have actualCompletionDate
+    #     populated. A COMPLETED status without an actual completion date suggests
+    #     a data-entry omission.
+    invariants.append(sub("""__P__:StudyCompletedNeedsCompletionDateShape a sh:NodeShape ;
+    sh:targetClass __P__:Study ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Study has studyStatus=COMPLETED but no actualCompletionDate. Verify the completion date is recorded; this is typically last-patient-last-visit (LPLV)." ;
+        sh:severity sh:Warning ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Study .
+                $this __P__:studyStatus "COMPLETED" .
+                FILTER NOT EXISTS { $this __P__:actualCompletionDate ?d }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 16. Hard: a Study with exactly one Arm should not declare interventionModel
+    #     in {PARALLEL, CROSSOVER, FACTORIAL, SEQUENTIAL}. Those models require
+    #     multiple arms by definition.
+    invariants.append(sub("""__P__:MultiArmModelNeedsMultipleArmsShape a sh:NodeShape ;
+    sh:targetClass __P__:Study ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Study has interventionModel in {PARALLEL, CROSSOVER, FACTORIAL, SEQUENTIAL} but only one hasArm. Multi-arm intervention models require multiple Arm sub-objects." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Study .
+                $this __P__:interventionModel ?model .
+                FILTER (?model IN ("PARALLEL", "CROSSOVER", "FACTORIAL", "SEQUENTIAL"))
+                {
+                    SELECT $this (COUNT(?arm) AS ?armCount) WHERE {
+                        $this __P__:hasArm ?arm .
+                    }
+                    GROUP BY $this
+                }
+                FILTER (?armCount = 1)
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -595,7 +731,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 10 (1 soft warning + 9 hard violations)")
+    print(f"  domain invariants: 16 (2 soft warnings + 14 hard violations)")
 
 
 if __name__ == "__main__":
