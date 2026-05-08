@@ -7,6 +7,101 @@
 
 Site is the second top-level to lift to full spec discipline (per ROADMAP.md). This note captures the scope, the open architectural questions, and the recommendations to resolve before drafting `site-spec.html` and expanding the source intermediate. Deliberately short — a working artifact, not a sealed spec.
 
+## Architectural anchor: the operational hierarchy
+
+Site sits at the top of the operational chain. The chain runs:
+
+```
+Site ─→ StudySite ─→ Study ─→ Protocol ─→ Schedule of Assessments ─→ Visit ─→ Activity ─→ ...
+                                            (SOA)                    (template)
+```
+
+The chain is bidirectional in framing:
+
+- **Definition side** (top-down from Protocol): Protocol → SOA → Visit-template → Activity defines what is *supposed* to happen for the Study.
+- **Operational side** (top-down from Site): Site → StudySite → Participant → Visit-occurrence → Activity-occurrence captures what *actually* happens at a specific site for a specific study.
+
+The two sides meet at Visit: each Visit-occurrence implements an SOA Item (the Visit-template). Activity-occurrences during a Visit-occurrence implement Activities defined by the Visit-template.
+
+This corrects an error in the OOUX Visit relationships block (which has Visit pointing directly at `1 Site` and `1 Participant`, conflating definitional and operational). Visit-occurrence properly points at StudySite (not Site directly), and a separate Visit-template (or a `visitNature: TEMPLATE | OCCURRENCE` discriminator on a unified Visit) carries the SOA-defined facts. **This is a Visit-spec decision, not a Site-spec decision** — flagged here as a tracked correction for when Visit lifts.
+
+**Implications for Site model**:
+
+1. **StudySite is the operational pivot, not a thin per-Study attribute carrier.** Every per-Site-per-Study fact lives on StudySite. StudySite is the entry point for Participants and Visit-occurrences at that Site for that Study.
+2. **Site has very few direct edges**. Direct Site edges go only to: Organization (legal), other Sites (parentSite, network), Person (head of research, staff roster — *study-independent* people), Equipment (site-bound), StorageLocation (site-bound), Document (essential records the Site holds study-independently), Site-level Credential. Everything operational (Visit, Participant, CRF, AE, Sample, IP dispensation, Monitoring, Audit) is reached via StudySite.
+3. **Per-Study staff and PI live on StudySite, not Site**. A Site has staff (Person roster); per-Study delegation (the actual Delegation of Authority Log per Study) lives on StudySite.
+4. **Feasibility/SFQ attributes live on Site** — they're stable across studies and define which studies a site can take on.
+
+## Site / StudySite split — what lives where
+
+After applying the corrected hierarchy, the attribute and relationship sets split as follows.
+
+### Site (operational + feasibility, study-independent)
+
+**Identity attributes**: `siteId`, `siteName`, `siteType` (HOSPITAL/CLINIC/ACADEMIC_MEDICAL_CENTER/RESEARCH_CENTER/COMMUNITY_PRACTICE/DECENTRALIZED_HUB/VIRTUAL), `siteAlias` (optional, for sites with operating names), `tags`.
+
+**Contact and address attributes**: `address` (0..N for decentralized hubs), `city`, `state`, `country`, `postalCode`, `phone`, `email`, `website` (optional).
+
+**Stable qualification attributes (study-independent)**: `gcpQualified` (does the Site have a current GCP qualification at the institution level), `facilitiesAdequate` (general adequacy independent of any specific protocol).
+
+**Feasibility / SFQ-derived attributes (study-independent capabilities)**:
+- Therapeutic / population: `therapeuticAreasExperienced` (array), `indicationExperience` (array of structured records: indication + # trials + # patients), `patientPopulationAccess` (array), `patientReferralSources` (array enum).
+- Past trial experience: `totalTrialsConducted`, `trialsByPhase` (array), `averageEnrollmentRate`, `firstPatientInToActivationDays`, `queryResponseTimeHours`, `sponsorRetentionRate`.
+- Infrastructure: `storageCapacity` (array), `freezerCapacity` (array of {temp, volume}), `imagingCapabilities` (array), `labCapabilities` (array), `pharmacyOnSite` (boolean), `specialtyEquipment` (array via Equipment relationships), `dctCapable` (boolean), `econsentCapable` (boolean), `ePROCapable` (boolean), `edcVendorExperience` (array).
+- Regulatory / ethics defaults: `irbType` (CENTRAL / LOCAL / HYBRID), `typicalIrbApprovalDays`, `regulatoryAuthorityExperience` (array), `sopsAvailable` (boolean), `sopLibrarySize`.
+- Insurance / legal: `insuranceCarrier`, `insuranceCoverageAmount`, `insuranceCurrency`, `insuranceExpiry`.
+- Staff capacity (aggregate signals): `subInvestigatorCount`, `coordinatorCount`, `regulatoryCoordinatorCount`, `studyNurseCount`, `labTechCount`, `languagesSupported` (array), `gcpTrainingCurrencyRate`.
+
+**Site-level relationships (study-independent)**:
+- `belongsToOrganization → Organization` (1..1) — legal owner, USDM-aligned.
+- `partOfSiteNetwork → Organization` (0..1) — SMO/network membership.
+- `parentSite → Site` (0..1) — satellite-of-main-site.
+- `hasStaff → Person` (0..N) — Persons employed/affiliated at this Site, study-independent roster. Per-Study delegation lives on StudySite.
+- `headOfClinicalResearch → Person` (0..1) — administrative/institutional contact, not the per-Study PI.
+- `hostsEquipment → Equipment` (0..N) — Site-bound equipment (Equipment.equipmentBinding=SITE_BOUND).
+- `hasStorageLocation → StorageLocation` (0..N) — Site-bound storage.
+- `hasInstitutionalDocument → Document` (0..N) — Site-level essential records that are study-independent (institutional licenses, CLIA certifications, lab accreditations, GCP training records, SOPs).
+- `hasInstitutionalCredential → Credential` (0..N) — Site-level credentials (CLIA, JCAHO, ISO, etc.).
+- `usesSystem → System` (0..N) — Site-operational Systems (the Site's EMR, the Site's source-document repository) that exist regardless of Study. Per-Study System usage (Sponsor-provisioned EDC, etc.) lives on StudySite.
+
+### StudySite (per-Study operational pivot, horizontal under TOP commons)
+
+**Identity attributes**: `studySiteId`, the (Study, Site) pair via relationships.
+
+**Per-Study lifecycle**: `siteNumber` (assigned per-Study by sponsor), `studySiteStatus` (PLANNED / IN_QUALIFICATION / ACTIVE / ON_HOLD / CLOSED), `activationDate`, `deactivationDate`.
+
+**Per-Study performance**: `enrollmentTarget`, `actualEnrollment`, `lastMonitoringVisitDate`.
+
+**Per-Study oversight (R3-derived)**: `oversightTier` (LOW / MEDIUM / HIGH per R3 risk-based monitoring), `recruitmentPotential` (per-protocol estimate), `staffingAdequate` (per-protocol adequacy), `essentialRecordsRetentionUntil`.
+
+**Per-Study qualification**: `irbApprovalStatus` (APPROVED / PENDING / EXPIRED / WITHDRAWN), `irbApprovalDate`, `irbApprovalLetterRef → Document`, `regulatoryAuthorizationStatus`.
+
+**StudySite relationships (the operational pivot)**:
+- `forSite → Site` (1..1) — the operational Site this StudySite participation belongs to.
+- `forStudy → Study` (1..1) — the Study this Site is participating in.
+- `hasPrincipalInvestigator → Person` (1..1, R3-required) — the per-Study PI. Must be drawn from `Site.hasStaff` (SHACL invariant). Temporal via `validFrom`/`validUntil` for PI handoffs mid-study.
+- `delegatesAuthorityTo → Person` (1..N, R3 2.3.3-required) — per-Study Delegation of Authority Log roster. Each delegation carries role, scope, validFrom, validUntil. Each Person must be drawn from `forSite → hasStaff`.
+- `hasIRB → OversightBody` (1..1 typically; 1..N for multi-IRB cases) — per-Study IRB of record.
+- `submitsTo → RegulatoryAuthority` (1..N) — per-jurisdiction regulatory submissions for this Site's participation.
+- `hasContract → Contract` (1..N) — site-level contracts (CTA, CDA, etc.) for this participation.
+- `hasStudyStartupPackage → StudyStartupPackage` (1..1).
+- `hostsVisit → Visit` (0..N) — visit-occurrences happening at this Site for this Study. (Visit lifts later; this is the inverse of Visit's StudySite reference.)
+- `hasParticipant → Participant` (0..N) — participants enrolled at this Site for this Study.
+- `hasMonitoringVisit → MonitoringVisit` (0..N) — per-Study monitoring visits.
+- `hasAudit → Audit` (0..N) — per-Study audits at this Site.
+- `engagesVendor → Organization` (0..N) — per-Study Site-engaged vendors (R3 2.3.4 documented agreements).
+- `usesLaboratory → Organization` (0..N) — per-Study Site-engaged laboratories.
+- `usesSystem → System` (0..N) — per-Study Systems (Sponsor-provisioned EDC, IRT, etc.) used at this Site participation.
+- `reportsTo → Sponsor` (0..N) — per-Study reporting (R3 2.7, 2.13).
+- `hasEssentialRecord → Document` (0..N) — per-Study essential records (with `essentialRecordPurpose` and `responsibleParty=INVESTIGATOR_INSTITUTION`).
+- `hasEnrollment → Enrollment` (0..N) — enrollment records at this Site for this Study.
+
+### Three things to resolve before lifting
+
+1. **Person horizontal must lift in this pass**. Both Site (`hasStaff`, `headOfClinicalResearch`) and StudySite (`hasPrincipalInvestigator`, `delegatesAuthorityTo`) require Person targets. Person can no longer be flagged-missing.
+2. **The OOUX Visit→Site edge is wrong**. OOUX has Visit pointing at `1 Site`. Visit should point at `1 StudySite`. Tracked as a correction for when Visit lifts; doesn't block Site/StudySite lift.
+3. **The OOUX Participant→Site edge has the same issue**. Participant currently `1 Site`. Should be `1 StudySite`. Tracked for when Participant lifts.
+
 ## Current state
 
 The Site entry in `top-strawman.json` carries three attributes (`siteId`, `siteName`, `siteType`) and five relationships (`belongsToOrganization`, `partOfSiteNetwork`, `parentSite`, `hasPrincipalInvestigator`, `participatesIn`), with a `_partialEntry` note flagging that the rest of OOUX Section 3 entry #1 has not been transcribed. There is no `site-spec.html`, no Site examples, and no Site SHACL invariants. The OOUX hierarchy entry (`docs/ooux-hierarchy.html`, lines 214–224) names five sub-objects/relationships that have not been modeled yet: Site Staff (delegated), Site Network membership, Equipment (site-bound), Storage Location (site-bound), Site Performance Metric. The hierarchy also notes "Sites can exist independently of any single Study; they enter Studies through CTAs."
@@ -338,19 +433,19 @@ This is a **non-trivial change to the planning recommendation**. The earlier "Op
 
 ## Scope decision for this pass
 
-Recommend the following lift, in this order:
+The combined Site + StudySite spec recommended (per Bo's Path A choice). StudySite as a horizontal under TOP commons. Lift order:
 
-1. Expand Site in `top-strawman.json` to full attribute coverage. Lift the OOUX-listed 21 attributes plus: address fields (0..N for decentralized hubs), qualification attributes (`gcpQualified`, `irbApprovalStatus`, `recruitmentPotential`, `staffingAdequate`, `facilitiesAdequate`), R3-derived attributes (`oversightTier` enum LOW/MEDIUM/HIGH, `essentialRecordsRetentionUntil`), and lifecycle status enum (recommend `PLANNED`, `IN_QUALIFICATION`, `ACTIVE`, `ON_HOLD`, `CLOSED` — broader than OOUX's three but matching operational reality and R3 Section 2.6 termination/suspension framing). Anchor the Site description in the source intermediate to R3 Annex 1's Site definition.
-2. Lift Site relationships to close ISF and R3 gaps: `hasIRB → OversightBody`, `delegatesAuthorityTo → Person` (with role/dates, GCP-required by R3 2.3.3), `engagesVendor → Organization` (R3 2.3.4), `usesLaboratory → Organization`, `hasMonitoringVisit → MonitoringVisit`, `hasContract → Contract`, `submitsTo → RegulatoryAuthority`, `reportsTo → Sponsor` (R3 2.7, 2.13). Flag-miss the targets that are not yet in the source intermediate (Person, MonitoringVisit, Contract, RegulatoryAuthority) — same pattern Sponsor uses for its flagged-missing targets.
-3. Land the `System` horizontal with R3-aligned attributes: `vendor`, `productName`, `instanceId`, `baseUrl`, `systemType` (enum: `EDC`, `CTMS`, `ETMF`, `IRT`, `SAFETY_DB`, `EMR`, `ELN`, `OTHER`), `version`, `validatedFor21CFRPart11`, plus R3 Section 4.3 attributes (`validationStatus`, `validationApproach`, `lastValidationDate`, `releaseStatus`, `proceduresDocumentRef`, `securityAssessmentRef`, `accessControlPolicyRef`, `contingencyPlanRef`, `supportContactId`). System.attributes will be the heaviest single change in this lift; the System spec ultimately deserves its own first-class spec doc (a v0.2 task, not v0.1, but flag it).
-4. Add the System role-relationships per the revised three-axis: `operatedBy → Sponsor|Site|Organization`, `usedBy → Sponsor|Site|Organization` (0..N), `oversightHeldBy → Sponsor|Site` (1..1, GCP-required). Add Site → System relationships split per system type (`usesEtmfSystem`, `usesEdcSystem`, `usesCtmsSystem`, etc.) following the polysemous-verb-split discipline from Sponsor v0.1.2.
-5. Expand `Document` horizontal with R3 Appendix C alignment: add `essentialRecordPurpose` enum (R3 purposes — full enum requires Appendix C transcription, not in the pasted extracts; placeholder values: `QUALIFICATION`, `DELEGATION`, `TRAINING`, `IP_MANAGEMENT`, `MONITORING`, `DATA_HANDLING`, `SYSTEMS_VALIDATION`, plus more from Appendix C); add `responsibleParty` enum (`INVESTIGATOR_INSTITUTION`, `SPONSOR`, `IRB_IEC`, `REGULATORY_AUTHORITY`); add `isfSection` (string, optional, legacy mapping); keep `documentType` for legacy operational view. R3 Appendix C purpose taxonomy is the canonical primary axis; ISF section is the legacy operational view. This is the single highest-leverage change for both R3 and ISF coverage.
-6. Defer Site Performance Metric — capture as tracked open issue. Defer Site Staff full sub-object — `delegatesAuthorityTo` placeholder serves it for now.
-7. Defer the `Log` and `CommunicationLog` horizontal lift — capture as ROADMAP additions (high-priority follow-on, several ISF gaps depend on Log).
-8. Write `site-spec.html` following the Sponsor spec template: TL;DR, model summary, **R3 alignment** as a first-class section (with the System three-axis decision documented as an explicit architectural decision, including the supersession trace from "visibility-as-projection" to "oversight-as-relationship"), **ISF alignment** as a legacy-operational-view section, stress-test scenarios, query patterns by persona, NLP-to-NGSI-LD translation, SHACL invariants, cross-walks (FHIR, USDM, CDASH, **ICH E6(R3)**, **ISF**), tracked open issues.
+1. Expand `Site` in `top-strawman.json` to the operational + feasibility attribute set (~40 attributes: identity, contact/address, stable qualification, full SFQ-derived feasibility coverage, staff capacity aggregates) and the study-independent Site-level relationships (Organization, network, parentSite, hasStaff, headOfClinicalResearch, hostsEquipment, hasStorageLocation, hasInstitutionalDocument, hasInstitutionalCredential, usesSystem for Site-operational systems). Anchor description to R3 Annex 1 Site definition. Drop the OOUX denormalized IDs (principalInvestigatorId, irbId, regulatoryAuthority) — relationships only.
+2. Lift `StudySite` as a new horizontal under TOP commons. Attributes: per-Study lifecycle (siteNumber, studySiteStatus, activationDate, deactivationDate), per-Study performance (enrollmentTarget, actualEnrollment, lastMonitoringVisitDate), per-Study oversight (oversightTier, recruitmentPotential, staffingAdequate, essentialRecordsRetentionUntil), per-Study qualification (irbApprovalStatus, irbApprovalDate, irbApprovalLetterRef, regulatoryAuthorizationStatus). Relationships: forSite, forStudy, hasPrincipalInvestigator, delegatesAuthorityTo, hasIRB, submitsTo, hasContract, hasStudyStartupPackage, hostsVisit, hasParticipant, hasMonitoringVisit, hasAudit, engagesVendor, usesLaboratory, usesSystem, reportsTo, hasEssentialRecord, hasEnrollment. Crosswalk: `usdm:StudySite`. Correct Site's existing crosswalk from `usdm:StudySite` to `usdm:Organization (with type=Code(Site))`.
+3. Lift `Person` as a horizontal in this pass (no longer deferrable). Both Site (`hasStaff`, `headOfClinicalResearch`) and StudySite (`hasPrincipalInvestigator`, `delegatesAuthorityTo`) require it. Attributes per OOUX Person object plus credential references; align to USDM AssignedPerson + StudyRole pattern (verify with `assigned_person.py` / `study_role.py` from cdisc-org/usdm). Cross-walk: `usdm:AssignedPerson` (operationally) + `fhir:Practitioner`.
+4. Lift `Log` and `CommunicationLog` as horizontals in this pass (no longer deferrable). ISF sections 13/14.3/14.5/16.1/18.1/19.1/22 are all log-shaped. Log horizontal with `logType` enum (TEMPERATURE, ACCOUNTABILITY, SCREENING, ENROLLMENT, COMMUNICATION, TRAINING, AUDIT_TRAIL, …). CommunicationLog as a Log subtype with `correspondent → Person|Organization`.
+5. Land the `System` horizontal with R3-aligned attributes: `vendor`, `productName`, `instanceId`, `baseUrl`, `systemType` (enum: `EDC`, `CTMS`, `ETMF`, `IRT`, `SAFETY_DB`, `EMR`, `ELN`, `OTHER`), `version`, `validatedFor21CFRPart11`, plus R3 Section 4.3 attributes (`validationStatus`, `validationApproach`, `lastValidationDate`, `releaseStatus`, `proceduresDocumentRef`, `securityAssessmentRef`, `accessControlPolicyRef`, `contingencyPlanRef`, `supportContactId`). The System horizontal earns a dedicated v0.2 spec doc; in v0.1 it's a horizontal serving Site/StudySite/Sponsor.
+6. Add the System role-relationships per the revised three-axis: `operatedBy → Sponsor|Site|Organization`, `usedBy → Sponsor|Site|Organization` (0..N), `oversightHeldBy → Sponsor|Site` (1..1, GCP-required). Add Site/StudySite → System relationships split per system type (`usesEtmfSystem`, `usesEdcSystem`, `usesCtmsSystem`, etc.) following the polysemous-verb-split discipline from Sponsor v0.1.2.
+7. Expand `Document` horizontal with R3 Appendix C alignment: add `essentialRecordPurpose` enum (R3 purposes — full enum requires Appendix C transcription, currently placeholder); add `responsibleParty` enum (`INVESTIGATOR_INSTITUTION`, `SPONSOR`, `IRB_IEC`, `REGULATORY_AUTHORITY`); add `isfSection` (string, optional, legacy mapping); keep `documentType` for legacy operational view.
+8. Write `site-spec.html` (combined Site + StudySite spec) extending the Sponsor spec template: TL;DR, model summary, **architectural anchor** (the operational hierarchy diagram and the Site/StudySite split rationale), **R3 alignment** as a first-class section (with the System three-axis decision documented as an explicit architectural decision, including the supersession trace from "visibility-as-projection" to "oversight-as-relationship"), **ISF alignment** as a legacy-operational-view section, **lifecycle state machine** (Site and StudySite separately, with legal transitions and SHACL guards), **persona-to-Site-view matrix** (10+ personas: Site Coordinator, PI, Sub-I, Pharmacist, Lab Tech, Sponsor CRA, Sponsor PM, SMO operator, Regulator, Auditor), **SFQ projection** as a named query template (the operational artifact that proves the model handles site selection), **delegation matrix** (role/scope/timing for `delegatesAuthorityTo`), stress-test scenarios, query patterns by persona, NLP-to-NGSI-LD translation, SHACL invariants, cross-walks (FHIR, USDM, CDASH, **ICH E6(R3)**, **ISF**), tracked open issues. Site spec extends Sponsor's template; the additions reflect Site's centrality in the operational chain.
 9. Encode SHACL-SPARQL domain invariants. Candidate invariants: (a) hard violation when a Site has `siteType=DECENTRALIZED_HUB` but `belongsToOrganization` is absent or has type `INDIVIDUAL`; (b) hard violation when a Site claims `partOfSiteNetwork` pointing at an Organization whose `organizationType` is not `SITE_NETWORK` or `SMO`; (c) soft warning when a Site's `parentSite` and `partOfSiteNetwork` both resolve to entities that disagree on the network parent; (d) hard violation when a Site has `status=ACTIVE` but no `delegatesAuthorityTo` with role=PRINCIPAL_INVESTIGATOR (R3 2.3.3 — no PI on the Delegation Sheet means no GCP-compliant Site); (e) soft warning when a Site has `submitsTo → RegulatoryAuthority` whose `country` does not match `belongsToOrganization → isLocatedIn`; (f) hard violation when a System has `oversightHeldBy → Site` but is `systemType=EDC|CTMS|IRT|SAFETY_DB` **with an IIT exception** (the constraint does not fire when the Site's `belongsToOrganization` equals a Sponsor's `belongsToOrganization` for the same Study — the IIT case where one party plays both roles is legitimate; SPARQL CONSTRAINT carries the equality test); (g) soft warning when a Sponsor-engaged service provider (Site's `engagesVendor → Organization` where the Organization plays a CRO role on the Sponsor side) does not have a Site-side documented agreement (R3 2.3.4 requires it; the Investigator's right of refusal under R3 2.3 means absence is meaningful). Five to seven invariants total.
-10. Author one worked example mirroring `sponsor-pfizer-iqvia.ttl`: a multi-site SMO-managed network (Elevate Research operating three sites, one of which is Memorial Sloan Kettering) running a Pfizer-sponsored study, validating clean against pyshacl, exercising the R3- and ISF-derived relationships (`hasIRB`, `delegatesAuthorityTo`, `usesLaboratory`, `submitsTo`, `reportsTo`, the System three-axis pattern with one Sponsor-operated EDC and one Site-operated ISF).
-11. Add a `site-verification-history.html` mirroring `sponsor-verification-history.html` once Bo's verification questions for Site are answered.
+10. Author **three to four worked examples**, one for each major Site archetype: (a) a traditional academic medical center site (MSKCC running a Pfizer trial); (b) an SMO-managed multi-site network (Elevate Research operating three sites, all participating in the same study); (c) an investigator-initiated trial site where Site=Sponsor (R3 IIT pattern, single PI academic trial); (d) optional fourth — a decentralized hub serving multi-region recruitment. Each validates clean against pyshacl, exercises the R3- and ISF-derived relationships (`hasIRB`, `delegatesAuthorityTo`, `usesLaboratory`, `submitsTo`, `reportsTo`, System three-axis pattern), and exercises the Site/StudySite split.
+11. Add a `site-verification-history.html` mirroring `sponsor-verification-history.html` once Bo's verification questions for Site are answered. Site likely needs more verification questions than Sponsor's eight — the larger operational surface area (lifecycle, feasibility, delegation, IIT, multi-jurisdictional, decentralized, system three-axis) suggests 12–15 questions.
 
 ## Stress-test scenarios
 
