@@ -197,22 +197,15 @@
 
 <p>This roadmap captures the work queued behind the core ontology effort, the decisions about how that work is staged, and the items that need to land before TOP moves out of <code class="inline">CLAUDE OUTPUTS/</code> into <a href="https://github.com/scientixai/the-ontology-project">github.com/scientixai/the-ontology-project</a> under Apache 2.0. It supplements the per-spec open-issues tables and becomes the single place where future work is tracked once we have more than one finished top-level.</p>
 
-<h2 class="section">Where we are (2026-05-08, end-of-day)</h2>
+<h2 class="section">Where we are (2026-05-08)</h2>
 
-<p>The clinical-trials reference graph is the first reference graph being built on TOP. The OOUX hierarchy is locked at eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven OOUX boundary decisions are resolved (see <a href="reference-graphs/clinical-trials/docs/ooux-hierarchy.html">ooux-hierarchy.html</a>). <strong>Three of eight top-levels are now sealed.</strong></p>
+<p>The clinical-trials reference graph is the first reference graph being built on TOP. The OOUX hierarchy is locked at eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven OOUX boundary decisions are resolved (see <a href="reference-graphs/clinical-trials/docs/ooux-hierarchy.html">ooux-hierarchy.html</a>).</p>
 
 <p><strong>Sponsor</strong> is fully sealed at v0.1.4-strawman with eight verification questions answered, four SHACL-SPARQL domain invariants encoded (one soft warning, three hard violations), one worked example validating clean against pyshacl, and a complete spec document (<a href="reference-graphs/clinical-trials/docs/sponsor-spec.html">sponsor-spec.html</a>).</p>
 
-<p><strong>Study</strong> lifted to v0.3.0-strawman as the third top-level (<a href="reference-graphs/clinical-trials/docs/study-spec.html">study-spec.html</a>, 659 lines), with 12 verification questions pending Bo's review. Study is the central organizing entity: Sponsor.runs and StudySite.forStudy both anchor on it; Study itself owns the design-side chain (Protocol, Arms, Schedule of Assessments, Endpoints, Inclusion / Exclusion Criteria) as sub-objects. USDM v3's three-level Study → StudyVersion → StudyDesign nesting is flattened (with StudyVersion sub-object lift in v0.4 if richer multi-version semantics warrant). Outcomes:</p>
+<p><strong>Study</strong> is fully sealed at v0.3.0-strawman with twelve verification questions pending Bo's review, six SHACL-SPARQL domain invariants encoded covering Study lifecycle and design constraints, four worked examples extended with Endpoint / InclusionCriterion / ScheduleOfAssessments entities and validating clean against pyshacl, and a complete spec document (<a href="reference-graphs/clinical-trials/docs/study-spec.html">study-spec.html</a>).</p>
 
-<ul class="bullets">
-  <li><strong>Study top-level</strong> lifted from 4 attrs / 2 rels to 36 attrs / 16 rels with full design-content coverage (identity, type/phase/design parameters, population/eligibility framing, lifecycle/dates, multi-registry IDs).</li>
-  <li><strong>6 sub-objects</strong> under Study: Protocol (10 attrs), Arm (9), ScheduleOfAssessments (8), Endpoint (8), InclusionCriterion (6), ExclusionCriterion (6).</li>
-  <li><strong>6 new SHACL invariants</strong> (16 total now: 4 Sponsor + 6 Site/StudySite/System/Credential + 6 Study). Lifecycle invariants encode: at-or-past-RECRUITING requires endpoints / inclusion / SOA; INTERVENTIONAL requires phase; multi-arm interventionModel requires multiple Arms; COMPLETED should have actualCompletionDate (soft warning).</li>
-  <li><strong>All 4 worked examples</strong> (sponsor-pfizer-iqvia, site-mskcc-onco423, site-elevate-network, site-iit-mskcc) extended with Endpoint, InclusionCriterion, and ScheduleOfAssessments entities; all conform under pyshacl 0.31.0 advanced mode.</li>
-</ul>
-
-<p><strong>Site</strong> sealed at v0.2.0-strawman as a combined Site + StudySite spec (<a href="reference-graphs/clinical-trials/docs/site-spec.html">site-spec.html</a>, 977 lines), with 14 verification questions pending Bo's review. The Site lift forced an architectural correction (Bo's "Site is the most important object, that's where trials operate" framing and the corrected operational hierarchy <code class="inline">Site → StudySite → Study → Protocol → SOA → Visit → Activity</code>). Outcomes:</p>
+<p><strong>Site</strong> has lifted to v0.2.0-strawman as a combined Site + StudySite spec (<a href="reference-graphs/clinical-trials/docs/site-spec.html">site-spec.html</a>, 977 lines), with 14 verification questions pending Bo's review. The Site lift forced an architectural correction (Bo's "Site is the most important object, that's where trials operate" framing and the corrected operational hierarchy <code class="inline">Site → StudySite → Study → Protocol → SOA → Visit → Activity</code>). Outcomes:</p>
 
 <ul class="bullets">
   <li><strong>Site</strong> (top-level) lifted from 3 attrs / 5 rels to 49 attrs / 10 rels with full SFQ feasibility coverage (therapeutic area experience, past trial experience, infrastructure, regulatory defaults, insurance, staff capacity).</li>
