@@ -1,0 +1,421 @@
+{
+  "@context": [
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld",
+    {
+      "top": "https://top.scientix.ai/onto/clinical/v1#",
+      "topc": "https://top.scientix.ai/onto/commons/v1#",
+      "fhir": "http://hl7.org/fhir/",
+      "usdm": "https://www.cdisc.org/standards/usdm/v3#",
+      "cdash": "https://www.cdisc.org/standards/cdashig/v2-1#",
+      "sdtm": "https://www.cdisc.org/standards/sdtmig/v3-4#",
+      "ncit": "http://purl.obolibrary.org/obo/NCIT_",
+      "snomed": "http://snomed.info/sct/",
+      "loinc": "http://loinc.org/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "ngsi-ld": "https://uri.etsi.org/ngsi-ld/",
+      "Sponsor": {
+        "@id": "top:Sponsor",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Organization"
+          },
+          {
+            "@id": "usdm:Sponsor"
+          },
+          {
+            "@id": "odm:Study/GlobalVariables/StudyName"
+          }
+        ]
+      },
+      "sponsorId": {
+        "@id": "top:sponsorId"
+      },
+      "sponsorName": {
+        "@id": "top:sponsorName",
+        "@type": "xsd:string"
+      },
+      "legalName": {
+        "@id": "topc:legalName",
+        "@type": "xsd:string"
+      },
+      "sponsorType": {
+        "@id": "top:sponsorType",
+        "@type": "xsd:string"
+      },
+      "duns": {
+        "@id": "top:duns",
+        "@type": "xsd:string"
+      },
+      "orcid": {
+        "@id": "top:orcid",
+        "@type": "xsd:string"
+      },
+      "address": {
+        "@id": "top:address",
+        "@type": "xsd:object"
+      },
+      "country": {
+        "@id": "topc:country",
+        "@type": "xsd:string"
+      },
+      "phone": {
+        "@id": "top:phone",
+        "@type": "xsd:string"
+      },
+      "email": {
+        "@id": "top:email",
+        "@type": "xsd:string"
+      },
+      "website": {
+        "@id": "topc:website",
+        "@type": "xsd:anyURI"
+      },
+      "status": {
+        "@id": "topc:status",
+        "@type": "xsd:string"
+      },
+      "isSponsorOfRecord": {
+        "@id": "top:isSponsorOfRecord",
+        "@type": "xsd:boolean"
+      },
+      "hasRegulatoryResponsibility": {
+        "@id": "top:hasRegulatoryResponsibility",
+        "@type": "xsd:boolean"
+      },
+      "hasFinancialResponsibility": {
+        "@id": "top:hasFinancialResponsibility",
+        "@type": "xsd:boolean"
+      },
+      "hasOperationalResponsibility": {
+        "@id": "top:hasOperationalResponsibility",
+        "@type": "xsd:boolean"
+      },
+      "isInitiator": {
+        "@id": "top:isInitiator",
+        "@type": "xsd:boolean"
+      },
+      "validFrom": {
+        "@id": "top:validFrom",
+        "@type": "xsd:dateTime"
+      },
+      "validUntil": {
+        "@id": "top:validUntil",
+        "@type": "xsd:dateTime"
+      },
+      "primaryTherapeuticArea": {
+        "@id": "top:primaryTherapeuticArea",
+        "@type": "xsd:string"
+      },
+      "belongsToOrganization": {
+        "@id": "top:belongsToOrganization",
+        "@type": "@id"
+      },
+      "actsOnBehalfOf": {
+        "@id": "top:actsOnBehalfOf",
+        "@type": "@id"
+      },
+      "parentSponsor": {
+        "@id": "top:parentSponsor",
+        "@type": "@id"
+      },
+      "regulatoryAuthorityScope": {
+        "@id": "top:regulatoryAuthorityScope",
+        "@type": "@id"
+      },
+      "runs": {
+        "@id": "top:runs",
+        "@type": "@id"
+      },
+      "employs": {
+        "@id": "top:employs",
+        "@type": "@id"
+      },
+      "engages": {
+        "@id": "top:engages",
+        "@type": "@id"
+      },
+      "contractsWith": {
+        "@id": "top:contractsWith",
+        "@type": "@id"
+      },
+      "holds": {
+        "@id": "top:holds",
+        "@type": "@id"
+      },
+      "authors": {
+        "@id": "top:authors",
+        "@type": "@id"
+      },
+      "publishesDocument": {
+        "@id": "top:publishesDocument",
+        "@type": "@id"
+      },
+      "publishesPublication": {
+        "@id": "top:publishesPublication",
+        "@type": "@id"
+      },
+      "files": {
+        "@id": "top:files",
+        "@type": "@id"
+      },
+      "commissions": {
+        "@id": "top:commissions",
+        "@type": "@id"
+      },
+      "operatesTrainingProgram": {
+        "@id": "top:operatesTrainingProgram",
+        "@type": "@id"
+      },
+      "maintains": {
+        "@id": "top:maintains",
+        "@type": "@id"
+      },
+      "operatesSystem": {
+        "@id": "top:operatesSystem",
+        "@type": "@id"
+      },
+      "produces": {
+        "@id": "top:produces",
+        "@type": "@id"
+      },
+      "plans": {
+        "@id": "top:plans",
+        "@type": "@id"
+      },
+      "conducts": {
+        "@id": "top:conducts",
+        "@type": "@id"
+      },
+      "executes": {
+        "@id": "top:executes",
+        "@type": "@id"
+      },
+      "interfacesWith": {
+        "@id": "top:interfacesWith",
+        "@type": "@id"
+      },
+      "signs": {
+        "@id": "top:signs",
+        "@type": "@id"
+      },
+      "supplies": {
+        "@id": "top:supplies",
+        "@type": "@id"
+      },
+      "organizes": {
+        "@id": "top:organizes",
+        "@type": "@id"
+      },
+      "Study": {
+        "@id": "top:Study",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchStudy"
+          },
+          {
+            "@id": "usdm:Study"
+          },
+          {
+            "@id": "cdash:DM"
+          }
+        ]
+      },
+      "studyId": {
+        "@id": "top:studyId"
+      },
+      "sponsorProtocolId": {
+        "@id": "top:sponsorProtocolId",
+        "@type": "xsd:string"
+      },
+      "clinicalTrialsGovId": {
+        "@id": "top:clinicalTrialsGovId",
+        "@type": "xsd:string"
+      },
+      "studyStatus": {
+        "@id": "top:studyStatus",
+        "@type": "xsd:string"
+      },
+      "hasProtocol": {
+        "@id": "top:hasProtocol",
+        "@type": "@id"
+      },
+      "hasArm": {
+        "@id": "top:hasArm",
+        "@type": "@id"
+      },
+      "Protocol": {
+        "@id": "top:Protocol",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:PlanDefinition"
+          },
+          {
+            "@id": "usdm:Protocol"
+          }
+        ]
+      },
+      "protocolVersion": {
+        "@id": "top:protocolVersion",
+        "@type": "xsd:string"
+      },
+      "protocolStatus": {
+        "@id": "top:protocolStatus",
+        "@type": "xsd:string"
+      },
+      "Arm": {
+        "@id": "top:Arm",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchStudy.arm"
+          },
+          {
+            "@id": "usdm:StudyArm"
+          },
+          {
+            "@id": "cdash:DM.ARM"
+          }
+        ]
+      },
+      "armName": {
+        "@id": "top:armName",
+        "@type": "xsd:string"
+      },
+      "armType": {
+        "@id": "top:armType",
+        "@type": "xsd:string"
+      },
+      "Site": {
+        "@id": "top:Site",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Organization"
+          },
+          {
+            "@id": "usdm:StudySite"
+          },
+          {
+            "@id": "cdash:DM.SITEID"
+          }
+        ]
+      },
+      "siteId": {
+        "@id": "top:siteId"
+      },
+      "siteName": {
+        "@id": "top:siteName",
+        "@type": "xsd:string"
+      },
+      "siteType": {
+        "@id": "top:siteType",
+        "@type": "xsd:string"
+      },
+      "partOfSiteNetwork": {
+        "@id": "top:partOfSiteNetwork",
+        "@type": "@id"
+      },
+      "parentSite": {
+        "@id": "top:parentSite",
+        "@type": "@id"
+      },
+      "hasPrincipalInvestigator": {
+        "@id": "top:hasPrincipalInvestigator",
+        "@type": "@id"
+      },
+      "participatesIn": {
+        "@id": "top:participatesIn",
+        "@type": "@id"
+      },
+      "Organization": {
+        "@id": "topc:Organization",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Organization"
+          },
+          {
+            "@id": "usdm:Organization"
+          }
+        ]
+      },
+      "organizationId": {
+        "@id": "topc:organizationId"
+      },
+      "organizationName": {
+        "@id": "topc:organizationName",
+        "@type": "xsd:string"
+      },
+      "organizationType": {
+        "@id": "topc:organizationType",
+        "@type": "xsd:string"
+      },
+      "identifierScheme": {
+        "@id": "topc:identifierScheme",
+        "@type": "xsd:string"
+      },
+      "identifier": {
+        "@id": "topc:identifier",
+        "@type": "xsd:string"
+      },
+      "legalAddress": {
+        "@id": "topc:legalAddress",
+        "@type": "xsd:object"
+      },
+      "employeeSizeBand": {
+        "@id": "topc:employeeSizeBand",
+        "@type": "xsd:string"
+      },
+      "fiscalYearEnd": {
+        "@id": "topc:fiscalYearEnd",
+        "@type": "xsd:string"
+      },
+      "primaryTherapeuticAreas": {
+        "@id": "topc:primaryTherapeuticAreas",
+        "@type": "xsd:string"
+      },
+      "Document": {
+        "@id": "topc:Document",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:DocumentReference"
+          },
+          {
+            "@id": "usdm:TMFDocument"
+          }
+        ]
+      },
+      "documentType": {
+        "@id": "topc:documentType",
+        "@type": "xsd:string"
+      },
+      "documentVersion": {
+        "@id": "topc:documentVersion",
+        "@type": "xsd:string"
+      },
+      "etmfLocation": {
+        "@id": "topc:etmfLocation",
+        "@type": "xsd:anyURI"
+      }
+    }
+  ],
+  "_meta": {
+    "source_version": "0.1.4-strawman",
+    "top_levels": [
+      "Sponsor",
+      "Study",
+      "Site"
+    ],
+    "horizontals": [
+      "Organization",
+      "Document"
+    ]
+  }
+}
