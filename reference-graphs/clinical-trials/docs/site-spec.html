@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Site + StudySite / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 22px 26px 32px;
+    line-height: 1.55;
+    font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  h2.section {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #111;
+    margin: 26px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #c8c8c0;
+  }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  h4.minor { font-size: 11.5px; font-weight: 600; color: #555; margin: 10px 0 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  p { margin-bottom: 10px; }
+  p.tldr {
+    background: #fff;
+    border-left: 3px solid #1e6fd9;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  th, td {
+    text-align: left;
+    padding: 7px 10px;
+    border-bottom: 1px solid #ececea;
+    vertical-align: top;
+  }
+  th {
+    background: #f0f0e9;
+    font-weight: 700;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    border-bottom: 1px solid #d6d6cf;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  td.muted { color: #888; font-style: italic; }
+
+  .decision, .scenario, .query, .persona-card {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves {
+    font-size: 11.5px;
+    color: #1a1a1a;
+    background: #f7faf8;
+    border: 1px solid #cde4d8;
+    border-radius: 3px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    line-height: 1.65;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .query .persona { font-weight: 700; font-size: 12px; color: #111; margin-bottom: 4px; }
+  .query .ask { font-style: italic; color: #555; margin-bottom: 8px; font-size: 12.5px; }
+  .query pre, pre.code-block {
+    background: #1e1e1c;
+    color: #e8e8e0;
+    padding: 10px 12px;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    line-height: 1.55;
+    overflow-x: auto;
+    margin-bottom: 6px;
+  }
+  .query .reads { font-size: 11.5px; color: #555; }
+
+  .persona-card .persona-name { font-weight: 700; font-size: 12.5px; color: #111; margin-bottom: 4px; }
+  .persona-card .persona-jtbd { font-style: italic; color: #555; font-size: 12px; margin-bottom: 6px; }
+
+  .diagram {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+
+  .toc {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .toc strong { color: #111; }
+  .toc a { color: #1e6fd9; text-decoration: none; margin-right: 12px; display: inline-block; }
+
+  .pill {
+    display: inline-block;
+    font-size: 10.5px;
+    background: #eef0ed;
+    color: #555;
+    padding: 1px 6px;
+    border-radius: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pill.r3 { background: #e8f0fc; color: #1e6fd9; }
+  .pill.isf { background: #f3ece2; color: #8b6e3a; }
+  .pill.gap { background: #fbe9e7; color: #b03a2e; }
+  .pill.full { background: #e6f4ea; color: #1e7e34; }
+  .pill.partial { background: #fff3cd; color: #8a6d1f; }
+  .pill.traversal { background: #f0e6f7; color: #6a4ba8; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Site + StudySite / spec / v1</div>
+  <div class="meta">2026-05-08 · backed by source/top-strawman.json (v0.2.0-strawman) · combined Site + StudySite spec · 10 SHACL invariants emitted (4 Sponsor + 6 Site/StudySite/System/Credential)</div>
+</header>
+
+<div class="toc">
+  <strong>Sections:</strong>
+  <a href="#tldr">1. TL;DR</a>
+  <a href="#anchor">2. Architectural anchor</a>
+  <a href="#model">3. Model summary</a>
+  <a href="#decisions">4. Architectural decisions</a>
+  <a href="#r3">5. R3 alignment</a>
+  <a href="#isf">6. ISF alignment</a>
+  <a href="#lifecycle">7. Lifecycle state machines</a>
+  <a href="#stress">8. Stress-test scenarios</a>
+  <a href="#personas">9. Persona-to-Site-view matrix</a>
+  <a href="#queries">10. Query patterns</a>
+  <a href="#sfq">11. SFQ projection</a>
+  <a href="#delegation">12. Delegation matrix</a>
+  <a href="#nlp">13. NLP-to-NGSI-LD</a>
+  <a href="#shacl">14. SHACL invariants</a>
+  <a href="#crosswalks">15. Cross-walks</a>
+  <a href="#open">16. Open issues</a>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">the operational hierarchy, the Site/StudySite split, where everything lives</span></h2>
+
+<p class="tldr">Site is where trials operate. The Site entity in TOP captures the physical/operational research site as a study-independent operational and feasibility entity — staff, equipment, IRB-of-record default, SFQ feasibility profile, infrastructure. The StudySite entity captures Site's role on a specific Study — the per-Study lifecycle, the per-Study Principal Investigator, the per-Study Delegation of Authority Log, the per-Study IRB approval, the per-Study contracts, and the entry point for Participants and Visit-occurrences at this Site for this Study. The operational chain is <span class="inline">Site → StudySite → Study → Protocol → SOA → Visit → Activity</span>. Site has very few direct edges; everything operational is reached via StudySite.</p>
+
+<p>The shape lets a Site Coordinator query "show me my Site's open queries on Study ONCO-423" via Site → StudySite → Study traversal without polluting the Site entity with thousands of per-Study CRF/Visit/Query references. It lets a Sponsor PM query "across all my StudySites, where is enrollment behind target" with one StudySite-level scan. It lets the SFQ projection ("Site X's feasibility for Study Y") run directly off the Site's stable feasibility attributes. It anchors GCP discipline cleanly: R3 Section 2 obligations (qualification, delegation, IP management, records) live on StudySite where they're per-Study real; R3 Section 4.3 computerised-system obligations live on the linked System; Equipment carries calibration and qualification independent of any computerised layer.</p>
+
+<p>Site spec extends the Sponsor spec template with five additions: an architectural-anchor section (the operational hierarchy), R3 alignment as a first-class section (Section 2 / 3 / 4 / Appendix C / Annex 2), an ISF alignment table mapping all 23 sections to TOP entities, a lifecycle state machine (separate for Site and StudySite), a persona-to-Site-view matrix covering ten roles, an SFQ projection as a named query template, and a delegation matrix. Site is the most operationally consequential top-level in the trials commons; the spec depth reflects that.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor <span class="subnote">the operational hierarchy</span></h2>
+
+<p>The operational chain runs from Site at the top of operations through StudySite (the per-Study pivot) down to Activity-occurrences during Visits:</p>
+
+<div class="diagram">                                  DEFINITION SIDE
+                              ┌─────────────────────────────────────────┐
+                              │                                         │
+                              │  Protocol  →  SOA  →  Visit-template    │
+                              │                                  ↓      │
+                              │                              Activity   │
+                              │                                         │
+                              └─────────────────────────────────────────┘
+                                              ▲
+                                              │  implements (visit-occurrence
+                                              │  implements an SOA Item;
+                                              │  activity-occurrence
+                                              │  implements an Activity)
+                                              │
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │                          OPERATIONAL SIDE                                │
+   │                                                                          │
+   │   Site ─→ StudySite ─→ Study     and    StudySite ─→ Participant         │
+   │                                                       ↓                  │
+   │                                                  Visit-occurrence        │
+   │                                                       ↓                  │
+   │                                                  Activity-occurrence     │
+   │                                                       ↓                  │
+   │                                                  CRF / Sample / AE / …   │
+   │                                                                          │
+   └──────────────────────────────────────────────────────────────────────────┘</div>
+
+<p>Two sides, meeting at Visit. The <strong>definition side</strong> is top-down from Protocol: Protocol → SOA → Visit-template → Activity defines what is supposed to happen. The <strong>operational side</strong> is top-down from Site: Site → StudySite → Participant → Visit-occurrence → Activity-occurrence captures what actually happened at a specific Site for a specific Study.</p>
+
+<p>This anchors three model decisions:</p>
+
+<ul style="margin-left: 20px; margin-bottom: 10px;">
+  <li><strong>Site has very few direct edges.</strong> Direct Site edges go only to: Organization (legal), other Sites (parentSite, network), Person (study-independent staff and head of clinical research), Equipment (site-bound), StorageLocation (site-bound), Document (institutional records), Credential (institutional credentials), System (Site-operational systems like the Site's own EMR). Everything operational is reached via StudySite.</li>
+  <li><strong>StudySite is the operational pivot.</strong> Per-Study lifecycle, per-Study performance, per-Study oversight, per-Study qualification, plus the relationships to Participant, Visit-occurrence, MonitoringVisit, Audit, Contract, Sponsor (reportsTo), RegulatoryAuthority, OversightBody, etc. — all per-Study facts.</li>
+  <li><strong>Visit splits into template and occurrence.</strong> The OOUX Visit object conflates them; this spec flags the correction that Visit needs a template-vs-occurrence split (or a discriminator) when Visit lifts. Per-Study Visit relationships from StudySite point at Visit-occurrences, not Visit-templates.</li>
+</ul>
+
+<!-- ============================================================== -->
+<h2 class="section" id="model"><span class="num">3.</span>Model summary <span class="subnote">attributes and key relationships · full set in source/top-strawman.json</span></h2>
+
+<h3 class="subsection">Site (operational + feasibility) — selected attributes (full set: 49)</h3>
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Type</th><th>Lens</th><th>Doc</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="code">siteId</td><td class="code">ngsi-ld:URI</td><td>identity</td><td>Globally unique NGSI-LD identifier.</td></tr>
+    <tr><td class="code">siteName</td><td class="code">xsd:string</td><td>identity</td><td>Display name.</td></tr>
+    <tr><td class="code">siteType</td><td class="code">enum</td><td>identity</td><td>HOSPITAL · CLINIC · ACADEMIC_MEDICAL_CENTER · RESEARCH_CENTER · COMMUNITY_PRACTICE · DECENTRALIZED_HUB · VIRTUAL.</td></tr>
+    <tr><td class="code">address, city, country, …</td><td class="code">xsd:string</td><td>contact</td><td>Primary site address. 0..N for DECENTRALIZED_HUB; 1 for fixed-location.</td></tr>
+    <tr><td class="code">gcpQualified</td><td class="code">xsd:boolean</td><td>qualification</td><td>Site holds current GCP qualification (R3 Section 2.1).</td></tr>
+    <tr><td class="code">therapeuticAreasExperienced</td><td class="code">xsd:string</td><td>feasibility</td><td>Comma-separated TA experience array (oncology, cardiology, …). SFQ matching key.</td></tr>
+    <tr><td class="code">indicationExperience</td><td class="code">xsd:object</td><td>feasibility</td><td>Array of {indication, totalTrials, totalPatientsEnrolled} structured records.</td></tr>
+    <tr><td class="code">averageEnrollmentRate</td><td class="code">xsd:decimal</td><td>feasibility</td><td>Patients/month average across past trials. SFQ benchmark.</td></tr>
+    <tr><td class="code">freezerCapacity</td><td class="code">xsd:object</td><td>feasibility</td><td>Array of {tempRange, volume, units}. Sample-storage feasibility.</td></tr>
+    <tr><td class="code">imagingCapabilities</td><td class="code">enum array</td><td>feasibility</td><td>XRAY, CT, MRI, ULTRASOUND, PET, SPECT, ECHO, NUCLEAR_MEDICINE, MAMMOGRAPHY.</td></tr>
+    <tr><td class="code">labCapabilities</td><td class="code">enum array</td><td>feasibility</td><td>CLIA, CAP, CENTRAL, POINT_OF_CARE, SPECIALTY.</td></tr>
+    <tr><td class="code">pharmacyOnSite, dctCapable, econsentCapable, eproCapable</td><td class="code">xsd:boolean</td><td>feasibility</td><td>Capability booleans for SFQ matching.</td></tr>
+    <tr><td class="code">edcVendorExperience</td><td class="code">xsd:string</td><td>feasibility</td><td>Comma-separated array of EDC vendors the Site has experience with. Technology-readiness signal.</td></tr>
+    <tr><td class="code">irbType</td><td class="code">enum</td><td>regulatory default</td><td>CENTRAL · LOCAL · HYBRID. Per-Study IRB-of-record assignment lives on StudySite.hasIRB.</td></tr>
+    <tr><td class="code">insuranceCarrier, insuranceCoverageAmount, insuranceCurrency, insuranceExpiry</td><td class="code">mixed</td><td>insurance</td><td>Site-level professional liability / clinical-trial insurance.</td></tr>
+    <tr><td class="code">subInvestigatorCount, coordinatorCount, studyNurseCount, labTechCount</td><td class="code">xsd:integer</td><td>staff capacity</td><td>Aggregate counts. The actual roster lives on hasStaff.</td></tr>
+    <tr><td class="code">languagesSupported</td><td class="code">xsd:string</td><td>staff capacity</td><td>Comma-separated ISO 639-1 codes.</td></tr>
+    <tr><td class="code">gcpTrainingCurrencyRate</td><td class="code">xsd:decimal</td><td>staff capacity</td><td>0.0–1.0 percentage of staff with current GCP training. SFQ signal.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Site — selected relationships (full set: 10)</h3>
+<table>
+  <thead><tr><th>Predicate</th><th>Target</th><th>Cardinality</th><th>Operational meaning</th></tr></thead>
+  <tbody>
+    <tr><td class="code">belongsToOrganization</td><td class="code">Organization</td><td>1..1</td><td>Legal Organization that owns or operates this Site (e.g., MSKCC's Organization for the MSKCC main-campus Site). USDM Organization.managedSites is the inverse.</td></tr>
+    <tr><td class="code">partOfSiteNetwork</td><td class="code">Organization</td><td>0..1</td><td>SMO/network membership. Organization with organizationType=SITE_NETWORK or SMO. Site-network membership is study-independent.</td></tr>
+    <tr><td class="code">parentSite</td><td class="code">Site</td><td>0..1</td><td>Self-reference for satellite-of-main-site. Different from network membership.</td></tr>
+    <tr><td class="code">hasStaff</td><td class="code">Person</td><td>0..N</td><td>Persons employed/affiliated at this Site, study-independent. Per-Study delegation lives on StudySite.delegatesAuthorityTo.</td></tr>
+    <tr><td class="code">hostsEquipment</td><td class="code">Equipment</td><td>0..N</td><td>Site-bound equipment (Equipment.equipmentBinding=SITE_BOUND).</td></tr>
+    <tr><td class="code">hasStorageLocation</td><td class="code">StorageLocation</td><td>0..N</td><td>Freezer slots, refrigerator shelves, cabinet drawers, ambient pharmacy shelves.</td></tr>
+    <tr><td class="code">usesSystem</td><td class="code">System</td><td>0..N</td><td>Site-operational Systems (Site's EMR, source-document repository, local pharmacy system) that exist regardless of Study.</td></tr>
+    <tr><td class="code">hasInstitutionalDocument</td><td class="code">Document</td><td>0..N</td><td>Site-level study-independent essential records: licenses, CLIA certifications, accreditations, institutional SOPs.</td></tr>
+    <tr><td class="code">hasInstitutionalCredential</td><td class="code">Credential</td><td>0..N</td><td>Site-level credentials (CLIA, JCAHO, ISO 9001, lab accreditations).</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">StudySite (per-Study pivot) — attributes (full set: 17)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Doc</th></tr></thead>
+  <tbody>
+    <tr><td class="code">studySiteId</td><td class="code">ngsi-ld:URI</td><td>Globally unique identifier for this Site-Study pair.</td></tr>
+    <tr><td class="code">siteNumber</td><td class="code">xsd:string</td><td>Site number assigned by Sponsor for this Study.</td></tr>
+    <tr><td class="code">studySiteStatus</td><td class="code">enum</td><td>PLANNED · IN_QUALIFICATION · ACTIVE · ON_HOLD · CLOSED. Per-Study lifecycle.</td></tr>
+    <tr><td class="code">activationDate, deactivationDate</td><td class="code">xsd:date</td><td>Activation = SIV completed, FPI possible. Deactivation = close-out done.</td></tr>
+    <tr><td class="code">enrollmentTarget, actualEnrollment</td><td class="code">xsd:integer</td><td>Per-Study targets and actuals. Aggregate (could be SPARQL-derived) but stored for view speed.</td></tr>
+    <tr><td class="code">oversightTier</td><td class="code">enum</td><td>LOW · MEDIUM · HIGH. R3 Section 3.10 risk-based monitoring tier per StudySite. Same Site can be HIGH on a complex oncology trial and LOW on a simple registry.</td></tr>
+    <tr><td class="code">recruitmentPotential</td><td class="code">xsd:integer</td><td>Per-protocol recruitment estimate. R3 Section 2.2.</td></tr>
+    <tr><td class="code">staffingAdequate</td><td class="code">xsd:boolean</td><td>Per-protocol staffing adequacy. R3 Section 2.2.</td></tr>
+    <tr><td class="code">irbApprovalStatus, irbApprovalDate</td><td class="code">enum, xsd:date</td><td>PENDING · APPROVED · WITH_CONDITIONS · EXPIRED · WITHDRAWN · DENIED.</td></tr>
+    <tr><td class="code">regulatoryAuthorizationStatus</td><td class="code">enum</td><td>NOT_REQUIRED · PENDING · APPROVED · EXPIRED · WITHDRAWN · DENIED. Per-jurisdiction.</td></tr>
+    <tr><td class="code">essentialRecordsRetentionUntil</td><td class="code">xsd:date</td><td>R3 Appendix C retention; per-Study because retention requirements vary by jurisdiction × Study type.</td></tr>
+    <tr><td class="code">validFrom, validUntil</td><td class="code">xsd:dateTime</td><td>NGSI-LD temporal: PI handoff, SoR transfer, etc.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">StudySite — selected relationships (full set: 18)</h3>
+<table>
+  <thead><tr><th>Predicate</th><th>Target</th><th>Cardinality</th><th>Operational meaning</th></tr></thead>
+  <tbody>
+    <tr><td class="code">forSite</td><td class="code">Site</td><td>1..1</td><td>The Site this StudySite participation belongs to.</td></tr>
+    <tr><td class="code">forStudy</td><td class="code">Study</td><td>1..1</td><td>The Study this Site is participating in.</td></tr>
+    <tr><td class="code">hasPrincipalInvestigator</td><td class="code">Person</td><td>1..1</td><td>Per-Study PI. R3 Section 2.1 GCP-required. Drawn from forSite.hasStaff.</td></tr>
+    <tr><td class="code">delegatesAuthorityTo</td><td class="code">Person</td><td>1..N</td><td>Per-Study Delegation of Authority Log. R3 Section 2.3.3 GCP-required.</td></tr>
+    <tr><td class="code">hasIRB</td><td class="code">OversightBody</td><td>1..N</td><td>Per-Study IRB(s)/IEC(s) of record. 1..N for multi-IRB cases.</td></tr>
+    <tr><td class="code">submitsTo</td><td class="code">RegulatoryAuthority</td><td>0..N</td><td>Per-jurisdiction regulatory authorities. R3 Section 2.3.5 inspection right.</td></tr>
+    <tr><td class="code">hasContract</td><td class="code">Contract</td><td>0..N</td><td>Site-level contracts: CTA, CDA, MTA, DTA.</td></tr>
+    <tr><td class="code">hostsVisit</td><td class="code">Visit</td><td>0..N</td><td>Visit-occurrences at this Site for this Study (when Visit lifts; OOUX Visit→Site is a tracked correction).</td></tr>
+    <tr><td class="code">hasParticipant</td><td class="code">Participant</td><td>0..N</td><td>Participants enrolled at this Site for this Study.</td></tr>
+    <tr><td class="code">hasMonitoringVisit</td><td class="code">MonitoringVisit</td><td>0..N</td><td>Per-Study monitoring visits.</td></tr>
+    <tr><td class="code">hasAudit</td><td class="code">Audit</td><td>0..N</td><td>Per-Study audits at this Site.</td></tr>
+    <tr><td class="code">engagesVendor</td><td class="code">Organization</td><td>0..N</td><td>Per-Study Site-engaged vendors (R3 Section 2.3.4 documented agreements). Distinct from Sponsor-engaged vendors.</td></tr>
+    <tr><td class="code">usesLaboratory</td><td class="code">Organization</td><td>0..N</td><td>Per-Study Site-engaged laboratories (Organization with organizationType=LABORATORY).</td></tr>
+    <tr><td class="code">usesSystem</td><td class="code">System</td><td>0..N</td><td>Per-Study Systems (Sponsor-provisioned EDC, per-Study IRT, etc.).</td></tr>
+    <tr><td class="code">reportsTo</td><td class="code">Sponsor</td><td>0..N</td><td>Per-Study reporting (R3 Sections 2.7, 2.13: safety, data, noncompliance).</td></tr>
+    <tr><td class="code">hasEssentialRecord</td><td class="code">Document</td><td>0..N</td><td>Per-Study essential records (Document.essentialRecordPurpose set per R3 Appendix C).</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="decisions"><span class="num">4.</span>Why this shape — architectural decisions</h2>
+
+<p>Five decisions shape the Site model. Each made in dialogue with the OOUX, USDM, ICH E6(R3), and ISF anchors; reversible if downstream evidence argues against.</p>
+
+<div class="decision">
+  <div class="title">Decision 1. Site is study-independent (operational + feasibility); StudySite is the per-Study pivot.</div>
+  <p>The OOUX Site object listed both study-independent attributes (siteName, siteType, address, contact info, equipment, staff) and per-Study attributes (siteNumber, enrollmentTarget, IRB approval status, last monitoring visit date) on a single entity. This conflates two lenses. The Sponsor v0.1.4 closure resolved an analogous tension by making Sponsor per-Org-per-Study and pushing corporate-scope facts onto Organization. Site needs the same treatment: per-Study facts move to a new <span class="inline">StudySite</span> horizontal that captures the (Site, Study) pair, and Site itself stays as the stable operational and feasibility entity. <strong>Why two entities and not one</strong>: a Site exists with its staff, equipment, IRB-of-record default, qualifications, and infrastructure regardless of which Studies are active. Site selection (the SFQ feasibility lens) operates on Site facts; per-Study operational management operates on StudySite facts. Conflating them forces every per-Study record to denormalize Site facts and every Site record to denormalize per-Study facts — a maintenance and consistency disaster.</p>
+  <p>Trade-off: TOP carries one more entity than USDM (which has Organization + StudySite without a middle Site). The crosswalk is two-way: Site → <span class="inline">usdm:Organization (with type=Code(Site))</span>; StudySite → <span class="inline">usdm:StudySite</span>. Verified against the actual USDM v3 schema (cdisc-org/usdm <span class="inline">src/usdm_model/study_site.py</span> + <span class="inline">organization.py</span>): USDM's StudySite is minimal (id + name + label + description + country) and most operational facts live on Organization with type Code. TOP's three-tier (Organization + Site + StudySite) projects to USDM's two-tier cleanly and carries the operational richness USDM doesn't model.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2. Direct-vs-traversed: Site has very few direct edges; StudySite is the operational pivot.</div>
+  <p>The OOUX inverse view shows 36+ relationships pointing at Site from other objects (Visit → Site, Participant → Site, CRF → Site, Adverse Event → Site, etc.). Putting all 36+ as direct edges on Site would denormalize the schema and force every Site read to traverse a vast object graph. The Sponsor v0.1.1 cardinality realism pass made the analogous decision: keep direct relationships only for things that are <em>Sponsor-scoped</em> (Contracts, Budgets, Submissions, Audits at sponsor level); traverse via Study for things that are Study-scoped.</p>
+  <p>For Site, the discipline is: <strong>Site keeps direct edges only to study-independent facts</strong> (Organization, network, staff roster, equipment, storage, institutional documents/credentials, Site-operational Systems). <strong>Everything per-Study reaches through StudySite</strong> (Visit-occurrences, Participants, CRFs, Adverse Events, Samples, IP dispensations, monitoring visits, audits, contracts, IRB, regulatory authority, vendors, per-Study Systems). The OOUX Visit→Site and Participant→Site direct edges are flagged as corrections for when those top-levels lift; they should point at StudySite, not Site.</p>
+  <p>Trade-off: query authors writing "show me all queries on Site X" need to traverse Site → StudySite → … which is one more hop than a direct edge would be. Acceptable: the ergonomic cost is small (named query templates, see §11) and the schema compactness is large.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3. System three-axis: <span class="inline">operatedBy</span> / <span class="inline">usedBy</span> / <span class="inline">oversightHeldBy</span>. Visibility follows from oversight, not from a presentation filter.</div>
+  <p>The original framing of "Site uses System X, Sponsor uses System Y" treated System as a two-layer (ownership / use) concept. Bo's eTMF insight sharpened it: a System has a third axis — what each role can <em>see</em> — even when ownership and use are resolved. The Sponsor genuinely may not know the URL of the Site's local source-document repository, even though they monitor data captured at the Site.</p>
+  <p>Initial framing treated visibility as a presentation-layer projection concern. ICH E6(R3) Section 3.9 (Sponsor oversight obligations under documented agreements) and Section 2.12 (Investigator/institution records responsibilities) reframed it as <strong>oversight, not visibility</strong>. The third axis is GCP-mandated responsibility allocation, which is a schema-level fact: Sponsor sees what Sponsor has agreement-grounded oversight over (R3 3.6, 3.9); Site sees what Site is GCP-responsible for (R3 2.12, 2.13). The schema captures who is responsible; presentation filters are a thin layer on top.</p>
+  <p>The three-relationship pattern on the System horizontal:</p>
+  <ul style="margin-left: 20px; margin-bottom: 10px;">
+    <li><span class="inline">operatedBy → Organization</span> (1..1) — the party running the System and responsible for its R3 Section 4.3 obligations (validation, security, access controls, release, contingency, support).</li>
+    <li><span class="inline">usedBy → Organization</span> (0..N) — parties interacting with the System for trial activities. Multiple roles per System.</li>
+    <li><span class="inline">oversightHeldBy → Organization</span> (1..1) — party with R3 Section 3.9 / Section 2.12 GCP-mandated oversight responsibility. For sponsor-critical Systems (EDC, CTMS, IRT, SAFETY_DB) this is typically a Sponsor-class Organization (SHACL invariant 9 enforces, with IIT exception).</li>
+  </ul>
+  <p>The Site-owned source-document repository case where Sponsor doesn't know the URL is correctly modeled as "no Sponsor-System triple" — there is no <span class="inline">usedBy</span> or <span class="inline">oversightHeldBy</span> from Sponsor's Organization. Schema-level truth, not presentation filter. This is much cleaner than the original "Sponsor's projection filters out the URL" framing.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4. IIT pattern: same Organization plays Sponsor and Site roles; no special schema relationship.</div>
+  <p>In an investigator-initiated trial (IIT), the Investigator is the Sponsor. Memorial Sloan Kettering as both Site and Sponsor for a single-PI academic study is the canonical case. Two ways to model this: (a) introduce a special "isAlsoSponsor" relationship on Site, or (b) let the existing relationships handle it via the same Organization playing both roles.</p>
+  <p>Decision: (b). MSKCC's Organization plays both <span class="inline">managesSite → Site:mskcc</span> AND <span class="inline">playsSponsorRole → Sponsor:mskcc-iit-onco-001-fda</span>. The same Person is <span class="inline">Site.hasStaff</span> AND <span class="inline">Sponsor.primaryContactId</span>. Sponsor.sponsorType=ACADEMIC and Sponsor.isInitiator=true flag the academic IIT. <strong>No new schema relationship required</strong>: the role conflation is captured by entity reuse rather than special-cased predicates.</p>
+  <p>Critical: R3 Sponsor obligations under Section 3 do <em>not</em> relax in IITs. Section 3.10 quality management, Section 3.11 monitoring, Section 3.13 safety reporting, Section 3.14 insurance, Section 3.6 documented agreements with service providers — all still apply when the Investigator is the Sponsor. Keeping the Sponsor entity present (rather than collapsing it into Site) preserves auditability of these obligations. Underrepresentation of these obligations in IITs is a known regulatory risk; the schema makes them visible.</p>
+  <p>SHACL invariant 9 (System sponsor-critical oversight) carries an IIT exception: when the SITE-type Organization that holds oversight on a sponsor-critical System also plays a Sponsor role on a Study using that System (via <span class="inline">playsSponsorRole</span> + matching Study), the violation does not fire. Encoded as <span class="inline">FILTER NOT EXISTS</span> in the SPARQL constraint.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5. Equipment and System are distinct entities; logs are a third entity.</div>
+  <p>Modern Equipment (refrigerators, freezers, centrifuges) often contains a computerised System component (IoT temperature monitors, audit-trail-enabled firmware). Three options were considered: (a) collapse Equipment into System; (b) collapse System into Equipment; (c) keep them distinct and link via a relationship.</p>
+  <p>Decision: (c). Equipment is the physical asset under R3 qualification/calibration/maintenance discipline; System is the computerised layer under R3 Section 4.3 validation/audit-trail/security/access-control discipline. They link via <span class="inline">Equipment.monitoredBySystem → System</span>. The temperature log itself is a third entity: <span class="inline">Log{logType=IP_STORAGE_TEMPERATURE, forEquipment=freezer, forSystem=monitor, forStudySite=…}</span>. Three entities working together rather than two conflated.</p>
+  <p>Trade-off: a simple lab fridge with no monitoring is just Equipment (no System triple, no Log triple). An IoT-monitored freezer is Equipment + System + Log. Operators don't pay for the System/Log discipline when they don't need it; they get it cleanly when they do.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="r3"><span class="num">5.</span>ICH E6(R3) alignment <span class="subnote">canonical anchor · Sections 2 / 3 / 4 / Appendix C / Annex 2</span></h2>
+
+<p>ICH E6(R3) Step 4 Final (January 2025) supersedes R2 and is the current GCP standard. The Site model anchors to R3 throughout: Section 2 (Investigator responsibilities) defines what a Site IS; Section 3 (Sponsor responsibilities) grounds the System three-axis decision; Section 4 (Data Governance) shapes the System horizontal's attribute set; Appendix C (Essential Records) drives the Document.essentialRecordPurpose taxonomy; Annex 2 frames decentralized modalities.</p>
+
+<h3 class="subsection">R3 Section 2 — Investigator/Institution responsibilities</h3>
+<table>
+  <thead><tr><th>R3 §</th><th>Topic</th><th>How TOP encodes it</th></tr></thead>
+  <tbody>
+    <tr><td>2.1</td><td>Qualifications and training</td><td><span class="inline">StudySite.hasPrincipalInvestigator → Person</span> (1..1, GCP-required). Person.gcpTrainingStatus + Person.hasCredential. Site.gcpQualified for institution-level qualification.</td></tr>
+    <tr><td>2.2</td><td>Resources (recruitment, staff, facilities)</td><td>Site.facilitiesAdequate, Site.subInvestigatorCount, Site.coordinatorCount, etc. Per-protocol adequacy lives on StudySite.staffingAdequate and StudySite.recruitmentPotential.</td></tr>
+    <tr><td>2.3.1–2.3.2</td><td>Delegation oversight</td><td>StudySite.delegatesAuthorityTo → Person (1..N, GCP-required). Investigator retains ultimate responsibility (modeled by hasPrincipalInvestigator's mandatory cardinality).</td></tr>
+    <tr><td>2.3.3</td><td>Delegation record</td><td>StudySite.delegatesAuthorityTo carries role/scope/dates. SHACL invariant 8: ACTIVE StudySite must have ≥1 delegation entry.</td></tr>
+    <tr><td>2.3.4</td><td>Service-provider agreements</td><td>StudySite.engagesVendor → Organization (R3 2.3.4 documented agreements), StudySite.usesLaboratory → Organization (Lab agreements). StudySite.hasContract → Contract (CTA, CDA).</td></tr>
+    <tr><td>2.3.5</td><td>Permit monitoring/audit/inspection</td><td>StudySite.hasMonitoringVisit, StudySite.hasAudit, StudySite.submitsTo → RegulatoryAuthority (inspection right anchored here).</td></tr>
+    <tr><td>2.4</td><td>IRB/IEC communication</td><td>StudySite.hasIRB → OversightBody (1..N). Per-Study, multi-IRB cases supported.</td></tr>
+    <tr><td>2.5</td><td>Protocol compliance</td><td>StudySite.forStudy → Study → hasProtocol → Protocol. Implicit through participation.</td></tr>
+    <tr><td>2.6</td><td>Premature termination</td><td>StudySite.studySiteStatus enum (PLANNED → IN_QUALIFICATION → ACTIVE → ON_HOLD → CLOSED). StudySite.deactivationDate.</td></tr>
+    <tr><td>2.7</td><td>Participant care + safety reporting</td><td>StudySite.reportsTo → Sponsor (safety, data, noncompliance). StudySite.hasParticipant traversal for participant-level data.</td></tr>
+    <tr><td>2.8</td><td>Informed consent</td><td>StudySite.hasParticipant → Participant → InformedConsent (when those lift; flagged-missing today).</td></tr>
+    <tr><td>2.9</td><td>End of participation</td><td>Through StudySite traversal to Participant lifecycle (when Participant lifts).</td></tr>
+    <tr><td>2.10</td><td>IP management</td><td>StudySite usesSystem traversal to IRT; Equipment for storage; Log{logType=IP_DISPENSING, IP_ACCOUNTABILITY}; StorageLocation for IP storage.</td></tr>
+    <tr><td>2.11</td><td>Randomization/unblinding</td><td>StudySite.usesSystem (per-Study IRT). Document{documentType=BLINDING_PROCEDURES}.</td></tr>
+    <tr><td>2.12</td><td>Records (essential)</td><td>StudySite.hasEssentialRecord → Document (with essentialRecordPurpose + responsibleParty=INVESTIGATOR_INSTITUTION).</td></tr>
+    <tr><td>2.13</td><td>Reports</td><td>StudySite.reportsTo → Sponsor; Document{documentType=MONITORING_REPORT, AUDIT_REPORT, etc.}.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">R3 Section 3 — Sponsor responsibilities (touchpoints with Site)</h3>
+<p>R3 Section 3 grounds the Sponsor side of the Site relationship. Key touchpoints:</p>
+<ul style="margin-left: 20px; margin-bottom: 10px;">
+  <li><strong>3.6 Agreements</strong>: documented agreements between Sponsor and any service provider, including Sites. Encoded as Sponsor.engages → Site (already on Sponsor v0.1) plus the StudySite.hasContract relationship.</li>
+  <li><strong>3.9 Sponsor oversight</strong>: proportionate oversight obligation. Grounds the System three-axis decision (System.oversightHeldBy → Sponsor for sponsor-critical Systems).</li>
+  <li><strong>3.10 Quality management / risk management</strong>: drives the StudySite.oversightTier enum (LOW/MEDIUM/HIGH) — risk-based monitoring tier per StudySite.</li>
+  <li><strong>3.11 QA / QC / monitoring</strong>: StudySite.hasMonitoringVisit, StudySite.hasAudit.</li>
+  <li><strong>3.13 Safety reporting</strong>: StudySite.reportsTo → Sponsor.</li>
+  <li><strong>3.14 Insurance</strong>: Site.insuranceCarrier / coverage / expiry (Site-level institutional insurance).</li>
+</ul>
+
+<h3 class="subsection">R3 Section 4 — Data Governance and Computerised Systems</h3>
+<p>R3 Section 4 maps directly onto the System horizontal:</p>
+<table>
+  <thead><tr><th>R3 §</th><th>Topic</th><th>System attribute / relationship</th></tr></thead>
+  <tbody>
+    <tr><td>4.1</td><td>Blinding safeguards</td><td>System.systemType=IRT carries blinding-procedures aspects; Document{documentType=BLINDING_PROCEDURES}.</td></tr>
+    <tr><td>4.2.1–4.2.8</td><td>Data lifecycle (capture → destruction)</td><td>Log entries record the lifecycle stages; System.auditTrailEnabled flags audit-trail capability per R3 4.2.2.</td></tr>
+    <tr><td>4.3.1</td><td>Procedures</td><td>System.proceduresDocumentRef → Document.</td></tr>
+    <tr><td>4.3.2</td><td>Training</td><td>Person.hasTrainingRecord → TrainingRecord (when TrainingRecord lifts; flagged-missing today).</td></tr>
+    <tr><td>4.3.3</td><td>Security</td><td>System.securityAssessmentRef → Document.</td></tr>
+    <tr><td>4.3.4</td><td>Validation (risk-based)</td><td>System.validationStatus (NOT_VALIDATED · IN_VALIDATION · VALIDATED · REVALIDATING · RETIRED), System.validationApproach (RISK_BASED · FULL_VALIDATION · VENDOR_QUALIFICATION_ONLY), System.lastValidationDate.</td></tr>
+    <tr><td>4.3.5</td><td>System release</td><td>System.releaseStatus (DEVELOPMENT · UAT · PRODUCTION · REVALIDATING · RETIRED).</td></tr>
+    <tr><td>4.3.6</td><td>Failure contingencies</td><td>System.contingencyPlanRef → Document.</td></tr>
+    <tr><td>4.3.7</td><td>Technical support</td><td>System.supportContact → Person.</td></tr>
+    <tr><td>4.3.8</td><td>User management / access controls</td><td>System.accessControlPolicyRef → Document.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">R3 Appendix C — Essential Records taxonomy</h3>
+<p>R3 Appendix C is the canonical record taxonomy, replacing R2's Section 8 prescriptive document list. Records are categorized by two axes:</p>
+<ul style="margin-left: 20px; margin-bottom: 10px;">
+  <li><strong>essentialRecordPurpose</strong>: what the record contributes to under GCP. Currently a placeholder enum (QUALIFICATION, DELEGATION, TRAINING, IP_MANAGEMENT, MONITORING, DATA_HANDLING, SYSTEMS_VALIDATION, OTHER) flagged with <span class="inline">_partialEnum</span> in source — full enum requires Appendix C transcription pending PDF access.</li>
+  <li><strong>responsibleParty</strong>: INVESTIGATOR_INSTITUTION · SPONSOR · IRB_IEC · REGULATORY_AUTHORITY · VENDOR · OTHER.</li>
+</ul>
+<p>The legacy ISF section taxonomy is captured in <span class="inline">Document.isfSection</span> as a free-text mapping; the operational continuity is preserved without making ISF the canonical primary axis.</p>
+
+<h3 class="subsection">R3 Annex 2 — non-traditional / decentralized</h3>
+<p>R3 doesn't enumerate DCT modalities formally; it places decentralized aspects within the principles and Annex 1 applicability with proportionate/risk-based approaches. TOP's existing siteType enum (HOSPITAL, CLINIC, ACADEMIC_MEDICAL_CENTER, RESEARCH_CENTER, COMMUNITY_PRACTICE, DECENTRALIZED_HUB, VIRTUAL) is sufficient. The flexibility lives in <em>how</em> existing relationships are populated (a VIRTUAL Site has no fixed address; a DECENTRALIZED_HUB has 0..N addresses) rather than in a new enum.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="isf"><span class="num">6.</span>ISF alignment <span class="subnote">legacy operational view · 23 sections mapped to TOP</span></h2>
+
+<p>The ISF section taxonomy is the legacy operational view that maps onto R3 Appendix C. Maintaining the alignment is operationally valuable — sponsors, CROs, and sites organize day-to-day artifacts against the ISF — but the canonical anchor is R3 Appendix C; ISF mappings are secondary.</p>
+
+<p>The ISF reference used here is a 23-section TOC (sourced from a Singapore HSA-flavored ISF that mirrors the international ICH E6 essential-documents structure). Re-validate against the actual CDISC ISF Provisional v1 PDF when accessible — section names and counts may differ.</p>
+
+<table>
+  <thead><tr><th>ISF §</th><th>Artifact</th><th>TOP Path</th><th>Coverage</th></tr></thead>
+  <tbody>
+    <tr><td>1.1</td><td>Site staff contact details</td><td><span class="inline">Site.hasStaff → Person</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>1.2</td><td>External vendor contact details</td><td><span class="inline">StudySite.engagesVendor → Organization</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>2</td><td>Investigator's Brochure (current + prior)</td><td><span class="inline">Document(documentType=INVESTIGATOR_BROCHURE)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>3.1, 3.2</td><td>Protocol (current + prior)</td><td><span class="inline">Study → Protocol</span> + Document versions</td><td><span class="pill partial">PARTIAL — Protocol horizontal not fully fleshed</span></td></tr>
+    <tr><td>3.3</td><td>Protocol Signature Page</td><td><span class="inline">Document(documentType=SIGNATURE_SHEET)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>4.1, 4.2</td><td>ICF current + prior (with translations)</td><td><span class="inline">Document(documentType=ICF)</span> + language attribute</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>4.3</td><td>Translation Certificates</td><td><span class="inline">Document(documentType=TRANSLATION_CERTIFICATE)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>4.4</td><td>Signed ICFs (per Participant)</td><td>Traversal: <span class="inline">StudySite.hasParticipant → Participant → InformedConsent</span></td><td><span class="pill traversal">TRAVERSAL</span></td></tr>
+    <tr><td>4.5</td><td>Signed ICF Tracking Log</td><td>Aggregate query over Participant ICFs at this StudySite</td><td><span class="pill traversal">TRAVERSAL</span></td></tr>
+    <tr><td>5.1</td><td>Patient Card / Diary / Questionnaires</td><td><span class="inline">Document(documentType=...)</span> + Questionnaire (when lifts)</td><td><span class="pill partial">PARTIAL</span></td></tr>
+    <tr><td>6</td><td>Recruitment advertisement</td><td><span class="inline">Document(documentType=RECRUITMENT_AD)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>7.1, 7.2</td><td>Blank CRF (current + prior)</td><td>CRF horizontal (not yet lifted)</td><td><span class="pill gap">GAP</span></td></tr>
+    <tr><td>7.3</td><td>CRF Completion Guidelines</td><td><span class="inline">Document</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>7.4, 7.5</td><td>Signed/completed CRFs + corrections</td><td>Traversal via Participant + Visit</td><td><span class="pill traversal">TRAVERSAL</span></td></tr>
+    <tr><td>8</td><td>Source Documents</td><td><span class="inline">Document(documentType=SOURCE_DOCUMENT)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>9.1</td><td>IRB Submission and Approval Documents</td><td><span class="inline">StudySite.hasIRB</span> + <span class="inline">Document(documentType=IRB_APPROVAL_LETTER)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>9.2–9.6</td><td>IRB progress reports, composition, safety/non-compliance notifications, correspondences</td><td><span class="inline">Document</span> for reports/letters; <span class="inline">Log(logType=COMMUNICATION, correspondent → IRB Org)</span> for correspondences; OversightBody.members for composition (when OversightBody lifts)</td><td><span class="pill partial">PARTIAL</span></td></tr>
+    <tr><td>10.1–10.6</td><td>Regulatory Authority (HSA/FDA/EMA/etc.) submissions, status reports, import permits, safety notifications, correspondences</td><td><span class="inline">StudySite.submitsTo → RegulatoryAuthority</span> (when RegulatoryAuthority lifts) + Document + Log{COMMUNICATION}</td><td><span class="pill partial">PARTIAL — RegulatoryAuthority flagged-missing</span></td></tr>
+    <tr><td>11.1</td><td>Signature Sheet (Delegation of Authority)</td><td><span class="inline">StudySite.delegatesAuthorityTo → Person</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>11.2</td><td>CV of Study Personnel</td><td><span class="inline">Person.hasCredential → Credential(credentialType=CV)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>11.3</td><td>Training Log</td><td><span class="inline">Log(logType=TRAINING)</span> + Person.hasTrainingRecord (TrainingRecord flagged-missing)</td><td><span class="pill partial">PARTIAL</span></td></tr>
+    <tr><td>12.1</td><td>Confidentiality Agreement</td><td><span class="inline">Document(documentType=CDA)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>12.2</td><td>Clinical Trial Agreement</td><td><span class="inline">Document(documentType=CTA)</span> + StudySite.hasContract</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>12.4</td><td>Insurance Certificate</td><td><span class="inline">Document(documentType=INSURANCE_CERTIFICATE)</span> + Site insurance attrs</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>13.1–13.4</td><td>Subject Logs (screening, enrolment, identification, visit tracking)</td><td>Either <span class="inline">Log</span> entries or aggregate queries over Participant + Enrollment</td><td><span class="pill traversal">TRAVERSAL</span></td></tr>
+    <tr><td>14.1</td><td>IP Handling Instructions</td><td><span class="inline">Document(documentType=IP_HANDLING_INSTRUCTIONS)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>14.2</td><td>IP Shipping/Receipt Records</td><td>Shipment horizontal (not yet lifted)</td><td><span class="pill gap">GAP</span></td></tr>
+    <tr><td>14.3</td><td>IP Dispensing/Accountability Logs</td><td><span class="inline">Log(logType=IP_DISPENSING, IP_ACCOUNTABILITY)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>14.4</td><td>IP Destruction Documentation</td><td><span class="inline">Document(documentType=IP_DESTRUCTION_RECORD)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>14.5</td><td>IP Storage Temperature Logs</td><td><span class="inline">Log(logType=IP_STORAGE_TEMPERATURE)</span> + forEquipment + forSystem (the freezer-with-IoT-monitor pattern)</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>15.1</td><td>Decoding Procedures (blinded)</td><td><span class="inline">Document(documentType=BLINDING_PROCEDURES)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>16.1</td><td>Site Visit Log (monitoring)</td><td><span class="inline">StudySite.hasMonitoringVisit → MonitoringVisit</span> (flagged-missing) + <span class="inline">Log(logType=MONITORING_VISIT)</span></td><td><span class="pill partial">PARTIAL</span></td></tr>
+    <tr><td>16.2</td><td>Visit Correspondences</td><td><span class="inline">Log(logType=COMMUNICATION)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>17.1</td><td>Lab normal values/ranges</td><td><span class="inline">Document(documentType=LAB_NORMAL_RANGES)</span> + StudySite.usesLaboratory</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>17.2</td><td>Lab Certification/Accreditation</td><td>Lab Org → <span class="inline">hasInstitutionalCredential → Credential(credentialType=CLIA_CERTIFICATION, etc.)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>18.1</td><td>Biological Sample Handling Log</td><td><span class="inline">Log(logType=SAMPLE_HANDLING)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>18.2</td><td>Sample Handling Manual</td><td><span class="inline">Document(documentType=SAMPLE_HANDLING_MANUAL)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>18.3</td><td>Sample Shipping Records</td><td><span class="inline">Log(logType=SAMPLE_SHIPPING)</span> + Shipment (when lifts)</td><td><span class="pill partial">PARTIAL</span></td></tr>
+    <tr><td>19.1</td><td>SAE Tracking Log</td><td><span class="inline">Log(logType=SAE_TRACKING)</span> + Participant traversal (when Participant lifts)</td><td><span class="pill traversal">TRAVERSAL</span></td></tr>
+    <tr><td>19.2, 19.3</td><td>SAE Reports + Expedited Safety Reports</td><td><span class="inline">Document</span> + RegulatorySubmission (already in source)</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>20</td><td>Study Reports / Publications</td><td><span class="inline">Document(documentType=MONITORING_REPORT, AUDIT_REPORT)</span> + Sponsor.publishesPublication</td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>21.1, 21.2, 21.3</td><td>Investigator/SIV/Other Meeting documentation</td><td>Investigator Meeting needs Meeting horizontal (gap); SIV maps to MonitoringVisit{visitType=SITE_INITIATION} (when MonitoringVisit lifts).</td><td><span class="pill partial">PARTIAL</span></td></tr>
+    <tr><td>22.1–22.4</td><td>Correspondences (Sponsor, Site Staff, Lab/Vendors, Other)</td><td><span class="inline">Log(logType=COMMUNICATION, correspondent → Org)</span></td><td><span class="pill full">FULL</span></td></tr>
+    <tr><td>23</td><td>Miscellaneous</td><td><span class="inline">Document</span> (catchall)</td><td><span class="pill full">FULL</span></td></tr>
+  </tbody>
+</table>
+
+<p>Coverage summary: ~28 ISF subsections fully covered, ~9 partial (mostly waiting for flagged-missing horizontals: MonitoringVisit, RegulatoryAuthority, TrainingRecord, OversightBody, Shipment), ~2 explicit gaps (CRF horizontal, Meeting horizontal — neither lifts in v0.2.0; tracked).</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="lifecycle"><span class="num">7.</span>Lifecycle state machines <span class="subnote">Site and StudySite separately</span></h2>
+
+<h3 class="subsection">Site lifecycle</h3>
+<p>The Site itself doesn't really have a strong lifecycle — it's a research facility that exists across studies. Site.status is a coarse-grained ACTIVE / INACTIVE / RETIRED enum. The interesting lifecycle is StudySite (per-Study).</p>
+
+<h3 class="subsection">StudySite lifecycle</h3>
+<div class="diagram">                            ┌───────────────────────────┐
+                            │                           │
+   ┌─────────┐  qualify    ┌─────────────────────┐  activate  ┌──────────┐
+   │ PLANNED │ ──────────▶ │  IN_QUALIFICATION  │ ──────────▶ │  ACTIVE  │
+   └─────────┘             └─────────────────────┘            └──────────┘
+                                                                ▲    │
+                                                                │    │ pause
+                                                                │    ▼
+                                                              ┌──────────┐
+                                                              │ ON_HOLD  │
+                                                              └──────────┘
+                                                                │
+                                                                │ close
+                                                                ▼
+                                                              ┌──────────┐
+                                                              │  CLOSED  │
+                                                              └──────────┘</div>
+
+<table>
+  <thead><tr><th>Transition</th><th>Trigger</th><th>SHACL guards</th></tr></thead>
+  <tbody>
+    <tr><td>PLANNED → IN_QUALIFICATION</td><td>Site selected; SIV scheduled</td><td>StudySite must have <span class="inline">forSite</span> + <span class="inline">forStudy</span> populated.</td></tr>
+    <tr><td>IN_QUALIFICATION → ACTIVE</td><td>Site Initiation Visit completed; IRB approval; first patient possible</td><td>SHACL invariant 7: ACTIVE requires hasPrincipalInvestigator. SHACL invariant 8: ACTIVE requires ≥1 delegatesAuthorityTo entry. <em>(Implicit: irbApprovalStatus should be APPROVED before ACTIVE — recommended SHACL addition in v0.3.)</em></td></tr>
+    <tr><td>ACTIVE ↔ ON_HOLD</td><td>Sponsor or Site initiates pause (safety hold, IRB suspension, recruitment pause)</td><td>Bidirectional. ON_HOLD must retain hasPrincipalInvestigator; staffing requirements relax.</td></tr>
+    <tr><td>ACTIVE / ON_HOLD → CLOSED</td><td>Close-out visit completed; all participants discontinued; essential records archived</td><td>deactivationDate must be populated. essentialRecordsRetentionUntil must be populated.</td></tr>
+    <tr><td>CLOSED → (any)</td><td><strong>Disallowed.</strong></td><td>Once a StudySite closes, it stays closed. Re-opening creates a new StudySite with new identifiers.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="stress"><span class="num">8.</span>Stress-test scenarios <span class="subnote">eight cases · plain English to graph shape</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">A. Traditional academic medical center site</div><div class="scn-tag">canonical</div></div>
+  <p>Memorial Sloan Kettering runs Pfizer's ONCO-423 trial. MSKCC is a single Site (HOSPITAL type) with one PI, one IRB of record, one CTA.</p>
+  <div class="resolves">
+Site:mskcc-main · siteType=HOSPITAL · gcpQualified=true<br>
+&nbsp;&nbsp;belongsToOrganization → Organization:mskcc<br>
+&nbsp;&nbsp;hasStaff → Person:patel, Person:jones, Person:martinez, ...<br>
+StudySite:mskcc-onco423 · forSite → Site:mskcc-main · forStudy → Study:ONCO-423<br>
+&nbsp;&nbsp;studySiteStatus=ACTIVE · siteNumber="US-002"<br>
+&nbsp;&nbsp;hasPrincipalInvestigator → Person:patel<br>
+&nbsp;&nbsp;delegatesAuthorityTo → [Person:jones (sub-I), Person:martinez (coord)]<br>
+&nbsp;&nbsp;hasIRB → OversightBody:mskcc-irb<br>
+&nbsp;&nbsp;hasContract → Contract:mskcc-pfizer-onco423-cta
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">B. SMO-managed multi-site network</div><div class="scn-tag">network</div></div>
+  <p>Elevate Research is an SMO with three locations (Boston, Phoenix, Miami), all participating in the same Pfizer ONCO-423 trial. Three Sites under one Organization.</p>
+  <div class="resolves">
+Organization:elevate-research · organizationType=SMO<br>
+Site:elevate-boston, Site:elevate-phoenix, Site:elevate-miami<br>
+&nbsp;&nbsp;each: belongsToOrganization → Organization:elevate-research<br>
+&nbsp;&nbsp;each: partOfSiteNetwork → Organization:elevate-research<br>
+StudySite:elevate-boston-onco423, StudySite:elevate-phoenix-onco423, ...<br>
+&nbsp;&nbsp;each: forSite → corresponding Site · forStudy → Study:ONCO-423<br>
+SHACL invariant 6 satisfied: partOfSiteNetwork target organizationType in (SITE_NETWORK, SMO).
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">C. Investigator-Initiated Trial (Site = Sponsor)</div><div class="scn-tag">IIT</div></div>
+  <p>Dr. Kim at MSKCC runs IIT-ONCO-001 with departmental funds. MSKCC is both Site and Sponsor; Dr. Kim is both PI on Site and primary contact on Sponsor.</p>
+  <div class="resolves">
+Organization:mskcc · plays both roles:<br>
+&nbsp;&nbsp;managesSite → Site:mskcc-main<br>
+&nbsp;&nbsp;playsSponsorRole → Sponsor:mskcc-iit-onco001-fda<br>
+Sponsor:mskcc-iit-onco001-fda · sponsorType=ACADEMIC · isInitiator=true<br>
+&nbsp;&nbsp;runs → Study:IIT-ONCO-001 · isSponsorOfRecord=true<br>
+StudySite:mskcc-iit-onco001 · forSite → Site:mskcc-main · forStudy → Study:IIT-ONCO-001<br>
+&nbsp;&nbsp;hasPrincipalInvestigator → Person:kim<br>
+&nbsp;&nbsp;reportsTo → Sponsor:mskcc-iit-onco001-fda (loop, but valid)<br>
+SHACL invariant 9 (System sponsor-critical oversight): IIT exception applies — MSKCC's<br>
+Organization plays both managesSite and playsSponsorRole, so Site-only oversight on the<br>
+EDC does not fire.
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">D. Decentralized hub serving multiple regions</div><div class="scn-tag">DCT</div></div>
+  <p>Curebase operates a virtual decentralized hub (siteType=DECENTRALIZED_HUB) for a multi-region asthma trial. No fixed address; participants in three US states are managed remotely.</p>
+  <div class="resolves">
+Site:curebase-asthma-hub · siteType=DECENTRALIZED_HUB · address=null<br>
+&nbsp;&nbsp;belongsToOrganization → Organization:curebase (organizationType=SITE)<br>
+&nbsp;&nbsp;dctCapable=true · econsentCapable=true · eproCapable=true<br>
+SHACL invariant 5 satisfied: belongsToOrganization is populated.<br>
+StudySite:curebase-asthma-hub-asthma-trial · forSite → Site:curebase-asthma-hub<br>
+&nbsp;&nbsp;hasPrincipalInvestigator → Person:remote-pi
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">E. PI handoff mid-study</div><div class="scn-tag">temporal</div></div>
+  <p>Site-X's original PI Dr. Adams retires on 2026-04-01; Dr. Brown takes over. The same StudySite continues, with two hasPrincipalInvestigator triples bracketed by validFrom / validUntil.</p>
+  <div class="resolves">
+StudySite:siteX-study1 · studySiteStatus=ACTIVE<br>
+&nbsp;&nbsp;hasPrincipalInvestigator → Person:adams<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[validFrom=2025-06-01, validUntil=2026-04-01]<br>
+&nbsp;&nbsp;hasPrincipalInvestigator → Person:brown<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[validFrom=2026-04-01, validUntil=null]<br>
+NGSI-LD temporal query at point-in-time T returns the correct PI for that T.
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">F. Sponsor-provisioned EDC + Site-owned ISF (the System three-axis worked example)</div><div class="scn-tag">system three-axis</div></div>
+  <p>MSKCC running Pfizer's ONCO-423 uses two eTMF-class systems: Pfizer's Veeva Vault (Sponsor-operated) for the central eTMF, and MSKCC's local Iron Mountain repository for the institutional ISF.</p>
+  <div class="resolves">
+System:pfizer-veeva-onco423 · systemType=ETMF · vendor="Veeva"<br>
+&nbsp;&nbsp;operatedBy → Organization:pfizer<br>
+&nbsp;&nbsp;usedBy → [Organization:pfizer, Organization:mskcc]<br>
+&nbsp;&nbsp;oversightHeldBy → Organization:pfizer (Sponsor; R3 3.9)<br>
+&nbsp;&nbsp;baseUrl="https://veeva.pfizer.com/onco423/" (visible to Pfizer + MSKCC)<br>
+<br>
+System:mskcc-isf-iron-mountain · systemType=ISF · vendor="Iron Mountain"<br>
+&nbsp;&nbsp;operatedBy → Organization:mskcc<br>
+&nbsp;&nbsp;usedBy → Organization:mskcc<br>
+&nbsp;&nbsp;oversightHeldBy → Organization:mskcc (Site; R3 2.12)<br>
+&nbsp;&nbsp;baseUrl="https://imdc.mskcc.org/..." (NO Pfizer triple — Pfizer doesn't see this)<br>
+<br>
+Pfizer's monitor accesses MSKCC essential records through monitoring visits (R3 2.3.5),<br>
+not by direct System access. The schema correctly captures that Pfizer has no triple<br>
+linking to System:mskcc-isf-iron-mountain.
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">G. Freezer with IoT temperature monitoring (Equipment + System + Log)</div><div class="scn-tag">equipment / system distinction</div></div>
+  <p>MSKCC's pharmacy-grade -80°C freezer F-12 is cloud-monitored by SaaS provider StratoMon. Continuous temperature readings are appended to a Log entity tied to both the Equipment and the System.</p>
+  <div class="resolves">
+Equipment:mskcc-freezer-f12 · equipmentClass=FREEZER · equipmentBinding=SITE_BOUND<br>
+&nbsp;&nbsp;atSite → Site:mskcc-main<br>
+&nbsp;&nbsp;temperatureRange={minTempC: -85, maxTempC: -75, units: "C"}<br>
+&nbsp;&nbsp;monitoredBySystem → System:stratomon-mskcc-temp-iot<br>
+&nbsp;&nbsp;hasCredential → Credential:f12-cal-2026 (calibration certificate)<br>
+<br>
+System:stratomon-mskcc-temp-iot · systemType=SAMPLE_TRACKING · vendor="StratoMon"<br>
+&nbsp;&nbsp;operatedBy → Organization:mskcc · auditTrailEnabled=true<br>
+&nbsp;&nbsp;validationStatus=VALIDATED · validatedFor21CfrPart11=true<br>
+<br>
+Log:f12-temp-2026q2 · logType=IP_STORAGE_TEMPERATURE<br>
+&nbsp;&nbsp;forEquipment → Equipment:mskcc-freezer-f12<br>
+&nbsp;&nbsp;forSystem → System:stratomon-mskcc-temp-iot<br>
+&nbsp;&nbsp;forStudySite → StudySite:mskcc-onco423<br>
+&nbsp;&nbsp;openedDate=2026-04-01 · status=ACTIVE
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">H. Site closes mid-study (close-out)</div><div class="scn-tag">lifecycle</div></div>
+  <p>Site-Y closes its participation on Study X (low enrollment, sponsor cuts). studySiteStatus moves ACTIVE → CLOSED with a deactivationDate. essentialRecordsRetentionUntil populated.</p>
+  <div class="resolves">
+StudySite:siteY-studyX (was) studySiteStatus=ACTIVE<br>
+StudySite:siteY-studyX (now) studySiteStatus=CLOSED<br>
+&nbsp;&nbsp;deactivationDate=2026-04-15<br>
+&nbsp;&nbsp;essentialRecordsRetentionUntil=2041-04-15 (15 years per US 21 CFR)<br>
+&nbsp;&nbsp;actualEnrollment=3 (final) · enrollmentTarget=20<br>
+The Site itself remains operational and may take other studies; Site.status is unaffected.
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="personas"><span class="num">9.</span>Persona-to-Site-view matrix <span class="subnote">ten roles · what each one cares about</span></h2>
+
+<div class="persona-card">
+  <div class="persona-name">Site Coordinator</div>
+  <div class="persona-jtbd">Manage today's visits, open queries, IP dispensing, and participant communications at my site.</div>
+  <p>Reads: <span class="inline">StudySite</span> for current participation status; <span class="inline">hostsVisit</span> for today's visits; <span class="inline">hasParticipant</span> for enrolled participants; <span class="inline">delegatesAuthorityTo</span> to confirm own role/scope. Writes: visit completion, CRF entries (per Visit), Discrepancy responses.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Principal Investigator</div>
+  <div class="persona-jtbd">Maintain medical and GCP oversight of the trial at my site; sign off on key decisions; manage adverse events.</div>
+  <p>Reads: full StudySite scope including Adverse Event traversal, Audit findings, Monitoring visit outcomes, Delegation Log. Signs: protocol signature page (FORM_1572), CRFs (verification), AE assessments, ICFs (witness).</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Sub-Investigator</div>
+  <div class="persona-jtbd">Conduct delegated medical activities; document findings; flag safety concerns.</div>
+  <p>Reads: scope-restricted StudySite view per Delegation Log entry; read-write access to assigned Participant subset.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Pharmacist</div>
+  <div class="persona-jtbd">Dispense IP, manage IP accountability, monitor storage temperatures.</div>
+  <p>Reads: <span class="inline">Site.hasStorageLocation</span> (pharmacy storage), <span class="inline">Equipment(equipmentClass=FREEZER, REFRIGERATOR)</span>, <span class="inline">Log(logType=IP_DISPENSING, IP_ACCOUNTABILITY, IP_STORAGE_TEMPERATURE)</span>. Writes: IP Dispensing Log entries, IP Accountability Log entries.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Lab Tech</div>
+  <div class="persona-jtbd">Process samples, run lab tests, ship to central lab.</div>
+  <p>Reads: <span class="inline">StudySite.hostsVisit</span> for sample collection schedule; <span class="inline">Site.hasStorageLocation</span> + <span class="inline">Equipment(CENTRIFUGE, etc.)</span>. Writes: Sample Handling Log, Sample Shipping Log entries.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Sponsor CRA (Clinical Research Associate)</div>
+  <div class="persona-jtbd">Monitor my assigned sites: track query response times, source-data verify, follow up on findings.</div>
+  <p>Reads: <span class="inline">StudySite</span> for sites I monitor (filter by Sponsor.engages and own assignment); <span class="inline">hasMonitoringVisit</span>; <span class="inline">hasParticipant</span> traversal for SDV; Discrepancy aggregates per StudySite. Writes: MonitoringVisit findings, Action Items.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Sponsor PM (Project Manager)</div>
+  <div class="persona-jtbd">Run the portfolio: track enrollment vs target across all sites, manage timelines, escalate issues.</div>
+  <p>Reads: aggregated <span class="inline">StudySite.actualEnrollment / enrollmentTarget</span>, <span class="inline">studySiteStatus</span> distribution, last MonitoringVisit dates. Site-level rollup via <span class="inline">forSite</span> + <span class="inline">partOfSiteNetwork</span>.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">SMO Operations Lead</div>
+  <div class="persona-jtbd">Manage portfolio across my SMO's locations: which Sponsors, which Studies, which sites.</div>
+  <p>Reads: All StudySites where <span class="inline">forSite → Site → partOfSiteNetwork → Organization:my-smo</span>. Group by Sponsor.belongsToOrganization for sponsor-portfolio map; group by therapeutic area for indication-portfolio map.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Regulator (FDA/EMA inspector)</div>
+  <div class="persona-jtbd">Inspect a Site for GCP compliance: review essential records, verify delegation, check qualification.</div>
+  <p>Reads: <span class="inline">StudySite.delegatesAuthorityTo</span> (Delegation Log), <span class="inline">hasPrincipalInvestigator + Person.hasCredential</span>, <span class="inline">hasEssentialRecord → Document(essentialRecordPurpose=...)</span>. Plus per-System validation status. R3 Section 2.3.5 grounds the inspection right; SHACL invariants 7+8 enforce the data shape.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Auditor (Sponsor QA or Independent)</div>
+  <div class="persona-jtbd">Audit a Site's conduct of a Study: protocol compliance, data integrity, GCP adherence.</div>
+  <p>Reads: scope per Audit assignment; full StudySite visibility plus traversal to Participant-level data. Writes: Audit findings, CAPA requests.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="queries"><span class="num">10.</span>Query patterns <span class="subnote">six concrete NGSI-LD HTTP shapes</span></h2>
+
+<div class="query">
+  <div class="persona">Site Coordinator</div>
+  <div class="ask">"Show me my Site's open queries on Study ONCO-423."</div>
+  <pre>GET /entities?type=Discrepancy
+  &amp;q=relatedStudy=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;q=relatedSite=="urn:ngsi-ld:Site:mskcc-main"
+  &amp;q=queryStatus=="OPEN"
+  &amp;options=keyValues</pre>
+  <div class="reads">When Visit/Discrepancy lift, the proper traversal is via StudySite. For now this is illustrative.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Sponsor PM (enrollment view)</div>
+  <div class="ask">"Across all StudySites for Study ONCO-423, where are we behind enrollment target?"</div>
+  <pre>GET /entities?type=StudySite
+  &amp;q=forStudy=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;q=studySiteStatus=="ACTIVE"
+  &amp;options=keyValues
+# Then client-side filter: actualEnrollment / enrollmentTarget &lt; 0.7</pre>
+  <div class="reads">Returns all active StudySites for the Study. Client groups by ratio for behind-target sites. With NGSI-LD Q expressions extended in the broker, the threshold can shift server-side.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Sponsor CRA (oversight)</div>
+  <div class="ask">"For Study ONCO-423, show me StudySites assigned oversightTier=HIGH that haven't had a monitoring visit in 90 days."</div>
+  <pre>GET /entities?type=StudySite
+  &amp;q=forStudy=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;q=oversightTier=="HIGH"
+  &amp;q=lastMonitoringVisitDate&lt;"2026-02-08"
+  &amp;options=keyValues</pre>
+  <div class="reads">Returns the HIGH-tier StudySites overdue for monitoring. Anchors R3 Section 3.10 risk-based monitoring discipline.</div>
+</div>
+
+<div class="query">
+  <div class="persona">SMO Operations Lead</div>
+  <div class="ask">"Across my 12 locations, which Studies are we currently active on, grouped by Sponsor?"</div>
+  <pre>GET /entities?type=StudySite
+  &amp;q=studySiteStatus=="ACTIVE"
+  &amp;q=forSite.partOfSiteNetwork=="urn:ngsi-ld:Organization:elevate-research"
+  &amp;options=keyValues
+# Client-side: traverse forStudy → engages_inverse → Sponsor</pre>
+  <div class="reads">Returns active StudySites at any Elevate location. Group client-side by Sponsor.belongsToOrganization for the sponsor-portfolio view.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Regulator (inspection prep)</div>
+  <div class="ask">"For inspection of Site MSKCC on Study ONCO-423: show me the Delegation Log and current PI."</div>
+  <pre>GET /entities?type=StudySite
+  &amp;q=forSite=="urn:ngsi-ld:Site:mskcc-main"
+  &amp;q=forStudy=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;options=sysAttrs
+
+# Then for each Person in delegatesAuthorityTo:
+GET /entities?type=Person&amp;id=&lt;personId&gt;&amp;options=keyValues
+GET /entities?type=Credential&amp;q=forPerson==&lt;personId&gt;</pre>
+  <div class="reads">Returns the StudySite with full delegation list (Persons), each Person's Credentials, and the PI. R3 Section 2.3.5 inspection right anchored.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Auditor (essential records spot-check)</div>
+  <div class="ask">"For StudySite MSKCC-ONCO423, show me all essential records categorized by R3 Appendix C purpose."</div>
+  <pre>GET /entities?type=Document
+  &amp;q=hasEssentialRecord_inverse=="urn:ngsi-ld:StudySite:mskcc-onco423"
+  &amp;options=keyValues
+# Group by essentialRecordPurpose</pre>
+  <div class="reads">Returns the essential records associated with this StudySite. Grouped by R3 Appendix C purpose for the audit checklist; cross-check against the responsibleParty enum.</div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="sfq"><span class="num">11.</span>SFQ projection <span class="subnote">named query template · operational artifact</span></h2>
+
+<p>The Site Feasibility Questionnaire (SFQ) is the canonical sponsor-selection artifact. Sponsor portfolio teams use SFQs to qualify Sites for upcoming Studies. The SFQ projection is a named query template that runs against the Site's stable feasibility attributes — no per-Study data needed.</p>
+
+<h3 class="subsection">Named query: <span class="inline">SiteFeasibilityProjection</span></h3>
+<pre class="code-block">QUERY SiteFeasibilityProjection(siteId)
+RETURNS FROM Site WHERE Site.siteId = $siteId:
+  -- Identity
+  siteId, siteName, siteType, address, country
+  -- Therapeutic / population fit
+  therapeuticAreasExperienced, indicationExperience, patientPopulationAccess
+  -- Past trial experience (benchmarks)
+  totalTrialsConducted, trialsByPhase, averageEnrollmentRate,
+  firstPatientInToActivationDays, queryResponseTimeHours, sponsorRetentionRate
+  -- Infrastructure
+  freezerCapacity, imagingCapabilities, labCapabilities,
+  pharmacyOnSite, dctCapable, econsentCapable, eproCapable,
+  edcVendorExperience
+  -- Regulatory / ethics defaults
+  irbType, typicalIrbApprovalDays, regulatoryAuthorityExperience,
+  sopsAvailable, sopLibrarySize
+  -- Insurance
+  insuranceCarrier, insuranceCoverageAmount, insuranceCurrency, insuranceExpiry
+  -- Staff capacity
+  subInvestigatorCount, coordinatorCount, regulatoryCoordinatorCount,
+  studyNurseCount, labTechCount, languagesSupported, gcpTrainingCurrencyRate
+  -- Network membership (for SMO sites)
+  partOfSiteNetwork → Organization (organizationName, organizationType)
+  -- Equipment summary (for infrastructure verification)
+  hostsEquipment[equipmentClass IN (FREEZER, CENTRIFUGE, ECG_MACHINE, MRI, ...)]
+RETURN AS JSON-LD with @context: top-clinical-trials</pre>
+
+<p>The projection contains zero per-Study data. A Sponsor portfolio team can score the Site for fit without entering a CTA, signing CDAs, or escalating engagement — the SFQ projection IS the qualification surface. Once the Site qualifies, a StudySite is created with the per-Study scope and engagement begins. Versioning the SFQ projection (capturing the exact attribute values at SFQ submission time) is a v0.3 enhancement; the projection runs on current Site state for v0.2.0.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="delegation"><span class="num">12.</span>Delegation matrix <span class="subnote">role · scope · timing</span></h2>
+
+<p>R3 Section 2.3.3 GCP-requires a Delegation of Authority Log: "the investigator should ensure a record is maintained of the persons and parties to whom the investigator has delegated trial-related activities." TOP encodes this as <span class="inline">StudySite.delegatesAuthorityTo → Person</span> with role/scope/temporal attributes carried on the relationship.</p>
+
+<table>
+  <thead><tr><th>Role</th><th>Typical scope</th><th>R3 grounding</th><th>Common scope restrictions</th></tr></thead>
+  <tbody>
+    <tr><td>PRINCIPAL_INVESTIGATOR</td><td>Full GCP responsibility</td><td>R3 2.1, 2.3.1</td><td>None (PI retains ultimate responsibility)</td></tr>
+    <tr><td>SUB_INVESTIGATOR</td><td>Medical decisions, AE assessment</td><td>R3 2.3.1, 2.3.2</td><td>Cannot sign 1572 (PI only); cannot delegate further</td></tr>
+    <tr><td>STUDY_COORDINATOR</td><td>Operational management, Visit scheduling, ICF administration</td><td>R3 2.3.1</td><td>No medical decisions; no IP dispensing without separate delegation</td></tr>
+    <tr><td>REGULATORY_COORDINATOR</td><td>IRB submissions, regulatory authority correspondences</td><td>R3 2.4</td><td>Limited to administrative regulatory activities</td></tr>
+    <tr><td>PHARMACIST</td><td>IP dispensing, accountability, storage, destruction</td><td>R3 2.10</td><td>Restricted to IP-related activities</td></tr>
+    <tr><td>STUDY_NURSE</td><td>Visit conduct, sample collection, vital signs, participant care</td><td>R3 2.7</td><td>Per nursing scope of practice</td></tr>
+    <tr><td>LAB_TECH</td><td>Sample processing, lab tests, shipping</td><td>R3 2.10 (samples)</td><td>Lab activities only</td></tr>
+    <tr><td>DATA_ENTRY</td><td>CRF entry from source documents</td><td>R3 4.2.1</td><td>Restricted to administrative data entry; cannot SDV</td></tr>
+    <tr><td>SOURCE_DATA_VERIFIER</td><td>SDV against source documents</td><td>R3 4.2.3</td><td>Restricted to verification; cannot enter or correct data</td></tr>
+  </tbody>
+</table>
+
+<p>Each <span class="inline">delegatesAuthorityTo</span> triple carries a role enum (one of the above), a validFrom/validUntil temporal pair, and an optional scope restriction (free-text or structured). When Person, PersonRole, or DelegationRecord lift to richer entities in v0.3, the role can move from a relationship attribute to a structured PersonRole entity with full audit trail.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="nlp"><span class="num">13.</span>NLP-to-NGSI-LD translation <span class="subnote">how operator language maps to graph predicates</span></h2>
+
+<table>
+  <thead><tr><th>Operator phrasing</th><th>Translated query shape</th><th>Discriminating predicate</th></tr></thead>
+  <tbody>
+    <tr><td>"Show me Site X's profile"</td><td>type=Site & siteId==X</td><td>Site identity</td></tr>
+    <tr><td>"Is Site X currently active on Study Y?"</td><td>type=StudySite & forSite==X & forStudy==Y & studySiteStatus=="ACTIVE"</td><td>studySiteStatus</td></tr>
+    <tr><td>"Who's the PI at Site X for Study Y?"</td><td>type=StudySite & forSite==X & forStudy==Y → hasPrincipalInvestigator</td><td>StudySite.hasPrincipalInvestigator</td></tr>
+    <tr><td>"Where is enrollment behind target?"</td><td>type=StudySite & studySiteStatus=="ACTIVE" & ratio of actualEnrollment/enrollmentTarget &lt; threshold</td><td>StudySite enrollment attrs</td></tr>
+    <tr><td>"Which sites have done oncology trials?"</td><td>type=Site & therapeuticAreasExperienced contains "ONCOLOGY"</td><td>Site.therapeuticAreasExperienced</td></tr>
+    <tr><td>"Sites in the Elevate Research network"</td><td>type=Site & partOfSiteNetwork=="urn:ngsi-ld:Organization:elevate-research"</td><td>Site.partOfSiteNetwork</td></tr>
+    <tr><td>"Where can we run a -80°C freezer trial?"</td><td>type=Site & freezerCapacity contains tempRange="-80C"</td><td>Site.freezerCapacity</td></tr>
+    <tr><td>"Sites that have used Veeva Vault"</td><td>type=Site & edcVendorExperience contains "Veeva"</td><td>Site.edcVendorExperience</td></tr>
+    <tr><td>"Active sites with HIGH oversight tier"</td><td>type=StudySite & studySiteStatus=="ACTIVE" & oversightTier=="HIGH"</td><td>StudySite.oversightTier</td></tr>
+    <tr><td>"Sites without a current PI"</td><td>type=StudySite & studySiteStatus=="ACTIVE" & NOT EXISTS hasPrincipalInvestigator (SHACL violation)</td><td>SHACL invariant 7</td></tr>
+    <tr><td>"Show me the Delegation Log for Site X on Study Y"</td><td>type=StudySite & forSite==X & forStudy==Y → delegatesAuthorityTo</td><td>StudySite.delegatesAuthorityTo</td></tr>
+    <tr><td>"Who's monitoring this site?"</td><td>type=MonitoringVisit (when lifts) & forStudySite==SS-X-Y; or traverse Sponsor.engages_inverse</td><td>MonitoringVisit (lift pending)</td></tr>
+    <tr><td>"What freezer is sample S in?"</td><td>type=Sample (when lifts) & sampleId==S → atStorageLocation → inEquipment</td><td>StorageLocation.inEquipment chain</td></tr>
+    <tr><td>"Site's calibration status on freezer F-12"</td><td>type=Equipment & equipmentId==F-12 → hasCredential & credentialType=="CALIBRATION_CERTIFICATE"</td><td>Equipment.hasCredential</td></tr>
+  </tbody>
+</table>
+
+<p>The pattern that earns its keep: operator questions about Site decompose to either Site (study-independent) or StudySite (per-Study) plus one or two attribute or relationship constraints. Site-level questions about feasibility/capability never need to traverse to per-Study data; per-Study questions never need to reach back into Site-level feasibility. The split is paying for itself in NLP tractability.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="shacl"><span class="num">14.</span>SHACL invariants <span class="subnote">what the validator catches · ten total · 4 Sponsor + 6 Site/StudySite/System/Credential</span></h2>
+
+<p>The SHACL shapes in <span class="inline">shapes/clinical-trials-shapes.ttl</span> are emitted from the source intermediate by <span class="inline">tools/build_shacl.py</span>. The full graph (Sponsor + Study + Site + 9 horizontals) emits 14 NodeShapes and 290 property shapes. Domain invariants are encoded as <span class="inline">sh:SPARQLConstraint</span> shapes (validated by pyshacl in <span class="inline">--advanced</span> mode).</p>
+
+<h3 class="subsection">Domain invariants (10 total)</h3>
+<table>
+  <thead><tr><th>#</th><th>Invariant</th><th>Severity</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Sponsor: isSponsorOfRecord=true should imply hasRegulatoryResponsibility=true (21 CFR 312.52 transfer-of-obligations exception permitted).</td><td><span class="inline">sh:Warning</span></td></tr>
+    <tr><td>2</td><td>Sponsor: every Study must have ≥1 Sponsor with isSponsorOfRecord=true.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>3</td><td>Sponsor: at most one Sponsor with isSponsorOfRecord=true per (Study × jurisdiction).</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>4</td><td>Sponsor: every Study must have ≥1 Sponsor with hasOperationalResponsibility=true.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>5</td><td>Site: siteType=DECENTRALIZED_HUB requires belongsToOrganization populated. A decentralized hub still needs a legal Organization to anchor regulatory and contractual responsibility.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>6</td><td>Site: partOfSiteNetwork target Organization must have organizationType ∈ {SITE_NETWORK, SMO}. Catches modeling errors where partOfSiteNetwork points at a SPONSOR or VENDOR.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>7</td><td>StudySite: studySiteStatus=ACTIVE requires hasPrincipalInvestigator. R3 Section 2.1 GCP-required.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>8</td><td>StudySite: studySiteStatus=ACTIVE requires ≥1 delegatesAuthorityTo entry. R3 Section 2.3.3 GCP-requires the Delegation of Authority Log.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>9</td><td>System: sponsor-critical (EDC/CTMS/IRT/SAFETY_DB) cannot have SITE-type Organization as oversightHeldBy under R3 Section 3.9. <strong>IIT exception</strong>: encoded as <span class="inline">FILTER NOT EXISTS</span> over the Site=Sponsor case (same Org plays both managesSite and playsSponsorRole on a Study using this System).</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>10</td><td>Credential: exactly one of forPerson, forSite, forEquipment must be populated. Polymorphic-target discipline; no multi-target bindings.</td><td><span class="inline">sh:Violation</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Invariants pending</h3>
+<table>
+  <thead><tr><th>Invariant</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td>StudySite: hasPrincipalInvestigator must be drawn from forSite.hasStaff. Requires cross-entity traversal in SPARQL.</td><td>v0.3</td></tr>
+    <tr><td>StudySite: delegatesAuthorityTo Persons must each be drawn from forSite.hasStaff. Requires cross-entity traversal.</td><td>v0.3</td></tr>
+    <tr><td>StudySite: irbApprovalStatus should be APPROVED before studySiteStatus moves to ACTIVE.</td><td>v0.3 (lifecycle guard)</td></tr>
+    <tr><td>StudySite: deactivationDate must be populated when studySiteStatus=CLOSED.</td><td>v0.3</td></tr>
+    <tr><td>Site: parentSite must not form a cycle (transitive). Hard to express in SPARQL.</td><td>Optional, low priority</td></tr>
+    <tr><td>Sponsor-engaged service provider: when Sponsor engages a vendor (via CRO or Service relationships) AND the StudySite uses that vendor, a Site-side documented agreement should exist (R3 2.3.4). Cross-entity invariant; SPARQL complex.</td><td>v0.3</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="crosswalks"><span class="num">15.</span>Cross-walks <span class="subnote">how Site and StudySite project into other vocabularies</span></h2>
+
+<table>
+  <thead><tr><th>Standard</th><th>Site</th><th>StudySite</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>FHIR R5</td><td><span class="inline">fhir:Organization</span></td><td><span class="inline">fhir:ResearchStudy.site</span></td><td>FHIR collapses Site into Organization with no separate per-Study site entity. Projection: TOP Site → FHIR Organization (with type code); TOP StudySite → FHIR ResearchStudy.site (a CodeableReference).</td></tr>
+    <tr><td>USDM v3</td><td><span class="inline">usdm:Organization (with type=Code(Site))</span></td><td><span class="inline">usdm:StudySite</span></td><td>USDM has no operational-Site entity; StudySite is minimal (id+name+description+country). TOP carries substantially more on both Site and StudySite. Verified against cdisc-org/usdm <span class="inline">study_site.py</span> + <span class="inline">organization.py</span>.</td></tr>
+    <tr><td>CDISC CDASH v2.1</td><td><span class="inline">cdash:DM.SITEID</span></td><td>(traversed via Participant)</td><td>CDASH is participant/visit-form-level; Site appears as a SITEID variable on demographics CRF.</td></tr>
+    <tr><td>ICH E6(R3)</td><td>Annex 1 §2 (Investigator/Institution)</td><td>Annex 1 §2.3 (per-Study delegation), Appendix C (Essential Records, INVESTIGATOR_INSTITUTION-owned)</td><td>R3 doesn't have a Site entity per se; the Investigator/Institution is the GCP-responsible party. TOP's Site/StudySite split honors R3's responsibility allocation cleanly.</td></tr>
+    <tr><td>ICH/GCP Investigator Site File</td><td>(institutional records: §1.1, §11.2, §17.2, §18.2)</td><td>(per-Study records: §1.2, §3.3, §4.1, §11.1, §12, §13, §14, §16, §19, §22)</td><td>ISF section taxonomy maps onto TOP via Document.isfSection (legacy operational view) and Document.essentialRecordPurpose (R3 canonical). Full alignment table in §6.</td></tr>
+    <tr><td>W3C PROV</td><td><span class="inline">prov:Agent / prov:Location</span></td><td><span class="inline">prov:Activity</span> with role bindings</td><td>PROV models Site as either a Location-class Agent or as Organization-class Agent. StudySite participation is a PROV Activity with the Investigator as prov:Agent.</td></tr>
+    <tr><td>NCIt</td><td><span class="inline">NCIT:C16696</span> (Clinical Site)</td><td><span class="inline">NCIT:C42850</span> (Clinical Trial Site)</td><td>NCIt distinguishes the institutional clinical site from the per-trial role; matches TOP's Site/StudySite split semantically.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="open"><span class="num">16.</span>Open issues <span class="subnote">tracked, not hidden</span></h2>
+
+<p>Items called out for resolution before v0.1 of the clinical-research reference graph publishes. Each is tracked; none block the architectural decisions in §4.</p>
+
+<table>
+  <thead><tr><th>Issue</th><th>Status</th><th>Owner</th></tr></thead>
+  <tbody>
+    <tr><td>OOUX Visit→Site direct edge correction. OOUX has Visit pointing at <span class="inline">1 Site</span>; should be <span class="inline">1 StudySite</span>. Surfaces when Visit lifts.</td><td>Tracked</td><td>Visit lift</td></tr>
+    <tr><td>OOUX Participant→Site direct edge correction. Same pattern as Visit.</td><td>Tracked</td><td>Participant lift</td></tr>
+    <tr><td>Visit template-vs-occurrence split. OOUX Visit conflates the protocol-defined visit template (SOA Item) with the participant-realized visit occurrence. Either two entities or a discriminator on Visit is required.</td><td>Tracked</td><td>Visit lift</td></tr>
+    <tr><td>OversightBody horizontal not yet in TOP source. StudySite.hasIRB target is flagged-missing; SHACL minCount relaxes to 0 until lift.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>RegulatoryAuthority horizontal not yet in TOP source. StudySite.submitsTo, Sponsor.regulatoryAuthorityScope target flagged-missing.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>Contract horizontal not yet in TOP source. StudySite.hasContract flagged-missing.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>MonitoringVisit horizontal not yet in TOP source. StudySite.hasMonitoringVisit flagged-missing.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>Audit horizontal not yet in TOP source. StudySite.hasAudit flagged-missing.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>TrainingRecord horizontal not yet in TOP source. Person.hasTrainingRecord flagged-missing.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>Enrollment horizontal not yet in TOP source.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>StudyStartupPackage horizontal not yet in TOP source.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>Document.essentialRecordPurpose enum is currently a 7-value placeholder. Full R3 Appendix C purpose taxonomy requires PDF transcription.</td><td>Pending</td><td>Outreach</td></tr>
+    <tr><td>SiteFeasibilityProjection versioning. Today the projection runs on current Site state; SFQ-time snapshots (versioned feasibility profiles tied to Sponsor SFQ submissions) is a v0.3 enhancement.</td><td>v0.3</td><td>Bo</td></tr>
+    <tr><td>Site Performance Metric sub-object. Parked in v0.2.0 because metric definitions are role-specific and belong with reference-pattern projections (v0.3 reference-architecture roadmap item).</td><td>Parked</td><td>Bo</td></tr>
+    <tr><td>System horizontal earns a dedicated v0.3 spec doc. R3 Section 4.3 alone gives System ~10 attributes; a dedicated spec is warranted as the System surface area accumulates.</td><td>v0.3</td><td>Working group</td></tr>
+    <tr><td>SHACL pending invariants (cross-entity Person-must-be-from-Site.hasStaff; lifecycle pre-ACTIVE IRB-approval check; Sponsor-engaged-vendor → Site-side-agreement). Listed in §14.</td><td>v0.3</td><td>Translator scaffold v3</td></tr>
+    <tr><td>USDM <span class="inline">parentOrganization</span> equivalent verification with David Iverson Hurst (CDISC USDM working group).</td><td>Outreach pending</td><td>Bo</td></tr>
+    <tr><td>CDISC ISF Provisional v1 PDF re-validation. Section 6 alignment table is grounded in a Singapore HSA-flavored TOC; need to confirm against the actual CDISC Provisional document.</td><td>Outreach pending</td><td>Bo</td></tr>
+    <tr><td>Person/PersonRole structure: PersonRole as a separate sub-object vs. role enum on relationships. v0.2.0 keeps role as a relationship attribute; v0.3 may lift PersonRole if the role taxonomy outgrows the enum.</td><td>v0.3</td><td>Working group</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  v1 spec · 2026-05-08 · backed by source/top-strawman.json (v0.2.0-strawman) + contexts/clinical-trials-context.jsonld + shapes/clinical-trials-shapes.ttl + examples/site-* worked examples in reference-graphs/clinical-trials/examples/ · pyshacl validation: pending worked-example authoring · Site is the operational center of the clinical-trials reference graph; this combined Site+StudySite spec extends the Sponsor template with architectural anchor, R3/ISF alignment sections, lifecycle state machines, persona matrix, SFQ projection, and delegation matrix · 49+17 attributes across Site and StudySite, 10+18 relationships, 6 new SHACL invariants
+</div>
+
+</div>
+</body>
+</html>
