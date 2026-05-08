@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Site + StudySite / verification view / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 22px 26px 32px;
+    line-height: 1.55;
+    font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .verify-panel {
+    background: #fffbe8;
+    border: 1px solid #e6d97a;
+    padding: 12px 16px;
+    border-radius: 3px;
+    margin-bottom: 18px;
+  }
+  .verify-panel h2 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6a5d10;
+    margin-bottom: 8px;
+  }
+  .verify-panel ol { padding-left: 18px; line-height: 1.55; font-size: 12.5px; }
+  .verify-panel li { margin-bottom: 8px; }
+  .verify-panel li strong { color: #111; }
+  .verify-panel .answer-line {
+    color: #888;
+    font-style: italic;
+    font-size: 11.5px;
+  }
+  .pending {
+    color: #b03a2e;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10.5px;
+  }
+  p { margin-bottom: 10px; }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Site + StudySite / verification view / v1</div>
+  <div class="meta">2026-05-08 · v0.2.0-strawman · verification questions pending Bo's review · combined Site + StudySite spec, 49+17 attributes, 10+18 relationships, 10 SHACL invariants</div>
+</header>
+
+<div class="verify-panel">
+  <h2>Verification questions for Bo (pending)</h2>
+  <p>The Site + StudySite spec replicates and extends the Sponsor template. Bo's eight Sponsor verification questions resolved cleanly in v0.1.4. Site is the operational center of the trials commons — larger surface area, more architectural decisions, more open questions. Estimate 12–15 verification questions for Site/StudySite; 14 listed below for review. <span class="pending">Pending Bo's review.</span></p>
+  <ol>
+    <li><strong>Q1 (Site/StudySite split).</strong> Is Site as study-independent operational+feasibility entity + StudySite as per-Study pivot the right shape? USDM has Organization+StudySite (no middle Site); TOP adds Site as a UX-first elevation. Verified against cdisc-org/usdm; Sponsor precedent supports the divergence. Architectural decision §4.1. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q2 (direct-vs-traversed).</strong> Is the discipline of "Site has very few direct edges; everything operational reaches via StudySite" the right call? Trade-off: query authors traverse Site → StudySite → … rather than direct edges. Architectural decision §4.2. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q3 (System three-axis: oversight as relationship).</strong> Is the operatedBy / usedBy / oversightHeldBy pattern (with R3 Section 3.9 grounding) the right schema-level encoding for what was previously framed as a "visibility" concern? Original visibility-as-projection framing superseded; planning note documents the supersession. Architectural decision §4.3. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q4 (IIT pattern: no special relationship).</strong> Is the IIT case (same Organization plays both Site and Sponsor roles via existing relationships, no new schema predicate) the right pattern? SHACL invariant 9 carries the exception. Worked example site-iit-mskcc.ttl validates. Architectural decision §4.4. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q5 (Equipment vs System).</strong> Is the Equipment + System + Log triad (freezer = Equipment; IoT temperature monitor = System; temperature readings = Log) the right resolution to the modern-Equipment-with-IoT-monitoring case? Worked example site-mskcc-onco423.ttl exercises it. Architectural decision §4.5. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q6 (siteStatus enum coverage).</strong> Is PLANNED · IN_QUALIFICATION · ACTIVE · ON_HOLD · CLOSED the right StudySite lifecycle? Broader than OOUX's PLANNED/ACTIVE/CLOSED but matching operational reality. Lifecycle diagram §7. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q7 (Person modeling).</strong> Is Person as a horizontal (USDM-aligned, with USDM AssignedPerson + StudyRole as the projection target) the right shape for v0.2.0? PersonRole as a separate sub-object may lift in v0.3 if the role taxonomy outgrows the enum. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q8 (delegatesAuthorityTo cardinality).</strong> Is the StudySite.delegatesAuthorityTo (1..N) pattern correct, with PI-must-be-on-the-list and SHACL invariants 7+8 enforcing ACTIVE-needs-PI and ACTIVE-needs-delegation? Planning note flagged the temporal handoff case (PI changes mid-study) — handled via NGSI-LD validFrom/validUntil on the relationship. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q9 (SFQ feasibility lens scope).</strong> Are the ~30 SFQ-derived attributes lifted onto Site (therapeutic area experience, infrastructure, regulatory defaults, insurance, staff capacity) the right scope for v0.2.0? Site Performance Metric parked. SFQ snapshot versioning deferred to v0.3. SFQ projection §11. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q10 (Document expansion).</strong> Is the Document horizontal expansion to carry both R3 Appendix C purpose taxonomy (essentialRecordPurpose + responsibleParty) AND legacy ISF section taxonomy (isfSection + documentType) the right two-axis shape? R3 canonical, ISF legacy. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q11 (Credential polymorphic targets).</strong> Is forPerson / forSite / forEquipment with SHACL invariant 10 (exactly one target) the right modeling for the polymorphic Credential? Three target classes; mutually exclusive. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q12 (Log + CommunicationLog merge).</strong> Was folding CommunicationLog into Log via logType=COMMUNICATION the right call, or should CommunicationLog be its own horizontal? logType discriminator currently has 19 values covering subject logs, IP logs, monitoring, sample handling, SAE tracking, communication, training, audit trail, delegation, temperature deviation. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q13 (Visit/Participant→Site OOUX correction).</strong> The OOUX has Visit and Participant pointing directly at Site; should be StudySite. Tracked as corrections for when those top-levels lift. Is the deferred resolution acceptable, or should the OOUX be amended now? <span class="answer-line">Pending.</span></li>
+    <li><strong>Q14 (Ten persona view scope).</strong> Are the ten personas in §9 (Site Coordinator, PI, Sub-I, Pharmacist, Lab Tech, Sponsor CRA, Sponsor PM, SMO Operations Lead, Regulator, Auditor) the right set for the persona-to-Site-view matrix, or is anything missing/over-specified? Compare Sponsor spec's 6 personas. <span class="answer-line">Pending.</span></li>
+  </ol>
+</div>
+
+<h2 class="section">Pre-verification artifacts</h2>
+<p>Site + StudySite spec landed on 2026-05-08 in <span class="inline">site-spec.html</span> with full architectural narrative, R3 alignment, ISF alignment, lifecycle diagrams, persona matrix, SFQ projection, delegation matrix, and 19 tracked open issues. SHACL: 14 NodeShapes, 290 property shapes, 10 domain invariants. Worked examples: site-mskcc-onco423.ttl (traditional AMC, exercises the System three-axis pattern), site-elevate-network.ttl (SMO with three sites, exercises invariant 6), site-iit-mskcc.ttl (Site=Sponsor IIT pattern, exercises invariant 9 IIT exception). All four worked examples (the three new + the existing Pfizer-IQVIA) conform under pyshacl 0.31.0 advanced mode.</p>
+
+<p>Planning note (<span class="inline">site-planning.md</span>) carries the architectural-decisions trace from "visibility-as-projection" to "oversight-as-relationship" once R3 grounded the framing. Bo's correction of the operational hierarchy (Site → StudySite → Study → Protocol → SOA → Visit → Activity, not Site → Visit) and Bo's Site-as-most-important-object framing both shaped the v0.2.0 discipline.</p>
+
+<h2 class="section">Tracked corrections (OOUX-level, not blocking Site/StudySite)</h2>
+<p>Two OOUX-level errors surface from the corrected operational hierarchy:</p>
+<ol style="margin-left: 20px;">
+  <li><strong>OOUX Visit→Site direct edge.</strong> OOUX has Visit pointing at <span class="inline">1 Site</span>; should be <span class="inline">1 StudySite</span>. Surfaces when Visit lifts.</li>
+  <li><strong>OOUX Participant→Site direct edge.</strong> Same pattern. Surfaces when Participant lifts.</li>
+</ol>
+<p>Tracked in site-spec.html §16; not blocking v0.2.0.</p>
+
+<div class="footer">
+  v1 verification view · 2026-05-08 · 14 verification questions pending Bo's review · all SHACL invariants encoded and worked examples conforming · combined Site + StudySite spec extends Sponsor template with 5 site-specific sections (architectural anchor, R3/ISF alignment, lifecycle state machines, persona matrix, SFQ projection, delegation matrix)
+</div>
+
+</div>
+</body>
+</html>

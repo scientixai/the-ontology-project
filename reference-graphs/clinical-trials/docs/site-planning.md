@@ -1,7 +1,19 @@
 # Site spec planning note (working draft)
 
-> Working document. Edited as Site lifts from partial scaffold to full spec discipline. Folds into `site-spec.html` once the scope decisions below are sealed.
+> Working document. Edited as Site lifts from partial scaffold to full spec discipline. **v0.2.0 lift complete (2026-05-08)** — site-spec.html drafted, three worked examples authored and conforming, source intermediate updated, SHACL invariants encoded. This note is preserved as the architectural-decision history; the canonical artifact is now `site-spec.html`.
 > Last touched 2026-05-08.
+
+## v0.2.0 status — what shipped
+
+**Source intermediate** (`top-strawman.json`) bumped from v0.1.4 to v0.2.0-strawman. Six new horizontals lifted (StudySite, Person, System, Log, Equipment, StorageLocation, Credential — plus Document expansion). Site (top-level) expanded from 3 attrs / 5 rels to 49 attrs / 10 rels with full SFQ feasibility coverage. Translator scaffold: 14 NodeShapes, 290 property shapes, 10 domain invariants. All three new worked examples plus the existing Sponsor example conform under pyshacl 0.31.0 advanced mode.
+
+**Spec artifacts**: `site-spec.html` (977 lines, combined Site + StudySite spec), `site-verification-history.html` (14 verification questions pending Bo's review), three worked examples (`site-mskcc-onco423.ttl` traditional AMC, `site-elevate-network.ttl` SMO network, `site-iit-mskcc.ttl` IIT pattern).
+
+**Architectural decisions sealed**: Site is study-independent operational + feasibility entity; StudySite is per-Study pivot. System three-axis pattern grounded in R3 Section 3.9 / 2.12 (oversight-as-relationship, schema-level fact). IIT pattern handled via existing relationships (no special schema predicate). Equipment + System + Log triad resolves the modern-Equipment-with-IoT-monitoring case. Direct-vs-traversed: Site has few direct edges; StudySite is the operational pivot.
+
+**Tracked corrections** (not blocking; surface when those top-levels lift): OOUX Visit→Site and OOUX Participant→Site direct edges should point at StudySite. Visit needs a template-vs-occurrence split.
+
+The remainder of this document preserves the planning-phase reasoning (lens framing, OOUX inverse view, ICH E6(R3) alignment, ISF alignment table, IIT pattern derivation, Site/StudySite split rationale) as an architectural-decision-record for future contributors.
 
 ## Purpose
 
