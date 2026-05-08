@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="top-logo.svg" alt="The Ontology Project" width="420">
+</p>
+
 # The Ontology Project
 
 > An open commons of reference knowledge graphs, governed by domain working groups, hosted under Apache 2.0.
@@ -74,4 +78,12 @@ The Ontology Project is convened by Bo Lora at Scientix.ai Inc.
 - Project: [top.scientix.ai](https://top.scientix.ai)
 - Manifesto: [MANIFESTO.html](MANIFESTO.html)
 - Roadmap: [ROADMAP.md](ROADMAP.md)
-- Convener: bo.lora@scientix.ai
+- Convener: [bolora.me](https://bolora.me)
+
+---
+
+<p align="center">
+  <a href="https://scientix.ai">
+    <img src="sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai" width="240">
+  </a>
+</p>
