@@ -37,6 +37,35 @@ This means TOP Participant's primary cross-walk targets are not USDM but the ope
 
 **This validates the architectural decisions stronger than I originally noted.** The sub-object pattern for lifecycle events is the SDTM DS domain pattern. The lifecycle enum should align with SDTM DSDECOD controlled terminology and FHIR ResearchSubjectStatus value set. Demographics fields should map directly to SDTM DM columns. Below, every decision now carries explicit cross-walk verification.
 
+## USDM/M11 ingest boundary (full-automation posture)
+
+A foundational TOP requirement: the design layer of every Study must be **derivable from a USDM v3 / ICH M11 compliant protocol document via automated ingestion**. No human in the loop for design-side entity creation. The pipeline shape is:
+
+```
+USDM v3 / M11 protocol (JSON)  ──[ingester]──▶  TOP NGSI-LD entities (Study, Protocol, Arm,
+                                                  ScheduleOfAssessments, Endpoint,
+                                                  Inclusion/Exclusion criteria, Visit, Activity)
+```
+
+**Participant sits on the operational side of that boundary.** USDM v3 has no per-subject entity (verified — see "Standards alignment posture" above), so:
+
+- TOP `Participant` entities are NOT created by USDM ingest. They are created at runtime by operational systems (eConsent, EDC, IRT, CTMS) when real humans enroll.
+- TOP `Participant.forStudy → Study`, `Participant.assignedToArm → Arm`, `Participant.hasEnrollmentRecord.protocolVersionAtEnrollment → StudyVersion` MUST resolve to entities that the USDM ingester previously created. The ingester's URI minting policy and the operational system's Participant-creation policy MUST share an identifier scheme.
+- Provisional URI policy (to be sealed alongside the ingester):
+  - Study: `urn:top:study:{usdm_study_id}`
+  - StudyVersion: `urn:top:study:{usdm_study_id}/version:{usdm_version_id}`
+  - Arm: `urn:top:study:{usdm_study_id}/arm:{usdm_arm_id}`
+  - EligibilityCriterion: `urn:top:study:{usdm_study_id}/eligibility:{usdm_criterion_id}`
+  - SOA / Visit / Activity: `urn:top:study:{usdm_study_id}/soa:{usdm_timeline_id}/visit:{usdm_encounter_id}/activity:{usdm_activity_id}`
+
+  USDM `id` fields are stable within a document version; TOP URIs derive deterministically. Re-ingesting an amended protocol produces stable URIs for unchanged entities and new URIs for added entities.
+
+- The Participant spec carries the canonical identifier-resolution example: a Participant created by an EDC at enrollment time references `urn:top:study:{usdm_study_id}/arm:{usdm_arm_id}` — the same URI the ingester wrote — and the SHACL invariant `Participant.assignedToArm.forStudy == Participant.forStudy` resolves cleanly because both ingester and EDC follow the URI policy.
+
+**System pattern this codifies.** USDM ingest is the source of design truth; operational systems are the source of runtime truth; both meet at TOP through a shared identifier scheme. Participant is the canonical "operational-side, design-referencing" entity.
+
+(Open question added below: is the `urn:top:...` URI policy correct, or should TOP defer to USDM's own URN scheme?)
+
 ## Architectural decisions to seal
 
 ### Decision 1 — Sub-objects for lifecycle events
@@ -291,6 +320,7 @@ A new dedicated Participant-focused worked example may not be necessary if the e
 4. **Confirm Decision 6**: 11-value lifecycle enum, or trim to a smaller set? Operators legitimately distinguish all 11 in practice; trade-off is more SHACL state-machine invariants.
 5. **Demographics field set**: is the recommended set (firstName, middleName, lastName, dateOfBirth, sex, race, ethnicity, primaryLanguage, country) the right scope? Anything to add (height/weight as per-Participant attrs vs visit-time observations)? Anything to drop?
 6. **Screen Fail as separate top-level vs sub-object**: OOUX has "Screen Fail" as a top-level object (one of the listed objects). TOP has been folding lifecycle events into sub-objects of the entity they describe. Recommend Screen Fail stays as a sub-object (ScreeningRecord with outcome=SCREEN_FAILED) rather than a separate top-level. The locked-8-top-levels boundary supports this.
+7. **URI policy for USDM-ingest-derived entities**: provisional `urn:top:study:{usdm_study_id}/arm:{usdm_arm_id}` etc. — does that work, or should the ingester emit URIs in USDM's own URN format (e.g., what USDM uses internally) and TOP just adopt them? The Participant spec needs to commit to the policy because runtime systems referencing Arms/Studies need to mint matching URIs. This is the upstream of a much bigger ingester-tool conversation; we can seal a default and revisit during the ingester build.
 
 ## Estimated lift scope
 
