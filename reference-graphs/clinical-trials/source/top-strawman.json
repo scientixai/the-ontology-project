@@ -198,10 +198,10 @@
         { "name": "parentSite", "target": "Site", "cardinality": "0..1", "doc": "Self-reference for satellite-of-main-site structure. A satellite clinic Site references the main hospital Site as its parent. Use when the relationship is operationally a parent-child pair, not just network membership." },
         { "name": "hasStaff", "target": "Person", "cardinality": "0..N", "doc": "Persons employed/affiliated at this Site, study-independent. The roster of people who CAN be delegated to per-Study; actual delegation per-Study lives on StudySite.delegatesAuthorityTo." },
         { "name": "headOfClinicalResearch", "target": "Person", "cardinality": "0..1", "doc": "Administrative/institutional contact for the Site's clinical-research operations. NOT the per-Study Principal Investigator (which lives on StudySite.hasPrincipalInvestigator)." },
-        { "name": "hostsEquipment", "target": "Equipment", "cardinality": "0..N", "doc": "Site-bound equipment. Equipment.equipmentBinding=SITE_BOUND points back here.", "_targetMissing": "Equipment is a horizontal in OOUX v0.2 (#73) but not yet in TOP source." },
-        { "name": "hasStorageLocation", "target": "StorageLocation", "cardinality": "0..N", "doc": "Site-bound storage locations (freezers, cabinets, secure storerooms).", "_targetMissing": "StorageLocation is a flagged-missing horizontal in OOUX v0.2." },
+        { "name": "hostsEquipment", "target": "Equipment", "cardinality": "0..N", "doc": "Site-bound equipment. Equipment.equipmentBinding=SITE_BOUND points back here." },
+        { "name": "hasStorageLocation", "target": "StorageLocation", "cardinality": "0..N", "doc": "Site-bound storage locations (freezer slots, refrigerator shelves, secure cabinet drawers, ambient pharmacy shelves, offsite vaults). The Equipment/StorageLocation split: a freezer is Equipment that provides multiple StorageLocations." },
         { "name": "hasInstitutionalDocument", "target": "Document", "cardinality": "0..N", "doc": "Site-level essential records that are study-independent: institutional licenses, CLIA certifications, lab accreditations, GCP training records (Site-level), institutional SOPs. Per-Study essential records live on StudySite.hasEssentialRecord." },
-        { "name": "hasInstitutionalCredential", "target": "Credential", "cardinality": "0..N", "doc": "Site-level credentials (CLIA, JCAHO, ISO 9001, lab accreditations, etc.).", "_targetMissing": "Credential is a flagged-missing horizontal in OOUX v0.2." },
+        { "name": "hasInstitutionalCredential", "target": "Credential", "cardinality": "0..N", "doc": "Site-level credentials (CLIA, JCAHO, ISO 9001, lab accreditations, etc.)." },
         { "name": "usesSystem", "target": "System", "cardinality": "0..N", "doc": "Site-operational Systems (the Site's EMR, the Site's source-document repository, the Site's local pharmacy management system) that exist regardless of any specific Study. Per-Study System usage (Sponsor-provisioned EDC, per-Study IRT, etc.) lives on StudySite.usesSystem." }
       ],
       "ctas": [
@@ -351,7 +351,7 @@
       ],
       "relationships": [
         { "name": "employedBy", "target": "Organization", "cardinality": "0..1", "doc": "Primary employing Organization. USDM AssignedPerson.organizationId. A Person can have multiple StudySite/Sponsor relationships independent of where they're employed." },
-        { "name": "hasCredential", "target": "Credential", "cardinality": "0..N", "doc": "Credentials this Person holds (medical license, specialty board certifications, GCP certificate, etc.).", "_targetMissing": "Credential is a flagged-missing horizontal." },
+        { "name": "hasCredential", "target": "Credential", "cardinality": "0..N", "doc": "Credentials this Person holds (medical license, specialty board certifications, GCP certificate, etc.)." },
         { "name": "hasTrainingRecord", "target": "TrainingRecord", "cardinality": "0..N", "doc": "Training records for this Person (study-specific GCP, study-specific protocol training, etc.).", "_targetMissing": "TrainingRecord is in OOUX v0.2 (#77) but not yet in TOP source." }
       ]
     },
@@ -414,7 +414,102 @@
         { "name": "forStudy", "target": "Study", "cardinality": "0..1", "doc": "The Study this log belongs to, when the log is Sponsor-side and not Site-scoped." },
         { "name": "forSystem", "target": "System", "cardinality": "0..1", "doc": "The System this log records (e.g., audit-trail logs are System-scoped under R3 Section 4.2.2)." },
         { "name": "owner", "target": "Person", "cardinality": "0..1", "doc": "The Person responsible for maintaining this log." },
-        { "name": "correspondent", "target": "Organization", "cardinality": "0..N", "doc": "For logType=COMMUNICATION: the parties this correspondence log captures exchanges with (Sponsor, IRB, RegulatoryAuthority, central lab, vendor). 0..N because some correspondence logs aggregate across multiple parties." }
+        { "name": "correspondent", "target": "Organization", "cardinality": "0..N", "doc": "For logType=COMMUNICATION: the parties this correspondence log captures exchanges with (Sponsor, IRB, RegulatoryAuthority, central lab, vendor). 0..N because some correspondence logs aggregate across multiple parties." },
+        { "name": "forEquipment", "target": "Equipment", "cardinality": "0..1", "doc": "The Equipment this log is about (e.g., a temperature log for freezer F-12). Distinct from forSystem which captures the monitoring System; logs about Equipment with IoT monitoring will populate both forEquipment and forSystem." }
+      ]
+    },
+    {
+      "id": "Equipment",
+      "role": "physical device, instrument, or apparatus used in trial conduct",
+      "description": "Equipment represents physical devices used in clinical-trial conduct: refrigerators, freezers, centrifuges, scales, ECG machines, ultrasound, blood pressure devices, glucometers, pulse oximeters, etc. Equipment is distinct from System (computerised systems): a freezer with IoT temperature monitoring is Equipment + a System (the monitoring platform), linked via Equipment.monitoredBySystem. Under R3, Equipment carries qualification, calibration, maintenance, and training discipline; computerised-systems aspects (validation, audit trails, access controls per R3 Section 4.3) live on the linked System.",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX Equipment object. equipmentBinding enum locked from OOUX hierarchy boundary decision (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Added equipmentClass enum to discriminate freezer vs centrifuge vs ECG vs participant-loaned wearable, etc. Added monitoredBySystem to capture the Equipment+System interaction for IoT-monitored Equipment (the freezer-with-cloud-temp-monitor pattern, ISF section 14.5). Equipment is the physical asset (calibration, maintenance, qualification); System is the computerised layer (R3 Section 4.3 obligations); Log captures the temporal trail (R3 Section 4.2.2 audit trail).",
+      "crosswalks": {
+        "fhir": "fhir:Device"
+      },
+      "attributes": [
+        { "name": "equipmentId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "equipmentName", "type": "xsd:string", "doc": "Display name (e.g., 'Freezer F-12 Pharmacy', 'Eppendorf 5810R Centrifuge')." },
+        { "name": "equipmentClass", "type": "xsd:string", "enum": ["FREEZER", "REFRIGERATOR", "CENTRIFUGE", "SCALE", "ECG_MACHINE", "ULTRASOUND", "BP_DEVICE", "THERMOMETER", "INCUBATOR", "AUTOCLAVE", "MICROSCOPE", "PIPETTE", "PH_METER", "SPIROMETER", "GLUCOMETER", "PULSE_OXIMETER", "WEARABLE", "INFUSION_PUMP", "COMPUTER", "PRINTER", "OTHER"], "doc": "Equipment class taxonomy. Covers most clinical-trial Equipment classes including participant-loaned wearables." },
+        { "name": "equipmentBinding", "type": "xsd:string", "enum": ["SITE_BOUND", "VENDOR_OWNED", "PARTICIPANT_LOANED"], "doc": "OOUX-locked binding pattern: SITE_BOUND for institution-owned equipment at a Site; VENDOR_OWNED for sponsor- or vendor-supplied equipment used at a Site; PARTICIPANT_LOANED for equipment loaned to a participant (wearables, BP cuff, glucometer)." },
+        { "name": "manufacturer", "type": "xsd:string", "optional": true },
+        { "name": "model", "type": "xsd:string", "optional": true },
+        { "name": "serialNumber", "type": "xsd:string", "optional": true },
+        { "name": "purchaseDate", "type": "xsd:date", "optional": true },
+        { "name": "installationDate", "type": "xsd:date", "optional": true },
+        { "name": "lastCalibrationDate", "type": "xsd:date", "optional": true },
+        { "name": "nextCalibrationDueDate", "type": "xsd:date", "optional": true },
+        { "name": "calibrationFrequency", "type": "xsd:string", "optional": true, "enum": ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL", "BIANNUAL", "ON_USE", "NOT_REQUIRED"] },
+        { "name": "lastMaintenanceDate", "type": "xsd:date", "optional": true },
+        { "name": "maintenanceSchedule", "type": "xsd:string", "optional": true, "enum": ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL", "ON_DEMAND", "NOT_REQUIRED"] },
+        { "name": "status", "type": "xsd:string", "enum": ["OPERATIONAL", "UNDER_MAINTENANCE", "OUT_OF_SERVICE", "RETIRED", "QUARANTINED"], "doc": "Lifecycle state." },
+        { "name": "locationDescription", "type": "xsd:string", "optional": true, "doc": "Free-text location (e.g., 'Pharmacy Room 3, second shelf'). For structured location, use atStorageLocation relationship via the StorageLocation horizontal." },
+        { "name": "temperatureRange", "type": "xsd:object", "optional": true, "doc": "For temperature-controlled Equipment: {minTempC, maxTempC, units}. Distinct from monitored temperature readings, which live in Log entries." }
+      ],
+      "relationships": [
+        { "name": "atSite", "target": "Site", "cardinality": "0..1", "doc": "The Site where this Equipment is located. Inverse of Site.hostsEquipment. 0..1 because VENDOR_OWNED equipment may move between sites; PARTICIPANT_LOANED equipment is at a Participant." },
+        { "name": "atStudySite", "target": "StudySite", "cardinality": "0..N", "doc": "The StudySites this Equipment is dedicated to. Empty for Site-shared Equipment (a general-purpose centrifuge); populated for per-Study dedicated Equipment (a study-specific freezer)." },
+        { "name": "vendor", "target": "Organization", "cardinality": "0..1", "doc": "The Organization that manufactured or supplies this Equipment. Organization with organizationType=VENDOR." },
+        { "name": "monitoredBySystem", "target": "System", "cardinality": "0..N", "doc": "Computerised System(s) that monitor or control this Equipment. A pharmacy-grade freezer with cloud-based temperature logging has monitoredBySystem pointing to the IoT temperature monitor System. The Equipment-System split keeps R3 Section 4.3 obligations on the System and Equipment-qualification obligations on the Equipment." },
+        { "name": "responsiblePerson", "target": "Person", "cardinality": "0..1", "doc": "The Person responsible for maintaining/operating this Equipment." },
+        { "name": "hasCredential", "target": "Credential", "cardinality": "0..N", "doc": "Equipment-level credentials: calibration certificates, validation certificates, vendor certifications." },
+        { "name": "hasUserManual", "target": "Document", "cardinality": "0..1", "doc": "User manual document." }
+      ]
+    },
+    {
+      "id": "StorageLocation",
+      "role": "addressable storage point at a Site",
+      "description": "StorageLocation represents an addressable storage point: a slot in a freezer rack, a shelf in a refrigerator, a position in a sample matrix, a drawer in a secure cabinet, an offsite vault location. StorageLocation is distinct from Equipment: an Equipment freezer provides multiple StorageLocations (its slots/shelves/racks); a secure cabinet (Equipment) provides drawer StorageLocations. Some StorageLocations are not inside Equipment (an ambient-temperature shelf in a controlled-access pharmacy room).",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX-flagged sub-object 'Storage Location (site-bound)' under the Site OOUX entry. Modeled as a horizontal because it's also referenced from Sample and InvestigationalProduct holdings; sub-object-under-Site would be too narrow. The Equipment/StorageLocation split lets a freezer (Equipment) provide many slots (StorageLocations) without conflating the two.",
+      "crosswalks": {
+        "fhir": "fhir:Location"
+      },
+      "attributes": [
+        { "name": "storageLocationId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "locationName", "type": "xsd:string", "doc": "Display name (e.g., 'Freezer F-12, Rack 3, Slot A4')." },
+        { "name": "storageType", "type": "xsd:string", "enum": ["FREEZER_SLOT", "REFRIGERATOR_SHELF", "AMBIENT_SHELF", "SECURE_CABINET_DRAWER", "OFFSITE_VAULT", "PHARMACY_SHELF", "BIOREPOSITORY_RACK", "OTHER"] },
+        { "name": "temperatureRangeC", "type": "xsd:string", "optional": true, "enum": ["MINUS_80", "MINUS_20", "FOUR", "FIFTEEN", "ROOM_TEMP", "AMBIENT", "OTHER"], "doc": "Standard temperature ranges in Celsius. For non-standard ranges document via the linked Equipment.temperatureRange." },
+        { "name": "capacity", "type": "xsd:integer", "optional": true, "doc": "Total capacity (count or volume)." },
+        { "name": "capacityUnit", "type": "xsd:string", "optional": true, "doc": "Unit of capacity (slots, mL, etc.)." },
+        { "name": "currentOccupancy", "type": "xsd:integer", "optional": true, "doc": "Current count of items stored." },
+        { "name": "accessRestriction", "type": "xsd:string", "optional": true, "enum": ["UNRESTRICTED", "AUTHORIZED_ONLY", "PI_ONLY", "PHARMACY_ONLY", "OTHER"] },
+        { "name": "securityLevel", "type": "xsd:string", "optional": true, "enum": ["LOW", "MEDIUM", "HIGH"] },
+        { "name": "gpsCoordinates", "type": "xsd:string", "optional": true, "doc": "Lat/long for offsite vaults (e.g., '40.7128,-74.0060')." },
+        { "name": "status", "type": "xsd:string", "enum": ["ACTIVE", "DECOMMISSIONED", "QUARANTINED"], "doc": "Lifecycle state." }
+      ],
+      "relationships": [
+        { "name": "atSite", "target": "Site", "cardinality": "1..1", "doc": "The Site this StorageLocation belongs to. Inverse of Site.hasStorageLocation." },
+        { "name": "inEquipment", "target": "Equipment", "cardinality": "0..1", "doc": "The Equipment this StorageLocation is housed in (when applicable). A slot in freezer F-12 has inEquipment pointing to Freezer F-12; an ambient pharmacy shelf has no inEquipment." },
+        { "name": "monitoredBySystem", "target": "System", "cardinality": "0..N", "doc": "Computerised systems that monitor this StorageLocation (inventory tracking, slot-level temperature monitoring)." }
+      ]
+    },
+    {
+      "id": "Credential",
+      "role": "qualification, certification, or accreditation held by a Person, Site, or Equipment",
+      "description": "Credential represents a qualification, certification, license, or accreditation. Credentials apply polymorphically to Persons (medical licenses, GCP certificates, board certifications), Sites (CLIA certification, JCAHO accreditation, ISO 9001), and Equipment (calibration certificates, validation certificates). Each Credential carries an issuing authority, an issue/expiry window, and a verification status, plus an optional reference to the certificate Document.",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX Credential object. Polymorphic targets (Person, Site, Equipment) modeled as separate optional relationships rather than a single polymorphic 'forSubject'; matches OOUX (Credential has 0-1 Person + 0-1 Site) and adds Equipment for equipment-level credentials (calibration certificates). SHACL invariant enforces exactly-one-target.",
+      "crosswalks": {
+        "fhir": "fhir:Credential (Practitioner.qualification for person-credentials)"
+      },
+      "attributes": [
+        { "name": "credentialId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "credentialType", "type": "xsd:string", "enum": ["MEDICAL_LICENSE", "BOARD_CERTIFICATION", "GCP_CERTIFICATE", "CITI_CERTIFICATE", "ACLS", "BLS", "CV", "CLIA_CERTIFICATION", "CAP_CERTIFICATION", "JCAHO_ACCREDITATION", "ISO_9001", "ISO_15189", "CALIBRATION_CERTIFICATE", "VALIDATION_CERTIFICATE", "VENDOR_CERTIFICATION", "INSTITUTIONAL_LICENSE", "OTHER"] },
+        { "name": "credentialNumber", "type": "xsd:string", "optional": true, "doc": "Identifier issued by the issuing authority." },
+        { "name": "issuingAuthorityName", "type": "xsd:string", "doc": "Free-text name when the issuing authority is not modeled as an Organization (e.g., 'Texas Medical Board'); use issuingAuthorityOrg relationship for modeled authorities." },
+        { "name": "issueDate", "type": "xsd:date", "optional": true },
+        { "name": "expirationDate", "type": "xsd:date", "optional": true },
+        { "name": "status", "type": "xsd:string", "enum": ["ACTIVE", "PENDING_VERIFICATION", "EXPIRED", "REVOKED", "SUSPENDED"], "doc": "Lifecycle state." },
+        { "name": "verificationStatus", "type": "xsd:string", "optional": true, "enum": ["NOT_VERIFIED", "IN_PROGRESS", "VERIFIED", "FAILED_VERIFICATION"] },
+        { "name": "verificationDate", "type": "xsd:date", "optional": true },
+        { "name": "lastReviewDate", "type": "xsd:date", "optional": true },
+        { "name": "nextReviewDate", "type": "xsd:date", "optional": true }
+      ],
+      "relationships": [
+        { "name": "forPerson", "target": "Person", "cardinality": "0..1", "doc": "Person this Credential is held by (medical license, GCP certificate, etc.). Mutually exclusive with forSite and forEquipment in operational practice; SHACL invariant enforces exactly-one-target." },
+        { "name": "forSite", "target": "Site", "cardinality": "0..1", "doc": "Site this Credential is held by (CLIA, JCAHO, etc.)." },
+        { "name": "forEquipment", "target": "Equipment", "cardinality": "0..1", "doc": "Equipment this Credential is held by (calibration certificate, validation certificate)." },
+        { "name": "issuingAuthorityOrg", "target": "Organization", "cardinality": "0..1", "doc": "The Organization issuing this Credential, when modeled (e.g., American Board of Internal Medicine). Use when the issuing authority is also referenced elsewhere; otherwise use issuingAuthorityName free-text." },
+        { "name": "verifiedBy", "target": "Person", "cardinality": "0..1", "doc": "Person who verified this Credential." },
+        { "name": "referenceDocument", "target": "Document", "cardinality": "0..1", "doc": "The certificate / license / attestation document file." }
       ]
     }
   ]
