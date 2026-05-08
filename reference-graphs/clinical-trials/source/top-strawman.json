@@ -1,0 +1,205 @@
+{
+  "_comment": "TOP v0.1 reference graph intermediate (strawman). The OOUX hierarchy is now locked at eight top-levels for the clinical-trials reference graph: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven boundary decisions resolved (see top_ooux-hierarchy_v1.html, 2026-05-07). This source currently scaffolds three of the eight (Sponsor, Study, Site) plus two horizontals (Organization, Document), enough to verify the federation pattern (clinical-trials @context imports a TOP commons @context). The remaining five top-levels lift in subsequent passes following the Sponsor spec template (top_sponsor-spec_v1.html). The build_context.py and build_shacl.py emitters do not change as top-levels are added; both carry a polysemous-verb guard that fails loudly on duplicate predicate names within a focus class. Sub-objects locked from OOUX: Visit Observation under Visit, Other Clinical Event under Event with derivedFrom audit chain. Equipment is fully horizontal with equipmentBinding enum (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Sample stays horizontal for the trials commons; specialty reference graphs (cell therapy, rare disease) may elevate it via the federation pattern.",
+
+  "version": "0.1.4-strawman",
+  "prefix": "top",
+  "horizontal_prefix": "topc",
+
+  "namespaces": {
+    "top": "https://top.scientix.ai/onto/clinical/v1#",
+    "topc": "https://top.scientix.ai/onto/commons/v1#"
+  },
+
+  "top_levels": [
+    {
+      "id": "Sponsor",
+      "role": "operator-facing entity that captures one Organization's role on one Study",
+      "description": "A Sponsor is an entity responsible for some aspect of a clinical trial: initiation, regulatory accountability, financing, or operational conduct. A study has at least one sponsor of record, who carries regulatory responsibility, and may have additional Sponsor entities for operational delegation (a CRO acting as proxy), financial backing (an academic medical center on an investigator-initiated trial), or co-sponsorship. The Sponsor entity is what the site, the study team, and the regulator interact with day to day. Corporate identity and parent/child structure live on the linked Organization.",
+      "ooux_editor_note": "v0.2: type vocabulary expanded to include CRO_AS_SPONSOR; added duns and orcid identifiers; added regulatory and finance contact relationships rather than embedded fields. Investigator-Sponsor (academic single-PI sponsor) is supported via sponsorType. v0.2-TOP additions (post-community-input, post-Gemini analysis): Sponsor is now per Organization-per-Study (one Sponsor entity per Org's role on one Study). Added belongsToOrganization (1..1, USDM-aligned) on the Organization horizontal. Added five boolean responsibility flags absorbing Gemini's responsibility-matrix pattern (isSponsorOfRecord, hasRegulatoryResponsibility, hasFinancialResponsibility, hasOperationalResponsibility, isInitiator). Added actsOnBehalfOf self-ref for CRO-as-proxy delegation. Added regulatoryAuthorityScope for multi-jurisdictional sponsor-of-record cases (Pfizer US + Pfizer Ireland on the same trial). Added validFrom and validUntil temporal attributes for M&A sponsor transfers (NGSI-LD-native temporal properties). Changed runs cardinality from 1..N to 1..1 to reflect per-study scoping; the enterprise-level 'all studies Org X sponsors' view is served from Organization.playsSponsorRole. v0.1.1 cardinality realism pass (Q9): all aspirational 1..N relationships relaxed to 0..N. The Sponsor invariant is 'belongs to exactly one Organization, runs exactly one Study'; everything else (Contracts, Submissions, Audits, Documents, IP, etc.) accumulates over the Study lifecycle and may legitimately be empty for a freshly-created or low-activity Sponsor record. Investigator-sponsor IITs may never accrue Audits or CAPAs. The 1..N constraints were aspirational, not operationally true; SHACL was firing on valid records. v0.1.2 polysemous-verb split (Q7): 'publishes' was fired against both Document and Publication; 'operates' was fired against both TrainingProgram and System. JSON-LD @context is a flat term map and SHACL property paths must be unambiguous, so duplicate predicate names silently overwrite or muddle. Renamed to publishesDocument, publishesPublication, operatesTrainingProgram, operatesSystem. This is the path USDM and FHIR took for the same reason; it preserves clean one-pass projection from TOP into either standard without query-time gymnastics. v0.1.3 verification-question closures (Bo, 2026-05-07): Q3 added parentSponsor (0..1 self-ref) for M&A successor lineage, lead/co-sponsor co-development, and EU CTR Article 74 legal-rep parents — distinct from belongsToOrganization (corporate identity) and actsOnBehalfOf (operational delegation). Q4 added primaryTherapeuticArea (single, optional) on Sponsor for the per-Study TA lens; pushed corporate-scope facts (employeeSizeBand, fiscalYearEnd, primaryTherapeuticAreas) onto the Organization horizontal where they belong. Q4 'regulatory authority of record' left unchanged — already covered by isSponsorOfRecord boolean + regulatoryAuthorityScope relationship; adding a denormalized attribute would create drift. Q8 added three CTAs: Reassign Primary Contact, Transfer Studies Between Programs, Request Public Listing on ClinicalTrials.gov. System ownership / use three-layer pattern remains parked for the Study spec; Sponsor.operatesSystem stays as the per-Study operational ownership view. v0.1.4 boolean-flag invariants (Bo, 2026-05-07): four SHACL-SPARQL constraints emitted by build_shacl.py. (1) Soft warning when isSponsorOfRecord=true and hasRegulatoryResponsibility=false — permitted under FDA 21 CFR 312.52 (transfer of obligations) but unusual; surfaces to a human reviewer. (2) Hard violation when a Study has no Sponsor flagged isSponsorOfRecord=true. (3) Hard violation when a Study has more than one isSponsorOfRecord=true Sponsor under the same regulatoryAuthorityScope (or with no explicit scope, treated as the implicit single-jurisdiction bucket). (4) Hard violation when a Study has no Sponsor with hasOperationalResponsibility=true. The Pfizer-IQVIA worked example was enriched with regulatoryAuthorityScope triples on both SoR Sponsor entities (FDA, EMA) so the multi-jurisdictional pattern actually validates rather than just being claimed in a comment.",
+      "crosswalks": {
+        "fhir": "fhir:Organization",
+        "usdm": "usdm:Sponsor",
+        "odm": "odm:Study/GlobalVariables/StudyName"
+      },
+      "attributes": [
+        { "name": "sponsorId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
+        { "name": "sponsorName", "type": "xsd:string", "doc": "Display name." },
+        { "name": "legalName", "type": "xsd:string", "doc": "Registered legal name." },
+        { "name": "sponsorType", "type": "xsd:string", "enum": ["PHARMACEUTICAL", "BIOTECH", "ACADEMIC", "GOVERNMENT", "INVESTIGATOR_SPONSOR", "CRO_AS_SPONSOR", "OTHER"], "doc": "Sponsor type taxonomy. CRO_AS_SPONSOR covers CROs acting as legal sponsor. INVESTIGATOR_SPONSOR covers academic single-PI sponsorship." },
+        { "name": "duns", "type": "xsd:string", "optional": true, "doc": "Dun & Bradstreet DUNS number." },
+        { "name": "orcid", "type": "xsd:string", "optional": true, "doc": "ORCID identifier when sponsor is an individual investigator-sponsor." },
+        { "name": "address", "type": "xsd:object", "doc": "Headquarters address (line1, line2, city, region, postalCode)." },
+        { "name": "country", "type": "xsd:string", "doc": "ISO 3166-1 alpha-3 country code of registration." },
+        { "name": "phone", "type": "xsd:string", "doc": "Primary phone." },
+        { "name": "email", "type": "xsd:string", "doc": "Primary email." },
+        { "name": "website", "type": "xsd:anyURI", "doc": "Sponsor website." },
+        { "name": "status", "type": "xsd:string", "enum": ["ACTIVE", "INACTIVE", "MERGED", "ACQUIRED"], "doc": "Lifecycle state." },
+        { "name": "isSponsorOfRecord", "type": "xsd:boolean", "doc": "True if this Sponsor entity holds regulatory accountability per 21 CFR 312 (or equivalent in other jurisdictions). Exactly one Sponsor entity per (Study × RegulatoryAuthorityScope) carries this flag set true; SHACL constraint enforces the rule per jurisdiction." },
+        { "name": "hasRegulatoryResponsibility", "type": "xsd:boolean", "doc": "True if this Sponsor entity carries regulatory accountability for the Study. Often the same as isSponsorOfRecord but separated for the rare case where regulatory submission is delegated without transfer of legal sponsor-of-record status." },
+        { "name": "hasFinancialResponsibility", "type": "xsd:boolean", "doc": "True if this Sponsor entity provides funding for the Study. Distinct from sponsor-of-record: an academic medical center may be the financial sponsor while a PI is the legal sponsor of an IIT." },
+        { "name": "hasOperationalResponsibility", "type": "xsd:boolean", "doc": "True if this Sponsor entity manages day-to-day operational conduct of the Study. Most common case where a CRO acts as proxy for the sponsor of record." },
+        { "name": "isInitiator", "type": "xsd:boolean", "doc": "True if this Sponsor entity initiated the Study (the entity that triggered the trial). Often the same as the financial sponsor for IITs; often the same as sponsor of record for industry-sponsored trials." },
+        { "name": "validFrom", "type": "xsd:dateTime", "optional": true, "doc": "Datetime from which this Sponsor relationship is operationally valid. Empty for the initial Sponsor record on a Study. Populated when sponsor transfers occur (M&A, divestiture, asset sale). Uses NGSI-LD's validFrom temporal property semantics." },
+        { "name": "validUntil", "type": "xsd:dateTime", "optional": true, "doc": "Datetime through which this Sponsor relationship was operationally valid. Empty for currently-active Sponsor records. Populated when this Sponsor record is superseded by a new one (M&A transfer, sponsor handoff). Acquiring entities in M&A often do not move all studies at once; the temporal bounds are how this gets modeled honestly." },
+        { "name": "primaryTherapeuticArea", "type": "xsd:string", "optional": true, "doc": "The therapeutic area this Sponsor entity's role on this Study is focused on (oncology, cardiology, infectious disease, rare disease, etc.). Per-Study lens: the Sponsor entity's TA focus for this specific Study, which may be a single area even when the parent Organization's portfolio spans many. The corporate TA spread lives on Organization.primaryTherapeuticAreas. Optional because not every Study has a single dominant TA (basket trials, platform trials)." }
+      ],
+      "relationships": [
+        { "name": "belongsToOrganization", "target": "Organization", "cardinality": "1..1", "doc": "The Organization (corporate / legal entity) this Sponsor entity is backed by. USDM models Sponsor as a type on Organization; TOP keeps Sponsor as an operator-grade top-level and uses this relationship to anchor it to the corporate truth. J&J Innovative Medicine (Sponsor) → belongsToOrganization → Organization{name: 'J&J Innovative Medicine', parentOrganization: J&J}." },
+        { "name": "actsOnBehalfOf", "target": "Sponsor", "cardinality": "0..1", "doc": "Self-ref: this Sponsor entity acts as proxy for another Sponsor entity (typically a CRO operational sponsor pointing to the sponsor of record). Empty when this Sponsor is itself the principal. The IQVIA-Sponsor entity that operationally runs Pfizer's Study X has actsOnBehalfOf → Pfizer-Sponsor entity. Distinct from parentSponsor: actsOnBehalfOf is operational delegation, parentSponsor is structural lineage." },
+        { "name": "parentSponsor", "target": "Sponsor", "cardinality": "0..1", "doc": "Self-ref: this Sponsor entity has a structural parent Sponsor entity. Use only when the per-Org-per-Study lineage is meaningfully different from what Organization.parentOrganization expresses. Three operational cases: (1) M&A successor lineage, where Sponsor B supersedes Sponsor A on the same Study after corporate transfer, B.parentSponsor → A captures the lineage handoff alongside validFrom/validUntil. (2) Lead/co-sponsor in co-development, where the co-sponsor entity points at the lead-sponsor entity. (3) EU CTR Article 74 legal representatives, where a non-EU principal Sponsor designates an EU Sponsor entity as their legal rep, with the EU rep's parentSponsor → principal. Distinct from belongsToOrganization (corporate identity) and actsOnBehalfOf (operational proxy)." },
+        { "name": "regulatoryAuthorityScope", "target": "RegulatoryAuthority", "cardinality": "0..N", "doc": "Regulatory authorities this Sponsor entity is the sponsor of record under. Used for multi-jurisdictional studies where different legal entities act as sponsor of record in different jurisdictions (Pfizer Inc under FDA, Pfizer Ireland under EMA, on the same trial). Empty for single-jurisdiction studies; the SHACL 'exactly one sponsor of record per Study' constraint relaxes to per-jurisdiction.", "_targetMissing": "RegulatoryAuthority is a flagged-missing object in OOUX v0.2 (#60)." },
+        { "name": "runs", "target": "Study", "cardinality": "1..1", "doc": "The Study this Sponsor entity is scoped to. Each Sponsor entity is per-Organization-per-Study. A company that sponsors many studies has many Sponsor entities, one per study, all linked through belongsToOrganization to the same Organization. The enterprise-level 'all studies Pfizer sponsors' view is served from Organization.playsSponsorRole, not from a single Sponsor entity." },
+        { "name": "employs", "target": "Person", "cardinality": "0..N", "doc": "Employees and contractors. 0..N at the per-Study Sponsor scope: a Sponsor record may be created before staffing assignments are linked. Enterprise-level employee counts roll up via Organization." },
+        { "name": "engages", "target": "Site", "cardinality": "0..N", "doc": "Sites the sponsor has contracted on this Study. 0..N because Sponsor records exist before site selection completes." },
+        { "name": "contractsWith", "target": "CRO", "cardinality": "0..N", "doc": "Contracted CROs.", "_targetMissing": "CRO is a flagged-missing object in OOUX v0.2; needs its own catalog entry." },
+        { "name": "holds", "target": "Contract", "cardinality": "0..N", "doc": "All sponsor-side contracts on this Study. 0..N because contracts get signed over time, not at Sponsor-record creation." },
+        { "name": "authors", "target": "Budget", "cardinality": "0..N", "doc": "Budgets the sponsor maintains for this Study. 0..N because budgets may be authored downstream." },
+        { "name": "publishesDocument", "target": "Document", "cardinality": "0..N", "doc": "Sponsor-controlled documents on this Study (TMF and beyond). 0..N because TMF accumulates over the Study lifecycle. Split from the polysemous 'publishes' verb in v0.1.2 so each predicate carries one target type, preserving clean projection to USDM and FHIR." },
+        { "name": "publishesPublication", "target": "Publication", "cardinality": "0..N", "doc": "Resulting publications (peer-reviewed, conference, preprint). 0..N because most Studies have not produced publications yet at any given moment. Split from the polysemous 'publishes' verb in v0.1.2 so each predicate carries one target type, preserving clean projection to USDM and FHIR.", "_targetMissing": "Publication is not in OOUX v0.2 catalog; treat as Document subtype until specified." },
+        { "name": "files", "target": "RegulatorySubmission", "cardinality": "0..N", "doc": "Submissions filed by the sponsor on this Study. 0..N because submissions accumulate; a brand-new Sponsor record has zero filings yet." },
+        { "name": "commissions", "target": "Audit", "cardinality": "0..N", "doc": "Sponsor-commissioned audits. 0..N: small IITs and academic-sponsored studies may never commission a sponsor-level audit." },
+        { "name": "operatesTrainingProgram", "target": "TrainingProgram", "cardinality": "0..N", "doc": "Sponsor training programs on this Study. 0..N at per-Study Sponsor scope. Split from the polysemous 'operates' verb in v0.1.2 so each predicate carries one target type, preserving clean projection to USDM and FHIR.", "_targetMissing": "TrainingProgram is not in OOUX v0.2 catalog; TrainingRecord (#77) covers individual completions; TrainingProgram needs its own entry." },
+        { "name": "maintains", "target": "SOP", "cardinality": "0..N", "doc": "Standard operating procedures attached to this Study. 0..N: SOPs are typically maintained at the Organization level and inherited.", "_targetMissing": "SOP is not in OOUX v0.2 catalog; treat as Document subtype until specified." },
+        { "name": "operatesSystem", "target": "System", "cardinality": "0..N", "doc": "Sponsor-owned systems on this Study (EDC, CTMS, eTMF, IRT, safety database). 0..N because system attachment happens during Study startup, not at Sponsor creation. Split from the polysemous 'operates' verb in v0.1.2 so each predicate carries one target type, preserving clean projection to USDM and FHIR." },
+        { "name": "produces", "target": "Report", "cardinality": "0..N", "doc": "Reports authored by the sponsor on this Study. 0..N because reports accumulate." },
+        { "name": "plans", "target": "Milestone", "cardinality": "0..N", "doc": "Program-level milestones. 0..N because milestones get planned downstream of Sponsor record creation." },
+        { "name": "conducts", "target": "RiskAssessment", "cardinality": "0..N", "doc": "Risk assessments owned by the sponsor on this Study. 0..N because risk assessment is a workflow that produces records over time." },
+        { "name": "executes", "target": "CAPA", "cardinality": "0..N", "doc": "Sponsor-driven CAPAs. 0..N: most Sponsor records have zero CAPAs at any given snapshot." },
+        { "name": "interfacesWith", "target": "OversightBody", "cardinality": "0..N", "doc": "IRB, EC, DSMB, IDMC engagement. 0..N because oversight engagement gets established during startup, not at Sponsor creation." },
+        { "name": "signs", "target": "DataTransferAgreement", "cardinality": "0..N", "doc": "Data transfer agreements. 0..N because DTAs are signed downstream of Sponsor record creation.", "_targetMissing": "DataTransferAgreement is a Contract subtype not separately enumerated in OOUX v0.2." },
+        { "name": "supplies", "target": "InvestigationalProduct", "cardinality": "0..N", "doc": "IP the sponsor supplies on this Study. 0..N because IP supply chain attaches downstream, and observational studies may not involve IP at all." },
+        { "name": "organizes", "target": "Tag", "cardinality": "0..N", "doc": "User-defined organizational tags." }
+      ],
+      "ctas": [
+        { "action": "Create Sponsor", "persona": "Platform Admin", "note": "Register a new sponsor." },
+        { "action": "Update Sponsor Details", "persona": "Sponsor Admin", "note": "Maintain sponsor profile." },
+        { "action": "Activate or Deactivate Sponsor", "persona": "Platform Admin", "note": "Toggle status." },
+        { "action": "Associate or Remove Study", "persona": "Sponsor PM", "note": "Link studies to the sponsor." },
+        { "action": "Manage Sponsor Contacts", "persona": "Sponsor Admin", "note": "Add or update key contacts." },
+        { "action": "Review Sponsor Performance", "persona": "Sponsor Exec", "note": "Run portfolio dashboards." },
+        { "action": "Generate Sponsor Report", "persona": "Sponsor Analytics", "note": "Produce sponsor-level performance report." },
+        { "action": "Audit Sponsor", "persona": "Quality", "note": "Trigger a sponsor-level audit." },
+        { "action": "Transfer Sponsorship", "persona": "Sponsor PM / Legal", "note": "Initiate sponsor-of-record handoff (M&A, divestiture, asset transfer). Creates a new Sponsor entity with validFrom set to the transfer datetime; sets validUntil on the superseded record. Both records remain queryable for audit." },
+        { "action": "Reassign Primary Contact", "persona": "Sponsor Admin", "note": "Update the Person flagged as the Sponsor's primary regulatory or medical-monitor contact for this Study. Common after personnel changes mid-trial; preserves the audit chain by recording the prior assignment." },
+        { "action": "Transfer Studies Between Programs", "persona": "Sponsor PM", "note": "Move this Sponsor entity's Study from one program/portfolio bucket to another (e.g., reorg from Oncology Phase II to Oncology Phase III). Operates at the Sponsor-runs-Study scope; does not touch the Organization-level portfolio." },
+        { "action": "Request Public Listing on ClinicalTrials.gov", "persona": "Sponsor Regulatory", "note": "Initiate or update the public registration entry on ClinicalTrials.gov (or EU CTIS, ANZCTR, ChiCTR, etc., per regulatoryAuthorityScope). Generates the RegulatorySubmission record and links it to this Sponsor's filings." }
+      ]
+    },
+
+    {
+      "id": "Study",
+      "role": "trial design and definition (USDM-aligned)",
+      "crosswalks": {
+        "fhir": "fhir:ResearchStudy",
+        "usdm": "usdm:Study",
+        "cdash": "cdash:DM"
+      },
+      "attributes": [
+        { "name": "studyId", "type": "ngsi-ld:URI" },
+        { "name": "sponsorProtocolId", "type": "xsd:string" },
+        { "name": "clinicalTrialsGovId", "type": "xsd:string" },
+        { "name": "studyStatus", "type": "xsd:string", "doc": "Aligned with FHIR ResearchStudy.status." }
+      ],
+      "relationships": [
+        { "name": "hasProtocol", "target": "Protocol", "cardinality": "1..1" },
+        { "name": "hasArm", "target": "Arm", "cardinality": "1..N" }
+      ],
+      "sub_objects": [
+        {
+          "id": "Protocol",
+          "crosswalks": {
+            "fhir": "fhir:PlanDefinition",
+            "usdm": "usdm:Protocol"
+          },
+          "attributes": [
+            { "name": "protocolVersion", "type": "xsd:string", "doc": "semver." },
+            { "name": "protocolStatus", "type": "xsd:string", "doc": "draft, in_review, approved, amended, superseded." }
+          ]
+        },
+        {
+          "id": "Arm",
+          "crosswalks": {
+            "fhir": "fhir:ResearchStudy.arm",
+            "usdm": "usdm:StudyArm",
+            "cdash": "cdash:DM.ARM"
+          },
+          "attributes": [
+            { "name": "armName", "type": "xsd:string" },
+            { "name": "armType", "type": "xsd:string", "doc": "treatment, comparator, placebo, control, observational." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "Site",
+      "role": "where conduct happens",
+      "_partialEntry": "Hierarchy fields added in v0.2; remaining attributes/relationships still to be filled out from OOUX Section 3 entry #1 once Sponsor is fully validated.",
+      "crosswalks": {
+        "fhir": "fhir:Organization",
+        "usdm": "usdm:StudySite",
+        "cdash": "cdash:DM.SITEID"
+      },
+      "attributes": [
+        { "name": "siteId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "siteName", "type": "xsd:string" },
+        { "name": "siteType", "type": "xsd:string", "enum": ["HOSPITAL", "CLINIC", "ACADEMIC_MEDICAL_CENTER", "RESEARCH_CENTER", "COMMUNITY_PRACTICE", "DECENTRALIZED_HUB", "VIRTUAL"] }
+      ],
+      "relationships": [
+        { "name": "belongsToOrganization", "target": "Organization", "cardinality": "1..1", "doc": "The Organization that owns or operates this Site. USDM Organization.managedSites is the inverse of this relationship." },
+        { "name": "partOfSiteNetwork", "target": "Organization", "cardinality": "0..1", "doc": "An Organization with type=SITE_NETWORK or SMO that this Site is part of. Elevate Research is an Organization; each of its locations is a Site with partOfSiteNetwork = Elevate Research." },
+        { "name": "parentSite", "target": "Site", "cardinality": "0..1", "doc": "Self-reference for satellite-of-main-site structure. A satellite clinic Site references the main hospital Site as its parent. Use when the relationship is operationally a parent-child site pair, not just network membership." },
+        { "name": "hasPrincipalInvestigator", "target": "Investigator", "cardinality": "1..1" },
+        { "name": "participatesIn", "target": "Study", "cardinality": "0..N" }
+      ]
+    }
+  ],
+
+  "horizontals": [
+    {
+      "id": "Organization",
+      "role": "corporate identity and legal hierarchy",
+      "description": "The legal/business entity. Sponsor and Site (TOP top-levels) reference Organization for their corporate identity and roll-up structure. Modeled after USDM v3 Organization, with the addition of parentOrganization for explicit corporate hierarchy. Cross-industry: Organizations also represent operating companies in energy (refiners, EPCs), manufacturing (parent corp, plants, contract manufacturers), and other domains.",
+      "ooux_editor_note": "Introduced in v0.2 to resolve the multi-business-unit problem (J&J vs Janssen R&D vs Innovative Medicine) and the site-network problem (Elevate Research vs its locations). USDM keeps Sponsor as a Code type on Organization; TOP keeps Sponsor as a top-level for operator UX while backing it with Organization for corporate truth.",
+      "crosswalks": {
+        "fhir": "fhir:Organization",
+        "usdm": "usdm:Organization"
+      },
+      "attributes": [
+        { "name": "organizationId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
+        { "name": "organizationName", "type": "xsd:string", "doc": "Display name." },
+        { "name": "legalName", "type": "xsd:string", "doc": "Registered legal name." },
+        { "name": "organizationType", "type": "xsd:string", "enum": ["PARENT_CORPORATION", "OPERATING_COMPANY", "SPONSOR", "CRO", "SITE", "SITE_NETWORK", "SMO", "REGULATORY_AUTHORITY", "OVERSIGHT_BODY", "VENDOR", "LABORATORY", "CONTRACT_MANUFACTURER", "ACADEMIC_INSTITUTION", "GOVERNMENT", "OTHER"], "doc": "Role classification (multi-valued in practice via separate role assignments). Aligns with USDM Organization.type Code." },
+        { "name": "identifierScheme", "type": "xsd:string", "enum": ["DUNS", "ORCID", "GLN", "GS1", "FDA_FEI", "EMA_EUD", "OTHER"], "doc": "Scheme for the identifier value. USDM-aligned." },
+        { "name": "identifier", "type": "xsd:string", "doc": "Identifier value scoped by identifierScheme." },
+        { "name": "legalAddress", "type": "xsd:object", "doc": "Headquarters/registered address (line1, line2, city, region, postalCode)." },
+        { "name": "country", "type": "xsd:string", "doc": "ISO 3166-1 alpha-3 country code of registration." },
+        { "name": "website", "type": "xsd:anyURI", "doc": "Organization website." },
+        { "name": "status", "type": "xsd:string", "enum": ["ACTIVE", "INACTIVE", "MERGED", "ACQUIRED", "DISSOLVED"], "doc": "Lifecycle state." },
+        { "name": "employeeSizeBand", "type": "xsd:string", "optional": true, "enum": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001-50000", "50001-100000", "100001+"], "doc": "Banded employee count for the Organization. Corporate-scope fact; does not vary per Study, so lives here rather than on the per-Study Sponsor entity. Bands rather than exact counts because exact headcount is volatile and rarely needed for Sponsor portfolio analysis." },
+        { "name": "fiscalYearEnd", "type": "xsd:string", "optional": true, "doc": "Fiscal year end as MM-DD (e.g., '12-31' for calendar year, '03-31' for many UK/Asian companies, '09-30' for US federal). Corporate-scope fact; useful for budget alignment, contract renewal cycles, and forecasting." },
+        { "name": "primaryTherapeuticAreas", "type": "xsd:string", "optional": true, "doc": "Comma-separated or JSON array of the Organization's portfolio therapeutic areas (oncology, cardiology, infectious disease, rare disease, etc.). Corporate-scope: Pfizer's TA spread is many; J&J Innovative Medicine's TA spread is a subset. The per-Study TA focus lives on Sponsor.primaryTherapeuticArea. Multi-value semantics: native NGSI-LD multi-value once the broker layer is in place; for the strawman emission, comma-separated string is the lowest-risk encoding." }
+      ],
+      "relationships": [
+        { "name": "parentOrganization", "target": "Organization", "cardinality": "0..1", "doc": "Self-reference for corporate hierarchy. J&J Innovative Medicine.parentOrganization = J&J. Empty for root-level entities." },
+        { "name": "hasChildOrganization", "target": "Organization", "cardinality": "0..N", "doc": "Inverse of parentOrganization. Convenience relationship for downward traversal." },
+        { "name": "managesSite", "target": "Site", "cardinality": "0..N", "doc": "Sites operationally managed by this Organization. USDM Organization.managedSites." },
+        { "name": "playsSponsorRole", "target": "Sponsor", "cardinality": "0..N", "doc": "Sponsor entities backed by this Organization in specific Studies." },
+        { "name": "isLocatedIn", "target": "Country", "cardinality": "1..1", "doc": "Country of registration; flagged-missing object in OOUX v0.2.", "_targetMissing": "Country is a flagged-missing object in OOUX v0.2 (#57)." }
+      ]
+    },
+    {
+      "id": "Document",
+      "role": "TMF / eTMF / ISF document",
+      "crosswalks": {
+        "fhir": "fhir:DocumentReference",
+        "usdm": "usdm:TMFDocument"
+      },
+      "attributes": [
+        { "name": "documentType", "type": "xsd:string", "doc": "Aligned with TMF Reference Model zones." },
+        { "name": "documentVersion", "type": "xsd:string" },
+        { "name": "etmfLocation", "type": "xsd:anyURI" }
+      ]
+    }
+  ]
+}

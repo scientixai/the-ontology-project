@@ -1,0 +1,138 @@
+@prefix top:   <https://top.scientix.ai/onto/clinical/v1#> .
+@prefix topc:  <https://top.scientix.ai/onto/commons/v1#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# Demonstrates the v0.2-TOP per-Org-per-Study Sponsor architecture
+# with the Option A boolean responsibility flags, actsOnBehalfOf delegation,
+# and the multi-jurisdictional regulatoryAuthorityScope.
+#
+# Scenario: Pfizer is sponsor of record under FDA. Pfizer Ireland is sponsor
+# of record under EMA. IQVIA acts as operational sponsor (proxy) on behalf of
+# both for the same Study (urn:Study:ONCO-423).
+
+# === Organizations (corporate truth) ===
+
+<urn:ngsi-ld:Organization:pfizer> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:pfizer"^^xsd:anyURI ;
+    topc:organizationName    "Pfizer Inc" ;
+    topc:legalName           "Pfizer Inc." ;
+    topc:organizationType    "PARENT_CORPORATION" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "002472129" ;
+    topc:legalAddress        "{ \"line1\": \"66 Hudson Boulevard\", \"city\": \"New York\", \"region\": \"NY\", \"postalCode\": \"10001\" }" ;
+    topc:country             "USA" ;
+    topc:website             "https://www.pfizer.com"^^xsd:anyURI ;
+    topc:status              "ACTIVE" .
+
+<urn:ngsi-ld:Organization:pfizer-ireland> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:pfizer-ireland"^^xsd:anyURI ;
+    topc:organizationName    "Pfizer Ireland Pharmaceuticals" ;
+    topc:legalName           "Pfizer Ireland Pharmaceuticals (Unlimited Company)" ;
+    topc:organizationType    "OPERATING_COMPANY" ;
+    topc:identifierScheme    "EMA_EUD" ;
+    topc:identifier          "ORG-100000326" ;
+    topc:parentOrganization  <urn:ngsi-ld:Organization:pfizer> ;
+    topc:legalAddress        "{ \"line1\": \"Operations Support Group, Ringaskiddy\", \"city\": \"Cork\", \"region\": \"COR\", \"postalCode\": \"P43 K840\" }" ;
+    topc:country             "IRL" ;
+    topc:website             "https://www.pfizer.ie"^^xsd:anyURI ;
+    topc:status              "ACTIVE" .
+
+<urn:ngsi-ld:Organization:iqvia> a topc:Organization ;
+    topc:organizationId      "urn:ngsi-ld:Organization:iqvia"^^xsd:anyURI ;
+    topc:organizationName    "IQVIA" ;
+    topc:legalName           "IQVIA Holdings Inc." ;
+    topc:organizationType    "CRO" ;
+    topc:identifierScheme    "DUNS" ;
+    topc:identifier          "017472988" ;
+    topc:legalAddress        "{ \"line1\": \"100 IMS Drive\", \"city\": \"Parsippany\", \"region\": \"NJ\", \"postalCode\": \"07054\" }" ;
+    topc:country             "USA" ;
+    topc:website             "https://www.iqvia.com"^^xsd:anyURI ;
+    topc:status              "ACTIVE" .
+
+# === Study (minimal, just enough for the runs relationship to resolve) ===
+
+<urn:ngsi-ld:Study:ONCO-423> a top:Study ;
+    top:studyId             "urn:ngsi-ld:Study:ONCO-423"^^xsd:anyURI ;
+    top:sponsorProtocolId   "ONCO-423-001" ;
+    top:clinicalTrialsGovId "NCT99999423" ;
+    top:studyStatus         "active" ;
+    top:hasProtocol         <urn:ngsi-ld:Protocol:ONCO-423-v3> ;
+    top:hasArm              <urn:ngsi-ld:Arm:ONCO-423-treatment> ,
+                            <urn:ngsi-ld:Arm:ONCO-423-comparator> .
+
+<urn:ngsi-ld:Protocol:ONCO-423-v3> a top:Protocol ;
+    top:protocolVersion     "3.0.0" ;
+    top:protocolStatus      "approved" .
+
+<urn:ngsi-ld:Arm:ONCO-423-treatment> a top:Arm ;
+    top:armName             "Treatment" ;
+    top:armType             "treatment" .
+
+<urn:ngsi-ld:Arm:ONCO-423-comparator> a top:Arm ;
+    top:armName             "Standard of Care" ;
+    top:armType             "comparator" .
+
+# === Sponsor entities (one per Org-per-Study role) ===
+
+# Pfizer as US sponsor of record (FDA)
+<urn:ngsi-ld:Sponsor:pfizer-onco423-fda> a top:Sponsor ;
+    top:sponsorId                    "urn:ngsi-ld:Sponsor:pfizer-onco423-fda"^^xsd:anyURI ;
+    top:sponsorName                  "Pfizer (US sponsor of record, ONCO-423)" ;
+    top:legalName                    "Pfizer Inc." ;
+    top:sponsorType                  "PHARMACEUTICAL" ;
+    top:address                      "{ \"line1\": \"66 Hudson Boulevard\", \"city\": \"New York\", \"region\": \"NY\", \"postalCode\": \"10001\" }" ;
+    top:country                      "USA" ;
+    top:phone                        "+1-212-733-2323" ;
+    top:email                        "regulatory-ops@pfizer.com" ;
+    top:website                      "https://www.pfizer.com"^^xsd:anyURI ;
+    top:status                       "ACTIVE" ;
+    top:isSponsorOfRecord            true ;
+    top:hasRegulatoryResponsibility  true ;
+    top:hasFinancialResponsibility   true ;
+    top:hasOperationalResponsibility false ;
+    top:isInitiator                  true ;
+    top:belongsToOrganization        <urn:ngsi-ld:Organization:pfizer> ;
+    top:regulatoryAuthorityScope     <urn:ngsi-ld:RegulatoryAuthority:fda> ;
+    top:runs                         <urn:ngsi-ld:Study:ONCO-423> .
+
+# Pfizer Ireland as EU sponsor of record (EMA)
+<urn:ngsi-ld:Sponsor:pfizer-ireland-onco423-ema> a top:Sponsor ;
+    top:sponsorId                    "urn:ngsi-ld:Sponsor:pfizer-ireland-onco423-ema"^^xsd:anyURI ;
+    top:sponsorName                  "Pfizer Ireland (EU sponsor of record, ONCO-423)" ;
+    top:legalName                    "Pfizer Ireland Pharmaceuticals (Unlimited Company)" ;
+    top:sponsorType                  "PHARMACEUTICAL" ;
+    top:address                      "{ \"line1\": \"Operations Support Group\", \"city\": \"Dublin\", \"region\": \"DUB\", \"postalCode\": \"D24\" }" ;
+    top:country                      "IRL" ;
+    top:phone                        "+353-1-467-6500" ;
+    top:email                        "ema-ops@pfizer.com" ;
+    top:website                      "https://www.pfizer.ie"^^xsd:anyURI ;
+    top:status                       "ACTIVE" ;
+    top:isSponsorOfRecord            true ;
+    top:hasRegulatoryResponsibility  true ;
+    top:hasFinancialResponsibility   false ;
+    top:hasOperationalResponsibility false ;
+    top:isInitiator                  false ;
+    top:belongsToOrganization        <urn:ngsi-ld:Organization:pfizer-ireland> ;
+    top:regulatoryAuthorityScope     <urn:ngsi-ld:RegulatoryAuthority:ema> ;
+    top:runs                         <urn:ngsi-ld:Study:ONCO-423> .
+
+# IQVIA as operational proxy (acts on behalf of both)
+<urn:ngsi-ld:Sponsor:iqvia-onco423-ops> a top:Sponsor ;
+    top:sponsorId                    "urn:ngsi-ld:Sponsor:iqvia-onco423-ops"^^xsd:anyURI ;
+    top:sponsorName                  "IQVIA (operational sponsor, ONCO-423)" ;
+    top:legalName                    "IQVIA Holdings Inc." ;
+    top:sponsorType                  "CRO_AS_SPONSOR" ;
+    top:address                      "{ \"line1\": \"100 IMS Drive\", \"city\": \"Parsippany\", \"region\": \"NJ\", \"postalCode\": \"07054\" }" ;
+    top:country                      "USA" ;
+    top:phone                        "+1-973-316-4000" ;
+    top:email                        "onco423-ops@iqvia.com" ;
+    top:website                      "https://www.iqvia.com"^^xsd:anyURI ;
+    top:status                       "ACTIVE" ;
+    top:isSponsorOfRecord            false ;
+    top:hasRegulatoryResponsibility  false ;
+    top:hasFinancialResponsibility   false ;
+    top:hasOperationalResponsibility true ;
+    top:isInitiator                  false ;
+    top:belongsToOrganization        <urn:ngsi-ld:Organization:iqvia> ;
+    top:actsOnBehalfOf               <urn:ngsi-ld:Sponsor:pfizer-onco423-fda> ;
+    top:runs                         <urn:ngsi-ld:Study:ONCO-423> .

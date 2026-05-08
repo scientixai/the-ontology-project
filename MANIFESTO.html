@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Ontology Project · A Manifesto · v0.2 draft</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 32px 32px 40px;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .page {
+    max-width: 740px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 44px 56px 48px;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+  }
+
+  .meta-strip {
+    display: flex;
+    justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 10.5px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid #e0e0d8;
+    padding-bottom: 12px;
+    margin-bottom: 28px;
+  }
+
+  h1.title {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.018em;
+    color: #111;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: #555;
+    font-style: italic;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .doc-meta {
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 11px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 18px;
+  }
+  .tagline {
+    font-size: 16px;
+    color: #1a1a1a;
+    font-style: italic;
+    border-left: 3px solid #1e6fd9;
+    padding: 6px 0 6px 16px;
+    margin-bottom: 28px;
+    line-height: 1.45;
+  }
+
+  h2.section {
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1e6fd9;
+    margin: 30px 0 12px;
+  }
+
+  p { margin-bottom: 14px; }
+
+  ul.values, ul.commitments {
+    list-style: none;
+    margin: 4px 0 14px 0;
+    padding: 0;
+  }
+  ul.values li, ul.commitments li {
+    padding: 4px 0 4px 22px;
+    position: relative;
+    line-height: 1.5;
+  }
+  ul.values li::before, ul.commitments li::before {
+    content: "▸";
+    color: #1e6fd9;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    font-size: 12px;
+  }
+  ul.commitments li strong {
+    color: #111;
+  }
+
+  .signatures {
+    margin-top: 32px;
+    padding-top: 22px;
+    border-top: 1px solid #c8c8c0;
+  }
+  .sig-disclaimer {
+    background: #fffbe8;
+    border: 1px solid #e6d97a;
+    padding: 10px 14px;
+    border-radius: 3px;
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 11.5px;
+    color: #6a5d10;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .sig-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 22px;
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  .sig-block {
+    background: #fafaf6;
+    border: 1px solid #e0e0d8;
+    border-radius: 3px;
+    padding: 14px 16px 12px;
+    position: relative;
+  }
+  .sig-block.convener {
+    border-left: 3px solid #1e8e6f;
+    background: #f4faf7;
+  }
+  .sig-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 1px;
+  }
+  .sig-role {
+    font-size: 11.5px;
+    color: #1e6fd9;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .sig-context {
+    font-size: 12px;
+    color: #2a2a2a;
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+  .sig-line {
+    border-top: 1px solid #c8c8c0;
+    padding-top: 6px;
+    font-size: 10.5px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: space-between;
+  }
+  .sig-block.convener .sig-line {
+    color: #1e8e6f;
+    font-weight: 600;
+  }
+
+  blockquote.attribution-note {
+    margin: 14px 0 16px;
+    padding: 6px 0 6px 16px;
+    border-left: 2px solid #c8c8c0;
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .footer {
+    margin-top: 32px;
+    padding-top: 14px;
+    border-top: 1px solid #e0e0d8;
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 10.5px;
+    color: #888;
+    line-height: 1.55;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<div class="meta-strip">
+  <span>v0.2 draft · May 2026</span>
+  <span>For Bo's review · founding signatures pending solicitation</span>
+</div>
+
+<h1 class="title">The Ontology Project</h1>
+<div class="subtitle">A Manifesto</div>
+<div class="doc-meta">v0.2 · May 2026 · supersedes v0.1 of April 2026</div>
+
+<div class="tagline">Reference knowledge graphs as a commons. Sovereign meaning as a public good.</div>
+
+<h2 class="section">The problem we name</h2>
+
+<p>Every organization building on shared meaning today inherits a quiet dependency: the knowledge structures beneath its data belong to someone else. Data can be exported. Ontologies cannot. They are shipped as borrowed catalogs inside commercial platforms, seed schemas a customer can use, extend, and depend on, but never take with them. When the contract ends, the data comes out in tables. The knowledge stays behind.</p>
+
+<p>This was the original market failure. A new one is now being layered on top of it.</p>
+
+<p>In May 2026, Anthropic, Blackstone, Hellman &amp; Friedman, and Goldman Sachs announced a $1.5 billion joint venture to deliver enterprise AI transformation services. OpenAI matched it the same week with TPG and Bain Capital. Palantir Technologies validated the pattern at over $325 billion in market capitalization. The model provider, the engineering capacity, and the deployment relationship now sit inside one external entity. The pitch undercuts the strategy houses on slides and the systems integrators on code. The financial sponsors supply the capital and the first clients from their portfolio companies.</p>
+
+<p>The trade press calls it consulting rebuilt from the model up. The press releases call it additional operating capability for the ecosystem. Both readings miss the structural shift. Vertical integration of model provider with implementer with deployment relationship compresses what were previously four dimensions of governance sovereignty (semantic, enforcement, access, container) into one counterparty. We name a fifth that the joint-venture pattern makes unavoidable: provenance independence. Without it, the other four can be reasserted on paper but not reconstructed in evidence.</p>
+
+<p>This is the procurement event most CDOs will not recognize until eighteen months in. The transformation contract is not what it appears to be. It is a transfer of the operational graph at enterprise scale, executed across private equity portfolios at speed.</p>
+
+<p>Speed has a price. The price is sovereignty.</p>
+
+<p>The cold-start tax was always real. Every new knowledge-graph deployment paid it, one customer at a time. That tax is steepest in the domains where getting meaning wrong costs the most: in healthcare and life sciences, where it is measured in patients; in energy and process industries, where it is measured in safety; in manufacturing, claims, and regulatory, where it compounds into exposure that no remediation budget can absorb. Independent reviews put the failure rate of knowledge-graph projects above 70%, with enterprise-scale implementations reaching $10 to $20 million and three years before self-sufficiency.</p>
+
+<p>The cold start is the lever the rebundled providers now pull. An organization that cannot start its own ontology accepts whatever ontology arrives bundled. The ontology that arrives bundled is owned by the counterparty. The two market failures interlock: the cold start created the demand for borrowed meaning; the rebundling captures it.</p>
+
+<p>We believe both failures are market failures, not technical ones. Ontology is where reusable domain meaning lives: the concepts, the relationships, the decisions about what counts as the same thing. Data is what an ontology lets you do. Losing the ontology is losing the work. Renting the ontology under a procurement contract that compresses four going on five sovereignty dimensions is losing the work twice.</p>
+
+<p>We are starting in healthcare and life sciences because the cost there is measured in patients. The architecture transfers.</p>
+
+<h2 class="section">What we owe the human</h2>
+
+<p>For four decades, enterprise software taught its users that the cost of automation is the user. Oracle, SAP, PeopleSoft, SAS, and the platforms that followed shipped on the assumption that the database was the artifact and the human at the keyboard was a shape that would have to bend to fit. Users learned the screens. They translated their mental model into the system's vocabulary. They reconstructed by hand what the system would not connect, and they did it every day, in every shift, in every audit, in every regulatory inspection. We have a name for this: digital archaeology. It is the toll the operator pays so the database can keep its assumptions.</p>
+
+<p>Knowledge graphs are the first chance enterprise software has had to repay that debt. An ontology that begins with the operator's mental model, what a clinical research coordinator carries in their head when they walk into a site, what a process engineer carries when they read a batch record, closes the gap that no UX layer alone has ever closed. This is why TOP starts with OOUX, the Object-Oriented UX methodology. The objects in our reference graphs are the objects the operator already names, not the objects a standards body found convenient.</p>
+
+<p>We believe AI's purpose is to be a human exoskeleton, not a human replacement. A pulley system for cognition. The thing that lets a clinical scientist who is exhausted from chasing eight signed delegation logs find the ninth in a quarter-second instead of a quarter-day. The thing that tells an auditor the chain is intact before they have to walk it. The thing that lets a process engineer compare a deviation against three prior matching deviations without standing up an entire data warehouse to do it. AI without grounding hallucinates. Grounding is what turns a pattern-matcher into an exoskeleton. The reference graph is the grounding.</p>
+
+<p>For the practitioners who make this work, the ontologists, the information architects, the data engineers who have spent careers arguing for their seat at the table, TOP changes the day-one job. The first conversation in a knowledge-graph project is no longer a defense of the discipline. The reference graph already exists. The cross-walks already work. The operator-grade meaning is already there. The practitioner walks in adding value to an institutional asset, not justifying the existence of one. That value compounds with every subsequent contribution, attributed and traceable. Their customers stop being researchers of the past and become architects of the future.</p>
+
+<p>This is what we mean by sovereign meaning. Not just that an organization owns its ontology. That the humans inside the organization, the operators and the practitioners both, get back the cognitive load that decades of mismatched systems have been silently extracting.</p>
+
+<h2 class="section">What we value</h2>
+
+<p>We have come to value:</p>
+
+<ul class="values">
+  <li>Shared reference graphs over borrowed catalogs.</li>
+  <li>Exportable knowledge over rented schemas.</li>
+  <li>Community-governed canon over single-vendor gravity.</li>
+  <li>Interoperable interfaces over proprietary APIs.</li>
+  <li>Domain fidelity over abstraction theater.</li>
+  <li>Versioned commons over snapshot generosity.</li>
+  <li>Sovereign meaning over compressed counterparty stacks.</li>
+</ul>
+
+<p>The items on the right have value. The items on the left are what we are building.</p>
+
+<h2 class="section">What we commit to</h2>
+
+<ul class="commitments">
+  <li><strong>Open licensing.</strong> Every reference graph we publish is licensed for reuse, redistribution, and commercial application without permission.</li>
+  <li><strong>Versioned releases.</strong> Reference graphs ship with semantic versions, changelogs, and migration notes. A commitment not to break downstream users silently.</li>
+  <li><strong>Governance with rotation.</strong> Stewardship is a role, not a tenure. Domain working groups elect and rotate editors on a published cadence.</li>
+  <li><strong>Domain-native working groups.</strong> Clinical research first. Adjacent healthcare and life-sciences domains follow. Energy, process industries, and manufacturing in parallel as practitioners step forward. The domain decides the ontology; we provide the process.</li>
+  <li><strong>A public query interface.</strong> Reference graphs are not just downloadable files. They are queryable from day one, by anyone, without an account.</li>
+  <li><strong>Interoperability over ownership.</strong> We commit to open standards for representation and federation before we commit to any implementation.</li>
+  <li><strong>Credit that is verifiable.</strong> Contribution is signed, attributed, and traceable across versions. We will not let the record be rewritten.</li>
+  <li><strong>A door out.</strong> Everything we host can be taken and run elsewhere. If we ever become a chokepoint, we have already failed our own test.</li>
+  <li><strong>Industry agnosticism by design.</strong> The substrate, the federation pattern, and the commons concepts work for any domain that has paid the cold-start tax. The first reference graph is healthcare; the architecture is not.</li>
+</ul>
+
+<h2 class="section">What we ship first</h2>
+
+<p>The founding reference asset is an object-oriented map of clinical research, built using OOUX, the Object-Oriented UX methodology. It names the entities, relationships, and attributes that clinical-research work actually turns on (sponsor, study, site, participant, visit, investigational product, oversight body, event), in a form that can be rendered as a knowledge graph, extended by the community, and consumed by any platform.</p>
+
+<p>This is the first reference graph. It exists so that no one starting work in this domain has to begin from a vendor's seed. It is our proof that we ship, not just argue. The next reference graphs already in the queue: in healthcare and life sciences, CMC, drug discovery, regulatory, commercial, claims, and healthcare delivery; in energy and process industries, the analogues to ISO 15926 and CFIHOS; in manufacturing, batch processing and supply chain. Each ships under its own working group with its own domain-native vocabulary, importing the same TOP commons.</p>
+
+<h2 class="section">How to query</h2>
+
+<p>We are building toward a knowledge graph of knowledge graphs, a federation where reference graphs from different domains remain their own artifacts, governed by their own communities, but can be discovered, cross-walked, and queried through a shared interface.</p>
+
+<p>The proposed substrate is NGSI-LD, an open standard for context-aware, linked-data exchange. It is the candidate because it treats entities as first-class, speaks JSON-LD natively, and federates without requiring a central authority. We will validate it by using it.</p>
+
+<h2 class="section">Invitation</h2>
+
+<p>v0.1 was deliberately unsigned. The document had to come first. v0.2 stands open for endorsement.</p>
+
+<p>What we ship next, the second reference graph, the governance charter, the contributor process, will be shaped by the people who show up to this draft and mark it up. If you believe knowledge is the work and data is only what the work enables, read this and argue with it. Where we are wrong, say so. Where we are vague, push.</p>
+
+<p>We are not asking for followers. We are asking for the first edits.</p>
+
+<div class="signatures">
+  <h2 class="section" style="margin-top: 0;">Convener</h2>
+
+  <div class="sig-grid">
+
+    <div class="sig-block convener">
+      <div class="sig-name">Bo Lora</div>
+      <div class="sig-role">Convener · Healthcare and Life Sciences</div>
+      <div class="sig-context">Founder, Scientix.ai Inc. Thirty years across regulated finance, travel, e-commerce, and healthcare and life sciences AI strategy. Former Principal Design Technologist, AWS HCLS Industry Products. Sponsor of the founding reference graph and the operational substrate that supports it.</div>
+      <div class="sig-line"><span>Signed as convener</span><span>May 2026</span></div>
+    </div>
+
+  </div>
+
+  <div class="sig-disclaimer" style="margin-top: 16px;">
+    Founding signatories will be named here as they accept the invitation. Endorsement of this manifesto carries no obligation beyond the signature itself; signatories retain the right to refine the manifesto's language as a condition of signing.
+  </div>
+</div>
+
+<div class="footer">
+  v0.2 draft · supersedes v0.1 (April 2026) · materially expanded with the sovereignty argument and the move from deliberately-unsigned to founding-signatory-pending · published under CC BY 4.0 once final · the reference graphs themselves ship under Apache 2.0 at github.com/scientixai/the-ontology-project · sponsorship of TOP infrastructure during the founding phase provided by Scientix.ai Inc · stewardship will rotate to domain working groups on a published cadence
+</div>
+
+</div>
+
+</body>
+</html>

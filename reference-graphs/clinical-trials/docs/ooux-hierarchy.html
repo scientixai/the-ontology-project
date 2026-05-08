@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Clinical Research / Top-Level Object Hierarchy / v0.1 strawman</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 20px 28px 24px;
+    line-height: 1.4;
+    font-size: 13px;
+  }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 12px; }
+  header .title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; }
+  header .lede { font-size: 12px; color: #2a2a2a; margin-top: 8px; max-width: 110ch; }
+
+  .scenarios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    margin: 10px 0 12px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .scenarios > strong { color: #555; letter-spacing: 0.04em; font-size: 10px; text-transform: uppercase; }
+  .scn { display: inline-flex; align-items: center; gap: 6px; color: #2a2a2a; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .s1 { background: #1e6fd9; }
+  .s2 { background: #c0392b; }
+  .s3 { background: #d68910; }
+  .s4 { background: #1e8e6f; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 9px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 10px 12px 11px;
+    position: relative;
+    min-height: 178px;
+  }
+  .card h2 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 1px;
+  }
+  .card .role {
+    font-size: 10.5px;
+    color: #777;
+    font-style: italic;
+    margin-bottom: 7px;
+    padding-right: 50px;
+  }
+  .card ul { list-style: none; font-size: 11.5px; color: #2a2a2a; }
+  .card li { padding: 0.5px 0; }
+  .card li.note {
+    color: #888;
+    font-size: 10.5px;
+    padding-top: 4px;
+    border-top: 1px dashed #e0e0d8;
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .card .scn-row {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    display: flex;
+    gap: 4px;
+  }
+
+  .horizontals {
+    margin-top: 12px;
+    padding: 10px 12px 11px;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+  }
+  .horizontals h3 {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 2px;
+  }
+  .horizontals .lede { font-size: 11px; color: #555; margin-bottom: 7px; max-width: 110ch; font-style: italic; }
+  .horizontals .row { font-size: 11px; color: #2a2a2a; line-height: 1.85; }
+  .horizontals .row .group { margin-right: 12px; display: inline-block; }
+  .horizontals .row .group strong { color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; margin-right: 6px; }
+  .pill {
+    background: #eeeee7;
+    padding: 1px 7px;
+    border-radius: 2px;
+    margin-right: 3px;
+    display: inline-block;
+    font-size: 11px;
+  }
+
+  .decisions {
+    margin-top: 12px;
+    padding: 10px 12px 11px;
+    background: #fffbe8;
+    border: 1px solid #e6d97a;
+    border-radius: 3px;
+  }
+  .decisions h3 {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6a5d10;
+    margin-bottom: 6px;
+  }
+  .decisions ol { font-size: 11.5px; color: #2a2a2a; padding-left: 18px; line-height: 1.55; }
+  .decisions li { padding: 1.5px 0; }
+  .decisions li strong { color: #111; }
+
+  .footer {
+    margin-top: 12px;
+    font-size: 10.5px;
+    color: #777;
+    line-height: 1.5;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .footer .crosswalks { flex: 1; }
+  .footer .legend { text-align: right; font-style: italic; color: #888; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title">TOP / Clinical Research / Top-Level Object Hierarchy / v0.1 strawman</div>
+  <div class="meta">May 2026 · derived from OOUX v0.2 (78 flat objects) · for Bo's markup</div>
+  <p class="lede">Eight top-level objects, OOUX-style. Sub-objects nested where they compose. Cross-cutting horizontals shown below as ribs that any top-level can reference. The four scenarios v0.1 has to demonstrate are tagged on the cards they touch, so coverage is visible without a separate matrix. <strong>Status (2026-05-07): all seven boundary decisions resolved. The hierarchy is stable.</strong></p>
+</header>
+
+<div class="scenarios">
+  <strong>Scenarios</strong>
+  <span class="scn"><span class="dot s1"></span>1 · Blood-draw evidentiary chain</span>
+  <span class="scn"><span class="dot s2"></span>2 · AE pattern → device-line owner</span>
+  <span class="scn"><span class="dot s3"></span>3 · Deviation found on monitoring visit</span>
+  <span class="scn"><span class="dot s4"></span>4 · Query (discrepancy) lifecycle</span>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s1" title="Scenario 1"></span>
+      <span class="dot s2" title="Scenario 2"></span>
+      <span class="dot s3" title="Scenario 3"></span>
+      <span class="dot s4" title="Scenario 4"></span>
+    </div>
+    <h2>Sponsor</h2>
+    <div class="role">runs the trial</div>
+    <ul>
+      <li>Sponsor identity and type</li>
+      <li>Parent organization</li>
+      <li>Regulatory and finance contacts</li>
+      <li class="note">Sponsor is mostly an apex reference. The Contracts, Budgets, Payments, Submissions it signs and authors live as horizontals.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s1" title="Scenario 1"></span>
+      <span class="dot s2" title="Scenario 2"></span>
+      <span class="dot s3" title="Scenario 3"></span>
+      <span class="dot s4" title="Scenario 4"></span>
+    </div>
+    <h2>Study</h2>
+    <div class="role">trial design and definition (USDM-aligned)</div>
+    <ul>
+      <li>Protocol</li>
+      <li>Schedule of Assessments</li>
+      <li>Arm</li>
+      <li>Endpoint</li>
+      <li>Inclusion / Exclusion Criteria</li>
+      <li>Amendment</li>
+      <li>Plan (SAP, DMP, recruitment, comms)</li>
+      <li>Milestone, Study Timeline</li>
+      <li>Enrollment Forecast, Performance Metric</li>
+      <li>Study Startup Package</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s1" title="Scenario 1"></span>
+      <span class="dot s2" title="Scenario 2"></span>
+      <span class="dot s3" title="Scenario 3"></span>
+    </div>
+    <h2>Site</h2>
+    <div class="role">where conduct happens</div>
+    <ul>
+      <li>Investigator</li>
+      <li>Site Staff (delegated)</li>
+      <li>Site Network membership</li>
+      <li>Equipment (site-bound)</li>
+      <li>Storage Location (site-bound)</li>
+      <li>Site Performance Metric</li>
+      <li class="note">Sites can exist independently of any single Study; they enter Studies through CTAs.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s1" title="Scenario 1"></span>
+      <span class="dot s2" title="Scenario 2"></span>
+    </div>
+    <h2>Participant (Subject)</h2>
+    <div class="role">the person being studied</div>
+    <ul>
+      <li>Informed Consent (and reconsent envelope)</li>
+      <li>Enrollment (event-typed)</li>
+      <li>Screen Fail</li>
+      <li>Medical History</li>
+      <li>Concomitant Medication</li>
+      <li class="note">Person ≠ Participant. Person is a horizontal; Participant carries the trial-bound subject identity.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s1" title="Scenario 1"></span>
+      <span class="dot s3" title="Scenario 3"></span>
+      <span class="dot s4" title="Scenario 4"></span>
+    </div>
+    <h2>Visit</h2>
+    <div class="role">unit of trial conduct in time</div>
+    <ul>
+      <li>Activity (the verb-level act)</li>
+      <li>Task</li>
+      <li>Assessment</li>
+      <li>CRF</li>
+      <li>Lab Result</li>
+      <li>Questionnaire</li>
+      <li>Other Clinical Event (boundary; see decisions)</li>
+      <li class="note">The blood-draw chain lives here as a Visit Activity that generates a Sample.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s2" title="Scenario 2"></span>
+    </div>
+    <h2>Investigational Product</h2>
+    <div class="role">what is being tested</div>
+    <ul>
+      <li>Drug / Biologic / Cell / Gene / Vaccine</li>
+      <li>Investigational Device (sub-type)</li>
+      <li>Lot, batch, label, blinding</li>
+      <li class="note">Lots, devices, and components are the anchor for the AE-pattern → device-line scenario.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s2" title="Scenario 2"></span>
+      <span class="dot s3" title="Scenario 3"></span>
+    </div>
+    <h2>Oversight Body</h2>
+    <div class="role">governance and compliance apex</div>
+    <ul>
+      <li>Audit (commissioned)</li>
+      <li>Monitoring Visit</li>
+      <li>Finding</li>
+      <li>CAPA</li>
+      <li>Risk Assessment</li>
+      <li>Regulatory Submission</li>
+      <li>Interim Analysis (DSMB)</li>
+      <li class="note">IRB, EC, DSMB, IBC, scientific review board live here. Audit Trail Entry is a horizontal.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="scn-row">
+      <span class="dot s2" title="Scenario 2"></span>
+      <span class="dot s3" title="Scenario 3"></span>
+      <span class="dot s4" title="Scenario 4"></span>
+    </div>
+    <h2>Event</h2>
+    <div class="role">things that happen and have to be reported</div>
+    <ul>
+      <li>Adverse Event</li>
+      <li>Serious Adverse Event (specialization of AE)</li>
+      <li>Deviation</li>
+      <li>Discrepancy / Query</li>
+      <li>Safety Signal</li>
+      <li>Safety Report (DSUR, PBRER, IND safety)</li>
+      <li class="note">This is the container that makes the deviation, AE-pattern, and query scenarios all walk the same shape.</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="horizontals">
+  <h3>Cross-cutting horizontals · referenced by any top-level</h3>
+  <p class="lede">These are the ribs that connect the spines. Each can be referenced from any of the eight top-levels and carries its own NGSI-LD entity type. None of them carry a top-level operator mental model on their own.</p>
+  <div class="row">
+    <span class="group"><strong>Records</strong>
+      <span class="pill">Document</span><span class="pill">Report</span><span class="pill">Audit Trail Entry</span><span class="pill">Communication Log</span><span class="pill">Log</span>
+    </span>
+    <span class="group"><strong>Money</strong>
+      <span class="pill">Contract</span><span class="pill">Budget</span><span class="pill">Budget Forecast</span><span class="pill">Payment</span>
+    </span>
+    <span class="group"><strong>Systems</strong>
+      <span class="pill">System</span><span class="pill">System Configuration</span><span class="pill">Service</span><span class="pill">Service Configuration</span><span class="pill">Data Transfer</span>
+    </span>
+    <br>
+    <span class="group"><strong>People</strong>
+      <span class="pill">Person</span><span class="pill">Person Role</span><span class="pill">User Role</span><span class="pill">Credential</span><span class="pill">Training Record</span>
+    </span>
+    <span class="group"><strong>Material</strong>
+      <span class="pill">Sample</span><span class="pill">Shipment</span><span class="pill">Storage Location</span><span class="pill">Equipment (vendor-owned)</span>
+    </span>
+    <span class="group"><strong>Work</strong>
+      <span class="pill">Action Item</span><span class="pill">Data Quality Metric</span>
+    </span>
+    <br>
+    <span class="group"><strong>Classifiers</strong>
+      <span class="pill">Tag</span><span class="pill">Therapeutic Area</span><span class="pill">Region</span><span class="pill">Country</span><span class="pill">Regulatory Authority</span><span class="pill">Date (object form)</span>
+    </span>
+  </div>
+</div>
+
+<div class="decisions">
+  <h3>Boundary decisions · Bo's calls (2026-05-07)</h3>
+  <ol>
+    <li><strong>Visit as top-level vs sub of Study.</strong> <em>Locked: top-level.</em> Operators carry "today's visits" as a primary mental anchor; folding under Study would force a Schedule-of-Assessments traversal for the most common operator query.</li>
+    <li><strong>Event as one container vs split.</strong> <em>Locked: one container.</em> Event is a single top-level holding AE, SAE, Deviation, Discrepancy, Safety Signal, Safety Report, and related occurrences. Discrimination by sub-type (eventCategory enum) rather than by class split. Operators do not mentally separate "safety event" from "conduct event" until they are filing a report.</li>
+    <li><strong>IP as top-level vs sub of Study.</strong> <em>Locked: top-level.</em> Lots, devices, and components anchor the AE-pattern scenario independently of the protocol. The USDM InvestigationalIntervention shape projects forward at emission time.</li>
+    <li><strong>Sample as horizontal vs ninth top-level.</strong> <em>Locked: horizontal for v0.1, with future-promotion note.</em> Sample stays under horizontals (generated by Visit Activities). Lab and biobank workflows where Sample is the central operator anchor may justify promotion in v0.2 or in domain-specific reference graphs (e.g., a cell-therapy graph). Tracked.</li>
+    <li><strong>Other Clinical Event placement.</strong> <em>Locked: Path C, both with disambiguation.</em> Visit gets a new sub-object <span class="pill">Visit Observation</span> (routine, non-reportable, per-Visit). Event gets <span class="pill">Other Clinical Event</span> (reportable, lives in the Event lifecycle). A 0..N <span class="pill">derivedFrom</span> relationship from Other Clinical Event back to Visit Observation preserves the audit chain when something noticed today becomes a categorized Event tomorrow. Reportability handoff is a categorical CRA action ("Promote Visit Observation to Event"), not a status flag transition. Tracked open: the operational boundary between "routine observation" and "reportable event" is a UX/workflow design problem; the model gives the entities, the UI determines the clarity of the handoff.</li>
+    <li><strong>Action Item placement.</strong> <em>Locked: horizontal.</em> Every top-level produces and assigns Action Items, so it lives across the spine, not under one top-level.</li>
+    <li><strong>Equipment placement.</strong> <em>Locked: all horizontal.</em> Bo's lean accepted. Site-bound vs vendor-owned vs participant-loaned distinction lives on an Equipment attribute (<span class="pill">equipmentBinding</span> enum: SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED) rather than a structural split. Site binding carries through a Relationship rather than hierarchical placement.</li>
+    <li><strong>The "ninth" question.</strong> <em>Locked: Path Z, eight is the cap for the clinical-trials reference graph; specialty graphs elevate what they need.</em> The trials commons (<span class="pill">top:</span>) stays at exactly eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. Specialty reference graphs (a future cell-therapy graph at <span class="pill">topct:</span>, a future rare-disease graph at <span class="pill">toprd:</span>, etc.) import the same horizontals and elevate domain-specific anchors (Sample, Supply/Logistics, etc.) to top-level in their own contexts. This honors KISS for the trials commons, honors the federation pattern for specialty domains, and keeps the Sample-horizontal-with-future-promotion-note (locked above) consistent rather than arbitrary.</li>
+  </ol>
+  <p style="font-size: 11px; color: #666; margin-top: 14px; font-style: italic;">All seven boundary decisions are resolved. The OOUX hierarchy is now stable at eight top-levels for the clinical-trials reference graph. Sub-objects locked: Visit Observation (under Visit), Other Clinical Event (under Event), derivedFrom audit-chain link from Other Clinical Event back to Visit Observation. Equipment fully promoted to horizontal with equipmentBinding enum carrying the SITE_BOUND / VENDOR_OWNED / PARTICIPANT_LOANED distinction. Sample remains horizontal in the trials commons; specialty reference graphs may elevate it.</p>
+</div>
+
+<div class="footer">
+  <div class="crosswalks">
+    <strong>Cross-walks carried at every entity:</strong> FHIR R5 · CDISC USDM v3 · CDISC SDTM IG 3.4 · CDISC CDASH IG 2.1 · ODM-XML · NCIt · SNOMED CT · LOINC · W3C PROV · NGSI-LD core. Surfaced via owl:equivalentClass and skos:exactMatch annotations on the @context.
+  </div>
+  <div class="legend">
+    Markup mode: write next to any line, or reply with line numbers · v0.1 strawman, expects to be edited
+  </div>
+</div>
+
+</body>
+</html>

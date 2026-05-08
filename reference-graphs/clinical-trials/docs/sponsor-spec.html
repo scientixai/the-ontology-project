@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Sponsor / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 22px 26px 32px;
+    line-height: 1.55;
+    font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  h2.section {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #111;
+    margin: 26px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #c8c8c0;
+  }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+
+  p { margin-bottom: 10px; }
+  p.tldr {
+    background: #fff;
+    border-left: 3px solid #1e6fd9;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  th, td {
+    text-align: left;
+    padding: 7px 10px;
+    border-bottom: 1px solid #ececea;
+    vertical-align: top;
+  }
+  th {
+    background: #f0f0e9;
+    font-weight: 700;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    border-bottom: 1px solid #d6d6cf;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  td.muted { color: #888; font-style: italic; }
+
+  .decision {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+
+  .scenario {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  .scenario .title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves {
+    font-size: 11.5px;
+    color: #1a1a1a;
+    background: #f7faf8;
+    border: 1px solid #cde4d8;
+    border-radius: 3px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    line-height: 1.65;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .query {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  .query .persona { font-weight: 700; font-size: 12px; color: #111; margin-bottom: 4px; }
+  .query .ask { font-style: italic; color: #555; margin-bottom: 8px; font-size: 12.5px; }
+  .query pre {
+    background: #1e1e1c;
+    color: #e8e8e0;
+    padding: 10px 12px;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    line-height: 1.55;
+    overflow-x: auto;
+    margin-bottom: 6px;
+  }
+  .query .reads { font-size: 11.5px; color: #555; }
+
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+
+  .toc {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .toc strong { color: #111; }
+  .toc a { color: #1e6fd9; text-decoration: none; margin-right: 12px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Sponsor / spec / v1</div>
+  <div class="meta">2026-05-07 · backed by source/top-strawman.json (v0.1.3-strawman) · pyshacl on the Pfizer-IQVIA worked example: <strong>Conforms: True</strong></div>
+</header>
+
+<div class="toc">
+  <strong>Sections:</strong>
+  <a href="#tldr">1. TL;DR</a>
+  <a href="#model">2. Model summary</a>
+  <a href="#decisions">3. Architectural decisions</a>
+  <a href="#stress">4. Stress-test scenarios</a>
+  <a href="#queries">5. Query patterns</a>
+  <a href="#nlp">6. NLP-to-NGSI-LD</a>
+  <a href="#shacl">7. SHACL invariants</a>
+  <a href="#crosswalks">8. Cross-walks</a>
+  <a href="#open">9. Open issues</a>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">the per-Org-per-Study insight, the three architectural decisions, the multi-jurisdictional pattern</span></h2>
+
+<p class="tldr">The Sponsor entity in TOP is per Organization, per Study. One Sponsor entity captures one Organization's role on one Study. A company that sponsors fifty Studies has fifty Sponsor entities, all anchored through <span class="inline">belongsToOrganization</span> to the same corporate Organization. The "all studies Pfizer sponsors" enterprise view is served from <span class="inline">Organization.playsSponsorRole</span>, not from a single Sponsor entity. This shape resolves the cases the OOUX map's enterprise-level Sponsor cannot: CRO-as-proxy on a single Study, multi-jurisdictional sponsor of record (Pfizer Inc under FDA, Pfizer Ireland under EMA on the same trial), M&A transfer of one Study without moving the rest of the portfolio, and the academic IIT where the legal sponsor is a single PI.</p>
+
+<p>What you see if you query the model: three boolean responsibility flags per Sponsor (regulatory, financial, operational) plus an <span class="inline">isInitiator</span> flag plus an <span class="inline">isSponsorOfRecord</span> flag, a 1..1 link to the corporate Organization, a 1..1 link to the Study, an optional self-reference (<span class="inline">actsOnBehalfOf</span>) for delegation chains, an optional self-reference (<span class="inline">parentSponsor</span>) for structural lineage, an optional 0..N link to RegulatoryAuthority for jurisdiction scoping, and <span class="inline">validFrom</span> / <span class="inline">validUntil</span> temporal bounds for handoffs and transfers. That set is the entire architectural payload. Everything else (Contracts, Documents, Audits, Submissions, IP, Sites, Systems, Persons) hangs off the Sponsor through standard relationships and accumulates over the Study lifecycle.</p>
+
+<p>The shape lets a regulator query "show me the legal Sponsor of record on Study ONCO-423 in my jurisdiction" and get exactly one entity back. It lets a site query "who do I call when the eTMF goes down on this Study" and get a Sponsor entity with operational responsibility. It lets a sponsor portfolio analyst query "show me every Sponsor entity backed by Pfizer Inc that is the SoR under FDA and is currently in active enrollment" without crossing layer boundaries. The model preserves clean projection into USDM and FHIR because every predicate carries one target type and every entity sits at one architectural scope.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="model"><span class="num">2.</span>Model summary <span class="subnote">attributes and key relationships · full set in source/top-strawman.json</span></h2>
+
+<h3 class="subsection">Attributes (twenty fields)</h3>
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Type</th><th>Optional</th><th>Doc</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="code">sponsorId</td><td class="code">ngsi-ld:URI</td><td>no</td><td>Globally unique NGSI-LD identifier</td></tr>
+    <tr><td class="code">sponsorName</td><td class="code">xsd:string</td><td>no</td><td>Display name</td></tr>
+    <tr><td class="code">legalName</td><td class="code">xsd:string</td><td>no</td><td>Registered legal name</td></tr>
+    <tr><td class="code">sponsorType</td><td class="code">enum</td><td>no</td><td>PHARMACEUTICAL, BIOTECH, ACADEMIC, GOVERNMENT, INVESTIGATOR_SPONSOR, CRO_AS_SPONSOR, OTHER</td></tr>
+    <tr><td class="code">duns</td><td class="code">xsd:string</td><td>yes</td><td>Dun &amp; Bradstreet DUNS number</td></tr>
+    <tr><td class="code">orcid</td><td class="code">xsd:string</td><td>yes</td><td>ORCID, populated for investigator-sponsors</td></tr>
+    <tr><td class="code">address</td><td class="code">xsd:object</td><td>no</td><td>Per-Study contact address (line1, city, region, postalCode)</td></tr>
+    <tr><td class="code">country</td><td class="code">xsd:string</td><td>no</td><td>ISO 3166-1 alpha-3</td></tr>
+    <tr><td class="code">phone</td><td class="code">xsd:string</td><td>no</td><td>Primary phone</td></tr>
+    <tr><td class="code">email</td><td class="code">xsd:string</td><td>no</td><td>Primary email</td></tr>
+    <tr><td class="code">website</td><td class="code">xsd:anyURI</td><td>no</td><td>Sponsor website</td></tr>
+    <tr><td class="code">status</td><td class="code">enum</td><td>no</td><td>ACTIVE, INACTIVE, MERGED, ACQUIRED</td></tr>
+    <tr><td class="code">isSponsorOfRecord</td><td class="code">xsd:boolean</td><td>no</td><td>True if this Sponsor entity holds regulatory accountability per 21 CFR 312 (or jurisdictional equivalent). Exactly one Sponsor per (Study × jurisdiction) carries this true.</td></tr>
+    <tr><td class="code">hasRegulatoryResponsibility</td><td class="code">xsd:boolean</td><td>no</td><td>Often coincident with isSponsorOfRecord; separated for the rare case where regulatory submission is delegated without transfer of legal SoR status.</td></tr>
+    <tr><td class="code">hasFinancialResponsibility</td><td class="code">xsd:boolean</td><td>no</td><td>True if this Sponsor provides funding. Distinct from SoR (an academic medical center may be the financial sponsor while a PI is the legal sponsor of an IIT).</td></tr>
+    <tr><td class="code">hasOperationalResponsibility</td><td class="code">xsd:boolean</td><td>no</td><td>True if this Sponsor manages day-to-day conduct. The CRO-as-proxy case.</td></tr>
+    <tr><td class="code">isInitiator</td><td class="code">xsd:boolean</td><td>no</td><td>True if this Sponsor initiated the Study.</td></tr>
+    <tr><td class="code">validFrom</td><td class="code">xsd:dateTime</td><td>yes</td><td>NGSI-LD temporal: from when this Sponsor relationship is operationally valid.</td></tr>
+    <tr><td class="code">validUntil</td><td class="code">xsd:dateTime</td><td>yes</td><td>NGSI-LD temporal: through when this Sponsor relationship was operationally valid.</td></tr>
+    <tr><td class="code">primaryTherapeuticArea</td><td class="code">xsd:string</td><td>yes</td><td>Per-Study TA focus from this Sponsor's role view (oncology, cardiology, rare disease, etc.). Corporate TA spread lives on Organization.primaryTherapeuticAreas.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Key relationships (selected; full set in <span class="inline">source/top-strawman.json</span>)</h3>
+<table>
+  <thead>
+    <tr><th>Predicate</th><th>Target</th><th>Cardinality</th><th>Operational meaning</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="code">belongsToOrganization</td><td class="code">Organization</td><td>1..1</td><td>The corporate Organization this Sponsor is backed by; carries the parentOrganization hierarchy for J&amp;J / Janssen / Innovative Medicine cases.</td></tr>
+    <tr><td class="code">runs</td><td class="code">Study</td><td>1..1</td><td>The single Study this Sponsor entity is scoped to (per-Org-per-Study pattern).</td></tr>
+    <tr><td class="code">actsOnBehalfOf</td><td class="code">Sponsor</td><td>0..1</td><td>Self-ref for operational delegation; CRO operational sponsor → sponsor of record.</td></tr>
+    <tr><td class="code">parentSponsor</td><td class="code">Sponsor</td><td>0..1</td><td>Self-ref for structural lineage: M&amp;A successor, lead/co-sponsor, EU CTR Article 74 legal-rep parent. Distinct from <span class="inline">actsOnBehalfOf</span> (operational) and <span class="inline">belongsToOrganization</span> (corporate).</td></tr>
+    <tr><td class="code">regulatoryAuthorityScope</td><td class="code">RegulatoryAuthority</td><td>0..N</td><td>Jurisdictional scoping for multi-jurisdictional sponsor of record.</td></tr>
+    <tr><td class="code">engages</td><td class="code">Site</td><td>0..N</td><td>Sites engaged for this Study (accumulates over startup).</td></tr>
+    <tr><td class="code">supplies</td><td class="code">InvestigationalProduct</td><td>0..N</td><td>IP supplied for this Study (observational studies have none).</td></tr>
+    <tr><td class="code">interfacesWith</td><td class="code">OversightBody</td><td>0..N</td><td>IRB, EC, DSMB, IDMC for this Study.</td></tr>
+    <tr><td class="code">files</td><td class="code">RegulatorySubmission</td><td>0..N</td><td>Submissions filed under this sponsorship (accumulates over lifecycle).</td></tr>
+    <tr><td class="code">operatesSystem</td><td class="code">System</td><td>0..N</td><td>Per-Study operational ownership of Systems (the "who do you call when the EDC breaks on this Study" view). Distinct from corporate tenancy at <span class="inline">Organization.operatesSystem</span>.</td></tr>
+    <tr><td class="code">publishesDocument</td><td class="code">Document</td><td>0..N</td><td>Sponsor-controlled documents on this Study (TMF and beyond).</td></tr>
+    <tr><td class="code">publishesPublication</td><td class="code">Publication</td><td>0..N</td><td>Resulting publications. Split from "publishes" for clean projection.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="decisions"><span class="num">3.</span>Why this shape — architectural decisions</h2>
+
+<p>Three decisions shape the Sponsor model. Each was made in dialogue and is reversible if downstream evidence argues against it.</p>
+
+<div class="decision">
+  <div class="title">Decision 1. Sponsor is per Organization, per Study.</div>
+  <p>The OOUX map's original Sponsor was implicitly enterprise-level (one Sponsor entity = one company; <span class="inline">runs: Study (1..N)</span>). We flipped this in v0.2-TOP to per-Organization-per-Study (<span class="inline">runs: Study (1..1)</span>). Reason: the operator's mental model of "the Sponsor of this study" is per-study contextual. The "all studies Pfizer sponsors" enterprise view is served from <span class="inline">Organization.playsSponsorRole</span>, not from a single Sponsor entity. This matches USDM's ProductOrganizationRole pattern and resolves Gemini's "show me trials where Org X is the payer but not the regulator" query cleanly. Trade-off: the per-Study scope means a company sponsoring fifty trials has fifty Sponsor entities. That is fine; they are cheap, they index well, and they make the SHACL invariants crisp.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2. Boolean responsibility flags absorb the responsibility-matrix pattern.</div>
+  <p>Each Sponsor entity carries five booleans: <span class="inline">isSponsorOfRecord</span>, <span class="inline">hasRegulatoryResponsibility</span>, <span class="inline">hasFinancialResponsibility</span>, <span class="inline">hasOperationalResponsibility</span>, <span class="inline">isInitiator</span>. Gemini originally proposed a junction class to model the five-way Sponsor-role matrix; we collapsed it into flags after stress-testing the IIT case (PI = legal sponsor, AMC = financial sponsor, no separate initiator) and the CRO-as-proxy case (Pfizer = SoR + regulatory + financial; IQVIA = operational only). The flags express the matrix without introducing a junction-class indirection that would slow every query and confuse operators reading the entity. Trade-off: the flags require explicit SHACL invariants to encode the rule "exactly one isSponsorOfRecord = true per Study × jurisdiction." That invariant lives in §7.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3. Multi-jurisdictional sponsor of record via regulatoryAuthorityScope.</div>
+  <p>Pfizer Inc is the SoR under FDA on Study ONCO-423. Pfizer Ireland is the SoR under EMA on the same Study. Two different legal entities, two different Sponsor entities, both carrying <span class="inline">isSponsorOfRecord = true</span>, distinguished by <span class="inline">regulatoryAuthorityScope</span> (the FDA entry vs the EMA entry). The SHACL invariant relaxes from "exactly one SoR per Study" to "exactly one SoR per Study × jurisdiction." This matches how multi-region clinical trials actually file and how regulators read the entity at audit. Trade-off: the RegulatoryAuthority horizontal is currently flagged-missing in OOUX v0.2; the relationship resolves through the target-missing minCount-zero pattern until the horizontal is specified.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="stress"><span class="num">4.</span>Stress-test scenarios <span class="subnote">seven cases, plain English to graph shape</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">A. Industry-sponsored trial, single jurisdiction, no CRO</div><div class="scn-tag">canonical</div></div>
+  <p>Pfizer Inc sponsors Study ONCO-423 under FDA. Pfizer runs ops in-house. No CRO, no co-sponsor, no academic involvement at the sponsorship layer.</p>
+  <div class="resolves">
+Sponsor:pfizer-onco423-fda<br>
+&nbsp;&nbsp;belongsToOrganization → Organization:pfizer<br>
+&nbsp;&nbsp;runs → Study:ONCO-423<br>
+&nbsp;&nbsp;regulatoryAuthorityScope → RegulatoryAuthority:fda<br>
+&nbsp;&nbsp;isSponsorOfRecord = true · hasRegulatoryResponsibility = true<br>
+&nbsp;&nbsp;hasFinancialResponsibility = true · hasOperationalResponsibility = true<br>
+&nbsp;&nbsp;isInitiator = true
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">B. CRO acting as operational proxy</div><div class="scn-tag">delegation</div></div>
+  <p>Pfizer is the legal SoR under FDA. IQVIA runs day-to-day operations as proxy. Two Sponsor entities, both linked to the same Study, related by <span class="inline">actsOnBehalfOf</span>.</p>
+  <div class="resolves">
+Sponsor:pfizer-onco423-fda · isSponsorOfRecord=true · hasOperational=false<br>
+Sponsor:iqvia-onco423-ops · isSponsorOfRecord=false · hasOperational=true<br>
+&nbsp;&nbsp;actsOnBehalfOf → Sponsor:pfizer-onco423-fda
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">C. Multi-jurisdictional sponsor of record, dual SoR</div><div class="scn-tag">multi-region</div></div>
+  <p>Pfizer Inc is SoR under FDA. Pfizer Ireland is SoR under EMA on the same Study. IQVIA operates the trial globally as proxy for both. Three Sponsor entities, two SoRs, one operational sponsor.</p>
+  <div class="resolves">
+Sponsor:pfizer-onco423-fda · regulatoryAuthorityScope → fda · isSoR=true<br>
+Sponsor:pfizer-ireland-onco423-ema · regulatoryAuthorityScope → ema · isSoR=true<br>
+Sponsor:iqvia-onco423-ops · actsOnBehalfOf → Sponsor:pfizer-onco423-fda · hasOperational=true<br>
+SHACL invariant: exactly one isSponsorOfRecord=true per (Study × RegulatoryAuthority) — satisfied.
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">D. Investigator-initiated trial at MD Anderson</div><div class="scn-tag">academic IIT</div></div>
+  <p>PI Dr. Smith at MD Anderson runs IIT-001 with departmental funds. Smith is the legal sponsor (sponsorType = INVESTIGATOR_SPONSOR, orcid populated, duns empty). MD Anderson is the financial sponsor and the operational owner.</p>
+  <div class="resolves">
+Sponsor:smith-iit001-fda · belongsToOrganization → Organization:smith-individual<br>
+&nbsp;&nbsp;sponsorType=INVESTIGATOR_SPONSOR · orcid=populated · duns=empty<br>
+&nbsp;&nbsp;isSoR=true · hasRegulatoryResponsibility=true · isInitiator=true<br>
+&nbsp;&nbsp;hasFinancialResponsibility=false · hasOperationalResponsibility=false<br>
+Sponsor:mdanderson-iit001-ops · belongsToOrganization → Organization:mdanderson<br>
+&nbsp;&nbsp;hasFinancialResponsibility=true · hasOperationalResponsibility=true
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">E. CRO contracted as legal sponsor</div><div class="scn-tag">CRO_AS_SPONSOR</div></div>
+  <p>Parexel is contracted as legal sponsor on a Phase I study for a small biotech that lacks the regulatory capacity to file IND themselves. Parexel is SoR; the biotech retains financial responsibility and IP ownership.</p>
+  <div class="resolves">
+Sponsor:parexel-bio001-fda · sponsorType=CRO_AS_SPONSOR · isSoR=true<br>
+&nbsp;&nbsp;belongsToOrganization → Organization:parexel<br>
+Sponsor:smallbio-bio001-fin · hasFinancialResponsibility=true · isInitiator=true<br>
+&nbsp;&nbsp;belongsToOrganization → Organization:smallbio
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">F. M&amp;A transfer mid-conduct</div><div class="scn-tag">temporal</div></div>
+  <p>Pfizer acquires Arena Pharmaceuticals on 2026-03-15. Arena's Study ARENA-LEGACY-001 transfers to Pfizer sponsorship on the IND-transfer effective date 2026-04-01. The Arena Sponsor entity gets <span class="inline">validUntil = 2026-04-01T00:00:00Z</span>; a new Pfizer Sponsor entity is created with <span class="inline">validFrom = 2026-04-01T00:00:00Z</span>. Both records remain queryable for audit. The successor links via <span class="inline">parentSponsor</span>.</p>
+  <div class="resolves">
+Sponsor:arena-legacy001-fda · validFrom=2024-06-01 · validUntil=2026-04-01<br>
+Sponsor:pfizer-legacy001-fda · validFrom=2026-04-01 · validUntil=null<br>
+&nbsp;&nbsp;parentSponsor → Sponsor:arena-legacy001-fda<br>
+&nbsp;&nbsp;belongsToOrganization → Organization:pfizer
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">G. SMO portfolio view across studies</div><div class="scn-tag">enterprise lens</div></div>
+  <p>Elevate Research is an SMO running sites across many Studies for many sponsors. Question: "show me every Sponsor entity whose engaged sites include any Elevate location, grouped by Sponsor parent Organization." This is a graph traversal, not a Sponsor-attribute query.</p>
+  <div class="resolves">
+Site → partOfSiteNetwork → Organization:elevate-research<br>
+&nbsp;&nbsp;←(engages)— Sponsor → belongsToOrganization → Organization (parent)<br>
+&nbsp;&nbsp;Group by parent Organization · count per group · result: SMO portfolio map.
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="queries"><span class="num">5.</span>Query patterns <span class="subnote">six perspectives, NGSI-LD HTTP shape</span></h2>
+
+<div class="query">
+  <div class="persona">Site (CRA at a hospital)</div>
+  <div class="ask">"Who do I call when the eTMF goes down on Study ONCO-423?"</div>
+  <pre>GET /entities?type=Sponsor
+  &amp;q=runs=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;q=hasOperationalResponsibility==true
+  &amp;options=keyValues</pre>
+  <div class="reads">Returns the Sponsor entity (or entities) flagged as the operational owner of this Study. The CRA reads <span class="inline">phone</span>, <span class="inline">email</span>, and the <span class="inline">employs</span> link to find the named contact.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Patient (or patient advocate)</div>
+  <div class="ask">"Who is legally responsible for this trial in the US?"</div>
+  <pre>GET /entities?type=Sponsor
+  &amp;q=runs=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;q=isSponsorOfRecord==true
+  &amp;q=regulatoryAuthorityScope=="urn:ngsi-ld:RegulatoryAuthority:fda"</pre>
+  <div class="reads">Returns exactly one Sponsor entity (per the SHACL invariant). The patient reads <span class="inline">legalName</span> and <span class="inline">website</span> to verify accountability.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Regulator (FDA reviewer)</div>
+  <div class="ask">"For Study ONCO-423, who holds the IND in our jurisdiction?"</div>
+  <pre>GET /entities?type=Sponsor
+  &amp;q=runs=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;q=isSponsorOfRecord==true
+  &amp;q=regulatoryAuthorityScope=="urn:ngsi-ld:RegulatoryAuthority:fda"
+  &amp;options=sysAttrs</pre>
+  <div class="reads">Returns the SoR entity with full audit metadata (createdAt, modifiedAt, validFrom, validUntil). Multi-jurisdictional studies return one entity per regulator's <span class="inline">regulatoryAuthorityScope</span>.</div>
+</div>
+
+<div class="query">
+  <div class="persona">SMO operations lead</div>
+  <div class="ask">"Across our 12 site locations, which Sponsors are we currently engaged with?"</div>
+  <pre>GET /entities?type=Sponsor
+  &amp;q=engages.partOfSiteNetwork=="urn:ngsi-ld:Organization:elevate-research"
+  &amp;options=keyValues</pre>
+  <div class="reads">Returns the Sponsor entities with at least one engaged Site that is part of the Elevate Research SMO. Group client-side by <span class="inline">belongsToOrganization</span> for the parent-Organization roll-up.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Sponsor portfolio analyst (Pfizer side)</div>
+  <div class="ask">"Show me every Pfizer-led Sponsor entity where we hold the SoR under FDA and the Study is in active enrollment."</div>
+  <pre>GET /entities?type=Sponsor
+  &amp;q=belongsToOrganization=="urn:ngsi-ld:Organization:pfizer"
+  &amp;q=isSponsorOfRecord==true
+  &amp;q=regulatoryAuthorityScope=="urn:ngsi-ld:RegulatoryAuthority:fda"
+  &amp;q=runs.studyStatus=="active"</pre>
+  <div class="reads">Returns the active Pfizer Sponsor entities under FDA. Hierarchy children (Pfizer Ireland, Janssen, Innovative Medicine) reachable by traversing <span class="inline">Organization.parentOrganization</span> with <span class="inline">belongsToOrganization</span>.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Compliance officer (post-M&amp;A audit)</div>
+  <div class="ask">"For Study ARENA-LEGACY-001, show me the full Sponsor lineage with effective dates."</div>
+  <pre>GET /temporal/entities?type=Sponsor
+  &amp;q=runs=="urn:ngsi-ld:Study:ARENA-LEGACY-001"
+  &amp;timerel=between
+  &amp;timeAt=2024-01-01T00:00:00Z
+  &amp;endTimeAt=2026-12-31T23:59:59Z
+  &amp;options=temporalValues</pre>
+  <div class="reads">Returns every Sponsor entity that has been the SoR on this Study, ordered by validFrom. The <span class="inline">parentSponsor</span> chain links successors to predecessors; <span class="inline">validFrom</span> / <span class="inline">validUntil</span> bracket each tenure.</div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="nlp"><span class="num">6.</span>NLP-to-NGSI-LD translation <span class="subnote">how operator language maps to graph predicates</span></h2>
+
+<p>Most Sponsor-related questions an operator types into a search bar collapse to a small number of structural patterns. The translation table below shows how natural-language phrasings rewrite into NGSI-LD query shapes, and how the boolean responsibility flags carry the discriminating logic.</p>
+
+<table>
+  <thead>
+    <tr><th>Operator phrasing</th><th>Translated query shape</th><th>Discriminating predicate</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>"Who's the sponsor of Study X?"</td><td>type=Sponsor &amp; runs==X &amp; isSponsorOfRecord==true</td><td>isSponsorOfRecord</td></tr>
+    <tr><td>"Who's running the trial day-to-day?"</td><td>type=Sponsor &amp; runs==X &amp; hasOperationalResponsibility==true</td><td>hasOperationalResponsibility</td></tr>
+    <tr><td>"Who's funding it?"</td><td>type=Sponsor &amp; runs==X &amp; hasFinancialResponsibility==true</td><td>hasFinancialResponsibility</td></tr>
+    <tr><td>"Who started this trial?"</td><td>type=Sponsor &amp; runs==X &amp; isInitiator==true</td><td>isInitiator</td></tr>
+    <tr><td>"Who holds the IND in the US?"</td><td>type=Sponsor &amp; runs==X &amp; isSponsorOfRecord==true &amp; regulatoryAuthorityScope==fda</td><td>regulatoryAuthorityScope</td></tr>
+    <tr><td>"Show me Pfizer's active oncology trials"</td><td>type=Sponsor &amp; belongsToOrganization==pfizer &amp; primaryTherapeuticArea==oncology &amp; runs.studyStatus==active</td><td>primaryTherapeuticArea + studyStatus</td></tr>
+    <tr><td>"Who replaced Arena as sponsor?"</td><td>type=Sponsor &amp; parentSponsor==Sponsor:arena-* &amp; validFrom!=null</td><td>parentSponsor + validFrom</td></tr>
+    <tr><td>"Who's the CRO running this trial?"</td><td>type=Sponsor &amp; runs==X &amp; sponsorType==CRO_AS_SPONSOR (legal CRO sponsor) OR &amp; actsOnBehalfOf!=null (operational proxy)</td><td>sponsorType vs actsOnBehalfOf</td></tr>
+    <tr><td>"Who's responsible for this Study's safety reporting?"</td><td>type=Sponsor &amp; runs==X &amp; hasRegulatoryResponsibility==true (then traverse to RegulatorySubmission)</td><td>hasRegulatoryResponsibility</td></tr>
+    <tr><td>"Has this Study had a sponsor change?"</td><td>temporal/entities, type=Sponsor &amp; runs==X &amp; count>1 OR any record where validUntil!=null</td><td>validUntil + temporal endpoint</td></tr>
+  </tbody>
+</table>
+
+<p>The pattern that earns its keep: every operator question reduces to a Sponsor-entity query plus one or two boolean-flag or scoped-relationship constraints. No junction-class hops, no derived-view materializations. The verb is always <span class="inline">runs</span> for "what Study" and the discriminator is always a flag, an enum, or a scoped relationship. This is what makes NLP-to-NGSI-LD translation tractable for a thin LLM layer.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="shacl"><span class="num">7.</span>SHACL invariants <span class="subnote">what the validator catches</span></h2>
+
+<p>The SHACL shapes in <span class="inline">shapes/clinical-trials-shapes.ttl</span> are emitted from the source intermediate by <span class="inline">tools/build_shacl.py</span>. The Sponsor NodeShape has 47 attribute property shapes and 24 relationship property shapes covering Sponsor and the Organization horizontal it backs; the full graph (Sponsor + Study + Site + Organization + Document) emits 84 property shapes total.</p>
+
+<h3 class="subsection">Invariants encoded today</h3>
+
+<table>
+  <thead>
+    <tr><th>Invariant</th><th>SHACL mechanism</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Every Sponsor must belong to exactly one Organization.</td><td><span class="inline">sh:minCount 1 ; sh:maxCount 1</span> on belongsToOrganization, plus <span class="inline">sh:class topc:Organization</span></td><td>Encoded</td></tr>
+    <tr><td>Every Sponsor must run exactly one Study.</td><td><span class="inline">sh:minCount 1 ; sh:maxCount 1</span> on runs, plus <span class="inline">sh:class top:Study</span></td><td>Encoded</td></tr>
+    <tr><td>Required attributes (sponsorId, sponsorName, legalName, sponsorType, address, country, phone, email, website, status, the five booleans) must all be present.</td><td><span class="inline">sh:minCount 1 ; sh:maxCount 1</span> on each, plus <span class="inline">sh:datatype</span> for typed literals.</td><td>Encoded</td></tr>
+    <tr><td>sponsorType, status, identifierScheme are bounded by enum.</td><td><span class="inline">sh:in (...)</span></td><td>Encoded</td></tr>
+    <tr><td>Aspirational relationships (Audits, Submissions, IP, Documents, etc.) accumulate over time and may legitimately be empty.</td><td>0..N cardinalities on every aspirational relationship, set via the v0.1.1 cardinality realism pass.</td><td>Encoded</td></tr>
+    <tr><td>Relationships pointing at flagged-missing target classes (RegulatoryAuthority, CRO, Country, Publication, SOP, TrainingProgram, DataTransferAgreement) automatically relax minCount to zero until the target is specified.</td><td>build_shacl.py forces minCount=0 when <span class="inline">_targetMissing</span> is set; emits a Turtle comment recording the relaxation.</td><td>Encoded (v0.1.1)</td></tr>
+    <tr><td>Predicate names are unambiguous within a focus class (no polysemous verbs).</td><td>Pre-emission guard <span class="inline">check_no_polysemous_verbs</span> in both build_context.py and build_shacl.py raises ValueError if a focus class has duplicate relationship or attribute names.</td><td>Encoded (v0.1.2)</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Domain invariants</strong> (encoded as SHACL-SPARQL constraints by <span class="inline">tools/build_shacl.py</span>, validated by pyshacl in <span class="inline">--advanced</span> mode):</p>
+
+<table>
+  <thead>
+    <tr><th>Invariant</th><th>Severity</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Soft warning: isSponsorOfRecord = true should imply hasRegulatoryResponsibility = true. The rare 21 CFR 312.52 transfer-of-obligations case is permitted; surfaces to a human reviewer rather than blocking validation.</td><td><span class="inline">sh:Warning</span></td><td>Encoded (v0.1.4)</td></tr>
+    <tr><td>Hard violation: every Study must have at least one Sponsor with isSponsorOfRecord = true.</td><td><span class="inline">sh:Violation</span></td><td>Encoded (v0.1.4)</td></tr>
+    <tr><td>Hard violation: at most one Sponsor with isSponsorOfRecord = true per (Study × RegulatoryAuthority). Sponsors lacking explicit regulatoryAuthorityScope group together as the implicit single-jurisdiction bucket, so two unscoped SoRs on the same Study correctly fire.</td><td><span class="inline">sh:Violation</span></td><td>Encoded (v0.1.4)</td></tr>
+    <tr><td>Hard violation: every Study must have at least one Sponsor with hasOperationalResponsibility = true. If nobody is running it day-to-day, the trial cannot be conducted.</td><td><span class="inline">sh:Violation</span></td><td>Encoded (v0.1.4)</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Invariants pending</h3>
+
+<table>
+  <thead>
+    <tr><th>Invariant</th><th>SHACL mechanism</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Temporal coverage continuity: no gaps in Sponsor coverage across handoffs (the Sponsor at <span class="inline">validUntil</span>=T1 should be succeeded by a Sponsor with <span class="inline">validFrom</span>=T1).</td><td>Custom SPARQL constraint or post-validation check.</td><td>Optional, low priority</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="crosswalks"><span class="num">8.</span>Cross-walks <span class="subnote">how Sponsor projects into other vocabularies</span></h2>
+
+<table>
+  <thead>
+    <tr><th>Standard</th><th>Equivalent class / property</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>FHIR R5</td><td><span class="inline">fhir:Organization</span></td><td>FHIR collapses sponsor into a generic Organization with no sponsor-specific role discriminator. TOP's per-Org-per-Study Sponsor projects onto FHIR by populating Organization.type with codes for the sponsor role and binding the Study via ResearchStudy.sponsor.</td></tr>
+    <tr><td>USDM v3</td><td><span class="inline">usdm:Sponsor</span></td><td>USDM models Sponsor as a Code type on Organization (one of several roles an Organization can play). TOP keeps Sponsor as an operator-grade top-level and uses belongsToOrganization to anchor it back to the corporate truth USDM expresses. Projection is two-hop: Sponsor → belongsToOrganization → Organization (USDM-shaped).</td></tr>
+    <tr><td>CDISC ODM-XML</td><td><span class="inline">odm:Study/GlobalVariables/StudyName</span></td><td>ODM-XML's Sponsor representation is shallow (a study-name attribute and a contact block). TOP's full Sponsor entity projects forward into ODM as a flattened Study-level metadata block.</td></tr>
+    <tr><td>CDASH v2.1</td><td>(not directly mapped)</td><td>CDASH is a clinical data acquisition standard at the case-report-form level; Sponsor lives above its scope.</td></tr>
+    <tr><td>W3C PROV</td><td><span class="inline">prov:Agent</span> with role <span class="inline">prov:Organization</span></td><td>PROV models Sponsor as an Agent involved in the activity (Study). The boolean responsibility flags map onto PROV qualified-association roles.</td></tr>
+    <tr><td>NCIt</td><td><span class="inline">NCIT:C70793</span> (Trial Sponsor)</td><td>NCIt's Trial Sponsor concept is the closest single-term match.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="open"><span class="num">9.</span>Open issues <span class="subnote">tracked, not hidden</span></h2>
+
+<p>Items called out for resolution before v0.1 of the clinical-research reference graph publishes. Each is tracked; none block the architectural decisions in §3.</p>
+
+<table>
+  <thead>
+    <tr><th>Issue</th><th>Status</th><th>Owner</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Cardinality realism pass (1..N → 0..N on aspirational Sponsor relationships).</td><td>Closed in v0.1.1-strawman. Eighteen aspirational 1..N relationships relaxed to 0..N. The Sponsor invariant is: belongs to exactly one Organization, runs exactly one Study. Everything else accumulates over the Study lifecycle. Worked example validates clean against pyshacl.</td><td>Bo (Q9), shipped</td></tr>
+    <tr><td>Target-missing minCount handling in build_shacl.py.</td><td>Closed in v0.1.1-strawman. When a relationship's target class is flagged with <span class="inline">_targetMissing</span> the emitter relaxes minCount to 0 and emits a Turtle comment recording the relaxation. Constraints restore automatically once the target class lands.</td><td>Shipped</td></tr>
+    <tr><td>Polysemous verb split: "publishes" against Document and Publication; "operates" against TrainingProgram and System.</td><td>Closed in v0.1.2-strawman. Renamed to <span class="inline">publishesDocument</span>, <span class="inline">publishesPublication</span>, <span class="inline">operatesTrainingProgram</span>, <span class="inline">operatesSystem</span>. Path B (split, not collapse-with-sh:or) chosen to preserve clean projection into USDM and FHIR. Pre-emission guard <span class="inline">check_no_polysemous_verbs</span> added to both emitters; regression cannot slip back in.</td><td>Bo (Q7), shipped</td></tr>
+    <tr><td>Q3 parentSponsor (keep with note).</td><td>Closed in v0.1.3-strawman. Added <span class="inline">parentSponsor (0..1)</span> self-ref for structural lineage cases (M&amp;A successor, lead/co-sponsor in co-development, EU CTR Article 74 legal-rep parent). Distinct from <span class="inline">actsOnBehalfOf</span> (operational delegation) and <span class="inline">belongsToOrganization</span> (corporate identity).</td><td>Bo (Q3), shipped</td></tr>
+    <tr><td>Q4 attribute completeness.</td><td>Closed in v0.1.3-strawman. <span class="inline">primaryTherapeuticArea</span> added on Sponsor (per-Study TA lens). <span class="inline">employeeSizeBand</span>, <span class="inline">fiscalYearEnd</span>, <span class="inline">primaryTherapeuticAreas</span> added on the Organization horizontal (corporate-scope facts). Regulatory authority of record left unchanged: already covered by <span class="inline">isSponsorOfRecord</span> + <span class="inline">regulatoryAuthorityScope</span>.</td><td>Bo (Q4), shipped</td></tr>
+    <tr><td>Q8 CTAs (operator-grade gaps).</td><td>Closed in v0.1.3-strawman. Added: Reassign Primary Contact, Transfer Studies Between Programs, Request Public Listing on ClinicalTrials.gov.</td><td>Bo (Q8), shipped</td></tr>
+    <tr><td>System ownership vs system use, three-layer modeling. Bo's eTMF insight (2026-05-07): a Sponsor may own multiple eTMFs but the operationally meaningful binding is per-Study; ownership matters because that is who you call when the system breaks.</td><td>Resolved architecturally; parked for Study spec implementation. Three layers: (1) corporate tenancy at <span class="inline">Organization.operatesSystem (0..N)</span>, the master-contract view; (2) per-Org-per-Study operational ownership at <span class="inline">Sponsor.operatesSystem (0..N)</span>, the call-when-it-breaks view (already in v0.1.2); (3) per-Study use binding at <span class="inline">Study.usesEtmfSystem / usesEdcSystem / usesCtmsSystem / usesIrtSystem / usesSafetyDatabaseSystem / usesRandomizationSystem / usesEproSystem (0..1 each)</span>, the which-instance-is-this-Study-on view. System becomes a horizontal carrying vendor (→ Organization with type=VENDOR), productName, instanceId, baseUrl, systemType. The Sponsor v0.1.3 source does not change.</td><td>Parked for Study spec; tracked. Logged 2026-05-07.</td></tr>
+    <tr><td>RegulatoryAuthority horizontal needs full spec (currently flagged-missing in OOUX v0.2 #60).</td><td>Parked</td><td>Working group</td></tr>
+    <tr><td>CRO horizontal needs full spec (currently flagged-missing in OOUX v0.2).</td><td>Parked</td><td>Working group</td></tr>
+    <tr><td>USDM <span class="inline">parentOrganization</span> equivalent needs verification with David Iverson Hurst.</td><td>Outreach pending</td><td>Bo</td></tr>
+    <tr><td>SHACL "exactly one isSponsorOfRecord per (Study × jurisdiction)".</td><td>Closed in v0.1.4-strawman. Encoded as SHACL-SPARQL constraint via <span class="inline">sh:SPARQLConstraint</span>. The implementation uses <span class="inline">OPTIONAL</span> on regulatoryAuthorityScope so unscoped SoRs group together as the implicit single-jurisdiction bucket, correctly catching dual-SoR-without-scoping. Pfizer-IQVIA worked example was enriched with regulatoryAuthorityScope triples (FDA, EMA) so the multi-jurisdictional pattern actually validates rather than just being claimed in a comment. Required pyshacl <span class="inline">--advanced</span> mode for SHACL-SPARQL.</td><td>Shipped</td></tr>
+    <tr><td>Boolean responsibility flag combinations: "isSponsorOfRecord implies hasRegulatoryResponsibility" and the cross-entity invariants (Study must have ≥1 SoR, ≥1 operational sponsor).</td><td>Closed in v0.1.4-strawman (Bo, soft-warning chosen). Implication encoded as <span class="inline">sh:Warning</span>; cross-entity rules encoded as <span class="inline">sh:Violation</span>. Plus a related fix: <span class="inline">build_shacl.py</span> now also suppresses <span class="inline">sh:class</span> when the target class is <span class="inline">_targetMissing</span>, on the same logic as the minCount relaxation (cannot validly assert a class against a class that does not yet exist).</td><td>Shipped</td></tr>
+    <tr><td>Temporal coverage continuity SHACL invariant (no gaps across handoffs).</td><td>Optional, low priority</td><td>Translator scaffold v3</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  v1 spec · 2026-05-07 · backed by source/top-strawman.json (v0.1.4-strawman) + contexts/clinical-trials-context.jsonld + shapes/clinical-trials-shapes.ttl + examples/sponsor-pfizer-iqvia.ttl in top_translator-scaffold_v1/ · pyshacl validation on the worked example: <strong>Conforms: True</strong> (advanced mode, SHACL-SPARQL constraints active) · the Sponsor object is the first complete spec; replicates to Site, Study, Participant, Visit, Investigational Product, Oversight Body, and Event as each top-level locks
+</div>
+
+</div>
+</body>
+</html>

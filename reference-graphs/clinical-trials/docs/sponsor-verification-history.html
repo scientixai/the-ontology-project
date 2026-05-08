@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Sponsor / verification view / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 22px 26px 32px;
+    line-height: 1.45;
+    font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .verify-panel {
+    background: #fffbe8;
+    border: 1px solid #e6d97a;
+    padding: 12px 16px;
+    border-radius: 3px;
+    margin-bottom: 18px;
+  }
+  .verify-panel h2 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6a5d10;
+    margin-bottom: 8px;
+  }
+  .verify-panel ol { padding-left: 18px; line-height: 1.55; font-size: 12.5px; }
+  .verify-panel li { margin-bottom: 6px; }
+  .verify-panel li strong { color: #111; }
+  .verify-panel .answer-line {
+    color: #888;
+    font-style: italic;
+    font-size: 11.5px;
+  }
+
+  h2.section {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #111;
+    margin: 22px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #c8c8c0;
+  }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+
+  .description {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .description .editor-note {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #d6d6cf;
+    font-size: 11.5px;
+    color: #777;
+    font-style: italic;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  th, td {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid #ececea;
+    vertical-align: top;
+  }
+  th {
+    background: #f0f0e9;
+    font-weight: 700;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    border-bottom: 1px solid #d6d6cf;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  td.muted { color: #888; font-style: italic; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+
+  .src {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 3px;
+    vertical-align: middle;
+  }
+  .src-ooux  { background: #e8f1fb; color: #1e6fd9; }
+  .src-usdm  { background: #e8f5ec; color: #1e8e6f; }
+  .src-top   { background: #fdf3e3; color: #c08410; }
+  .src-flag  { background: #f5e8e6; color: #c0392b; }
+
+  .scenarios {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .scenario {
+    padding: 10px 0 12px;
+    border-bottom: 1px dashed #e0e0d8;
+  }
+  .scenario:last-child { border-bottom: none; padding-bottom: 0; }
+  .scenario .title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .scenario .scn-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+  }
+  .scenario .scn-tag {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .scenario .desc {
+    font-size: 12px;
+    color: #2a2a2a;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .scenario .resolves {
+    font-size: 11.5px;
+    color: #1a1a1a;
+    background: #f7faf8;
+    border: 1px solid #cde4d8;
+    border-radius: 3px;
+    padding: 6px 10px;
+    line-height: 1.6;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .scenario .question {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: #c08410;
+    font-style: italic;
+  }
+
+  .legend {
+    margin-top: 14px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #e0e0d8;
+    border-radius: 3px;
+    font-size: 10.5px;
+    color: #555;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .legend .src { font-style: normal; }
+
+  .footer { margin-top: 14px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Sponsor / verification view / v1</div>
+  <div class="meta">2026-05-07 · for Bo's verification before locking · backed by source/top-strawman.json</div>
+</header>
+
+<div class="verify-panel">
+  <h2>Eight verification questions for you</h2>
+  <ol>
+    <li><strong>Description.</strong> Does the description match how you would explain a Sponsor to a ClinOps director who is new to TOP? <span class="answer-line">— accept / rewrite</span></li>
+    <li><strong>Hierarchy.</strong> Is <code>belongsToOrganization</code> always 1..1, or are there real cases (early-stage Sponsor records, investigator-sponsors before incorporation) where 0..1 is more honest? <span class="answer-line">— 1..1 / 0..1 / split into two cases</span></li>
+    <li><strong>parentSponsor.</strong> Worth keeping at all, or does the corporate hierarchy fully resolve through Organization.parentOrganization, leaving parentSponsor redundant? <span class="answer-line">— keep / drop / keep with note</span></li>
+    <li><strong>Attribute completeness.</strong> Twelve attributes. Anything missing that an operator regularly fills out at the sponsor level (primary therapeutic-area focus, employee size band, regulatory authority of record, fiscal year)? Anything that does not belong here at all? <span class="answer-line">— add / drop / accept</span></li>
+    <li><strong>Investigator-Sponsor coverage.</strong> An academic single-PI sponsor: sponsorType=INVESTIGATOR_SPONSOR, orcid populated, duns empty, legalName possibly = the PI's own name. Does the model survive this case, or does it want a separate object? <span class="answer-line">— survives / needs split / needs hint</span></li>
+    <li><strong>CRO-as-Sponsor coverage.</strong> A CRO contracted as legal sponsor: sponsorType=CRO_AS_SPONSOR, belongsToOrganization points to the CRO. Is "Sponsor" the right top-level for this case, or should CRO get its own top-level later? <span class="answer-line">— stays under Sponsor / CRO becomes top-level / flag for v0.3</span></li>
+    <li><strong>Polysemous verbs.</strong> The OOUX map has Sponsor publishes Document and publishes Publication; operates Training Program and operates System. The @context collapses each verb to a single term and lets the relationship instance carry the typed target. Acceptable, or do you want explicit term names (publishesDocument, publishesPublication)? <span class="answer-line">— collapse / split</span></li>
+    <li><strong>Calls to Action.</strong> Eight CTAs. Operator-grade enough? Anything missing that you have seen sponsor leads do regularly (reassign primary contact, transfer studies between programs, request public listing on ClinicalTrials.gov)? <span class="answer-line">— add / accept</span></li>
+  </ol>
+</div>
+
+<h2 class="section">Description and editor note <span class="subnote">prose summary, top of the entry</span></h2>
+<div class="description">
+  A Sponsor is the legal organization responsible for initiating, managing, and financing one or more clinical trials. Sponsors hold regulatory accountability for their studies and own the master data that anchors most other entities.
+  <div class="editor-note">v0.2 editor note (from OOUX map Section 6): type vocabulary expanded to include CRO_AS_SPONSOR; added duns and orcid identifiers; added regulatory and finance contact relationships rather than embedded fields. Investigator-Sponsor (academic single-PI sponsor) is supported via sponsorType. v0.2-TOP additions: belongsToOrganization and parentSponsor (USDM-aligned hierarchy).</div>
+</div>
+
+<h2 class="section">Attributes <span class="subnote">12 fields · sources flagged</span></h2>
+<table>
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Optional</th>
+      <th>Constraint / enum</th>
+      <th>Doc</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">sponsorId</td><td>ngsi-ld:URI</td><td>required</td><td>unique</td><td>Globally unique NGSI-LD identifier.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">sponsorName</td><td>xsd:string</td><td>required</td><td>—</td><td>Display name.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">legalName</td><td>xsd:string</td><td>required</td><td>—</td><td>Registered legal name.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">sponsorType</td><td>xsd:string</td><td>required</td><td>enum (7): PHARMACEUTICAL, BIOTECH, ACADEMIC, GOVERNMENT, INVESTIGATOR_SPONSOR, CRO_AS_SPONSOR, OTHER</td><td>v0.2 added CRO_AS_SPONSOR.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">duns</td><td>xsd:string</td><td>optional</td><td>—</td><td>Dun &amp; Bradstreet DUNS number.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">orcid</td><td>xsd:string</td><td>optional</td><td>—</td><td>ORCID identifier when sponsor is an investigator-sponsor.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">address</td><td>xsd:object</td><td>required</td><td>{line1, line2, city, region, postalCode}</td><td>Headquarters address.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">country</td><td>xsd:string</td><td>required</td><td>ISO 3166-1 alpha-3</td><td>Country of registration.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">phone</td><td>xsd:string</td><td>required</td><td>—</td><td>Primary phone.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">email</td><td>xsd:string</td><td>required</td><td>—</td><td>Primary email.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">website</td><td>xsd:anyURI</td><td>required</td><td>—</td><td>Sponsor website.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">status</td><td>xsd:string</td><td>required</td><td>enum (4): ACTIVE, INACTIVE, MERGED, ACQUIRED</td><td>Lifecycle state.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section">Relationships <span class="subnote">22 outbound · sources flagged · target-missing notes called out</span></h2>
+<table>
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Verb</th>
+      <th>Target</th>
+      <th>Card.</th>
+      <th>Doc</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="src src-top">TOP</span></td><td class="code">belongsToOrganization</td><td class="code">Organization</td><td>1..1</td><td>The corporate Organization this Sponsor is backed by. The hub for J&amp;J / Janssen / Innovative Medicine resolution.</td></tr>
+    <tr><td><span class="src src-top">TOP</span></td><td class="code">parentSponsor</td><td class="code">Sponsor</td><td>0..1</td><td>Self-ref for sub-sponsor structure when both parent and sub-unit are operator-visible Sponsor entities.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">runs</td><td class="code">Study</td><td>1..N</td><td>Studies sponsored by this organization.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">employs</td><td class="code">Person</td><td>1..N</td><td>Employees and contractors.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">engages</td><td class="code">Site</td><td>1..N</td><td>Sites the sponsor has contracted.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span> <span class="src src-flag">missing</span></td><td class="code">contractsWith</td><td class="code">CRO</td><td>0..N</td><td>CRO is a flagged-missing object in OOUX v0.2; needs its own catalog entry.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">holds</td><td class="code">Contract</td><td>1..N</td><td>All sponsor-side contracts.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">authors</td><td class="code">Budget</td><td>1..N</td><td>Budgets the sponsor maintains.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">publishes</td><td class="code">Document</td><td>1..N</td><td>Sponsor-controlled documents (TMF and beyond).</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span> <span class="src src-flag">missing</span></td><td class="code">publishes</td><td class="code">Publication</td><td>1..N</td><td>Resulting publications. Publication not in OOUX v0.2 catalog; treat as Document subtype until specified.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">files</td><td class="code">RegulatorySubmission</td><td>1..N</td><td>Submissions filed by the sponsor.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">commissions</td><td class="code">Audit</td><td>1..N</td><td>Sponsor-commissioned audits.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span> <span class="src src-flag">missing</span></td><td class="code">operates</td><td class="code">TrainingProgram</td><td>1..N</td><td>TrainingProgram is not in OOUX v0.2 catalog; TrainingRecord (#77) covers individual completions; TrainingProgram needs its own entry.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span> <span class="src src-flag">missing</span></td><td class="code">maintains</td><td class="code">SOP</td><td>1..N</td><td>SOP is not in OOUX v0.2 catalog; treat as Document subtype until specified.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">operates</td><td class="code">System</td><td>1..N</td><td>Sponsor-owned systems.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">produces</td><td class="code">Report</td><td>1..N</td><td>Reports authored by the sponsor.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">plans</td><td class="code">Milestone</td><td>1..N</td><td>Program-level milestones.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">conducts</td><td class="code">RiskAssessment</td><td>1..N</td><td>Risk assessments owned by the sponsor.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">executes</td><td class="code">CAPA</td><td>1..N</td><td>Sponsor-driven CAPAs.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">interfacesWith</td><td class="code">OversightBody</td><td>1..N</td><td>IRB, EC, DSMB, IDMC engagement.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span> <span class="src src-flag">missing</span></td><td class="code">signs</td><td class="code">DataTransferAgreement</td><td>1..N</td><td>DataTransferAgreement is a Contract subtype not separately enumerated in OOUX v0.2.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">supplies</td><td class="code">InvestigationalProduct</td><td>1..N</td><td>IP the sponsor supplies.</td></tr>
+    <tr><td><span class="src src-ooux">OOUX</span></td><td class="code">organizes</td><td class="code">Tag</td><td>0..N</td><td>User-defined organizational tags.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section">Calls to Action <span class="subnote">8 operator workflows · all OOUX-sourced</span></h2>
+<table>
+  <thead>
+    <tr><th>Action</th><th>Persona</th><th>Note</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="code">Create Sponsor</td><td>Platform Admin</td><td>Register a new sponsor.</td></tr>
+    <tr><td class="code">Update Sponsor Details</td><td>Sponsor Admin</td><td>Maintain sponsor profile.</td></tr>
+    <tr><td class="code">Activate or Deactivate Sponsor</td><td>Platform Admin</td><td>Toggle status.</td></tr>
+    <tr><td class="code">Associate or Remove Study</td><td>Sponsor PM</td><td>Link studies to the sponsor.</td></tr>
+    <tr><td class="code">Manage Sponsor Contacts</td><td>Sponsor Admin</td><td>Add or update key contacts.</td></tr>
+    <tr><td class="code">Review Sponsor Performance</td><td>Sponsor Exec</td><td>Run portfolio dashboards.</td></tr>
+    <tr><td class="code">Generate Sponsor Report</td><td>Sponsor Analytics</td><td>Produce sponsor-level performance report.</td></tr>
+    <tr><td class="code">Audit Sponsor</td><td>Quality</td><td>Trigger a sponsor-level audit.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section">Cross-walks <span class="subnote">at every entity, surfaced as owl:equivalentClass / skos:exactMatch</span></h2>
+<table>
+  <thead>
+    <tr><th>Standard</th><th>Target</th><th>Note</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>FHIR R5</td><td class="code">fhir:Organization</td><td>Sponsor maps to a FHIR Organization with type = sponsor.</td></tr>
+    <tr><td>USDM v3</td><td class="code">usdm:Sponsor</td><td>USDM models Sponsor as a Code on Organization.type. The TOP Sponsor entity wraps that role for operator-grade UX; Organization (TOP commons horizontal) carries the corporate truth.</td></tr>
+    <tr><td>CDISC ODM-XML</td><td class="code">odm:Study/GlobalVariables/StudyName</td><td>Sponsor name surfaces in the ODM Study metadata block.</td></tr>
+    <tr><td>CDASH</td><td class="muted">— not a CDASH domain</td><td>Sponsor is referenced in DM trial-summary metadata but is not itself a CDASH domain.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section">Real-world scenarios <span class="subnote">does the model survive contact with the hard cases?</span></h2>
+<div class="scenarios">
+
+  <div class="scenario">
+    <div class="title-row">
+      <span class="scn-title">Case 1 · Multi-business-unit pharma (J&amp;J)</span>
+      <span class="scn-tag">large enterprise</span>
+    </div>
+    <div class="desc">J&amp;J is the corporate parent. J&amp;J Innovative Medicine and J&amp;J MedTech are operating companies. Janssen R&amp;D sits inside J&amp;J Innovative Medicine. A study is sponsored at the Janssen R&amp;D level; regulatory accountability rolls up to J&amp;J Innovative Medicine; financial reporting rolls up to J&amp;J.</div>
+    <div class="resolves">
+Sponsor{name: "Janssen R&amp;D", sponsorType: PHARMACEUTICAL, status: ACTIVE}<br>
+&nbsp;&nbsp;belongsToOrganization → Organization{name: "Janssen R&amp;D", type: SPONSOR, parentOrganization → Organization{name: "J&amp;J Innovative Medicine", type: OPERATING_COMPANY, parentOrganization → Organization{name: "Johnson &amp; Johnson", type: PARENT_CORPORATION}}}<br>
+&nbsp;&nbsp;parentSponsor → (empty; J&amp;J Innovative Medicine is not separately a Sponsor entity in this study)
+    </div>
+    <div class="question">Does this resolve cleanly, or does the operator want to see "J&amp;J Innovative Medicine" as a Sponsor entity too, with Janssen R&amp;D as its parentSponsor child?</div>
+  </div>
+
+  <div class="scenario">
+    <div class="title-row">
+      <span class="scn-title">Case 2 · Investigator-sponsor (academic single PI)</span>
+      <span class="scn-tag">edge case</span>
+    </div>
+    <div class="desc">Dr. Maria Chen at MD Anderson runs an investigator-initiated trial. She is the legal sponsor. Her institution provides administrative support but is not the sponsor of record.</div>
+    <div class="resolves">
+Sponsor{name: "Maria Chen, MD", sponsorType: INVESTIGATOR_SPONSOR, orcid: "0000-0001-...", duns: empty, status: ACTIVE}<br>
+&nbsp;&nbsp;belongsToOrganization → Organization{name: "Maria Chen, MD (Investigator-Sponsor)", type: SPONSOR, parentOrganization → Organization{name: "MD Anderson Cancer Center", type: ACADEMIC_INSTITUTION}}<br>
+&nbsp;&nbsp;parentSponsor → (empty)
+    </div>
+    <div class="question">Is it honest to require Dr. Chen to be modeled as her own Organization with a parent? Or does this case need belongsToOrganization to be 0..1 so the Sponsor can stand alone?</div>
+  </div>
+
+  <div class="scenario">
+    <div class="title-row">
+      <span class="scn-title">Case 3 · CRO acting as legal sponsor</span>
+      <span class="scn-tag">contractual edge</span>
+    </div>
+    <div class="desc">A small biotech without internal regulatory capacity contracts a CRO (e.g., IQVIA) to act as the legal sponsor of record for a phase 1 trial. The biotech is the financial sponsor; the CRO carries regulatory accountability.</div>
+    <div class="resolves">
+Sponsor{name: "IQVIA (sponsor of record for Acme Bio Phase 1)", sponsorType: CRO_AS_SPONSOR, status: ACTIVE}<br>
+&nbsp;&nbsp;belongsToOrganization → Organization{name: "IQVIA", type: CRO, parentOrganization: empty}<br>
+&nbsp;&nbsp;parentSponsor → (empty)<br>
+&nbsp;&nbsp;contractsWith → CRO{name: "IQVIA"} ← <span style="color:#c0392b;">RECURSIVE / SELF-REFERENCE PROBLEM</span>
+    </div>
+    <div class="question">When the CRO is the sponsor, the contractsWith → CRO relationship becomes a self-loop. Is this acceptable, or does CRO_AS_SPONSOR need a different relationship pattern? Also: should the financial-sponsor (Acme Bio) appear anywhere in the model, or is that a Contract-side concern?</div>
+  </div>
+
+  <div class="scenario">
+    <div class="title-row">
+      <span class="scn-title">Case 4 · Government sponsor (NIH-funded trial)</span>
+      <span class="scn-tag">public sector</span>
+    </div>
+    <div class="desc">An NCI-funded oncology trial. The sponsor of record is the National Cancer Institute (an NIH institute). The legal hierarchy: NCI sits under NIH, which sits under HHS.</div>
+    <div class="resolves">
+Sponsor{name: "National Cancer Institute", sponsorType: GOVERNMENT, status: ACTIVE}<br>
+&nbsp;&nbsp;belongsToOrganization → Organization{name: "NCI", type: GOVERNMENT, parentOrganization → Organization{name: "NIH", type: GOVERNMENT, parentOrganization → Organization{name: "HHS", type: GOVERNMENT}}}<br>
+&nbsp;&nbsp;parentSponsor → (empty)
+    </div>
+    <div class="question">Does the GOVERNMENT type code carry enough information, or should we add a sub-type (DEPARTMENT, AGENCY, INSTITUTE, OFFICE) to capture the federal hierarchy more precisely?</div>
+  </div>
+
+</div>
+
+<div class="legend">
+  Source legend:
+  <span class="src src-ooux">OOUX</span> directly from your OOUX map v0.2 ·
+  <span class="src src-usdm">USDM</span> borrowed from CDISC USDM v3 (cdisc-org/usdm main branch) ·
+  <span class="src src-top">TOP</span> introduced in TOP v0.2 (my proposal, awaiting your verification) ·
+  <span class="src src-flag">missing</span> target object is flagged-missing in OOUX v0.2 and needs its own catalog entry.
+</div>
+
+<div class="footer">
+  v1 verification view · 12 attributes, 22 relationships, 8 CTAs, 4 cross-walks, 4 scenarios · the eight verification questions at the top are the things that change downstream code if you call them differently · once locked, the source/top-strawman.json reflects your decisions and the @context regenerates accordingly
+</div>
+
+</div>
+
+</body>
+</html>
