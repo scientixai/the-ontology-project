@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Study / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 22px 26px 32px;
+    line-height: 1.55;
+    font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #111; margin: 26px 0 10px;
+    padding-bottom: 4px; border-bottom: 1px solid #c8c8c0;
+  }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr {
+    background: #fff; border-left: 3px solid #1e6fd9;
+    padding: 12px 14px; margin-bottom: 12px; font-size: 13px;
+  }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table {
+    width: 100%; border-collapse: collapse; background: #fff;
+    border: 1px solid #d6d6cf; border-radius: 3px;
+    margin-bottom: 12px; font-size: 12px;
+  }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th {
+    background: #f0f0e9; font-weight: 700; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.04em; color: #555;
+    border-bottom: 1px solid #d6d6cf;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  td.muted { color: #888; font-style: italic; }
+  .decision, .scenario, .query, .persona-card {
+    background: #fff; border: 1px solid #d6d6cf;
+    border-radius: 3px; padding: 12px 16px; margin-bottom: 10px;
+  }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves {
+    font-size: 11.5px; color: #1a1a1a; background: #f7faf8;
+    border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px;
+    margin-top: 6px; line-height: 1.65;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .query .persona { font-weight: 700; font-size: 12px; color: #111; margin-bottom: 4px; }
+  .query .ask { font-style: italic; color: #555; margin-bottom: 8px; font-size: 12.5px; }
+  .query pre {
+    background: #1e1e1c; color: #e8e8e0; padding: 10px 12px;
+    border-radius: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; line-height: 1.55; overflow-x: auto; margin-bottom: 6px;
+  }
+  .query .reads { font-size: 11.5px; color: #555; }
+  .persona-card .persona-name { font-weight: 700; font-size: 12.5px; color: #111; margin-bottom: 4px; }
+  .persona-card .persona-jtbd { font-style: italic; color: #555; font-size: 12px; margin-bottom: 6px; }
+  .diagram {
+    background: #fff; border: 1px solid #d6d6cf; border-radius: 3px;
+    padding: 14px 16px; margin-bottom: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px; line-height: 1.7;
+    white-space: pre; overflow-x: auto;
+  }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  .toc {
+    background: #fff; border: 1px solid #d6d6cf;
+    border-radius: 3px; padding: 10px 14px;
+    margin-bottom: 14px; font-size: 12px;
+  }
+  .toc strong { color: #111; }
+  .toc a { color: #1e6fd9; text-decoration: none; margin-right: 12px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Study / spec / v1</div>
+  <div class="meta">2026-05-08 · backed by source/top-strawman.json (v0.3.0-strawman) · the central organizing entity · 16 SHACL invariants emitted (4 Sponsor + 6 Site/StudySite/System/Credential + 6 Study)</div>
+</header>
+
+<div class="toc">
+  <strong>Sections:</strong>
+  <a href="#tldr">1. TL;DR</a>
+  <a href="#anchor">2. Architectural anchor</a>
+  <a href="#model">3. Model summary</a>
+  <a href="#decisions">4. Architectural decisions</a>
+  <a href="#usdm">5. USDM alignment</a>
+  <a href="#ich">6. ICH E8 / E6(R3) alignment</a>
+  <a href="#registries">7. Trial registry alignment</a>
+  <a href="#lifecycle">8. Lifecycle state machine</a>
+  <a href="#stress">9. Stress-test scenarios</a>
+  <a href="#personas">10. Persona-to-Study-view matrix</a>
+  <a href="#queries">11. Query patterns</a>
+  <a href="#nlp">12. NLP-to-NGSI-LD</a>
+  <a href="#shacl">13. SHACL invariants</a>
+  <a href="#crosswalks">14. Cross-walks</a>
+  <a href="#open">15. Open issues</a>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">the central organizing entity · USDM-flattening · sub-object containment</span></h2>
+
+<p class="tldr">Study is the central organizing entity of the clinical-trials reference graph. Every other top-level relates to Study somehow: Sponsor.runs (1..1) reaches into it, StudySite.forStudy (1..1) anchors off it, Visit-template and Visit-occurrence (when Visit lifts) sit beneath it, Participant participation flows through it. Study itself owns the design-side chain: Protocol, Arms, Schedule of Assessments, Endpoints, Inclusion/Exclusion Criteria — all as sub-objects whose lifecycle is bound to the Study. USDM v3 nests this as Study → StudyVersion → StudyDesign → arms/endpoints/criteria/scheduleTimelines; TOP flattens this nesting for operator UX, with a single <span class="inline">studyVersion</span> attribute carrying simple-version cases. The flattening preserves clean projection back to USDM via a future StudyVersion sub-object lift if richer multi-version semantics become operationally needed.</p>
+
+<p>What you see if you query the model: a Study entity with 36 attributes (identity, names, type/phase/design parameters, population/eligibility framing, lifecycle/dates, multi-registry IDs, tags), 16 relationships pointing at sub-objects (Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion) and at flagged-missing horizontals that lift on their own tracks (Amendment, Milestone, InvestigationalProduct, OversightBody, StudyStartupPackage, RiskAssessment, Tag), and 6 sub-objects under <span class="inline">sub_objects</span>. Study has no direct edges to Site (those are reached through StudySite.forStudy inverse), no direct edges to Participants (reached through StudySite.hasParticipant), no direct edges to Visit-occurrences (reached through StudySite.hostsVisit). The direct-vs-traversed discipline established in the Site spec applies in mirror image at the Study side: Study keeps direct edges only to study-design entities; operational data is reached through StudySite, Participant, and Visit-occurrence.</p>
+
+<p>Six new SHACL invariants encode the lifecycle truths that are operator-grounded: a Study at or past RECRUITING must have endpoints, inclusion criteria, and an SOA defined; an INTERVENTIONAL Study must have a phase; multi-arm interventionModel values (PARALLEL, CROSSOVER, FACTORIAL, SEQUENTIAL) require multiple Arm sub-objects. These catch the "spec-shaped but operationally meaningless" cases where a study claims to be recruiting without having defined what it's measuring or who is eligible.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor <span class="subnote">where Study sits in the operational hierarchy</span></h2>
+
+<div class="diagram">                                       DEFINITION SIDE
+                              ┌──────────────────────────────────────────────────┐
+                              │                                                  │
+                              │  Protocol  →  SOA  →  Visit-template  →  Activity│
+                              │                                                  │
+                              └──────────────────────────────────────────────────┘
+                                                  ▲
+                                                  │
+   ┌────────────────────────────────────────────────────────────────────────────┐
+   │                          OPERATIONAL SIDE                                   │
+   │                                                                             │
+   │   Site ─→ StudySite ─→ ┌────────┐                                           │
+   │                        │  STUDY │ ◄── Sponsor.runs (1..1)                   │
+   │                        └────────┘                                           │
+   │                            │                                                │
+   │              StudySite ─→  │  ◄── StudySite.forStudy (1..1)                 │
+   │                                                                             │
+   └────────────────────────────────────────────────────────────────────────────┘</div>
+
+<p>Study is the pivot. The definition-side chain (Protocol → SOA → Visit-template → Activity) hangs off Study via sub-objects and traversed relationships; the operational-side chain (Site → StudySite → Study, then StudySite → Participant / Visit-occurrence / etc.) reaches into Study through the StudySite.forStudy inverse and the Sponsor.runs inverse. From Study's own outgoing edges, we never see Sites or Participants directly — those are inverse traversals.</p>
+
+<p>This anchors three model decisions that mirror the Site spec's discipline:</p>
+
+<ul style="margin-left: 20px; margin-bottom: 10px;">
+  <li><strong>Study has no direct Site edge.</strong> The traversal is StudySite → forStudy (Study) and StudySite → forSite (Site); from Study's side, "all my sites" is a SPARQL query <span class="inline">?ss topc:forStudy ?study; topc:forSite ?site</span>.</li>
+  <li><strong>Study has no direct Participant edge.</strong> The traversal is StudySite → hasParticipant; from Study's side, "all my participants" sums across all StudySites participating in this Study.</li>
+  <li><strong>Study has no direct Visit-occurrence edge.</strong> Visit-occurrences are at the StudySite × Participant intersection; aggregate visit views are SPARQL traversals.</li>
+</ul>
+
+<!-- ============================================================== -->
+<h2 class="section" id="model"><span class="num">3.</span>Model summary <span class="subnote">attributes, relationships, sub-objects · full set in source/top-strawman.json</span></h2>
+
+<h3 class="subsection">Study attributes (36) — selected</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Doc</th></tr></thead>
+  <tbody>
+    <tr><td class="code">studyId</td><td class="code">ngsi-ld:URI</td><td>Globally unique NGSI-LD identifier.</td></tr>
+    <tr><td class="code">sponsorProtocolId</td><td class="code">xsd:string</td><td>Sponsor's internal protocol identifier (e.g., 'ONCO-423-001').</td></tr>
+    <tr><td class="code">studyTitle, studyShortTitle, studyAcronym</td><td class="code">xsd:string</td><td>Display names.</td></tr>
+    <tr><td class="code">studyType</td><td class="code">enum</td><td>INTERVENTIONAL · OBSERVATIONAL · EXPANDED_ACCESS · PATIENT_REGISTRY</td></tr>
+    <tr><td class="code">studyPhase</td><td class="code">enum</td><td>PHASE_0 · PHASE_1 · PHASE_1_2 · PHASE_2 · PHASE_2_3 · PHASE_3 · PHASE_4 · NOT_APPLICABLE. Required when studyType=INTERVENTIONAL (SHACL invariant 14).</td></tr>
+    <tr><td class="code">interventionModel</td><td class="code">enum</td><td>SINGLE_GROUP · PARALLEL · CROSSOVER · FACTORIAL · SEQUENTIAL. SHACL invariant 16: multi-arm models (PARALLEL, CROSSOVER, FACTORIAL, SEQUENTIAL) require multiple Arm sub-objects.</td></tr>
+    <tr><td class="code">allocation</td><td class="code">enum</td><td>RANDOMIZED · NON_RANDOMIZED · NOT_APPLICABLE</td></tr>
+    <tr><td class="code">masking</td><td class="code">enum</td><td>OPEN_LABEL · SINGLE_BLIND · DOUBLE_BLIND · TRIPLE_BLIND · QUADRUPLE_BLIND</td></tr>
+    <tr><td class="code">primaryPurpose</td><td class="code">enum</td><td>TREATMENT · PREVENTION · DIAGNOSTIC · SUPPORTIVE_CARE · SCREENING · HEALTH_SERVICES_RESEARCH · BASIC_SCIENCE · DEVICE_FEASIBILITY · OTHER</td></tr>
+    <tr><td class="code">studyStatus</td><td class="code">enum</td><td>PLANNED · RECRUITING · ENROLLING_BY_INVITATION · ACTIVE_NOT_RECRUITING · COMPLETED · SUSPENDED · TERMINATED · WITHDRAWN · UNKNOWN_STATUS. Distinct from per-StudySite status. SHACL invariants 11–13: at-or-past-RECRUITING requires endpoints / inclusion / SOA.</td></tr>
+    <tr><td class="code">conditionStudied, therapeuticArea</td><td class="code">xsd:string</td><td>Disease / TA classification.</td></tr>
+    <tr><td class="code">targetEnrollment, actualEnrollment</td><td class="code">xsd:integer</td><td>Aggregate across all sites; per-StudySite values live on StudySite.</td></tr>
+    <tr><td class="code">enrollmentType</td><td class="code">enum</td><td>ANTICIPATED · ACTUAL.</td></tr>
+    <tr><td class="code">minAge, maxAge, sexEligibility, acceptsHealthyVolunteers</td><td class="code">mixed</td><td>Population eligibility framing.</td></tr>
+    <tr><td class="code">plannedStartDate, actualStartDate, primaryCompletionDate, plannedCompletionDate, actualCompletionDate</td><td class="code">xsd:date</td><td>Lifecycle dates.</td></tr>
+    <tr><td class="code">responsibleParty</td><td class="code">enum</td><td>SPONSOR · INVESTIGATOR_SPONSOR · SPONSOR_INVESTIGATOR · OTHER. INVESTIGATOR_SPONSOR for IITs.</td></tr>
+    <tr><td class="code">studyVersion</td><td class="code">xsd:string</td><td>Current version (e.g., '3.2.1'). Mirrors USDM StudyVersion.versionIdentifier.</td></tr>
+    <tr><td class="code">clinicalTrialsGovId, eudraCT, euCtisId, isrctn, nciId, otherRegistryIds</td><td class="code">xsd:string</td><td>Registry identifiers.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Study relationships (16)</h3>
+<table>
+  <thead><tr><th>Predicate</th><th>Target</th><th>Cardinality</th><th>Operational meaning</th></tr></thead>
+  <tbody>
+    <tr><td class="code">hasProtocol</td><td class="code">Protocol</td><td>1..1</td><td>Current effective Protocol (sub-object).</td></tr>
+    <tr><td class="code">hasArm</td><td class="code">Arm</td><td>1..N</td><td>Study arms (sub-object). 1..N because every study has at least one arm (single-arm studies count).</td></tr>
+    <tr><td class="code">hasSchedule</td><td class="code">ScheduleOfAssessments</td><td>0..N</td><td>SOA(s) (sub-object). 0..N during PLANNED; required at-or-past-RECRUITING (SHACL invariant 13).</td></tr>
+    <tr><td class="code">hasEndpoint</td><td class="code">Endpoint</td><td>0..N</td><td>Endpoints (sub-object). 0..N during PLANNED; required at-or-past-RECRUITING (SHACL invariant 11).</td></tr>
+    <tr><td class="code">hasInclusionCriterion</td><td class="code">InclusionCriterion</td><td>0..N</td><td>Inclusion criteria (sub-object). 0..N during PLANNED; required at-or-past-RECRUITING (SHACL invariant 12).</td></tr>
+    <tr><td class="code">hasExclusionCriterion</td><td class="code">ExclusionCriterion</td><td>0..N</td><td>Exclusion criteria (sub-object). Always 0..N (rare studies have no exclusion criteria).</td></tr>
+    <tr><td class="code">hasAmendment</td><td class="code">Amendment</td><td>0..N</td><td>Protocol amendments. Flagged-missing.</td></tr>
+    <tr><td class="code">hasMilestone</td><td class="code">Milestone</td><td>0..N</td><td>FPI / LPI / DBL / CSR. Flagged-missing.</td></tr>
+    <tr><td class="code">suppliesInvestigationalProduct</td><td class="code">InvestigationalProduct</td><td>0..N</td><td>IPs supplied for this Study. Flagged-missing (IP is an OOUX top-level).</td></tr>
+    <tr><td class="code">hasOversightBody</td><td class="code">OversightBody</td><td>0..N</td><td>Study-level DSMB / IDMC. Flagged-missing.</td></tr>
+    <tr><td class="code">hasStudyStartupPackage</td><td class="code">StudyStartupPackage</td><td>0..1</td><td>Flagged-missing.</td></tr>
+    <tr><td class="code">usesSystem</td><td class="code">System</td><td>0..N</td><td>Per-Study Systems (the EDC, CTMS, IRT, eTMF, safety database used for this Study).</td></tr>
+    <tr><td class="code">hasStatisticalAnalysisPlan</td><td class="code">Document</td><td>0..1</td><td>The SAP document.</td></tr>
+    <tr><td class="code">hasStudyTeam</td><td class="code">Person</td><td>0..N</td><td>Study team (PM, Biostats, Medical Monitor, PV Lead). Orthogonal to per-StudySite delegation.</td></tr>
+    <tr><td class="code">hasTag</td><td class="code">Tag</td><td>0..N</td><td>User-defined tags. Flagged-missing.</td></tr>
+    <tr><td class="code">hasRiskAssessment</td><td class="code">RiskAssessment</td><td>0..N</td><td>ICH E8(R1) quality-by-design risk assessments. Flagged-missing.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Sub-objects (6)</h3>
+
+<table>
+  <thead><tr><th>Sub-object</th><th>Attrs</th><th>Doc</th></tr></thead>
+  <tbody>
+    <tr><td class="code">Protocol</td><td>10</td><td>The canonical study-design document. protocolId, protocolNumber, protocolTitle, protocolVersion, protocolStatus (DRAFT / IN_REVIEW / APPROVED / EFFECTIVE / AMENDED / SUPERSEDED / RETIRED), approvalDate, effectiveDate, protocolDocumentRef, ddfDocumentRef (USDM Digital Definition Format), studyDesignRationale.</td></tr>
+    <tr><td class="code">Arm</td><td>9</td><td>Study arm (treatment group, comparator, observational cohort). armId, armName, armShortName, armType (EXPERIMENTAL / ACTIVE_COMPARATOR / PLACEBO_COMPARATOR / NO_INTERVENTION / SHAM_COMPARATOR / OTHER), armDescription, armSize, interventionDescription, isPlaceboArm, isControlArm.</td></tr>
+    <tr><td class="code">ScheduleOfAssessments</td><td>8</td><td>The visit-by-procedure matrix. soaId, soaName, soaVersion, soaStatus (DRAFT / APPROVED / EFFECTIVE / SUPERSEDED), approvalDate, effectiveDate, soaDocumentRef, description.</td></tr>
+    <tr><td class="code">Endpoint</td><td>8</td><td>Study endpoint. endpointId, endpointName, endpointDescription, endpointType (PRIMARY / SECONDARY / EXPLORATORY / SAFETY), endpointMeasurementType (BINARY / CONTINUOUS / ORDINAL / TIME_TO_EVENT / COUNT / RATE / OTHER), measurementUnit, timeFrame, statisticalApproach.</td></tr>
+    <tr><td class="code">InclusionCriterion</td><td>6</td><td>Eligibility inclusion criterion. criterionId, criterionNumber, criterionText, criterionCategory (AGE / SEX / DIAGNOSIS / DISEASE_STAGE / LAB_VALUES / MEDICAL_HISTORY / PRIOR_TREATMENT / MEDICATIONS / PERFORMANCE_STATUS / GENETIC / OTHER), waiverAllowed, waiverConditions.</td></tr>
+    <tr><td class="code">ExclusionCriterion</td><td>6</td><td>Eligibility exclusion criterion. Same shape as InclusionCriterion but adds PREGNANCY to the criterionCategory enum (near-universal exclusion in interventional studies).</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="decisions"><span class="num">4.</span>Why this shape — architectural decisions</h2>
+
+<div class="decision">
+  <div class="title">Decision 1. Flatten USDM's Study → StudyVersion → StudyDesign nesting.</div>
+  <p>USDM v3 carries the actual study content three levels deep: <span class="inline">Study</span> is a thin container with versions; <span class="inline">StudyVersion</span> holds versioned identifiers, organizations, amendments, and study designs; <span class="inline">StudyDesign</span> holds arms, endpoints, criteria, schedule timelines, objectives. TOP flattens this nesting: a single Study entity carries the design content directly via sub-objects. The <span class="inline">studyVersion</span> attribute on Study captures simple version identification (e.g., "3.2.1"); richer multi-version semantics (versioned design, multi-version diff queries) lift to a future StudyVersion sub-object in v0.4 if operationally needed.</p>
+  <p>Trade-off: TOP loses USDM's clean separation of "the trial concept" (Study) from "this version of the trial's definition" (StudyVersion). For operator UX this is an acceptable simplification — operators speak of "Study X v3.2" not "Study X version 3.2". USDM-shaped consumers re-reify the version structure at projection time.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2. Sub-object containment for design entities.</div>
+  <p>Protocol, Arm, Schedule of Assessments, Endpoint, Inclusion Criterion, and Exclusion Criterion are all modeled as <em>sub-objects</em> of Study, not as horizontals. Their lifecycle is bound to the Study: an Arm exists because the Study exists; an Endpoint is meaningful only in the Study's context. Sub-object semantics make this explicit (the SHACL <span class="inline">topc:Arm</span> shape is anchored within Study's NodeShape; deletion of Study cascades).</p>
+  <p>This contrasts with horizontals (Document, Person, System, etc.) whose lifecycle is independent. A Person can exist without any Study; an Arm cannot. Trade-off: sub-object containment means cross-Study reference of an Arm is awkward (you'd reference Study.hasArm[i] rather than a global Arm URI) — but cross-Study Arm reference isn't a real operational pattern, so the trade-off is free.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3. Direct-vs-traversed: Study has no direct Site / Participant / Visit-occurrence edges.</div>
+  <p>The same discipline established in the Site spec applies in mirror image at the Study side. Study's direct edges are to study-design entities (Protocol, Arms, SOA, Endpoints, Criteria) and study-level horizontals (Amendment, Milestone, IP, OversightBody, etc.). Sites participating in this Study are reached through the StudySite.forStudy inverse; Participants enrolled at sites for this Study are reached through StudySite.hasParticipant; Visit-occurrences at sites are reached through StudySite.hostsVisit (when Visit lifts).</p>
+  <p>The benefit is the same as on Site: Study stays compact, queries are explicit traversals (which makes them auditable), and cross-cutting analytics (per-Study enrollment, per-Study queries, etc.) work the same way regardless of which top-level perspective they come from. Trade-off: operators querying "all participants on Study X" need to traverse <span class="inline">?ss topc:forStudy ?study; topc:hasParticipant ?p</span> rather than a direct <span class="inline">?study top:hasParticipant ?p</span>. Acceptable: named query templates abstract this for operators.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4. Inclusion and Exclusion as separate sub-objects.</div>
+  <p>USDM models eligibility via a single <span class="inline">EligibilityCriterion</span> entity with a code field distinguishing inclusion from exclusion. TOP splits this into <span class="inline">InclusionCriterion</span> and <span class="inline">ExclusionCriterion</span> sub-objects. Reason: operators read inclusion and exclusion as distinct lists (the Protocol's "Inclusion Criteria" section vs "Exclusion Criteria" section), and the SFQ feasibility flow filters them separately. The split also lets ExclusionCriterion add PREGNANCY to its category enum without polluting InclusionCriterion (pregnancy is essentially never an inclusion criterion in interventional studies).</p>
+  <p>Trade-off: projection to USDM unifies the two into a single EligibilityCriterion list with type codes. Mechanical at emission time; no semantic loss.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5. Sponsor reference is implicit through Sponsor.runs (1..1) inverse.</div>
+  <p>From Study's side, "who sponsors this Study" is answered by inverse traversal: <span class="inline">?sponsor a top:Sponsor; top:runs ?study</span>. No direct <span class="inline">Study.runsBy → Sponsor</span> relationship is added because (a) it would denormalize the Sponsor.runs cardinality which is already authoritative, and (b) the Sponsor model is per-Org-per-Study, so there can be multiple Sponsor entities for one Study (multi-jurisdictional, CRO-as-proxy, IIT financial+operational+regulatory split) — the inverse view handles this naturally.</p>
+  <p>Same pattern as Site: Site has no direct <span class="inline">Site.engagedBy → Sponsor</span> edge; Sponsor.engages → Site is the authoritative direction. Symmetry across top-levels.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="usdm"><span class="num">5.</span>USDM v3 alignment <span class="subnote">verified against cdisc-org/usdm canonical schema</span></h2>
+
+<p>USDM v3 is the CDISC Unified Study Definition Model — the canonical study-definition standard for trial design. TOP's Study entity projects into USDM via flattening (per Decision 1). Verified against the actual USDM v3 source (<span class="inline">github.com/cdisc-org/usdm/src/usdm_model/</span>):</p>
+
+<table>
+  <thead><tr><th>USDM v3 entity</th><th>USDM fields</th><th>TOP mapping</th></tr></thead>
+  <tbody>
+    <tr><td class="code">Study</td><td>id, name, description, label, versions[], documentedBy[], instanceType</td><td>TOP Study identity attributes (studyId, sponsorProtocolId, studyTitle, studyDescription) plus the studyVersion attribute (mirroring StudyVersion.versionIdentifier).</td></tr>
+    <tr><td class="code">StudyVersion</td><td>versionIdentifier, rationale, dateValues, amendments, businessTherapeuticAreas, studyIdentifiers, referenceIdentifiers, studyDesigns, titles, eligibilityCriterionItems, narrativeContentItems, abbreviations, roles, organizations, studyInterventions, administrableProducts, medicalDevices, productOrganizationRoles, biomedicalConcepts, ...</td><td>Currently flattened into Study attributes + sub-objects. The <span class="inline">studyVersion</span> attribute carries versionIdentifier; therapeuticArea attribute carries businessTherapeuticAreas; multi-registry IDs (clinicalTrialsGovId, eudraCT, euCtisId, isrctn, nciId, otherRegistryIds) cover studyIdentifiers; titles project from studyTitle/studyShortTitle/studyAcronym; amendments project from Study.hasAmendment (when Amendment lifts); rationale projects from Protocol.studyDesignRationale; organizations (Sponsor / sites) project via Sponsor and StudySite. Future StudyVersion sub-object in v0.4 if richer multi-version semantics warrant.</td></tr>
+    <tr><td class="code">StudyDesign</td><td>studyType, studyPhase, therapeuticAreas, characteristics, encounters, activities, arms, studyCells, rationale, epochs, elements, estimands, indications, studyInterventionIds, objectives, population, scheduleTimelines, biospecimenRetentions, eligibilityCriteria, analysisPopulations</td><td>TOP Study attributes (studyType, studyPhase, therapeuticArea) + sub-objects (Arm × hasArm, ScheduleOfAssessments × hasSchedule, Endpoint × hasEndpoint, InclusionCriterion × hasInclusionCriterion, ExclusionCriterion × hasExclusionCriterion). USDM's encounters / activities / epochs / elements / estimands lift in v0.4 when Visit and Activity top-levels lift.</td></tr>
+    <tr><td class="code">StudyArm</td><td>(USDM Arm has armName, armType code, etc.)</td><td>TOP Arm sub-object (9 attrs).</td></tr>
+    <tr><td class="code">Endpoint</td><td>purpose, level, instanceType (plus inherited from SyntaxTemplate)</td><td>TOP Endpoint sub-object (8 attrs). USDM's level (PRIMARY/SECONDARY/etc.) maps to TOP's endpointType.</td></tr>
+    <tr><td class="code">EligibilityCriterion</td><td>(code distinguishes inclusion from exclusion; text content)</td><td>TOP splits into InclusionCriterion + ExclusionCriterion (per Decision 4). Mechanical re-unification at projection time.</td></tr>
+    <tr><td class="code">ScheduleTimeline</td><td>(visit timing structure)</td><td>TOP ScheduleOfAssessments sub-object. USDM's per-instance visit timing details are a richer model that TOP-Visit will engage with when Visit lifts.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="ich"><span class="num">6.</span>ICH E8(R1) and E6(R3) alignment <span class="subnote">study-design and conduct standards</span></h2>
+
+<p>ICH E8(R1) "General Considerations for Clinical Studies" (October 2021) is the GCP framework for study design: quality by design, identification of critical-to-quality factors, risk-based approach to design and conduct. ICH E6(R3) Step 4 Final (January 2025) extends this to the conduct framework. Together they define the regulatory shape of a "well-designed clinical study."</p>
+
+<table>
+  <thead><tr><th>Area</th><th>ICH source</th><th>How TOP's Study entity supports it</th></tr></thead>
+  <tbody>
+    <tr><td>Quality by design / critical-to-quality factors</td><td>E8(R1) §3</td><td>Study.hasRiskAssessment relationship (flagged-missing; lifts in v0.3+). Study.studyDesignRationale (on Protocol sub-object) carries the design rationale.</td></tr>
+    <tr><td>Study type and phase classification</td><td>E8(R1) §2; ICH E6(R3) Section 1</td><td>studyType + studyPhase enums; SHACL invariant 14 (interventional must have phase).</td></tr>
+    <tr><td>Population definition and eligibility</td><td>E8(R1) §6.2</td><td>Inclusion / Exclusion sub-objects with categorization; population framing attributes (minAge, maxAge, sexEligibility, acceptsHealthyVolunteers).</td></tr>
+    <tr><td>Endpoint definition</td><td>E8(R1) §6.3; E9 alignment for statistical aspects</td><td>Endpoint sub-object with endpointType (PRIMARY/SECONDARY/EXPLORATORY/SAFETY), measurement type, time frame, statistical approach.</td></tr>
+    <tr><td>Study design (interventional model, allocation, masking)</td><td>E8(R1) §6.4</td><td>interventionModel, allocation, masking enums.</td></tr>
+    <tr><td>Schedule of assessments</td><td>E8(R1) §7; E6(R3) Section 4 data lifecycle</td><td>ScheduleOfAssessments sub-object linked from Study.hasSchedule.</td></tr>
+    <tr><td>Protocol versioning and amendments</td><td>E6(R3) Section 2.5 (protocol compliance), Section 3 (sponsor responsibilities for amendments)</td><td>Protocol.protocolVersion + protocolStatus; Study.hasAmendment relationship for amendment lineage (flagged-missing target lifts v0.3+).</td></tr>
+    <tr><td>Sponsor responsibility for study design</td><td>E6(R3) Section 3.1, 3.10 (quality management)</td><td>Sponsor.runs → Study (1..1) plus the responsibility flags on Sponsor (isSponsorOfRecord, hasRegulatoryResponsibility, etc.).</td></tr>
+    <tr><td>Data Safety Monitoring Board / IDMC</td><td>E6(R3) Section 5 oversight; E9</td><td>Study.hasOversightBody → OversightBody (flagged-missing).</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="registries"><span class="num">7.</span>Trial registry alignment <span class="subnote">multi-registry identifier model</span></h2>
+
+<p>Trials register with multiple authorities depending on jurisdiction: ClinicalTrials.gov (US), EudraCT and EU CTIS (EU), ISRCTN (UK), NCI (oncology, US), JPRN (Japan), ChiCTR (China), ANZCTR (Australia/New Zealand), ChiCTR. TOP's Study carries explicit attributes for the four most common (clinicalTrialsGovId, eudraCT, euCtisId, isrctn, nciId) plus a comma-separated <span class="inline">otherRegistryIds</span> for the long tail.</p>
+
+<table>
+  <thead><tr><th>Registry</th><th>TOP attribute</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>ClinicalTrials.gov (US, NIH/NLM)</td><td class="code">clinicalTrialsGovId</td><td>NCT identifier (e.g., 'NCT99999423'). Required for US sponsors under FDAAA 801; also commonly required by journals at publication.</td></tr>
+    <tr><td>EudraCT (EU, legacy)</td><td class="code">eudraCT</td><td>EU CTR Article 80 register identifier. Format: 'YYYY-NNNNNN-CC'. Replaced by CTIS for new submissions but maintained for legacy trials.</td></tr>
+    <tr><td>EU Clinical Trials Information System (EU, current)</td><td class="code">euCtisId</td><td>The EU CTR's current registry identifier; replaces EudraCT for new submissions under the EU Clinical Trials Regulation.</td></tr>
+    <tr><td>ISRCTN (UK)</td><td class="code">isrctn</td><td>International Standard Randomised Controlled Trial Number; UK-led registry, accepts global trials.</td></tr>
+    <tr><td>NCI Clinical Trials ID (US, oncology)</td><td class="code">nciId</td><td>NCI-issued identifier for oncology-focused trials.</td></tr>
+    <tr><td>Other (JPRN, ChiCTR, ANZCTR, REBEC, …)</td><td class="code">otherRegistryIds</td><td>Comma-separated for the long tail. v0.4 may promote individual registries to attributes if they hit critical mass in TOP-using studies.</td></tr>
+  </tbody>
+</table>
+
+<p>Registry alignment matters operationally because regulatory submissions, journal publications, and patient-facing recruitment all depend on the trial being findable by registry ID. TOP's multi-registry model lets a single Study carry every identifier it accumulates over its lifecycle.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="lifecycle"><span class="num">8.</span>Lifecycle state machine <span class="subnote">studyStatus transitions</span></h2>
+
+<div class="diagram">                       ┌─────────────────────┐
+   ┌─────────┐ submit  │                     │ activate
+   │ PLANNED │ ──────▶ │  (under review;     │ ─────────▶ ┌────────────┐
+   └─────────┘         │  IRB / regulatory)  │            │ RECRUITING │
+                       └─────────────────────┘            └────────────┘
+                                                                │
+                                                                │ enrollment closes
+                                                                ▼
+                                                      ┌──────────────────────┐
+                                                      │ ACTIVE_NOT_RECRUITING│
+                                                      └──────────────────────┘
+                                                                │
+                                                                │ LPLV
+                                                                ▼
+                                                          ┌──────────┐
+                                                          │COMPLETED │
+                                                          └──────────┘
+
+   At any active state, branches:
+       → SUSPENDED (temporary safety / regulatory hold; resumes to prior state)
+       → TERMINATED (early stop; safety, futility, business)
+       → WITHDRAWN (never enrolled a patient; rare)
+       → UNKNOWN_STATUS (registry annotation; not a recommended target state)</div>
+
+<table>
+  <thead><tr><th>Transition</th><th>Trigger</th><th>SHACL guards</th></tr></thead>
+  <tbody>
+    <tr><td>PLANNED → RECRUITING</td><td>Activation; IRB approved at ≥1 site; first site IN_QUALIFICATION → ACTIVE</td><td>Invariants 11/12/13: must have ≥1 endpoint, ≥1 inclusion criterion, ≥1 SOA. Invariant 14: if INTERVENTIONAL, must have studyPhase.</td></tr>
+    <tr><td>RECRUITING ↔ ACTIVE_NOT_RECRUITING</td><td>Enrollment closes; participants continue protocol</td><td>Same invariants as RECRUITING.</td></tr>
+    <tr><td>ACTIVE_NOT_RECRUITING → COMPLETED</td><td>Last patient last visit (LPLV); primary outcome assessed</td><td>Same invariants. Soft warning (invariant 15): COMPLETED should have actualCompletionDate populated.</td></tr>
+    <tr><td>any ACTIVE → SUSPENDED</td><td>Safety hold, IRB suspension, recruitment pause</td><td>Bidirectional: SUSPENDED can resume to RECRUITING or ACTIVE_NOT_RECRUITING.</td></tr>
+    <tr><td>any ACTIVE → TERMINATED</td><td>Early stop (DSMB recommendation, futility, sponsor decision)</td><td>One-way; TERMINATED is terminal. Distinct from COMPLETED (planned end) and WITHDRAWN (never enrolled).</td></tr>
+    <tr><td>PLANNED → WITHDRAWN</td><td>Never enrolled a patient; sponsor decided not to proceed</td><td>One-way; rare.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Note on Study lifecycle vs StudySite lifecycle:</strong> the Study's overall studyStatus is independent of any per-site studySiteStatus. A Study can be RECRUITING globally while individual StudySites are PLANNED, IN_QUALIFICATION, ACTIVE, ON_HOLD, or CLOSED. The aggregate enrollment view sums across StudySites; the global studyStatus reflects the operational whole.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="stress"><span class="num">9.</span>Stress-test scenarios <span class="subnote">six cases · plain English to graph shape</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">A. Single-arm phase 1 dose-escalation oncology trial</div><div class="scn-tag">phase 1</div></div>
+  <p>An interventional, open-label, phase 1 dose-escalation study of Drug X in patients with advanced solid tumors. Single arm (Drug X with escalating doses), three cohorts at 3 dose levels.</p>
+  <div class="resolves">
+Study:DRUGX-101<br>
+&nbsp;&nbsp;studyType=INTERVENTIONAL · studyPhase=PHASE_1 · interventionModel=SINGLE_GROUP<br>
+&nbsp;&nbsp;allocation=NON_RANDOMIZED · masking=OPEN_LABEL · primaryPurpose=TREATMENT<br>
+&nbsp;&nbsp;hasArm → Arm:drugx-escalation (armType=EXPERIMENTAL, armSize=15)<br>
+&nbsp;&nbsp;hasEndpoint → Endpoint:mtd · Endpoint:dlt · Endpoint:safety-grade-3<br>
+&nbsp;&nbsp;hasInclusionCriterion → InclusionCriterion (advanced solid tumor, ECOG 0-1, ...)<br>
+&nbsp;&nbsp;hasSchedule → ScheduleOfAssessments (cycle-based)<br>
+SHACL invariants 11/12/13/14: all satisfied (endpoints, inclusion, SOA, phase populated).<br>
+Invariant 16 not triggered (interventionModel=SINGLE_GROUP, single arm is consistent).
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">B. Phase 3 randomized double-blind placebo-controlled</div><div class="scn-tag">phase 3</div></div>
+  <p>Pfizer's ONCO-423: phase 3 randomized double-blind placebo-controlled study of a novel oncology agent. Two arms (Drug X + standard of care vs Placebo + standard of care).</p>
+  <div class="resolves">
+Study:ONCO-423<br>
+&nbsp;&nbsp;studyType=INTERVENTIONAL · studyPhase=PHASE_3 · interventionModel=PARALLEL<br>
+&nbsp;&nbsp;allocation=RANDOMIZED · masking=DOUBLE_BLIND · primaryPurpose=TREATMENT<br>
+&nbsp;&nbsp;hasArm → Arm:treatment (EXPERIMENTAL) · Arm:placebo (PLACEBO_COMPARATOR)<br>
+&nbsp;&nbsp;hasEndpoint → Endpoint:os (PRIMARY, TIME_TO_EVENT) ·<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Endpoint:pfs (SECONDARY) · Endpoint:orr (SECONDARY) · Endpoint:safety<br>
+&nbsp;&nbsp;hasOversightBody → DSMB<br>
+&nbsp;&nbsp;targetEnrollment=600 · enrollmentType=ANTICIPATED<br>
+SHACL invariant 16 satisfied (PARALLEL with 2 arms).
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">C. Investigator-Initiated Trial (IIT)</div><div class="scn-tag">IIT</div></div>
+  <p>MSKCC IIT-ONCO-001: a single-PI academic study of a refractory hematologic malignancy. MSKCC plays both Sponsor and Site roles (per Site spec IIT pattern). responsibleParty=INVESTIGATOR_SPONSOR.</p>
+  <div class="resolves">
+Study:IIT-ONCO-001<br>
+&nbsp;&nbsp;studyType=INTERVENTIONAL · studyPhase=PHASE_2 · responsibleParty=INVESTIGATOR_SPONSOR<br>
+&nbsp;&nbsp;Sponsor:mskcc-iit (sponsorType=ACADEMIC, isInitiator=true) → runs → Study<br>
+&nbsp;&nbsp;StudySite:mskcc-iit-onco001 → forStudy → Study, forSite → MSKCC<br>
+SHACL invariant 9 IIT exception applies for any Site-Sponsor System sharing.<br>
+clinicalTrialsGovId may be empty during early-phase (Study v0.3.0 source marks it optional<br>
+explicitly with the 'IITs and early-phase trials may not have NCT IDs at time of Study<br>
+creation' rationale).
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">D. Multi-jurisdictional study (FDA + EMA)</div><div class="scn-tag">multi-region</div></div>
+  <p>A global phase 3 study with FDA and EMA submissions; Pfizer Inc as US sponsor of record, Pfizer Ireland as EU sponsor of record, IQVIA as operational sponsor (per Sponsor spec multi-jurisdictional pattern).</p>
+  <div class="resolves">
+Study:GLOBAL-PHASE3<br>
+&nbsp;&nbsp;clinicalTrialsGovId="NCT99999500" · eudraCT="2026-001234-56" · euCtisId="..."<br>
+Sponsor:pfizer-fda → runs → Study (regulatoryAuthorityScope=FDA, isSoR=true)<br>
+Sponsor:pfizer-ireland-ema → runs → Study (regulatoryAuthorityScope=EMA, isSoR=true)<br>
+Sponsor:iqvia-ops → runs → Study (hasOperational=true, actsOnBehalfOf both)<br>
+SHACL Sponsor invariant 3 satisfied: exactly one SoR per (Study × jurisdiction).
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">E. Observational registry study</div><div class="scn-tag">observational</div></div>
+  <p>A multi-center patient registry capturing real-world use of an approved drug in patients with rare disease X.</p>
+  <div class="resolves">
+Study:RWE-REG-RARE-X<br>
+&nbsp;&nbsp;studyType=OBSERVATIONAL · studyPhase=NOT_APPLICABLE · interventionModel=null<br>
+&nbsp;&nbsp;allocation=NOT_APPLICABLE · primaryPurpose=HEALTH_SERVICES_RESEARCH<br>
+&nbsp;&nbsp;hasArm → Arm:observational-cohort (armType=NO_INTERVENTION)<br>
+&nbsp;&nbsp;hasEndpoint → Endpoint:hospitalization-rate · Endpoint:medication-adherence<br>
+SHACL invariant 14 not triggered (studyType != INTERVENTIONAL).
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">F. Crossover bioequivalence study</div><div class="scn-tag">crossover</div></div>
+  <p>Two-period two-treatment crossover bioequivalence study comparing a generic drug to the reference listed drug.</p>
+  <div class="resolves">
+Study:GENERIC-BE-001<br>
+&nbsp;&nbsp;studyType=INTERVENTIONAL · studyPhase=PHASE_1 · interventionModel=CROSSOVER<br>
+&nbsp;&nbsp;allocation=RANDOMIZED · masking=OPEN_LABEL<br>
+&nbsp;&nbsp;hasArm → Arm:test-then-reference (EXPERIMENTAL) · Arm:reference-then-test (ACTIVE_COMPARATOR)<br>
+SHACL invariant 16 satisfied: CROSSOVER with 2 arms.<br>
+hasEndpoint → Endpoint:cmax (CONTINUOUS) · Endpoint:auc-0-inf (CONTINUOUS)
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="personas"><span class="num">10.</span>Persona-to-Study-view matrix <span class="subnote">eight roles · what each cares about</span></h2>
+
+<div class="persona-card">
+  <div class="persona-name">Sponsor PM</div>
+  <div class="persona-jtbd">Run the Study end-to-end: keep timelines, manage scope, escalate issues, drive enrollment.</div>
+  <p>Reads: the entire Study scope (status, dates, milestones, registry IDs, sites, enrollment). Per-StudySite enrollment views via traversal. Writes: studyStatus transitions, studyVersion increments, milestone achievement.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Medical Monitor</div>
+  <div class="persona-jtbd">Maintain medical oversight of the Study; review safety signals; handle protocol questions.</div>
+  <p>Reads: Protocol, eligibility criteria, endpoint definitions, AE traversal across all StudySites and Participants. Writes: protocol amendments, eligibility waivers, safety reporting decisions.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Biostatistician</div>
+  <div class="persona-jtbd">Define the analysis approach; execute the SAP; produce statistical outputs.</div>
+  <p>Reads: Endpoints (especially endpointMeasurementType, statisticalApproach), Arms, ScheduleOfAssessments, SAP document, raw data via OMOP projection of TOP-grounded participant data. Writes: SAP document, interim analysis reports.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Regulatory Affairs Lead</div>
+  <div class="persona-jtbd">Prepare and submit regulatory documents; respond to authority questions; maintain registry entries.</div>
+  <p>Reads: Sponsor.regulatoryAuthorityScope, all registry IDs (clinicalTrialsGovId, eudraCT, euCtisId, isrctn, nciId), Protocol versions and amendments, RegulatorySubmission entities. Writes: submissions, registry updates.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Pharmacovigilance Lead</div>
+  <div class="persona-jtbd">Maintain global safety oversight; ensure expedited reporting; manage SAE flow.</div>
+  <p>Reads: Endpoint:safety, AE/SAE traversal across all StudySites, OversightBody (DSMB) interactions, RegulatorySubmission entries (expedited reports). Writes: safety reports, signal detection outputs.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Site Principal Investigator</div>
+  <div class="persona-jtbd">Lead the Study at my Site; consent participants; assess outcomes; sign off on data.</div>
+  <p>Reads: Protocol, ScheduleOfAssessments, eligibility criteria, his own StudySite scope (his Participants, his Visits, his AEs). Writes: investigator decisions, AE assessments, eligibility verification.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Sponsor Portfolio Analyst</div>
+  <div class="persona-jtbd">Track Sponsor's portfolio of studies; report on aggregate progress and risk.</div>
+  <p>Reads: All Studies sponsored by the parent Organization (via Organization.playsSponsorRole → Sponsor.runs → Study traversal). Aggregate enrollment, milestone progress, study lifecycle distribution. Writes: portfolio reports.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">External Researcher</div>
+  <div class="persona-jtbd">Consume Study definitions for cross-study analyses; analyze published trial data.</div>
+  <p>Reads: Public Study attributes (titles, IDs, phase, status, eligibility) via registry projections. With access, Participant-level data via OMOP CDM projection through StudySite traversal.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="queries"><span class="num">11.</span>Query patterns <span class="subnote">five concrete NGSI-LD HTTP shapes</span></h2>
+
+<div class="query">
+  <div class="persona">Sponsor PM (enrollment overview)</div>
+  <div class="ask">"What's the aggregate enrollment vs target across all sites for Study X?"</div>
+  <pre>GET /entities?type=Study
+  &amp;id=urn:ngsi-ld:Study:ONCO-423
+  &amp;options=keyValues
+# Read targetEnrollment and actualEnrollment
+# For per-site breakdown:
+GET /entities?type=StudySite
+  &amp;q=forStudy=="urn:ngsi-ld:Study:ONCO-423"
+  &amp;attrs=siteNumber,studySiteStatus,enrollmentTarget,actualEnrollment</pre>
+  <div class="reads">Returns the Study aggregate plus per-StudySite breakdown. Aggregate enrollment is stored on Study but verifiable as SUM over StudySite.actualEnrollment.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Medical Monitor (eligibility check)</div>
+  <div class="ask">"Show me the inclusion and exclusion criteria for Study X."</div>
+  <pre>GET /entities?type=Study
+  &amp;id=urn:ngsi-ld:Study:ONCO-423
+  &amp;attrs=hasInclusionCriterion,hasExclusionCriterion
+# Then resolve each criterion
+GET /entities?type=InclusionCriterion
+  &amp;q=hasInclusionCriterion_inverse=="urn:ngsi-ld:Study:ONCO-423"</pre>
+  <div class="reads">Returns the eligibility criteria with criterionNumber, criterionText, criterionCategory, waiverAllowed.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Regulatory Affairs Lead (registry sync)</div>
+  <div class="ask">"Which of my Sponsor's Studies are missing ClinicalTrials.gov registration?"</div>
+  <pre>GET /entities?type=Study
+  &amp;q=clinicalTrialsGovId==null
+# Or via Sponsor traversal:
+GET /entities?type=Sponsor
+  &amp;q=belongsToOrganization=="urn:ngsi-ld:Organization:pfizer"
+  &amp;attrs=runs
+# Then for each Study, check clinicalTrialsGovId presence</pre>
+  <div class="reads">Returns Studies missing NCT IDs. Useful for compliance audits (FDAAA 801).</div>
+</div>
+
+<div class="query">
+  <div class="persona">Biostatistician (endpoint inventory)</div>
+  <div class="ask">"List all primary endpoints across my portfolio of Phase 3 oncology trials."</div>
+  <pre>GET /entities?type=Endpoint
+  &amp;q=endpointType=="PRIMARY"
+  &amp;q=hasEndpoint_inverse.studyPhase=="PHASE_3"
+  &amp;q=hasEndpoint_inverse.therapeuticArea=="ONCOLOGY"</pre>
+  <div class="reads">Returns primary endpoints across the portfolio with their measurement types and statistical approaches. Reveals harmonization opportunities.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Site PI (today's protocol)</div>
+  <div class="ask">"What's the current effective Protocol version and SOA for the studies I'm running today?"</div>
+  <pre>GET /entities?type=StudySite
+  &amp;q=hasPrincipalInvestigator=="urn:ngsi-ld:Person:patel"
+  &amp;q=studySiteStatus=="ACTIVE"
+  &amp;attrs=forStudy
+# Then for each Study:
+GET /entities?type=Study
+  &amp;id=&lt;studyId&gt;
+  &amp;attrs=studyTitle,studyVersion,hasProtocol,hasSchedule</pre>
+  <div class="reads">Returns the active Studies for this PI plus current Protocol and SOA. Foundation for the "Investigator Today View" reference pattern.</div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="nlp"><span class="num">12.</span>NLP-to-NGSI-LD translation <span class="subnote">how operator language maps to graph predicates</span></h2>
+
+<table>
+  <thead><tr><th>Operator phrasing</th><th>Translated query shape</th><th>Discriminating predicate</th></tr></thead>
+  <tbody>
+    <tr><td>"Show me Study X"</td><td>type=Study & studyId==X</td><td>Study identity</td></tr>
+    <tr><td>"What phase is this trial?"</td><td>type=Study & id==X → studyPhase</td><td>Study.studyPhase</td></tr>
+    <tr><td>"Who's enrolled in this trial?"</td><td>type=StudySite & forStudy==X → hasParticipant (when Participant lifts)</td><td>Traversal via StudySite</td></tr>
+    <tr><td>"What's the primary endpoint?"</td><td>type=Endpoint & hasEndpoint_inverse==X & endpointType==PRIMARY</td><td>Endpoint.endpointType</td></tr>
+    <tr><td>"Is this trial randomized?"</td><td>type=Study & id==X → allocation == "RANDOMIZED"</td><td>Study.allocation</td></tr>
+    <tr><td>"Is this trial blinded?"</td><td>type=Study & id==X → masking != "OPEN_LABEL"</td><td>Study.masking</td></tr>
+    <tr><td>"What sites are running this?"</td><td>type=StudySite & forStudy==X → forSite</td><td>StudySite traversal</td></tr>
+    <tr><td>"Which studies use Drug X?"</td><td>type=InvestigationalProduct → suppliedTo_inverse → Study (when IP horizontal lifts)</td><td>InvestigationalProduct traversal</td></tr>
+    <tr><td>"Show me Pfizer's Phase 3 oncology trials"</td><td>type=Study & studyPhase=="PHASE_3" & therapeuticArea=="ONCOLOGY" & runs_inverse.belongsToOrganization=="pfizer"</td><td>Multi-attribute filter + Sponsor traversal</td></tr>
+    <tr><td>"How many active studies do we have?"</td><td>type=Study & studyStatus IN {RECRUITING, ENROLLING_BY_INVITATION, ACTIVE_NOT_RECRUITING} → COUNT</td><td>Aggregate over studyStatus</td></tr>
+    <tr><td>"Has this trial enrolled its target?"</td><td>type=Study & id==X → actualEnrollment / targetEnrollment</td><td>Two-attribute ratio</td></tr>
+    <tr><td>"What's the SAP say?"</td><td>type=Study & id==X → hasStatisticalAnalysisPlan → Document</td><td>Study.hasStatisticalAnalysisPlan traversal</td></tr>
+    <tr><td>"When did the protocol last get amended?"</td><td>type=Amendment (when Amendment lifts) & relatedStudy==X → max(amendmentDate)</td><td>Amendment traversal</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="shacl"><span class="num">13.</span>SHACL invariants <span class="subnote">six new Study invariants · 16 total in the graph</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Invariant</th><th>Severity</th></tr></thead>
+  <tbody>
+    <tr><td>11</td><td>Study at or past RECRUITING (statuses: RECRUITING / ENROLLING_BY_INVITATION / ACTIVE_NOT_RECRUITING / COMPLETED) must have at least one hasEndpoint. Study at PLANNED is exempt.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>12</td><td>Study at or past RECRUITING must have at least one hasInclusionCriterion. Study at PLANNED is exempt.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>13</td><td>Study at or past RECRUITING must have at least one hasSchedule (Schedule of Assessments). Study at PLANNED is exempt.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>14</td><td>Study with studyType=INTERVENTIONAL must have studyPhase populated. Observational, expanded-access, registry studies are exempt.</td><td><span class="inline">sh:Violation</span></td></tr>
+    <tr><td>15</td><td>Study with studyStatus=COMPLETED should have actualCompletionDate populated. Soft warning; data-entry verification.</td><td><span class="inline">sh:Warning</span></td></tr>
+    <tr><td>16</td><td>Study with interventionModel in {PARALLEL, CROSSOVER, FACTORIAL, SEQUENTIAL} must have multiple Arm sub-objects. Multi-arm models require multiple arms by definition.</td><td><span class="inline">sh:Violation</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Pending Study invariants (v0.4)</h3>
+<table>
+  <thead><tr><th>Invariant</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td>Multi-arm Study (numberOfArms attribute) must match COUNT of hasArm. Cross-attribute consistency.</td><td>v0.4 — needs numberOfArms attribute first</td></tr>
+    <tr><td>Study with studyStatus=RECRUITING must have at least one StudySite with studySiteStatus=ACTIVE.</td><td>v0.4 — cross-entity invariant</td></tr>
+    <tr><td>Study targetEnrollment > 0 when studyStatus in {RECRUITING, ENROLLING_BY_INVITATION, ACTIVE}.</td><td>v0.4</td></tr>
+    <tr><td>Study with studyPhase=PHASE_4 should have at least one regulatory approval (post-marketing).</td><td>v0.4 — needs RegulatorySubmission</td></tr>
+    <tr><td>Study with multiple Sponsor entities must have at least one with hasOperationalResponsibility=true (covered by existing Sponsor invariant 4 but worth confirming at Study level).</td><td>Already covered by Sponsor invariant 4</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="crosswalks"><span class="num">14.</span>Cross-walks</h2>
+
+<table>
+  <thead><tr><th>Standard</th><th>Mapping</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>FHIR R5</td><td><span class="inline">fhir:ResearchStudy</span></td><td>FHIR's central trial resource. Sub-objects map to ResearchStudy.arm, ResearchStudy.objective, ResearchStudy.recruitment, etc.</td></tr>
+    <tr><td>USDM v3</td><td>Study + StudyVersion + StudyDesign collapsed</td><td>Verified against cdisc-org/usdm; details in §5. The collapsing is reversible at projection time.</td></tr>
+    <tr><td>CDISC CDASH IG 2.1</td><td><span class="inline">cdash:DM</span></td><td>Demographics domain captures study identification at the participant level.</td></tr>
+    <tr><td>CDISC SDTM</td><td><span class="inline">sdtm:TS / SE / TI</span></td><td>SDTM Trial Summary, Subject Elements, Trial Inclusion/Exclusion. Study-design content projects via SDTM TS variables.</td></tr>
+    <tr><td>ICH E8(R1)</td><td>Quality-by-design framework</td><td>See §6 for topic-by-topic mapping.</td></tr>
+    <tr><td>ICH E6(R3) Section 1, 2.5, 3.1, 3.10</td><td>Conduct framework, sponsor design responsibility, quality management</td><td>See §6.</td></tr>
+    <tr><td>ClinicalTrials.gov ProtocolSection</td><td>Direct attribute mapping</td><td>studyType, studyPhase, interventionModel, allocation, masking, primaryPurpose, studyStatus all align directly with CT.gov enumerations.</td></tr>
+    <tr><td>EU CTIS / EudraCT</td><td>Multi-registry attributes</td><td>See §7.</td></tr>
+    <tr><td>OMOP CDM</td><td>(no direct equivalent at Study level)</td><td>Per-Participant data flowing through this Study projects to OMOP via StudySite → Participant traversal. OMOP itself doesn't model Study-as-trial; it captures observational data.</td></tr>
+    <tr><td>NCIt</td><td><span class="inline">NCIT:C63536</span> (Clinical Trial)</td><td>Closest single-term match.</td></tr>
+    <tr><td>W3C PROV</td><td><span class="inline">prov:Activity</span></td><td>The Study is an Activity in PROV terms; Sponsor and Site participate; the Protocol is a prov:Plan.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="open"><span class="num">15.</span>Open issues</h2>
+
+<table>
+  <thead><tr><th>Issue</th><th>Status</th><th>Owner</th></tr></thead>
+  <tbody>
+    <tr><td>StudyVersion sub-object lift for richer multi-version semantics (versioned design, multi-version diff queries).</td><td>v0.4 if operationally needed</td><td>Working group</td></tr>
+    <tr><td>Amendment horizontal lift. Currently flagged-missing on Study.hasAmendment; lifts in v0.3+ to enable amendment lineage tracking.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>Milestone horizontal lift. Currently flagged-missing on Study.hasMilestone.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>InvestigationalProduct top-level lift (one of the OOUX-locked 8). Required for Study.suppliesInvestigationalProduct and Sponsor.supplies.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>OversightBody top-level lift. Required for Study.hasOversightBody and StudySite.hasIRB.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>StudyStartupPackage horizontal lift.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>RiskAssessment horizontal lift (ICH E8(R1) quality-by-design).</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>Tag horizontal lift.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>Pending Study SHACL invariants (numberOfArms-vs-COUNT consistency, RECRUITING needs ≥1 ACTIVE StudySite, targetEnrollment > 0 for active studies, PHASE_4 needs regulatory approval).</td><td>v0.4</td><td>Translator scaffold v3</td></tr>
+    <tr><td>Visit lift (top-level). When Visit lifts, the OOUX correction tracked on the Site spec applies: Visit should point at StudySite (not Site directly), and probably split into Visit-template vs Visit-occurrence.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>Activity sub-object lift (or top-level). Activity is the leaf in the Protocol → SOA → Visit-template → Activity definition chain. USDM has Activity at StudyDesign level.</td><td>v0.3+</td><td>Working group</td></tr>
+    <tr><td>Endpoint enrichment: USDM has Endpoint inside Objective inside StudyDesign. TOP currently flattens; if richer Objective semantics become operationally needed, lift Objective as a sub-object.</td><td>v0.4 if needed</td><td>Working group</td></tr>
+    <tr><td>Long-tail registry promotion. otherRegistryIds is comma-separated for now; individual registries (JPRN, ChiCTR, ANZCTR, REBEC, etc.) may promote to attributes if they hit critical mass.</td><td>v0.4 if usage data warrants</td><td>Working group</td></tr>
+    <tr><td>Protocol amendment lineage in Protocol sub-object. Currently Protocol.protocolStatus has AMENDED + SUPERSEDED states but no explicit predecessor link. v0.3+ adds Protocol.supersedesProtocol to capture amendment chain.</td><td>v0.3+</td><td>Working group</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  v1 spec · 2026-05-08 · backed by source/top-strawman.json (v0.3.0-strawman) + contexts/clinical-trials-context.jsonld + shapes/clinical-trials-shapes.ttl + four worked examples in reference-graphs/clinical-trials/examples/ · pyshacl validation: all four worked examples Conforming=True · the Study spec is the third complete top-level (Sponsor v0.1.4, Site+StudySite v0.2.0, Study v0.3.0); replicates the spec template established by Sponsor and extended by Site
+</div>
+
+</div>
+</body>
+</html>

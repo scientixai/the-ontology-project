@@ -39,17 +39,22 @@
     top:studyId             "urn:ngsi-ld:Study:ONCO-423"^^xsd:anyURI ;
     top:sponsorProtocolId   "ONCO-423-001" ;
     top:clinicalTrialsGovId "NCT99999423" ;
-    top:studyStatus         "active" ;
+    top:studyStatus         "RECRUITING" ;
     top:hasProtocol         <urn:ngsi-ld:Protocol:ONCO-423-v3> ;
-    top:hasArm              <urn:ngsi-ld:Arm:ONCO-423-treatment> .
+    top:hasArm              <urn:ngsi-ld:Arm:ONCO-423-treatment> ;
+    top:hasEndpoint         <urn:ngsi-ld:Endpoint:ONCO-423-os> ;
+    top:hasInclusionCriterion <urn:ngsi-ld:InclusionCriterion:ONCO-423-i1> ;
+    top:hasSchedule         <urn:ngsi-ld:ScheduleOfAssessments:ONCO-423-soa-v1> .
 
 <urn:ngsi-ld:Protocol:ONCO-423-v3> a top:Protocol ;
+    top:protocolId             "urn:ngsi-ld:Protocol:ONCO-423-v3"^^xsd:anyURI ;
     top:protocolVersion     "3.0.0" ;
-    top:protocolStatus      "approved" .
+    top:protocolStatus      "EFFECTIVE" .
 
 <urn:ngsi-ld:Arm:ONCO-423-treatment> a top:Arm ;
+    top:armId             "urn:ngsi-ld:Arm:ONCO-423-treatment"^^xsd:anyURI ;
     top:armName             "Treatment" ;
-    top:armType             "treatment" .
+    top:armType             "EXPERIMENTAL" .
 
 <urn:ngsi-ld:Sponsor:pfizer-onco423-fda> a top:Sponsor ;
     top:sponsorId                    "urn:ngsi-ld:Sponsor:pfizer-onco423-fda"^^xsd:anyURI ;
@@ -211,3 +216,30 @@
     topc:jobTitle           "Principal Investigator" ;
     topc:gcpTrainingStatus  "CURRENT" ; topc:status "ACTIVE" ;
     topc:employedBy         <urn:ngsi-ld:Organization:elevate-research> .
+
+# === Endpoint, InclusionCriterion, ScheduleOfAssessments (sub-objects of Study, lifted in v0.3.0) ===
+
+<urn:ngsi-ld:Endpoint:ONCO-423-os> a top:Endpoint ;
+    top:endpointId          "urn:ngsi-ld:Endpoint:ONCO-423-os"^^xsd:anyURI ;
+    top:endpointName        "Overall Survival" ;
+    top:endpointDescription "Time from randomization to death from any cause." ;
+    top:endpointType        "PRIMARY" ;
+    top:endpointMeasurementType "TIME_TO_EVENT" ;
+    top:measurementUnit     "months" ;
+    top:timeFrame           "Up to approximately 5 years post-randomization" ;
+    top:statisticalApproach "Kaplan-Meier survival analysis with Cox proportional hazards model" .
+
+<urn:ngsi-ld:InclusionCriterion:ONCO-423-i1> a top:InclusionCriterion ;
+    top:criterionId         "urn:ngsi-ld:InclusionCriterion:ONCO-423-i1"^^xsd:anyURI ;
+    top:criterionNumber     "I1" ;
+    top:criterionText       "Adults aged 18 years or older with histologically confirmed advanced non-small cell lung cancer (Stage IIIB or IV) and ECOG performance status 0-1." ;
+    top:criterionCategory   "DIAGNOSIS" ;
+    top:waiverAllowed       false .
+
+<urn:ngsi-ld:ScheduleOfAssessments:ONCO-423-soa-v1> a top:ScheduleOfAssessments ;
+    top:soaId               "urn:ngsi-ld:ScheduleOfAssessments:ONCO-423-soa-v1"^^xsd:anyURI ;
+    top:soaName             "ONCO-423 Schedule of Assessments v1.0" ;
+    top:soaVersion          "1.0" ;
+    top:soaStatus           "EFFECTIVE" ;
+    top:effectiveDate       "2026-01-01"^^xsd:date ;
+    top:description         "Visit-by-procedure matrix covering Screening, Treatment, and Follow-up phases." .

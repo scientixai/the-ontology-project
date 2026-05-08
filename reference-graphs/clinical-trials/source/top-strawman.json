@@ -1,7 +1,7 @@
 {
   "_comment": "TOP v0.1 reference graph intermediate (strawman). The OOUX hierarchy is now locked at eight top-levels for the clinical-trials reference graph: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven boundary decisions resolved (see top_ooux-hierarchy_v1.html, 2026-05-07). This source currently scaffolds three of the eight (Sponsor, Study, Site) plus two horizontals (Organization, Document), enough to verify the federation pattern (clinical-trials @context imports a TOP commons @context). The remaining five top-levels lift in subsequent passes following the Sponsor spec template (top_sponsor-spec_v1.html). The build_context.py and build_shacl.py emitters do not change as top-levels are added; both carry a polysemous-verb guard that fails loudly on duplicate predicate names within a focus class. Sub-objects locked from OOUX: Visit Observation under Visit, Other Clinical Event under Event with derivedFrom audit chain. Equipment is fully horizontal with equipmentBinding enum (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Sample stays horizontal for the trials commons; specialty reference graphs (cell therapy, rare disease) may elevate it via the federation pattern.",
 
-  "version": "0.2.0-strawman",
+  "version": "0.3.0-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
 
@@ -88,44 +88,206 @@
 
     {
       "id": "Study",
-      "role": "trial design and definition (USDM-aligned)",
+      "role": "trial design and definition — the central organizing entity for clinical research",
+      "description": "A Study is a research project intended to evaluate the effects of an intervention (interventional), to characterize a population or natural history (observational), or to provide expanded access to an investigational product. The Study entity is the central organizing concept of the clinical-trials reference graph: every other top-level relates to Study somehow. Study is reached upstream from Sponsor (via Sponsor.runs, 1..1) and from StudySite (via StudySite.forStudy, 1..1). Study itself owns the definition-side chain (Protocol, Arms, Schedule of Assessments, Endpoints, Inclusion/Exclusion Criteria) as sub-objects. Operational facts (per-Site participation, per-Participant data, per-Visit-occurrence events) are reached through StudySite, Participant, and Visit-occurrence — not as direct edges on Study, per the direct-vs-traversed discipline established in the Site spec.",
+      "ooux_editor_note": "v0.3.0 lift (2026-05-08): expanded from 4 attributes / 2 relationships / 2 thin sub-objects to 35 attributes / 16 relationships / 6 sub-objects. USDM v3 verified: USDM's Study is thin (id, name, description, label, versions, documentedBy) with the actual content in StudyVersion → StudyDesign. TOP flattens this nesting for operator UX: a single Study entity carries the design content directly via sub-objects (Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion). The studyVersion attribute carries the simple-version case; a StudyVersion sub-object can lift in v0.4 if richer multi-version semantics become operationally needed. Per the operational hierarchy Site → StudySite → Study → Protocol → SOA → Visit → Activity, Study is the pivot between operator-side (StudySite reaches in) and definition-side (Protocol/SOA/Visit-template reach out).",
       "crosswalks": {
         "fhir": "fhir:ResearchStudy",
-        "usdm": "usdm:Study",
-        "cdash": "cdash:DM"
+        "usdm": "usdm:Study (with the StudyVersion + StudyDesign nesting collapsed; TOP carries the design content directly as sub-objects)",
+        "cdash": "cdash:DM",
+        "ctgov": "ClinicalTrials.gov ProtocolSection",
+        "omop": "no direct OMOP equivalent (trial-side; OMOP CDM is observational/research-warehouse-shaped). Per-Participant data flowing through this Study projects to OMOP via StudySite → Participant traversal."
       },
       "attributes": [
-        { "name": "studyId", "type": "ngsi-ld:URI" },
-        { "name": "sponsorProtocolId", "type": "xsd:string" },
-        { "name": "clinicalTrialsGovId", "type": "xsd:string", "optional": true, "doc": "ClinicalTrials.gov NCT identifier. Optional: IITs and early-phase trials may not have NCT IDs at time of Sponsor/Site creation; populated when ClinicalTrials.gov registration completes." },
-        { "name": "studyStatus", "type": "xsd:string", "doc": "Aligned with FHIR ResearchStudy.status." }
+        { "name": "studyId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
+        { "name": "sponsorProtocolId", "type": "xsd:string", "doc": "Sponsor's internal protocol identifier (e.g., 'ONCO-423-001'). Distinct from registry IDs (NCT, EudraCT)." },
+        { "name": "studyTitle", "type": "xsd:string", "optional": true, "doc": "Official long title of the study (e.g., 'A Phase 3 Randomized Double-Blind Placebo-Controlled Study of Drug X in Patients with Advanced Non-Small Cell Lung Cancer'). Optional at strawman; required when Study is registered with ClinicalTrials.gov / EU CTIS." },
+        { "name": "studyShortTitle", "type": "xsd:string", "optional": true, "doc": "Operator-friendly short title used in dashboards and conversation." },
+        { "name": "studyAcronym", "type": "xsd:string", "optional": true, "doc": "Single-token acronym (e.g., 'ONCO-423')." },
+        { "name": "studyDescription", "type": "xsd:string", "optional": true, "doc": "Narrative description of the study's purpose and design." },
+        { "name": "studyType", "type": "xsd:string", "optional": true, "enum": ["INTERVENTIONAL", "OBSERVATIONAL", "EXPANDED_ACCESS", "PATIENT_REGISTRY"], "doc": "Study category. Optional at strawman to accommodate PLANNED-state Studies. Aligned with ClinicalTrials.gov StudyType and USDM StudyDesign.studyType." },
+        { "name": "studyPhase", "type": "xsd:string", "optional": true, "enum": ["PHASE_0", "PHASE_1", "PHASE_1_2", "PHASE_2", "PHASE_2_3", "PHASE_3", "PHASE_4", "NOT_APPLICABLE"], "doc": "Trial phase per ICH E8 / ClinicalTrials.gov / USDM. NOT_APPLICABLE for observational and registry studies." },
+        { "name": "interventionModel", "type": "xsd:string", "optional": true, "enum": ["SINGLE_GROUP", "PARALLEL", "CROSSOVER", "FACTORIAL", "SEQUENTIAL"], "doc": "ClinicalTrials.gov interventional model assignment." },
+        { "name": "allocation", "type": "xsd:string", "optional": true, "enum": ["RANDOMIZED", "NON_RANDOMIZED", "NOT_APPLICABLE"], "doc": "Allocation model per ClinicalTrials.gov / ICH E8." },
+        { "name": "masking", "type": "xsd:string", "optional": true, "enum": ["OPEN_LABEL", "SINGLE_BLIND", "DOUBLE_BLIND", "TRIPLE_BLIND", "QUADRUPLE_BLIND"], "doc": "Blinding/masking level. Aligned with ClinicalTrials.gov Masking and USDM." },
+        { "name": "primaryPurpose", "type": "xsd:string", "optional": true, "enum": ["TREATMENT", "PREVENTION", "DIAGNOSTIC", "SUPPORTIVE_CARE", "SCREENING", "HEALTH_SERVICES_RESEARCH", "BASIC_SCIENCE", "DEVICE_FEASIBILITY", "OTHER"], "doc": "ClinicalTrials.gov primary purpose classification." },
+        { "name": "studyStatus", "type": "xsd:string", "enum": ["PLANNED", "RECRUITING", "ENROLLING_BY_INVITATION", "ACTIVE_NOT_RECRUITING", "COMPLETED", "SUSPENDED", "TERMINATED", "WITHDRAWN", "UNKNOWN_STATUS"], "doc": "Lifecycle state. Aligned with ClinicalTrials.gov OverallStatus and FHIR ResearchStudy.status. Distinct from per-StudySite status (which lives on StudySite.studySiteStatus)." },
+        { "name": "conditionStudied", "type": "xsd:string", "optional": true, "doc": "Primary condition or disease being studied (e.g., 'Advanced Non-Small Cell Lung Cancer'). Free text or SNOMED-coded; comma-separated for multiple conditions." },
+        { "name": "therapeuticArea", "type": "xsd:string", "optional": true, "doc": "Therapeutic area classification (e.g., ONCOLOGY, CARDIOLOGY, NEUROLOGY, IMMUNOLOGY). Per-Study TA; corporate-portfolio TA spread lives on the linked Sponsor's Organization." },
+        { "name": "targetEnrollment", "type": "xsd:integer", "optional": true, "doc": "Target enrollment across all sites for the entire study. Aggregate; per-StudySite enrollment targets live on StudySite.enrollmentTarget." },
+        { "name": "actualEnrollment", "type": "xsd:integer", "optional": true, "doc": "Current actual enrollment across all sites. Aggregate; computable as SUM over StudySite.actualEnrollment but stored for view-speed." },
+        { "name": "enrollmentType", "type": "xsd:string", "optional": true, "enum": ["ANTICIPATED", "ACTUAL"], "doc": "Whether targetEnrollment is anticipated or actual. Aligned with ClinicalTrials.gov EnrollmentType." },
+        { "name": "minAge", "type": "xsd:string", "optional": true, "doc": "Minimum age for participant eligibility (e.g., '18 Years', '6 Months'). String to preserve unit." },
+        { "name": "maxAge", "type": "xsd:string", "optional": true, "doc": "Maximum age for participant eligibility." },
+        { "name": "sexEligibility", "type": "xsd:string", "optional": true, "enum": ["ALL", "MALE", "FEMALE"], "doc": "Sex eligibility per ClinicalTrials.gov." },
+        { "name": "acceptsHealthyVolunteers", "type": "xsd:boolean", "optional": true, "doc": "Whether the study accepts healthy volunteers." },
+        { "name": "plannedStartDate", "type": "xsd:date", "optional": true, "doc": "Planned date of first patient first visit." },
+        { "name": "actualStartDate", "type": "xsd:date", "optional": true, "doc": "Actual date of first patient first visit (FPI). Empty until FPI is achieved." },
+        { "name": "primaryCompletionDate", "type": "xsd:date", "optional": true, "doc": "Date of last primary outcome measure assessment per ClinicalTrials.gov. Distinct from actualCompletionDate (last visit, all outcomes)." },
+        { "name": "plannedCompletionDate", "type": "xsd:date", "optional": true },
+        { "name": "actualCompletionDate", "type": "xsd:date", "optional": true, "doc": "Date of last patient last visit (LPLV). Empty until LPLV is achieved." },
+        { "name": "responsibleParty", "type": "xsd:string", "optional": true, "enum": ["SPONSOR", "INVESTIGATOR_SPONSOR", "SPONSOR_INVESTIGATOR", "OTHER"], "doc": "Who is responsible for the study per ClinicalTrials.gov ResponsibleParty.type. INVESTIGATOR_SPONSOR for IITs where the PI is the sponsor of record; SPONSOR_INVESTIGATOR for industry-sponsored with sub-investigator named." },
+        { "name": "studyVersion", "type": "xsd:string", "optional": true, "doc": "Current version identifier for the study definition (e.g., '3.2.1'). Mirrors USDM StudyVersion.versionIdentifier; richer multi-version semantics (separate StudyVersion sub-object) lifts in v0.4 if operationally needed. Amendments are tracked via the hasAmendment relationship." },
+        { "name": "clinicalTrialsGovId", "type": "xsd:string", "optional": true, "doc": "ClinicalTrials.gov NCT identifier (e.g., 'NCT99999423'). Optional: IITs and early-phase trials may not have NCT IDs at time of Study creation; populated when ClinicalTrials.gov registration completes." },
+        { "name": "eudraCT", "type": "xsd:string", "optional": true, "doc": "EudraCT (EU Clinical Trials Register) identifier (e.g., '2026-001234-56'). For studies submitted under the EU Clinical Trials Regulation; replaced by EU CTIS identifier for new submissions." },
+        { "name": "euCtisId", "type": "xsd:string", "optional": true, "doc": "EU Clinical Trials Information System (CTIS) identifier; the EU CTR Article 80 register identifier replacing EudraCT for new submissions." },
+        { "name": "isrctn", "type": "xsd:string", "optional": true, "doc": "ISRCTN registry identifier (UK)." },
+        { "name": "nciId", "type": "xsd:string", "optional": true, "doc": "NCI Clinical Trials ID (oncology studies)." },
+        { "name": "otherRegistryIds", "type": "xsd:string", "optional": true, "doc": "Comma-separated additional registry identifiers (ANZCTR, ChiCTR, JPRN, etc.). Free-form for registries not enumerated above." },
+        { "name": "tags", "type": "xsd:string", "optional": true, "doc": "Comma-separated user-defined tags." }
       ],
       "relationships": [
-        { "name": "hasProtocol", "target": "Protocol", "cardinality": "1..1" },
-        { "name": "hasArm", "target": "Arm", "cardinality": "1..N" }
+        { "name": "hasProtocol", "target": "Protocol", "cardinality": "1..1", "doc": "The current effective Protocol for this Study. Sub-object. Protocol amendments are tracked via the hasAmendment relationship; the hasProtocol points at the current effective version." },
+        { "name": "hasArm", "target": "Arm", "cardinality": "1..N", "doc": "Study arms (treatment groups). Sub-object. Single-arm studies have one Arm entity. Multi-arm studies (parallel, crossover, factorial) have multiple. Aligned with USDM StudyDesign.arms." },
+        { "name": "hasSchedule", "target": "ScheduleOfAssessments", "cardinality": "0..N", "doc": "Schedule(s) of Assessments. Sub-object. 0..N because PLANNED-state Studies may not yet have an SOA; SHACL invariant enforces presence once Study is ACTIVE. 0..N also handles the case where SOA versions across protocol amendments are tracked separately. Aligned with USDM StudyDesign.scheduleTimelines." },
+        { "name": "hasEndpoint", "target": "Endpoint", "cardinality": "0..N", "doc": "Study endpoints (primary, secondary, exploratory, safety). Sub-object. 0..N because PLANNED-state Studies may not yet have endpoints defined; SHACL invariant enforces presence once Study is ACTIVE. Aligned with USDM StudyDesign.objectives.endpoints." },
+        { "name": "hasInclusionCriterion", "target": "InclusionCriterion", "cardinality": "0..N", "doc": "Inclusion criteria for participant eligibility. Sub-object. 0..N because PLANNED-state Studies may not yet have criteria; SHACL invariant enforces presence once Study is RECRUITING. Aligned with USDM StudyDesign.eligibilityCriteria (subset of inclusion type)." },
+        { "name": "hasExclusionCriterion", "target": "ExclusionCriterion", "cardinality": "0..N", "doc": "Exclusion criteria for participant eligibility. Sub-object. 0..N because rare cases (some registries) may have no formal exclusion criteria. Aligned with USDM StudyDesign.eligibilityCriteria (subset of exclusion type)." },
+        { "name": "hasAmendment", "target": "Amendment", "cardinality": "0..N", "doc": "Protocol amendments tracked over the Study lifecycle. Each Amendment captures the change history; the current effective Protocol is reached via hasProtocol.", "_targetMissing": "Amendment is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "hasMilestone", "target": "Milestone", "cardinality": "0..N", "doc": "Study-level milestones (FPI, LPI, DBL, CSR, IND submission, etc.). Site-level milestones live on StudySite.activationDate / deactivationDate.", "_targetMissing": "Milestone is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "suppliesInvestigationalProduct", "target": "InvestigationalProduct", "cardinality": "0..N", "doc": "IPs supplied for this Study. 0..N because observational studies may have none. Mirrors Sponsor.supplies (the per-Sponsor IP list).", "_targetMissing": "InvestigationalProduct is a top-level in OOUX (one of the locked 8) but not yet in TOP source." },
+        { "name": "hasOversightBody", "target": "OversightBody", "cardinality": "0..N", "doc": "Study-level oversight bodies (DSMB, IDMC). Per-Site IRB/EC of record lives on StudySite.hasIRB.", "_targetMissing": "OversightBody is a top-level in OOUX (one of the locked 8) but not yet in TOP source." },
+        { "name": "hasStudyStartupPackage", "target": "StudyStartupPackage", "cardinality": "0..1", "doc": "The Study Startup Package containing essential documents and templates distributed to sites during initiation.", "_targetMissing": "StudyStartupPackage is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "usesSystem", "target": "System", "cardinality": "0..N", "doc": "Per-Study Systems (the EDC, CTMS, IRT, eTMF, safety database used for this Study). Sites and Sponsors using these Systems reach them via the System's three-axis relationships (operatedBy, usedBy, oversightHeldBy)." },
+        { "name": "hasStatisticalAnalysisPlan", "target": "Document", "cardinality": "0..1", "doc": "The Statistical Analysis Plan (SAP) document. Document.documentType=SOP or a future SAP-specific subtype." },
+        { "name": "hasStudyTeam", "target": "Person", "cardinality": "0..N", "doc": "Study team members (Sponsor PM, Biostatistician, Medical Monitor, Pharmacovigilance Lead, etc.). Orthogonal to per-StudySite delegation (which is on StudySite.delegatesAuthorityTo). The same Person can be on multiple Studies' teams." },
+        { "name": "hasTag", "target": "Tag", "cardinality": "0..N", "doc": "User-defined tags applied to this Study.", "_targetMissing": "Tag is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "hasRiskAssessment", "target": "RiskAssessment", "cardinality": "0..N", "doc": "Risk assessments owned at the Study level (per ICH E8(R1) quality-by-design). Per-StudySite risk-tier is captured on StudySite.oversightTier.", "_targetMissing": "RiskAssessment is in OOUX v0.2 catalog but not yet in TOP source." }
+      ],
+      "ctas": [
+        { "action": "Create Study", "persona": "Sponsor PM", "note": "Create a new Study record." },
+        { "action": "Update Study Details", "persona": "Sponsor PM", "note": "Maintain Study identity and design attributes." },
+        { "action": "Submit for Approval", "persona": "Sponsor Regulatory", "note": "Submit Study for IRB/regulatory approval; transitions Study from PLANNED to under-review." },
+        { "action": "Activate Study", "persona": "Sponsor PM", "note": "Open the Study for enrollment; transitions to RECRUITING. SHACL invariant: requires at least one ACTIVE StudySite." },
+        { "action": "Put Study on Hold", "persona": "Sponsor PM / Regulatory", "note": "Suspend enrollment temporarily (safety hold, regulatory pause); transitions to SUSPENDED. Existing enrolled participants continue per protocol." },
+        { "action": "Terminate Study", "persona": "Sponsor PM", "note": "End the Study before planned completion (safety, futility, business). Transitions to TERMINATED. Distinct from COMPLETED (planned end) and WITHDRAWN (never started)." },
+        { "action": "Complete Study", "persona": "Sponsor PM", "note": "Mark Study as having reached planned completion; transitions to COMPLETED after LPLV." },
+        { "action": "Amend Protocol", "persona": "Sponsor PM / Medical Monitor", "note": "Initiate a protocol amendment; creates Amendment entity and updates studyVersion. Cascades to ICF re-consent if required." },
+        { "action": "Register on ClinicalTrials.gov", "persona": "Sponsor Regulatory", "note": "Submit registration to ClinicalTrials.gov; populates clinicalTrialsGovId. Similar CTAs for EudraCT, EU CTIS, ISRCTN, NCI." },
+        { "action": "Generate Study Report", "persona": "Sponsor Analytics", "note": "Generate Study-level reports (interim analysis, CSR, safety report)." }
       ],
       "sub_objects": [
         {
           "id": "Protocol",
+          "role": "the canonical study-design document",
+          "description": "The Protocol is the formal document defining the study's design, methodology, statistical plan, and conduct procedures. Sub-object of Study. Protocol amendments are tracked via Study.hasAmendment; this Protocol points at the current effective version.",
           "crosswalks": {
             "fhir": "fhir:PlanDefinition",
-            "usdm": "usdm:Protocol"
+            "usdm": "usdm:StudyProtocolDocumentVersion",
+            "ctgov": "ClinicalTrials.gov ProtocolDocument"
           },
           "attributes": [
-            { "name": "protocolVersion", "type": "xsd:string", "doc": "semver." },
-            { "name": "protocolStatus", "type": "xsd:string", "doc": "draft, in_review, approved, amended, superseded." }
+            { "name": "protocolId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "protocolNumber", "type": "xsd:string", "optional": true, "doc": "Sponsor's protocol identifier (often duplicates Study.sponsorProtocolId; kept distinct because the protocol-as-document has its own identity separate from the Study-as-trial)." },
+            { "name": "protocolTitle", "type": "xsd:string", "optional": true, "doc": "Protocol document title (often duplicates Study.studyTitle for consistency, but kept as separate field for cases where the document title differs)." },
+            { "name": "protocolVersion", "type": "xsd:string", "doc": "Semver-style version (e.g., '3.0.0', '3.2.1'). Each amendment increments." },
+            { "name": "protocolStatus", "type": "xsd:string", "enum": ["DRAFT", "IN_REVIEW", "APPROVED", "EFFECTIVE", "AMENDED", "SUPERSEDED", "RETIRED"], "doc": "Lifecycle state. EFFECTIVE means currently in force; AMENDED means a successor version exists; SUPERSEDED means replaced; RETIRED means Study closed and Protocol archived." },
+            { "name": "approvalDate", "type": "xsd:date", "optional": true, "doc": "Date of regulatory or IRB approval of this Protocol version." },
+            { "name": "effectiveDate", "type": "xsd:date", "optional": true, "doc": "Date this Protocol version became effective at sites." },
+            { "name": "protocolDocumentRef", "type": "xsd:anyURI", "optional": true, "doc": "URI of the actual Protocol PDF (typically in eTMF). Distinct from the JSON-LD/RDF representation." },
+            { "name": "ddfDocumentRef", "type": "xsd:anyURI", "optional": true, "doc": "URI of the USDM Digital Definition Format JSON document (machine-readable protocol). Aligned with USDM v3 DDF deliverable." },
+            { "name": "studyDesignRationale", "type": "xsd:string", "optional": true, "doc": "Narrative rationale for the chosen study design. Aligned with USDM StudyDesign.rationale." }
           ]
         },
         {
           "id": "Arm",
+          "role": "study arm (treatment group, comparator, or observational cohort)",
+          "description": "An Arm is a group of Participants who receive a specific intervention (or no intervention) per the protocol. Sub-object of Study. Single-arm studies have one Arm; multi-arm studies (parallel, crossover, factorial) have multiple. Each Participant is assigned to exactly one Arm at randomization (or is unassigned in pre-randomization phases).",
           "crosswalks": {
             "fhir": "fhir:ResearchStudy.arm",
             "usdm": "usdm:StudyArm",
-            "cdash": "cdash:DM.ARM"
+            "cdash": "cdash:DM.ARM",
+            "ctgov": "ClinicalTrials.gov ArmGroup"
           },
           "attributes": [
-            { "name": "armName", "type": "xsd:string" },
-            { "name": "armType", "type": "xsd:string", "doc": "treatment, comparator, placebo, control, observational." }
+            { "name": "armId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "armName", "type": "xsd:string", "doc": "Display name (e.g., 'Drug X 200mg', 'Standard of Care', 'Placebo')." },
+            { "name": "armShortName", "type": "xsd:string", "optional": true, "doc": "Abbreviated label for charts and dashboards." },
+            { "name": "armType", "type": "xsd:string", "enum": ["EXPERIMENTAL", "ACTIVE_COMPARATOR", "PLACEBO_COMPARATOR", "NO_INTERVENTION", "SHAM_COMPARATOR", "OTHER"], "doc": "Arm type per ClinicalTrials.gov ArmType." },
+            { "name": "armDescription", "type": "xsd:string", "optional": true, "doc": "Narrative description of what participants in this arm receive." },
+            { "name": "armSize", "type": "xsd:integer", "optional": true, "doc": "Planned number of Participants for this arm." },
+            { "name": "interventionDescription", "type": "xsd:string", "optional": true, "doc": "One-line summary of the intervention (e.g., 'Drug X 200mg PO QD for 12 weeks')." },
+            { "name": "isPlaceboArm", "type": "xsd:boolean", "optional": true },
+            { "name": "isControlArm", "type": "xsd:boolean", "optional": true, "doc": "True if this arm serves as the control (placebo, active comparator, or no-intervention)." }
+          ]
+        },
+        {
+          "id": "ScheduleOfAssessments",
+          "role": "the visit-by-procedure matrix that defines what happens when at each visit",
+          "description": "The Schedule of Assessments (SOA) defines the visit-by-procedure matrix for the study: which procedures, assessments, samples, and data collections happen at which protocol-defined visit. Sub-object of Study. The SOA anchors the Visit-template chain: each row is a procedure or assessment; each column is a Visit-template. The cell at (procedure, visit) tells the operator whether that procedure is performed at that visit.",
+          "ooux_editor_note": "v0.3.0 introduction (2026-05-08): lifted from OOUX SOA object. Sub-object of Study because SOA is a canonical study-design artifact (lifecycle bound to Study). 1..N cardinality on Study.hasSchedule for cases where SOA versions across protocol amendments are tracked separately. Visit-templates and Activity-templates are reachable via the SOA via future relationships (when Visit lifts). The OOUX has SOA as a top-level candidate; TOP keeps it as a Study sub-object because its lifecycle is bound to the Study and it's not operationally useful outside that context.",
+          "crosswalks": {
+            "usdm": "usdm:ScheduleTimeline",
+            "ctgov": "(implicit in ProtocolSection)",
+            "cdash": "cdash:VS / VISIT"
+          },
+          "attributes": [
+            { "name": "soaId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "soaName", "type": "xsd:string", "doc": "Display name (e.g., 'ONCO-423 Schedule of Assessments v3.0')." },
+            { "name": "soaVersion", "type": "xsd:string", "doc": "Version identifier; tracks alongside Protocol version through amendments." },
+            { "name": "soaStatus", "type": "xsd:string", "enum": ["DRAFT", "APPROVED", "EFFECTIVE", "SUPERSEDED"], "doc": "Lifecycle state. EFFECTIVE means currently in force at activated sites." },
+            { "name": "approvalDate", "type": "xsd:date", "optional": true },
+            { "name": "effectiveDate", "type": "xsd:date", "optional": true },
+            { "name": "soaDocumentRef", "type": "xsd:anyURI", "optional": true, "doc": "URI of the SOA artifact (typically a table embedded in the Protocol PDF or a separate Excel/PDF file)." },
+            { "name": "description", "type": "xsd:string", "optional": true, "doc": "Narrative description; useful when the SOA covers complex multi-arm or crossover designs." }
+          ]
+        },
+        {
+          "id": "Endpoint",
+          "role": "study endpoint (primary, secondary, exploratory, or safety)",
+          "description": "An Endpoint is a measurable outcome used to evaluate the study's intervention or natural history. Sub-object of Study. Endpoints are categorized as PRIMARY (the main outcome the study is powered to detect), SECONDARY (additional pre-specified outcomes), EXPLORATORY (hypothesis-generating), or SAFETY (adverse event-driven). Each endpoint has a measurement type, a time frame, and an associated statistical approach.",
+          "ooux_editor_note": "v0.3.0 introduction (2026-05-08): lifted from OOUX Endpoint object. Sub-object of Study (lifecycle bound to Study). USDM models endpoints inside StudyDesign.objectives.endpoints; TOP flattens this nesting for operator UX, with the implicit assumption that each Endpoint belongs to one Objective (which is captured via endpointType and statisticalApproach for v0.3.0; explicit Objective sub-object lifts in v0.4 if richer multi-objective semantics become operationally needed).",
+          "crosswalks": {
+            "fhir": "fhir:ResearchStudy.objective",
+            "usdm": "usdm:Endpoint",
+            "ctgov": "ClinicalTrials.gov OutcomeMeasure"
+          },
+          "attributes": [
+            { "name": "endpointId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "endpointName", "type": "xsd:string", "doc": "Short name for dashboards (e.g., 'Overall Survival', 'PFS at 12 months', 'C-max')." },
+            { "name": "endpointDescription", "type": "xsd:string", "doc": "Full text definition of the endpoint, including how it is measured and at what time points." },
+            { "name": "endpointType", "type": "xsd:string", "enum": ["PRIMARY", "SECONDARY", "EXPLORATORY", "SAFETY"], "doc": "Endpoint category." },
+            { "name": "endpointMeasurementType", "type": "xsd:string", "optional": true, "enum": ["BINARY", "CONTINUOUS", "ORDINAL", "TIME_TO_EVENT", "COUNT", "RATE", "OTHER"], "doc": "Statistical type of the measurement." },
+            { "name": "measurementUnit", "type": "xsd:string", "optional": true, "doc": "Unit of measurement (e.g., 'months', 'mg/dL', '%')." },
+            { "name": "timeFrame", "type": "xsd:string", "optional": true, "doc": "Time window over which the endpoint is assessed (e.g., 'Up to 24 weeks', 'From randomization to death from any cause')." },
+            { "name": "statisticalApproach", "type": "xsd:string", "optional": true, "doc": "Statistical method used to analyze this endpoint (e.g., 'Cox proportional hazards model', 'Kaplan-Meier survival analysis', 'Mixed-effects model for repeated measures')." }
+          ]
+        },
+        {
+          "id": "InclusionCriterion",
+          "role": "study inclusion criterion for participant eligibility",
+          "description": "An InclusionCriterion is a specific characteristic that potential Participants must have to be eligible for the Study. Sub-object of Study. Eligibility is determined per-Participant during screening; failed inclusion criteria result in screen failure.",
+          "ooux_editor_note": "v0.3.0 introduction (2026-05-08): lifted from OOUX Inclusion Criteria object. Sub-object of Study because criteria are study-design-bound. USDM models eligibility via EligibilityCriterion with a code distinguishing inclusion from exclusion; TOP splits into two sub-objects (InclusionCriterion + ExclusionCriterion) for operator UX clarity (operators read inclusion and exclusion as distinct lists).",
+          "crosswalks": {
+            "fhir": "fhir:Group.characteristic (with exclude=false)",
+            "usdm": "usdm:EligibilityCriterion (with code=inclusion)",
+            "ctgov": "ClinicalTrials.gov EligibilityCriteria.criteria"
+          },
+          "attributes": [
+            { "name": "criterionId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "criterionNumber", "type": "xsd:string", "doc": "Display number/code (e.g., 'I1', 'I2', '1.a'). Operator-readable identifier within the protocol." },
+            { "name": "criterionText", "type": "xsd:string", "doc": "Full text of the criterion as written in the Protocol." },
+            { "name": "criterionCategory", "type": "xsd:string", "optional": true, "enum": ["AGE", "SEX", "DIAGNOSIS", "DISEASE_STAGE", "LAB_VALUES", "MEDICAL_HISTORY", "PRIOR_TREATMENT", "MEDICATIONS", "PERFORMANCE_STATUS", "GENETIC", "OTHER"], "doc": "Categorization for SFQ-style filtering and feasibility analysis." },
+            { "name": "waiverAllowed", "type": "xsd:boolean", "optional": true, "doc": "Whether deviations from this criterion are allowed via medical monitor approval (most criteria do NOT allow waivers)." },
+            { "name": "waiverConditions", "type": "xsd:string", "optional": true, "doc": "Conditions under which a waiver may be granted (if waiverAllowed=true)." }
+          ]
+        },
+        {
+          "id": "ExclusionCriterion",
+          "role": "study exclusion criterion for participant eligibility",
+          "description": "An ExclusionCriterion is a specific characteristic that disqualifies potential Participants from the Study. Sub-object of Study. A Participant who meets ANY exclusion criterion is ineligible.",
+          "crosswalks": {
+            "fhir": "fhir:Group.characteristic (with exclude=true)",
+            "usdm": "usdm:EligibilityCriterion (with code=exclusion)",
+            "ctgov": "ClinicalTrials.gov EligibilityCriteria.criteria"
+          },
+          "attributes": [
+            { "name": "criterionId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "criterionNumber", "type": "xsd:string", "doc": "Display number/code (e.g., 'E1', 'E2', '2.b')." },
+            { "name": "criterionText", "type": "xsd:string", "doc": "Full text of the criterion." },
+            { "name": "criterionCategory", "type": "xsd:string", "optional": true, "enum": ["AGE", "SEX", "DIAGNOSIS", "DISEASE_STAGE", "LAB_VALUES", "MEDICAL_HISTORY", "PRIOR_TREATMENT", "MEDICATIONS", "PERFORMANCE_STATUS", "GENETIC", "PREGNANCY", "OTHER"], "doc": "Categorization. PREGNANCY appears in exclusion category list because pregnancy/lactation is a near-universal exclusion in interventional studies but rarely an inclusion criterion." },
+            { "name": "waiverAllowed", "type": "xsd:boolean", "optional": true, "doc": "Whether deviations from this criterion are allowed via medical monitor approval." },
+            { "name": "waiverConditions", "type": "xsd:string", "optional": true }
           ]
         }
       ]

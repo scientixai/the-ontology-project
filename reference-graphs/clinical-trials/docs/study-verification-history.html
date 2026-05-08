@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Study / verification view / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a; background: #f4f4f1;
+    padding: 22px 26px 32px; line-height: 1.55; font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .verify-panel {
+    background: #fffbe8; border: 1px solid #e6d97a;
+    padding: 12px 16px; border-radius: 3px; margin-bottom: 18px;
+  }
+  .verify-panel h2 {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #6a5d10; margin-bottom: 8px;
+  }
+  .verify-panel ol { padding-left: 18px; line-height: 1.55; font-size: 12.5px; }
+  .verify-panel li { margin-bottom: 8px; }
+  .verify-panel li strong { color: #111; }
+  .verify-panel .answer-line { color: #888; font-style: italic; font-size: 11.5px; }
+  .pending {
+    color: #b03a2e; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em; font-size: 10.5px;
+  }
+  p { margin-bottom: 10px; }
+  h2.section {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #111; margin: 22px 0 8px;
+    padding-bottom: 4px; border-bottom: 1px solid #c8c8c0;
+  }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Study / verification view / v1</div>
+  <div class="meta">2026-05-08 · v0.3.0-strawman · Study + Protocol + Arm + SOA + Endpoint + InclusionCriterion + ExclusionCriterion · 36 attrs / 16 rels / 6 sub-objects · 6 SHACL invariants · 12 verification questions pending</div>
+</header>
+
+<div class="verify-panel">
+  <h2>Verification questions for Bo (pending)</h2>
+  <p>Study is the third top-level fully sealed in TOP (after Sponsor v0.1.4 and Site/StudySite v0.2.0). Twelve verification questions surface architectural decisions for review. <span class="pending">Pending Bo's review.</span></p>
+  <ol>
+    <li><strong>Q1 (USDM flattening).</strong> Is collapsing USDM v3's Study → StudyVersion → StudyDesign three-level nesting into a single Study with sub-objects the right call for operator UX, with the simple-version case captured by studyVersion attribute? Architectural decision §4.1. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q2 (sub-object containment).</strong> Are Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, and ExclusionCriterion correctly modeled as sub-objects of Study (lifecycle bound to Study) rather than as horizontals (lifecycle independent)? Architectural decision §4.2. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q3 (direct-vs-traversed).</strong> Should Study keep zero direct edges to Site / Participant / Visit-occurrence (all reached through StudySite traversal), or are there operational queries that justify direct denormalized edges? Architectural decision §4.3. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q4 (Inclusion/Exclusion split).</strong> Is splitting USDM's single EligibilityCriterion (with type code) into TOP's separate InclusionCriterion + ExclusionCriterion sub-objects justified by operator UX (separate lists in Protocol, separate SFQ filtering)? Architectural decision §4.4. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q5 (no Study.runsBy).</strong> Should Study have an explicit inverse relationship to Sponsor (e.g., <span class="inline">runsBy</span>) for query convenience, or is the Sponsor.runs (1..1) inverse traversal sufficient? Architectural decision §4.5. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q6 (studyStatus enum coverage).</strong> Is the 9-value studyStatus enum (PLANNED, RECRUITING, ENROLLING_BY_INVITATION, ACTIVE_NOT_RECRUITING, COMPLETED, SUSPENDED, TERMINATED, WITHDRAWN, UNKNOWN_STATUS) the right coverage? Aligned with ClinicalTrials.gov OverallStatus. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q7 (multi-registry attribute set).</strong> Are clinicalTrialsGovId, eudraCT, euCtisId, isrctn, nciId the right registries to make first-class attributes (with otherRegistryIds catchall)? Should JPRN, ChiCTR, ANZCTR, REBEC promote to first-class? §7. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q8 (lifecycle SHACL invariants).</strong> Are SHACL invariants 11/12/13 (RECRUITING-or-past requires hasEndpoint / hasInclusionCriterion / hasSchedule) correctly tuned? Should they fire on RECRUITING and onwards, or only after FPI (actualStartDate populated)? §13. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q9 (interventional phase invariant).</strong> Is SHACL invariant 14 (INTERVENTIONAL Studies must have studyPhase) correctly scoped? Should EXPANDED_ACCESS also require phase? §13. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q10 (multi-arm interventionModel invariant).</strong> Is SHACL invariant 16 (PARALLEL/CROSSOVER/FACTORIAL/SEQUENTIAL require multiple Arm sub-objects) correctly scoped? Should SEQUENTIAL allow single-arm crossover-into-self designs? §13. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q11 (responsibleParty enum).</strong> Are SPONSOR / INVESTIGATOR_SPONSOR / SPONSOR_INVESTIGATOR / OTHER the right values? ClinicalTrials.gov ResponsibleParty.type uses similar but not identical terminology. <span class="answer-line">Pending.</span></li>
+    <li><strong>Q12 (flagged-missing horizontal lift order).</strong> Of the 7 flagged-missing targets on Study (Amendment, Milestone, InvestigationalProduct, OversightBody, StudyStartupPackage, RiskAssessment, Tag), which lift first in v0.3+? Suggested order by operational importance: InvestigationalProduct (top-level in OOUX), OversightBody (top-level in OOUX, also referenced by StudySite), Amendment (protocol-amendment lineage), Milestone (study tracking), then StudyStartupPackage / RiskAssessment / Tag. <span class="answer-line">Pending.</span></li>
+  </ol>
+</div>
+
+<h2 class="section">Pre-verification artifacts</h2>
+<p>Study spec landed on 2026-05-08 in <span class="inline">study-spec.html</span> (659 lines) with architectural anchor (operational hierarchy), model summary, five architectural decisions, USDM v3 alignment table, ICH E8(R1) and E6(R3) alignment, multi-registry alignment, lifecycle state machine, six stress-test scenarios, eight-persona view matrix, query patterns, NLP translation, SHACL invariants, cross-walks, and tracked open issues. SHACL: 18 NodeShapes (3 top-levels + 6 sub-objects + 9 horizontals), 379 property shapes, 16 domain invariants. Worked examples: all four examples extended with Endpoint, InclusionCriterion, and ScheduleOfAssessments entities; all conform under pyshacl 0.31.0 advanced mode.</p>
+
+<p>The Study lift completes the third top-level after Sponsor (v0.1.4-strawman) and Site/StudySite (v0.2.0-strawman). The clinical-trials reference graph now has the central organizing entity sealed; Visit, Participant, IP, Oversight Body, and Event remain queued as the final five top-levels.</p>
+
+<h2 class="section">Architectural patterns established</h2>
+<p>Study consolidates three architectural patterns established by earlier specs:</p>
+<ol style="margin-left: 20px;">
+  <li><strong>Per-Org-per-Study Sponsor</strong> (Sponsor v0.1.4): a Study is reached by multiple Sponsor entities representing different jurisdictions, financial vs operational responsibility, or CRO-as-proxy delegation. Study itself doesn't carry sponsor responsibility flags; those live on Sponsor.</li>
+  <li><strong>Operational hierarchy with StudySite pivot</strong> (Site v0.2.0): Site → StudySite → Study → Protocol → SOA → Visit → Activity. Study is the pivot between operator-side and definition-side. StudySite is the per-Site-per-Study join entity.</li>
+  <li><strong>Sub-object containment for design entities</strong> (Study v0.3.0): Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion are sub-objects of Study; their lifecycle is bound to the Study. Future top-levels with similar contained-design semantics (e.g., Visit's sub-objects) follow the same pattern.</li>
+</ol>
+
+<div class="footer">
+  v1 verification view · 2026-05-08 · 12 verification questions pending Bo's review · all SHACL invariants encoded and worked examples conforming · Study completes the third top-level lift; Visit / Participant / IP / Oversight Body / Event queued as the final five
+</div>
+
+</div>
+</body>
+</html>

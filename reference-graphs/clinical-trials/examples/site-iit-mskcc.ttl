@@ -50,17 +50,22 @@
 <urn:ngsi-ld:Study:IIT-ONCO-001> a top:Study ;
     top:studyId             "urn:ngsi-ld:Study:IIT-ONCO-001"^^xsd:anyURI ;
     top:sponsorProtocolId   "MSKCC-IIT-ONCO-001" ;
-    top:studyStatus         "active" ;
+    top:studyStatus         "RECRUITING" ;
     top:hasProtocol         <urn:ngsi-ld:Protocol:IIT-ONCO-001-v1> ;
-    top:hasArm              <urn:ngsi-ld:Arm:IIT-ONCO-001-treatment> .
+    top:hasArm              <urn:ngsi-ld:Arm:IIT-ONCO-001-treatment> ;
+    top:hasEndpoint         <urn:ngsi-ld:Endpoint:IIT-ONCO-001-os> ;
+    top:hasInclusionCriterion <urn:ngsi-ld:InclusionCriterion:IIT-ONCO-001-i1> ;
+    top:hasSchedule         <urn:ngsi-ld:ScheduleOfAssessments:IIT-ONCO-001-soa-v1> .
 
 <urn:ngsi-ld:Protocol:IIT-ONCO-001-v1> a top:Protocol ;
+    top:protocolId             "urn:ngsi-ld:Protocol:IIT-ONCO-001-v1"^^xsd:anyURI ;
     top:protocolVersion     "1.0.0" ;
-    top:protocolStatus      "approved" .
+    top:protocolStatus      "EFFECTIVE" .
 
 <urn:ngsi-ld:Arm:IIT-ONCO-001-treatment> a top:Arm ;
+    top:armId             "urn:ngsi-ld:Arm:IIT-ONCO-001-treatment"^^xsd:anyURI ;
     top:armName             "Treatment" ;
-    top:armType             "treatment" .
+    top:armType             "EXPERIMENTAL" .
 
 # === Site (operational, study-independent) ===
 
@@ -165,3 +170,30 @@
 # constraint targets specifically the case where a research-site Organization
 # (organizationType=SITE) tries to claim oversight of sponsor-critical Systems
 # without playing the Sponsor role itself.
+
+# === Endpoint, InclusionCriterion, ScheduleOfAssessments (sub-objects of Study, lifted in v0.3.0) ===
+
+<urn:ngsi-ld:Endpoint:IIT-ONCO-001-os> a top:Endpoint ;
+    top:endpointId          "urn:ngsi-ld:Endpoint:IIT-ONCO-001-os"^^xsd:anyURI ;
+    top:endpointName        "Overall Survival" ;
+    top:endpointDescription "Time from randomization to death from any cause." ;
+    top:endpointType        "PRIMARY" ;
+    top:endpointMeasurementType "TIME_TO_EVENT" ;
+    top:measurementUnit     "months" ;
+    top:timeFrame           "Up to approximately 5 years post-randomization" ;
+    top:statisticalApproach "Kaplan-Meier survival analysis with Cox proportional hazards model" .
+
+<urn:ngsi-ld:InclusionCriterion:IIT-ONCO-001-i1> a top:InclusionCriterion ;
+    top:criterionId         "urn:ngsi-ld:InclusionCriterion:IIT-ONCO-001-i1"^^xsd:anyURI ;
+    top:criterionNumber     "I1" ;
+    top:criterionText       "Adults aged 18 years or older with refractory hematologic malignancy who have failed at least two prior lines of standard therapy." ;
+    top:criterionCategory   "DIAGNOSIS" ;
+    top:waiverAllowed       false .
+
+<urn:ngsi-ld:ScheduleOfAssessments:IIT-ONCO-001-soa-v1> a top:ScheduleOfAssessments ;
+    top:soaId               "urn:ngsi-ld:ScheduleOfAssessments:IIT-ONCO-001-soa-v1"^^xsd:anyURI ;
+    top:soaName             "IIT-ONCO-001 Schedule of Assessments v1.0" ;
+    top:soaVersion          "1.0" ;
+    top:soaStatus           "EFFECTIVE" ;
+    top:effectiveDate       "2026-01-01"^^xsd:date ;
+    top:description         "Visit-by-procedure matrix covering Screening, Treatment, and Follow-up phases." .
