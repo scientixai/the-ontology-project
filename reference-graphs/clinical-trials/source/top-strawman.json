@@ -1,7 +1,7 @@
 {
   "_comment": "TOP v0.1 reference graph intermediate (strawman). The OOUX hierarchy is now locked at eight top-levels for the clinical-trials reference graph: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven boundary decisions resolved (see top_ooux-hierarchy_v1.html, 2026-05-07). This source currently scaffolds three of the eight (Sponsor, Study, Site) plus two horizontals (Organization, Document), enough to verify the federation pattern (clinical-trials @context imports a TOP commons @context). The remaining five top-levels lift in subsequent passes following the Sponsor spec template (top_sponsor-spec_v1.html). The build_context.py and build_shacl.py emitters do not change as top-levels are added; both carry a polysemous-verb guard that fails loudly on duplicate predicate names within a focus class. Sub-objects locked from OOUX: Visit Observation under Visit, Other Clinical Event under Event with derivedFrom audit chain. Equipment is fully horizontal with equipmentBinding enum (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Sample stays horizontal for the trials commons; specialty reference graphs (cell therapy, rare disease) may elevate it via the federation pattern.",
 
-  "version": "0.1.4-strawman",
+  "version": "0.2.0-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
 
@@ -133,24 +133,85 @@
 
     {
       "id": "Site",
-      "role": "where conduct happens",
-      "_partialEntry": "Hierarchy fields added in v0.2; remaining attributes/relationships still to be filled out from OOUX Section 3 entry #1 once Sponsor is fully validated.",
+      "role": "where conduct happens — the physical/operational research site, study-independent",
+      "description": "A Site is the location or set of locations where trial-related activities are conducted and/or coordinated under the investigator's/institution's oversight (ICH E6(R3) Annex 1 Section 2). Site captures the operational reality and stable feasibility profile of a research site. Per-Study facts (siteNumber, enrollmentTarget, IRB approval status, oversight tier, per-Study staff delegation, per-Study Systems and Contracts) live on the StudySite horizontal, which captures Site's role on a specific Study. Site itself is study-independent: a Site exists with its staff, equipment, IRB-of-record default, qualifications, and infrastructure regardless of which Studies are active.",
+      "ooux_editor_note": "v0.2.0 lift (2026-05-08): expanded from 3 attributes / 5 relationships to full operational + feasibility coverage. Site/StudySite split adopted: per-Study facts moved to StudySite horizontal; Site retains study-independent identity, contact, qualifications, feasibility, and staff capacity. Anchored to ICH E6(R3) Annex 1 Site definition. Crosswalk corrected from usdm:StudySite to usdm:Organization (with type=Code(Site)) — USDM has no operational Site entity; what USDM calls StudySite is the per-Study participation record, which TOP models as the StudySite horizontal. Investigator-Initiated Trial pattern: same Organization plays both managesSite and playsSponsorRole; same Person is hasPrincipalInvestigator on StudySite and primary contact on Sponsor; no special schema relationship required. SFQ feasibility lens lifted in this pass (~30 attributes covering therapeutic area experience, past trial experience, infrastructure, regulatory/ethics defaults, insurance, staff capacity).",
       "crosswalks": {
         "fhir": "fhir:Organization",
-        "usdm": "usdm:StudySite",
+        "usdm": "usdm:Organization (with type=Code(Site))",
         "cdash": "cdash:DM.SITEID"
       },
       "attributes": [
-        { "name": "siteId", "type": "ngsi-ld:URI", "unique": true },
-        { "name": "siteName", "type": "xsd:string" },
-        { "name": "siteType", "type": "xsd:string", "enum": ["HOSPITAL", "CLINIC", "ACADEMIC_MEDICAL_CENTER", "RESEARCH_CENTER", "COMMUNITY_PRACTICE", "DECENTRALIZED_HUB", "VIRTUAL"] }
+        { "name": "siteId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
+        { "name": "siteName", "type": "xsd:string", "doc": "Display name." },
+        { "name": "siteAlias", "type": "xsd:string", "optional": true, "doc": "Operating name when distinct from legal Site name." },
+        { "name": "siteType", "type": "xsd:string", "enum": ["HOSPITAL", "CLINIC", "ACADEMIC_MEDICAL_CENTER", "RESEARCH_CENTER", "COMMUNITY_PRACTICE", "DECENTRALIZED_HUB", "VIRTUAL"], "doc": "Site type taxonomy. DECENTRALIZED_HUB and VIRTUAL cover R3 Annex 2 non-traditional modalities." },
+        { "name": "address", "type": "xsd:object", "optional": true, "doc": "Primary address. For DECENTRALIZED_HUB sites this may be 0..N when the hub serves multiple geographic locations; the strawman emits as a single object and the broker layer normalizes to multi-valued when needed." },
+        { "name": "city", "type": "xsd:string", "optional": true },
+        { "name": "state", "type": "xsd:string", "optional": true },
+        { "name": "country", "type": "xsd:string", "doc": "ISO 3166-1 alpha-3 country code." },
+        { "name": "postalCode", "type": "xsd:string", "optional": true },
+        { "name": "phone", "type": "xsd:string", "optional": true },
+        { "name": "email", "type": "xsd:string", "optional": true },
+        { "name": "website", "type": "xsd:anyURI", "optional": true },
+        { "name": "gcpQualified", "type": "xsd:boolean", "optional": true, "doc": "Site holds a current GCP qualification at the institution level (R3 Section 2.1). Per-Study GCP currency for individual staff lives on Person.gcpTrainingStatus." },
+        { "name": "facilitiesAdequate", "type": "xsd:boolean", "optional": true, "doc": "General facilities adequacy for clinical research (R3 Section 2.2). Per-Study/per-protocol facilities adequacy lives on StudySite.staffingAdequate and is protocol-dependent." },
+        { "name": "therapeuticAreasExperienced", "type": "xsd:string", "optional": true, "doc": "Comma-separated array of therapeutic areas the Site has experience in (oncology, cardiology, neurology, immunology, infectious disease, rare disease, etc.). Drives feasibility-questionnaire matching." },
+        { "name": "indicationExperience", "type": "xsd:object", "optional": true, "doc": "Array of structured records: {indication, totalTrials, totalPatientsEnrolled}. Captures past indication-specific experience for SFQ matching." },
+        { "name": "patientPopulationAccess", "type": "xsd:object", "optional": true, "doc": "Array of {populationDescription, estimatedReach, sourceType}. SFQ feasibility input." },
+        { "name": "patientReferralSources", "type": "xsd:string", "optional": true, "enum": ["HOSPITAL_OWN", "EMR_DATABASE", "ADVERTISING", "REFERRAL_NETWORK", "REGISTRY", "PATIENT_ADVOCACY", "OTHER"], "doc": "Comma-separated array of recruitment sources the Site uses." },
+        { "name": "totalTrialsConducted", "type": "xsd:integer", "optional": true, "doc": "Lifetime count of trials conducted at this Site." },
+        { "name": "trialsByPhase", "type": "xsd:object", "optional": true, "doc": "Array of {phase, count} for past trial experience by phase." },
+        { "name": "averageEnrollmentRate", "type": "xsd:decimal", "optional": true, "doc": "Average patients enrolled per month across past trials. SFQ benchmark." },
+        { "name": "firstPatientInToActivationDays", "type": "xsd:integer", "optional": true, "doc": "Average days from contract execution to first patient enrolled." },
+        { "name": "queryResponseTimeHours", "type": "xsd:decimal", "optional": true, "doc": "Average hours to respond to data queries; data-quality SFQ signal." },
+        { "name": "sponsorRetentionRate", "type": "xsd:decimal", "optional": true, "doc": "Percentage of past sponsors that have run multiple trials at this Site (0.0-1.0)." },
+        { "name": "freezerCapacity", "type": "xsd:object", "optional": true, "doc": "Array of {tempRange (e.g. '-80C', '-20C', '4C'), volume, units}. Storage feasibility for biological samples." },
+        { "name": "imagingCapabilities", "type": "xsd:string", "optional": true, "enum": ["XRAY", "CT", "MRI", "ULTRASOUND", "PET", "SPECT", "ECHO", "NUCLEAR_MEDICINE", "MAMMOGRAPHY"], "doc": "Comma-separated array of on-site imaging modalities." },
+        { "name": "labCapabilities", "type": "xsd:string", "optional": true, "enum": ["CLIA", "CAP", "CENTRAL", "POINT_OF_CARE", "SPECIALTY"], "doc": "Comma-separated array of lab certifications/types available." },
+        { "name": "pharmacyOnSite", "type": "xsd:boolean", "optional": true, "doc": "Site has a pharmacy on-site capable of IP handling." },
+        { "name": "dctCapable", "type": "xsd:boolean", "optional": true, "doc": "Site supports decentralized trial activities (remote visits, home health, telehealth)." },
+        { "name": "econsentCapable", "type": "xsd:boolean", "optional": true, "doc": "Site supports electronic informed consent." },
+        { "name": "eproCapable", "type": "xsd:boolean", "optional": true, "doc": "Site supports electronic patient-reported outcomes." },
+        { "name": "edcVendorExperience", "type": "xsd:string", "optional": true, "doc": "Comma-separated array of EDC vendors the Site has experience with (Medidata Rave, Veeva CDMS, Castor, REDCap, etc.). SFQ technology-readiness signal." },
+        { "name": "irbType", "type": "xsd:string", "optional": true, "enum": ["CENTRAL", "LOCAL", "HYBRID"], "doc": "Default IRB type the Site uses; per-Study IRB-of-record assignment lives on StudySite.hasIRB." },
+        { "name": "typicalIrbApprovalDays", "type": "xsd:integer", "optional": true, "doc": "Average days from IRB submission to approval. SFQ timeline signal." },
+        { "name": "regulatoryAuthorityExperience", "type": "xsd:string", "optional": true, "doc": "Comma-separated array of regulatory authorities the Site has filed under (FDA, EMA, PMDA, NMPA, MHRA, HSA, ANVISA, etc.)." },
+        { "name": "sopsAvailable", "type": "xsd:boolean", "optional": true, "doc": "Site maintains its own SOP library." },
+        { "name": "sopLibrarySize", "type": "xsd:integer", "optional": true, "doc": "Count of distinct SOPs in the Site's library." },
+        { "name": "insuranceCarrier", "type": "xsd:string", "optional": true, "doc": "Name of the insurance carrier providing professional liability / clinical-trial insurance for the Site." },
+        { "name": "insuranceCoverageAmount", "type": "xsd:decimal", "optional": true },
+        { "name": "insuranceCurrency", "type": "xsd:string", "optional": true, "doc": "ISO 4217 currency code." },
+        { "name": "insuranceExpiry", "type": "xsd:date", "optional": true },
+        { "name": "subInvestigatorCount", "type": "xsd:integer", "optional": true, "doc": "Aggregate count of available sub-investigators. The actual Person roster lives on hasStaff." },
+        { "name": "coordinatorCount", "type": "xsd:integer", "optional": true, "doc": "Aggregate count of available study coordinators." },
+        { "name": "regulatoryCoordinatorCount", "type": "xsd:integer", "optional": true },
+        { "name": "studyNurseCount", "type": "xsd:integer", "optional": true },
+        { "name": "labTechCount", "type": "xsd:integer", "optional": true },
+        { "name": "languagesSupported", "type": "xsd:string", "optional": true, "doc": "Comma-separated ISO 639-1 codes; languages staff can support for participant interactions." },
+        { "name": "gcpTrainingCurrencyRate", "type": "xsd:decimal", "optional": true, "doc": "Percentage of staff with current GCP training (0.0-1.0). SFQ signal; per-Person training currency lives on Person." },
+        { "name": "tags", "type": "xsd:string", "optional": true, "doc": "Comma-separated array of user-defined tags (per OOUX Tag pattern)." }
       ],
       "relationships": [
-        { "name": "belongsToOrganization", "target": "Organization", "cardinality": "1..1", "doc": "The Organization that owns or operates this Site. USDM Organization.managedSites is the inverse of this relationship." },
-        { "name": "partOfSiteNetwork", "target": "Organization", "cardinality": "0..1", "doc": "An Organization with type=SITE_NETWORK or SMO that this Site is part of. Elevate Research is an Organization; each of its locations is a Site with partOfSiteNetwork = Elevate Research." },
-        { "name": "parentSite", "target": "Site", "cardinality": "0..1", "doc": "Self-reference for satellite-of-main-site structure. A satellite clinic Site references the main hospital Site as its parent. Use when the relationship is operationally a parent-child site pair, not just network membership." },
-        { "name": "hasPrincipalInvestigator", "target": "Investigator", "cardinality": "1..1" },
-        { "name": "participatesIn", "target": "Study", "cardinality": "0..N" }
+        { "name": "belongsToOrganization", "target": "Organization", "cardinality": "1..1", "doc": "The legal Organization that owns or operates this Site (e.g., MSKCC's Organization for the MSKCC main-campus Site). USDM Organization.managedSites is the inverse." },
+        { "name": "partOfSiteNetwork", "target": "Organization", "cardinality": "0..1", "doc": "An Organization with organizationType=SITE_NETWORK or SMO that this Site is part of. Elevate Research is an Organization; each of its locations is a Site with partOfSiteNetwork pointing to Elevate Research." },
+        { "name": "parentSite", "target": "Site", "cardinality": "0..1", "doc": "Self-reference for satellite-of-main-site structure. A satellite clinic Site references the main hospital Site as its parent. Use when the relationship is operationally a parent-child pair, not just network membership." },
+        { "name": "hasStaff", "target": "Person", "cardinality": "0..N", "doc": "Persons employed/affiliated at this Site, study-independent. The roster of people who CAN be delegated to per-Study; actual delegation per-Study lives on StudySite.delegatesAuthorityTo." },
+        { "name": "headOfClinicalResearch", "target": "Person", "cardinality": "0..1", "doc": "Administrative/institutional contact for the Site's clinical-research operations. NOT the per-Study Principal Investigator (which lives on StudySite.hasPrincipalInvestigator)." },
+        { "name": "hostsEquipment", "target": "Equipment", "cardinality": "0..N", "doc": "Site-bound equipment. Equipment.equipmentBinding=SITE_BOUND points back here.", "_targetMissing": "Equipment is a horizontal in OOUX v0.2 (#73) but not yet in TOP source." },
+        { "name": "hasStorageLocation", "target": "StorageLocation", "cardinality": "0..N", "doc": "Site-bound storage locations (freezers, cabinets, secure storerooms).", "_targetMissing": "StorageLocation is a flagged-missing horizontal in OOUX v0.2." },
+        { "name": "hasInstitutionalDocument", "target": "Document", "cardinality": "0..N", "doc": "Site-level essential records that are study-independent: institutional licenses, CLIA certifications, lab accreditations, GCP training records (Site-level), institutional SOPs. Per-Study essential records live on StudySite.hasEssentialRecord." },
+        { "name": "hasInstitutionalCredential", "target": "Credential", "cardinality": "0..N", "doc": "Site-level credentials (CLIA, JCAHO, ISO 9001, lab accreditations, etc.).", "_targetMissing": "Credential is a flagged-missing horizontal in OOUX v0.2." },
+        { "name": "usesSystem", "target": "System", "cardinality": "0..N", "doc": "Site-operational Systems (the Site's EMR, the Site's source-document repository, the Site's local pharmacy management system) that exist regardless of any specific Study. Per-Study System usage (Sponsor-provisioned EDC, per-Study IRT, etc.) lives on StudySite.usesSystem." }
+      ],
+      "ctas": [
+        { "action": "Create Site", "persona": "Platform Admin", "note": "Register a new Site in the system." },
+        { "action": "Update Site Details", "persona": "Site Admin", "note": "Maintain Site identity, contact info, and feasibility profile." },
+        { "action": "Activate or Deactivate Site", "persona": "Platform Admin", "note": "Toggle Site operational status (e.g., when a Site closes its research program). Per-Study activation/deactivation lives on StudySite." },
+        { "action": "Initiate Site for Study", "persona": "Sponsor PM", "note": "Begin Site Initiation for a specific Study; creates a StudySite record." },
+        { "action": "Monitor Site", "persona": "Sponsor CRA", "note": "Schedule or conduct a monitoring visit at the Site for a specific StudySite." },
+        { "action": "Close Site", "persona": "Site Admin", "note": "Close out the Site's clinical-research program; cascades to closing all StudySite records." },
+        { "action": "Update Feasibility Profile", "persona": "Site Admin", "note": "Update the Site's SFQ-derived feasibility attributes (therapeutic areas, infrastructure, staff capacity). Triggers a versioned feasibility snapshot for sponsor SFQ matching." }
       ]
     }
   ],
@@ -190,15 +251,170 @@
     },
     {
       "id": "Document",
-      "role": "TMF / eTMF / ISF document",
+      "role": "TMF / eTMF / ISF document or essential record",
+      "description": "Document represents any file or formal record associated with the trial. ICH E6(R3) Appendix C is the canonical record taxonomy: records are categorized by purpose (what they contribute to under GCP) and by responsible party. The TMF Reference Model and the ISF section taxonomy are the legacy operational views that map onto R3 purposes. TOP carries both axes: essentialRecordPurpose (R3 primary) and isfSection (legacy operational view).",
+      "ooux_editor_note": "v0.2.0 expansion (2026-05-08): added essentialRecordPurpose (R3 Appendix C purpose taxonomy — currently placeholder enum, full enum requires Appendix C transcription pending PDF access), responsibleParty (R3 record-owner discriminator), isfSection (legacy operational view), and richer documentType enum aligned to ISF section identifiers. R3 anchors are canonical; ISF section taxonomy is a secondary mapping for operational continuity.",
       "crosswalks": {
         "fhir": "fhir:DocumentReference",
         "usdm": "usdm:TMFDocument"
       },
       "attributes": [
-        { "name": "documentType", "type": "xsd:string", "doc": "Aligned with TMF Reference Model zones." },
-        { "name": "documentVersion", "type": "xsd:string" },
-        { "name": "etmfLocation", "type": "xsd:anyURI" }
+        { "name": "documentId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "documentTitle", "type": "xsd:string" },
+        { "name": "documentType", "type": "xsd:string", "enum": ["PROTOCOL", "INVESTIGATOR_BROCHURE", "ICF", "FORM_1572", "IRB_APPROVAL_LETTER", "REGULATORY_SUBMISSION", "CTA", "CDA", "MTA", "DTA", "INSURANCE_CERTIFICATE", "SOURCE_DOCUMENT", "IP_HANDLING_INSTRUCTIONS", "IP_DESTRUCTION_RECORD", "BLINDING_PROCEDURES", "LAB_NORMAL_RANGES", "LAB_CERTIFICATION", "SAMPLE_HANDLING_MANUAL", "RECRUITMENT_AD", "TRANSLATION_CERTIFICATE", "DELEGATION_LOG", "SIGNATURE_SHEET", "CV", "TRAINING_RECORD", "MONITORING_REPORT", "AUDIT_REPORT", "VALIDATION_RECORD", "SECURITY_ASSESSMENT", "PROCEDURES_MANUAL", "SOP", "ESSENTIAL_RECORD_OTHER", "OTHER"], "doc": "Document subtype taxonomy aligned to ISF section identifiers and TMF Reference Model zones. Operational/UX label." },
+        { "name": "documentVersion", "type": "xsd:string", "optional": true },
+        { "name": "documentStatus", "type": "xsd:string", "optional": true, "enum": ["DRAFT", "IN_REVIEW", "APPROVED", "EFFECTIVE", "SUPERSEDED", "WITHDRAWN", "ARCHIVED"], "doc": "Lifecycle state." },
+        { "name": "essentialRecordPurpose", "type": "xsd:string", "optional": true, "_partialEnum": "ICH E6(R3) Appendix C purpose taxonomy. Full enum requires Appendix C PDF transcription; placeholder values cover the seven purposes named in R3 extracts.", "enum": ["QUALIFICATION", "DELEGATION", "TRAINING", "IP_MANAGEMENT", "MONITORING", "DATA_HANDLING", "SYSTEMS_VALIDATION", "OTHER"], "doc": "R3 Appendix C purpose: what this record contributes to under GCP." },
+        { "name": "responsibleParty", "type": "xsd:string", "optional": true, "enum": ["INVESTIGATOR_INSTITUTION", "SPONSOR", "IRB_IEC", "REGULATORY_AUTHORITY", "VENDOR", "OTHER"], "doc": "R3 Appendix C: party responsible for creating and maintaining this record." },
+        { "name": "isfSection", "type": "xsd:string", "optional": true, "doc": "Legacy operational view: ISF section identifier (e.g., '11.1' for Signature Sheet, '14.3' for IP Accountability Log, '22.1' for Sponsor correspondences). Free-text rather than enum because ISF flavors vary (Singapore HSA, FDA, EMA all have variations)." },
+        { "name": "etmfLocation", "type": "xsd:anyURI", "optional": true, "doc": "URI of the document in its eTMF/ISF system." },
+        { "name": "creationDate", "type": "xsd:date", "optional": true },
+        { "name": "effectiveDate", "type": "xsd:date", "optional": true },
+        { "name": "expirationDate", "type": "xsd:date", "optional": true },
+        { "name": "retentionUntil", "type": "xsd:date", "optional": true, "doc": "Retention end date per regulatory/contractual requirements." },
+        { "name": "language", "type": "xsd:string", "optional": true, "doc": "ISO 639-1 code." }
+      ]
+    },
+    {
+      "id": "StudySite",
+      "role": "per-Study Site participation pivot — the operational join entity for Site x Study",
+      "description": "StudySite captures a Site's role on a specific Study. Every per-Site-per-Study fact (siteNumber, enrollmentTarget, IRB approval status, oversight tier, activation/deactivation dates, per-Study staff delegation, per-Study Systems, per-Study contracts) lives here. StudySite is the entry point for Participants enrolled at this Site for this Study and Visit-occurrences happening at this Site for this Study. The operational hierarchy runs Site -> StudySite -> Study -> Protocol -> SOA -> Visit -> Activity. StudySite is reached by the operator clicking 'this Site on this Study' and is where most of the day-to-day workflow lives.",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): introduced as a new horizontal under TOP commons to resolve the Site-operational-vs-per-Study-participation tension. Crosswalks to usdm:StudySite (which is itself thin in USDM v3 — id+name+description+country only). TOP carries substantially more on StudySite because the operational pivot needs the relationships USDM doesn't model. See site-planning.md for the architectural discussion. The OOUX Visit->Site and Participant->Site direct edges are corrections that surface when those top-levels lift; both should point at StudySite, not Site directly.",
+      "crosswalks": {
+        "usdm": "usdm:StudySite",
+        "fhir": "fhir:ResearchStudy.site"
+      },
+      "attributes": [
+        { "name": "studySiteId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier for this Site-Study pair." },
+        { "name": "siteNumber", "type": "xsd:string", "doc": "Site number assigned by the sponsor for this Study. Distinct from Site.siteId (which is global)." },
+        { "name": "studySiteStatus", "type": "xsd:string", "enum": ["PLANNED", "IN_QUALIFICATION", "ACTIVE", "ON_HOLD", "CLOSED"], "doc": "Per-Study lifecycle state. R3 Section 2.6 grounds the termination/suspension framing." },
+        { "name": "activationDate", "type": "xsd:date", "optional": true, "doc": "Date the Site was activated for this Study (Site Initiation Visit completed; first patient can be enrolled)." },
+        { "name": "deactivationDate", "type": "xsd:date", "optional": true, "doc": "Date the Site was deactivated for this Study (close-out completed). Empty for currently-active StudySite records." },
+        { "name": "enrollmentTarget", "type": "xsd:integer", "optional": true, "doc": "Target number of Participants for this Site for this Study." },
+        { "name": "actualEnrollment", "type": "xsd:integer", "optional": true, "doc": "Current count of Participants enrolled at this Site for this Study. Could be a derived attribute via SPARQL aggregation; surfaced as a stored attribute for operational view speed." },
+        { "name": "lastMonitoringVisitDate", "type": "xsd:date", "optional": true },
+        { "name": "oversightTier", "type": "xsd:string", "optional": true, "enum": ["LOW", "MEDIUM", "HIGH"], "doc": "R3 Section 3.10 risk-based monitoring tier for this Site on this Study. Drives Sponsor monitoring frequency and Audit prioritization. The same Site can be HIGH on a complex oncology trial and LOW on a simple registry — hence per-StudySite, not per-Site." },
+        { "name": "recruitmentPotential", "type": "xsd:integer", "optional": true, "doc": "Per-protocol estimate of recruitable Participants. Distinct from Site.totalTrialsConducted (lifetime) and Site.averageEnrollmentRate (cross-trial). R3 Section 2.2 grounds the requirement." },
+        { "name": "staffingAdequate", "type": "xsd:boolean", "optional": true, "doc": "Per-protocol staffing adequacy. R3 Section 2.2 — adequacy depends on protocol complexity, so per-StudySite." },
+        { "name": "essentialRecordsRetentionUntil", "type": "xsd:date", "optional": true, "doc": "Date until which essential records for this StudySite must be retained. Per-Study because retention requirements vary by jurisdiction x Study type." },
+        { "name": "irbApprovalStatus", "type": "xsd:string", "optional": true, "enum": ["PENDING", "APPROVED", "WITH_CONDITIONS", "EXPIRED", "WITHDRAWN", "DENIED"], "doc": "Current IRB approval status for this StudySite." },
+        { "name": "irbApprovalDate", "type": "xsd:date", "optional": true },
+        { "name": "regulatoryAuthorizationStatus", "type": "xsd:string", "optional": true, "enum": ["NOT_REQUIRED", "PENDING", "APPROVED", "EXPIRED", "WITHDRAWN", "DENIED"], "doc": "Per-Study regulatory authorization status (FDA, EMA, etc., per jurisdiction)." },
+        { "name": "validFrom", "type": "xsd:dateTime", "optional": true, "doc": "Datetime from which this StudySite participation is operationally valid. Mirrors Sponsor's NGSI-LD-native temporal property for relationship handoffs (e.g., when a Site changes Principal Investigator mid-study)." },
+        { "name": "validUntil", "type": "xsd:dateTime", "optional": true }
+      ],
+      "relationships": [
+        { "name": "forSite", "target": "Site", "cardinality": "1..1", "doc": "The Site this StudySite participation belongs to." },
+        { "name": "forStudy", "target": "Study", "cardinality": "1..1", "doc": "The Study this Site is participating in." },
+        { "name": "hasPrincipalInvestigator", "target": "Person", "cardinality": "1..1", "doc": "The per-Study Principal Investigator at this Site. R3 Section 2.1 GCP-required. The Person must be drawn from forSite.hasStaff (SHACL invariant). Temporal handoffs use validFrom/validUntil on the relationship." },
+        { "name": "delegatesAuthorityTo", "target": "Person", "cardinality": "1..N", "doc": "Per-Study Delegation of Authority Log roster. R3 Section 2.3.3 GCP-required. Each delegation carries role (sub-investigator, study coordinator, regulatory coordinator, pharmacist, etc.), scope, validFrom, validUntil. Each Person must be drawn from forSite.hasStaff." },
+        { "name": "hasIRB", "target": "OversightBody", "cardinality": "1..N", "doc": "Per-Study IRB(s)/IEC(s) of record for this StudySite. 1..N for multi-IRB cases.", "_targetMissing": "OversightBody is a top-level in OOUX (one of the locked 8) but not yet in TOP source." },
+        { "name": "submitsTo", "target": "RegulatoryAuthority", "cardinality": "0..N", "doc": "Per-jurisdiction regulatory authorities this StudySite files with. R3 Section 2.3.5 inspection right anchored here.", "_targetMissing": "RegulatoryAuthority is a flagged-missing horizontal in OOUX v0.2." },
+        { "name": "hasContract", "target": "Contract", "cardinality": "0..N", "doc": "Site-level contracts for this StudySite participation: CTA, CDA, MTA, DTA, etc.", "_targetMissing": "Contract is a flagged-missing horizontal in OOUX v0.2." },
+        { "name": "hasStudyStartupPackage", "target": "StudyStartupPackage", "cardinality": "0..1", "doc": "The Study Startup Package distributed to this Site for this Study.", "_targetMissing": "StudyStartupPackage is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "hostsVisit", "target": "Visit", "cardinality": "0..N", "doc": "Visit-occurrences at this Site for this Study. Inverse of Visit.atStudySite (when Visit lifts).", "_targetMissing": "Visit is a top-level in OOUX (one of the locked 8) but not yet in TOP source." },
+        { "name": "hasParticipant", "target": "Participant", "cardinality": "0..N", "doc": "Participants enrolled at this Site for this Study. The OOUX Participant->Site direct edge is a correction: should be Participant->StudySite when Participant lifts.", "_targetMissing": "Participant is a top-level in OOUX (one of the locked 8) but not yet in TOP source." },
+        { "name": "hasMonitoringVisit", "target": "MonitoringVisit", "cardinality": "0..N", "doc": "Per-Study monitoring visits at this Site.", "_targetMissing": "MonitoringVisit is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "hasAudit", "target": "Audit", "cardinality": "0..N", "doc": "Per-Study audits at this Site.", "_targetMissing": "Audit is in OOUX v0.2 catalog but not yet in TOP source." },
+        { "name": "engagesVendor", "target": "Organization", "cardinality": "0..N", "doc": "Per-Study Site-engaged vendors (R3 Section 2.3.4 documented agreements). Sponsor-engaged vendors are different — those are the Sponsor's; this is the Site's per-Study direct engagement (after R3 Section 2.3 Investigator's right of acceptance/refusal)." },
+        { "name": "usesLaboratory", "target": "Organization", "cardinality": "0..N", "doc": "Per-Study Site-engaged laboratories (Organization with organizationType=LABORATORY). Distinct from Site.usesSystem for the Site's own internal lab system." },
+        { "name": "usesSystem", "target": "System", "cardinality": "0..N", "doc": "Per-Study Systems used at this Site participation: Sponsor-provisioned EDC, per-Study IRT, per-Study eTMF, etc. The System's three-axis pattern (operatedBy / usedBy / oversightHeldBy) on the System entity captures the GCP responsibility allocation." },
+        { "name": "reportsTo", "target": "Sponsor", "cardinality": "0..N", "doc": "Per-Study reporting target (R3 Sections 2.7, 2.13: safety, data, noncompliance reporting from Site to Sponsor)." },
+        { "name": "hasEssentialRecord", "target": "Document", "cardinality": "0..N", "doc": "Per-Study essential records (with Document.essentialRecordPurpose set per R3 Appendix C and Document.responsibleParty=INVESTIGATOR_INSTITUTION). Distinct from Site.hasInstitutionalDocument (study-independent institutional records)." },
+        { "name": "hasEnrollment", "target": "Enrollment", "cardinality": "0..N", "doc": "Enrollment records at this StudySite.", "_targetMissing": "Enrollment is in OOUX v0.2 catalog but not yet in TOP source." }
+      ]
+    },
+    {
+      "id": "Person",
+      "role": "individual involved in clinical trials",
+      "description": "Person represents any individual involved in trial conduct: principal investigators, sub-investigators, study coordinators, regulatory coordinators, pharmacists, study nurses, lab techs, monitors, sponsor staff, regulators, IRB members. Persons exist independently of any specific Site or Study; their roles in specific contexts are captured via relationship targets and PersonRole assignments. USDM models AssignedPerson as nested inside StudyRole — TOP makes Person a horizontal so it can be referenced consistently across the operational chain (Site.hasStaff, StudySite.hasPrincipalInvestigator, StudySite.delegatesAuthorityTo, Sponsor.employs, OversightBody.members, Audit.auditors).",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX Person object. Required by both Site and StudySite person relationships; could not be flagged-missing for the Site spec (R3 Section 2.3.3 GCP-required Delegation of Authority Log needs real Person targets). USDM crosswalk: usdm:AssignedPerson (the operational/participation lens) plus usdm:StudyRole (the role-typing lens). PersonRole is currently embedded as a per-relationship attribute (role enum on delegatesAuthorityTo); a separate PersonRole sub-object lifts in v0.3 if the role taxonomy grows beyond what an enum can carry.",
+      "crosswalks": {
+        "fhir": "fhir:Practitioner",
+        "usdm": "usdm:AssignedPerson"
+      },
+      "attributes": [
+        { "name": "personId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
+        { "name": "firstName", "type": "xsd:string" },
+        { "name": "middleName", "type": "xsd:string", "optional": true },
+        { "name": "lastName", "type": "xsd:string" },
+        { "name": "title", "type": "xsd:string", "optional": true, "doc": "Professional title (Dr., Prof., MD, RN, PharmD, etc.)." },
+        { "name": "jobTitle", "type": "xsd:string", "optional": true, "doc": "USDM AssignedPerson.jobTitle. The functional role at the employing Organization (e.g., Director of Clinical Research, Senior CRA, Study Coordinator)." },
+        { "name": "email", "type": "xsd:string", "optional": true },
+        { "name": "phone", "type": "xsd:string", "optional": true },
+        { "name": "orcid", "type": "xsd:string", "optional": true, "doc": "ORCID identifier." },
+        { "name": "npi", "type": "xsd:string", "optional": true, "doc": "US National Provider Identifier (where applicable)." },
+        { "name": "preferredLanguages", "type": "xsd:string", "optional": true, "doc": "Comma-separated ISO 639-1 codes." },
+        { "name": "gcpTrainingStatus", "type": "xsd:string", "optional": true, "enum": ["CURRENT", "EXPIRED", "NOT_REQUIRED"], "doc": "GCP training currency. Per-Person fact independent of any Site or Study." },
+        { "name": "gcpTrainingExpiry", "type": "xsd:date", "optional": true },
+        { "name": "status", "type": "xsd:string", "enum": ["ACTIVE", "INACTIVE", "RETIRED", "DECEASED"], "doc": "Lifecycle state." }
+      ],
+      "relationships": [
+        { "name": "employedBy", "target": "Organization", "cardinality": "0..1", "doc": "Primary employing Organization. USDM AssignedPerson.organizationId. A Person can have multiple StudySite/Sponsor relationships independent of where they're employed." },
+        { "name": "hasCredential", "target": "Credential", "cardinality": "0..N", "doc": "Credentials this Person holds (medical license, specialty board certifications, GCP certificate, etc.).", "_targetMissing": "Credential is a flagged-missing horizontal." },
+        { "name": "hasTrainingRecord", "target": "TrainingRecord", "cardinality": "0..N", "doc": "Training records for this Person (study-specific GCP, study-specific protocol training, etc.).", "_targetMissing": "TrainingRecord is in OOUX v0.2 (#77) but not yet in TOP source." }
+      ]
+    },
+    {
+      "id": "System",
+      "role": "computerised system used in clinical trial conduct",
+      "description": "System represents a computerised system used in trial conduct: EDC, CTMS, eTMF/ISF, IRT/RTSM, safety database, EMR, ELN, eCOA/ePRO platform, eConsent platform, sample management system, etc. Systems carry their R3 Section 4.3 governance attributes (validation, security, access controls, release status, contingency plans, support) and a three-axis role pattern (operatedBy / usedBy / oversightHeldBy) that captures GCP responsibility allocation.",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX System object. R3-aligned attribute set per Section 4.3 (procedures, training, security, validation, release, contingencies, support, user/access management). Three-axis role pattern resolves the System ownership/use/visibility question: visibility follows from oversight under R3 Section 3.9 (Sponsor) and Section 2.12 (Site); the schema captures who is GCP-responsible, and presentation follows. The System horizontal earns a dedicated v0.3 spec eventually; in v0.2 it serves Site/StudySite/Sponsor.",
+      "crosswalks": {
+        "fhir": "fhir:Device (where the System is a medical-device-class platform; otherwise no direct FHIR equivalent)"
+      },
+      "attributes": [
+        { "name": "systemId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "vendor", "type": "xsd:string", "doc": "Vendor name (e.g., 'Veeva', 'Medidata', 'Oracle', 'Castor')." },
+        { "name": "productName", "type": "xsd:string", "doc": "Product name (e.g., 'Vault eTMF', 'Rave EDC', 'Siebel CTMS', 'CDMS')." },
+        { "name": "instanceId", "type": "xsd:string", "optional": true, "doc": "Tenant or instance identifier (e.g., 'mskcc-prod', 'pfizer-tenant-7')." },
+        { "name": "baseUrl", "type": "xsd:anyURI", "optional": true, "doc": "Base URL for the System instance. May be unpopulated when the consumer of the System record does not have access to the instance details (R3 Section 3.9 oversight-as-relationship framing)." },
+        { "name": "systemType", "type": "xsd:string", "enum": ["EDC", "CTMS", "ETMF", "ISF", "IRT", "RTSM", "SAFETY_DB", "EMR", "ELN", "ECOA", "EPRO", "ECONSENT", "SAMPLE_TRACKING", "LABORATORY_INFORMATION", "PHARMACY_MANAGEMENT", "OTHER"], "doc": "Functional system type." },
+        { "name": "version", "type": "xsd:string", "optional": true },
+        { "name": "validatedFor21CfrPart11", "type": "xsd:boolean", "optional": true, "doc": "FDA 21 CFR Part 11 validation status." },
+        { "name": "validatedForEuAnnex11", "type": "xsd:boolean", "optional": true, "doc": "EU EudraLex Annex 11 validation status." },
+        { "name": "validationStatus", "type": "xsd:string", "optional": true, "enum": ["NOT_VALIDATED", "IN_VALIDATION", "VALIDATED", "REVALIDATING", "RETIRED"], "doc": "R3 Section 4.3.4 validation lifecycle state." },
+        { "name": "validationApproach", "type": "xsd:string", "optional": true, "enum": ["RISK_BASED", "FULL_VALIDATION", "VENDOR_QUALIFICATION_ONLY"], "doc": "R3 Section 4.3.4 risk-based validation approach." },
+        { "name": "lastValidationDate", "type": "xsd:date", "optional": true },
+        { "name": "releaseStatus", "type": "xsd:string", "optional": true, "enum": ["DEVELOPMENT", "UAT", "PRODUCTION", "REVALIDATING", "RETIRED"], "doc": "R3 Section 4.3.5 release lifecycle." },
+        { "name": "auditTrailEnabled", "type": "xsd:boolean", "optional": true, "doc": "R3 Section 4.2.2 audit-trail capability." }
+      ],
+      "relationships": [
+        { "name": "operatedBy", "target": "Organization", "cardinality": "1..1", "doc": "The Organization that operates this System and is responsible for its R3 Section 4.3 obligations (validation, security, access controls, release, contingency, support). A Sponsor's EDC has operatedBy -> Pfizer (or Pfizer's CRO under documented agreement); a Site's local source-document repository has operatedBy -> MSKCC." },
+        { "name": "usedBy", "target": "Organization", "cardinality": "0..N", "doc": "Organizations that use this System for trial activities. A Sponsor-operated EDC is used by both Sponsor staff and authorized Site staff; the same System has multiple usedBy triples." },
+        { "name": "oversightHeldBy", "target": "Organization", "cardinality": "1..1", "doc": "The Organization holding GCP-mandated oversight responsibility for this System's use in trial conduct. R3 Section 3.9 (Sponsor for trial-critical Sponsor-delegated Systems) or Section 2.12 (Site for Site-internal records). For sponsor-critical Systems (EDC, CTMS, IRT, SAFETY_DB), oversightHeldBy must be a Sponsor (SHACL invariant); the IIT case where Site=Sponsor exempts via the Site.belongsToOrganization == Sponsor.belongsToOrganization equality test." },
+        { "name": "proceduresDocumentRef", "target": "Document", "cardinality": "0..1", "doc": "R3 Section 4.3.1 procedures document." },
+        { "name": "securityAssessmentRef", "target": "Document", "cardinality": "0..1", "doc": "R3 Section 4.3.3 security assessment." },
+        { "name": "accessControlPolicyRef", "target": "Document", "cardinality": "0..1", "doc": "R3 Section 4.3.8 access control policy." },
+        { "name": "contingencyPlanRef", "target": "Document", "cardinality": "0..1", "doc": "R3 Section 4.3.6 contingency / disaster-recovery plan." },
+        { "name": "supportContact", "target": "Person", "cardinality": "0..1", "doc": "R3 Section 4.3.7 technical support point of contact." }
+      ]
+    },
+    {
+      "id": "Log",
+      "role": "operational record of events, actions, or observations",
+      "description": "Log represents records of events, actions, or observations that occur during trial conduct. Logs are append-only by GCP discipline (R3 Section 4.2.2) — entries cannot be retroactively edited. Logs are distinct from Documents in that they have lifecycle behavior (entry, review, sign-off) and are inherently temporal sequences. Covers Subject Logs (ISF section 13), IP Accountability Logs (14.3), IP Storage Temperature Logs (14.5), Site Visit Logs (16.1), Sample Handling Logs (18.1), SAE Tracking Logs (19.1), Communication Logs (22), and others.",
+      "ooux_editor_note": "v0.2.0 introduction (2026-05-08): lifted from OOUX Log object. Required by Site spec because ISF sections 13/14.3/14.5/16.1/18.1/19.1/22 are all log-shaped. CommunicationLog (ISF section 22 correspondences) folds in as logType=COMMUNICATION rather than as a separate horizontal — saves an entity, exercises the polysemous-verb-split discipline by keeping logType discriminator clean.",
+      "crosswalks": {
+        "fhir": "fhir:AuditEvent (for system-generated audit-trail logs); fhir:DocumentReference (for archival-form logs)"
+      },
+      "attributes": [
+        { "name": "logId", "type": "ngsi-ld:URI", "unique": true },
+        { "name": "logType", "type": "xsd:string", "enum": ["SUBJECT_SCREENING", "SUBJECT_ENROLLMENT", "SUBJECT_IDENTIFICATION", "SUBJECT_VISIT_TRACKING", "IP_DISPENSING", "IP_ACCOUNTABILITY", "IP_TEMPERATURE", "IP_STORAGE_TEMPERATURE", "SITE_VISIT", "MONITORING_VISIT", "SAMPLE_HANDLING", "SAMPLE_SHIPPING", "SAE_TRACKING", "COMMUNICATION", "TRAINING", "AUDIT_TRAIL", "DELEGATION", "TEMPERATURE_DEVIATION", "OTHER"], "doc": "The log's discriminator. CommunicationLog folds in as COMMUNICATION; AuditTrail folds in as AUDIT_TRAIL." },
+        { "name": "logTitle", "type": "xsd:string", "doc": "Human-readable title of the log (e.g., 'IP Storage Temperature — Freezer F-12 — 2026 Q1')." },
+        { "name": "openedDate", "type": "xsd:date" },
+        { "name": "closedDate", "type": "xsd:date", "optional": true, "doc": "Empty for currently-active logs." },
+        { "name": "status", "type": "xsd:string", "enum": ["ACTIVE", "CLOSED", "ARCHIVED"], "doc": "Lifecycle state." },
+        { "name": "entryCount", "type": "xsd:integer", "optional": true, "doc": "Count of entries in this log; aggregate signal." },
+        { "name": "retentionUntil", "type": "xsd:date", "optional": true, "doc": "Date until which this log must be retained per regulatory/contractual requirements." }
+      ],
+      "relationships": [
+        { "name": "forStudySite", "target": "StudySite", "cardinality": "0..1", "doc": "The StudySite this log belongs to. Most operational logs are per-StudySite. Empty for Site-wide logs (e.g., institutional audit trail) which use forSite instead." },
+        { "name": "forSite", "target": "Site", "cardinality": "0..1", "doc": "The Site this log belongs to, when the log is study-independent (e.g., institutional GCP training log)." },
+        { "name": "forStudy", "target": "Study", "cardinality": "0..1", "doc": "The Study this log belongs to, when the log is Sponsor-side and not Site-scoped." },
+        { "name": "forSystem", "target": "System", "cardinality": "0..1", "doc": "The System this log records (e.g., audit-trail logs are System-scoped under R3 Section 4.2.2)." },
+        { "name": "owner", "target": "Person", "cardinality": "0..1", "doc": "The Person responsible for maintaining this log." },
+        { "name": "correspondent", "target": "Organization", "cardinality": "0..N", "doc": "For logType=COMMUNICATION: the parties this correspondence log captures exchanges with (Sponsor, IRB, RegulatoryAuthority, central lab, vendor). 0..N because some correspondence logs aggregate across multiple parties." }
       ]
     }
   ]
