@@ -1,0 +1,115 @@
+# TOP First Principles
+
+> The design rules every spec doc, planning note, and PR can cite by name. Operationalizes the manifesto. When "but USDM does it this way" or "but SDTM has this column" enters an architectural argument, this is the document that wins it.
+
+## The principle in one line
+
+**A participant is a participant. Full stop.**
+
+Operators are the customer. The substrate is built from their workday down, not from the standards up. Standards become projection edges — ephemeral by design — and live below the operator-facing line.
+
+## The inversion
+
+| Most ontologies | TOP |
+| --- | --- |
+| Built standards-up | Built human-down |
+| SDTM / FHIR / USDM shape entities | Operator workflow shapes entities |
+| Operators see standards-shaped UX | Operators see what they actually do |
+| Cross-walks are the deliverable | Cross-walks are projection rules below the line |
+| Standards alignment is the substrate | Standards alignment is the *projection layer* |
+
+This is the move. Everything else follows from it.
+
+## What this means concretely
+
+1. **Entity names come from operator vocabulary.**
+   - Yes: `Participant`, `Visit`, `Site`, `Sponsor`, `Activity`.
+   - No: `ResearchSubject`, `Encounter`, `ResearchOrganization` (those are projection targets).
+
+2. **Attribute names match what operators say or type.**
+   - Yes: `firstName`, `screeningNumber`, `randomizationNumber`, `participantStatus`.
+   - No: `USUBJID`, `SUBJID`, `ARMCD` (projection-time derivations).
+
+3. **Enum values are operator-meaningful.**
+   - Yes: `ON_TREATMENT`, `IN_FOLLOW_UP`, `WITHDRAWN`.
+   - No: `ON_STUDY_INTERVENTION`, `WITHDRAWAL_OF_CONSENT` (projection layer).
+
+4. **Sub-objects exist for operator-meaningful events, not for serialization fidelity.**
+   - Yes: `InformedConsent`, `ScreeningRecord`, `EnrollmentRecord`, `WithdrawalRecord` — each is a moment in a coordinator's day.
+   - No: `ResearchSubjectProgressEntry`, `DSRecord` — those are how the projection adapter renders the TOP sub-object as FHIR or SDTM at export time.
+
+5. **Cross-walks live below the entity definition, never as the shape.** Every spec doc carries its FHIR / SDTM / CDASH / USDM / OMOP cross-walks as documentation of what the projection adapter will emit — not as constraints on the entity's shape.
+
+6. **Standards adapters are ephemeral by design.** The USDM ingester, the FHIR exporter, the SDTM emitter, the OMOP projector — they evolve with their target standards. The entity layer doesn't. When CDISC ships a CT update or USDM bumps to v5, the adapter changes; the substrate persists.
+
+## Decision rule when in doubt
+
+Ask in this order:
+
+1. **Does an operator say this term out loud during their workday?** If yes, use it.
+2. **Does this entity / attribute / enum match a workflow boundary?** (Consent is a real moment; `ResearchSubjectProgressEntry` is a serialization detail.)
+3. **Am I shaping TOP to match a standard, or shaping a projection to match a standard?** If the former, stop. Shape the projection.
+
+If a CDISC C-code, an HL7 resource name, or a USDM class name shows up in a TOP entity definition unprefixed by "this is how we project," something has gone wrong.
+
+## What this rules OUT
+
+- CDISC C-codes in operator UX.
+- Standards-driven entity names (`fhir:ResearchSubject`, `usdm:Encounter`) as TOP entity types — these are projection targets.
+- Nesting under regulatory taxonomies for browsing (e.g., ICH E6(R3) Section 2.x as primary navigation).
+- Carrying every standards-mandated field that operators don't actually use ("we have to carry it because USDM has it" — no).
+- Treating standards alignment as the deliverable.
+
+## What this rules IN
+
+- Operator vocabulary as the authoritative naming.
+- Workflow-bound entity boundaries.
+- Sub-objects that match operator events.
+- Cross-walks documented thoroughly, but always as projection rules below the line.
+- Standards alignment as a quality of the projection layer, not of the substrate.
+- Aggressive simplification of the substrate. **Less is the win.**
+
+## Already-applied examples
+
+The principle has been at work, sometimes implicitly:
+
+- TOP `Participant.participantStatus` uses operator-meaningful enums (`ON_TREATMENT`, `IN_FOLLOW_UP`, `WITHDRAWN`) with the FHIR / SDTM mappings as projection-layer documentation, not entity shape.
+- TOP doesn't carry `USUBJID` — that's the SDTM projection's `STUDYID-SITEID-SUBJID` derivation; operators type the parts, not the concatenation.
+- TOP `Site` is the place where things happen (operator-grounded). USDM has no operational `Site` (it has `Organization` with `type=Site` as a projection-time shape). TOP didn't morph to USDM's flatter shape; the cross-walk runs the other direction.
+- TOP carries `InformedConsent` / `ScreeningRecord` / `EnrollmentRecord` / `WithdrawalRecord` as workflow-bound sub-objects. The SDTM DS-record projection happens at the edge — operators never see DSDECOD.
+- TOP `Sponsor` is per-Organization-per-Study (operator's view) backed by `Organization` for corporate truth — distinct from USDM's "Sponsor as a Code on Organization" pattern, which would have collapsed the operator-facing entity.
+
+## Implications for in-flight work
+
+- **USDM ingest audit (PR #4) reframes**: not "is TOP USDM-aligned?" but "can the USDM ingester project USDM IN to TOP without losing operator-grounded fidelity?" TOP at the center; USDM at the edge. The audit's eight gaps stand, but their *justification* gets re-rooted: Gap 8 (rationale on Study) — yes, because operators see rationale at Study level (the why-this-trial answer), not because USDM has rationale on StudyDesign. Gap 9 (Protocol cardinality 0..1) — yes, because a planning-state Study with no finalized protocol document is a real operator state, not because USDM allows `documentedBy: []`.
+- **CDISC dependency pipeline (PR #5) is the load-bearing mechanism**: the human-grounded substrate persists across upstream churn; the projection adapters absorb the changes. The pipeline is what makes ephemeral-projections actually work in practice.
+- **CDISC ecosystem alignment (PR #5)**: names which CDISC artifacts get to influence TOP entity shape (**none**, by principle) versus which get to influence projection-adapter rules (**most of them**, by design).
+- **Participant planning (PR #3)**: the cross-walks I wrote (FHIR / SDTM / CDASH / USDM) are correctly placed *below* the entity decisions. They document what the projection adapters will emit; they don't constrain Participant's shape.
+
+## Implications for every future decision
+
+Each new entity, attribute, enum, sub-object, or relationship asks itself: **did an operator's workday cause this, or did a standards body cause this?** If the answer is "standards body," it doesn't go in the substrate. It goes in a projection adapter.
+
+Each spec doc, planning note, and PR description can cite this document by reference: *"per `FIRST-PRINCIPLES.md`, the operator-facing layer is the prize."*
+
+## Why this matters beyond the architecture
+
+CDISC alone publishes 11+ standards across SDTM / CDASH / ADaM / SEND / ODM / USDM / M11 / COSMoS / CT / TAUGs / Implementation Guides. FHIR adds research-side resources. ICH layers governance vocabulary. NCIt feeds terminology. **No human can hold all of this in working memory.** Sponsors burn millions on standards-compliance headcount; CROs charge premiums for CDISC expertise; coordinators and PIs either ignore standards (creating downstream submission pain) or drown in them (and don't actually conduct trials).
+
+TOP's bet is that **the substrate eats the standards complexity so operators don't have to**. A coordinator sees "Participant" — that's it. The Participant→SDTM, Participant→FHIR, Participant→USDM cross-walks happen at the edges, automatically, maintained by ephemeral adapters that ride upstream releases.
+
+This is the force-multiplier story made structural. The notes that look like overhead — audits, cross-walks, dependency pipelines — are the absorber. The point is the absorber itself is the product.
+
+Standards-up ontologies make humans pay the integration cost forever. TOP makes the substrate pay it once, and then again whenever the standards change.
+
+That's the bet.
+
+## Naming and citation
+
+Cite as: **`FIRST-PRINCIPLES.md`** or, in prose, as **"TOP first principles"**. The principle in one line — *a participant is a participant, full stop* — is the quotable form.
+
+## Pointers
+
+- [`MANIFESTO.html`](MANIFESTO.html) — the philosophical foundation; this document operationalizes it.
+- [`ROADMAP.md`](ROADMAP.md) — what we're building, in what order.
+- [`reference-graphs/clinical-trials/docs/`](reference-graphs/clinical-trials/docs/) — where this principle lands, repeatedly.
