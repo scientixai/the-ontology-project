@@ -466,7 +466,148 @@ topcr:Kit a skos:Concept ;
 # ====================================================================
 # Concept count summary
 # ====================================================================
-# Commons substrate: 12 top-level + 3 sub-concepts under Visit = 15
-# Clinical Research extension: 6 top-level + 7 sub-objects under Study + 4 under Participant + 2 under IP = 19
+# Commons substrate concepts (vocabulary anchors): 12 top-level + 3 sub-concepts under Visit = 15
+# Commons-with-shape (truly identical across workflows): Person, Organization (2)
+# Workflow extension concepts (subClassOf commons): 13 clinical-research workflow shapes that subClassOf commons concepts
+# Clinical Research workflow-specific entities: 6 top-level + 7 sub-objects under Study + 4 under Participant + 2 under IP = 19
 # Future workflow extensions (placeholders): 3
-# Total concepts: 15 + 19 + 3 + 2 (top concepts) = 39
+# Total concepts: ~52
+
+
+# ====================================================================
+# Clinical Research — workflow-specific shapes that subClassOf commons concepts
+# ====================================================================
+# Per Option B (commons-as-vocabulary, workflow-as-shape): the clinical-research
+# workflow has its OWN specialized shapes for entities like Visit, Event, Site,
+# OversightBody, Activity, Task, etc. These shapes subClassOf the corresponding
+# commons concept so cross-workflow queries against the commons supertype find
+# every workflow's specialized shape. Each declared via skos:broader (taxonomy)
+# AND rdfs:subClassOf (OWL class hierarchy).
+
+topcr:Visit a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Visit ;
+    rdfs:subClassOf topc:Visit ;
+    skos:prefLabel "Visit"@en ;
+    skos:altLabel "Study Visit"@en, "Trial Visit"@en, "Subject Visit"@en ;
+    skos:definition "The clinical-research-specific shape of a Visit — a Participant attended a real visit at a StudySite on a real date, per protocol-defined SOA. Carries clinical-research-specific attributes: visitDay, visitWindow, definedBy → VisitDefinition, forParticipant, protocolDeviationCode."@en ;
+    skos:scopeNote "Per Option B: the underlying concept (topc:Visit) is universal across workflows; THIS is the clinical-research specialization. Care-delivery has topcd:Visit (future); manufacturing has topmfg:InspectionVisit (future); all subClassOf topc:Visit."@en ;
+    skos:notation "topcr:Visit" ;
+    prov:Activity "prov:Activity" .
+
+topcr:Event a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Event ;
+    rdfs:subClassOf topc:Event ;
+    skos:prefLabel "Event (clinical-research)"@en ;
+    skos:altLabel "Adverse Event"@en, "AE"@en, "SAE"@en, "Protocol Deviation"@en, "Discrepancy"@en ;
+    skos:definition "The clinical-research-specific shape of an Event. eventCategory enum covers AE / SAE / Protocol Deviation / Discrepancy / Safety Signal / Safety Report / Other Clinical Event with severity, causality, expedited reporting, CTCAE grading."@en ;
+    skos:scopeNote "Per Option B: the underlying concept (topc:Event) is universal; this shape carries clinical-research-specific regulatory attributes (ICH E2A expedited reporting, CTCAE grading, ICH E2B(R3) ICSR projection target)."@en ;
+    skos:notation "topcr:Event" ;
+    prov:Activity "prov:Activity" .
+
+topcr:Site a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Site ;
+    rdfs:subClassOf topc:Site ;
+    skos:prefLabel "Site (clinical-research)"@en ;
+    skos:altLabel "Clinical Trial Site"@en, "Investigator Site"@en ;
+    skos:definition "The clinical-research-specific shape of a Site — a place where clinical research is conducted. Carries SFQ feasibility attributes (therapeutic-area experience, IRB type, regulatory authority experience, insurance, staff capacity)."@en ;
+    skos:scopeNote "Per Option B: the underlying concept (topc:Site) is universal; this shape carries clinical-research-specific feasibility profile. Manufacturing has topmfg:Site (future); supply-chain has topsc:Warehouse (future); all subClassOf topc:Site."@en ;
+    skos:notation "topcr:Site" ;
+    prov:Agent "prov:Agent" .
+
+topcr:OversightBody a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:OversightBody ;
+    rdfs:subClassOf topc:OversightBody ;
+    skos:prefLabel "Oversight Body (clinical-research)"@en ;
+    skos:altLabel "IRB"@en, "EC"@en, "DSMB"@en, "IDMC"@en, "CEC"@en ;
+    skos:definition "The clinical-research-specific shape of an OversightBody — IRB / EC / DSMB / IDMC / Steering Committee / CEC. Carries clinical-research-specific attributes: registrationNumber (FDA OHRP), scope (LOCAL / CENTRAL / SPONSOR), study-review relationships."@en ;
+    skos:scopeNote "Per Option B: the underlying concept (topc:OversightBody) is universal; this shape carries clinical-research review-board specifics. Care-delivery has topcd:OversightBody (P&T committees, future); audit/regulatory has its own shape."@en ;
+    skos:notation "topcr:OversightBody" ;
+    prov:Agent "prov:Agent" .
+
+topcr:Activity a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Activity ;
+    rdfs:subClassOf topc:Activity ;
+    skos:prefLabel "Activity (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of an Activity — vitals, MRI, ePRO, biopsy, IP administration, ECG, sequencing draw — performed at a clinical-research Visit. Inherits universal Activity shape from topc:Activity; carries clinical-research-specific activityType enum values."@en ;
+    skos:scopeNote "Per Option B: the underlying concept (topc:Activity) is universal across workflows. Manufacturing has topmfg:Activity (process step); care-delivery has topcd:Activity (clinical procedure); all subClassOf topc:Activity."@en ;
+    skos:notation "topcr:Activity" ;
+    prov:Activity "prov:Activity" .
+
+topcr:Task a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Task ;
+    rdfs:subClassOf topc:Task ;
+    skos:prefLabel "Task (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a Task — a leaf data-capture unit within a clinical-research Activity. Polymorphic taskValue covers any data shape; biomedicalConceptCode references COSMoS BC catalog."@en ;
+    skos:notation "topcr:Task" ;
+    prov:Activity "prov:Activity" .
+
+topcr:VisitObservation a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:VisitObservation ;
+    rdfs:subClassOf topc:VisitObservation ;
+    skos:prefLabel "Visit Observation (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a VisitObservation. Carries OOUX Path C reportability handoff to clinical-research Event."@en ;
+    skos:notation "topcr:VisitObservation" ;
+    prov:Activity "prov:Activity" .
+
+topcr:Document a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Document ;
+    rdfs:subClassOf topc:Document ;
+    skos:prefLabel "Document (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a Document — protocol, IB, ICF, regulatory submission, audit report. Carries ICH E6(R3) Appendix C essentialRecordPurpose + responsibleParty."@en ;
+    skos:scopeNote "Per Option B: underlying topc:Document concept is universal; manufacturing has topmfg:Document (batch records with GMP-specific attrs); supply-chain has topsc:Document (bills of lading)."@en ;
+    skos:notation "topcr:Document" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Equipment a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Equipment ;
+    rdfs:subClassOf topc:Equipment ;
+    skos:prefLabel "Equipment (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of Equipment. Carries study-binding (SITE_BOUND / VENDOR_OWNED / PARTICIPANT_LOANED) and clinical-research calibration / qualification patterns."@en ;
+    skos:notation "topcr:Equipment" ;
+    prov:Entity "prov:Entity" .
+
+topcr:System a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:System ;
+    rdfs:subClassOf topc:System ;
+    skos:prefLabel "System (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a System — EDC, CTMS, eTMF, IRT, safety database. Carries the ICH E6(R3) §4.3 three-axis pattern (operatedBy / usedBy / oversightHeldBy)."@en ;
+    skos:notation "topcr:System" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Log a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Log ;
+    rdfs:subClassOf topc:Log ;
+    skos:prefLabel "Log (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a Log — communication log, equipment monitoring log, audit log, training log, delegation log, IP accountability log."@en ;
+    skos:notation "topcr:Log" ;
+    prov:Activity "prov:Activity" .
+
+topcr:StorageLocation a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:StorageLocation ;
+    rdfs:subClassOf topc:StorageLocation ;
+    skos:prefLabel "Storage Location (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a StorageLocation — freezer slots, refrigerator shelves, secure cabinets, ambient pharmacy shelves used for trial samples / IP storage."@en ;
+    skos:notation "topcr:StorageLocation" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Credential a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Credential ;
+    rdfs:subClassOf topc:Credential ;
+    skos:prefLabel "Credential (clinical-research)"@en ;
+    skos:definition "The clinical-research-specific shape of a Credential — institutional CLIA cert, professional GCP training, IRB approval, IATA shipping cert. Workflow-specific credential types."@en ;
+    skos:scopeNote "Manufacturing has topmfg:Credential (GMP training); care-delivery has topcd:Credential (NPI, DEA, board certifications)."@en ;
+    skos:notation "topcr:Credential" ;
+    prov:Entity "prov:Entity" .

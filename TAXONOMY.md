@@ -11,42 +11,80 @@ The original namespace structure had two compounding errors:
 
 The corrected taxonomy is layered, not siblinged: a single commons substrate (universal cross-cutting concepts) plus composable workflow extensions (workflow-specific concepts that compose on top of the substrate). Workflows are NOT mutually exclusive — a real-world deployment uses as many extensions as it needs, all over the same commons.
 
-## The architecture
+## The architecture (Option B — commons-as-vocabulary, workflows-as-shape)
+
+After working through whether `clinical-research/visit` and `healthcare/visit` both feel right (they do — same word, different shapes per workflow), the architecture commits to **Option B**: commons holds the *concept vocabulary* (the operator-grounded names everyone recognizes); workflow extensions hold the *shapes* (the operational attributes that vary per workflow). Workflow shapes subClassOf the commons concept so cross-workflow queries against the commons supertype find every workflow's specialized shape.
 
 ```
 TOP (the project framework — top.scientix.ai)
   │
   └── Commons substrate (universal layer — topc:)
         │
-        ├── Person, Organization, Site, Document, Equipment, System, Log,
-        │   StorageLocation, Credential, Visit, Event, OversightBody
-        │   (12 substrate primitives)
+        ├── CONCEPTS (vocabulary anchors; SKOS-only, no shape) —
+        │   the words operators across workflows recognize:
+        │   topc:Visit, topc:Event, topc:Site, topc:OversightBody,
+        │   topc:Activity, topc:Task, topc:VisitObservation,
+        │   topc:Document, topc:Equipment, topc:System, topc:Log,
+        │   topc:StorageLocation, topc:Credential
         │
-        └── Visit sub-concepts (universal across workflows)
-            ├── Activity (the universal work unit)
-            ├── Task (the universal data-capture leaf)
-            └── VisitObservation (operator narrative)
+        └── COMMONS WITH SHAPE (truly identical attrs across workflows):
+            topc:Person (universal identity attrs)
+            topc:Organization (universal corporate attrs)
 
   └── Workflow extensions (composable; not mutually exclusive)
         │
         ├── Clinical Research (topcr:) — current, in flight
-        │     ├── Sponsor, Study, Participant, Recruit, InvestigationalProduct,
-        │     │   StudySite (6 top-level concepts)
-        │     ├── Study sub-objects: Protocol, Arm, ScheduleOfAssessments,
-        │     │   Endpoint, InclusionCriterion, ExclusionCriterion, VisitDefinition (7)
-        │     ├── Participant sub-objects: InformedConsent, ScreeningRecord,
-        │     │   EnrollmentRecord, WithdrawalRecord (4)
-        │     └── InvestigationalProduct sub-objects: Lot, Kit (2)
+        │     │
+        │     ├── SHAPES that subClassOf commons concepts:
+        │     │   topcr:Visit subClassOf topc:Visit
+        │     │   topcr:Event subClassOf topc:Event
+        │     │   topcr:Site subClassOf topc:Site
+        │     │   topcr:OversightBody subClassOf topc:OversightBody
+        │     │   topcr:Activity subClassOf topc:Activity
+        │     │   topcr:Task subClassOf topc:Task
+        │     │   topcr:VisitObservation subClassOf topc:VisitObservation
+        │     │   topcr:Document subClassOf topc:Document
+        │     │   topcr:Equipment subClassOf topc:Equipment
+        │     │   topcr:System subClassOf topc:System
+        │     │   topcr:Log subClassOf topc:Log
+        │     │   topcr:StorageLocation subClassOf topc:StorageLocation
+        │     │   topcr:Credential subClassOf topc:Credential
+        │     │
+        │     └── CLINICAL-RESEARCH-NATIVE entities (no commons supertype —
+        │         these concepts only exist in clinical-research workflow):
+        │         topcr:Sponsor, topcr:Study, topcr:Participant, topcr:Recruit,
+        │         topcr:InvestigationalProduct, topcr:StudySite
+        │         + Study sub-objects (Protocol, Arm, SOA, Endpoint, InclusionCriterion,
+        │           ExclusionCriterion, VisitDefinition)
+        │         + Participant sub-objects (InformedConsent, ScreeningRecord,
+        │           EnrollmentRecord, WithdrawalRecord)
+        │         + InvestigationalProduct sub-objects (Lot, Kit)
         │
         ├── Care Delivery (topcd:) — future
-        │     Patient, Encounter, Order, Diagnosis, Discharge, ...
+        │     SHAPES that subClassOf commons (topcd:Visit, topcd:Encounter,
+        │     topcd:Event, topcd:Site, topcd:OversightBody — for P&T committees, etc.)
+        │     + CARE-DELIVERY-NATIVE entities (topcd:Patient, topcd:Order,
+        │       topcd:Diagnosis, topcd:Discharge, ...)
         │
         ├── Manufacturing (topmfg:) — future
-        │     ManufacturingBatch, BatchRecord, ProcessParameters, ...
+        │     SHAPES that subClassOf commons (topmfg:InspectionVisit subClassOf
+        │     topc:Visit; topmfg:Event subClassOf topc:Event for OOS / Batch
+        │     Failure / Contamination; topmfg:Site for manufacturing plants)
+        │     + MANUFACTURING-NATIVE entities (ManufacturingBatch, BatchRecord,
+        │       ProcessParameters, ...)
         │
         └── Supply Chain (topsc:) — future
-              Shipment, CustodyHandoff, Carrier, ...
+              SHAPES that subClassOf commons (topsc:DeliveryVisit subClassOf
+              topc:Visit; topsc:Event subClassOf topc:Event for cold-chain
+              excursions; topsc:Warehouse subClassOf topc:Site)
+              + SUPPLY-CHAIN-NATIVE entities (Shipment, CustodyHandoff, Carrier, ...)
 ```
+
+**Two kinds of entities exist in workflow extensions**:
+1. **Shapes that subClassOf a commons concept** — when the operator's word (Visit, Event, Site, etc.) is universal across workflows but the ATTRIBUTES diverge. Cross-workflow queries against the commons supertype work via inheritance.
+2. **Workflow-native entities** (no commons supertype) — when the concept itself only exists in that workflow. Sponsor / Study / Participant / Recruit / InvestigationalProduct / StudySite are clinical-research-native; manufacturing has its native concepts; etc.
+
+**The same example reads consistently**: a smart hospital sponsoring a clinical trial uses commons substrate (`topc:Person`, `topc:Organization`) + clinical-research workflow shapes (`topcr:Sponsor`, `topcr:Study`, `topcr:Visit subClassOf topc:Visit`) + (future) care-delivery workflow shapes (`topcd:Patient`, `topcd:Visit subClassOf topc:Visit`). Same Visit *concept*; two specialized shapes; cross-workflow queries find both.
 
 ## URI / prefix conventions
 
@@ -115,33 +153,48 @@ The hospital doesn't *belong* to one reference graph. The same Organization, Per
 
 This is exactly the pattern already established with Sponsor (per-Organization-per-Study role) and the IIT case (same Organization plays managesSite + playsSponsorRole). We just hadn't generalized it to the project taxonomy.
 
-## Migration from current state
+## Migration from current state (Option B)
 
 The current source intermediate (v0.6.0-strawman) carries:
 
 - `top:` prefix → `https://top.scientix.ai/onto/clinical/v1#` (mislabeled clinical)
 - `topc:` prefix → `https://top.scientix.ai/onto/commons/v1#` (correct intent, wrong path)
 
-Migration to corrected taxonomy:
+Migration under Option B is more nuanced than the prior single-prefix shuffle. Workflow-specific SHAPES move to `topcr:`; the corresponding commons CONCEPTS get added to `topc:` (vocabulary-only; SKOS).
 
-| Current | Corrected |
-|---|---|
-| `top:Sponsor` | `topcr:Sponsor` (clinical-research extension) |
-| `top:Study` | `topcr:Study` (clinical-research extension) |
-| `top:Participant` | `topcr:Participant` (clinical-research extension) |
-| `top:Recruit` | `topcr:Recruit` (clinical-research extension) |
-| `top:InvestigationalProduct` | `topcr:InvestigationalProduct` (clinical-research extension) |
-| **`top:Site`** | **`topc:Site`** (moves to commons — universal) |
-| **`top:Visit`** | **`topc:Visit`** (moves to commons — universal) |
-| **`top:OversightBody`** | **`topc:OversightBody`** (moves to commons — universal) |
-| Future `top:Event` (was about to lift) | **`topc:Event`** (commons — universal) |
-| `topc:StudySite` | **`topcr:StudySite`** (moves to clinical-research extension — clinical-research-specific despite being structurally a horizontal) |
-| `topc:Organization` | `topc:Organization` (already correct) |
-| `topc:Document` | `topc:Document` (already correct) |
-| `topc:Person` | `topc:Person` (already correct) |
-| `topc:System` / `topc:Log` / `topc:Equipment` / `topc:StorageLocation` / `topc:Credential` | unchanged (already correct) |
+| Current | Corrected | Type of move |
+|---|---|---|
+| `top:Sponsor` | `topcr:Sponsor` | Clinical-research-native (no commons supertype) |
+| `top:Study` | `topcr:Study` | Clinical-research-native |
+| `top:Participant` | `topcr:Participant` | Clinical-research-native |
+| `top:Recruit` | `topcr:Recruit` | Clinical-research-native |
+| `top:InvestigationalProduct` | `topcr:InvestigationalProduct` | Clinical-research-native |
+| `top:Site` | `topcr:Site subClassOf topc:Site` | Shape stays in clinical-research; commons gets concept |
+| `top:Visit` | `topcr:Visit subClassOf topc:Visit` | Shape stays in clinical-research; commons gets concept |
+| `top:OversightBody` | `topcr:OversightBody subClassOf topc:OversightBody` | Shape stays in clinical-research; commons gets concept |
+| Future `top:Event` (about to lift) | `topcr:Event subClassOf topc:Event` | Shape lifts in clinical-research; commons concept anchors it |
+| `topc:StudySite` | `topcr:StudySite` | Move from commons to clinical-research-native |
+| `topc:Document` | `topcr:Document subClassOf topc:Document` | Shape moves to clinical-research; commons keeps concept |
+| `topc:Equipment` | `topcr:Equipment subClassOf topc:Equipment` | Shape moves; commons keeps concept |
+| `topc:System` | `topcr:System subClassOf topc:System` | Shape moves; commons keeps concept |
+| `topc:Log` | `topcr:Log subClassOf topc:Log` | Shape moves; commons keeps concept |
+| `topc:StorageLocation` | `topcr:StorageLocation subClassOf topc:StorageLocation` | Shape moves; commons keeps concept |
+| `topc:Credential` | `topcr:Credential subClassOf topc:Credential` | Shape moves; commons keeps concept |
+| **`topc:Person`** | **`topc:Person`** (stays as commons class with shape) | Truly identical attrs across workflows; commons-with-shape |
+| **`topc:Organization`** | **`topc:Organization`** (stays as commons class with shape) | Truly identical attrs across workflows; commons-with-shape |
+
+**Sub-object shapes** (Activity, Task, VisitObservation, Protocol, Arm, etc.) follow the same pattern: workflow-specific shapes in `topcr:` with subClassOf to commons concepts where applicable.
 
 **IRI path correction**: `/onto/clinical/v1#` → `/clinical-research/v1#`; `/onto/commons/v1#` → `/commons/v1#` (drops `/onto/`).
+
+**What the substrate looks like in practice**:
+
+- **Commons-with-shape**: 2 entities (Person, Organization) — usable directly from `topc:`
+- **Commons concepts only** (vocabulary anchors): 13 — Visit, Event, Site, OversightBody, Activity, Task, VisitObservation, Document, Equipment, System, Log, StorageLocation, Credential
+- **Clinical-research workflow-native entities**: 6 top-level + 13 sub-objects = 19 entities, all in `topcr:` with no commons supertype
+- **Clinical-research workflow-shaped extensions** (subClassOf commons concepts): 13 entities in `topcr:` matching the 13 commons concepts
+
+Total clinical-research workflow entity count: 19 native + 13 shape extensions = 32. Plus 2 commons-with-shape (Person, Organization) the workflow uses directly. Plus the 13 commons concepts the workflow's shapes reference.
 
 ## Migration plan
 
