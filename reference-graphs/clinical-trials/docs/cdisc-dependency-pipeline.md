@@ -275,14 +275,17 @@ The ingester is **versioned alongside its USDM target**, not floating. This keep
 
 Each milestone is independently valuable; the manifest alone (v0.5) gives TOP a "what version of CDISC are we aligned with right now?" answer that the project doesn't have today.
 
-## Open questions for Bo
+## Sealed decisions (Bo, 2026-05-09)
 
-1. **Pinning policy**: should TOP pin to the latest stable CDISC release as soon as it's stable (aggressive currency), or deliberately lag by one release (conservative, gives the ecosystem time to stabilize)?
-2. **Assessment SLA**: how long do we have between "watcher detects change" and "assessment PR is decided"? A week? A month? Indefinite?
-3. **Multi-dependency coordination**: USDM v5 + COSMoS r20 + CT 2027-Q1 sometimes land within weeks of each other. Do we batch the assessments (one mega-assessment per quarter), or process each as it arrives (more PRs, finer granularity)?
-4. **Public vs internal change-tracker**: is `cdisc-changelog/` public-by-default (community-visible record of TOP's currency posture), or internal-by-default (only TOP maintainers see it)? Public is the operator-grade move; internal is the typical software-team move.
-5. **Assessment author**: who has authority to approve an assessment PR? Bo solo, or the broader TOP community once that's mature?
-6. **Defer-to-deployment escape hatch**: some CDISC changes might be *deliberately not* propagated to TOP substrate because they're deployment-specific (e.g., a per-sponsor CT extension). Do we model that as a "deferred to deployment" classification?
+1. **Pinning policy: latest stable.** TOP pins to the latest stable CDISC release as soon as it's stable. Aggressive currency posture; aligned with TOP's force-multiplier framing (operators benefit from current standards alignment without bearing the upgrade cost themselves; TOP absorbs it).
+2. **Assessment SLA: one month.** Between "watcher detects change" and "assessment PR is decided" — 30 days. Watcher opens the assessment PR with diff + impact analysis; reviewer has 30 days to apply / apply-with-edits / defer / reject. Auto-escalation if SLA breached; the assessment PR title and label both surface the deadline.
+3. **Multi-dependency coordination: each as it arrives.** No batching. Finer granularity, more PRs, but each assessment stays focused. USDM v5 + COSMoS r20 + CT 2027-Q1 landing in close succession means three concurrent assessment PRs; reviewer addresses each independently. Trade-off accepted for cleaner audit trail.
+4. **Public vs internal change-tracker: public.** The `cdisc-changelog/` directory is public-by-default. *Transparency is king* — community sees TOP's CDISC currency posture in real time; operators considering adoption verify what TOP is aligned with; sponsors planning deployments read the change-control record without an NDA. The operator-grade move; aligned with the open-substrate posture.
+5. **Approver authority: Bo solo for now**, until other TOP maintainers join. Each assessment PR's "Reviewer decision" section is signed by Bo. As community matures (per ROADMAP governance), approver authority distributes — likely to a small assessment-review committee, with Bo retaining veto until the working group structure is operational.
+
+## Still open
+
+6. **Defer-to-deployment escape hatch**: some CDISC changes might be *deliberately not* propagated to TOP substrate because they're deployment-specific (e.g., a per-sponsor CT extension). Do we model that as a "deferred to deployment" classification (a fifth alongside Cosmetic / Additive / Breaking / Semantic)? Recommended: yes; not blocking; can be added when the first deployment-specific CDISC update surfaces and forces the call.
 
 ## What this note does NOT cover
 
