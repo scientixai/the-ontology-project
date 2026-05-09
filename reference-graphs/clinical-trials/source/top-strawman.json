@@ -1,6 +1,6 @@
 {
-  "_comment": "TOP v0.5.1 reference graph intermediate (strawman). v0.5.1 lift (2026-05-09) adds OversightBody as the seventh top-level. OversightBody covers the regulatory / ethics / safety committees that hold review authority over a Study or StudySite \u2014 IRB / EC / DSMB / IDMC / Steering Committee / CEC. Per FIRST-PRINCIPLES universal-substrate posture, OversightBody is a substrate primitive (every regulated trial has oversight bodies; not therapeutic-area-specific), so it lifts as a top-level. Un-flag-misses Sponsor.interfacesWith, StudySite.hasIRB, Study.hasOversightBody \u2014 three existing relationships now have a real target. Per temporal+PROV native: OversightBody declares provType: prov:Agent (committees that hold authority and bear responsibility for review decisions); reviewDecisions sub-object declares provType: prov:Activity (the review event itself). PROV chain: ReviewDecision wasAssociatedWith committee members (prov:Agent); the Study or StudySite review approval / disapproval / suspension is queryable as a graph traversal. Top-level count: 7 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody). Remaining: InvestigationalProduct, Event.",
-  "version": "0.5.1-strawman",
+  "_comment": "TOP v0.6.0 reference graph intermediate (strawman). v0.6.0 lift (2026-05-09) adds InvestigationalProduct (IP) as the eighth top-level. Per FIRST-PRINCIPLES universal-substrate posture, IP is one entity for all product types \u2014 DRUG, BIOLOGIC, DEVICE, DIAGNOSTIC, COMBINATION_PRODUCT, OTHER \u2014 discriminated by investigationalProductType enum. IP supply chain modeled via two sub-objects: Lot (per-batch manufacturing/expiry/release) and Kit (per-blinded-packaging-unit for blinded studies; assigned to Participant via IRT). Dispensation events live as Visit Activities (already in v0.5) \u2014 no separate Dispensation sub-object needed; the universal Visit > Activity > Task substrate handles IP administration with activityType=IP_ADMINISTRATION + STRUCTURED taskValue carrying dose/lot/kit references. Un-flag-misses Sponsor.supplies, Study.suppliesInvestigationalProduct. Per temporal+PROV native: IP / Lot / Kit declare provType: prov:Entity (defined artifacts; Lot is a manufacturing batch; Kit is a packaging unit). Top-level count: 8 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody, InvestigationalProduct). Remaining: Event.",
+  "version": "0.6.0-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
   "namespaces": {
@@ -722,8 +722,7 @@
           "name": "suppliesInvestigationalProduct",
           "target": "InvestigationalProduct",
           "cardinality": "0..N",
-          "doc": "IPs supplied for this Study. 0..N because observational studies may have none. Mirrors Sponsor.supplies (the per-Sponsor IP list).",
-          "_targetMissing": "InvestigationalProduct is a top-level in OOUX (one of the locked 8) but not yet in TOP source."
+          "doc": "IPs supplied for this Study. 0..N because observational studies may have none. Mirrors Sponsor.supplies (the per-Sponsor IP list)."
         },
         {
           "name": "hasOversightBody",
@@ -3343,6 +3342,354 @@
           "action": "Disband OversightBody",
           "persona": "Sponsor / Site Admin",
           "note": "Transition status to DISBANDED after study close-out and document retention period ends."
+        }
+      ]
+    },
+    {
+      "id": "InvestigationalProduct",
+      "role": "the drug, biologic, device, or combination product under investigation",
+      "description": "An InvestigationalProduct (IP) is the substance, biologic, medical device, or combination being studied in a Study. Per FIRST-PRINCIPLES universal-substrate posture, IP is a single entity covering all product types \u2014 drugs, biologics, devices, diagnostics, combination products \u2014 discriminated by investigationalProductType enum. Specialization is content (productCode, dosageForm, mechanismOfAction, regulatorySource); not entity shape. Per ICH E6(R3) Section 2.7 and 21 CFR 312.6, IPs require lot tracking, blinded kit packaging (when applicable), and dispensation accountability. TOP models these via two sub-objects: Lot (per-batch manufacturing identity) and Kit (per-blinded-packaging-unit). Dispensation events live as Visit Activities (activityType=IP_ADMINISTRATION) per the universal Visit > Activity > Task substrate; no separate Dispensation entity needed.",
+      "ooux_editor_note": "v0.6.0 introduction (2026-05-09): eighth TOP top-level. Per OOUX-locked-9 sequencing. Un-flag-misses Sponsor.supplies + Study.suppliesInvestigationalProduct. Per FIRST-PRINCIPLES universal-substrate posture, single IP entity with investigationalProductType enum discriminator (DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER). The Lot sub-object captures per-batch facts (manufacturedDate, expirationDate, retestDate, lotStatus); the Kit sub-object captures blinded-packaging-unit facts (kitNumber, treatmentAssignment for blinded studies, assignmentDate). Dispensation tracking happens via the Visit Activity (activityType=IP_ADMINISTRATION) with STRUCTURED taskValue carrying dose/route/lot/kit references \u2014 the universal substrate covers IP administration without specialized Dispensation entity.",
+      "provType": "prov:Entity",
+      "crosswalks": {
+        "fhir": "fhir:MedicationKnowledge (for drugs/biologics); fhir:DeviceDefinition (for devices); fhir:Substance (for raw substances)",
+        "usdm": "usdm:StudyIntervention + usdm:AdministrableProduct (USDM separates the intervention from the administrable product; TOP collapses for operator UX)",
+        "sdtm": "sdtm:EX (Exposure \u2014 captures per-dose dispensation; the IP definition is an SDTM define.xml SUPPDM or vendor extension)",
+        "cdash": "cdash:EX",
+        "ich": "ICH E6(R3) Section 2.7 (IP Management); 21 CFR 312.6 (Labeling); ICH M11 IP fields"
+      },
+      "attributes": [
+        {
+          "name": "investigationalProductId",
+          "type": "ngsi-ld:URI",
+          "unique": true,
+          "doc": "Globally unique NGSI-LD identifier."
+        },
+        {
+          "name": "investigationalProductName",
+          "type": "xsd:string",
+          "doc": "Operator-friendly name (e.g., 'Drug X', 'BioCar-T-001', 'NeuroMonitor v2')."
+        },
+        {
+          "name": "genericName",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Generic / non-proprietary name (when applicable)."
+        },
+        {
+          "name": "brandName",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Brand / proprietary name (when commercially available, e.g., for active comparators or reformulations)."
+        },
+        {
+          "name": "investigationalProductType",
+          "type": "xsd:string",
+          "enum": [
+            "DRUG",
+            "BIOLOGIC",
+            "DEVICE",
+            "DIAGNOSTIC",
+            "COMBINATION_PRODUCT",
+            "OTHER"
+          ],
+          "doc": "Coarse type discriminator. DRUG for small-molecule pharmaceuticals; BIOLOGIC for biologics including monoclonal antibodies, vaccines, cell/gene therapies; DEVICE for medical devices; DIAGNOSTIC for in vitro diagnostics; COMBINATION_PRODUCT for drug-device or biologic-device combinations; OTHER for catch-all. Per FIRST-PRINCIPLES universal-substrate posture, this is a category discriminator for sort/filter, NOT a shape discriminator \u2014 the entity is the same shape regardless of type."
+        },
+        {
+          "name": "mechanismOfAction",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Brief description of how the product works (e.g., 'PD-1 checkpoint inhibitor', 'CAR-T cell therapy targeting CD19')."
+        },
+        {
+          "name": "dosageForm",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Dosage form (TABLET / CAPSULE / SOLUTION / SUSPENSION / INJECTION / INFUSION / TOPICAL / IMPLANT / DEVICE \u2014 free text accepts NCIt or FHIR Medication.form codes)."
+        },
+        {
+          "name": "routeOfAdministration",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Primary route of administration (ORAL / IV / IM / SC / TOPICAL / INTRATHECAL / etc.)."
+        },
+        {
+          "name": "strength",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Strength / concentration (e.g., '200 mg', '50 mg/mL', '10^7 cells/dose')."
+        },
+        {
+          "name": "isBlinded",
+          "type": "xsd:boolean",
+          "doc": "Whether this IP is dispensed under blinding (true requires Kit sub-objects with treatmentAssignment for IRT-managed kit assignment; false means open-label)."
+        },
+        {
+          "name": "regulatoryStatus",
+          "type": "xsd:string",
+          "optional": true,
+          "enum": [
+            "INVESTIGATIONAL",
+            "APPROVED_OFF_LABEL",
+            "EXPANDED_ACCESS",
+            "MARKETED_COMPARATOR",
+            "OTHER"
+          ],
+          "doc": "Regulatory status of the product. INVESTIGATIONAL for true IND/IDE products; APPROVED_OFF_LABEL when an approved drug is investigated for a new indication; EXPANDED_ACCESS for compassionate-use frameworks; MARKETED_COMPARATOR for active comparator arms using approved drugs; OTHER for catch-all."
+        },
+        {
+          "name": "regulatorySource",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Regulatory authority and identifier (e.g., 'FDA IND #123456', 'EMA EudraCT 2024-001234-56', 'PMDA Notification #...')."
+        },
+        {
+          "name": "biomedicalConceptCode",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "NCIt C-code for the substance / device. References COSMoS BC catalog or external substance registries (UNII, RxNorm)."
+        },
+        {
+          "name": "investigationalProductStatus",
+          "type": "xsd:string",
+          "enum": [
+            "PLANNED",
+            "IN_DEVELOPMENT",
+            "IN_USE",
+            "DISCONTINUED",
+            "WITHDRAWN"
+          ],
+          "_temporalProperty": true,
+          "doc": "Lifecycle of the IP across all studies that use it. PLANNED for pre-IND; IN_DEVELOPMENT for pre-first-in-human; IN_USE for actively-administered; DISCONTINUED for development paused; WITHDRAWN for safety-driven removal. NGSI-LD temporal property."
+        },
+        {
+          "name": "validFrom",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this IP record became operationally valid."
+        },
+        {
+          "name": "validUntil",
+          "type": "xsd:dateTime",
+          "optional": true
+        }
+      ],
+      "relationships": [
+        {
+          "name": "suppliedBySponsor",
+          "target": "Sponsor",
+          "cardinality": "1..1",
+          "doc": "The Sponsor that supplies / manufactures / imports this IP. Per 21 CFR 312.6 the IP supplier is regulatorily accountable for product labeling, lot tracking, and dispensation oversight."
+        },
+        {
+          "name": "forStudy",
+          "target": "Study",
+          "cardinality": "0..N",
+          "doc": "The Studies that use this IP. 0..N because some IPs are used across multiple studies (platform trials, basket trials, expanded-access programs)."
+        },
+        {
+          "name": "hasLot",
+          "target": "Lot",
+          "cardinality": "0..N",
+          "doc": "Manufacturing lots / batches of this IP. Each Lot has its own manufacturing date, expiration, release status, and accountability chain."
+        },
+        {
+          "name": "hasKit",
+          "target": "Kit",
+          "cardinality": "0..N",
+          "doc": "Blinded packaging units (kits) prepared from this IP. Required when isBlinded=true (SHACL invariant). Each Kit ties to a Lot and is assigned to a Participant via IRT."
+        },
+        {
+          "name": "governedByDocument",
+          "target": "Document",
+          "cardinality": "0..N",
+          "doc": "Documents governing this IP \u2014 Investigator's Brochure, IP handling instructions, product label, Certificate of Analysis (lot-specific), IP destruction record. Per ICH E6(R3) Section 2.7."
+        }
+      ],
+      "ctas": [
+        {
+          "action": "Register IP",
+          "persona": "Sponsor Regulatory / IP Manager",
+          "note": "Create a new IP record with type, regulatory source (IND #), mechanism of action, blinding status."
+        },
+        {
+          "action": "Add Lot",
+          "persona": "Sponsor Manufacturing / IP Manager",
+          "note": "Create a Lot sub-object with lotNumber, manufacturedDate, expirationDate, releaseDate. Required for any actual dispensation."
+        },
+        {
+          "action": "Package Kits",
+          "persona": "Sponsor Packaging / IRT Vendor",
+          "note": "Create Kit sub-objects from a Lot for blinded studies; each Kit has kitNumber + treatmentAssignment (the IRT randomization code)."
+        },
+        {
+          "action": "Update IP Status",
+          "persona": "Sponsor Regulatory",
+          "note": "Transition investigationalProductStatus across the development lifecycle (PLANNED \u2192 IN_DEVELOPMENT \u2192 IN_USE \u2192 DISCONTINUED / WITHDRAWN)."
+        },
+        {
+          "action": "Recall Lot",
+          "persona": "Sponsor Regulatory / Pharmacovigilance",
+          "note": "When a manufacturing or safety issue surfaces, transition Lot.lotStatus to RECALLED; cascades to Kit reconciliation workflow at Sites."
+        }
+      ],
+      "sub_objects": [
+        {
+          "id": "Lot",
+          "role": "a manufacturing batch of the InvestigationalProduct",
+          "description": "A Lot represents a single manufacturing batch of an InvestigationalProduct. Per ICH E6(R3) Section 2.7, IP must be tracked at lot level for accountability, expiry management, and recall response. The Lot carries manufacturing date, release date, expiration date, retest date (when applicable), manufacturer / facility identifiers, and lot status. Dispensation events at Visits reference the Lot used (via Visit's STRUCTURED taskValue or via Kit assignment for blinded studies).",
+          "provType": "prov:Entity",
+          "crosswalks": {
+            "fhir": "fhir:Medication (with batch / lot identifier)",
+            "sdtm": "sdtm:EX (lot tracked per dispensation row)",
+            "ich": "ICH E6(R3) Section 2.7; 21 CFR 312.62 (Investigator records \u2014 drug disposition)"
+          },
+          "attributes": [
+            {
+              "name": "lotId",
+              "type": "ngsi-ld:URI",
+              "unique": true
+            },
+            {
+              "name": "lotNumber",
+              "type": "xsd:string",
+              "doc": "Sponsor-assigned lot identifier (e.g., 'DRX-2026-0117'). Operator-grounded \u2014 what gets printed on the IP label and tracked in pharmacy."
+            },
+            {
+              "name": "manufacturedDate",
+              "type": "xsd:date",
+              "optional": true,
+              "doc": "Date the lot was manufactured."
+            },
+            {
+              "name": "releaseDate",
+              "type": "xsd:date",
+              "optional": true,
+              "doc": "Date the lot was released for clinical use (post-QC / post-Certificate-of-Analysis)."
+            },
+            {
+              "name": "expirationDate",
+              "type": "xsd:date",
+              "doc": "Expiration date. Hard SHACL: lots cannot be administered after expiration; lotStatus=EXPIRED requires this date <= today."
+            },
+            {
+              "name": "retestDate",
+              "type": "xsd:date",
+              "optional": true,
+              "doc": "Date by which the lot must be re-tested (for stability-extension lots). Optional \u2014 only applies when stability data supports retest extension."
+            },
+            {
+              "name": "manufacturer",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "Name of the manufacturer (when distinct from suppliedBySponsor \u2014 e.g., contract manufacturer)."
+            },
+            {
+              "name": "manufacturingFacility",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "Manufacturing facility identifier or address."
+            },
+            {
+              "name": "quantityProduced",
+              "type": "xsd:integer",
+              "optional": true,
+              "doc": "Number of units produced in this lot (kits, vials, tablets \u2014 unit depends on dosageForm)."
+            },
+            {
+              "name": "lotStatus",
+              "type": "xsd:string",
+              "enum": [
+                "MANUFACTURING",
+                "RELEASED",
+                "IN_DISTRIBUTION",
+                "DISTRIBUTED",
+                "EXPIRED",
+                "RECALLED",
+                "DESTROYED"
+              ],
+              "_temporalProperty": true,
+              "doc": "Lot lifecycle. NGSI-LD temporal property. MANUFACTURING during production; RELEASED after QC sign-off; IN_DISTRIBUTION during shipment; DISTRIBUTED when arrived at sites; EXPIRED past expiration date; RECALLED for safety / quality recall; DESTROYED post-reconciliation."
+            }
+          ],
+          "relationships": [
+            {
+              "name": "governedByDocument",
+              "target": "Document",
+              "cardinality": "0..N",
+              "doc": "Documents governing this lot \u2014 Certificate of Analysis (lot-specific), lot release record, lot destruction record."
+            }
+          ]
+        },
+        {
+          "id": "Kit",
+          "role": "a blinded packaging unit assigned to a Participant",
+          "description": "A Kit is a single blinded packaging unit prepared from a Lot, assigned to a Participant via IRT (Interactive Response Technology). Required for blinded studies where treatment assignment is masked at the dispensation level. Each Kit carries the kit number (printed on the label), its source Lot, the treatment assignment code (the IRT-issued randomization code; the unblinding key is held separately by the IRT vendor), and lifecycle status (PACKAGED \u2192 IN_INVENTORY \u2192 DISPENSED \u2192 RETURNED \u2192 RECONCILED).",
+          "provType": "prov:Entity",
+          "crosswalks": {
+            "fhir": "fhir:Medication (with batch + kit identifier extension)",
+            "sdtm": "sdtm:EX (kit number tracked per dispensation row)",
+            "ich": "ICH E6(R3) Section 2.7; ICH E9 Section 2.3 (Randomization and Blinding)"
+          },
+          "attributes": [
+            {
+              "name": "kitId",
+              "type": "ngsi-ld:URI",
+              "unique": true
+            },
+            {
+              "name": "kitNumber",
+              "type": "xsd:string",
+              "doc": "Sponsor / IRT-assigned kit identifier (e.g., 'KIT-00042'). Operator-grounded \u2014 what gets scanned at dispensation."
+            },
+            {
+              "name": "packagedDate",
+              "type": "xsd:date",
+              "optional": true,
+              "doc": "Date the kit was packaged from its Lot."
+            },
+            {
+              "name": "treatmentAssignment",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "IRT-issued treatment-assignment code. For blinded studies, this is a coded label (e.g., 'A', 'B', 'PLACEBO_GROUP_2') whose unblinding key is held separately by the IRT vendor; the substrate carries the code without the unblinding map."
+            },
+            {
+              "name": "assignmentDate",
+              "type": "xsd:date",
+              "optional": true,
+              "doc": "Date the kit was assigned to a Participant (typically the randomization or dispensation date)."
+            },
+            {
+              "name": "kitStatus",
+              "type": "xsd:string",
+              "enum": [
+                "PACKAGED",
+                "IN_INVENTORY",
+                "ASSIGNED",
+                "DISPENSED",
+                "RETURNED",
+                "RECONCILED",
+                "DESTROYED"
+              ],
+              "_temporalProperty": true,
+              "doc": "Kit lifecycle. NGSI-LD temporal property. PACKAGED at packaging facility; IN_INVENTORY at site pharmacy; ASSIGNED when IRT issues to Participant (pre-dispensation); DISPENSED when handed to Participant; RETURNED when unused returned to pharmacy; RECONCILED at end-of-trial reconciliation; DESTROYED per IP destruction record."
+            }
+          ],
+          "relationships": [
+            {
+              "name": "belongsToLot",
+              "target": "Lot",
+              "cardinality": "1..1",
+              "doc": "The Lot this Kit was packaged from. Each Kit traces back to exactly one Lot for accountability."
+            },
+            {
+              "name": "assignedToParticipant",
+              "target": "Participant",
+              "cardinality": "0..1",
+              "doc": "The Participant the Kit is assigned to (post-IRT-assignment). 0..1 because Kits in IN_INVENTORY haven't been assigned yet. SHACL: kitStatus=ASSIGNED or DISPENSED requires this to be populated."
+            }
+          ]
         }
       ]
     }

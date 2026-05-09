@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / InvestigationalProduct / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: #1a1a1a; background: #f4f4f1; padding: 22px 26px 32px; line-height: 1.55; font-size: 13px; }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #111; margin: 26px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #c8c8c0; }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr { background: #fff; border-left: 3px solid #1e6fd9; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; margin-bottom: 12px; font-size: 12px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th { background: #f0f0e9; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  .decision, .scenario { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 12px 16px; margin-bottom: 10px; }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves { font-size: 11.5px; background: #f7faf8; border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px; margin-top: 6px; line-height: 1.65; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .diagram { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 14px 16px; margin-bottom: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.7; white-space: pre; overflow-x: auto; }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="title">TOP / InvestigationalProduct / spec / v1</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.6.0-strawman) · eighth top-level · universal IP for DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER · Lot + Kit sub-objects · 4 new SHACL invariants (40 total)</div>
+</header>
+
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">universal IP entity · Lot + Kit sub-objects · dispensation lives as Visit Activity</span></h2>
+
+<p class="tldr"><strong>InvestigationalProduct (IP) is the substance, biologic, device, or combination under investigation.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> universal-substrate posture, IP is one TOP entity covering all product types — <span class="inline">investigationalProductType</span> enum (DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER) is the operator-grounded discriminator, NOT a shape discriminator. IP supply chain modeled via two sub-objects: <span class="inline">Lot</span> (per-batch manufacturing identity, expiration, release status) and <span class="inline">Kit</span> (per-blinded-packaging-unit, IRT-assigned to Participant). Dispensation events live as Visit Activities (<span class="inline">activityType=IP_ADMINISTRATION</span> with STRUCTURED <span class="inline">taskValue</span> carrying dose/lot/kit references) — no separate Dispensation entity needed; the universal Visit > Activity > Task substrate from v0.5 covers it cleanly. PROV: IP / Lot / Kit are <span class="inline">prov:Entity</span> (defined artifacts). Un-flag-misses <span class="inline">Sponsor.supplies</span> + <span class="inline">Study.suppliesInvestigationalProduct</span>.</p>
+
+<h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor</h2>
+
+<div class="diagram">          Sponsor (supplies)
+               │
+               ▼
+       InvestigationalProduct
+        ├─ hasLot → Lot[*] (manufacturing batches)
+        │            │
+        │            └─ governedByDocument → Document (Certificate of Analysis, etc.)
+        │
+        ├─ hasKit → Kit[*] (blinded packaging units)
+        │            ├─ belongsToLot → Lot
+        │            └─ assignedToParticipant → Participant (when IRT-assigned)
+        │
+        └─ governedByDocument → Document (Investigator's Brochure, IP handling instructions, label)
+
+Dispensation events (where IP gets administered) live as:
+  Visit > Activity (activityType=IP_ADMINISTRATION) > Task (STRUCTURED taskValue
+  with dose/route/lot/kit references) — universal substrate, no specialization.</div>
+
+<p>The IP's responsibility chain runs from Sponsor (supplies, regulatorily accountable per 21 CFR 312.6) → Lot (manufacturing batch with expiry / release / lot status) → Kit (blinded packaging unit assigned to a Participant via IRT). Per ICH E6(R3) Section 2.7 and 21 CFR 312.62, this chain is required for IP accountability and recall response.</p>
+
+<h2 class="section" id="universal"><span class="num">3.</span>Universal IP — one shape for all product types</h2>
+
+<p>Per FIRST-PRINCIPLES universal-substrate posture, the same TOP entity shape handles drugs, biologics, devices, diagnostics, and combination products. Specialization is content (<span class="inline">investigationalProductType</span> + <span class="inline">biomedicalConceptCode</span> + <span class="inline">dosageForm</span> + <span class="inline">routeOfAdministration</span> + <span class="inline">mechanismOfAction</span>), never entity shape.</p>
+
+<table>
+  <thead><tr><th>investigationalProductType</th><th>Example</th><th>biomedicalConceptCode</th><th>dosageForm</th><th>route</th></tr></thead>
+  <tbody>
+    <tr><td><span class="inline">DRUG</span></td><td>Aspirin 100mg tablet</td><td>NCIt:C287 (Aspirin)</td><td>TABLET</td><td>ORAL</td></tr>
+    <tr><td><span class="inline">BIOLOGIC</span></td><td>Drug X (anti-PD-L1 mAb)</td><td>NCIt:C172310</td><td>INFUSION</td><td>IV</td></tr>
+    <tr><td><span class="inline">BIOLOGIC</span></td><td>BioCar-T (CD19 CAR-T)</td><td>NCIt:C147156</td><td>INFUSION</td><td>IV</td></tr>
+    <tr><td><span class="inline">DEVICE</span></td><td>Cardiac Monitor v3</td><td>SNOMED:706687002</td><td>DEVICE</td><td>—</td></tr>
+    <tr><td><span class="inline">DIAGNOSTIC</span></td><td>Companion IVD assay</td><td>(LOINC)</td><td>—</td><td>—</td></tr>
+    <tr><td><span class="inline">COMBINATION_PRODUCT</span></td><td>Drug-eluting stent</td><td>SNOMED:715974005</td><td>DEVICE+DRUG</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<p>The substrate doesn't know the type-specific specifics. External systems (electronic Drug Master Files, device databases, IRT systems) hold implementation specifics; TOP holds the universal trial-conduct-realm reference and the supply-chain accountability (Lot, Kit, Sponsor).</p>
+
+<h2 class="section" id="model"><span class="num">4.</span>Model summary</h2>
+
+<h3 class="subsection">InvestigationalProduct attributes (~16)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">investigationalProductId</td><td>NGSI-LD URI</td><td>Globally unique</td></tr>
+    <tr><td class="code">investigationalProductName</td><td>string</td><td>Operator-friendly name</td></tr>
+    <tr><td class="code">genericName / brandName</td><td>string · optional</td><td>When applicable</td></tr>
+    <tr><td class="code">investigationalProductType</td><td>enum (6) — DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER</td><td>Operator-grounded discriminator (sort/filter only, NOT a shape discriminator)</td></tr>
+    <tr><td class="code">mechanismOfAction</td><td>string · optional</td><td>e.g., "PD-L1 checkpoint inhibitor"</td></tr>
+    <tr><td class="code">dosageForm</td><td>string · optional</td><td>TABLET / INJECTION / INFUSION / DEVICE / etc.</td></tr>
+    <tr><td class="code">routeOfAdministration</td><td>string · optional</td><td>ORAL / IV / IM / SC / TOPICAL / etc.</td></tr>
+    <tr><td class="code">strength</td><td>string · optional</td><td>e.g., "200 mg/vial"</td></tr>
+    <tr><td class="code">isBlinded</td><td>boolean</td><td>True requires hasKit (SHACL #37)</td></tr>
+    <tr><td class="code">regulatoryStatus</td><td>enum (5) — INVESTIGATIONAL / APPROVED_OFF_LABEL / EXPANDED_ACCESS / MARKETED_COMPARATOR / OTHER</td><td>—</td></tr>
+    <tr><td class="code">regulatorySource</td><td>string · optional</td><td>e.g., "FDA IND #154321"</td></tr>
+    <tr><td class="code">biomedicalConceptCode</td><td>string · optional</td><td>NCIt / SNOMED / RxNorm / UNII reference</td></tr>
+    <tr><td class="code">investigationalProductStatus</td><td>enum (5) — PLANNED / IN_DEVELOPMENT / IN_USE / DISCONTINUED / WITHDRAWN</td><td>NGSI-LD temporal property</td></tr>
+    <tr><td class="code">validFrom / validUntil</td><td>dateTime · optional</td><td>Operational validity bracket</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">InvestigationalProduct relationships (5)</h3>
+<table>
+  <thead><tr><th>Relationship</th><th>Target</th><th>Card.</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">suppliedBySponsor</td><td>Sponsor</td><td>1..1</td><td>Per 21 CFR 312.6: the Sponsor is regulatorily accountable for IP labeling, lot tracking, and dispensation oversight</td></tr>
+    <tr><td class="code">forStudy</td><td>Study</td><td>0..N</td><td>0..N for platform / basket / expanded-access products used across multiple studies</td></tr>
+    <tr><td class="code">hasLot</td><td>Lot</td><td>0..N</td><td>Manufacturing batches</td></tr>
+    <tr><td class="code">hasKit</td><td>Kit</td><td>0..N</td><td>Required when isBlinded=true (SHACL #37)</td></tr>
+    <tr><td class="code">governedByDocument</td><td>Document</td><td>0..N</td><td>IB, IP handling instructions, label, lot CoA</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Sub-object: Lot (~10 attrs)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">lotId</td><td>NGSI-LD URI</td><td></td></tr>
+    <tr><td class="code">lotNumber</td><td>string</td><td>Sponsor-assigned (e.g., "DRX-2026-0117")</td></tr>
+    <tr><td class="code">manufacturedDate / releaseDate / expirationDate / retestDate</td><td>date</td><td>Manufacturing lifecycle dates</td></tr>
+    <tr><td class="code">manufacturer / manufacturingFacility</td><td>string · optional</td><td>Manufacturer identification</td></tr>
+    <tr><td class="code">quantityProduced</td><td>integer · optional</td><td>Number of units</td></tr>
+    <tr><td class="code">lotStatus</td><td>enum (7) — MANUFACTURING / RELEASED / IN_DISTRIBUTION / DISTRIBUTED / EXPIRED / RECALLED / DESTROYED</td><td>NGSI-LD temporal property; SHACL #39 (soft) and #40 (hard) enforce expiry consistency</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Sub-object: Kit (~7 attrs / 2 rels)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">kitId</td><td>NGSI-LD URI</td><td></td></tr>
+    <tr><td class="code">kitNumber</td><td>string</td><td>Sponsor / IRT-assigned</td></tr>
+    <tr><td class="code">packagedDate</td><td>date · optional</td><td></td></tr>
+    <tr><td class="code">treatmentAssignment</td><td>string · optional</td><td>IRT-issued treatment-assignment code (e.g., "TREATMENT_A"); the unblinding key is held separately by the IRT vendor</td></tr>
+    <tr><td class="code">assignmentDate</td><td>date · optional</td><td>Date IRT assigned the kit to a Participant</td></tr>
+    <tr><td class="code">kitStatus</td><td>enum (7) — PACKAGED / IN_INVENTORY / ASSIGNED / DISPENSED / RETURNED / RECONCILED / DESTROYED</td><td>NGSI-LD temporal property; SHACL #38 enforces ASSIGNED/DISPENSED → assignedToParticipant populated</td></tr>
+    <tr><td class="code">belongsToLot → Lot (1..1)</td><td>relationship</td><td>Each Kit traces to exactly one Lot</td></tr>
+    <tr><td class="code">assignedToParticipant → Participant (0..1)</td><td>relationship</td><td>Empty until IRT assignment</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="decisions"><span class="num">5.</span>Architectural decisions</h2>
+
+<div class="decision">
+  <div class="title">Decision 1 — Single IP entity with type discriminator (universal substrate)</div>
+  <p>Per FIRST-PRINCIPLES universal-substrate posture: don't split into separate Drug / Biologic / Device entities. One TOP entity with <span class="inline">investigationalProductType</span> enum carries the operator-grounded discrimination. Same architectural moat as Activity + Task in v0.5 and OversightBody in v0.5.1: standards-up vendors model N entity types per product family; TOP carries one universal pattern.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2 — Lot + Kit as sub-objects (not separate horizontals)</div>
+  <p>Lot and Kit lifecycles are bound to the parent IP. Their identity is hierarchical: <span class="inline">IP / Lot / Kit</span>. Per the established sub-object pattern (consistent with Sponsor's Lot / Study's Arm / Visit's Activity), they live as sub-objects under IP. A Lot can't exist without an IP; a Kit can't exist without a Lot.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3 — No separate Dispensation entity</div>
+  <p>Dispensation events (where IP gets administered to a Participant) live in the universal Visit > Activity > Task substrate from v0.5: an Activity with <span class="inline">activityType=IP_ADMINISTRATION</span>, plus a Task with <span class="inline">taskValueType=STRUCTURED</span> carrying the dose/route/lot/kit reference. Per universal-substrate posture, no specialized DispensationRecord entity. The Task can reference Lot and Kit by URI for accountability.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4 — Blinding handled via Kit sub-object + IRT integration</div>
+  <p><span class="inline">IP.isBlinded=true</span> requires the Kit sub-object pattern (SHACL #37). Each Kit carries the IRT-issued <span class="inline">treatmentAssignment</span> code; the unblinding key is held separately by the IRT vendor (TOP doesn't carry the unblinding map — that's a deployment-edge security boundary). For open-label studies, isBlinded=false and dispensation Activities reference Lot directly via Task.taskValue without Kit indirection.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5 — PROV typing: prov:Entity for IP / Lot / Kit (defined artifacts)</div>
+  <p>IP is the artifact under investigation; Lot is a manufacturing batch; Kit is a packaging unit. All are <span class="inline">prov:Entity</span> in PROV terms. The dispensation Activity (in Visit) is <span class="inline">prov:Activity</span> that <span class="inline">prov:used</span> the Lot/Kit (the kit is consumed in the act of dispensation). PROV chain queries: "which kits did Maria receive at which visits, from which lots, manufactured when?" assemble cleanly from substrate triples.</p>
+</div>
+
+<h2 class="section" id="shacl"><span class="num">6.</span>SHACL invariants <span class="subnote">4 new (40 total)</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Severity</th><th>Constraint</th></tr></thead>
+  <tbody>
+    <tr><td>37</td><td>Hard</td><td><strong>Blinded IP requires kits.</strong> IP with isBlinded=true must have at least one hasKit. Blinded studies require kit-level packaging for masking.</td></tr>
+    <tr><td>38</td><td>Hard</td><td><strong>Assigned/dispensed kit needs participant.</strong> Kit with kitStatus in {ASSIGNED, DISPENSED} must have assignedToParticipant populated.</td></tr>
+    <tr><td>39</td><td>Soft</td><td><strong>Past-expiry lot should be flagged.</strong> Lot with expirationDate in the past should have lotStatus in {EXPIRED, RECALLED, DESTROYED}.</td></tr>
+    <tr><td>40</td><td>Hard</td><td><strong>EXPIRED status requires past expiry.</strong> Lot with lotStatus=EXPIRED must have expirationDate populated and in the past.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="crosswalks"><span class="num">7.</span>Cross-walks <span class="subnote">FHIR / SDTM / USDM · projection-edge documentation</span></h2>
+
+<table>
+  <thead><tr><th>TOP entity</th><th>FHIR R5</th><th>SDTM</th><th>USDM</th><th>ICH</th></tr></thead>
+  <tbody>
+    <tr><td>InvestigationalProduct</td><td>MedicationKnowledge (drugs/biologics); DeviceDefinition (devices); Substance (raw substances)</td><td>(define.xml SUPPDM or vendor extension)</td><td>StudyIntervention + AdministrableProduct</td><td>ICH E6(R3) §2.7; 21 CFR 312.6</td></tr>
+    <tr><td>Lot</td><td>Medication (with batch lotNumber + expirationDate)</td><td>EX (lot tracked per dispensation row)</td><td>(implicit in StudyIntervention's batch tracking)</td><td>21 CFR 312.62 (Investigator records — drug disposition)</td></tr>
+    <tr><td>Kit</td><td>Medication (with batch + kit identifier extension)</td><td>EX (kit number tracked per dispensation row)</td><td>(implicit; IRT manages kit-to-treatment mapping)</td><td>ICH E9 §2.3 (Randomization and Blinding)</td></tr>
+    <tr><td>Dispensation event</td><td>MedicationAdministration</td><td>EX (Exposure)</td><td>(captured at runtime, not in USDM)</td><td>ICH E6(R3) §2.7</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Key insight</strong>: TOP doesn't have a separate Dispensation entity because the universal Visit > Activity > Task substrate handles it. The Activity (activityType=IP_ADMINISTRATION) projects to FHIR MedicationAdministration and SDTM EX rows; the Task carries the structured dose/route/lot/kit data. The PROV chain assembles automatically.</p>
+
+<h2 class="section" id="stress"><span class="num">8.</span>Stress-test scenarios</h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Blinded biologic with IRT kit assignment</div><div class="scn-tag">Common case</div></div>
+  <p>Drug X (anti-PD-L1 mAb, IV infusion) is blinded; kits assigned via IRT to Maria at C1D1.</p>
+  <div class="resolves">IP (investigationalProductType=BIOLOGIC, isBlinded=true) with one Lot (DRX-2026-0117, lotStatus=DISTRIBUTED, expirationDate=2027-07-15) and one Kit (KIT-00042, treatmentAssignment="TREATMENT_A", kitStatus=DISPENSED, assignedToParticipant=Maria, belongsToLot=DRX-2026-0117). The dispensation Activity at Maria's C1D1 Visit (activityType=IP_ADMINISTRATION) carries a Task with STRUCTURED taskValue containing dose=200mg, route=IV, lot reference, kit reference. SHACL #37 + #38 satisfied. (Mirrored in worked example.)</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Open-label drug, no kits required</div><div class="scn-tag">Open-label</div></div>
+  <p>An open-label Phase 2 study uses Drug Y (oral tablet); no blinding, no IRT kit assignment.</p>
+  <div class="resolves">IP (investigationalProductType=DRUG, isBlinded=false) with one or more Lots; NO Kit sub-objects (SHACL #37 doesn't apply because isBlinded=false). Dispensation Activities reference the Lot directly via Task.taskValue STRUCTURED content (dose, lot reference, no kit).</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Lot recall — safety-driven retirement</div><div class="scn-tag">Recall</div></div>
+  <p>Manufacturing investigation surfaces a contamination issue with Lot DRX-2026-0117. Sponsor recalls.</p>
+  <div class="resolves">Lot.lotStatus transitions DISTRIBUTED → RECALLED. NGSI-LD temporal property captures the trajectory (validFrom for the new RECALLED state). All Kits packaged from this Lot need reconciliation: Kit.kitStatus transitions to RETURNED for unused kits, RECONCILED for accountability sign-off. Cross-Lot query "show me all Kits from this Lot and their current status" is a substrate traversal.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">PROV chain — chain of custody for a single dispensation</div><div class="scn-tag">Provenance</div></div>
+  <p>A regulator asks: "show me the full chain of custody for the Drug X dose Maria received at C1D1."</p>
+  <div class="resolves">SPARQL traverses: Visit.hasActivity (IP_ADMINISTRATION) → Activity.prov:wasAssociatedWith (administering Person) + Activity.prov:used (infusion equipment, with calibration credential) → Activity.hasTask → Task with STRUCTURED taskValue → kit reference → Kit.belongsToLot → Lot (with manufacturedDate, releaseDate, expirationDate, manufacturer) → Lot back to IP (suppliedBySponsor). Full chain assembles from substrate triples — no audit-log join. This is the v0.5 chain-of-custody view extended to IP supply chain.</div>
+</div>
+
+<h2 class="section" id="open"><span class="num">9.</span>Open issues</h2>
+
+<ol>
+  <li><strong>IRT system integration.</strong> Kit.treatmentAssignment is a free-text code; the unblinding key is held by the IRT vendor outside TOP. When IRT integration becomes operational, an adapter projects TOP Kit ↔ IRT API for assignment events.</li>
+  <li><strong>IP destruction record (Document linkage).</strong> Lot.lotStatus=DESTROYED implies an IP destruction record exists; the governedByDocument relationship links it to a Document with documentType=IP_DESTRUCTION_RECORD. SHACL invariant could enforce this when needed (deferred).</li>
+  <li><strong>Multi-IP combination products.</strong> Combination products (drug-eluting stents, drug-device combinations) have multiple component IPs. Currently a single IP entity carries the combination; explicit component-IP relationships could lift in v0.7+ if combination-product workflows force it.</li>
+  <li><strong>Storage temperature / cold-chain integration.</strong> Per the v0.4.1 chain-of-custody mock-up, cold-chain monitoring (temperature logs during shipment and at site) is the Equipment + Log substrate. IP doesn't directly carry storage requirements — they live on the linked Equipment / StorageLocation entities. When the Equipment.calibrationStatus enrichment lands, IP storage requirements become queryable via substrate traversal.</li>
+</ol>
+
+<div class="footer">
+  TOP / InvestigationalProduct / spec / v1 · backed by source/top-strawman.json (v0.6.0-strawman) · 2026-05-09<br>
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: universal substrate (one entity for all product types — content-discriminated), native temporal+PROV (prov:Entity + temporal lifecycle), operator-grounded vocabulary.
+</div>
+
+</div>
+</body>
+</html>

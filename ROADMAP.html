@@ -243,6 +243,20 @@
   <li><strong>Spec doc</strong>: <a href="reference-graphs/clinical-trials/docs/oversightbody-spec.html">oversightbody-spec.html</a>.</li>
 </ul>
 
+<p><strong>InvestigationalProduct (IP)</strong> is fully sealed at v0.6.0-strawman as the eighth top-level — the substance, biologic, device, or combination product under investigation. Per FIRST-PRINCIPLES universal-substrate posture, IP is one TOP entity covering all product types (DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER) with <code class="inline">investigationalProductType</code> as the operator-grounded discriminator — not a shape discriminator. The substrate doesn't carry type-specific specifics; external systems (Drug Master Files, device databases, IRT systems) hold implementation details. Outcomes:</p>
+
+<ul>
+  <li><strong>InvestigationalProduct</strong> (top-level) lifted with 16 attrs / 5 rels covering identity, product properties, regulatory (status, IND/EudraCT source), blinding flag, and supply-chain relationships to Sponsor, Study, Lot, Kit, Document.</li>
+  <li><strong>Lot</strong> (sub-object, ~10 attrs) — manufacturing batch with lotNumber, manufactured/release/expiration/retest dates, manufacturer / facility, lot status as NGSI-LD temporal property.</li>
+  <li><strong>Kit</strong> (sub-object, ~7 attrs / 2 rels) — blinded packaging unit with treatmentAssignment (IRT-issued code; unblinding key held separately), kitStatus as NGSI-LD temporal property. <code class="inline">belongsToLot → Lot</code> + <code class="inline">assignedToParticipant → Participant</code>.</li>
+  <li><strong>PROV typing</strong>: IP / Lot / Kit are <code class="inline">prov:Entity</code>. Dispensation Activities (in Visit) are <code class="inline">prov:Activity</code> that <code class="inline">prov:used</code> the Lot/Kit. Chain of custody assembles via substrate traversal.</li>
+  <li><strong>Two flagged-missing relationships un-flagged</strong>: <code class="inline">Sponsor.supplies</code> and <code class="inline">Study.suppliesInvestigationalProduct</code>.</li>
+  <li><strong>No separate Dispensation entity</strong> — per universal-substrate posture, dispensation events live in the Visit > Activity > Task substrate (activityType=IP_ADMINISTRATION + STRUCTURED taskValue carrying dose/route/lot/kit references).</li>
+  <li><strong>4 new SHACL invariants</strong> added (40 total: 6 soft + 34 hard). Blinded IP requires kits; assigned/dispensed kit needs participant; past-expiry lot soft warning + EXPIRED status hard requirement.</li>
+  <li><strong>1 worked example extended</strong> (site-mskcc-onco423.ttl) — Drug X (BIOLOGIC, anti-PD-L1 mAb, blinded) supplied by Pfizer for ONCO-423; one Lot (DRX-2026-0117); one Kit (KIT-00042, DISPENSED to Maria).</li>
+  <li><strong>Spec doc</strong>: <a href="reference-graphs/clinical-trials/docs/investigationalproduct-spec.html">investigationalproduct-spec.html</a>.</li>
+</ul>
+
 <p><strong>Site</strong> has lifted to v0.2.0-strawman as a combined Site + StudySite spec (<a href="reference-graphs/clinical-trials/docs/site-spec.html">site-spec.html</a>, 977 lines), with 14 verification questions pending Bo's review. The Site lift forced an architectural correction (Bo's "Site is the most important object, that's where trials operate" framing and the corrected operational hierarchy <code class="inline">Site → StudySite → Study → Protocol → SOA → Visit → Activity</code>). Outcomes:</p>
 
 <ul class="bullets">
