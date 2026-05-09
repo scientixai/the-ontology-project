@@ -1,0 +1,472 @@
+# TOP Taxonomy v1 — SKOS canonical
+#
+# The Ontology Project — taxonomy of entities classified into the commons substrate
+# vs composable workflow extensions.
+#
+# Importable into TermBoard, PoolParty, Synaptica, Protégé, and any SKOS-aware
+# tool. The CSV companion (taxonomy.csv) is a flat alternative for spreadsheet-
+# based review. The Markdown narrative (TAXONOMY.md) is the prose accompaniment.
+#
+# Discipline: classification BEFORE construction. This
+# document is the classification scheme; FIRST-PRINCIPLES.md is the design rule;
+# ROADMAP.md is the build sequence.
+#
+# Conventions:
+#   - skos:Concept for every entity-level taxonomy node
+#   - skos:broader for hierarchy (concept under its layer or parent entity)
+#   - skos:definition for the operator-grounded definition
+#   - skos:scopeNote for rules-of-inclusion guidance
+#   - skos:notation for the URI / prefix-qualified name
+#   - dct:* for Dublin Core metadata
+#   - prov:* annotations document the W3C PROV typing per FIRST-PRINCIPLES native
+#     temporal+provenance commitment
+#
+# All concept URIs use the corrected namespace structure (per Bo, 2026-05-09):
+#   top.scientix.ai/v1#                       — project-level concepts
+#   top.scientix.ai/commons/v1#               — universal substrate (topc:)
+#   top.scientix.ai/clinical-research/v1#     — clinical-research workflow extensions (topcr:)
+#   top.scientix.ai/care-delivery/v1#         — future workflow extension (topcd:)
+#   top.scientix.ai/manufacturing/v1#         — future workflow extension (topmfg:)
+#   top.scientix.ai/supply-chain/v1#          — future workflow extension (topsc:)
+
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix top:   <https://top.scientix.ai/v1#> .
+@prefix topc:  <https://top.scientix.ai/commons/v1#> .
+@prefix topcr: <https://top.scientix.ai/clinical-research/v1#> .
+@prefix topcd: <https://top.scientix.ai/care-delivery/v1#> .
+@prefix topmfg: <https://top.scientix.ai/manufacturing/v1#> .
+@prefix topsc: <https://top.scientix.ai/supply-chain/v1#> .
+
+# ====================================================================
+# Concept Scheme
+# ====================================================================
+
+top:TaxonomyV1 a skos:ConceptScheme ;
+    dct:title "TOP Taxonomy v1"@en ;
+    dct:description "Classification scheme for The Ontology Project — separates universal commons substrate primitives from composable workflow extensions. Workflows compose; they are not mutually exclusive."@en ;
+    dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
+    dct:created "2026-05-09"^^xsd:date ;
+    dct:license "Apache-2.0" ;
+    skos:hasTopConcept top:CommonsSubstrate, top:WorkflowExtensions ;
+    rdfs:seeAlso <https://top.scientix.ai/FIRST-PRINCIPLES.html>,
+                 <https://top.scientix.ai/MANIFESTO.html>,
+                 <https://top.scientix.ai/ROADMAP.html> .
+
+
+# ====================================================================
+# Two top concepts — the layering
+# ====================================================================
+
+top:CommonsSubstrate a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:prefLabel "Commons Substrate"@en ;
+    skos:altLabel "Substrate"@en, "Commons"@en, "Universal Layer"@en ;
+    skos:definition "Universal cross-cutting entities that operators across multiple workflows recognize as first-class concepts. The substrate is composable — every workflow extension reaches into the same commons."@en ;
+    skos:scopeNote "Inclusion test: do operators in workflows beyond a single domain recognize this concept as a first-class thing? Person, Organization, Site, Visit, Event, Document, Equipment — yes. Sponsor, Study, Participant — no, those are workflow-specific."@en ;
+    skos:notation "topc:" ;
+    rdfs:seeAlso <https://top.scientix.ai/FIRST-PRINCIPLES.md> .
+
+top:WorkflowExtensions a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:prefLabel "Workflow Extensions"@en ;
+    skos:altLabel "Workflows"@en, "Domain Extensions"@en ;
+    skos:definition "Domain-specific concepts that compose on top of the commons substrate. Workflows are composable; a single deployment can use multiple workflows simultaneously (e.g., a hospital running a sponsored trial uses Clinical Research and Care Delivery workflows over the same Commons substrate)."@en ;
+    skos:scopeNote "Workflows are NOT sibling industries / domains. They are sets of additional concepts that extend the commons substrate. A real-world deployment imports as many extensions as it uses. Avoids the FIWARE Smart Data Models mistake of treating Healthcare, Manufacturing, Supply Chain as walled-off siblings."@en .
+
+
+# ====================================================================
+# Commons Substrate concepts (12)
+# ====================================================================
+
+topc:Person a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Person"@en ;
+    skos:altLabel "Individual"@en, "Human"@en ;
+    skos:definition "Any individual human in any operational context — staff, member, employee, contractor, investigator, coordinator, recruiter, regulator, committee member."@en ;
+    skos:scopeNote "Person is for staff and operational humans. Trial subjects are Participant (workflow extension); patients are Patient (future workflow extension). One real human can map to multiple role-entities across realms; cross-realm identity resolution is federation, not substrate."@en ;
+    skos:notation "topc:Person" ;
+    prov:Agent "prov:Agent" .
+
+topc:Organization a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Organization"@en ;
+    skos:altLabel "Legal Entity"@en, "Corporate Entity"@en, "Institution"@en ;
+    skos:definition "Any legal/business entity — corporate parent, operating company, hospital, academic institution, regulatory authority, vendor, CRO, sponsor."@en ;
+    skos:scopeNote "Organization is corporate identity. Roles played on specific objects (Sponsor on a Study, Site for a hospital) are workflow extensions that point back to Organization."@en ;
+    skos:notation "topc:Organization" ;
+    prov:Agent "prov:Agent" .
+
+topc:Site a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Site"@en ;
+    skos:altLabel "Facility"@en, "Location"@en ;
+    skos:definition "Any physical or operational location where work happens — hospital site, manufacturing plant, research facility, decentralized hub, warehouse, clinic."@en ;
+    skos:scopeNote "Site is study-independent / workflow-independent. Per-Study site facts (siteNumber, IRB approval) live in StudySite (clinical-research extension). MOVED to commons in v0.7 from prior clinical-trials placement."@en ;
+    skos:notation "topc:Site" ;
+    prov:Agent "prov:Agent" .
+
+topc:Document a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Document"@en ;
+    skos:altLabel "Record"@en, "File"@en, "Artifact"@en ;
+    skos:definition "Any file, record, or formal artifact across regulated workflows — protocol, SOP, IB, ICF, regulatory submission, audit report, validation record, training record, lab manual."@en ;
+    skos:notation "topc:Document" ;
+    prov:Entity "prov:Entity" .
+
+topc:Equipment a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Equipment"@en ;
+    skos:altLabel "Device"@en, "Instrument"@en ;
+    skos:definition "Any physical device or instrument used in operational work — centrifuge, MRI scanner, infusion pump, freezer, IoT temperature monitor, manufacturing equipment, ECG machine."@en ;
+    skos:notation "topc:Equipment" ;
+    prov:Entity "prov:Entity" .
+
+topc:System a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "System"@en ;
+    skos:altLabel "Software System"@en, "Application"@en ;
+    skos:definition "Any computerized / software system used in regulated workflows — EDC, CTMS, eTMF, ERP, EMR, IRT, LIMS, MES."@en ;
+    skos:scopeNote "System carries the three-axis pattern (operatedBy / usedBy / oversightHeldBy) for ICH E6(R3) Section 4.3 oversight semantics."@en ;
+    skos:notation "topc:System" ;
+    prov:Entity "prov:Entity" .
+
+topc:Log a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Log"@en ;
+    skos:altLabel "Audit Trail"@en, "Trail"@en ;
+    skos:definition "Any temporal trail — communication log, equipment monitoring log, audit log, training log, delegation log, IP accountability log."@en ;
+    skos:notation "topc:Log" ;
+    prov:Activity "prov:Activity" .
+
+topc:StorageLocation a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Storage Location"@en ;
+    skos:altLabel "Storage"@en, "Storage Slot"@en ;
+    skos:definition "Any storage facility or sub-facility — freezer slot, refrigerator shelf, secure cabinet, ambient pharmacy shelf, offsite vault."@en ;
+    skos:scopeNote "Equipment / StorageLocation distinction: a freezer is Equipment that PROVIDES multiple StorageLocations. The freezer-with-IoT-monitor case is the canonical example."@en ;
+    skos:notation "topc:StorageLocation" ;
+    prov:Entity "prov:Entity" .
+
+topc:Credential a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Credential"@en ;
+    skos:altLabel "Qualification"@en, "Certification"@en, "License"@en ;
+    skos:definition "Any qualification, license, or certification — institutional CLIA cert, professional license, GCP training cert, IATA shipping cert, equipment calibration."@en ;
+    skos:notation "topc:Credential" ;
+    prov:Entity "prov:Entity" .
+
+topc:Visit a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Visit"@en ;
+    skos:altLabel "Encounter"@en, "Appointment"@en ;
+    skos:definition "Any operational encounter — clinical visit, audit visit, supply-chain delivery visit, manufacturing site visit. Universal across workflows."@en ;
+    skos:scopeNote "Visit captures actual occurrences (a Participant attended on a date, a delivery happened at a warehouse). Protocol-defined visit templates are workflow-specific (e.g., topcr:VisitDefinition for clinical research). MOVED to commons in v0.7 from prior clinical-trials placement."@en ;
+    skos:notation "topc:Visit" ;
+    prov:Activity "prov:Activity" .
+
+topc:Event a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Event"@en ;
+    skos:altLabel "Occurrence"@en, "Incident"@en ;
+    skos:definition "Any categorized occurrence with severity, causality, and outcome — adverse event, manufacturing OOS event, hospital code blue, supply-chain temperature excursion, regulatory finding, equipment failure, safety signal."@en ;
+    skos:scopeNote "Event is universal across every workflow. eventCategory enum varies by workflow (AE/SAE/Deviation in clinical research; OOS/BatchFailure/Contamination in manufacturing; Code Blue/MedError/Fall in care delivery)."@en ;
+    skos:notation "topc:Event" .
+
+topc:OversightBody a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:CommonsSubstrate ;
+    skos:prefLabel "Oversight Body"@en ;
+    skos:altLabel "Review Committee"@en, "Ethics Board"@en ;
+    skos:definition "Any review committee with authority over operational work — IRB / EC, DSMB / IDMC, P&T committee, audit committee, ethics board, regulatory inspection authority."@en ;
+    skos:scopeNote "MOVED to commons in v0.7 from prior clinical-trials placement. Universal across regulated industries."@en ;
+    skos:notation "topc:OversightBody" ;
+    prov:Agent "prov:Agent" .
+
+
+# ====================================================================
+# Sub-concepts under Visit (commons)
+# ====================================================================
+
+topc:Activity a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Visit ;
+    skos:prefLabel "Activity"@en ;
+    skos:altLabel "Procedure"@en, "Assessment"@en, "Work Unit"@en ;
+    skos:definition "A unit of operational work performed at a Visit. Universal across workflow types — vitals, MRI, ePRO, biopsy, IP administration, manufacturing process step, sample collection."@en ;
+    skos:scopeNote "Per FIRST-PRINCIPLES universal-substrate posture, Activity is the same TOP entity shape regardless of activityType. Specialization is content (biomedicalConceptCode, taskValueType), never entity shape."@en ;
+    skos:notation "topc:Activity" ;
+    prov:Activity "prov:Activity" .
+
+topc:Task a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Activity ;
+    skos:prefLabel "Task"@en ;
+    skos:altLabel "Item"@en, "Measurement"@en, "Data Point"@en ;
+    skos:definition "A leaf data-capture unit — one Task per measurement, response, dose, or observation. Polymorphic taskValue (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE) covers any data shape."@en ;
+    skos:scopeNote "Task IS the CRF entry from the EDC perspective. Specialization happens in content via taskValueType + biomedicalConceptCode + URI references; NEVER via entity shape."@en ;
+    skos:notation "topc:Task" ;
+    prov:Activity "prov:Activity" .
+
+topc:VisitObservation a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topc:Visit ;
+    skos:prefLabel "Visit Observation"@en ;
+    skos:altLabel "Observation"@en, "Operator Note"@en ;
+    skos:definition "An operator-narrative observation captured during a Visit; may escalate to a categorized Event via the OOUX Path C reportability handoff."@en ;
+    skos:notation "topc:VisitObservation" ;
+    prov:Activity "prov:Activity" .
+
+
+# ====================================================================
+# Workflow Extensions — top concepts
+# ====================================================================
+
+top:ClinicalResearch a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:WorkflowExtensions ;
+    skos:prefLabel "Clinical Research"@en ;
+    skos:altLabel "Clinical Trials"@en ;
+    skos:definition "The workflow of running a clinical research study under regulatory protocol. Covers sponsor-investigator-site-participant collaboration, regulatory submission, and standards projection (FHIR ResearchSubject, SDTM DM/DS, USDM)."@en ;
+    skos:notation "topcr:" .
+
+top:CareDelivery a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:WorkflowExtensions ;
+    skos:prefLabel "Care Delivery"@en ;
+    skos:altLabel "Clinical Care"@en, "Hospital Operations"@en ;
+    skos:definition "The workflow of clinical care delivery — hospital operations, ambulatory care, telehealth. Future extension when care-delivery use cases drive it."@en ;
+    skos:scopeNote "Not yet lifted in v0.7. Future workflow extension."@en ;
+    skos:notation "topcd:" .
+
+top:Manufacturing a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:WorkflowExtensions ;
+    skos:prefLabel "Manufacturing"@en ;
+    skos:altLabel "GMP Manufacturing"@en ;
+    skos:definition "The workflow of running manufacturing operations — pharma, biotech, device manufacturing under GMP."@en ;
+    skos:scopeNote "Not yet lifted in v0.7. Future workflow extension."@en ;
+    skos:notation "topmfg:" .
+
+top:SupplyChain a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:WorkflowExtensions ;
+    skos:prefLabel "Supply Chain"@en ;
+    skos:altLabel "Logistics"@en ;
+    skos:definition "The workflow of running supply-chain operations — distribution, cold chain, sample logistics."@en ;
+    skos:scopeNote "Not yet lifted in v0.7. Future workflow extension."@en ;
+    skos:notation "topsc:" .
+
+
+# ====================================================================
+# Clinical Research workflow extension — top-level concepts (5)
+# ====================================================================
+
+topcr:Sponsor a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:ClinicalResearch ;
+    skos:prefLabel "Sponsor"@en ;
+    skos:definition "An operator-facing entity that captures one Organization's role on one Study (per-Org-per-Study pattern). Carries regulatory accountability, financial support, operational delegation, initiation distinctions."@en ;
+    skos:scopeNote "Sponsor is per-Organization-per-Study; the same Organization sponsoring multiple studies has multiple Sponsor entities. Backed by topc:Organization for corporate identity."@en ;
+    skos:notation "topcr:Sponsor" ;
+    prov:Agent "prov:Agent" .
+
+topcr:Study a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:ClinicalResearch ;
+    skos:prefLabel "Study"@en ;
+    skos:altLabel "Trial"@en, "Clinical Trial"@en ;
+    skos:definition "A research project intended to evaluate the effects of an intervention (interventional), characterize a population (observational), or provide expanded access. The central organizing entity of clinical research workflow."@en ;
+    skos:notation "topcr:Study" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Participant a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:ClinicalResearch ;
+    skos:prefLabel "Participant"@en ;
+    skos:altLabel "Subject"@en, "Trial Subject"@en ;
+    skos:definition "A real human enrolled in a Study at a StudySite. Per-Study scoping; the trial-conduct-realm role of the underlying human (a Patient in care delivery and a Participant in clinical research can be the same human in two role contexts)."@en ;
+    skos:scopeNote "Multi-realm projection: same human is a Participant in clinical research, a Patient in care delivery, a Claimant in claims, an RWE-Patient in research warehouses. TOP carries one realm; cross-realm identity resolution is federation."@en ;
+    skos:notation "topcr:Participant" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Recruit a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:ClinicalResearch ;
+    skos:prefLabel "Recruit"@en ;
+    skos:altLabel "Pre-Consent Subject"@en, "Funnel Entry"@en ;
+    skos:definition "A person in the recruitment funnel for a Study but not yet consented. Pre-consent realm; converts to Participant when consent is obtained."@en ;
+    skos:notation "topcr:Recruit" ;
+    prov:Entity "prov:Entity" .
+
+topcr:InvestigationalProduct a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:ClinicalResearch ;
+    skos:prefLabel "Investigational Product"@en ;
+    skos:altLabel "IP"@en, "Study Drug"@en, "Investigational Drug"@en ;
+    skos:definition "The substance, biologic, device, or combination product under investigation in a Study (drug, biologic, device, diagnostic, combination product)."@en ;
+    skos:notation "topcr:InvestigationalProduct" ;
+    prov:Entity "prov:Entity" .
+
+topcr:StudySite a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:ClinicalResearch ;
+    skos:prefLabel "Study Site"@en ;
+    skos:altLabel "Per-Study Site Pivot"@en ;
+    skos:definition "The per-Study site participation pivot. Captures a Site's role on a specific Study (siteNumber, enrollment target, IRB approval status, oversight tier, per-Study delegation)."@en ;
+    skos:scopeNote "RECLASSIFIED in v0.7 from commons (topc:) to clinical-research extension (topcr:). StudySite is clinical-research-specific despite being structurally a horizontal in earlier versions; the per-Study site concept doesn't generalize to manufacturing or care delivery."@en ;
+    skos:notation "topcr:StudySite" ;
+    prov:Agent "prov:Agent" .
+
+
+# ====================================================================
+# Clinical Research — Study sub-objects (7)
+# ====================================================================
+
+topcr:Protocol a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Protocol"@en ;
+    skos:definition "The canonical study-design document. Sub-object of Study."@en ;
+    skos:notation "topcr:Protocol" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Arm a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Arm"@en ;
+    skos:altLabel "Treatment Group"@en, "Cohort"@en ;
+    skos:definition "A study arm — treatment group, comparator (placebo / active / no-intervention / sham), or observational cohort."@en ;
+    skos:notation "topcr:Arm" ;
+    prov:Entity "prov:Entity" .
+
+topcr:ScheduleOfAssessments a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Schedule of Assessments"@en ;
+    skos:altLabel "SOA"@en ;
+    skos:definition "The visit-by-procedure matrix for the study; defines what happens when at each visit."@en ;
+    skos:notation "topcr:ScheduleOfAssessments" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Endpoint a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Endpoint"@en ;
+    skos:altLabel "Outcome Measure"@en ;
+    skos:definition "A measurable outcome used to evaluate the study's intervention or natural history (primary, secondary, exploratory, safety)."@en ;
+    skos:notation "topcr:Endpoint" ;
+    prov:Entity "prov:Entity" .
+
+topcr:InclusionCriterion a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Inclusion Criterion"@en ;
+    skos:definition "A specific characteristic potential Participants must have to be eligible for the Study."@en ;
+    skos:notation "topcr:InclusionCriterion" ;
+    prov:Entity "prov:Entity" .
+
+topcr:ExclusionCriterion a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Exclusion Criterion"@en ;
+    skos:definition "A specific characteristic that disqualifies potential Participants from the Study."@en ;
+    skos:notation "topcr:ExclusionCriterion" ;
+    prov:Entity "prov:Entity" .
+
+topcr:VisitDefinition a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Study ;
+    skos:prefLabel "Visit Definition"@en ;
+    skos:altLabel "Visit Template"@en, "Protocol Visit"@en ;
+    skos:definition "The protocol-defined visit template (per-Study schedule entry; USDM-ingest-derivable from StudyDesign.encounters[])."@en ;
+    skos:scopeNote "Distinct from topc:Visit (the operational occurrence). Visit Definitions are templates; Visits are runtime instantiations."@en ;
+    skos:notation "topcr:VisitDefinition" ;
+    prov:Entity "prov:Entity" .
+
+
+# ====================================================================
+# Clinical Research — Participant sub-objects (4)
+# ====================================================================
+
+topcr:InformedConsent a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Participant ;
+    skos:prefLabel "Informed Consent"@en ;
+    skos:altLabel "Consent Event"@en ;
+    skos:definition "An informed-consent event under GCP — when the Participant signed an ICF acknowledging the study's purpose, procedures, risks, and benefits."@en ;
+    skos:notation "topcr:InformedConsent" ;
+    prov:Activity "prov:Activity" .
+
+topcr:ScreeningRecord a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Participant ;
+    skos:prefLabel "Screening Record"@en ;
+    skos:definition "An eligibility-screening event for a Participant against the Study's inclusion/exclusion criteria."@en ;
+    skos:notation "topcr:ScreeningRecord" ;
+    prov:Activity "prov:Activity" .
+
+topcr:EnrollmentRecord a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Participant ;
+    skos:prefLabel "Enrollment Record"@en ;
+    skos:definition "The enrollment event — eligibility confirmed, on the trial."@en ;
+    skos:notation "topcr:EnrollmentRecord" ;
+    prov:Activity "prov:Activity" .
+
+topcr:WithdrawalRecord a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:Participant ;
+    skos:prefLabel "Withdrawal Record"@en ;
+    skos:altLabel "Discontinuation Record"@en ;
+    skos:definition "A withdrawal/discontinuation event."@en ;
+    skos:notation "topcr:WithdrawalRecord" ;
+    prov:Activity "prov:Activity" .
+
+
+# ====================================================================
+# Clinical Research — InvestigationalProduct sub-objects (2)
+# ====================================================================
+
+topcr:Lot a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:InvestigationalProduct ;
+    skos:prefLabel "Lot"@en ;
+    skos:altLabel "Batch"@en ;
+    skos:definition "A manufacturing batch of an InvestigationalProduct."@en ;
+    skos:scopeNote "When TOP-Manufacturing extension lifts, ManufacturingBatch may exist as a parallel concept; cross-extension reuse considered then."@en ;
+    skos:notation "topcr:Lot" ;
+    prov:Entity "prov:Entity" .
+
+topcr:Kit a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader topcr:InvestigationalProduct ;
+    skos:prefLabel "Kit"@en ;
+    skos:altLabel "Blinded Kit"@en, "IRT Kit"@en ;
+    skos:definition "A blinded packaging unit prepared from a Lot, assigned to a Participant via IRT (Interactive Response Technology). Required for blinded studies."@en ;
+    skos:notation "topcr:Kit" ;
+    prov:Entity "prov:Entity" .
+
+
+# ====================================================================
+# Concept count summary
+# ====================================================================
+# Commons substrate: 12 top-level + 3 sub-concepts under Visit = 15
+# Clinical Research extension: 6 top-level + 7 sub-objects under Study + 4 under Participant + 2 under IP = 19
+# Future workflow extensions (placeholders): 3
+# Total concepts: 15 + 19 + 3 + 2 (top concepts) = 39
