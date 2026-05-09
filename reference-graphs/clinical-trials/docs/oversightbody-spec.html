@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / OversightBody / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: #1a1a1a; background: #f4f4f1; padding: 22px 26px 32px; line-height: 1.55; font-size: 13px; }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #111; margin: 26px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #c8c8c0; }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr { background: #fff; border-left: 3px solid #1e6fd9; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; margin-bottom: 12px; font-size: 12px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th { background: #f0f0e9; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  .decision, .scenario { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 12px 16px; margin-bottom: 10px; }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves { font-size: 11.5px; background: #f7faf8; border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px; margin-top: 6px; line-height: 1.65; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .diagram { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 14px 16px; margin-bottom: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.7; white-space: pre; overflow-x: auto; }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="title">TOP / OversightBody / spec / v1</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.5.1-strawman) · seventh top-level · IRB / EC / DSMB / IDMC / Steering Committee / CEC · 2 new SHACL invariants (36 total)</div>
+</header>
+
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a substrate primitive — every regulated trial has oversight bodies</span></h2>
+
+<p class="tldr"><strong>OversightBody is the regulatory / ethics / safety committee with review authority over a Study or StudySite.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, OversightBody is a substrate primitive (every regulated trial has oversight bodies regardless of therapeutic area; not specialization). Six types via <span class="inline">oversightBodyType</span> enum: IRB (US institutional review), EC (EU ethics committees), DSMB / IDMC (sponsor-level safety review), Steering Committee (cross-site governance), CEC (clinical events adjudication). PROV: <span class="inline">prov:Agent</span> (committees bear responsibility); members act on behalf of the body via <span class="inline">prov:actedOnBehalfOf</span>. Status is a NGSI-LD temporal property — bodies can be SUSPENDED (regulatory hold) or DISBANDED (post-trial). Un-flag-misses three existing relationships: <span class="inline">Sponsor.interfacesWith</span>, <span class="inline">StudySite.hasIRB</span>, <span class="inline">Study.hasOversightBody</span>.</p>
+
+<h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor</h2>
+
+<div class="diagram">                          ┌─→ Sponsor      (interfacesWith — sponsor-engaged oversight)
+                          │
+OversightBody ────────────┼─→ Study        (reviewsStudy — multi-Study scope possible)
+                          │
+                          ├─→ StudySite    (reviewsStudySite — site-level IRB review)
+                          │
+                          └─→ Person[*]    (hasMember + chair)</div>
+
+<p>OversightBody is reached from three existing entities: Sponsor (DSMB/IDMC engagement), Study (sponsor-level oversight bodies), StudySite (site-level IRB review). Each role is a separate OversightBody record per the per-Org-per-Role pattern from Sponsor — the same human committee can play different oversightBodyType roles on different studies (a hospital IRB serves as central IRB for some, local IRB for others).</p>
+
+<h2 class="section" id="model"><span class="num">3.</span>Model summary</h2>
+
+<h3 class="subsection">OversightBody attributes (~14)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">oversightBodyId</td><td>NGSI-LD URI</td><td>Globally unique</td></tr>
+    <tr><td class="code">oversightBodyName</td><td>string</td><td>Display name</td></tr>
+    <tr><td class="code">oversightBodyType</td><td>enum (7) — IRB / EC / DSMB / IDMC / STEERING_COMMITTEE / CEC / OTHER</td><td>Operator-grounded discriminator</td></tr>
+    <tr><td class="code">scope</td><td>enum (5) — LOCAL / CENTRAL / SPONSOR / REGULATORY / OTHER</td><td>SHACL invariants enforce type/scope alignment</td></tr>
+    <tr><td class="code">registrationNumber</td><td>string · optional</td><td>FDA OHRP IRB number, EU EC reference, etc.</td></tr>
+    <tr><td class="code">registrationAuthority</td><td>string · optional</td><td>FDA OHRP, EU CTIS, NHS HRA, etc.</td></tr>
+    <tr><td class="code">registrationCountry</td><td>ISO 3166-1 alpha-3 · optional</td><td></td></tr>
+    <tr><td class="code">address / phone / email / website</td><td>various · optional</td><td>Contact</td></tr>
+    <tr><td class="code">operatingProcedure</td><td>URI · optional</td><td>Reference to charter / SOP Document</td></tr>
+    <tr><td class="code">establishedDate</td><td>date · optional</td><td></td></tr>
+    <tr><td class="code">status</td><td>enum (3) — ACTIVE / SUSPENDED / DISBANDED</td><td>NGSI-LD temporal property</td></tr>
+    <tr><td class="code">validFrom / validUntil</td><td>dateTime · optional</td><td>Operational validity bracket</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">OversightBody relationships (5)</h3>
+<table>
+  <thead><tr><th>Relationship</th><th>Target</th><th>Card.</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">belongsToOrganization</td><td>Organization</td><td>0..1</td><td>The hosting Organization (when one exists)</td></tr>
+    <tr><td class="code">hasMember</td><td>Person</td><td>0..N</td><td>Committee members; <span class="inline">prov:actedOnBehalfOf</span> the body</td></tr>
+    <tr><td class="code">chair</td><td>Person</td><td>0..1</td><td>Committee chair (0..1 because some bodies use co-chairs / rotating chairs)</td></tr>
+    <tr><td class="code">reviewsStudy</td><td>Study</td><td>0..N</td><td>Studies under review authority</td></tr>
+    <tr><td class="code">reviewsStudySite</td><td>StudySite</td><td>0..N</td><td>Site-level review (IRB / EC)</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="decisions"><span class="num">4.</span>Architectural decisions</h2>
+
+<div class="decision">
+  <div class="title">Decision 1 — Single OversightBody entity with type discriminator (universal substrate)</div>
+  <p>Per FIRST-PRINCIPLES universal-substrate posture: don't split into separate IRB / EC / DSMB / IDMC entities. One TOP entity shape; <span class="inline">oversightBodyType</span> enum carries the operator-grounded discrimination. Same architectural moat as the Activity + Task pattern in Visit: standards-up vendors model N entity types per oversight category; TOP carries one universal pattern.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2 — Per-Role-per-Study records (Sponsor pattern applied)</div>
+  <p>The same human committee (e.g., MSKCC IRB) can play different oversightBodyType roles on different studies. Each role gets a separate OversightBody record. Mirrors the Sponsor per-Organization-per-Study pattern — the substrate carries operational reality, not corporate ledger.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3 — PROV typing: prov:Agent (the body), prov:actedOnBehalfOf (members)</div>
+  <p>OversightBody is <span class="inline">prov:Agent</span> — committees bear responsibility for review decisions. The <span class="inline">hasMember</span> relationship carries <span class="inline">prov:actedOnBehalfOf</span> semantics (members act on behalf of the body). When ReviewDecision lifts as a sub-object (deferred to v0.6+), it becomes <span class="inline">prov:Activity</span> with <span class="inline">prov:wasAssociatedWith</span> linking to the OversightBody.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4 — Type/scope SHACL alignment</div>
+  <p>SHACL #35: IRB and EC must have scope LOCAL or CENTRAL (review boards have geographic / institutional scope). SHACL #36: DSMB and IDMC must have scope SPONSOR (sponsor-convened safety boards). Catches operational mismatches at validation time.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5 — Defer ReviewDecision sub-object to v0.6+</div>
+  <p>ReviewDecision (the Activity capturing a single review event with decision, conditions, next-review-date) is operationally meaningful but not blocking. v0.5.1 lifts the body itself; the review-event substrate adds when sponsors / IRBs need explicit decision tracking. Until then, IRB approvals are tracked on StudySite.irbApprovalStatus + irbApprovalDate (already in source).</p>
+</div>
+
+<h2 class="section" id="shacl"><span class="num">5.</span>SHACL invariants <span class="subnote">2 new (36 total)</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Severity</th><th>Constraint</th></tr></thead>
+  <tbody>
+    <tr><td>35</td><td>Hard</td><td><strong>IRB / EC scope must be LOCAL or CENTRAL.</strong> Review boards have geographic / institutional scope; SPONSOR or REGULATORY indicates a typing mismatch.</td></tr>
+    <tr><td>36</td><td>Hard</td><td><strong>DSMB / IDMC scope must be SPONSOR.</strong> These are sponsor-convened safety review boards.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="stress"><span class="num">6.</span>Stress-test scenarios</h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Local hospital IRB reviewing a study at one StudySite</div><div class="scn-tag">Common case</div></div>
+  <p>MSKCC IRB reviews ONCO-423 at the MSKCC site.</p>
+  <div class="resolves">OversightBody (oversightBodyType=IRB, scope=LOCAL, registrationNumber populated). belongsToOrganization → MSKCC. reviewsStudy → ONCO-423. reviewsStudySite → MSKCC's StudySite. SHACL #35 satisfied. (Mirrored in worked example.)</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Central IRB serving multiple sites in an SMO network</div><div class="scn-tag">Multi-site</div></div>
+  <p>Advarra Central IRB covers Elevate Network's three sites for ONCO-423.</p>
+  <div class="resolves">One OversightBody (oversightBodyType=IRB, scope=CENTRAL). Each of the three StudySite records (Boston, Phoenix, Miami) references the same OversightBody via hasIRB. Avoids the per-site-per-IRB pattern when central IRB applies. (Mirrored in elevate-network worked example.)</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Sponsor-convened DSMB for sponsor-level safety review</div><div class="scn-tag">DSMB</div></div>
+  <p>Pfizer convenes an IDMC for ONCO-423 to review interim safety data.</p>
+  <div class="resolves">OversightBody (oversightBodyType=IDMC, scope=SPONSOR, no belongsToOrganization since DSMBs are typically convened ad-hoc). reviewsStudy → ONCO-423. SHACL #36 satisfied. Members are external experts in oncology, biostatistics, ethics.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Same hospital committee, different roles on different studies</div><div class="scn-tag">Per-Role pattern</div></div>
+  <p>MSKCC's IRB committee serves as local IRB for ONCO-423 (multi-site sponsored trial) AND as central IRB for IIT-ONCO-001 (MSKCC's own IIT).</p>
+  <div class="resolves">Two OversightBody records: <span class="inline">OversightBody:mskcc-irb</span> (scope=LOCAL, reviewing ONCO-423) and <span class="inline">OversightBody:mskcc-irb-iit</span> (scope=LOCAL, reviewing IIT-ONCO-001). Same registration number, same hosting Organization. Per-Role-per-Study pattern preserved. (Both mirrored in worked examples.)</div>
+</div>
+
+<h2 class="section" id="open"><span class="num">7.</span>Open issues</h2>
+
+<ol>
+  <li><strong>ReviewDecision sub-object (v0.6+).</strong> Captures individual review events: decision (APPROVED / DISAPPROVED / SUSPENDED / TABLED), decisionDate, conditions, nextReviewDate, recordedBy. <span class="inline">prov:Activity</span> with <span class="inline">prov:wasAssociatedWith</span> the OversightBody. Lifts when sponsors / IRBs need explicit decision tracking beyond the existing StudySite.irbApprovalStatus.</li>
+  <li><strong>Member terms (validFrom/validUntil on hasMember relationship).</strong> Members rotate on/off committees; tracking term boundaries requires per-relationship temporal semantics. Defers; current per-entity validFrom captures body-level validity.</li>
+  <li><strong>Adjudication workflow integration.</strong> When CEC (Clinical Events Committee) adjudicates an endpoint or AE, the adjudication chain ties to Endpoint (when adjudication-result attribute lifts) or Event (when Event lifts in v0.7+).</li>
+  <li><strong>FHIR Organization profile alignment.</strong> FHIR has Organization with <span class="inline">type=committee</span> code values. The TOP→FHIR adapter projects OversightBody as Organization with appropriate type Code per the cross-walks in the source intermediate.</li>
+</ol>
+
+<div class="footer">
+  TOP / OversightBody / spec / v1 · backed by source/top-strawman.json (v0.5.1-strawman) · 2026-05-09<br>
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: substrate primitive (universal across therapeutic areas), native temporal+PROV (prov:Agent + status temporal property), operator-grounded vocabulary.
+</div>
+
+</div>
+</body>
+</html>

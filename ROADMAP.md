@@ -36,6 +36,15 @@ The clinical-trials reference graph is the first reference graph being built on 
 - **Chain-of-custody view** enabled — every Activity becomes queryable as a complete provenance chain (consent → performance → equipment-with-calibration → governing-SOP → captured-Tasks). Compliance vendors render this from hand-curated audit logs; TOP renders it from substrate facts in real time.
 - **Spec doc**: [`visit-spec.html`](reference-graphs/clinical-trials/docs/visit-spec.html).
 
+**OversightBody** is fully sealed at v0.5.1-strawman as the seventh top-level — IRB / EC / DSMB / IDMC / Steering Committee / CEC. Per FIRST-PRINCIPLES universal-substrate posture, OversightBody is a substrate primitive (every regulated trial has oversight bodies regardless of therapeutic area; not specialization). Single TOP entity with `oversightBodyType` enum carries the operator-grounded discrimination — same architectural moat as Activity + Task. Outcomes:
+
+- **OversightBody** (top-level) lifted with 14 attrs / 5 rels covering identity (registrationNumber + registrationAuthority + registrationCountry), type discriminator, scope, member roster + chair, and review-authority relationships to Study and StudySite. NGSI-LD temporal property on `status` (ACTIVE / SUSPENDED / DISBANDED).
+- **PROV typing**: OversightBody is `prov:Agent` (committees bear responsibility); `hasMember` carries `prov:actedOnBehalfOf` semantics (members act on behalf of the body). When ReviewDecision lifts (deferred to v0.6+), it becomes `prov:Activity` with `prov:wasAssociatedWith` linking to the OversightBody.
+- **Three flagged-missing relationships un-flagged**: `Sponsor.interfacesWith`, `StudySite.hasIRB`, `Study.hasOversightBody` now have a real target with sh:class enforcement active.
+- **2 new SHACL invariants** added (36 total: 5 soft + 31 hard). Type/scope alignment: IRB / EC require LOCAL or CENTRAL scope (review boards have geographic / institutional scope); DSMB / IDMC require SPONSOR scope (sponsor-convened safety boards).
+- **3 worked examples extended**: MSKCC IRB serving ONCO-423 + ONCO-423 IDMC at MSKCC; same IRB committee playing different roles on IIT-ONCO-001 (per-Role-per-Study pattern); Advarra Central IRB serving Elevate Network's three sites.
+- **Spec doc**: [`oversightbody-spec.html`](reference-graphs/clinical-trials/docs/oversightbody-spec.html).
+
 **Site** has lifted to v0.2.0-strawman as a combined Site + StudySite spec ([`site-spec.html`](reference-graphs/clinical-trials/docs/site-spec.html), 977 lines), with 14 verification questions pending Bo's review. The Site lift forced an architectural correction (Bo's "Site is the most important object, that's where trials operate" framing and the corrected operational hierarchy `Site → StudySite → Study → Protocol → SOA → Visit → Activity`). Outcomes:
 
 - **Site** (top-level) lifted from 3 attrs / 5 rels to 49 attrs / 10 rels with full SFQ feasibility coverage (therapeutic area experience, past trial experience, infrastructure, regulatory defaults, insurance, staff capacity).

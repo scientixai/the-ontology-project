@@ -170,6 +170,7 @@
     topc:irbApprovalStatus        "APPROVED" ;
     topc:irbApprovalDate          "2025-12-12"^^xsd:date ;
     topc:regulatoryAuthorizationStatus "APPROVED" ;
+    topc:hasIRB                   <urn:ngsi-ld:OversightBody:mskcc-irb> ;
     topc:forSite                  <urn:ngsi-ld:Site:mskcc-main> ;
     topc:forStudy                 <urn:ngsi-ld:Study:ONCO-423> ;
     topc:hasPrincipalInvestigator <urn:ngsi-ld:Person:patel> ;
@@ -716,3 +717,35 @@
     top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-ipadmin> ;
     top:performedBy            <urn:ngsi-ld:Person:patel> .
 
+
+# === OversightBody (lifted in v0.5.1) — MSKCC IRB and ONCO-423 DSMB ===
+
+<urn:ngsi-ld:OversightBody:mskcc-irb> a top:OversightBody ;
+    top:oversightBodyId        "urn:ngsi-ld:OversightBody:mskcc-irb"^^xsd:anyURI ;
+    top:oversightBodyName      "Memorial Sloan Kettering Cancer Center IRB" ;
+    top:oversightBodyType      "IRB" ;
+    top:scope                  "LOCAL" ;
+    top:registrationNumber     "IRB00000123" ;
+    top:registrationAuthority  "FDA OHRP" ;
+    top:registrationCountry    "USA" ;
+    top:phone                  "+1-212-555-0700" ;
+    top:email                  "irb@mskcc.example.org" ;
+    top:website                "https://example.org/mskcc/irb"^^xsd:anyURI ;
+    top:establishedDate        "1998-04-15"^^xsd:date ;
+    top:status                 "ACTIVE" ;
+    top:belongsToOrganization  <urn:ngsi-ld:Organization:mskcc> ;
+    top:hasMember              <urn:ngsi-ld:Person:director-research> ,
+                                <urn:ngsi-ld:Person:patel> ;
+    top:chair                  <urn:ngsi-ld:Person:director-research> ;
+    top:reviewsStudy           <urn:ngsi-ld:Study:ONCO-423> ;
+    topc:reviewsStudySite      <urn:ngsi-ld:StudySite:mskcc-onco423> .
+
+<urn:ngsi-ld:OversightBody:onco-423-dsmb> a top:OversightBody ;
+    top:oversightBodyId        "urn:ngsi-ld:OversightBody:onco-423-dsmb"^^xsd:anyURI ;
+    top:oversightBodyName      "ONCO-423 Independent Data Monitoring Committee" ;
+    top:oversightBodyType      "IDMC" ;
+    top:scope                  "SPONSOR" ;
+    top:registrationCountry    "USA" ;
+    top:establishedDate        "2025-11-20"^^xsd:date ;
+    top:status                 "ACTIVE" ;
+    top:reviewsStudy           <urn:ngsi-ld:Study:ONCO-423> .
