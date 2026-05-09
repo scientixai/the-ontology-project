@@ -19,7 +19,7 @@ If you are reading this in 2026 you are early. The clinical-research reference g
 - [`reference-graphs/clinical-trials/`](reference-graphs/clinical-trials/) — the `top:` namespace, the founding reference graph. Eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event.
 - [`tools/`](tools/) — the translator scaffold. `build_context.py` emits the JSON-LD `@context`. `build_shacl.py` emits the SHACL Turtle shapes. Stdlib only.
 - [`reference-patterns/`](reference-patterns/) — placeholder for role-specific projections and views (Sponsor PM Daily View, Investigator Today View, Regulator Audit View). Community-contributable. See [ROADMAP.md](ROADMAP.md) for the framework.
-- [`governance/`](governance/) — working group structure, RFC process, release process. Where new contributors learn the rules.
+- [`governance/`](governance/) — working group structure, RFC process, release process, and the [architectural decision log](governance/decision-log.md). Where new contributors learn the rules.
 - [`MANIFESTO.html`](MANIFESTO.html) — v0.2 manifesto with founding signatories.
 - [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued behind it, how community contributions enter the project.
 

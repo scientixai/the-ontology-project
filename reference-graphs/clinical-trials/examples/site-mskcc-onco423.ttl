@@ -421,6 +421,7 @@
     top:hasInformedConsent     <urn:ngsi-ld:InformedConsent:onco-423-mskcc-p001-c1> ;
     top:hasScreeningRecord     <urn:ngsi-ld:ScreeningRecord:onco-423-mskcc-p001-s1> ;
     top:hasEnrollmentRecord    <urn:ngsi-ld:EnrollmentRecord:onco-423-mskcc-p001-e1> ;
+    top:hasAdverseEvent        <urn:ngsi-ld:Event:onco-423-mskcc-p001-sae-001> ;
     top:convertedFromRecruit   <urn:ngsi-ld:Recruit:onco-423-mskcc-r001> .
 
 <urn:ngsi-ld:InformedConsent:onco-423-mskcc-p001-c1> a top:InformedConsent ;
@@ -796,3 +797,70 @@
     top:kitStatus              "DISPENSED" ;
     top:belongsToLot           <urn:ngsi-ld:Lot:drugx-2026-0117> ;
     top:assignedToParticipant  <urn:ngsi-ld:Participant:onco-423-mskcc-p001> .
+
+# === Events (lifted in v0.7.0) ===
+# One SAE (Grade 3 immune-related hepatitis emerging Day 13 post-dose) and one
+# protocol deviation (out-of-window lab draw). The SAE demonstrates the
+# regulatory-reportable + MedDRA + CTCAE + IP-causality pathway; the deviation
+# demonstrates the protocolDeviationCategory + impact pathway. Both attach to
+# Maria; the SAE links the suspected IP and the C1D1 administration Activity.
+
+# === Event #1 — SAE: Grade 3 Immune-Related Hepatitis ===
+
+<urn:ngsi-ld:Event:onco-423-mskcc-p001-sae-001> a top:Event ;
+    top:eventId                       "urn:ngsi-ld:Event:onco-423-mskcc-p001-sae-001"^^xsd:anyURI ;
+    top:eventCategory                 "SERIOUS_ADVERSE_EVENT" ;
+    top:eventType                     "Immune-related hepatitis (Grade 3)" ;
+    top:identifier                    "SAE-MSKCC-2026-001" ;
+    top:eventDate                     "2026-04-25T14:00:00Z"^^xsd:dateTime ;
+    top:detectedDate                  "2026-04-25T16:30:00Z"^^xsd:dateTime ;
+    top:reportedDate                  "2026-04-25T18:15:00Z"^^xsd:dateTime ;
+    top:description                   "Day 13 post-C1D1 ALT elevation 8x ULN (480 U/L), AST 6x ULN, total bilirubin 2.1 mg/dL. Asymptomatic; participant called for routine follow-up labs. Consistent with PD-L1 inhibitor immune-related adverse event per IB Section 6.4." ;
+    top:severity                      "SEVERE" ;
+    top:status                        "UNDER_REVIEW" ;
+    top:detectionSource               "ROUTINE_LAB" ;
+    top:causality                     "PROBABLY" ;
+    top:expectedness                  "EXPECTED" ;
+    top:regulatoryReportable          true ;
+    top:regulatoryReportDeadline      "2026-05-10T23:59:59Z"^^xsd:dateTime ;
+    top:regulatoryReportSubmitted     true ;
+    top:regulatoryReportSubmittedDate "2026-05-08T11:22:00Z"^^xsd:dateTime ;
+    top:meddraPreferredTerm           "Immune-mediated hepatitis" ;
+    top:meddraSystemOrganClass        "Hepatobiliary disorders" ;
+    top:ctcaeGrade                    "GRADE_3" ;
+    top:actionTakenWithIp             "DOSE_INTERRUPTED" ;
+    top:outcome                       "RECOVERING" ;
+    top:forStudy                      <urn:ngsi-ld:Study:ONCO-423> ;
+    top:forParticipant                <urn:ngsi-ld:Participant:onco-423-mskcc-p001> ;
+    top:forStudySite                  <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:relatedToInvestigationalProduct <urn:ngsi-ld:InvestigationalProduct:drugx> ;
+    top:relatedToLot                  <urn:ngsi-ld:Lot:drugx-2026-0117> ;
+    top:relatedToKit                  <urn:ngsi-ld:Kit:drugx-kit-00042> ;
+    top:reportedBy                    <urn:ngsi-ld:Person:patel> ;
+    top:assignedTo                    <urn:ngsi-ld:Person:patel> ;
+    top:reviewedBy                    <urn:ngsi-ld:OversightBody:onco-423-dsmb> .
+
+# === Event #2 — Protocol Deviation: out-of-window Day 8 labs ===
+
+<urn:ngsi-ld:Event:onco-423-mskcc-p001-dev-001> a top:Event ;
+    top:eventId                       "urn:ngsi-ld:Event:onco-423-mskcc-p001-dev-001"^^xsd:anyURI ;
+    top:eventCategory                 "DEVIATION" ;
+    top:eventType                     "Day 8 safety labs performed at Day 9 (out-of-window)" ;
+    top:identifier                    "DEV-MSKCC-2026-014" ;
+    top:eventDate                     "2026-04-21T09:30:00Z"^^xsd:dateTime ;
+    top:detectedDate                  "2026-04-21T10:00:00Z"^^xsd:dateTime ;
+    top:reportedDate                  "2026-04-21T15:45:00Z"^^xsd:dateTime ;
+    top:description                   "Per SOA, Day 8 safety labs were due 2026-04-20 (±1 day window). Participant rescheduled due to severe weather closure of MSKCC outpatient labs on 2026-04-20; labs drawn 2026-04-21 (Day 9). Within ±1 day operational tolerance but outside protocol-specified ±0 day window for Day 8." ;
+    top:severity                      "LOW" ;
+    top:status                        "CLOSED" ;
+    top:detectionSource               "MONITORING" ;
+    top:regulatoryReportable          false ;
+    top:regulatoryReportSubmitted     false ;
+    top:protocolDeviationCategory     "OUT_OF_WINDOW_VISIT" ;
+    top:protocolDeviationImpact       "MINOR" ;
+    top:outcome                       "RECOVERED" ;
+    top:forStudy                      <urn:ngsi-ld:Study:ONCO-423> ;
+    top:forParticipant                <urn:ngsi-ld:Participant:onco-423-mskcc-p001> ;
+    top:forStudySite                  <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:reportedBy                    <urn:ngsi-ld:Person:jones> ;
+    top:assignedTo                    <urn:ngsi-ld:Person:jones> .

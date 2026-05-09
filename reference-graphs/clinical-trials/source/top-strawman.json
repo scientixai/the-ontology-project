@@ -1,6 +1,6 @@
 {
-  "_comment": "TOP v0.6.0 reference graph intermediate (strawman). v0.6.0 lift (2026-05-09) adds InvestigationalProduct (IP) as the eighth top-level. Per FIRST-PRINCIPLES universal-substrate posture, IP is one entity for all product types \u2014 DRUG, BIOLOGIC, DEVICE, DIAGNOSTIC, COMBINATION_PRODUCT, OTHER \u2014 discriminated by investigationalProductType enum. IP supply chain modeled via two sub-objects: Lot (per-batch manufacturing/expiry/release) and Kit (per-blinded-packaging-unit for blinded studies; assigned to Participant via IRT). Dispensation events live as Visit Activities (already in v0.5) \u2014 no separate Dispensation sub-object needed; the universal Visit > Activity > Task substrate handles IP administration with activityType=IP_ADMINISTRATION + STRUCTURED taskValue carrying dose/lot/kit references. Un-flag-misses Sponsor.supplies, Study.suppliesInvestigationalProduct. Per temporal+PROV native: IP / Lot / Kit declare provType: prov:Entity (defined artifacts; Lot is a manufacturing batch; Kit is a packaging unit). Top-level count: 8 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody, InvestigationalProduct). Remaining: Event.",
-  "version": "0.6.0-strawman",
+  "_comment": "TOP v0.7.0 reference graph intermediate (strawman). v0.7.0 lift (2026-05-09) adds Event as the ninth and final OOUX-locked top-level. Per FIRST-PRINCIPLES universal-substrate posture, Event is a single container covering all clinical-trial occurrences requiring tracking, reporting, or escalation \u2014 Adverse Event, Serious Adverse Event, Deviation, Discrepancy, Safety Signal, Safety Report, Other Clinical Event \u2014 discriminated by eventCategory enum. Specialization is content (causality, expectedness, MedDRA term, CTCAE grade, protocolDeviationCategory); not entity shape. Per ICH E2A / E2B(R3) and 21 CFR 312.32, regulatory reportability is a first-class attribute with submission tracking. Per ICH E6(R3) Section 6, deviations carry category + impact. Un-flag-misses Participant.hasAdverseEvent, Visit.hasAdverseEvent, VisitObservation.escalatedTo. Per temporal+PROV native: Event declares provType: prov:Activity (the event IS the thing that happened); reportedBy \u2192 Person carries provSemantics: wasAssociatedWith; derivedFrom \u2192 VisitObservation carries provSemantics: wasInformedBy (escalation chain). Per the taxonomy migration table, Event is destined to split into topc:Event (universal primitive shape \u2014 every regulated workflow has Events) + topcr:Event (clinical-research specialization adding causality, MedDRA, CTCAE, IP causality, protocol-deviation discipline) in the upcoming namespace refactor. For v0.7 this lift co-locates both concerns under the existing top: prefix; the refactor PR will perform the split with no shape changes. Top-level count: 9 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody, InvestigationalProduct, Event). v0.7.0 SHACL adds 5 Event domain invariants (4 hard + 1 soft).",
+  "version": "0.7.0-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
   "namespaces": {
@@ -2002,8 +2002,7 @@
           "name": "hasAdverseEvent",
           "target": "Event",
           "cardinality": "0..N",
-          "doc": "Adverse-event records linked to this Participant.",
-          "_targetMissing": "Event is a top-level in OOUX (one of the locked 8) but not yet in TOP source."
+          "doc": "Adverse-event records linked to this Participant. The relationship is named for AE/SAE category Events (the operator vocabulary); the broader Event entity also covers Deviations, Discrepancies, Safety Signals, etc., reachable via Event.forParticipant inverse."
         },
         {
           "name": "hasTag",
@@ -2822,8 +2821,7 @@
           "name": "hasAdverseEvent",
           "target": "Event",
           "cardinality": "0..N",
-          "doc": "Adverse events identified at or attributed to this Visit. Flagged-missing until Event lifts.",
-          "_targetMissing": "Event is a top-level in OOUX-locked-9 but not yet in TOP source; lifts in v0.7+."
+          "doc": "Adverse events identified at or attributed to this Visit. Inverse of Event.duringVisit. As with Participant.hasAdverseEvent, the relationship label is operator-vocabulary; Event with category in {DEVIATION, DISCREPANCY, OTHER_CLINICAL_EVENT} arising during a Visit reach back through Event.duringVisit."
         },
         {
           "name": "hasTag",
@@ -3151,9 +3149,8 @@
               "name": "escalatedTo",
               "target": "Event",
               "cardinality": "0..1",
-              "doc": "When escalated, the categorized Event that resulted from this observation. PROV: the Event was wasInformedBy this observation.",
-              "provSemantics": "wasInformedBy",
-              "_targetMissing": "Event is a top-level in OOUX-locked-9 but not yet lifted; flagged-missing until v0.7+."
+              "doc": "When escalated, the categorized Event that resulted from this observation. PROV: the Event was wasInformedBy this observation. Inverse of Event.derivedFrom (operator-meaningful escalation chain).",
+              "provSemantics": "wasInformedBy"
             }
           ]
         }
@@ -3690,6 +3687,394 @@
               "doc": "The Participant the Kit is assigned to (post-IRT-assignment). 0..1 because Kits in IN_INVENTORY haven't been assigned yet. SHACL: kitStatus=ASSIGNED or DISPENSED requires this to be populated."
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "Event",
+      "role": "container for clinical-trial occurrences requiring tracking, reporting, or escalation",
+      "description": "An Event is a single container holding occurrences related to a Study lifecycle: Adverse Event (AE), Serious Adverse Event (SAE), Protocol Deviation, Data Discrepancy, Safety Signal, Safety Report, Other Clinical Event. Per FIRST-PRINCIPLES universal-substrate posture, Event is one entity for all categories — discriminated by eventCategory enum rather than split into specialized classes. Per ICH E2A / E2B(R3) and 21 CFR 312.32, regulatory reportability is a first-class attribute with submission timeline tracking. Per ICH E6(R3) Section 6, protocol deviations carry category and impact. Other Clinical Event carries derivedFrom back to a VisitObservation when a routine observation escalates to a tracked Event.",
+      "ooux_editor_note": "v0.7.0 introduction (2026-05-09): ninth and final TOP top-level. Per OOUX-locked-9 sequencing, Event closes the OOUX top-level set. Single Event entity with eventCategory enum discriminator (ADVERSE_EVENT / SERIOUS_ADVERSE_EVENT / DEVIATION / DISCREPANCY / SAFETY_SIGNAL / SAFETY_REPORT / OTHER_CLINICAL_EVENT). Universal-grade attributes (eventId, eventCategory, eventType, eventDate, description, severity, status, detectionSource, reportedBy/Date) live alongside clinical-research-specific attributes (causality, expectedness, MedDRA terms, CTCAE grade, protocolDeviationCategory, regulatoryReportable, regulatoryReportSubmitted, actionTakenWithIp, outcome) in this single shape; the upcoming namespace-refactor PR splits this into topc:Event (universal) + topcr:Event (specialization). Un-flag-misses Participant.hasAdverseEvent, Visit.hasAdverseEvent, VisitObservation.escalatedTo. Per temporal+PROV native: Event is prov:Activity (the event IS what happened); reportedBy → Person carries wasAssociatedWith; derivedFrom → VisitObservation carries wasInformedBy (operator escalation chain). Five SHACL-SPARQL domain invariants emitted by build_shacl.py (4 hard + 1 soft): SAE requires regulatoryReportable=true; ctcaeGrade only valid for AE/SAE; protocolDeviationCategory only valid for DEVIATION; regulatoryReportSubmitted=true requires regulatoryReportSubmittedDate; soft warning when regulatoryReportable=true and regulatoryReportDeadline is past with regulatoryReportSubmitted=false (overdue).",
+      "provType": "prov:Activity",
+      "crosswalks": {
+        "fhir": "fhir:AdverseEvent (for AE/SAE) · fhir:DetectedIssue (for DISCREPANCY) · fhir:Communication (for SAFETY_REPORT) · fhir:ResearchSubject.progress (for status transitions)",
+        "usdm": "usdm:Event",
+        "sdtm": "sdtm:AE (Adverse Events) · sdtm:DV (Protocol Deviations) · sdtm:DD (Data Discrepancies)",
+        "cdash": "cdash:AE · cdash:DV",
+        "ich": "ICH E2A (Safety Reporting) · ICH E2B(R3) (Individual Case Safety Reports) · ICH E6(R3) Section 6 (Deviations) · 21 CFR 312.32 (IND Safety Reporting) · ICH E9(R1) (Estimands and missing-data discipline interacts with deviations)"
+      },
+      "attributes": [
+        {
+          "name": "eventId",
+          "type": "ngsi-ld:URI",
+          "unique": true,
+          "doc": "Globally unique NGSI-LD identifier."
+        },
+        {
+          "name": "eventCategory",
+          "type": "xsd:string",
+          "enum": [
+            "ADVERSE_EVENT",
+            "SERIOUS_ADVERSE_EVENT",
+            "DEVIATION",
+            "DISCREPANCY",
+            "SAFETY_SIGNAL",
+            "SAFETY_REPORT",
+            "OTHER_CLINICAL_EVENT"
+          ],
+          "doc": "Discriminator across the Event categories. ADVERSE_EVENT for any untoward medical occurrence; SERIOUS_ADVERSE_EVENT for SAEs (death, life-threatening, hospitalization, persistent disability, congenital anomaly, medically important — ICH E2A definition); DEVIATION for protocol deviations (ICH E6 Section 6); DISCREPANCY for data discrepancies surfaced during cleaning; SAFETY_SIGNAL for aggregate safety signals (cross-participant trends); SAFETY_REPORT for E2B(R3) Individual Case Safety Reports submitted to regulators; OTHER_CLINICAL_EVENT for catch-all escalations (e.g., an unusual VisitObservation that doesn't fit AE but warrants tracking)."
+        },
+        {
+          "name": "eventType",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Free-form workflow-domain term for the specific occurrence (e.g., 'Grade 3 nausea', 'Missed visit window', 'Lab discrepancy: alkaline phosphatase'). Not a controlled vocabulary at this layer; controlled vocabulary lives in meddraPreferredTerm (for AE/SAE) or protocolDeviationCategory (for DEVIATION)."
+        },
+        {
+          "name": "eventDate",
+          "type": "xsd:dateTime",
+          "doc": "When the event occurred (or, for ongoing events, when it began). NGSI-LD temporal property — events have a real-world timeline distinct from when they were reported. PROV: this is the prov:atTime of the prov:Activity.",
+          "_temporalProperty": true,
+          "provSemantics": "atTime"
+        },
+        {
+          "name": "detectedDate",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "_temporalProperty": true,
+          "doc": "When the event was detected (which may be later than when it occurred — e.g., a Grade 1 AE noticed retroactively at the next visit, or a discrepancy surfaced during data cleaning weeks after data entry)."
+        },
+        {
+          "name": "reportedDate",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "_temporalProperty": true,
+          "doc": "When the event was formally reported into the trial system. For SAEs, this anchors the 24-hour / 7-day / 15-day reporting clocks."
+        },
+        {
+          "name": "description",
+          "type": "xsd:string",
+          "doc": "Operator-grounded narrative description. For AE/SAE this is the verbatim term; for DEVIATION the deviation narrative; for DISCREPANCY the specific data quality issue."
+        },
+        {
+          "name": "severity",
+          "type": "xsd:string",
+          "enum": [
+            "MILD",
+            "MODERATE",
+            "SEVERE",
+            "LIFE_THREATENING",
+            "FATAL",
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL"
+          ],
+          "optional": true,
+          "doc": "Severity grading. MILD/MODERATE/SEVERE/LIFE_THREATENING/FATAL for AE/SAE per CTCAE/ICH E2A; LOW/MEDIUM/HIGH/CRITICAL for non-clinical event categories (DEVIATION, DISCREPANCY). Mutually-exclusive scales kept in one enum for substrate simplicity; controlled-vocabulary projection at the adapter layer enforces the right scale per category."
+        },
+        {
+          "name": "status",
+          "type": "xsd:string",
+          "enum": [
+            "REPORTED",
+            "UNDER_REVIEW",
+            "ASSESSED",
+            "RESOLVED",
+            "ONGOING",
+            "CLOSED"
+          ],
+          "_temporalProperty": true,
+          "doc": "Lifecycle state. NGSI-LD temporal property — Events transition REPORTED → UNDER_REVIEW → ASSESSED → (RESOLVED|ONGOING) → CLOSED with full audit trail."
+        },
+        {
+          "name": "detectionSource",
+          "type": "xsd:string",
+          "enum": [
+            "VISIT_OBSERVATION",
+            "SELF_REPORT",
+            "EXTERNAL_REPORT",
+            "MONITORING",
+            "ROUTINE_LAB",
+            "DATA_CLEANING",
+            "AGGREGATE_REVIEW",
+            "OTHER"
+          ],
+          "optional": true,
+          "doc": "How the Event was detected. VISIT_OBSERVATION pairs with derivedFrom (the routine observation that escalated); SELF_REPORT is participant-initiated; EXTERNAL_REPORT covers ER visits, hospitalizations reported by family/caregiver; MONITORING surfaces during CRA review; ROUTINE_LAB for lab-flagged values; DATA_CLEANING for query-driven discrepancies; AGGREGATE_REVIEW for cross-participant safety signals."
+        },
+        {
+          "name": "identifier",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Workflow-issued identifier (e.g., 'AE-2026-0014', 'DEV-MSKCC-008'). Distinct from eventId (URI); identifier is the human-meaningful reference operators use in narratives and CAPAs."
+        },
+        {
+          "name": "causality",
+          "type": "xsd:string",
+          "enum": [
+            "UNRELATED",
+            "UNLIKELY",
+            "POSSIBLY",
+            "PROBABLY",
+            "DEFINITELY",
+            "NOT_ASSESSABLE"
+          ],
+          "optional": true,
+          "doc": "Investigator's causality assessment relative to the InvestigationalProduct. Required field for AE/SAE per ICH E2A; not applicable to DEVIATION or DISCREPANCY. The action taken with IP (actionTakenWithIp) often correlates with causality but is recorded separately."
+        },
+        {
+          "name": "expectedness",
+          "type": "xsd:string",
+          "enum": [
+            "EXPECTED",
+            "UNEXPECTED"
+          ],
+          "optional": true,
+          "doc": "Whether the event is expected per the Investigator's Brochure (IB). UNEXPECTED + SERIOUS + IP-related = SUSAR (Suspected Unexpected Serious Adverse Reaction) — the highest-priority regulatory reporting category per ICH E2A."
+        },
+        {
+          "name": "regulatoryReportable",
+          "type": "xsd:boolean",
+          "doc": "Whether this event triggers a regulatory submission (e.g., to FDA via E2B, to EMA via EudraVigilance). SHACL invariant: SERIOUS_ADVERSE_EVENT must have regulatoryReportable=true."
+        },
+        {
+          "name": "regulatoryReportDeadline",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "_temporalProperty": true,
+          "doc": "Deadline for regulatory submission. SUSARs: 7 days for fatal/life-threatening, 15 days for other; non-SUSAR SAEs: 15 days; periodic safety reports vary. SHACL soft warning when this is in the past and regulatoryReportSubmitted is still false (overdue)."
+        },
+        {
+          "name": "regulatoryReportSubmitted",
+          "type": "xsd:boolean",
+          "_temporalProperty": true,
+          "doc": "Whether the regulatory report has been submitted. NGSI-LD temporal property — flips from false to true once submission lands. SHACL invariant: when true, regulatoryReportSubmittedDate must be populated."
+        },
+        {
+          "name": "regulatoryReportSubmittedDate",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "_temporalProperty": true,
+          "doc": "Date/time the regulatory report was submitted. Anchors compliance audit trails — comparing this to eventDate validates timeline compliance."
+        },
+        {
+          "name": "meddraPreferredTerm",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "MedDRA Preferred Term (PT) for AE/SAE coding. Controlled vocabulary; CDISC-pipeline manifest carries the active MedDRA version. Required for AE/SAE that submit to E2B."
+        },
+        {
+          "name": "meddraSystemOrganClass",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "MedDRA System Organ Class (SOC). Highest level in the MedDRA hierarchy; derived from PT but stored separately for query convenience and aggregate reporting."
+        },
+        {
+          "name": "ctcaeGrade",
+          "type": "xsd:string",
+          "enum": [
+            "GRADE_1",
+            "GRADE_2",
+            "GRADE_3",
+            "GRADE_4",
+            "GRADE_5"
+          ],
+          "optional": true,
+          "doc": "CTCAE grading per CTCAE 5.0 (NCI Common Terminology Criteria for Adverse Events). 1=Mild, 2=Moderate, 3=Severe, 4=Life-threatening, 5=Death. SHACL invariant: ctcaeGrade only valid when eventCategory IN {ADVERSE_EVENT, SERIOUS_ADVERSE_EVENT}."
+        },
+        {
+          "name": "actionTakenWithIp",
+          "type": "xsd:string",
+          "enum": [
+            "NONE",
+            "DOSE_REDUCED",
+            "DOSE_INTERRUPTED",
+            "DOSE_DISCONTINUED",
+            "NEW_TREATMENT_INITIATED",
+            "NOT_APPLICABLE",
+            "UNKNOWN"
+          ],
+          "optional": true,
+          "doc": "Action taken with the InvestigationalProduct in response to the event. Per ICH E2A required AE field. NOT_APPLICABLE for DEVIATION / DISCREPANCY events."
+        },
+        {
+          "name": "outcome",
+          "type": "xsd:string",
+          "enum": [
+            "RECOVERED",
+            "RECOVERING",
+            "NOT_RECOVERED",
+            "RECOVERED_WITH_SEQUELAE",
+            "FATAL",
+            "UNKNOWN"
+          ],
+          "optional": true,
+          "doc": "Clinical outcome of the event. Required for AE/SAE per E2A; not applicable to DEVIATION."
+        },
+        {
+          "name": "protocolDeviationCategory",
+          "type": "xsd:string",
+          "enum": [
+            "INCLUSION_VIOLATION",
+            "EXCLUSION_VIOLATION",
+            "INFORMED_CONSENT",
+            "MISSED_VISIT",
+            "MISSED_PROCEDURE",
+            "OUT_OF_WINDOW_VISIT",
+            "IP_NONCOMPLIANCE",
+            "RANDOMIZATION_ERROR",
+            "BLINDING_BREAK",
+            "OTHER"
+          ],
+          "optional": true,
+          "doc": "Categorization of protocol deviations per ICH E6(R3) Section 6. SHACL invariant: protocolDeviationCategory only valid when eventCategory=DEVIATION."
+        },
+        {
+          "name": "protocolDeviationImpact",
+          "type": "xsd:string",
+          "enum": [
+            "NONE",
+            "MINOR",
+            "MAJOR",
+            "CRITICAL"
+          ],
+          "optional": true,
+          "doc": "Impact assessment for DEVIATION events per ICH E6(R3). MAJOR/CRITICAL deviations require root-cause analysis and CAPA."
+        },
+        {
+          "name": "validFrom",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this Event record became operationally valid."
+        },
+        {
+          "name": "validUntil",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this Event record was superseded or invalidated (e.g., reclassified after assessment)."
+        }
+      ],
+      "relationships": [
+        {
+          "name": "forStudy",
+          "target": "Study",
+          "cardinality": "1..1",
+          "doc": "The Study this Event belongs to. Required — every Event ties to exactly one Study lifecycle."
+        },
+        {
+          "name": "forParticipant",
+          "target": "Participant",
+          "cardinality": "0..1",
+          "doc": "The Participant the Event concerns (when applicable). 0..1 because some DEVIATION events (e.g., procedural failures, system outages) don't map to a single Participant; aggregate SAFETY_SIGNAL events may span participants and are queried via causedBy."
+        },
+        {
+          "name": "forStudySite",
+          "target": "StudySite",
+          "cardinality": "0..1",
+          "doc": "The StudySite where the Event occurred or was detected. Critical for site-level monitoring and CAPA scoping."
+        },
+        {
+          "name": "duringVisit",
+          "target": "Visit",
+          "cardinality": "0..1",
+          "doc": "The Visit during which the Event was detected (when applicable). Pairs with derivedFrom when detection happened via VisitObservation escalation."
+        },
+        {
+          "name": "relatedToInvestigationalProduct",
+          "target": "InvestigationalProduct",
+          "cardinality": "0..1",
+          "doc": "The IP suspected of causing or being relevant to the Event. Required for AE/SAE events where causality is being assessed; populated alongside causality and actionTakenWithIp."
+        },
+        {
+          "name": "relatedToLot",
+          "target": "Lot",
+          "cardinality": "0..1",
+          "doc": "Specific Lot of IP relevant to the Event. Critical for safety signals tied to a manufacturing batch (e.g., a recall trigger)."
+        },
+        {
+          "name": "relatedToKit",
+          "target": "Kit",
+          "cardinality": "0..1",
+          "doc": "Specific Kit involved in the Event (for blinded studies). Pairs with IP_NONCOMPLIANCE deviations and BLINDING_BREAK events."
+        },
+        {
+          "name": "reportedBy",
+          "target": "Person",
+          "cardinality": "1..1",
+          "doc": "The Person who reported the Event into the trial system. For AE/SAE typically the investigator or coordinator; for DEVIATION the monitor or coordinator. PROV: the event was wasAssociatedWith this Person.",
+          "provSemantics": "wasAssociatedWith"
+        },
+        {
+          "name": "assignedTo",
+          "target": "Person",
+          "cardinality": "0..1",
+          "doc": "The Person responsible for assessing/closing the Event (e.g., investigator for AE causality assessment, sponsor safety lead for SAE workup). PROV: prov:wasAssociatedWith with prov:hadRole assessor.",
+          "provSemantics": "wasAssociatedWith"
+        },
+        {
+          "name": "derivedFrom",
+          "target": "VisitObservation",
+          "cardinality": "0..1",
+          "doc": "The VisitObservation this Event was escalated from (when detectionSource=VISIT_OBSERVATION). PROV: this Event was wasInformedBy that observation. The escalation chain is operator-meaningful: a routine vital-sign observation escalates to a tracked AE Event with explicit lineage.",
+          "provSemantics": "wasInformedBy"
+        },
+        {
+          "name": "partOf",
+          "target": "Event",
+          "cardinality": "0..1",
+          "doc": "Parent Event when this Event is a sub-component (e.g., an SAE that aggregates multiple precursor AEs; a Safety Signal aggregating individual AEs). Self-reference for nesting."
+        },
+        {
+          "name": "causedBy",
+          "target": "Event",
+          "cardinality": "0..N",
+          "doc": "Causal predecessor Events (e.g., a SAFETY_SIGNAL caused by a cluster of AEs; a SAFETY_REPORT caused by one or more SAEs). PROV: this Event was wasInformedBy these Events.",
+          "provSemantics": "wasInformedBy"
+        },
+        {
+          "name": "reviewedBy",
+          "target": "OversightBody",
+          "cardinality": "0..N",
+          "doc": "OversightBodies that reviewed this Event. DSMB/IDMC review SAEs and Safety Signals; IRB reviews aggregate safety reports per submitted updates; CEC adjudicates endpoint events."
+        },
+        {
+          "name": "documentedIn",
+          "target": "Document",
+          "cardinality": "0..N",
+          "doc": "Supporting documents — MedWatch 3500A forms, narrative documents, CIOMS forms, CAPA records, deviation reports."
+        }
+      ],
+      "ctas": [
+        {
+          "action": "Report Adverse Event",
+          "persona": "Investigator / Coordinator",
+          "note": "Create an Event with eventCategory=ADVERSE_EVENT or SERIOUS_ADVERSE_EVENT, populate severity, eventDate, MedDRA term, CTCAE grade, causality, action with IP, outcome."
+        },
+        {
+          "action": "Escalate to SAE",
+          "persona": "Investigator / Safety Lead",
+          "note": "Reclassify an existing AE Event to SERIOUS_ADVERSE_EVENT, set regulatoryReportable=true, populate regulatoryReportDeadline per E2B timeline, link parent AE via partOf."
+        },
+        {
+          "action": "Document Protocol Deviation",
+          "persona": "Coordinator / Monitor",
+          "note": "Create an Event with eventCategory=DEVIATION, populate protocolDeviationCategory and protocolDeviationImpact, link to the affected Visit via duringVisit."
+        },
+        {
+          "action": "Submit Regulatory Report",
+          "persona": "Sponsor Safety / Regulatory",
+          "note": "Set regulatoryReportSubmitted=true and regulatoryReportSubmittedDate; attach E2B XML or CIOMS PDF via documentedIn."
+        },
+        {
+          "action": "Aggregate Safety Signal",
+          "persona": "Sponsor Safety / Pharmacovigilance",
+          "note": "Create a SAFETY_SIGNAL Event, link the constituent AE Events via causedBy, attach DSMB review via reviewedBy."
+        },
+        {
+          "action": "Close Event",
+          "persona": "Investigator / Safety",
+          "note": "Transition status to CLOSED after outcome is final and any required regulatory report has been submitted. NGSI-LD temporal history preserves the lifecycle."
         }
       ]
     }
