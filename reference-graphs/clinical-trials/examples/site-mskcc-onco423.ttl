@@ -749,3 +749,50 @@
     top:establishedDate        "2025-11-20"^^xsd:date ;
     top:status                 "ACTIVE" ;
     top:reviewsStudy           <urn:ngsi-ld:Study:ONCO-423> .
+
+# === InvestigationalProduct (lifted in v0.6.0) — Drug X ===
+
+<urn:ngsi-ld:InvestigationalProduct:drugx> a top:InvestigationalProduct ;
+    top:investigationalProductId   "urn:ngsi-ld:InvestigationalProduct:drugx"^^xsd:anyURI ;
+    top:investigationalProductName "Drug X" ;
+    top:genericName                "investigational anti-PD-L1 monoclonal antibody" ;
+    top:investigationalProductType "BIOLOGIC" ;
+    top:mechanismOfAction          "PD-L1 checkpoint inhibitor" ;
+    top:dosageForm                 "INFUSION" ;
+    top:routeOfAdministration      "IV" ;
+    top:strength                   "200 mg/vial" ;
+    top:isBlinded                  true ;
+    top:regulatoryStatus           "INVESTIGATIONAL" ;
+    top:regulatorySource           "FDA IND #154321" ;
+    top:biomedicalConceptCode      "C172310" ;
+    top:investigationalProductStatus "IN_USE" ;
+    top:suppliedBySponsor          <urn:ngsi-ld:Sponsor:pfizer-onco423-fda> ;
+    top:forStudy                   <urn:ngsi-ld:Study:ONCO-423> ;
+    top:hasLot                     <urn:ngsi-ld:Lot:drugx-2026-0117> ;
+    top:hasKit                     <urn:ngsi-ld:Kit:drugx-kit-00042> .
+
+# === Lot (sub-object) — manufacturing batch ===
+
+<urn:ngsi-ld:Lot:drugx-2026-0117> a top:Lot ;
+    top:lotId                  "urn:ngsi-ld:Lot:drugx-2026-0117"^^xsd:anyURI ;
+    top:lotNumber              "DRX-2026-0117" ;
+    top:manufacturedDate       "2026-01-15"^^xsd:date ;
+    top:releaseDate            "2026-02-12"^^xsd:date ;
+    top:expirationDate         "2027-07-15"^^xsd:date ;
+    top:retestDate             "2027-01-15"^^xsd:date ;
+    top:manufacturer           "Pfizer Andover BioFacility" ;
+    top:manufacturingFacility  "Andover, MA, USA" ;
+    top:quantityProduced       2400 ;
+    top:lotStatus              "DISTRIBUTED" .
+
+# === Kit (sub-object) — Maria's blinded kit, dispensed at C1D1 ===
+
+<urn:ngsi-ld:Kit:drugx-kit-00042> a top:Kit ;
+    top:kitId                  "urn:ngsi-ld:Kit:drugx-kit-00042"^^xsd:anyURI ;
+    top:kitNumber              "KIT-00042" ;
+    top:packagedDate           "2026-02-20"^^xsd:date ;
+    top:treatmentAssignment    "TREATMENT_A" ;
+    top:assignmentDate         "2026-04-12"^^xsd:date ;
+    top:kitStatus              "DISPENSED" ;
+    top:belongsToLot           <urn:ngsi-ld:Lot:drugx-2026-0117> ;
+    top:assignedToParticipant  <urn:ngsi-ld:Participant:onco-423-mskcc-p001> .

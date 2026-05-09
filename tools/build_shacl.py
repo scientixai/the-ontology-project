@@ -1128,6 +1128,97 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === InvestigationalProduct invariants (v0.6.0) ===
+    invariants.append("# === InvestigationalProduct invariants (v0.6.0) ===")
+    invariants.append("")
+
+    # 37. Hard: an InvestigationalProduct with isBlinded=true must have at least
+    #     one Kit. Blinded studies require kit-level packaging for masking.
+    invariants.append(sub("""__P__:IPBlindedNeedsKitShape a sh:NodeShape ;
+    sh:targetClass __P__:InvestigationalProduct ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "InvestigationalProduct has isBlinded=true but no hasKit. Blinded studies require Kit sub-objects for IRT-managed treatment-assignment masking." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:InvestigationalProduct .
+                $this __P__:isBlinded true .
+                FILTER NOT EXISTS { $this __P__:hasKit ?k }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 38. Hard: a Kit with kitStatus in {ASSIGNED, DISPENSED} must have
+    #     assignedToParticipant populated.
+    invariants.append(sub("""__P__:KitAssignedNeedsParticipantShape a sh:NodeShape ;
+    sh:targetClass __P__:Kit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Kit has kitStatus in {ASSIGNED, DISPENSED} but no assignedToParticipant. Assigned and dispensed kits must reference the Participant." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Kit .
+                $this __P__:kitStatus ?status .
+                FILTER (?status IN ("ASSIGNED", "DISPENSED"))
+                FILTER NOT EXISTS { $this __P__:assignedToParticipant ?p }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 39. Soft warning: a Lot with expirationDate in the past should have
+    #     lotStatus=EXPIRED. Surfaces lots that should be retired but aren't
+    #     yet flagged. xsd:date is cast through xsd:dateTime for robust comparison
+    #     with NOW() across rdflib versions.
+    invariants.append(sub("""__P__:LotPastExpiryNeedsExpiredStatusShape a sh:NodeShape ;
+    sh:targetClass __P__:Lot ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Lot has expirationDate in the past but lotStatus is not EXPIRED, RECALLED, or DESTROYED. Verify the lot has been retired from active distribution." ;
+        sh:severity sh:Warning ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+                $this a __P__:Lot .
+                $this __P__:expirationDate ?exp .
+                $this __P__:lotStatus ?status .
+                BIND (xsd:dateTime(CONCAT(STR(?exp), "T23:59:59Z")) AS ?expDT)
+                FILTER (?expDT < NOW())
+                FILTER (?status NOT IN ("EXPIRED", "RECALLED", "DESTROYED"))
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 40. Hard: a Lot with lotStatus=EXPIRED must have expirationDate populated
+    #     and <= today (cast through xsd:dateTime for robust comparison).
+    invariants.append(sub("""__P__:LotExpiredNeedsPastExpiryShape a sh:NodeShape ;
+    sh:targetClass __P__:Lot ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Lot has lotStatus=EXPIRED but expirationDate is missing or in the future. EXPIRED status requires a past expiration date." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+                $this a __P__:Lot .
+                $this __P__:lotStatus "EXPIRED" .
+                FILTER (NOT EXISTS { $this __P__:expirationDate ?exp } ||
+                        EXISTS { $this __P__:expirationDate ?exp .
+                                 BIND (xsd:dateTime(CONCAT(STR(?exp), "T00:00:00Z")) AS ?expDT)
+                                 FILTER (?expDT > NOW()) })
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -1195,7 +1286,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 36 (5 soft warnings + 31 hard violations)")
+    print(f"  domain invariants: 40 (6 soft warnings + 34 hard violations)")
 
 
 if __name__ == "__main__":
