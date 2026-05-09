@@ -526,3 +526,193 @@
     top:forStudy                <urn:ngsi-ld:Study:ONCO-423> ;
     top:forStudySite            <urn:ngsi-ld:StudySite:mskcc-onco423> ;
     top:recruitedBy             <urn:ngsi-ld:Person:jones> .
+
+# === VisitDefinition (Study sub-object, lifted in v0.5.0) — protocol templates ===
+
+<urn:ngsi-ld:VisitDefinition:ONCO-423-screening> a top:VisitDefinition ;
+    top:visitDefinitionId      "urn:ngsi-ld:VisitDefinition:ONCO-423-screening"^^xsd:anyURI ;
+    top:visitNumber            "Screening" ;
+    top:visitName              "Screening Visit" ;
+    top:visitDay               -7 ;
+    top:visitWindowMinDays     -28 ;
+    top:visitWindowMaxDays     0 ;
+    top:expectedDurationMinutes 180 ;
+    top:description            "Eligibility verification, informed consent, baseline labs, ECG, imaging." ;
+    top:visitDefinitionStatus  "EFFECTIVE" .
+
+<urn:ngsi-ld:VisitDefinition:ONCO-423-c1d1> a top:VisitDefinition ;
+    top:visitDefinitionId      "urn:ngsi-ld:VisitDefinition:ONCO-423-c1d1"^^xsd:anyURI ;
+    top:visitNumber            "C1D1" ;
+    top:visitName              "Cycle 1 Day 1" ;
+    top:visitDay               1 ;
+    top:visitWindowMinDays     -3 ;
+    top:visitWindowMaxDays     3 ;
+    top:expectedDurationMinutes 240 ;
+    top:description            "First treatment dose. Pre-dose vitals, labs, ECG; IP infusion; post-infusion observation." ;
+    top:visitDefinitionStatus  "EFFECTIVE" .
+
+# === Visit (occurrence) — Maria's Cycle 1 Day 1 visit ===
+
+<urn:ngsi-ld:Visit:onco-423-mskcc-p001-c1d1> a top:Visit ;
+    top:visitId                "urn:ngsi-ld:Visit:onco-423-mskcc-p001-c1d1"^^xsd:anyURI ;
+    top:visitNumber            "C1D1" ;
+    top:visitName              "Cycle 1 Day 1" ;
+    top:visitMode              "IN_PERSON_CLINIC" ;
+    top:visitStatus            "COMPLETED" ;
+    top:plannedStartDate       "2026-04-12"^^xsd:date ;
+    top:plannedEndDate         "2026-04-12"^^xsd:date ;
+    top:actualStartDate        "2026-04-12"^^xsd:date ;
+    top:actualStartTime        "08:30:00"^^xsd:time ;
+    top:actualEndDate          "2026-04-12"^^xsd:date ;
+    top:actualEndTime          "12:45:00"^^xsd:time ;
+    top:visitDay               1 ;
+    top:forParticipant         <urn:ngsi-ld:Participant:onco-423-mskcc-p001> ;
+    top:forStudySite           <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:definedBy              <urn:ngsi-ld:VisitDefinition:ONCO-423-c1d1> ;
+    top:hasActivity            <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals> ,
+                                <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-bloodlabs> ,
+                                <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-ipadmin> ;
+    top:hasTask                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-sysbp> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-diabp> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-hr> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-temp> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-hgb> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-wbc> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-plt> ,
+                                <urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-dose> .
+
+# === Activity sub-objects (universal — same shape regardless of activity type) ===
+
+<urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals> a top:Activity ;
+    top:activityId             "urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals"^^xsd:anyURI ;
+    top:activityName           "Vital Signs" ;
+    top:activityType           "ASSESSMENT" ;
+    top:activityStatus         "PERFORMED" ;
+    top:biomedicalConceptCode  "C28267" ;
+    top:validFrom              "2026-04-12T08:35:00Z"^^xsd:dateTime ;
+    top:validUntil             "2026-04-12T08:42:00Z"^^xsd:dateTime ;
+    top:performedBy            <urn:ngsi-ld:Person:martinez> .
+
+<urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-bloodlabs> a top:Activity ;
+    top:activityId             "urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-bloodlabs"^^xsd:anyURI ;
+    top:activityName           "Blood Draw — CBC Panel" ;
+    top:activityType           "SAMPLE_COLLECTION" ;
+    top:activityStatus         "PERFORMED" ;
+    top:biomedicalConceptCode  "C25294" ;
+    top:validFrom              "2026-04-12T08:50:00Z"^^xsd:dateTime ;
+    top:validUntil             "2026-04-12T09:00:00Z"^^xsd:dateTime ;
+    top:performedBy            <urn:ngsi-ld:Person:chen> .
+
+<urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-ipadmin> a top:Activity ;
+    top:activityId             "urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-ipadmin"^^xsd:anyURI ;
+    top:activityName           "Drug X Administration" ;
+    top:activityType           "IP_ADMINISTRATION" ;
+    top:activityStatus         "PERFORMED" ;
+    top:biomedicalConceptCode  "C172310" ;
+    top:validFrom              "2026-04-12T10:15:00Z"^^xsd:dateTime ;
+    top:validUntil             "2026-04-12T12:30:00Z"^^xsd:dateTime ;
+    top:performedBy            <urn:ngsi-ld:Person:patel> ,
+                                <urn:ngsi-ld:Person:jones> .
+
+# === Task sub-objects (universal leaf data-capture; polymorphic taskValue) ===
+# Vitals tasks — NUMERIC taskValueType
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-sysbp> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-sysbp"^^xsd:anyURI ;
+    top:taskName               "Systolic Blood Pressure" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "128" ;
+    top:taskUnit               "[mmHg]" ;
+    top:biomedicalConceptCode  "C25298" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T08:36:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals> ;
+    top:performedBy            <urn:ngsi-ld:Person:martinez> .
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-diabp> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-diabp"^^xsd:anyURI ;
+    top:taskName               "Diastolic Blood Pressure" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "78" ;
+    top:taskUnit               "[mmHg]" ;
+    top:biomedicalConceptCode  "C25299" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T08:36:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals> ;
+    top:performedBy            <urn:ngsi-ld:Person:martinez> .
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-hr> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-hr"^^xsd:anyURI ;
+    top:taskName               "Heart Rate" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "72" ;
+    top:taskUnit               "/min" ;
+    top:biomedicalConceptCode  "C49677" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T08:37:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals> ;
+    top:performedBy            <urn:ngsi-ld:Person:martinez> .
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-temp> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-temp"^^xsd:anyURI ;
+    top:taskName               "Body Temperature" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "36.7" ;
+    top:taskUnit               "Cel" ;
+    top:biomedicalConceptCode  "C25206" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T08:38:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-vitals> ;
+    top:performedBy            <urn:ngsi-ld:Person:martinez> .
+
+# Lab tasks — NUMERIC taskValueType
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-hgb> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-hgb"^^xsd:anyURI ;
+    top:taskName               "Hemoglobin" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "12.4" ;
+    top:taskUnit               "g/dL" ;
+    top:biomedicalConceptCode  "C64848" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T11:30:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-bloodlabs> ;
+    top:performedBy            <urn:ngsi-ld:Person:chen> .
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-wbc> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-wbc"^^xsd:anyURI ;
+    top:taskName               "White Blood Cell Count" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "6.8" ;
+    top:taskUnit               "10*3/uL" ;
+    top:biomedicalConceptCode  "C51948" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T11:30:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-bloodlabs> ;
+    top:performedBy            <urn:ngsi-ld:Person:chen> .
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-plt> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-plt"^^xsd:anyURI ;
+    top:taskName               "Platelet Count" ;
+    top:taskValueType          "NUMERIC" ;
+    top:taskValue              "245" ;
+    top:taskUnit               "10*3/uL" ;
+    top:biomedicalConceptCode  "C51951" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T11:30:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-bloodlabs> ;
+    top:performedBy            <urn:ngsi-ld:Person:chen> .
+
+# IP administration task — STRUCTURED taskValueType (dose with units, route, lot)
+
+<urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-dose> a top:Task ;
+    top:taskId                 "urn:ngsi-ld:Task:onco-423-mskcc-p001-c1d1-dose"^^xsd:anyURI ;
+    top:taskName               "Drug X Dose" ;
+    top:taskValueType          "STRUCTURED" ;
+    top:taskValue              "{\"dose\": 200, \"unit\": \"mg\", \"route\": \"IV\", \"infusionDurationMinutes\": 120, \"lotNumber\": \"DRX-2026-0117\"}" ;
+    top:biomedicalConceptCode  "C172310" ;
+    top:taskStatus             "COMPLETED" ;
+    top:observedAt             "2026-04-12T10:15:00Z"^^xsd:dateTime ;
+    top:belongsToActivity      <urn:ngsi-ld:Activity:onco-423-mskcc-p001-c1d1-ipadmin> ;
+    top:performedBy            <urn:ngsi-ld:Person:patel> .
+

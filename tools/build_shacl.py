@@ -904,6 +904,182 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === Visit invariants (v0.5.0) ===
+    invariants.append("# === Visit invariants (v0.5.0) ===")
+    invariants.append("")
+
+    # 26. Hard: a Visit with visitStatus in {COMPLETED, PARTIALLY_COMPLETED, OUT_OF_WINDOW}
+    #     must have actualStartDate populated. Cannot have completed a visit without
+    #     recording when it happened.
+    invariants.append(sub("""__P__:VisitCompletedNeedsActualStartShape a sh:NodeShape ;
+    sh:targetClass __P__:Visit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Visit has visitStatus in {COMPLETED, PARTIALLY_COMPLETED, OUT_OF_WINDOW} but no actualStartDate populated. A visit cannot be completed without recording when it actually happened." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Visit .
+                $this __P__:visitStatus ?status .
+                FILTER (?status IN ("COMPLETED", "PARTIALLY_COMPLETED", "OUT_OF_WINDOW"))
+                FILTER NOT EXISTS { $this __P__:actualStartDate ?d }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 27. Hard: a Visit with visitStatus=COMPLETED must have actualEndDate populated.
+    invariants.append(sub("""__P__:VisitCompletedNeedsActualEndShape a sh:NodeShape ;
+    sh:targetClass __P__:Visit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Visit has visitStatus=COMPLETED but no actualEndDate populated. A completed visit requires both start and end timestamps." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Visit .
+                $this __P__:visitStatus "COMPLETED" .
+                FILTER NOT EXISTS { $this __P__:actualEndDate ?d }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 28. Hard: a Visit with visitStatus=UNSCHEDULED must have unscheduledReason populated.
+    #     UNSCHEDULED visits require operator justification per protocol-deviation discipline.
+    invariants.append(sub("""__P__:VisitUnscheduledNeedsReasonShape a sh:NodeShape ;
+    sh:targetClass __P__:Visit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Visit has visitStatus=UNSCHEDULED but no unscheduledReason populated. Unscheduled visits require operator justification per protocol-deviation discipline." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Visit .
+                $this __P__:visitStatus "UNSCHEDULED" .
+                FILTER NOT EXISTS { $this __P__:unscheduledReason ?r }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 29. Hard: a Visit with visitStatus=OUT_OF_WINDOW must have protocolDeviationCode populated.
+    invariants.append(sub("""__P__:VisitOutOfWindowNeedsDeviationCodeShape a sh:NodeShape ;
+    sh:targetClass __P__:Visit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Visit has visitStatus=OUT_OF_WINDOW but no protocolDeviationCode populated. Out-of-window visits are protocol deviations and require a deviation code." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Visit .
+                $this __P__:visitStatus "OUT_OF_WINDOW" .
+                FILTER NOT EXISTS { $this __P__:protocolDeviationCode ?c }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 30. Hard: cross-entity consistency — a Visit's forParticipant.forStudySite must
+    #     match the Visit's forStudySite. Cross-entity consistency.
+    invariants.append(sub2("""__P__:VisitParticipantStudySiteConsistencyShape a sh:NodeShape ;
+    sh:targetClass __P__:Visit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Visit's forParticipant.forStudySite does not match Visit.forStudySite. The participant's anchored StudySite and the visit's hosting StudySite must agree." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            PREFIX __C__: <__CIRI__>
+            SELECT $this WHERE {
+                $this a __P__:Visit .
+                $this __P__:forParticipant ?participant .
+                $this __P__:forStudySite ?visitStudySite .
+                ?participant __P__:forStudySite ?participantStudySite .
+                FILTER (?participantStudySite != ?visitStudySite)
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 31. Hard: an Activity with activityStatus=NOT_PERFORMED must have notPerformedReason
+    #     populated.
+    invariants.append(sub("""__P__:ActivityNotPerformedNeedsReasonShape a sh:NodeShape ;
+    sh:targetClass __P__:Activity ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Activity has activityStatus=NOT_PERFORMED but no notPerformedReason populated. Non-performance requires documented justification." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Activity .
+                $this __P__:activityStatus "NOT_PERFORMED" .
+                FILTER NOT EXISTS { $this __P__:notPerformedReason ?r }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 32. Hard: a Task with taskStatus=NOT_PERFORMED must have notPerformedReason populated.
+    invariants.append(sub("""__P__:TaskNotPerformedNeedsReasonShape a sh:NodeShape ;
+    sh:targetClass __P__:Task ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Task has taskStatus=NOT_PERFORMED but no notPerformedReason populated. Non-performance requires documented justification." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Task .
+                $this __P__:taskStatus "NOT_PERFORMED" .
+                FILTER NOT EXISTS { $this __P__:notPerformedReason ?r }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 33. Hard: a Task with taskStatus=COMPLETED must have a non-empty taskValue.
+    invariants.append(sub("""__P__:TaskCompletedNeedsValueShape a sh:NodeShape ;
+    sh:targetClass __P__:Task ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Task has taskStatus=COMPLETED but taskValue is missing. Completed Tasks must carry the captured value." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Task .
+                $this __P__:taskStatus "COMPLETED" .
+                FILTER NOT EXISTS { $this __P__:taskValue ?v }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 34. Soft warning: a VisitObservation with escalated=true should have escalatedTo
+    #     populated (when Event lifts). Surfaces ungrounded escalation flags.
+    invariants.append(sub("""__P__:VisitObservationEscalatedNeedsLinkShape a sh:NodeShape ;
+    sh:targetClass __P__:VisitObservation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "VisitObservation has escalated=true but no escalatedTo populated. Escalated observations should link to the resulting Event (when Event lifts in v0.7+)." ;
+        sh:severity sh:Warning ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:VisitObservation .
+                $this __P__:escalated true .
+                FILTER NOT EXISTS { $this __P__:escalatedTo ?e }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -971,7 +1147,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 25 (4 soft warnings + 21 hard violations)")
+    print(f"  domain invariants: 34 (5 soft warnings + 29 hard violations)")
 
 
 if __name__ == "__main__":

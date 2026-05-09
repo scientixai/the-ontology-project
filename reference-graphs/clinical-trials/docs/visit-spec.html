@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Visit / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: #1a1a1a; background: #f4f4f1; padding: 22px 26px 32px; line-height: 1.55; font-size: 13px; }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #111; margin: 26px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #c8c8c0; }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr { background: #fff; border-left: 3px solid #1e6fd9; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; margin-bottom: 12px; font-size: 12px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th { background: #f0f0e9; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; border-bottom: 1px solid #d6d6cf; }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  td.muted { color: #888; font-style: italic; }
+  .decision, .scenario { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 12px 16px; margin-bottom: 10px; }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves { font-size: 11.5px; color: #1a1a1a; background: #f7faf8; border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px; margin-top: 6px; line-height: 1.65; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .diagram { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 14px 16px; margin-bottom: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.7; white-space: pre; overflow-x: auto; }
+  pre.code { background: #1e1e1c; color: #e8e8e0; padding: 12px 14px; border-radius: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; line-height: 1.55; overflow-x: auto; margin-bottom: 8px; }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  .toc { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; }
+  .toc strong { color: #111; }
+  .toc a { color: #1e6fd9; text-decoration: none; margin-right: 12px; display: inline-block; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="title">TOP / Visit / spec / v1</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.5.0-strawman) · sixth top-level · universal Activity + Task substrate · 9 new SHACL invariants (34 total)</div>
+</header>
+
+<div class="toc">
+  <strong>Sections:</strong>
+  <a href="#tldr">1. TL;DR</a>
+  <a href="#principles">2. First-principles posture</a>
+  <a href="#anchor">3. Architectural anchor</a>
+  <a href="#universal">4. Universal Activity + Task</a>
+  <a href="#temporal-prov">5. Native temporal+PROV</a>
+  <a href="#fhir-questionnaire">6. FHIR Questionnaire projection</a>
+  <a href="#chain-of-custody">7. Chain-of-custody view</a>
+  <a href="#model">8. Model summary</a>
+  <a href="#decisions">9. Architectural decisions</a>
+  <a href="#crosswalks">10. Cross-walks</a>
+  <a href="#shacl">11. SHACL invariants</a>
+  <a href="#stress">12. Stress-test scenarios</a>
+  <a href="#open">13. Open issues</a>
+</div>
+
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a Visit is a Visit · universal Activity + Task substrate · accommodates any assessment</span></h2>
+
+<p class="tldr"><strong>Visit is the operational visit-occurrence — a Participant attended a real visit at a StudySite on a real date.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, the substrate carries one universal pattern: <span class="inline">Visit → Activity → Task</span>, where Activity is the universal work unit (Vitals, MRI, ePRO, biopsy, IP administration — same shape) and Task is the universal leaf data-capture (BP, MRI Study reference, PHQ-9 item, drug dose — same shape, polymorphic taskValue). Specialization is content (biomedicalConceptCode + taskValueType + URI references), never entity shape. Visit-occurrence is distinct from <span class="inline">VisitDefinition</span> (the protocol template, USDM-ingest-derivable). Per the temporal+PROV native commitment: every entity is a typed PROV node (Visit and Activity are <span class="inline">prov:Activity</span>, VisitDefinition is <span class="inline">prov:Entity</span>); status attributes are NGSI-LD temporal properties; Task captures <span class="inline">observedAt</span> as Property metadata. The substrate IS a W3C PROV graph by construction.</p>
+
+<h2 class="section" id="principles"><span class="num">2.</span>First-principles posture <span class="subnote">why the entity looks the way it looks</span></h2>
+
+<p>Three structural commitments, all applied:</p>
+
+<ol>
+  <li><strong>Operator-grounded vocabulary.</strong> "Visit," "Activity," "Task" — what coordinators say. Not "Encounter" (FHIR's name), not "ScheduledActivityInstance" (USDM's name). Cross-walks live below the line.</li>
+  <li><strong>Native temporal + provenance.</strong> Visit, Activity, Task all declare <span class="inline">provType: prov:Activity</span> via <span class="inline">rdfs:subClassOf</span>. VisitDefinition declares <span class="inline">prov:Entity</span>. <span class="inline">visitStatus</span> / <span class="inline">activityStatus</span> / <span class="inline">taskStatus</span> are NGSI-LD temporal properties. <span class="inline">Task.observedAt</span> is canonical Property metadata, not a flat <span class="inline">performedDateTime</span> attribute. <span class="inline">performedBy</span> declares <span class="inline">provSemantics: wasAssociatedWith</span>; <span class="inline">usedEquipment</span> declares <span class="inline">used</span>.</li>
+  <li><strong>Universal substrate.</strong> Activity and Task are universal containers. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape. Specialization is content (<span class="inline">biomedicalConceptCode</span>, <span class="inline">taskValueType</span>, <span class="inline">taskValue</span>) and links (<span class="inline">usedEquipment</span>, <span class="inline">governedBy</span>), never entity-type discrimination.</li>
+</ol>
+
+<h2 class="section" id="anchor"><span class="num">3.</span>Architectural anchor <span class="subnote">Visit's place in the operational hierarchy</span></h2>
+
+<div class="diagram">Site ─→ StudySite ─→ Study ─→ Protocol ─→ SOA ─→ VisitDefinition (template, USDM-ingest-derivable)
+                                                                ▲
+                                                                │ definedBy (0..1)
+                                                                │
+                  Participant ─→ Visit (occurrence) ────────────┘
+                                  │
+                                  ├─ hasActivity → Activity[*] (universal work unit)
+                                  ├─ hasTask → Task[*] (universal leaf; polymorphic taskValue)
+                                  ├─ hasVisitObservation → VisitObservation[*] (operator-narrative)
+                                  ├─ partOf → Visit (multi-part / follow-up linkage)
+                                  └─ hasAdverseEvent → Event (flagged-missing until v0.7+)</div>
+
+<p><strong>Anchor pattern</strong>: <span class="inline">Visit.forParticipant</span> (1..1) + <span class="inline">Visit.forStudySite</span> (1..1) + <span class="inline">Visit.definedBy → VisitDefinition</span> (0..1). The 0..1 cardinality on definedBy lets UNSCHEDULED visits exist (urgent care, AE workup, sponsor-requested) without a corresponding template. SHACL invariant #30 enforces cross-entity consistency: Visit.forParticipant.forStudySite must match Visit.forStudySite.</p>
+
+<p>The OOUX correction tracked since the Site spec is applied here: <span class="inline">Visit → 1 Site</span> (OOUX) is corrected to <span class="inline">Visit → 1 StudySite</span> (TOP) — Visits anchor at the per-Study site role, not the institutional Site.</p>
+
+<h2 class="section" id="universal"><span class="num">4.</span>Universal Activity + Task <span class="subnote">specialization is content, not shape</span></h2>
+
+<p>Per the universal-substrate posture in <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES</a>, Visit's sub-objects accommodate any assessment without modeling its specifics. The same TOP entity shape handles vitals, MRI, ePRO, biopsy, IP administration, lab draws, ECGs, sequencing — anything.</p>
+
+<table>
+  <thead><tr><th>Activity</th><th>activityName</th><th>activityType</th><th>biomedicalConceptCode</th><th>Task example</th><th>Task.taskValueType</th></tr></thead>
+  <tbody>
+    <tr><td>Vital Signs</td><td>"Vital Signs"</td><td><span class="inline">ASSESSMENT</span></td><td>NCIt:C28267</td><td>Systolic BP = 128 mmHg</td><td><span class="inline">NUMERIC</span></td></tr>
+    <tr><td>MRI Brain</td><td>"MRI Brain"</td><td><span class="inline">IMAGING</span></td><td>NCIt:C16809</td><td>DICOM Study Instance UID = "urn:dicom:..."</td><td><span class="inline">URI_REFERENCE</span></td></tr>
+    <tr><td>PHQ-9 Questionnaire</td><td>"PHQ-9"</td><td><span class="inline">QUESTIONNAIRE</span></td><td>LOINC:44249-1</td><td>Item 1 response = "2"</td><td><span class="inline">CODED</span></td></tr>
+    <tr><td>Drug X Administration</td><td>"Drug X Administration"</td><td><span class="inline">IP_ADMINISTRATION</span></td><td>NCIt:C172310</td><td>{dose: 200, unit: "mg", route: "IV", lot: "..."}</td><td><span class="inline">STRUCTURED</span></td></tr>
+    <tr><td>Blood Draw</td><td>"Blood Draw — CBC"</td><td><span class="inline">SAMPLE_COLLECTION</span></td><td>NCIt:C25294</td><td>Hemoglobin = 12.4 g/dL</td><td><span class="inline">NUMERIC</span></td></tr>
+    <tr><td>RECIST Lesion</td><td>"Tumor Measurement"</td><td><span class="inline">ASSESSMENT</span></td><td>NCIt:C147547</td><td>{longestDiameter: 22, unit: "mm", lesionId: "L1"}</td><td><span class="inline">STRUCTURED</span></td></tr>
+    <tr><td>Genomic Sequencing</td><td>"WGS"</td><td><span class="inline">SAMPLE_COLLECTION</span></td><td>NCIt:C101294</td><td>VCF reference URI</td><td><span class="inline">URI_REFERENCE</span></td></tr>
+  </tbody>
+</table>
+
+<p><strong>The architectural moat</strong>: standards-up vendors model N entity types per therapeutic area (<span class="inline">DICOMImagingStudy</span>, <span class="inline">PHQ9Response</span>, <span class="inline">LabResult</span>, <span class="inline">EProSession</span>). TOP carries one universal pattern that handles all of them. External systems (DICOM PACS, lab LIS, ePRO platform, EHR, sequencing pipelines) hold implementation specifics; TOP holds the universal trial-conduct-realm reference; URI references point to wherever the specialized artifact actually lives.</p>
+
+<h2 class="section" id="temporal-prov"><span class="num">5.</span>Native temporal + PROV — applied <span class="subnote">substrate IS a W3C PROV graph by construction</span></h2>
+
+<p>Every Visit-related entity declares its PROV type via <span class="inline">rdfs:subClassOf</span> in the emitted shapes (per the v0.4.1 commitment):</p>
+
+<table>
+  <thead><tr><th>TOP entity</th><th>PROV type</th><th>Reasoning</th></tr></thead>
+  <tbody>
+    <tr><td><span class="inline">Visit</span></td><td><span class="inline">prov:Activity</span></td><td>Occurs over time, acts on entities (Participant, Equipment); the occurrence IS an Activity in PROV terms</td></tr>
+    <tr><td><span class="inline">VisitDefinition</span></td><td><span class="inline">prov:Entity</span></td><td>A defined artifact (the protocol template) — Entity in PROV</td></tr>
+    <tr><td><span class="inline">Activity</span></td><td><span class="inline">prov:Activity</span></td><td>Occurs over time within a Visit; the universal work unit</td></tr>
+    <tr><td><span class="inline">Task</span></td><td><span class="inline">prov:Activity</span></td><td>The capture event itself is an Activity that generates a value Entity (the taskValue)</td></tr>
+    <tr><td><span class="inline">VisitObservation</span></td><td><span class="inline">prov:Activity</span></td><td>The recording event; if escalated, the resulting Event was wasInformedBy this Activity</td></tr>
+  </tbody>
+</table>
+
+<p>Relationship-level PROV semantics:</p>
+
+<table>
+  <thead><tr><th>TOP relationship</th><th><span class="inline">rdfs:subPropertyOf</span></th></tr></thead>
+  <tbody>
+    <tr><td>Activity.performedBy → Person</td><td><span class="inline">prov:wasAssociatedWith</span></td></tr>
+    <tr><td>Activity.usedEquipment → Equipment</td><td><span class="inline">prov:used</span></td></tr>
+    <tr><td>Task.performedBy → Person</td><td><span class="inline">prov:wasAssociatedWith</span></td></tr>
+    <tr><td>VisitObservation.recordedBy → Person</td><td><span class="inline">prov:wasAssociatedWith</span></td></tr>
+    <tr><td>VisitObservation.escalatedTo → Event</td><td><span class="inline">prov:wasInformedBy</span></td></tr>
+    <tr><td>Visit.definedBy → VisitDefinition</td><td><span class="inline">prov:wasInformedBy</span></td></tr>
+  </tbody>
+</table>
+
+<p>NGSI-LD temporal-property semantics on lifecycle attributes (<span class="inline">visitStatus</span>, <span class="inline">activityStatus</span>, <span class="inline">taskStatus</span>): each value bracketed by <span class="inline">validFrom</span> / <span class="inline">validUntil</span>, queryable as a trajectory. <span class="inline">Task.observedAt</span> is canonical Property metadata for the value's measurement timestamp — NOT a flat <span class="inline">performedDateTime</span> attribute.</p>
+
+<h2 class="section" id="fhir-questionnaire"><span class="num">6.</span>FHIR Questionnaire projection <span class="subnote">force-multiplier for EHR / SMART / ePRO integration</span></h2>
+
+<p>TOP's universal Visit → Activity → Task hierarchy projects cleanly to FHIR R5 <span class="inline">Questionnaire</span> (form template) and <span class="inline">QuestionnaireResponse</span> (captured data). This is the consuming view that turns TOP into a single-source-of-truth for clinical-trial forms across Epic, Cerner, SMART on FHIR apps, ePRO vendors.</p>
+
+<table>
+  <thead><tr><th>TOP substrate</th><th>FHIR Questionnaire (form template)</th><th>FHIR QuestionnaireResponse (captured)</th></tr></thead>
+  <tbody>
+    <tr><td>VisitDefinition</td><td>Questionnaire (root)</td><td>(framing context)</td></tr>
+    <tr><td>VisitDefinition.visitName</td><td>Questionnaire.title</td><td>—</td></tr>
+    <tr><td>Activity (template, when ActivityTemplate lifts)</td><td>Questionnaire.item[type=group]</td><td>QuestionnaireResponse.item[type=group]</td></tr>
+    <tr><td>Activity.activityName</td><td>group.text</td><td>(matched by linkId)</td></tr>
+    <tr><td>Task (template)</td><td>Questionnaire.item[type=decimal/string/coding/etc.]</td><td>QuestionnaireResponse.item.answer</td></tr>
+    <tr><td>Task.biomedicalConceptCode (NCIt → LOINC)</td><td>item.code (LOINC)</td><td>—</td></tr>
+    <tr><td>Task.taskValueType</td><td>item.type (decimal / coding / date / etc.)</td><td>(renders correct widget)</td></tr>
+    <tr><td>Task.taskUnit</td><td>item.extension[questionnaire-unit] (UCUM)</td><td>—</td></tr>
+    <tr><td>Task.taskValue (after capture)</td><td>—</td><td>item.answer.value[x]</td></tr>
+    <tr><td>Visit.actualStartDate/Time</td><td>—</td><td>QuestionnaireResponse.authored</td></tr>
+    <tr><td>Visit.forParticipant</td><td>—</td><td>QuestionnaireResponse.subject</td></tr>
+    <tr><td>Activity.performedBy</td><td>—</td><td>QuestionnaireResponse.author</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Force-multiplier story</strong>: today, sponsors maintain forms separately in 4-5 systems (CRF builder, SMART on FHIR app, ePRO vendor, EHR config). With TOP, the protocol → TOP VisitDefinition + ActivityTemplate + TaskTemplate is the single source; the FHIR Questionnaire adapter projects to canonical Questionnaire JSON; Epic / Cerner / ePRO devices all consume the same Questionnaire. Reverse: ePRO devices emit <span class="inline">QuestionnaireResponse</span>; the TOP ingester reads it and creates Visit + Activities + Tasks.</p>
+
+<p><strong>Adapter implementation deferred to v0.6+</strong>: <span class="inline">tools/project_to_fhir_questionnaire.py</span> takes a VisitDefinition (with linked Activity-template and Task-template metadata) and emits Questionnaire JSON. ~200-300 lines of Python. Bidirectional: also <span class="inline">tools/ingest_fhir_questionnaire_response.py</span>.</p>
+
+<h2 class="section" id="chain-of-custody"><span class="num">7.</span>Chain-of-custody view <span class="subnote">the consuming view that compliance vendors render from audit logs; TOP renders from substrate facts</span></h2>
+
+<p>The substrate decisions in this lift enable per-Activity provenance views. Compliance vendors render these from hand-curated audit logs; TOP renders them from substrate facts in real time, against any Activity, by graph traversal. Example query for "show me the chain of custody for Maria's blood draw at C1D1":</p>
+
+<pre class="code">PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;
+PREFIX top:  &lt;https://top.scientix.ai/onto/clinical/v1#&gt;
+
+SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
+  ?visit a top:Visit ;
+         top:forParticipant ?participant ;
+         top:hasActivity ?activity .
+  ?participant top:firstName "Maria" .
+  ?activity top:activityName "Blood Draw — CBC Panel" ;
+            prov:wasAssociatedWith ?actor ;        # phlebotomist
+            prov:used ?equipment ;                  # centrifuge, dry shipper
+            top:governedBy ?document .              # SOP
+  ?activity top:hasTask / top:observedAt ?observedAt .
+}</pre>
+
+<p>No audit-log table. No translation layer. The chain assembles from substrate triples. Every checkmark in a regulator's compliance view is one of these triples.</p>
+
+<h2 class="section" id="model"><span class="num">8.</span>Model summary <span class="subnote">attributes, relationships, sub-objects · full set in source/top-strawman.json</span></h2>
+
+<h3 class="subsection">Visit attributes (~17)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">visitId</td><td>NGSI-LD URI</td><td>Globally unique</td></tr>
+    <tr><td class="code">visitNumber</td><td>string · optional</td><td>Maps to SDTM VISITNUM; matches definedBy.visitNumber when populated</td></tr>
+    <tr><td class="code">visitName</td><td>string · optional</td><td>Maps to SDTM VISIT</td></tr>
+    <tr><td class="code">visitMode</td><td>enum (6) — IN_PERSON_CLINIC / IN_PERSON_HOME / REMOTE_VIDEO / REMOTE_PHONE / REMOTE_ASYNC / HYBRID</td><td>ICH E6(R3) Annex 2 DCT framing</td></tr>
+    <tr><td class="code">visitStatus</td><td>enum (9) — SCHEDULED / IN_PROGRESS / COMPLETED / PARTIALLY_COMPLETED / MISSED / RESCHEDULED / CANCELLED / OUT_OF_WINDOW / UNSCHEDULED</td><td>NGSI-LD temporal property</td></tr>
+    <tr><td class="code">plannedStartDate</td><td>date · optional</td><td>What the SOA says</td></tr>
+    <tr><td class="code">plannedEndDate</td><td>date · optional</td><td></td></tr>
+    <tr><td class="code">actualStartDate</td><td>date · optional</td><td>Maps to SDTM SVSTDTC</td></tr>
+    <tr><td class="code">actualStartTime</td><td>time · optional</td><td></td></tr>
+    <tr><td class="code">actualEndDate</td><td>date · optional</td><td>Maps to SDTM SVENDTC</td></tr>
+    <tr><td class="code">actualEndTime</td><td>time · optional</td><td></td></tr>
+    <tr><td class="code">visitDay</td><td>integer · optional</td><td>Days from study anchor; maps to SDTM VISITDY</td></tr>
+    <tr><td class="code">protocolDeviationCode</td><td>string · optional</td><td>Required by SHACL when status=OUT_OF_WINDOW</td></tr>
+    <tr><td class="code">unscheduledReason</td><td>string · optional</td><td>Required by SHACL when status=UNSCHEDULED</td></tr>
+    <tr><td class="code">tags</td><td>string · optional</td><td>Comma-separated</td></tr>
+    <tr><td class="code">validFrom</td><td>dateTime · optional</td><td>NGSI-LD temporal-property pattern</td></tr>
+    <tr><td class="code">validUntil</td><td>dateTime · optional</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Visit relationships (~7)</h3>
+<table>
+  <thead><tr><th>Relationship</th><th>Target</th><th>Card.</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">forParticipant</td><td>Participant</td><td>1..1</td><td>The Participant whose visit this is</td></tr>
+    <tr><td class="code">forStudySite</td><td>StudySite</td><td>1..1</td><td>The hosting StudySite (operational owner regardless of physical location)</td></tr>
+    <tr><td class="code">definedBy</td><td>VisitDefinition</td><td>0..1</td><td>Protocol template; 0..1 because UNSCHEDULED visits have no template; provSemantics: wasInformedBy</td></tr>
+    <tr><td class="code">hasActivity</td><td>Activity</td><td>0..N</td><td>Activities performed at this Visit (universal sub-objects)</td></tr>
+    <tr><td class="code">hasTask</td><td>Task</td><td>0..N</td><td>Leaf data-capture units; each task.belongsToActivity links to a parent Activity</td></tr>
+    <tr><td class="code">hasVisitObservation</td><td>VisitObservation</td><td>0..N</td><td>Operator-narrative observations</td></tr>
+    <tr><td class="code">partOf</td><td>Visit</td><td>0..1</td><td>Multi-part / follow-up linkage</td></tr>
+    <tr><td class="code">hasAdverseEvent</td><td>Event</td><td>0..N</td><td>Flagged-missing until v0.7+</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Sub-objects of Visit (3)</h3>
+<table>
+  <thead><tr><th>Sub-object</th><th>Role</th><th>provType</th><th>Key attrs</th></tr></thead>
+  <tbody>
+    <tr><td class="code">Activity</td><td>The universal work unit (vitals, MRI, ePRO, IP-admin, anything)</td><td><span class="inline">prov:Activity</span></td><td>activityName, activityType, activityStatus (temporal), biomedicalConceptCode, validFrom/Until</td></tr>
+    <tr><td class="code">Task</td><td>The universal leaf data-capture unit; polymorphic taskValue</td><td><span class="inline">prov:Activity</span></td><td>taskName, taskValueType, taskValue, taskUnit, biomedicalConceptCode, taskStatus (temporal), observedAt, belongsToActivity</td></tr>
+    <tr><td class="code">VisitObservation</td><td>Operator-narrative observation; may escalate to Event</td><td><span class="inline">prov:Activity</span></td><td>observationText, observationCategory, escalated, escalationDate</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">VisitDefinition (Study sub-object) — ~10 attrs</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">visitDefinitionId</td><td>NGSI-LD URI</td><td>Mints from USDM Encounter.id under the urn:top:study:{usdm_study_id}/visit-definition:{usdm_encounter_id} URI policy</td></tr>
+    <tr><td class="code">visitNumber</td><td>string</td><td>Display number (V1, Visit 4, Day 28)</td></tr>
+    <tr><td class="code">visitName</td><td>string</td><td>Operator-friendly name</td></tr>
+    <tr><td class="code">visitDay</td><td>integer · optional</td><td>Days from study anchor</td></tr>
+    <tr><td class="code">visitWindowMinDays</td><td>integer · optional</td><td>How early the visit can occur and still be in-window</td></tr>
+    <tr><td class="code">visitWindowMaxDays</td><td>integer · optional</td><td>How late and still in-window</td></tr>
+    <tr><td class="code">expectedDurationMinutes</td><td>integer · optional</td><td></td></tr>
+    <tr><td class="code">description</td><td>string · optional</td><td></td></tr>
+    <tr><td class="code">visitDefinitionStatus</td><td>enum — DRAFT / EFFECTIVE / SUPERSEDED</td><td>NGSI-LD temporal property</td></tr>
+    <tr><td class="code">tags</td><td>string · optional</td><td></td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="decisions"><span class="num">9.</span>Why this shape — architectural decisions</h2>
+
+<div class="decision">
+  <div class="title">Decision 1 — Two separate entities: VisitDefinition + Visit</div>
+  <p>VisitDefinition (Study sub-object) is USDM-ingest-derivable from <span class="inline">StudyDesign.encounters[]</span>; Visit (top-level) is the operational occurrence runtime-created by EDC/scheduling/eVisit systems. Linked by <span class="inline">Visit.definedBy</span> (0..1; UNSCHEDULED visits have no template). Per FIRST-PRINCIPLES (different operator vocabulary gets first-class entity): operators talk about "Visit 1" (template) and "Mary's Visit 1" (occurrence) as different operational objects. Two separate entities; clean USDM ingest mapping; clean SHACL invariants.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2 — Anchor pattern: forParticipant + forStudySite</div>
+  <p><span class="inline">Visit.forParticipant</span> (1..1) and <span class="inline">Visit.forStudySite</span> (1..1) — both direct edges, even though forStudySite is reachable via forParticipant.forStudySite traversal. The redundancy is deliberate (query convenience: "all visits at MSKCC across all participants" without a join). SHACL invariant #30 enforces consistency.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3 — VisitObservation as sub-object (OOUX Path C)</div>
+  <p>Captures operator-narrative observations during a visit that don't fit a structured Activity / Task. Has <span class="inline">escalated</span> flag and <span class="inline">escalatedTo → Event</span> for the Path C reportability handoff. PROV: <span class="inline">prov:wasInformedBy</span> on escalatedTo means a categorized Event was informed by this observation.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4 — Activity + Task as universal sub-objects (specialization is content)</div>
+  <p>Per Bo's clarification: TOP must accommodate any assessment without modeling its specifics. The substrate carries Activity + Task as universal containers; specialization is content (biomedicalConceptCode + taskValueType + URI references), never entity shape. This eliminates the need for ImagingStudy / IPAdministration / QuestionnaireResponse / per-instrument horizontals. Implementation specifics live in external systems (DICOM PACS, lab LIS, ePRO platform); TOP carries the universal trial-conduct-realm reference. The architectural moat: standards-up vendors model N entity types per therapeutic area; TOP carries one.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5 — visitMode 6-state enum per ICH E6(R3) Annex 2</div>
+  <p>IN_PERSON_CLINIC / IN_PERSON_HOME / REMOTE_VIDEO / REMOTE_PHONE / REMOTE_ASYNC / HYBRID. DCT modality is critical for trial-feasibility analytics, post-COVID DCT design, and twin-synthesis covariates (visit modality affects drop-out risk, data quality, and patient burden). FHIR Encounter.virtualService + Encounter.location are the projection targets.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 6 — visitStatus 9-state lifecycle enum (NGSI-LD temporal property)</div>
+  <p>SCHEDULED / IN_PROGRESS / COMPLETED / PARTIALLY_COMPLETED / MISSED / RESCHEDULED / CANCELLED / OUT_OF_WINDOW / UNSCHEDULED. NGSI-LD temporal property (validFrom/validUntil per value) for trajectory queryability — parallel to Participant.participantStatus from v0.4.0. Trade-off: more states → more SHACL state-machine invariants (4 of the 9 Visit invariants enforce status-driven completeness).</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 7 — Protocol-deviation handling via lifecycle states + protocolDeviationCode</div>
+  <p>Three operationally-distinct deviation modes: OUT_OF_WINDOW (visit happened outside the protocol window — captured by status + protocolDeviationCode), MISSED (didn't happen, no make-up scheduled), UNSCHEDULED (extra visit — captured by status + unscheduledReason). A separate ProtocolDeviation sub-object can lift in v0.6+ if structured deviation modeling becomes operationally needed.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 8 — Planned-vs-actual datetime separation</div>
+  <p>plannedStartDate / plannedEndDate are operator-grounded scheduling facts (what the SOA / scheduling system says). actualStartDate / actualStartTime / actualEndDate / actualEndTime are runtime facts (what actually happened). Both kept distinct; visit-window adherence analytics use both. NGSI-LD <span class="inline">validFrom</span> / <span class="inline">validUntil</span> on the entity record bracket operational validity at the entity level (separate concern from per-property-value temporal semantics on visitStatus).</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 9 — Twin-queryability extension</div>
+  <p>Visit lifts the queryability surface for digital-twin synthesis significantly. Per-Participant time-series of Visits + per-Visit Activities + per-Activity Tasks + visit-window adherence as a covariate. The substrate decisions made in Participant v0.4 pay off here. Twin synthesis is downstream tooling (not in TOP); the substrate provides the contract.</p>
+</div>
+
+<h2 class="section" id="crosswalks"><span class="num">10.</span>Cross-walks <span class="subnote">FHIR R5 / SDTM / CDASH / USDM / OMOP · projection-edge documentation</span></h2>
+
+<h3 class="subsection">Visit → standards (operational)</h3>
+<table>
+  <thead><tr><th>TOP attribute / relationship</th><th>FHIR R5</th><th>SDTM SV</th><th>CDASH</th><th>OMOP</th><th>USDM</th></tr></thead>
+  <tbody>
+    <tr><td class="code">visitId (URI)</td><td>Encounter.identifier</td><td>(SUPPDM or implied)</td><td>—</td><td>visit_occurrence_id</td><td>—</td></tr>
+    <tr><td class="code">visitNumber</td><td>Encounter.identifier (use=secondary)</td><td>VISITNUM</td><td>VISITNUM</td><td>—</td><td>(via VisitDefinition)</td></tr>
+    <tr><td class="code">visitName</td><td>Encounter.type[].text</td><td>VISIT</td><td>VISIT</td><td>—</td><td>(via VisitDefinition)</td></tr>
+    <tr><td class="code">visitMode</td><td>Encounter.virtualService + Encounter.location</td><td>(SUPPDM)</td><td>—</td><td>visit_concept_id (with mode-specific concepts)</td><td>Encounter.environmentalSettings + contactModes</td></tr>
+    <tr><td class="code">visitStatus</td><td>Encounter.status</td><td>(computed from SVSTDTC presence)</td><td>—</td><td>(computed)</td><td>—</td></tr>
+    <tr><td class="code">actualStartDate/Time</td><td>Encounter.actualPeriod.start</td><td>SVSTDTC</td><td>SVSTDTC</td><td>visit_start_datetime</td><td>—</td></tr>
+    <tr><td class="code">actualEndDate/Time</td><td>Encounter.actualPeriod.end</td><td>SVENDTC</td><td>SVENDTC</td><td>visit_end_datetime</td><td>—</td></tr>
+    <tr><td class="code">visitDay</td><td>(computed)</td><td>VISITDY</td><td>—</td><td>—</td><td>(via VisitDefinition relative-day)</td></tr>
+    <tr><td class="code">unscheduledReason</td><td>Encounter.reason[].text</td><td>SVUPDES</td><td>—</td><td>visit_source_value</td><td>—</td></tr>
+    <tr><td class="code">forParticipant → Participant</td><td>Encounter.subject (Ref → Patient via ResearchSubject)</td><td>USUBJID</td><td>USUBJID</td><td>person_id</td><td>—</td></tr>
+    <tr><td class="code">forStudySite → StudySite</td><td>Encounter.serviceProvider + .location</td><td>SITEID</td><td>SITEID</td><td>care_site_id</td><td>—</td></tr>
+    <tr><td class="code">definedBy → VisitDefinition</td><td>(via Encounter.appointment)</td><td>(implicit via VISITNUM)</td><td>—</td><td>—</td><td>Encounter (template)</td></tr>
+    <tr><td class="code">partOf → Visit (parent)</td><td>Encounter.partOf</td><td>—</td><td>—</td><td>preceding_visit_occurrence_id</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Activity → standards (varies by content, same TOP shape)</h3>
+<table>
+  <thead><tr><th>Activity content</th><th>FHIR R5 resource</th><th>SDTM domain</th><th>OMOP table</th></tr></thead>
+  <tbody>
+    <tr><td>Vital Signs</td><td>Observation (category=vital-signs)</td><td>VS</td><td>measurement</td></tr>
+    <tr><td>Lab Tests</td><td>Observation (category=laboratory)</td><td>LB</td><td>measurement</td></tr>
+    <tr><td>Procedure</td><td>Procedure</td><td>PR</td><td>procedure_occurrence</td></tr>
+    <tr><td>IP Administration</td><td>MedicationAdministration</td><td>EX</td><td>drug_exposure</td></tr>
+    <tr><td>ECG</td><td>Observation + DiagnosticReport</td><td>EG</td><td>measurement</td></tr>
+    <tr><td>Imaging</td><td>ImagingStudy</td><td>(custom or CR)</td><td>—</td></tr>
+    <tr><td>Questionnaire</td><td>QuestionnaireResponse</td><td>QS</td><td>observation</td></tr>
+  </tbody>
+</table>
+
+<p>The same TOP Activity entity shape projects to different standards resources depending on its content (biomedicalConceptCode + activityType). The projection adapter at the deployment edge does the routing.</p>
+
+<h3 class="subsection">Task → standards (varies by taskValueType + content)</h3>
+<table>
+  <thead><tr><th>taskValueType</th><th>FHIR Observation.value[x]</th><th>SDTM</th></tr></thead>
+  <tbody>
+    <tr><td><span class="inline">NUMERIC</span></td><td>valueQuantity (with UCUM unit)</td><td>VSORRES (numeric, with VSORRESU unit)</td></tr>
+    <tr><td><span class="inline">TEXT</span></td><td>valueString</td><td>VSORRES (text)</td></tr>
+    <tr><td><span class="inline">CODED</span></td><td>valueCodeableConcept</td><td>VSORRES + VSSTRESC (controlled term)</td></tr>
+    <tr><td><span class="inline">URI_REFERENCE</span></td><td>valueReference (or extension)</td><td>(custom — reference to external system)</td></tr>
+    <tr><td><span class="inline">STRUCTURED</span></td><td>component[] (multi-component Observation)</td><td>SUPPDM or per-domain qualifier records</td></tr>
+    <tr><td><span class="inline">DATE</span></td><td>valueDateTime</td><td>(domain-specific DTC field)</td></tr>
+    <tr><td><span class="inline">IMAGE_REFERENCE</span></td><td>valueReference → ImagingStudy</td><td>(custom — DICOM Study Instance UID reference)</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="shacl"><span class="num">11.</span>SHACL invariants <span class="subnote">9 new for Visit lift · 34 total in the graph</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Severity</th><th>Constraint</th></tr></thead>
+  <tbody>
+    <tr><td>26</td><td>Hard</td><td><strong>Completed visit needs actual start.</strong> Visit with status in {COMPLETED, PARTIALLY_COMPLETED, OUT_OF_WINDOW} requires actualStartDate.</td></tr>
+    <tr><td>27</td><td>Hard</td><td><strong>Completed visit needs actual end.</strong> Visit with status=COMPLETED requires actualEndDate.</td></tr>
+    <tr><td>28</td><td>Hard</td><td><strong>Unscheduled visit needs reason.</strong> Visit with status=UNSCHEDULED requires unscheduledReason.</td></tr>
+    <tr><td>29</td><td>Hard</td><td><strong>Out-of-window visit needs deviation code.</strong> Visit with status=OUT_OF_WINDOW requires protocolDeviationCode.</td></tr>
+    <tr><td>30</td><td>Hard</td><td><strong>Visit-Participant-StudySite consistency.</strong> Visit.forParticipant.forStudySite must match Visit.forStudySite.</td></tr>
+    <tr><td>31</td><td>Hard</td><td><strong>Activity NOT_PERFORMED needs reason.</strong></td></tr>
+    <tr><td>32</td><td>Hard</td><td><strong>Task NOT_PERFORMED needs reason.</strong></td></tr>
+    <tr><td>33</td><td>Hard</td><td><strong>Completed Task needs value.</strong> Task with taskStatus=COMPLETED requires non-empty taskValue.</td></tr>
+    <tr><td>34</td><td>Soft</td><td><strong>Escalated VisitObservation needs link.</strong> escalated=true should have escalatedTo populated (when Event lifts).</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="stress"><span class="num">12.</span>Stress-test scenarios <span class="subnote">six cases · plain English to graph shape</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">In-person C1D1 visit with vitals + labs + IP administration</div><div class="scn-tag">Happy path</div></div>
+  <p>Maria attends Cycle 1 Day 1 at MSKCC on 2026-04-12. Vitals taken, blood drawn for CBC, drug administered.</p>
+  <div class="resolves">Visit (visitMode=IN_PERSON_CLINIC, status=COMPLETED) with three Activities (Vitals, Blood Draw, Drug X Administration) and eight Tasks (Sys/Dia BP, HR, Temp, Hgb, WBC, Platelets, Drug X dose). Each Task carries observedAt, biomedicalConceptCode, performedBy. PROV chain: Activity prov:wasAssociatedWith → Person; Task prov:wasAssociatedWith → Person; Task generated by Activity. (Mirrored in worked example site-mskcc-onco423.ttl.)</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Telehealth follow-up visit with ePRO capture</div><div class="scn-tag">DCT</div></div>
+  <p>Maria attends a Day 14 follow-up via video; PHQ-9 questionnaire administered remotely.</p>
+  <div class="resolves">Visit (visitMode=REMOTE_VIDEO, status=COMPLETED). One Activity (PHQ-9 Questionnaire, activityType=QUESTIONNAIRE, biomedicalConceptCode=LOINC:44249-1). Nine Tasks (one per PHQ-9 item, taskValueType=CODED, biomedicalConceptCode=LOINC:44261-6 etc.). Task.taskValue carries the response code (0/1/2/3). FHIR projection: QuestionnaireResponse rendering on the patient's device captures the responses; reverse-projection adapter creates Tasks.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Out-of-window visit (protocol deviation)</div><div class="scn-tag">Deviation</div></div>
+  <p>Maria's C2D1 visit was supposed to be on 2026-05-10 (Day 28, window ±3) but happened on 2026-05-15 (Day 33).</p>
+  <div class="resolves">Visit with visitStatus=OUT_OF_WINDOW, actualStartDate=2026-05-15, protocolDeviationCode populated. SHACL #29 satisfied. Recorded as a protocol deviation in the sponsor's deviation log via downstream adapter. The visit's data is still valid; the deviation is documented.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Unscheduled visit for AE workup</div><div class="scn-tag">Unscheduled</div></div>
+  <p>Maria reports nausea on Day 10; an unscheduled visit is opened for evaluation.</p>
+  <div class="resolves">Visit with visitStatus=UNSCHEDULED, unscheduledReason="AE workup — Grade 2 nausea reported via portal", definedBy=null. SHACL #28 satisfied. Activities for vitals + targeted assessment + clinician note. VisitObservation captures the operator's narrative; if escalated, links to an AE Event (when Event lifts).</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">DICOM imaging visit (universal substrate handles it)</div><div class="scn-tag">Imaging</div></div>
+  <p>Maria's End-of-Treatment MRI scan on Day 90.</p>
+  <div class="resolves">Visit (visitMode=IN_PERSON_CLINIC, status=COMPLETED). One Activity (activityName="MRI Brain", activityType=IMAGING, biomedicalConceptCode=NCIt:C16809). One Task (taskName="MRI Study", taskValueType=URI_REFERENCE, taskValue="urn:dicom:study/1.2.840.113654...", biomedicalConceptCode=NCIt:C16809). The DICOM Study Instance UID is referenced — TOP doesn't store pixels, the PACS does. Same TOP entity shape as a blood draw; specialization is in content.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Compliance query — chain of custody for a single Activity</div><div class="scn-tag">Provenance</div></div>
+  <p>A regulator asks: "Show me the full chain of custody for Maria's blood draw at C1D1."</p>
+  <div class="resolves">SPARQL query over substrate (no audit-log join): finds the Activity by Visit + activityName, traverses prov:wasAssociatedWith to the phlebotomist, prov:used to the centrifuge Equipment (which carries its calibration Credential chain), top:governedBy to the lab SOP Document, top:hasTask to the captured measurements. All from substrate triples. The compliance view renders from this in real time — no curated audit log required.</div>
+</div>
+
+<h2 class="section" id="open"><span class="num">13.</span>Open issues</h2>
+
+<ol>
+  <li><strong>ActivityTemplate as Study sub-object (v0.6+).</strong> Currently <span class="inline">VisitDefinition.hasExpectedActivityTemplate</span> is flagged-missing. Lifts when the SOA grid needs richer template modeling and the FHIR Questionnaire projection adapter requires per-Activity template metadata.</li>
+  <li><strong>FHIR Questionnaire projection adapter (<span class="inline">tools/project_to_fhir_questionnaire.py</span>).</strong> Implementation deferred to v0.6. Bidirectional: projects VisitDefinition → Questionnaire; ingests QuestionnaireResponse → Visit + Activities + Tasks.</li>
+  <li><strong>Equipment.calibrationStatus as NGSI-LD temporal property.</strong> Per the chain-of-custody mock-up, Equipment calibration currency is a SHACL-queryable assertion at activity-time. Defers to a small Equipment enrichment PR.</li>
+  <li><strong>Person.hasCredential richer credentialType enum.</strong> Per the chain-of-custody mock-up: phlebotomy certs, IATA shipping certs, GCP training certs all surface as Credentials. Defers to a Credential horizontal enrichment.</li>
+  <li><strong>Document section anchors (§7.4, §7.6 references).</strong> Per the chain-of-custody mock-up. Defers to a Document horizontal enrichment.</li>
+  <li><strong>Continuous monitoring data (Log temporal-property enrichment).</strong> Cold-chain temperature logs, CGM streams, wearable data. Log horizontal extension; URI_REFERENCE on Task to the log file is the substrate-side handle.</li>
+  <li><strong>Event lift (v0.7+).</strong> AdverseEvent / Other Clinical Event with eventCategory enum + the OOUX Path C reportability handoff. Visit.hasAdverseEvent + VisitObservation.escalatedTo unlocks at that point.</li>
+  <li><strong>Twin-spec planning note.</strong> Now that Visit + Activity + Task expand the queryability surface significantly, the twin-synthesizer contract spec lifts as a planning note in v0.6+.</li>
+</ol>
+
+<div class="footer">
+  TOP / Visit / spec / v1 · backed by source/top-strawman.json (v0.5.0-strawman) · 2026-05-09<br>
+  Generated artifacts (cross-walks · SHACL shapes · JSON-LD context) live in onto/clinical/v1/.<br>
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: operator-grounded substrate, native temporal+PROV, universal substrate.
+</div>
+
+</div>
+</body>
+</html>

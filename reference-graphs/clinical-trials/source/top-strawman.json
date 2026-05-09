@@ -1,6 +1,6 @@
 {
-  "_comment": "TOP v0.4.1 reference graph intermediate (strawman). v0.4.1 cleanup (2026-05-09): NGSI-LD temporal-property semantics + W3C PROV native typing applied as ANNOTATIONS across all entities (no entity-shape changes). Per FIRST-PRINCIPLES.md, temporal and provenance are native TOP capabilities, not cross-walk projections \u2014 the substrate IS a PROV graph by construction (every entity declares provType: prov:Agent | prov:Activity | prov:Entity; relationships carrying PROV semantics declare provSemantics: wasAssociatedWith | wasAttributedTo | wasGeneratedBy | wasDerivedFrom | actedOnBehalfOf). Status attributes that operators see change over time declare _temporalProperty: true (participantStatus, studyStatus, recruitStatus, etc.). The build_context.py emitter generates JSON-LD context entries declaring PROV typing; build_shacl.py emits rdfs:subClassOf prov:* and rdfs:subPropertyOf prov:* declarations. v0.4.0 lift content unchanged: 9 top-levels (Sponsor, Study, Site, Participant, Recruit + future Visit / IP / OversightBody / Event), 4 Participant sub-objects (InformedConsent, ScreeningRecord, EnrollmentRecord, WithdrawalRecord), 6 Study sub-objects (Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion), 9 commons horizontals (Organization, Document, StudySite, Person, System, Log, Equipment, StorageLocation, Credential). 25 SHACL invariants emitted (4 soft + 21 hard). The polysemous-verb guard, target-missing minCount relaxation, and target-missing class-constraint suppression all hold across the cleanup pass.",
-  "version": "0.4.1-strawman",
+  "_comment": "TOP v0.5.0 reference graph intermediate (strawman). v0.5.0 lift (2026-05-09) adds Visit (sixth top-level) with three Visit sub-objects (Activity, Task, VisitObservation) plus VisitDefinition as a Study sub-object. Per FIRST-PRINCIPLES.md universal-substrate posture, Activity and Task are universal containers \u2014 specialization is content (taskValue polymorphism + biomedicalConceptCode + URI references), never entity shape. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape; they differ in content. Per the temporal+PROV native conventions, every entity declares provType (prov:Agent / prov:Activity / prov:Entity); status attributes declare _temporalProperty: true; relationships carrying PROV semantics declare provSemantics. Task carries observedAt as Property metadata on taskValue (NOT a separate flat performedDateTime attribute). Top-level count: 6 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit); remaining: InvestigationalProduct, OversightBody, Event. Study sub-objects: 7 (Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion, VisitDefinition). Visit sub-objects: 3 (Activity, Task, VisitObservation). Total entities scaffolded: 6 top-levels + 13 sub-objects + 9 horizontals = 28 NodeShapes. SHACL invariants grow from 25 to 34 (4 soft + 30 hard). build_context.py and build_shacl.py emitters unchanged from v0.4.1. The OOUX Visit->Site direct edge correction is applied: Visit.forStudySite -> StudySite (1..1), not Site directly.",
+  "version": "0.5.0-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
   "namespaces": {
@@ -1231,6 +1231,99 @@
             }
           ],
           "provType": "prov:Entity"
+        },
+        {
+          "id": "VisitDefinition",
+          "role": "the protocol-defined visit template",
+          "description": "VisitDefinition captures what the protocol says happens at a given visit (template-side). It carries the visit window, expected duration, day-relative-to-anchor scheduling, and references to ActivityTemplates that should be performed. Distinct from Visit (the operational occurrence). USDM-ingest-derivable from StudyDesign.encounters[]; the operational-side Visit is created by EDC/scheduling/eVisit systems at runtime.",
+          "ooux_editor_note": "v0.5.0 introduction (2026-05-09): seventh Study sub-object. Lifts as USDM-ingest target per Visit planning Decision 1 (separate VisitDefinition + Visit entities). Visit.definedBy \u2192 VisitDefinition (0..1; UNSCHEDULED visits don't have a corresponding template). Per FIRST-PRINCIPLES universal-substrate posture, VisitDefinition stays universal; therapeutic-area diversity is in content (visitName, biomedicalConceptCode references on linked ActivityTemplates), not entity shape.",
+          "provType": "prov:Entity",
+          "crosswalks": {
+            "fhir": "fhir:PlanDefinition (or fhir:Encounter at template profile level)",
+            "usdm": "usdm:Encounter (template, design-side)",
+            "sdtm": "sdtm:TV (Trial Visits \u2014 design-side reference)",
+            "cdash": "cdash:VISIT (template fields)"
+          },
+          "attributes": [
+            {
+              "name": "visitDefinitionId",
+              "type": "ngsi-ld:URI",
+              "unique": true,
+              "doc": "Globally unique NGSI-LD identifier. Mints from USDM Encounter.id under the urn:top:study:{usdm_study_id}/visit-definition:{usdm_encounter_id} URI policy."
+            },
+            {
+              "name": "visitNumber",
+              "type": "xsd:string",
+              "doc": "Display number/code (e.g., 'V1', 'Visit 4', 'Day 28'). Operator-readable identifier within the protocol."
+            },
+            {
+              "name": "visitName",
+              "type": "xsd:string",
+              "doc": "Operator-friendly name (e.g., 'Screening Visit', 'Baseline / Day 1', 'End of Treatment')."
+            },
+            {
+              "name": "visitDay",
+              "type": "xsd:integer",
+              "optional": true,
+              "doc": "Days from study anchor (typically randomization or first dose). Negative for screening (Day -7), 0 for baseline, positive for follow-up. Maps to SDTM VISITDY."
+            },
+            {
+              "name": "visitWindowMinDays",
+              "type": "xsd:integer",
+              "optional": true,
+              "doc": "Minimum days from visitDay the visit can occur and still be in-window. Negative offset (e.g., -3 means 'up to 3 days early')."
+            },
+            {
+              "name": "visitWindowMaxDays",
+              "type": "xsd:integer",
+              "optional": true,
+              "doc": "Maximum days from visitDay the visit can occur and still be in-window. Positive offset (e.g., +3 means 'up to 3 days late')."
+            },
+            {
+              "name": "expectedDurationMinutes",
+              "type": "xsd:integer",
+              "optional": true,
+              "doc": "Expected duration of the visit in minutes (operational scheduling input)."
+            },
+            {
+              "name": "description",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "Narrative description. Useful when the visit's purpose isn't obvious from name + day."
+            },
+            {
+              "name": "visitDefinitionStatus",
+              "type": "xsd:string",
+              "enum": [
+                "DRAFT",
+                "EFFECTIVE",
+                "SUPERSEDED"
+              ],
+              "_temporalProperty": true,
+              "doc": "Lifecycle of the template. EFFECTIVE means currently in force; SUPERSEDED if a protocol amendment introduced a new VisitDefinition. NGSI-LD temporal property."
+            },
+            {
+              "name": "tags",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "Comma-separated user-defined tags."
+            }
+          ],
+          "relationships": [
+            {
+              "name": "appearsInSchedule",
+              "target": "ScheduleOfAssessments",
+              "cardinality": "0..N",
+              "doc": "The Schedule(s) of Assessments this VisitDefinition appears in. 0..N because protocol amendments can reference the same VisitDefinition across multiple SOA versions."
+            },
+            {
+              "name": "hasExpectedActivityTemplate",
+              "target": "Activity",
+              "cardinality": "0..N",
+              "doc": "ActivityTemplates expected at this visit per the SOA. Flagged-missing for now: ActivityTemplate as a separate entity defers to v0.6+; v0.5 carries this as a forward reference for future lift.",
+              "_targetMissing": "ActivityTemplate is a v0.6+ entity; for v0.5 the SOA grid is referenced indirectly via this relationship. Visit-occurrences carry runtime Activity sub-objects directly."
+            }
+          ]
         }
       ],
       "provType": "prov:Entity"
@@ -2547,6 +2640,526 @@
         }
       ],
       "provType": "prov:Entity"
+    },
+    {
+      "id": "Visit",
+      "role": "the operational visit occurrence \u2014 when a Participant attended a real visit",
+      "description": "A Visit is an actual visit-occurrence: a Participant attended at a StudySite on a specific date. Distinct from VisitDefinition (the protocol-template). Visits carry actual datetimes, status, mode (in-person / telehealth / remote / async), Activities performed, Tasks captured, and any Observations the operator noted. Per FIRST-PRINCIPLES universal-substrate posture, the Visit > Activity > Task hierarchy handles ANY assessment without modeling specifics \u2014 a DICOM imaging Activity and a blood-draw Activity are the same TOP shape. The OOUX Visit->Site direct edge is corrected: Visit.forStudySite -> StudySite (1..1).",
+      "ooux_editor_note": "v0.5.0 introduction (2026-05-09): sixth TOP top-level. Visit-occurrences are runtime-created by EDC/scheduling/eVisit systems, NOT USDM-ingest-derivable (template-side is VisitDefinition; runtime-side is Visit). Per Visit planning Decision 4 (revised), Activity + Task are universal sub-objects under Visit; specialization is content (taskValue polymorphism + biomedicalConceptCode), never entity shape. visitStatus is a NGSI-LD temporal property for trajectory queryability (parallel to Participant.participantStatus). visitMode 6-state enum per ICH E6(R3) Annex 2 DCT framing. Three Visit sub-objects: Activity (universal work unit), Task (universal leaf data-capture, with polymorphic taskValue), VisitObservation (operator-narrative escalation-to-Event sub-object per OOUX Path C). FHIR Questionnaire projection is the canonical EHR-rendering target: VisitDefinition + Activity-templates + Task-templates project to FHIR Questionnaire JSON (consumable by Epic, Cerner, SMART on FHIR apps); Visit + Activities + Tasks project to FHIR QuestionnaireResponse.",
+      "provType": "prov:Activity",
+      "crosswalks": {
+        "fhir": "fhir:Encounter (operational); fhir:QuestionnaireResponse (data-capture projection)",
+        "sdtm": "sdtm:SV (Subject Visits)",
+        "cdash": "cdash:VISIT",
+        "omop": "omop:VISIT_OCCURRENCE",
+        "usdm": "usdm:N/A (no per-visit-occurrence runtime entity)"
+      },
+      "attributes": [
+        {
+          "name": "visitId",
+          "type": "ngsi-ld:URI",
+          "unique": true,
+          "doc": "Globally unique NGSI-LD identifier."
+        },
+        {
+          "name": "visitNumber",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Numeric ordering per protocol (matches VisitDefinition.visitNumber when definedBy is populated). Maps to SDTM VISITNUM."
+        },
+        {
+          "name": "visitName",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Operator-friendly name. For UNSCHEDULED visits, free text describing the reason. Maps to SDTM VISIT."
+        },
+        {
+          "name": "visitMode",
+          "type": "xsd:string",
+          "enum": [
+            "IN_PERSON_CLINIC",
+            "IN_PERSON_HOME",
+            "REMOTE_VIDEO",
+            "REMOTE_PHONE",
+            "REMOTE_ASYNC",
+            "HYBRID"
+          ],
+          "doc": "Visit modality per ICH E6(R3) Annex 2 DCT framing. IN_PERSON_CLINIC for traditional clinic visits; IN_PERSON_HOME for home health; REMOTE_VIDEO for telehealth; REMOTE_PHONE for phone visits; REMOTE_ASYNC for ePRO/eDiary capture without live interaction; HYBRID for mixed-modality visits. FHIR Encounter.virtualService + Encounter.location are the projection targets."
+        },
+        {
+          "name": "visitStatus",
+          "type": "xsd:string",
+          "enum": [
+            "SCHEDULED",
+            "IN_PROGRESS",
+            "COMPLETED",
+            "PARTIALLY_COMPLETED",
+            "MISSED",
+            "RESCHEDULED",
+            "CANCELLED",
+            "OUT_OF_WINDOW",
+            "UNSCHEDULED"
+          ],
+          "_temporalProperty": true,
+          "doc": "Visit lifecycle state. NGSI-LD temporal property (validFrom/validUntil per value) for trajectory queryability. SCHEDULED for booked-but-not-started; IN_PROGRESS during active visit; COMPLETED for per-protocol completion; PARTIALLY_COMPLETED when some Activities not performed (rescheduled separately); MISSED for didn't-happen-no-makeup; OUT_OF_WINDOW when actual datetime falls outside visitDefinition.visitWindow; UNSCHEDULED for ad-hoc (urgent care, AE workup, sponsor-requested). FHIR Encounter.status is the projection target."
+        },
+        {
+          "name": "plannedStartDate",
+          "type": "xsd:date",
+          "optional": true,
+          "doc": "Planned visit date per SOA / scheduling system. What the operator/coordinator booked."
+        },
+        {
+          "name": "plannedEndDate",
+          "type": "xsd:date",
+          "optional": true,
+          "doc": "Planned end date (typically same day; multi-day visits possible for inpatient procedures or PK time-courses)."
+        },
+        {
+          "name": "actualStartDate",
+          "type": "xsd:date",
+          "optional": true,
+          "doc": "Actual visit start date. Empty for SCHEDULED visits not yet started. Maps to SDTM SVSTDTC."
+        },
+        {
+          "name": "actualStartTime",
+          "type": "xsd:time",
+          "optional": true,
+          "doc": "Actual start time-of-day where captured. Operational completeness."
+        },
+        {
+          "name": "actualEndDate",
+          "type": "xsd:date",
+          "optional": true,
+          "doc": "Actual visit end date. Maps to SDTM SVENDTC."
+        },
+        {
+          "name": "actualEndTime",
+          "type": "xsd:time",
+          "optional": true,
+          "doc": "Actual end time-of-day where captured."
+        },
+        {
+          "name": "visitDay",
+          "type": "xsd:integer",
+          "optional": true,
+          "doc": "Days from study anchor (typically randomization or first dose). Computed from actualStartDate when definedBy is populated. Maps to SDTM VISITDY."
+        },
+        {
+          "name": "protocolDeviationCode",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Sponsor-defined deviation code when visitStatus=OUT_OF_WINDOW or other deviation. Free text or coded; aligns with sponsor deviation taxonomy."
+        },
+        {
+          "name": "unscheduledReason",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Reason for an unscheduled visit (urgent care, AE workup, sponsor-requested follow-up). Required when visitStatus=UNSCHEDULED. Maps to SDTM SVUPDES."
+        },
+        {
+          "name": "tags",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Comma-separated user-defined tags."
+        },
+        {
+          "name": "validFrom",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this Visit record became operationally valid."
+        },
+        {
+          "name": "validUntil",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this Visit record was superseded or closed."
+        }
+      ],
+      "relationships": [
+        {
+          "name": "forParticipant",
+          "target": "Participant",
+          "cardinality": "1..1",
+          "doc": "The Participant whose visit this is. PROV: this Visit Activity is wasAttributedTo this Participant. Maps to FHIR Encounter.subject (via ResearchSubject.subject linkage)."
+        },
+        {
+          "name": "forStudySite",
+          "target": "StudySite",
+          "cardinality": "1..1",
+          "doc": "The StudySite hosting this visit (operational owner regardless of physical location \u2014 telehealth visits still have a StudySite of record). OOUX Visit->Site corrected to Visit->StudySite per the operational hierarchy. Maps to FHIR Encounter.serviceProvider + Encounter.location."
+        },
+        {
+          "name": "definedBy",
+          "target": "VisitDefinition",
+          "cardinality": "0..1",
+          "doc": "The VisitDefinition (protocol template) this Visit instantiates. 0..1 because UNSCHEDULED visits don't have a corresponding template. PROV: wasInformedBy semantics \u2014 the template informed the actual visit's expected scope.",
+          "provSemantics": "wasInformedBy"
+        },
+        {
+          "name": "hasActivity",
+          "target": "Activity",
+          "cardinality": "0..N",
+          "doc": "Activities performed at this Visit (universal sub-objects: vitals, MRI, ePRO, biopsy, IP-admin, etc.). Per FIRST-PRINCIPLES universal-substrate posture, Activity is the same TOP shape regardless of activity type."
+        },
+        {
+          "name": "hasTask",
+          "target": "Task",
+          "cardinality": "0..N",
+          "doc": "Tasks (leaf data-capture units) performed at this Visit. Each Task has belongsToActivity referencing its parent Activity within the same Visit. Polymorphic taskValue handles all data shapes (numeric, text, coded, URI references, structured)."
+        },
+        {
+          "name": "hasVisitObservation",
+          "target": "VisitObservation",
+          "cardinality": "0..N",
+          "doc": "Operator-narrative observations captured during the visit that don't fit a structured Activity slot (per OOUX Path C reportability handoff). May escalate to Event when relevant."
+        },
+        {
+          "name": "partOf",
+          "target": "Visit",
+          "cardinality": "0..1",
+          "doc": "Parent Visit this Visit is part of (multi-part visits, follow-up linkage). Maps to FHIR Encounter.partOf and OMOP preceding_visit_occurrence_id (linked-list)."
+        },
+        {
+          "name": "hasAdverseEvent",
+          "target": "Event",
+          "cardinality": "0..N",
+          "doc": "Adverse events identified at or attributed to this Visit. Flagged-missing until Event lifts.",
+          "_targetMissing": "Event is a top-level in OOUX-locked-9 but not yet in TOP source; lifts in v0.7+."
+        },
+        {
+          "name": "hasTag",
+          "target": "Tag",
+          "cardinality": "0..N",
+          "doc": "User-defined tags.",
+          "_targetMissing": "Tag flagged-missing as before."
+        }
+      ],
+      "ctas": [
+        {
+          "action": "Schedule Visit",
+          "persona": "Site Coordinator",
+          "note": "Create a new Visit record with visitStatus=SCHEDULED for an upcoming participant visit. Populates plannedStartDate, definedBy, forParticipant, forStudySite."
+        },
+        {
+          "action": "Start Visit",
+          "persona": "Site Coordinator / PI",
+          "note": "Transition visitStatus from SCHEDULED to IN_PROGRESS. Captures actualStartDate/Time."
+        },
+        {
+          "action": "Complete Visit",
+          "persona": "Site Coordinator / PI",
+          "note": "Transition to COMPLETED after all expected Activities performed; captures actualEndDate/Time."
+        },
+        {
+          "action": "Reschedule Visit",
+          "persona": "Site Coordinator",
+          "note": "Move a SCHEDULED visit to a new date; original visit transitions to RESCHEDULED, new SCHEDULED Visit created with partOf reference."
+        },
+        {
+          "action": "Cancel Visit",
+          "persona": "Site Coordinator / PI",
+          "note": "Cancel a SCHEDULED visit (early termination, withdrawal, etc.); transitions to CANCELLED."
+        },
+        {
+          "action": "Mark Missed",
+          "persona": "Site Coordinator",
+          "note": "Mark a Visit as MISSED when it didn't happen and no make-up is currently scheduled."
+        },
+        {
+          "action": "Mark Out-of-Window",
+          "persona": "Site Coordinator",
+          "note": "When a Visit's actual datetime falls outside the visitDefinition.visitWindow, transition to OUT_OF_WINDOW and populate protocolDeviationCode."
+        },
+        {
+          "action": "Create Unscheduled Visit",
+          "persona": "Site Coordinator / PI",
+          "note": "Create a Visit not in the SOA (urgent care, AE workup, sponsor-requested); visitStatus=UNSCHEDULED; populates unscheduledReason."
+        },
+        {
+          "action": "Record Activity",
+          "persona": "Site Coordinator / PI / Phlebotomist / Technologist",
+          "note": "Add an Activity sub-object to the Visit (Vitals, Blood Draw, MRI, ePRO session, IP administration, etc.)."
+        },
+        {
+          "action": "Capture Task",
+          "persona": "Site Coordinator / PI / etc.",
+          "note": "Add a Task sub-object capturing a single data point (BP, MRI Study reference, PHQ-9 item, drug dose). Task references its parent Activity via belongsToActivity."
+        },
+        {
+          "action": "Record Observation",
+          "persona": "CRA / Site Coordinator",
+          "note": "Add a VisitObservation sub-object for operator-narrative items that don't fit structured Activities."
+        },
+        {
+          "action": "Escalate Observation",
+          "persona": "CRA",
+          "note": "Flag a VisitObservation as escalated; populates escalatedTo when Event lifts."
+        }
+      ],
+      "sub_objects": [
+        {
+          "id": "Activity",
+          "role": "the universal work unit performed at a Visit",
+          "description": "Activity is the universal work unit at a Visit \u2014 Vitals, Blood Draw, MRI, ePRO session, IP administration, ECG, biopsy, sequencing draw, ADAS-Cog session, anything. Per FIRST-PRINCIPLES universal-substrate posture, the SAME entity shape handles all activity types; specialization is content (biomedicalConceptCode + activityType for filter/sort + linked Equipment + governing Document), never entity shape. activityStatus is a NGSI-LD temporal property. PROV: each Activity is a prov:Activity with wasAssociatedWith Person agents, used Equipment, governed-by Documents.",
+          "provType": "prov:Activity",
+          "crosswalks": {
+            "fhir": "fhir:Procedure (procedural Activities); fhir:Observation (assessment Activities); resource selection by activityType",
+            "sdtm": "varies by activityType: VS / EX / PR / LB / EG / IE / CM (each domain row corresponds to Activity + its Tasks)",
+            "usdm": "usdm:Activity (template-side; runtime-side has no USDM analog)"
+          },
+          "attributes": [
+            {
+              "name": "activityId",
+              "type": "ngsi-ld:URI",
+              "unique": true
+            },
+            {
+              "name": "activityName",
+              "type": "xsd:string",
+              "doc": "Operator-friendly name (e.g., 'Vital Signs', 'MRI Brain', 'ECOG Performance Status', 'Drug X Administration', 'EQ-5D-5L')."
+            },
+            {
+              "name": "activityType",
+              "type": "xsd:string",
+              "enum": [
+                "PROCEDURE",
+                "ASSESSMENT",
+                "IP_ADMINISTRATION",
+                "SAMPLE_COLLECTION",
+                "QUESTIONNAIRE",
+                "IMAGING",
+                "OTHER"
+              ],
+              "doc": "Coarse categorization for operator sort/filter, NOT for specialization. Per FIRST-PRINCIPLES universal-substrate posture, the entity shape is the same for all types \u2014 activityType is a hint, not a discriminator that changes structure."
+            },
+            {
+              "name": "activityStatus",
+              "type": "xsd:string",
+              "enum": [
+                "PERFORMED",
+                "NOT_PERFORMED",
+                "PARTIALLY_PERFORMED",
+                "RESCHEDULED"
+              ],
+              "_temporalProperty": true,
+              "doc": "Lifecycle of this Activity. NGSI-LD temporal property."
+            },
+            {
+              "name": "notPerformedReason",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "When activityStatus=NOT_PERFORMED, the reason (subject refused, equipment failure, scheduling conflict, etc.). Required by SHACL when status indicates non-performance."
+            },
+            {
+              "name": "biomedicalConceptCode",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "NCIt C-code (or LOINC where applicable) identifying what the Activity IS. References COSMoS BC catalog. The discriminator that operators (and downstream systems) use to know 'this is a Vital Signs activity' vs 'this is an MRI Brain activity' \u2014 content, not shape."
+            },
+            {
+              "name": "validFrom",
+              "type": "xsd:dateTime",
+              "optional": true,
+              "doc": "NGSI-LD temporal property: operational start time of the Activity within the Visit."
+            },
+            {
+              "name": "validUntil",
+              "type": "xsd:dateTime",
+              "optional": true,
+              "doc": "NGSI-LD temporal property: operational end time."
+            }
+          ],
+          "relationships": [
+            {
+              "name": "performedBy",
+              "target": "Person",
+              "cardinality": "1..N",
+              "doc": "Person(s) who performed the Activity. PROV: prov:wasAssociatedWith. Drawn from forStudySite.delegatesAuthorityTo for delegated tasks.",
+              "provSemantics": "wasAssociatedWith"
+            },
+            {
+              "name": "usedEquipment",
+              "target": "Equipment",
+              "cardinality": "0..N",
+              "doc": "Equipment used to perform the Activity (centrifuge, MRI scanner, infusion pump, ECG machine, etc.). PROV: prov:used. The Equipment's calibration/credential chain is queryable from here.",
+              "provSemantics": "used"
+            },
+            {
+              "name": "governedBy",
+              "target": "Document",
+              "cardinality": "0..N",
+              "doc": "Document(s) that govern how this Activity should be performed (protocol section, SOP, lab manual). Document carries the section anchor. Per the chain-of-custody mock-up: 'Per shipping SOP-2026-CL-019' is a governedBy reference."
+            }
+          ]
+        },
+        {
+          "id": "Task",
+          "role": "the universal leaf data-capture unit",
+          "description": "Task is the universal leaf data-capture unit at a Visit (one Task per measurement / response / dose / observation). Per FIRST-PRINCIPLES universal-substrate posture, Task handles ANY captured data via polymorphic taskValue (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE). A BP measurement, an MRI Study Instance UID reference, a PHQ-9 item response, a drug dose record, a tumor lesion measurement \u2014 all the same TOP entity shape. The specialization lives in content. Each Task carries observedAt as Property metadata on taskValue (NOT a separate flat performedDateTime attribute) per NGSI-LD temporal conventions. Maps to FHIR Observation (one Observation per Task) and per-domain SDTM rows (VS/LB/EX/etc.).",
+          "provType": "prov:Activity",
+          "crosswalks": {
+            "fhir": "fhir:Observation (one per Task); fhir:QuestionnaireResponse.item.answer (when in a Questionnaire context)",
+            "sdtm": "varies by domain: VS / LB / EX / EG / IE / etc. \u2014 each Task projects to a domain row keyed by USUBJID + VISITNUM + TEST",
+            "cdash": "fhir:QuestionnaireResponse.item; CDASH form items"
+          },
+          "attributes": [
+            {
+              "name": "taskId",
+              "type": "ngsi-ld:URI",
+              "unique": true
+            },
+            {
+              "name": "taskName",
+              "type": "xsd:string",
+              "doc": "Operator-friendly name (e.g., 'Systolic BP', 'MRI Study Instance UID', 'PHQ-9 Item 1', 'Drug X dose')."
+            },
+            {
+              "name": "taskValueType",
+              "type": "xsd:string",
+              "enum": [
+                "NUMERIC",
+                "TEXT",
+                "CODED",
+                "URI_REFERENCE",
+                "STRUCTURED",
+                "DATE",
+                "IMAGE_REFERENCE"
+              ],
+              "doc": "Discriminates the shape of taskValue. NUMERIC for numeric measurements; TEXT for free text; CODED for enum/concept-code values; URI_REFERENCE for URIs to external artifacts (DICOM PACS, S3, lab LIS); STRUCTURED for nested object values (lesion measurements with components, BP with sys/dia/MAP); DATE for captured dates; IMAGE_REFERENCE for radiology/pathology image URIs."
+            },
+            {
+              "name": "taskValue",
+              "type": "xsd:string",
+              "doc": "The captured value, polymorphic per taskValueType. NUMERIC values held as string for SHACL flexibility; deployment-side typing applies at projection time. NGSI-LD observedAt Property metadata captures when the value was measured/observed (NOT a separate performedDateTime attribute)."
+            },
+            {
+              "name": "taskUnit",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "UCUM unit where applicable (e.g., '[mmHg]', 'cm', 'mg', 'beats/min'). Empty for taskValueType=TEXT/CODED/URI_REFERENCE/etc. where unit doesn't apply."
+            },
+            {
+              "name": "biomedicalConceptCode",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "NCIt or LOINC C-code identifying what the Task IS (the BC catalog lookup). e.g., NCIt:C25298 for Systolic BP, LOINC:44261-6 for PHQ-9 Q1, NCIt:C16809 for MRI Brain."
+            },
+            {
+              "name": "taskStatus",
+              "type": "xsd:string",
+              "enum": [
+                "COMPLETED",
+                "NOT_PERFORMED",
+                "PARTIALLY_COMPLETED"
+              ],
+              "_temporalProperty": true,
+              "doc": "Lifecycle of the Task. NGSI-LD temporal property."
+            },
+            {
+              "name": "notPerformedReason",
+              "type": "xsd:string",
+              "optional": true,
+              "doc": "When taskStatus=NOT_PERFORMED. Required by SHACL."
+            },
+            {
+              "name": "observedAt",
+              "type": "xsd:dateTime",
+              "optional": true,
+              "doc": "When the value was observed/measured. Canonical NGSI-LD Property metadata for measurement timestamps. Maps to FHIR Observation.effectiveDateTime and SDTM per-domain DTC fields."
+            }
+          ],
+          "relationships": [
+            {
+              "name": "belongsToActivity",
+              "target": "Activity",
+              "cardinality": "1..1",
+              "doc": "The parent Activity within the same Visit. Tasks group under Activities for operator sort/filter and projection-adapter routing (e.g., all VS-domain Tasks in one Vitals Activity)."
+            },
+            {
+              "name": "performedBy",
+              "target": "Person",
+              "cardinality": "1..1",
+              "doc": "The Person who captured this Task. PROV: prov:wasAssociatedWith.",
+              "provSemantics": "wasAssociatedWith"
+            }
+          ]
+        },
+        {
+          "id": "VisitObservation",
+          "role": "operator-narrative observation captured during a visit",
+          "description": "VisitObservation captures something the operator notices during a visit that doesn't fit a structured Activity / Task slot \u2014 observational notes, unexpected events, patient-reported context. Per OOUX Path C, may escalate to a categorized Event (when Event lifts) via escalatedTo. Distinct from Task (which is structured data capture). PROV: each VisitObservation is a prov:Activity that wasInformedBy by the parent Visit; if escalated, the resulting Event was wasInformedBy this VisitObservation.",
+          "provType": "prov:Activity",
+          "crosswalks": {
+            "fhir": "fhir:Observation (with category=note) or fhir:Encounter.note[]",
+            "sdtm": "varies: NV (Non-Standard Variables), DV (Protocol Deviations), or domain-specific note fields"
+          },
+          "attributes": [
+            {
+              "name": "observationId",
+              "type": "ngsi-ld:URI",
+              "unique": true
+            },
+            {
+              "name": "observationText",
+              "type": "xsd:string",
+              "doc": "The operator's narrative observation."
+            },
+            {
+              "name": "observationCategory",
+              "type": "xsd:string",
+              "enum": [
+                "PROTOCOL_DEVIATION",
+                "SAFETY_SIGNAL",
+                "DATA_DISCREPANCY",
+                "OPERATIONAL_NOTE",
+                "OTHER"
+              ],
+              "doc": "Coarse categorization. SAFETY_SIGNAL escalates to AE workflow; PROTOCOL_DEVIATION goes to deviation tracking; DATA_DISCREPANCY into query workflow; OPERATIONAL_NOTE for routine notes; OTHER for catch-all."
+            },
+            {
+              "name": "observationDate",
+              "type": "xsd:date",
+              "doc": "When the observation was recorded."
+            },
+            {
+              "name": "observationTime",
+              "type": "xsd:time",
+              "optional": true,
+              "doc": "Time-of-day the observation was recorded."
+            },
+            {
+              "name": "escalated",
+              "type": "xsd:boolean",
+              "optional": true,
+              "doc": "True if this observation has been escalated to a categorized Event. SHACL soft warning: escalated=true should have escalatedTo populated."
+            },
+            {
+              "name": "escalationDate",
+              "type": "xsd:date",
+              "optional": true,
+              "doc": "Date the escalation occurred."
+            }
+          ],
+          "relationships": [
+            {
+              "name": "recordedBy",
+              "target": "Person",
+              "cardinality": "1..1",
+              "doc": "The Person who recorded the observation (typically a CRA, coordinator, or PI). PROV: prov:wasAssociatedWith.",
+              "provSemantics": "wasAssociatedWith"
+            },
+            {
+              "name": "escalatedTo",
+              "target": "Event",
+              "cardinality": "0..1",
+              "doc": "When escalated, the categorized Event that resulted from this observation. PROV: the Event was wasInformedBy this observation.",
+              "provSemantics": "wasInformedBy",
+              "_targetMissing": "Event is a top-level in OOUX-locked-9 but not yet lifted; flagged-missing until v0.7+."
+            }
+          ]
+        }
+      ]
     }
   ],
   "horizontals": [
