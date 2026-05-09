@@ -393,3 +393,136 @@
     top:soaStatus           "EFFECTIVE" ;
     top:effectiveDate       "2026-01-01"^^xsd:date ;
     top:description         "Visit-by-procedure matrix covering Screening, Treatment, and Follow-up phases." .
+
+# === Participant + sub-objects (lifted in v0.4.0) ===
+# Maria — a Phase 3 NSCLC trial participant, ON_TREATMENT state.
+# Real values for operator-grounded UX; deployment-side de-identification handles
+# tokenization for research-warehouse projections (per Decision 2 PHI posture).
+
+<urn:ngsi-ld:Participant:onco-423-mskcc-p001> a top:Participant ;
+    top:participantId          "urn:ngsi-ld:Participant:onco-423-mskcc-p001"^^xsd:anyURI ;
+    top:screeningNumber        "MSK-001" ;
+    top:randomizationNumber    "ONCO-423-R-0042" ;
+    top:randomizationDate      "2026-04-12"^^xsd:date ;
+    top:firstName              "Maria" ;
+    top:lastName               "Rodriguez" ;
+    top:dateOfBirth            "1958-09-14"^^xsd:date ;
+    top:sex                    "FEMALE" ;
+    top:race                   "Hispanic or Latino, White" ;
+    top:ethnicity              "HISPANIC_OR_LATINO" ;
+    top:primaryLanguage        "en" ;
+    top:country                "USA" ;
+    top:participantStatus      "ON_TREATMENT" ;
+    top:enrollmentDate         "2026-04-08"^^xsd:date ;
+    top:forStudySite           <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:forStudy               <urn:ngsi-ld:Study:ONCO-423> ;
+    top:assignedToArm          <urn:ngsi-ld:Arm:ONCO-423-treatment> ;
+    top:hasInformedConsent     <urn:ngsi-ld:InformedConsent:onco-423-mskcc-p001-c1> ;
+    top:hasScreeningRecord     <urn:ngsi-ld:ScreeningRecord:onco-423-mskcc-p001-s1> ;
+    top:hasEnrollmentRecord    <urn:ngsi-ld:EnrollmentRecord:onco-423-mskcc-p001-e1> ;
+    top:convertedFromRecruit   <urn:ngsi-ld:Recruit:onco-423-mskcc-r001> .
+
+<urn:ngsi-ld:InformedConsent:onco-423-mskcc-p001-c1> a top:InformedConsent ;
+    top:consentId              "urn:ngsi-ld:InformedConsent:onco-423-mskcc-p001-c1"^^xsd:anyURI ;
+    top:consentVersion         "ICF v3.2" ;
+    top:consentDate            "2026-03-22"^^xsd:date ;
+    top:consentMethod          "ELECTRONIC" ;
+    top:consenterRelationship  "SELF" ;
+    top:language               "en" ;
+    top:translatorUsed         false ;
+    top:consentStatus          "OBTAINED" ;
+    top:reconsentRequired      false ;
+    top:personObtainingConsent <urn:ngsi-ld:Person:jones> .
+
+<urn:ngsi-ld:ScreeningRecord:onco-423-mskcc-p001-s1> a top:ScreeningRecord ;
+    top:screeningRecordId      "urn:ngsi-ld:ScreeningRecord:onco-423-mskcc-p001-s1"^^xsd:anyURI ;
+    top:screeningStartDate     "2026-03-22"^^xsd:date ;
+    top:screeningEndDate       "2026-04-08"^^xsd:date ;
+    top:screeningOutcome       "ENROLLED" ;
+    top:reScreeningEligibility false ;
+    top:screenedBy             <urn:ngsi-ld:Person:patel> .
+
+<urn:ngsi-ld:EnrollmentRecord:onco-423-mskcc-p001-e1> a top:EnrollmentRecord ;
+    top:enrollmentRecordId     "urn:ngsi-ld:EnrollmentRecord:onco-423-mskcc-p001-e1"^^xsd:anyURI ;
+    top:enrollmentDate         "2026-04-08"^^xsd:date ;
+    top:enrollmentMethod       "ON_SITE" ;
+    top:enrollmentNumber       "ONCO-423-E-0042" ;
+    top:protocolVersionAtEnrollment "ONCO-423 Protocol v3.2" ;
+    top:eligibilityConfirmedBy <urn:ngsi-ld:Person:patel> .
+
+# === Recruit (the recruitment-funnel entry that became Maria) ===
+# Maria responded to a digital ad campaign in late February; recruitment coordinator
+# Sarah Jones followed up, pre-screened, scheduled the consent appointment.
+# Funnel terminated at CONVERTED_TO_PARTICIPANT.
+
+<urn:ngsi-ld:Recruit:onco-423-mskcc-r001> a top:Recruit ;
+    top:recruitId               "urn:ngsi-ld:Recruit:onco-423-mskcc-r001"^^xsd:anyURI ;
+    top:firstName               "Maria" ;
+    top:lastName                "Rodriguez" ;
+    top:phone                   "+1-212-555-0142" ;
+    top:email                   "maria.rodriguez@example.org" ;
+    top:preferredContactMethod  "PHONE" ;
+    top:recruitStatus           "CONVERTED_TO_PARTICIPANT" ;
+    top:recruitmentSource       "ADVERTISING_DIGITAL" ;
+    top:recruitmentSourceDetails "Facebook NSCLC awareness campaign Q1-2026" ;
+    top:responseDate            "2026-02-28"^^xsd:date ;
+    top:preScreeningOutcome     "QUALIFIED" ;
+    top:preScreeningNotes       "Stage IIIB NSCLC, ECOG 1, prior platinum-doublet failure. Strong motivation; primary caregiver is daughter (transport supportive). Speaks fluent English." ;
+    top:contactAttempts         3 ;
+    top:lastContactDate         "2026-03-15"^^xsd:date ;
+    top:consentScheduled        true ;
+    top:consentAppointmentDate  "2026-03-22"^^xsd:date ;
+    top:country                 "USA" ;
+    top:primaryLanguage         "en" ;
+    top:forStudy                <urn:ngsi-ld:Study:ONCO-423> ;
+    top:forStudySite            <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:recruitedBy             <urn:ngsi-ld:Person:jones> ;
+    top:convertedToParticipant  <urn:ngsi-ld:Participant:onco-423-mskcc-p001> .
+
+# === Recruit (still in funnel — pre-screening qualified, consent appointment scheduled) ===
+# Different person, in earlier funnel state. Demonstrates the operational lifecycle.
+
+<urn:ngsi-ld:Recruit:onco-423-mskcc-r002> a top:Recruit ;
+    top:recruitId               "urn:ngsi-ld:Recruit:onco-423-mskcc-r002"^^xsd:anyURI ;
+    top:firstName               "Robert" ;
+    top:lastName                "Chen" ;
+    top:phone                   "+1-212-555-0387" ;
+    top:preferredContactMethod  "PHONE" ;
+    top:recruitStatus           "QUALIFIED_PENDING_CONSENT" ;
+    top:recruitmentSource       "REFERRAL_PROVIDER" ;
+    top:recruitmentSourceDetails "Referred by Dr. Liu, NYU Langone Pulmonology" ;
+    top:responseDate            "2026-04-25"^^xsd:date ;
+    top:preScreeningOutcome     "QUALIFIED" ;
+    top:preScreeningNotes       "Stage IV NSCLC, ECOG 1, ALK-rearrangement positive. Treatment-naive. Lives in Brooklyn; Saturday clinic preferred." ;
+    top:contactAttempts         2 ;
+    top:lastContactDate         "2026-05-02"^^xsd:date ;
+    top:consentScheduled        true ;
+    top:consentAppointmentDate  "2026-05-15"^^xsd:date ;
+    top:country                 "USA" ;
+    top:primaryLanguage         "en" ;
+    top:forStudy                <urn:ngsi-ld:Study:ONCO-423> ;
+    top:forStudySite            <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:recruitedBy             <urn:ngsi-ld:Person:jones> .
+
+# === Recruit (declined — funnel attrition) ===
+
+<urn:ngsi-ld:Recruit:onco-423-mskcc-r003> a top:Recruit ;
+    top:recruitId               "urn:ngsi-ld:Recruit:onco-423-mskcc-r003"^^xsd:anyURI ;
+    top:firstName               "Jennifer" ;
+    top:lastName                "Park" ;
+    top:phone                   "+1-212-555-0921" ;
+    top:preferredContactMethod  "EMAIL" ;
+    top:recruitStatus           "DECLINED" ;
+    top:recruitmentSource       "ADVERTISING_DIGITAL" ;
+    top:recruitmentSourceDetails "Facebook NSCLC awareness campaign Q1-2026" ;
+    top:responseDate            "2026-03-04"^^xsd:date ;
+    top:preScreeningOutcome     "QUALIFIED" ;
+    top:preScreeningNotes       "Eligible per pre-screen; declined after reading consent draft due to randomization design preference." ;
+    top:contactAttempts         2 ;
+    top:lastContactDate         "2026-03-18"^^xsd:date ;
+    top:consentScheduled        false ;
+    top:country                 "USA" ;
+    top:primaryLanguage         "en" ;
+    top:forStudy                <urn:ngsi-ld:Study:ONCO-423> ;
+    top:forStudySite            <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    top:recruitedBy             <urn:ngsi-ld:Person:jones> .
