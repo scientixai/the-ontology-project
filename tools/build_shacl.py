@@ -1219,6 +1219,109 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === Event invariants (v0.7.0) ===
+    invariants.append("# === Event invariants (v0.7.0) ===")
+    invariants.append("")
+
+    # 41. Hard: a SERIOUS_ADVERSE_EVENT must have regulatoryReportable=true.
+    #     SAEs trigger reporting by definition per ICH E2A / 21 CFR 312.32.
+    invariants.append(sub("""__P__:EventSAEMustBeReportableShape a sh:NodeShape ;
+    sh:targetClass __P__:Event ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Event has eventCategory=SERIOUS_ADVERSE_EVENT but regulatoryReportable is not true. SAEs trigger regulatory submission by definition per ICH E2A and 21 CFR 312.32." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Event .
+                $this __P__:eventCategory "SERIOUS_ADVERSE_EVENT" .
+                FILTER NOT EXISTS { $this __P__:regulatoryReportable true }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 42. Hard: ctcaeGrade is only valid when eventCategory is AE or SAE.
+    #     CTCAE 5.0 grades only apply to clinical adverse events.
+    invariants.append(sub("""__P__:EventCtcaeOnlyForAEShape a sh:NodeShape ;
+    sh:targetClass __P__:Event ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Event has ctcaeGrade populated but eventCategory is not ADVERSE_EVENT or SERIOUS_ADVERSE_EVENT. CTCAE grades only apply to clinical adverse events per CTCAE 5.0." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Event .
+                $this __P__:ctcaeGrade ?grade .
+                $this __P__:eventCategory ?cat .
+                FILTER (?cat NOT IN ("ADVERSE_EVENT", "SERIOUS_ADVERSE_EVENT"))
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 43. Hard: protocolDeviationCategory is only valid when eventCategory=DEVIATION.
+    invariants.append(sub("""__P__:EventDeviationCategoryOnlyForDeviationShape a sh:NodeShape ;
+    sh:targetClass __P__:Event ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Event has protocolDeviationCategory populated but eventCategory is not DEVIATION. Protocol deviation categorization only applies to DEVIATION events per ICH E6(R3) Section 6." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Event .
+                $this __P__:protocolDeviationCategory ?dc .
+                $this __P__:eventCategory ?cat .
+                FILTER (?cat != "DEVIATION")
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 44. Hard: regulatoryReportSubmitted=true requires regulatoryReportSubmittedDate.
+    #     Audit-trail integrity: a submission claim must carry its timestamp.
+    invariants.append(sub("""__P__:EventSubmittedNeedsDateShape a sh:NodeShape ;
+    sh:targetClass __P__:Event ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Event has regulatoryReportSubmitted=true but no regulatoryReportSubmittedDate. Audit-trail integrity requires the submission timestamp." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Event .
+                $this __P__:regulatoryReportSubmitted true .
+                FILTER NOT EXISTS { $this __P__:regulatoryReportSubmittedDate ?d }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 45. Soft warning: regulatoryReportable=true with regulatoryReportDeadline
+    #     in the past and regulatoryReportSubmitted still false (overdue).
+    invariants.append(sub("""__P__:EventOverdueReportShape a sh:NodeShape ;
+    sh:targetClass __P__:Event ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Event is regulatoryReportable=true with regulatoryReportDeadline in the past and regulatoryReportSubmitted still false. Submission is overdue; verify whether the report has been filed and update the record, or escalate per E2B SUSAR timelines." ;
+        sh:severity sh:Warning ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+                $this a __P__:Event .
+                $this __P__:regulatoryReportable true .
+                $this __P__:regulatoryReportDeadline ?dl .
+                FILTER (?dl < NOW())
+                FILTER NOT EXISTS { $this __P__:regulatoryReportSubmitted true }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -1286,7 +1389,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 40 (6 soft warnings + 34 hard violations)")
+    print(f"  domain invariants: 45 (7 soft warnings + 38 hard violations)")
 
 
 if __name__ == "__main__":

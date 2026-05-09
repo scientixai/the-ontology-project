@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Event / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: #1a1a1a; background: #f4f4f1; padding: 22px 26px 32px; line-height: 1.55; font-size: 13px; }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #111; margin: 26px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #c8c8c0; }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr { background: #fff; border-left: 3px solid #1e6fd9; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; margin-bottom: 12px; font-size: 12px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th { background: #f0f0e9; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  .decision, .scenario { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 12px 16px; margin-bottom: 10px; }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves { font-size: 11.5px; background: #f7faf8; border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px; margin-top: 6px; line-height: 1.65; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .diagram { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 14px 16px; margin-bottom: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.7; white-space: pre; overflow-x: auto; }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 3px; }
+  .pre { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 12px 14px; margin-bottom: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.55; white-space: pre; overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="title">TOP / Event / spec / v1</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.7.0-strawman) · ninth (final OOUX-locked) top-level · Adverse Event / SAE / Deviation / Discrepancy / Safety Signal / Safety Report · 5 new SHACL invariants (45 total)</div>
+</header>
+
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">one container, all the categories operators actually deal with</span></h2>
+
+<p class="tldr"><strong>Event is the single container for clinical-trial occurrences requiring tracking, reporting, or escalation.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> universal-substrate posture, one Event entity covers Adverse Event, Serious Adverse Event, Protocol Deviation, Data Discrepancy, Safety Signal, Safety Report, and Other Clinical Event — discriminated by <span class="inline">eventCategory</span> enum, not by entity type. Per ICH E2A / E2B(R3) / 21 CFR 312.32, regulatory reportability is a first-class attribute with submission-timeline tracking. Per ICH E6(R3) Section 6, deviations carry category and impact. PROV: Event is <span class="inline">prov:Activity</span> (the event IS the thing that happened); <span class="inline">reportedBy → Person</span> carries <span class="inline">prov:wasAssociatedWith</span>; <span class="inline">derivedFrom → VisitObservation</span> carries <span class="inline">prov:wasInformedBy</span> (the operator-meaningful escalation chain). Un-flag-misses three relationships: <span class="inline">Participant.hasAdverseEvent</span>, <span class="inline">Visit.hasAdverseEvent</span>, <span class="inline">VisitObservation.escalatedTo</span>. Closes the OOUX-locked-9 top-level set.</p>
+
+<h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor</h2>
+
+<div class="diagram">                          ┌─→ Study           (forStudy — every Event ties to a Study)
+                          │
+                          ├─→ Participant     (forParticipant — most events)
+                          │
+Event ────────────────────┼─→ StudySite       (forStudySite — locality of occurrence)
+                          │
+                          ├─→ Visit           (duringVisit — when detected at a Visit)
+                          │
+                          ├─→ VisitObservation (derivedFrom — escalation chain · prov:wasInformedBy)
+                          │
+                          ├─→ InvestigationalProduct / Lot / Kit (causality chain)
+                          │
+                          ├─→ Person          (reportedBy / assignedTo · prov:wasAssociatedWith)
+                          │
+                          ├─→ Event           (partOf · causedBy[*] — aggregation + causal lineage)
+                          │
+                          ├─→ OversightBody   (reviewedBy[*] — DSMB / IDMC / IRB review)
+                          │
+                          └─→ Document        (documentedIn[*] — MedWatch, CIOMS, CAPA)</div>
+
+<p>Event reaches every other top-level. The forward-references that pre-date this lift are <span class="inline">Participant.hasAdverseEvent → Event</span>, <span class="inline">Visit.hasAdverseEvent → Event</span>, and <span class="inline">VisitObservation.escalatedTo → Event</span> — all flagged-missing in earlier lifts and resolved here. The <span class="inline">derivedFrom</span> relationship is the operator-meaningful escalation chain: a routine vital-sign observation that flags as elevated escalates into a tracked Event with explicit lineage.</p>
+
+<h2 class="section" id="model"><span class="num">3.</span>Model summary</h2>
+
+<h3 class="subsection">Event attributes (~22)</h3>
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">eventId</td><td>NGSI-LD URI</td><td>Globally unique</td></tr>
+    <tr><td class="code">eventCategory</td><td>enum (7) — ADVERSE_EVENT / SERIOUS_ADVERSE_EVENT / DEVIATION / DISCREPANCY / SAFETY_SIGNAL / SAFETY_REPORT / OTHER_CLINICAL_EVENT</td><td>The discriminator. SHACL invariants gate per-category attributes off this.</td></tr>
+    <tr><td class="code">eventType</td><td>string · optional</td><td>Free-form workflow term ("Grade 3 nausea", "Missed visit window")</td></tr>
+    <tr><td class="code">eventDate</td><td>dateTime · temporal</td><td>When the event occurred. <span class="inline">prov:atTime</span></td></tr>
+    <tr><td class="code">detectedDate</td><td>dateTime · optional · temporal</td><td>When detected (may be later than eventDate)</td></tr>
+    <tr><td class="code">reportedDate</td><td>dateTime · optional · temporal</td><td>When formally reported into the system. Anchors E2B reporting clocks for SAE.</td></tr>
+    <tr><td class="code">description</td><td>string</td><td>Operator-grounded narrative</td></tr>
+    <tr><td class="code">severity</td><td>enum (9) — MILD / MODERATE / SEVERE / LIFE_THREATENING / FATAL / LOW / MEDIUM / HIGH / CRITICAL</td><td>AE/SAE scale + non-clinical scale in one enum; adapter projects per category</td></tr>
+    <tr><td class="code">status</td><td>enum (6) — REPORTED / UNDER_REVIEW / ASSESSED / RESOLVED / ONGOING / CLOSED</td><td>NGSI-LD temporal property — full lifecycle audit trail</td></tr>
+    <tr><td class="code">detectionSource</td><td>enum (8) — VISIT_OBSERVATION / SELF_REPORT / EXTERNAL_REPORT / MONITORING / ROUTINE_LAB / DATA_CLEANING / AGGREGATE_REVIEW / OTHER</td><td>How the event surfaced</td></tr>
+    <tr><td class="code">identifier</td><td>string · optional</td><td>Workflow-issued reference ("AE-2026-0014", "DEV-MSKCC-008")</td></tr>
+    <tr><td class="code">causality</td><td>enum (6) — UNRELATED / UNLIKELY / POSSIBLY / PROBABLY / DEFINITELY / NOT_ASSESSABLE</td><td>Investigator's IP causality; required AE/SAE field per E2A</td></tr>
+    <tr><td class="code">expectedness</td><td>enum (2) — EXPECTED / UNEXPECTED</td><td>vs Investigator's Brochure. UNEXPECTED + SERIOUS + IP-related = SUSAR.</td></tr>
+    <tr><td class="code">regulatoryReportable</td><td>boolean</td><td>Triggers regulatory submission. SHACL: SAE ⇒ regulatoryReportable=true.</td></tr>
+    <tr><td class="code">regulatoryReportDeadline</td><td>dateTime · optional · temporal</td><td>SUSAR 7-day fatal/life-threatening · 15-day other; non-SUSAR SAE 15-day. SHACL soft warning when overdue.</td></tr>
+    <tr><td class="code">regulatoryReportSubmitted</td><td>boolean · temporal</td><td>SHACL: when true, regulatoryReportSubmittedDate must be populated.</td></tr>
+    <tr><td class="code">regulatoryReportSubmittedDate</td><td>dateTime · optional · temporal</td><td>Submission timestamp; anchors compliance audit.</td></tr>
+    <tr><td class="code">meddraPreferredTerm</td><td>string · optional</td><td>MedDRA PT for AE/SAE coding; required for E2B</td></tr>
+    <tr><td class="code">meddraSystemOrganClass</td><td>string · optional</td><td>MedDRA SOC for aggregate reporting</td></tr>
+    <tr><td class="code">ctcaeGrade</td><td>enum (5) — GRADE_1..GRADE_5</td><td>CTCAE 5.0. SHACL: only valid when eventCategory IN {ADVERSE_EVENT, SERIOUS_ADVERSE_EVENT}.</td></tr>
+    <tr><td class="code">actionTakenWithIp</td><td>enum (7) — NONE / DOSE_REDUCED / DOSE_INTERRUPTED / DOSE_DISCONTINUED / NEW_TREATMENT_INITIATED / NOT_APPLICABLE / UNKNOWN</td><td>Required AE field per E2A</td></tr>
+    <tr><td class="code">outcome</td><td>enum (6) — RECOVERED / RECOVERING / NOT_RECOVERED / RECOVERED_WITH_SEQUELAE / FATAL / UNKNOWN</td><td>Required AE field per E2A</td></tr>
+    <tr><td class="code">protocolDeviationCategory</td><td>enum (10) — INCLUSION_VIOLATION / EXCLUSION_VIOLATION / INFORMED_CONSENT / MISSED_VISIT / MISSED_PROCEDURE / OUT_OF_WINDOW_VISIT / IP_NONCOMPLIANCE / RANDOMIZATION_ERROR / BLINDING_BREAK / OTHER</td><td>Per ICH E6(R3) §6. SHACL: only valid when eventCategory=DEVIATION.</td></tr>
+    <tr><td class="code">protocolDeviationImpact</td><td>enum (4) — NONE / MINOR / MAJOR / CRITICAL</td><td>MAJOR/CRITICAL trigger CAPA</td></tr>
+    <tr><td class="code">validFrom / validUntil</td><td>dateTime · optional</td><td>NGSI-LD temporal validity bracket</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Event relationships (14)</h3>
+<table>
+  <thead><tr><th>Relationship</th><th>Target</th><th>Card.</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">forStudy</td><td>Study</td><td>1..1</td><td>Required — every Event ties to one Study</td></tr>
+    <tr><td class="code">forParticipant</td><td>Participant</td><td>0..1</td><td>Most events tie to one Participant; system-level deviations may not</td></tr>
+    <tr><td class="code">forStudySite</td><td>StudySite</td><td>0..1</td><td>Locality for site-level monitoring + CAPA scoping</td></tr>
+    <tr><td class="code">duringVisit</td><td>Visit</td><td>0..1</td><td>Visit during which event detected</td></tr>
+    <tr><td class="code">relatedToInvestigationalProduct</td><td>InvestigationalProduct</td><td>0..1</td><td>Suspected IP for AE causality</td></tr>
+    <tr><td class="code">relatedToLot</td><td>Lot</td><td>0..1</td><td>Specific lot for batch-level safety signals / recalls</td></tr>
+    <tr><td class="code">relatedToKit</td><td>Kit</td><td>0..1</td><td>Specific kit for IP_NONCOMPLIANCE / BLINDING_BREAK</td></tr>
+    <tr><td class="code">reportedBy</td><td>Person</td><td>1..1</td><td><span class="inline">prov:wasAssociatedWith</span> — investigator / coordinator / monitor</td></tr>
+    <tr><td class="code">assignedTo</td><td>Person</td><td>0..1</td><td><span class="inline">prov:wasAssociatedWith</span> — assessor / closer</td></tr>
+    <tr><td class="code">derivedFrom</td><td>VisitObservation</td><td>0..1</td><td><span class="inline">prov:wasInformedBy</span> — escalation chain from routine observation</td></tr>
+    <tr><td class="code">partOf</td><td>Event</td><td>0..1</td><td>Self-ref: aggregation parent (SAE rolls up multiple AEs; Safety Signal rolls up cluster)</td></tr>
+    <tr><td class="code">causedBy</td><td>Event</td><td>0..N</td><td>Self-ref: <span class="inline">prov:wasInformedBy</span> — causal predecessors</td></tr>
+    <tr><td class="code">reviewedBy</td><td>OversightBody</td><td>0..N</td><td>DSMB / IDMC / IRB / CEC review chain</td></tr>
+    <tr><td class="code">documentedIn</td><td>Document</td><td>0..N</td><td>MedWatch 3500A, CIOMS, narratives, CAPA records</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="decisions"><span class="num">4.</span>Architectural decisions</h2>
+
+<div class="decision">
+  <div class="title">Decision 1 — Single Event entity with category discriminator (universal substrate)</div>
+  <p>Per FIRST-PRINCIPLES universal-substrate posture: don't split into separate AdverseEvent / Deviation / Discrepancy / SafetySignal classes. One TOP entity shape; <span class="inline">eventCategory</span> enum carries the operator-grounded discrimination. Same architectural moat as Activity + Task (v0.5), OversightBody (v0.5.1), and InvestigationalProduct (v0.6.0). Standards-up vendors model N entity types per category; TOP carries one universal shape and projects to FHIR / SDTM / E2B at the adapter layer.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2 — Universal-grade attributes coexist with clinical-research-specific attributes for v0.7</div>
+  <p>The <a href="../../../TAXONOMY.md">migration table</a> targets <span class="inline">topc:Event</span> (universal primitive shape — every regulated workflow has Events) plus <span class="inline">topcr:Event subClassOf topc:Event</span> (clinical-research specialization adding causality / MedDRA / CTCAE / IP-causality / protocol-deviation discipline). For v0.7 those concerns co-locate under the existing <span class="inline">top:</span> prefix; the upcoming namespace-refactor PR performs the split with no shape changes — it is purely a prefix renaming + <span class="inline">subClassOf</span> addition.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3 — Event is <span class="inline">prov:Activity</span></div>
+  <p>The Event IS the thing that happened. Visit was <span class="inline">prov:Activity</span> for the same reason — the visit IS the activity. The recorded fact (the Event entity itself) is both the prov:Activity and its audit-trail entry. <span class="inline">eventDate</span> carries <span class="inline">prov:atTime</span>; <span class="inline">reportedBy</span> carries <span class="inline">prov:wasAssociatedWith</span>; <span class="inline">derivedFrom</span> carries <span class="inline">prov:wasInformedBy</span> (the escalation chain from VisitObservation). The provenance chain is queryable by every PROV-aware tool downstream.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4 — Severity uses one enum spanning both AE/SAE and non-clinical scales</div>
+  <p>AE/SAE per ICH E2A grade severity as MILD / MODERATE / SEVERE / LIFE_THREATENING / FATAL. Non-clinical events (DEVIATION, DISCREPANCY) typically use LOW / MEDIUM / HIGH / CRITICAL. Two scales kept in one enum for substrate simplicity; the projection adapter restricts to the right scale per category. CTCAE grading is a separate field (<span class="inline">ctcaeGrade</span>) because CTCAE 5.0 grading is more granular and only applies to AE/SAE.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5 — <span class="inline">hasAdverseEvent</span> kept as the operator-vocabulary forward reference; broader category access via <span class="inline">Event.forParticipant</span></div>
+  <p>Operators say "adverse events" out loud during their workday. <span class="inline">Participant.hasAdverseEvent</span> and <span class="inline">Visit.hasAdverseEvent</span> are kept as the named forward references — they're the operator-vocabulary view filtered to AE/SAE category. Broader category access ("all events for this participant", "all deviations during this visit") is reachable via <span class="inline">Event.forParticipant</span> / <span class="inline">Event.duringVisit</span> inverse traversal. Don't create both <span class="inline">hasAdverseEvent</span> and <span class="inline">hasEvent</span>; that's redundant.</p>
+</div>
+
+<h2 class="section" id="invariants"><span class="num">5.</span>SHACL invariants <span class="subnote">5 new in v0.7.0 — 4 hard + 1 soft</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Severity</th><th>Constraint</th></tr></thead>
+  <tbody>
+    <tr><td>41</td><td>Hard</td><td>SERIOUS_ADVERSE_EVENT must have <span class="inline">regulatoryReportable=true</span>. SAEs trigger reporting by definition per ICH E2A.</td></tr>
+    <tr><td>42</td><td>Hard</td><td><span class="inline">ctcaeGrade</span> populated requires eventCategory IN {ADVERSE_EVENT, SERIOUS_ADVERSE_EVENT}. CTCAE only applies to clinical adverse events.</td></tr>
+    <tr><td>43</td><td>Hard</td><td><span class="inline">protocolDeviationCategory</span> populated requires eventCategory=DEVIATION.</td></tr>
+    <tr><td>44</td><td>Hard</td><td><span class="inline">regulatoryReportSubmitted=true</span> requires <span class="inline">regulatoryReportSubmittedDate</span>. Audit-trail integrity.</td></tr>
+    <tr><td>45</td><td>Soft</td><td><span class="inline">regulatoryReportable=true</span> and <span class="inline">regulatoryReportDeadline</span> in past and <span class="inline">regulatoryReportSubmitted</span> still false → overdue warning.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="crosswalks"><span class="num">6.</span>Cross-walks <span class="subnote">below the operator-facing line — projection edges, not entity shape</span></h2>
+
+<table>
+  <thead><tr><th>Standard</th><th>Cross-walk</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">FHIR R5</td><td><span class="inline">fhir:AdverseEvent</span> (AE/SAE) · <span class="inline">fhir:DetectedIssue</span> (DISCREPANCY) · <span class="inline">fhir:Communication</span> (SAFETY_REPORT)</td><td>FHIR splits by resource type; TOP collapses for operator UX</td></tr>
+    <tr><td class="code">USDM v4</td><td><span class="inline">usdm:Event</span></td><td>USDM has a single Event class — direct mapping</td></tr>
+    <tr><td class="code">SDTM</td><td><span class="inline">sdtm:AE</span> (Adverse Events) · <span class="inline">sdtm:DV</span> (Deviations) · <span class="inline">sdtm:DD</span> (Discrepancies)</td><td>SDTM splits by domain; the projection adapter routes by eventCategory</td></tr>
+    <tr><td class="code">CDASH</td><td><span class="inline">cdash:AE</span> · <span class="inline">cdash:DV</span></td><td>Direct mapping at form level</td></tr>
+    <tr><td class="code">ICH E2A / E2B(R3)</td><td>Individual Case Safety Reports</td><td>regulatoryReportable / regulatoryReport* fields project to E2B XML</td></tr>
+    <tr><td class="code">ICH E6(R3) §6</td><td>Deviation discipline</td><td>protocolDeviationCategory / protocolDeviationImpact</td></tr>
+    <tr><td class="code">21 CFR 312.32</td><td>IND Safety Reporting</td><td>SUSAR fast-track (7-day fatal/life-threatening, 15-day other)</td></tr>
+    <tr><td class="code">CTCAE 5.0</td><td>Common Terminology Criteria for Adverse Events</td><td>ctcaeGrade — a CDISC-pipeline manifest dependency</td></tr>
+    <tr><td class="code">MedDRA</td><td>Medical Dictionary for Regulatory Activities</td><td>meddraPreferredTerm + meddraSystemOrganClass</td></tr>
+    <tr><td class="code">OMOP</td><td><span class="inline">condition_occurrence</span> + <span class="inline">observation</span></td><td>For real-world-evidence projections</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section" id="example"><span class="num">7.</span>Worked example <span class="subnote">Maria's Grade 3 immune-related hepatitis SAE</span></h2>
+
+<div class="scenario">
+  <div class="title-row">
+    <div class="scn-title">Day 13 post-C1D1: Grade 3 immune-related hepatitis SAE</div>
+    <div class="scn-tag">SCENARIO · SAE</div>
+  </div>
+  <p>Maria Rodriguez (Participant <span class="inline">onco-423-mskcc-p001</span>) received Drug X (anti-PD-L1 monoclonal antibody, BIOLOGIC, blinded) at her C1D1 visit on 2026-04-12. On 2026-04-25 (Day 13 post-dose), routine follow-up labs returned ALT 8× ULN, AST 6× ULN, total bilirubin 2.1 mg/dL — asymptomatic but Grade 3 by CTCAE 5.0. Investigator Patel reviews, classifies as immune-mediated hepatitis (consistent with PD-L1 mechanism per IB Section 6.4), interrupts Drug X dosing, and reports the SAE the same day.</p>
+  <div class="resolves">Event { eventId: ":Event:onco-423-mskcc-p001-sae-001",
+        eventCategory: "SERIOUS_ADVERSE_EVENT",
+        ctcaeGrade: "GRADE_3",
+        causality: "PROBABLY",
+        expectedness: "EXPECTED",
+        regulatoryReportable: true,
+        regulatoryReportDeadline: 2026-05-10T23:59:59Z,
+        regulatoryReportSubmitted: true,
+        regulatoryReportSubmittedDate: 2026-05-08T11:22:00Z,
+        meddraPreferredTerm: "Immune-mediated hepatitis",
+        actionTakenWithIp: "DOSE_INTERRUPTED",
+        outcome: "RECOVERING",
+        forParticipant: → Maria,
+        relatedToInvestigationalProduct: → Drug X,
+        relatedToLot: → DRX-2026-0117,
+        relatedToKit: → KIT-00042,
+        reportedBy: → Patel,
+        reviewedBy: → ONCO-423 DSMB }</div>
+  <p>Validates against all 5 v0.7.0 invariants: SAE has regulatoryReportable=true (#41); ctcaeGrade is set on AE/SAE (#42); protocolDeviationCategory is unset (#43 satisfied vacuously); regulatoryReportSubmitted=true paired with submittedDate (#44); deadline is satisfied (#45 not triggered — submitted before deadline).</p>
+</div>
+
+<div class="scenario">
+  <div class="title-row">
+    <div class="scn-title">Out-of-window labs as DEVIATION</div>
+    <div class="scn-tag">SCENARIO · DEVIATION</div>
+  </div>
+  <p>Day 8 safety labs were due 2026-04-20. MSKCC outpatient labs closed for severe weather; labs drawn the following day (Day 9). Outside protocol-specified ±0 day window for Day 8 but within ±1 day operational tolerance. Coordinator Jones documents as DEVIATION with category <span class="inline">OUT_OF_WINDOW_VISIT</span>, impact MINOR, regulatoryReportable=false, status CLOSED. Demonstrates the deviation-discipline path through the same Event entity — same shape, different category, different relevant attributes.</p>
+</div>
+
+<h2 class="section" id="ctas"><span class="num">8.</span>CTAs <span class="subnote">operator-meaningful actions</span></h2>
+
+<ul>
+  <li><strong>Report Adverse Event</strong> — Investigator / Coordinator. Create Event with <span class="inline">eventCategory=ADVERSE_EVENT</span> (or SAE), populate severity / eventDate / MedDRA term / CTCAE grade / causality / actionTakenWithIp / outcome.</li>
+  <li><strong>Escalate to SAE</strong> — Investigator / Safety. Reclassify AE → SERIOUS_ADVERSE_EVENT, set regulatoryReportable=true, populate regulatoryReportDeadline per E2B timeline, link parent AE via partOf.</li>
+  <li><strong>Document Protocol Deviation</strong> — Coordinator / Monitor. <span class="inline">eventCategory=DEVIATION</span>, populate protocolDeviationCategory + protocolDeviationImpact, link the affected Visit via duringVisit.</li>
+  <li><strong>Submit Regulatory Report</strong> — Sponsor Safety / Regulatory. Set regulatoryReportSubmitted=true with regulatoryReportSubmittedDate; attach E2B XML or CIOMS PDF via documentedIn.</li>
+  <li><strong>Aggregate Safety Signal</strong> — Sponsor Safety / Pharmacovigilance. <span class="inline">eventCategory=SAFETY_SIGNAL</span>, link constituent AE Events via causedBy[*], attach DSMB review via reviewedBy.</li>
+  <li><strong>Close Event</strong> — Investigator / Safety. Transition status to CLOSED after final outcome and required regulatory reporting. NGSI-LD temporal history preserves the lifecycle.</li>
+</ul>
+
+<h2 class="section" id="forward"><span class="num">9.</span>Forward references resolved</h2>
+
+<ul>
+  <li><span class="inline">Participant.hasAdverseEvent → Event</span> — was flagged-missing since v0.4 (Participant lift). Now resolves to the Event entity. Operator vocabulary retained: the relationship label remains <span class="inline">hasAdverseEvent</span> (not <span class="inline">hasEvent</span>); Event is reachable in full-category breadth via <span class="inline">Event.forParticipant</span> inverse.</li>
+  <li><span class="inline">Visit.hasAdverseEvent → Event</span> — was flagged-missing since v0.5 (Visit lift). Resolves; broader category access via <span class="inline">Event.duringVisit</span> inverse.</li>
+  <li><span class="inline">VisitObservation.escalatedTo → Event</span> — was flagged-missing since v0.5. Resolves; carries <span class="inline">prov:wasInformedBy</span> semantics. The escalation chain from a routine observation to a tracked Event is now first-class queryable provenance.</li>
+</ul>
+
+<h2 class="section" id="closure"><span class="num">10.</span>Closure of OOUX-locked-9 top-level set</h2>
+
+<p>Event closes the OOUX-locked-9 top-level sequence: Sponsor (v0.1) → Site (v0.3) → Study (v0.3) → Participant + Recruit (v0.4) → Visit (v0.5) → OversightBody (v0.5.1) → InvestigationalProduct (v0.6) → Event (v0.7). The substrate is now structurally complete for an end-to-end clinical-research deployment. Forward work: namespace refactor (per <a href="../../../TAXONOMY.md">TAXONOMY.md</a>); workflow-extension lifts (Care Delivery, Manufacturing, Supply Chain) under their own prefixes; sub-object refinements (ReviewDecision under OversightBody; Activity-template under Study); reference patterns (operator-specific projections).</p>
+
+<div class="footer">TOP / Event / spec / v1 · 2026-05-09 · backed by source/top-strawman.json (v0.7.0-strawman) · 5 new SHACL invariants · 22 attributes · 14 relationships · ninth and final OOUX-locked top-level · governed by The Ontology Project under Apache 2.0</div>
+
+</div>
+</body>
+</html>
