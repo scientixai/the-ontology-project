@@ -66,6 +66,54 @@ USDM v3 / M11 protocol (JSON)  ──[ingester]──▶  TOP NGSI-LD entities (
 
 (Open question added below: is the `urn:top:...` URI policy correct, or should TOP defer to USDM's own URN scheme?)
 
+## Multi-realm projection — Mary in five rooms
+
+Per [`FIRST-PRINCIPLES.md`](../../../../FIRST-PRINCIPLES.md): a participant is a participant, full stop. Operators say "Mary." That's the anchor. *Realms* and *states* are the lenses different operators look at Mary through:
+
+| Realm | Operator role | Mary appears as | Standards projection |
+| --- | --- | --- | --- |
+| **Recruitment** | Recruiter / outreach coordinator | A `Recruit` (responder, in funnel, pre-consent) | (no canonical standard; sponsor-internal) |
+| **Trial conduct** | Study coordinator / PI / monitor | A `Participant` (consented through completion / withdrawal) | FHIR `ResearchSubject`, SDTM `DM` + `DS`, USDM (no per-subject) |
+| **Standard care** | Primary care nurse / treating physician | A `Patient` (clinical relationship outside the study) | FHIR `Patient`, USCDI, OMOP `PERSON` |
+| **Claims / payer** | Claims processor / payer ops | A `Claimant` / `Member` | FHIR `Claim` / `Coverage`, X12 837, NCPDP |
+| **Real-world evidence** | Epidemiologist / RWE analyst | A `Patient` (post-trial, observed in EMR/claims) | OMOP CDM, Sentinel, PCORnet CDM |
+
+**TOP carries one realm: trial conduct.** TOP `Participant` is the Mary-as-trial-subject role-entity. Other realms are out of TOP's scope as entities — they are *projection targets* handled by separate adapters (FHIR adapter for Patient, OMOP projector for RWE, claims adapter for Claimant).
+
+**This is the same projection-edge pattern as standards.** Just as TOP doesn't carry FHIR `Patient` shape but emits Patient via the FHIR adapter, TOP doesn't carry Mary-as-Claimant but emits a Claimant view via a claims adapter. The substrate persists; the projections are ephemeral.
+
+**Identity resolution across realms is federation, not substrate.** Mary's Participant URI in TOP, Mary's Patient URI in her PCP's FHIR server, Mary's Claimant ID in her insurer's system — these resolve to the same human via Datavant tokens, master patient indexes, or cross-realm trust agreements. TOP doesn't model this resolution; it provides the substrate that *can be resolved against* at the deployment edge.
+
+**Pre-consent is a real workflow boundary** (new architectural decision below — see Decision 9). Recruiters work with people who haven't yet entered the trial-conduct realm. Whether `Recruit` becomes a separate TOP entity or is folded as a pre-consent state on `Participant` is the architectural call.
+
+## Digital-twin posture — Mary as a model
+
+A participant — at any stage (recruit, screening, randomized, on-treatment, post-trial) — needs to be **spec-able as a digital twin**. Twin synthesis is a major axis of research workflow now (synthetic control arms, in-silico trials, individual outcome prediction, shadow-enrollment dashboards) and TOP's posture matters because the twin is a high-value derivative.
+
+**TOP's posture: digital twin is a projection lens, not an entity.** Same pattern as everything else in this note. The TOP Participant carries the substrate; a *twin synthesizer* (model-driven, not part of TOP) reads from TOP and emits a twin representation.
+
+**What TOP must guarantee for the substrate to be twin-spec-able**: every Participant — at every stage — must be queryable along the dimensions a twin needs. Not "TOP carries the twin"; *"TOP carries enough that a twin can be derived."*
+
+The dimensions the twin synthesizer needs:
+
+| Twin dimension | TOP source |
+| --- | --- |
+| **Demographic substrate** | Participant attributes (sex, dateOfBirth, race, ethnicity, country) |
+| **Disease state at entry** | ScreeningRecord + Activity occurrences during screening (when Visit/Activity lift) |
+| **Treatment assignment** | EnrollmentRecord + assignedToArm + protocolVersionAtEnrollment (Arm carries intervention reach via the USDM-ingester chain) |
+| **Time-varying observations** | Visit / Activity / Observation occurrences (when those lift) |
+| **Lifecycle state trajectory** | participantStatus over time (the 11-state enum carries this; sub-objects carry the state-change events) |
+| **Outcome trajectory** | Endpoint values + AE occurrences (when those lift) + final state (COMPLETED / WITHDRAWN / DISCONTINUED / etc.) |
+| **Cross-realm context** (when federation provides it) | Linked Patient (FHIR), Claimant (claims), historical Patient (OMOP) — at the deployment edge, not in TOP substrate |
+
+**Implication for Participant entity design**: every attribute, every relationship, every sub-object is queryable across the participant's lifetime. The lifecycle states (SCREENING → CONSENTED → ENROLLED → RANDOMIZED → ON_TREATMENT → ...) are not just labels; they are *queryable temporal axes* the twin synthesizer reads. The `validFrom` / `validUntil` temporal pattern (already used on Sponsor and StudySite for relationship handoffs) extends to Participant attributes that change over time.
+
+**Implication for the lifecycle enum (Decision 6)**: every state transition must produce a queryable record. The sub-object pattern already does this for the canonical events (Consent, Screening, Enrollment, Withdrawal). State transitions inside on-trial states (ON_TREATMENT → IN_FOLLOW_UP) need either a new sub-object (`StateTransition`?) or temporal-property semantics on `participantStatus` itself.
+
+**Twin spec is a separate document, not a TOP substrate decision** — but it shapes the substrate. The actionable implication for v0.4 Participant: ensure every lifecycle transition leaves an audit-queryable record (sub-object OR temporal-property change) so a twin synthesizer downstream can reconstruct the trajectory.
+
+**What's NOT in TOP**: the twin model itself (computational artifact), the twin synthesis logic, the twin's predicted outputs, the model-version-vs-Participant linkage. Those live in twin-synthesizer infrastructure, not TOP substrate. TOP provides the contract; the synthesizer fulfills it.
+
 ## Architectural decisions to seal
 
 ### Decision 1 — Sub-objects for lifecycle events
@@ -195,6 +243,39 @@ Recommend modest direct-edge set for v0.4.0:
 
 Defer everything else to traversal or to later passes.
 
+### Decision 9 — Recruit (pre-consent) as separate entity vs pre-Participant state
+
+The recruitment realm has its own operator (recruiter / outreach coordinator), its own workflow (response to ads, pre-screening calls, eligibility pre-check, contact attempts), and its own data shape (lighter than full Participant — no consent, no enrollment, often no full demographics, sometimes only a phone number and a name).
+
+When a Recruit consents, they become a Participant. **Question: does Recruit get its own TOP entity, or fold as a pre-consent state on Participant?**
+
+**Option A (recommended for v0.4.0): separate `Recruit` top-level entity.** Lift Recruit alongside Participant. Recruit carries: contactInfo, recruitmentSource, contactAttempts[], preScreeningOutcome, eligibilityPreCheck, prospectStatus (RESPONDED / CONTACTED / PRE-SCREENED / SCHEDULED / NO_SHOW / DECLINED / CONVERTED_TO_PARTICIPANT / DROPPED). Recruit→Participant transition is a separate workflow event (consent triggers the conversion). Recruit data is typically not PHI in the same way (no full DOB, no medical history).
+- Pro: matches recruitment-coordinator workflow; respects PHI boundary (recruiter doesn't need full demographics); Recruit data can be retained separately for unconverted-recruit analytics
+- Pro per FIRST-PRINCIPLES: recruiter is a real operator role with a distinct workflow; their entity should not be a hidden state on someone else's
+
+**Option B: pre-consent state on Participant.** Add `RECRUIT` and `PRE_SCREENING` to the lifecycle enum. Participant entity exists pre-consent.
+- Pro: simpler entity count
+- Con: forces full Participant shape on incomplete data; PHI boundary leaks; recruiter and coordinator share an entity even though their workflows differ
+
+**Recommendation: Option A.** Recruit lifts as a separate top-level (or commons horizontal — TBD). v0.4 Participant lift should NOT include pre-consent states; the lifecycle enum starts at SCREENING (after consent has been obtained but during eligibility verification). Recruit→Participant transition is captured by Participant.hasInformedConsent linkage (the InformedConsent sub-object's existence IS the conversion event).
+
+Implication: TOP top-level count moves from 8 to 9 (or Recruit lifts as a horizontal — open architectural question). Tracked.
+
+### Decision 10 — Twin-queryability discipline
+
+Per the digital-twin posture above: every Participant lifecycle transition must produce a queryable record so a downstream twin synthesizer can reconstruct the trajectory.
+
+**Rule**: every `participantStatus` transition either (a) creates a sub-object instance (Consent, Screening, Enrollment, Withdrawal — already covered), or (b) creates a `StateTransition` sub-object record, or (c) produces a NGSI-LD temporal-property change with `validFrom` / `validUntil` semantics on `participantStatus` itself.
+
+**Recommendation: combination of (a) and (c).**
+- The four canonical transitions (consent, screening, enrollment, withdrawal) produce sub-objects (already in the design).
+- Mid-trial transitions (RANDOMIZED → ON_TREATMENT → IN_FOLLOW_UP → COMPLETED) produce temporal-property changes on `participantStatus` with `validFrom` / `validUntil` brackets. NGSI-LD's native temporal-property semantics handle this; the broker layer answers "what was Mary's status on 2026-08-15?" cleanly.
+- A separate `StateTransition` sub-object is overkill for v0.4; revisit if temporal-property querying proves insufficient.
+
+**Implication for source intermediate**: `participantStatus` declared as a NGSI-LD temporal property (not a flat enum), with status-change emission patterns documented. The Sponsor entity already established the temporal-property pattern (validFrom/validUntil on the relationship); Participant extends it to the lifecycle attribute.
+
+**Implication for SHACL invariants**: add an invariant that any participantStatus value matching a state requiring an event sub-object (e.g., RANDOMIZED requires assignedToArm + randomizationDate; WITHDRAWN requires WithdrawalRecord) — already in the SHACL candidates list.
+
 ## Cross-walk verification (FHIR R5 / SDTM / CDASH / USDM)
 
 Consolidated cross-walk for the spec doc. Every Participant attribute, relationship, and sub-object resolves to recognizable FHIR / CDISC structures, so a CDISC or USDM reviewer reading the spec sees standards alignment by construction rather than by assertion.
@@ -321,18 +402,26 @@ A new dedicated Participant-focused worked example may not be necessary if the e
 5. **Demographics field set**: is the recommended set (firstName, middleName, lastName, dateOfBirth, sex, race, ethnicity, primaryLanguage, country) the right scope? Anything to add (height/weight as per-Participant attrs vs visit-time observations)? Anything to drop?
 6. **Screen Fail as separate top-level vs sub-object**: OOUX has "Screen Fail" as a top-level object (one of the listed objects). TOP has been folding lifecycle events into sub-objects of the entity they describe. Recommend Screen Fail stays as a sub-object (ScreeningRecord with outcome=SCREEN_FAILED) rather than a separate top-level. The locked-8-top-levels boundary supports this.
 7. **URI policy for USDM-ingest-derived entities**: provisional `urn:top:study:{usdm_study_id}/arm:{usdm_arm_id}` etc. — does that work, or should the ingester emit URIs in USDM's own URN format (e.g., what USDM uses internally) and TOP just adopt them? The Participant spec needs to commit to the policy because runtime systems referencing Arms/Studies need to mint matching URIs. This is the upstream of a much bigger ingester-tool conversation; we can seal a default and revisit during the ingester build.
+8. **Confirm Decision 9 (Recruit boundary)**: Recruit lifts as a separate top-level entity (or commons horizontal — TBD), with Participant lifecycle starting at SCREENING after consent? Recommendation: yes. Top-level count moves from 8 to 9, which warrants explicit acknowledgment.
+9. **Confirm Decision 10 (twin-queryability)**: `participantStatus` as NGSI-LD temporal property (validFrom/validUntil bracketing each value), so trajectory is queryable for downstream twin synthesis? Recommendation: yes.
+10. **Multi-realm scope for v0.4**: confirm TOP carries only the trial-conduct realm (Participant entity); Patient / Claimant / RWE-Patient are projection-adapter targets, not TOP entities? Recommendation: yes — same projection-edge pattern as standards. Cross-realm identity resolution (Datavant, MPI, federation) deferred to deployment-edge concerns.
+11. **Digital-twin spec as v0.5+ deliverable**: capture the twin-synthesizer contract as a separate planning note (not in scope for v0.4 Participant lift, but the queryability discipline it requires shapes Decision 10)? Recommendation: yes — twin-spec note lifts when Visit / Activity / Observation lift, since the twin contract reaches into time-varying observations beyond what v0.4 Participant carries.
 
 ## Estimated lift scope
 
 Once decisions are sealed:
 
 - Source intermediate: ~22 attrs / 10 rels on Participant; ~8 attrs each on 4 sub-objects (~32 sub-object attrs total). About the same scale as Study (36 attrs / 16 rels / 6 sub-objects).
-- SHACL invariants: 6-7 new (22-23 total in the graph).
+- SHACL invariants: 6-7 new (22-23 total in the graph), plus 1-2 additional for twin-queryability discipline (Decision 10).
 - Spec doc: ~600 lines (smaller than Site's 977; comparable to Study's 659).
 - Worked examples: extend existing 4 to add Participants.
 - Verification history: ~10 questions.
 
-Single PR. Follows the patterns established by Sponsor / Site / Study.
+If Decision 9 confirms a separate Recruit entity, that lifts as **its own PR** (parallel to Participant), with its own ~10-15 attrs and ~3-4 relationships. Recruit is smaller than Participant since it carries less data per FIRST-PRINCIPLES (recruiter doesn't need full demographics).
+
+Single PR for Participant; potentially second PR for Recruit (if Decision 9 confirms separate-entity). Twin-spec planning note deferred to v0.5+ when Visit / Activity / Observation lift expands the queryability surface.
+
+Pattern follows Sponsor / Site / Study lift discipline.
 
 ## Pointers
 
