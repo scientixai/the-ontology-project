@@ -129,26 +129,56 @@ The OOUX-locked sub-object that lands under Visit during the boundary decisions 
 
 Captures the reportability handoff workflow per OOUX boundary decision Path C: the CRA's "this looks like an AE — escalate" action.
 
-### Decision 4 — Activity as sub-object (vs separate top-level)
+### Decision 4 — Activity + Task as universal sub-objects (universal substrate posture)
 
-In OOUX, Activity is mentioned but not in the locked-9. Two ways to model:
+Per Bo: TOP must accommodate any assessment without modeling its specifics. Specific visit structures, therapeutic-area assessments, instrument configurations are implementation details — they belong in sponsor-side workflow tools, vendor platforms, EHR integrations. The substrate stays universal.
 
-**Option A: Activity as Visit sub-object** (occurrence-side — what was performed at this visit). Activity-templates lift later as a separate sub-object on VisitDefinition or directly under Study.
+The substrate carries **`Activity` and `Task` as universal containers** under Visit. Specialization happens via content (biomedicalConceptCode, polymorphic taskValue, Equipment used, Document governing), never via specialized entity shapes. A DICOM imaging Activity and a blood-draw Activity are the same TOP shape; they differ in content, not in entity type.
 
-**Option B: Activity as separate top-level**, with both Activity-templates (Study-side) and Activity-occurrences (Visit-side) modeled.
+```
+Visit (occurrence)
+  ├── hasActivity → Activity[*] (universal: vitals OR MRI OR ePRO OR biopsy OR IP-admin OR ...)
+  ├── hasTask → Task[*]    (universal leaf data-capture; task.belongsToActivity links to Activity)
+  └── hasVisitObservation → VisitObservation[*]
+```
 
-**Recommendation: Option A for v0.5.** Activity-occurrence as a Visit sub-object. Lighter scope. Activity-templates can lift later (as a sub-object on VisitDefinition or as a peer of Endpoint under Study) when the SOA grid needs richer template modeling.
+**Activity sub-object** (~7 attrs / ~3 rels) — the universal work unit:
+- `activityId` (URI)
+- `activityName` (operator-friendly: "Vital Signs", "MRI Brain", "ECOG Status", "Drug X Administration", "EQ-5D-5L")
+- `activityType` (coarse enum for operator categorization: PROCEDURE / ASSESSMENT / IP_ADMINISTRATION / SAMPLE_COLLECTION / QUESTIONNAIRE / IMAGING / OTHER) — used for filter/sort, not for specialization
+- `activityStatus` (PERFORMED / NOT_PERFORMED / PARTIALLY_PERFORMED / RESCHEDULED) — NGSI-LD temporal property
+- `validFrom` / `validUntil` — operational time window
+- `governedBy → Document` (0..N) — protocol section / SOP that defines this Activity (references Document with section anchor)
+- `usedEquipment → Equipment` (0..N) — `prov:used` semantics
+- `performedBy → Person` (0..N) — `prov:wasAssociatedWith` semantics
 
-ActivityOccurrence sub-object attributes:
-- activityId (URI)
-- activityName (operator-friendly: "Vital Signs", "ECOG Performance Status", "Drug X Administration")
-- activityType (enum: PROCEDURE / ASSESSMENT / IP_ADMINISTRATION / SAMPLE_COLLECTION / QUESTIONNAIRE / IMAGING / OTHER)
-- performedDate / performedTime
-- activityStatus (PERFORMED / NOT_PERFORMED / PARTIALLY_PERFORMED / RESCHEDULED)
-- notPerformedReason (when NOT_PERFORMED)
-- definedByActivityTemplate (0..1; references the design-side Activity-template URI)
-- biomedicalConceptCode (NCIt C-code; references COSMoS BC catalog when applicable)
-- performedBy (Person, drawn from forStudySite delegation)
+PROV typing: `Activity rdfs:subClassOf prov:Activity` (per the v0.4.1 temporal+PROV native commitment). The PROV chain works identically regardless of activityType.
+
+**Task sub-object** (~9 attrs / ~2 rels) — the universal leaf data-capture unit (this is the CRF entry / EDC item / Observation; one Task per measurement):
+- `taskId` (URI)
+- `taskName` (operator-friendly: "Systolic BP", "MRI Study Instance UID", "PHQ-9 Item 1", "Drug X dose")
+- `taskValue` (Property whose value is polymorphic — see taskValueType)
+- `taskValueType` (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE) — discriminates the value's shape
+- `taskUnit` (UCUM where applicable: `[mmHg]`, `cm`, `mg`)
+- `biomedicalConceptCode` (NCIt C-code; references COSMoS BC catalog) — what the Task IS
+- `taskStatus` (COMPLETED / NOT_PERFORMED / PARTIALLY_COMPLETED) — NGSI-LD temporal property
+- `notPerformedReason` (when NOT_PERFORMED)
+- NGSI-LD `observedAt` Property metadata on `taskValue` — when the value was measured/captured (NOT a separate flat `performedDateTime` attribute; per the temporal+PROV native conventions)
+- `belongsToActivity → Activity` (1..1; links to the parent Activity within the same Visit)
+- `performedBy → Person` (1..1; `prov:wasAssociatedWith`)
+
+**Why polymorphic taskValue is the key mechanism**:
+- BP=128 → `taskValueType=NUMERIC`, `taskValue=128`, `taskUnit="[mmHg]"`, `biomedicalConceptCode=NCIt:C25298`
+- MRI Study reference → `taskValueType=URI_REFERENCE`, `taskValue="urn:dicom:study/1.2.840.113654...."`, `biomedicalConceptCode=NCIt:C16809`
+- PHQ-9 item response → `taskValueType=CODED`, `taskValue="2"`, `biomedicalConceptCode=LOINC:44261-6`
+- IP dose recorded → `taskValueType=NUMERIC`, `taskValue=200`, `taskUnit="mg"`, `biomedicalConceptCode=NCIt:C172310`
+- Lesion measurement (RECIST) → `taskValueType=STRUCTURED`, `taskValue={longestDiameter: 22, unit: "mm", lesionId: "L1"}`
+
+External systems (DICOM PACS, lab LIS, ePRO platform, EHR) hold implementation specifics. TOP holds the universal trial-conduct-realm reference; the URI points to wherever the specialized artifact actually lives.
+
+**This eliminates the need for specialized horizontals** like ImagingStudy, IPAdministration, QuestionnaireResponse. The substrate stays universal; specialization is content. The architectural moat: standards-up vendors model N entity types per therapeutic area; TOP carries one universal pattern that handles all of them.
+
+**FHIR Questionnaire projection target**: TOP's universal Visit > Activity > Task hierarchy projects cleanly to FHIR R5 `Questionnaire` (form template) and `QuestionnaireResponse` (captured data). VisitDefinition + Activity-templates + Task-templates → Questionnaire JSON (consumable by Epic, Cerner, SMART on FHIR apps, ePRO vendors). Reverse projection (FHIR QuestionnaireResponse → TOP) ingests captured data from EHR/ePRO devices. One source of truth → many ephemeral renderings — exactly the projection-edge pattern.
 
 ### Decision 5 — Visit modes (DCT framing per ICH E6(R3) Annex 2)
 
