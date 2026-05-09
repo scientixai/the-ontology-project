@@ -209,6 +209,34 @@
 
 <p>That's the bet.</p>
 
+<h2 class="section">Temporal and provenance, native</h2>
+
+<p>Two structural commitments differentiate TOP from compliance vendors, workflow vendors, and most knowledge-graph projects:</p>
+
+<ol>
+  <li><strong>NGSI-LD temporal-property semantics native.</strong> Status / outcome / state attributes that operators see change over time are NGSI-LD temporal properties (<span class="inline">validFrom</span> / <span class="inline">validUntil</span> per value), not flat enums with separate audit-log mechanisms. Measurement timestamps use the canonical <span class="inline">observedAt</span> Property metadata. Trajectory queries work directly against the substrate.</li>
+  <li><strong>W3C PROV native typing.</strong> Every TOP entity declares its PROV type (<span class="inline">prov:Agent</span> / <span class="inline">prov:Activity</span> / <span class="inline">prov:Entity</span>) via <span class="inline">rdfs:subClassOf</span>. Relationships that carry PROV semantics (<span class="inline">wasAssociatedWith</span>, <span class="inline">wasAttributedTo</span>, <span class="inline">wasGeneratedBy</span>, <span class="inline">wasDerivedFrom</span>, <span class="inline">actedOnBehalfOf</span>, <span class="inline">wasInformedBy</span>, <span class="inline">wasInvalidatedBy</span>) declare those via <span class="inline">rdfs:subPropertyOf</span>. The substrate IS a PROV graph by construction, not via cross-walk translation.</li>
+</ol>
+
+<p>These two commitments answer compliance-grade questions as graph traversals:</p>
+
+<ul>
+  <li>"Show me the chain of custody for this data point." → PROV traversal.</li>
+  <li>"Who attributed Mary's enrollment, and what was her status on a specific date?" → PROV + temporal-property traversal.</li>
+  <li>"What sources did this synthetic-control twin derive from?" → PROV <span class="inline">wasDerivedFrom</span> chain.</li>
+  <li>"When did this consent become invalid and what activity invalidated it?" → PROV <span class="inline">wasInvalidatedBy</span> traversal.</li>
+</ul>
+
+<p>No audit-log table. No bespoke versioning shim. No translation layer.</p>
+
+<p>This is what compliance vendors, workflow vendors, and most ontologies <em>don't</em> have natively. TOP's claim — that the substrate carries temporal and provenance natively — is the architectural moat that complements the operator-grounded vocabulary moat.</p>
+
+<p>Per FIRST-PRINCIPLES, the operator vocabulary remains primary. The PROV typing layers structurally — the same instance answers <span class="inline">?ic a top:InformedConsent</span> (operator query) and <span class="inline">?ic a prov:Activity</span> (compliance query). Both views, one substrate.</p>
+
+<blockquote class="pull-quote">
+  <p>The consuming view: a per-Activity provenance card showing the complete chain of custody for a single blood draw — consent, collection, processing, packaging, transit — with every evidentiary checkmark traceable to a substrate fact. Compliance vendors render that card from hand-curated audit logs. TOP renders it from substrate facts, in real time, against any Activity.</p>
+</blockquote>
+
 <h2 class="section">Universal substrate — specialization is content, not shape</h2>
 
 <p>A third structural commitment, alongside operator-grounded vocabulary and native temporal+provenance: <strong>the substrate accommodates any assessment without modeling its specifics. Specialization is content; specialization is never entity-shape.</strong></p>

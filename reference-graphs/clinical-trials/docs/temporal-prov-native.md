@@ -335,6 +335,113 @@ The market reality:
 
 This is the architectural moat that complements the operator-grounded-substrate moat.
 
+## The consuming view — what this enables for operators and auditors
+
+The substrate decisions in this audit are not abstract. They enable **per-Activity provenance views** that render the complete chain of custody for any data point as a graph traversal — not as a pre-computed audit log. Bo shared the following mock-up of the end-state UX:
+
+```
+Activity: Blood draw · Subject 423-MU07-018 · Visit 04
+Trial ONCO-423 · Site Munich-07 · Protocol v3.2
+
+1. Subject consented · Day -7 · 14:22 CET
+   ✓ eConsent v3.2 signed                          eC-2026-0411
+   ✓ Witnessed by site coordinator                 SC delegated
+   ✓ Subject ID 423-MU07-018 verified              CTMS
+
+2. Sample collected · Day 0 · 09:14 CET
+   ✓ Phlebotomist credentialed                     cert# 2024-088
+   ✓ PI delegation log entry                       DG-2026-0047
+   ✓ Trained on protocol v3.2                      TR-2026-0188
+   ✓ Subject consent on v3.2 (matches)             version-link
+   ✓ 3× EDTA + 1× SST per protocol §7.4            vial-spec
+
+3. Sample processed · Day 0 · 09:42 CET
+   ✓ Centrifuge model CF-200                       S/N 2023-441
+   ✓ Calibration current (next 2026-09-15)         CAL-2026-03-15
+   ✓ Spin: 3000 rpm × 15 min (per §7.6)            in spec
+
+4. Sample packaged · Day 0 · 10:30 CET
+   ✓ Packager IATA certified                       IATA-2025-0911
+   ✓ PI delegation + protocol training             DG / TR linked
+   ✓ Validated dry-shipper VS-2024                 cert in file
+   ✓ Per shipping SOP-2026-CL-019                  SOP linked
+
+5. Cold-chain transit · Day 0 11:00 → Day 1 14:00
+   ✓ Data logger DL-2026-2287                      attached
+   ✓ Continuous temp log · no excursion            -78°C ± 2
+   ✓ Carrier custody trace complete                FedEx CC
+```
+
+Every numbered step is a `prov:Activity`. The chain itself is a `prov:wasInformedBy` sequence (consent → collection → processing → packaging → transit). Every checkmark is a SHACL/SPARQL-queryable assertion against substrate state at a specific point in time. Operators see a clean compliance-grade view; underneath, every fact is a graph traversal answered natively by the substrate's PROV typing and NGSI-LD temporal properties.
+
+This view is what differentiates TOP. Compliance vendors render the same view from a hand-curated audit log. Workflow vendors can't render it at all (no provenance graph). TOP renders it from substrate facts, in real time, against any Activity, with full traceability — because the substrate IS the audit graph by construction.
+
+### Activity diversity — therapeutic areas, modalities, and spatial data
+
+The blood-draw mock-up is **one Activity type**. Real trials carry many: imaging (CT / MRI / PET / DICOM), ePRO questionnaires, ECG / Holter, biopsy, infusion, cognitive battery, IP administration, sample shipment, ePRO diary, vaccine reactogenicity capture. Therapeutic-area diversity multiplies further:
+
+- **Oncology**: imaging studies (RECIST evaluation, tumor segmentation), biopsies with histopathology, ECOG performance status assessment
+- **Cardiology**: ECGs, echocardiograms with measurements, cardiac MRI with chamber volumes, Holter/event monitoring
+- **Neurology**: structural/functional MRI, EEG, cognitive batteries (ADAS-Cog, MMSE, neuropsych panels)
+- **Vaccines**: titers, cell-mediated immunity panels, reactogenicity diaries
+- **Mental health**: PHQ-9, GAD-7, structured clinical interviews
+- **Rare disease / genomics**: WGS / WES / panel sequencing with variant calling, biomarker panels
+- **Endocrinology / metabolic**: continuous glucose monitoring streams, OGTT, hormone panels
+
+Each Activity type has different equipment, credentials, data shapes, and standards-projection targets (different SDTM domains, different FHIR resources, different OMOP tables, different USDM `BiomedicalConcept` references).
+
+**Some activities carry spatial data**, not just temporal. DICOM imaging is the canonical example:
+- The image itself is a binary artifact (TOP doesn't store pixels; it references via URI to a PACS / image archive)
+- Annotations on images carry spatial coordinates (ROIs, tumor boundaries, lesion measurements)
+- DICOM SR (Structured Reports) and W3C Web Annotation are the standard layers for spatial provenance
+- Tumor segmentation across timepoints is BOTH temporal AND spatial — a 4D problem
+
+**Substrate posture for diversity (per FIRST-PRINCIPLES, less is the win)**:
+
+The substrate carries a **generic Activity** entity. Specialized data lives in dedicated sub-objects or horizontals when the activity type warrants it. The PROV provenance chain runs through both:
+
+```
+Activity (generic) ─┬─→ uses → Equipment (generic)
+                    ├─→ uses → Document (SOP / protocol section)
+                    ├─→ wasAssociatedWith → Person
+                    └─→ generated → [specialized sub-object per type]
+                                      ├─ Task / Observation (measurement Activities)
+                                      ├─ Sample (collection Activities; horizontal — flagged-missing)
+                                      ├─ ImagingStudy (imaging Activities; future horizontal, v0.6+)
+                                      ├─ QuestionnaireResponse (ePRO Activities)
+                                      └─ DispensationRecord (IP administration Activities)
+```
+
+The Activity entity stays generic. Specialized horizontals (`ImagingStudy`, `Sample`, etc.) lift when the corresponding therapeutic-area work surfaces them. The **PROV chain is uniform** regardless of activity type — `?activity prov:used ?equipment ; prov:wasAssociatedWith ?agent ; prov:generated ?artifact` works for blood draws, DICOM acquisitions, ePRO sessions, and IP administrations alike.
+
+**Spatial substrate for v0.6+**:
+- DICOM-shaped data: `ImagingStudy` horizontal (links to PACS by URI; carries DICOM Study/Series Instance UIDs as references; doesn't store pixels)
+- Spatial annotations: GeoSPARQL alignment for ROI coordinates; W3C Web Annotation for image regions
+- Cross-modal lineage: PROV chain spans TOP (Activity) → external PACS (Image) → annotation system → trial data captures
+- Federation pattern (v0.6+) handles the cross-system PROV traversal
+
+**Per-therapeutic-area assessment instruments** (e.g., EQ-5D-5L, ADAS-Cog, RECIST):
+- COSMoS BC catalog already handles these via NCIt + LOINC codes (per the CDISC ecosystem alignment note PR #5)
+- TOP Task carries `biomedicalConceptCode` referencing the canonical concept
+- The COSMoS Dataset Specialization carries the per-instrument SDTM projection rules
+- TOP doesn't model the instruments internally; references them and projects through them
+
+**The bet**: a generic Activity + temporal+PROV native substrate handles 80% of activity diversity through the same patterns. The remaining 20% (specialized data shapes like DICOM, complex spatial-temporal observations, ePRO devices with their own auth flows) lift as dedicated horizontals or sub-objects when the therapeutic-area work demands them. The substrate doesn't try to enumerate every activity type up front; it provides the universal frame in which specialized extensions land cleanly.
+
+### What the mock-up surfaces for substrate refinement
+
+The mock-up forces several refinements that flow naturally from the temporal+PROV commitment but aren't yet in the substrate. These are architectural deferrals (v0.5+ work, not v0.4.1 cleanup):
+
+1. **`Equipment.calibrationStatus` must be a NGSI-LD temporal property** (current vs lapsed; `validUntil >= activity time` is the SHACL check).
+2. **`Person.hasCredential` (multi-realm)** — IATA shipping certs, phlebotomy certs, GCP training certs all surface here. Credential horizontal already exists; richer credentialType enum needed.
+3. **`Person.hasTrainingRecord` per-protocol-version** — training records linked to specific Protocol versions. Currently flagged-missing; lifts when training-record requirements concretize.
+4. **`Document` section anchors** (§7.4, §7.6 references) — protocols and SOPs are referenced by Activities at the section level. Document horizontal needs section-level addressing.
+5. **`Activity.governedBy → Document` + `Activity.parameters` referencing Protocol sections** — Visit's Activity sub-object (v0.5) needs these relationships.
+6. **`Log` temporal-property enrichment for continuous monitoring** — temperature observations across a window; no-excursion verification is a SHACL-queryable assertion.
+7. **External-system integration** (carrier custody) — TOP federates with external PROV-bearing graphs (FedEx logistics, EHR audit trails). Cross-system PROV interop is v0.6+ federation work.
+
+These refinements don't change the v0.4.1 annotation cleanup; they're items the v0.5 Visit lift, the Equipment/Document/Person enrichments, and v0.6 federation work absorb in turn.
+
 ## Convention summary (additions to FIRST-PRINCIPLES)
 
 The two new conventions to make explicit:

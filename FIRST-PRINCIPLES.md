@@ -105,6 +105,29 @@ Standards-up ontologies make humans pay the integration cost forever. TOP makes 
 
 That's the bet.
 
+## Temporal and provenance, native
+
+Two structural commitments differentiate TOP from compliance vendors, workflow vendors, and most knowledge-graph projects:
+
+1. **NGSI-LD temporal-property semantics native.** Status / outcome / state attributes that operators see change over time are NGSI-LD temporal properties (`validFrom` / `validUntil` per value), not flat enums with separate audit-log mechanisms. Measurement timestamps use the canonical `observedAt` Property metadata. Trajectory queries work directly against the substrate.
+
+2. **W3C PROV native typing.** Every TOP entity declares its PROV type (`prov:Agent` / `prov:Activity` / `prov:Entity`) via `rdfs:subClassOf`. Relationships that carry PROV semantics (`wasAssociatedWith`, `wasAttributedTo`, `wasGeneratedBy`, `wasDerivedFrom`, `actedOnBehalfOf`, `wasInformedBy`, `wasInvalidatedBy`) declare those via `rdfs:subPropertyOf`. The substrate IS a PROV graph by construction, not via cross-walk translation.
+
+These two commitments answer compliance-grade questions as graph traversals:
+
+- "Show me the chain of custody for this data point." → PROV traversal.
+- "Who attributed Mary's enrollment, and what was her status on 2026-08-15?" → PROV + temporal-property traversal.
+- "What sources did this synthetic-control twin derive from?" → PROV `wasDerivedFrom` chain.
+- "When did this consent become invalid and what activity invalidated it?" → PROV `wasInvalidatedBy` traversal.
+
+No audit-log table. No bespoke versioning shim. No translation layer.
+
+This is what compliance vendors, workflow vendors, and most ontologies *don't* have natively. TOP's claim — that the substrate carries temporal and provenance natively — is the architectural moat that complements the operator-grounded vocabulary moat.
+
+Per FIRST-PRINCIPLES, the operator vocabulary remains primary (`InformedConsent`, `Participant`, `screeningNumber`). The PROV typing layers structurally — the same instance answers `?ic a top:InformedConsent` (operator query) and `?ic a prov:Activity` (compliance query). Both views, one substrate.
+
+The consuming-view exemplar: a per-Activity provenance card showing the complete chain of custody (consent → collection → processing → packaging → transit) for a single blood-draw, with every evidentiary checkmark traceable to a substrate fact. Compliance vendors render that card from hand-curated audit logs. TOP renders it from substrate facts, in real time, against any Activity. See [`reference-graphs/clinical-trials/docs/temporal-prov-native.md`](reference-graphs/clinical-trials/docs/temporal-prov-native.md) for the full audit, conventions, and consuming-view example.
+
 ## Universal substrate — specialization is content, not shape
 
 A third structural commitment, alongside operator-grounded vocabulary and native temporal+provenance: **the substrate accommodates any assessment without modeling its specifics. Specialization is content; specialization is never entity-shape.**

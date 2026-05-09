@@ -43,6 +43,7 @@ PRELUDE_PREFIXES = """@prefix sh:    <http://www.w3.org/ns/shacl#> .
 @prefix usdm:  <https://www.cdisc.org/standards/usdm/v3#> .
 @prefix cdash: <https://www.cdisc.org/standards/cdashig/v2-1#> .
 @prefix ngsi:  <https://uri.etsi.org/ngsi-ld/> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
 """
 
 
@@ -157,10 +158,26 @@ def emit_relationship_shape(rel, prefix, target_prefix_map, indent="    "):
 
 
 def emit_node_shape(obj, prefix, target_prefix_map):
-    """Emit a SHACL NodeShape for one top-level / sub-object / horizontal class."""
+    """Emit a SHACL NodeShape for one top-level / sub-object / horizontal class.
+
+    When the entity declares a provType (prov:Agent | prov:Activity | prov:Entity),
+    also emits a parallel rdfs:subClassOf assertion on the target class so the
+    substrate IS a W3C PROV graph by construction (per FIRST-PRINCIPLES.md
+    'temporal and provenance, native' commitment). The subClassOf is emitted as
+    a separate statement on the targetClass IRI rather than as a SHACL property
+    so it carries through to OWL/RDFS reasoners.
+    """
     name = obj["id"]
     shape_id = f"{prefix}:{name}Shape"
     target_class = f"{prefix}:{name}"
+
+    parts = []
+
+    # PROV native typing — emit rdfs:subClassOf on the targetClass IRI
+    prov_type = obj.get("provType")
+    if prov_type:
+        parts.append(f"{target_class} rdfs:subClassOf {prov_type} .")
+        parts.append("")
 
     lines = [f"{shape_id} a sh:NodeShape ;"]
     lines.append(f"    sh:targetClass {target_class} ;")
@@ -182,7 +199,22 @@ def emit_node_shape(obj, prefix, target_prefix_map):
     else:
         lines[-1] = lines[-1].rstrip() + " ."
 
-    return "\n".join(lines)
+    parts.append("\n".join(lines))
+
+    # PROV relationship semantics — emit rdfs:subPropertyOf for relationships that
+    # carry PROV semantics (wasAssociatedWith / wasAttributedTo / wasGeneratedBy /
+    # wasDerivedFrom / actedOnBehalfOf / wasInformedBy / wasInvalidatedBy)
+    prov_rel_lines = []
+    for rel in obj.get("relationships", []):
+        prov_sem = rel.get("provSemantics")
+        if prov_sem:
+            rel_iri = f"{prefix}:{rel['name']}"
+            prov_rel_lines.append(f"{rel_iri} rdfs:subPropertyOf prov:{prov_sem} .")
+    if prov_rel_lines:
+        parts.append("")
+        parts.extend(prov_rel_lines)
+
+    return "\n".join(parts)
 
 
 def check_no_polysemous_verbs(source):
