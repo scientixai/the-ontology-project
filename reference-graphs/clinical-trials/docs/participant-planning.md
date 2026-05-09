@@ -114,6 +114,38 @@ The dimensions the twin synthesizer needs:
 
 **What's NOT in TOP**: the twin model itself (computational artifact), the twin synthesis logic, the twin's predicted outputs, the model-version-vs-Participant linkage. Those live in twin-synthesizer infrastructure, not TOP substrate. TOP provides the contract; the synthesizer fulfills it.
 
+### Prior art — PMDT (Patient Medical Digital Twin, El Gammal et al., under review at SoSyM)
+
+The ontology-driven digital-twin direction is validated in real-world deployment: the **Patient Medical Digital Twin (PMDT)** framework (El Gammal et al., authored at ServTech / Cairo University / FernUniversität / Macquarie / UNSW, currently under review at *Software and Systems Modeling*) is an OWL 2.0 ontology for chronic-care patient digital twins, validated in the EU H2020 **QUALITOP** project pilot with real-world immunotherapy patients. Reference for TOP's twin posture; not a dependency.
+
+**PMDT's modular Blueprints map roughly to TOP's expected lift trajectory:**
+
+| PMDT Blueprint | TOP entity (current or expected) | Realm |
+| --- | --- | --- |
+| Patient | `Participant` (trial realm) / `Patient` projection (care realm) | Trial / care |
+| Disease and diagnosis | `Condition` (when it lifts; currently `conditionStudied` is a string on Study) | Trial |
+| Treatment and follow-up | `Activity` + `IPDispensation` (when they lift) | Trial |
+| Trajectories | The twin-queryability discipline above (Decision 10) | Trial |
+| Safety | `AdverseEvent` (when it lifts; flagged-missing currently) | Trial |
+| Pathways | `ScheduleOfAssessments` + Activity-flow (in progress, post-Visit) | Trial |
+| Adverse events | `AdverseEvent` (separate from Safety in PMDT's framing) | Trial |
+
+PMDT's structural carving is good prior-art for what TOP will need to address as the clinical-trials reference graph matures past Participant. Useful as a sanity check rather than a blueprint to copy directly — PMDT serves *chronic care* (continuous, longitudinal, post-diagnosis) while TOP clinical-trials serves *trial conduct* (bounded, protocol-driven). Adjacent realms; different operational tempos; same underlying human anchor.
+
+**Substrate divergence**: PMDT is **OWL 2.0** (DL-classical, optimized for SPARQL reasoning). TOP is **NGSI-LD / JSON-LD-native** (broker-based, optimized for operational data exchange + temporal-property semantics + streaming). These are different ontology paradigms, both legitimate. **TOP can export to OWL/RDF as another projection edge** — same pattern as FHIR/SDTM/USDM exports — for downstream tools that prefer classical-reasoning toolchains. This is one more projection adapter, not a substrate change. Per FIRST-PRINCIPLES, the substrate stays in the operator-grounded paradigm; OWL is downstream.
+
+**Reference-ontology alignments PMDT uses, that TOP will need when it lifts the relevant entities:**
+- **Disease Ontology (DO)** — for `Condition` semantics (when Condition lifts; currently absent in TOP)
+- **OWL-Time** — for temporal-trajectory reasoning (TOP uses NGSI-LD's native temporal-property semantics; OWL-Time is the projection target when TOP exports to OWL)
+- **CTCAE** (Common Terminology Criteria for Adverse Events) — for AdverseEvent grading (when AE lifts)
+- **GDPR-compliant federated analytics** — prior art for cross-realm identity resolution (which TOP defers as a federation concern in v0.6+)
+
+These reference ontologies belong in the [CDISC dependency pipeline manifest](cdisc-dependency-pipeline.md) when TOP picks them up — same pattern as USDM / FHIR / SDTMIG.
+
+**Federation lessons from QUALITOP**: PMDT's multi-institutional, privacy-preserving federation in real-world immunotherapy deployment is direct prior art for what TOP will need when cross-realm identity resolution becomes operational (per the multi-realm posture above). When TOP reaches v0.6+ federation work, the QUALITOP architecture and pilot lessons are reference material.
+
+**Net read**: PMDT validates the ontology-driven twin approach, sanity-checks TOP's expected entity lift trajectory, and provides useful federation prior-art. TOP's clinical-trials reference graph and PMDT's chronic-care framework cover different realms with the same underlying conviction (semantic substrate + ephemeral analytics on top). Citing PMDT alongside FHIR / SDTM / USDM in the spec doc strengthens the standards-and-prior-art posture for community/regulator review.
+
 ## Architectural decisions to seal
 
 ### Decision 1 — Sub-objects for lifecycle events
