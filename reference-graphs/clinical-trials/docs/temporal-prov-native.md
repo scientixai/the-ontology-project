@@ -396,37 +396,64 @@ Each Activity type has different equipment, credentials, data shapes, and standa
 - DICOM SR (Structured Reports) and W3C Web Annotation are the standard layers for spatial provenance
 - Tumor segmentation across timepoints is BOTH temporal AND spatial — a 4D problem
 
-**Substrate posture for diversity (per FIRST-PRINCIPLES, less is the win)**:
+**Substrate posture for diversity — universal containers, not specialized entities**:
 
-The substrate carries a **generic Activity** entity. Specialized data lives in dedicated sub-objects or horizontals when the activity type warrants it. The PROV provenance chain runs through both:
+Per Bo's clarification: **TOP must accommodate any assessment without modeling its specifics. Specific visit structures, therapeutic-area assessments, instrument configurations are implementation details — they belong in sponsor-side workflow tools, vendor platforms, and EHR integrations. The substrate stays universal.**
+
+The substrate carries **`Activity` and `Task` as universal containers**:
 
 ```
-Activity (generic) ─┬─→ uses → Equipment (generic)
-                    ├─→ uses → Document (SOP / protocol section)
-                    ├─→ wasAssociatedWith → Person
-                    └─→ generated → [specialized sub-object per type]
-                                      ├─ Task / Observation (measurement Activities)
-                                      ├─ Sample (collection Activities; horizontal — flagged-missing)
-                                      ├─ ImagingStudy (imaging Activities; future horizontal, v0.6+)
-                                      ├─ QuestionnaireResponse (ePRO Activities)
-                                      └─ DispensationRecord (IP administration Activities)
+Visit (occurrence)
+  └── Activity (universal: vitals OR MRI OR ePRO OR biopsy OR IP-admin OR genomic panel OR ECG OR ...)
+        ├── governedBy → Document (the SOP / protocol section that defines this Activity)
+        ├── usedEquipment → Equipment (the device, with its own Credential chain)
+        ├── performedBy → Person (with PROV wasAssociatedWith)
+        └── hasTask → Task[*]
+                       ├── biomedicalConceptCode (NCIt → COSMoS BC: identifies what this is)
+                       ├── taskValue (polymorphic: number, string, URI, coded, structured)
+                       ├── taskValueType (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE)
+                       └── (PROV + observedAt temporal metadata)
 ```
 
-The Activity entity stays generic. Specialized horizontals (`ImagingStudy`, `Sample`, etc.) lift when the corresponding therapeutic-area work surfaces them. The **PROV chain is uniform** regardless of activity type — `?activity prov:used ?equipment ; prov:wasAssociatedWith ?agent ; prov:generated ?artifact` works for blood draws, DICOM acquisitions, ePRO sessions, and IP administrations alike.
+**Specialization is in CONTENT, not in SHAPE.**
 
-**Spatial substrate for v0.6+**:
-- DICOM-shaped data: `ImagingStudy` horizontal (links to PACS by URI; carries DICOM Study/Series Instance UIDs as references; doesn't store pixels)
-- Spatial annotations: GeoSPARQL alignment for ROI coordinates; W3C Web Annotation for image regions
-- Cross-modal lineage: PROV chain spans TOP (Activity) → external PACS (Image) → annotation system → trial data captures
-- Federation pattern (v0.6+) handles the cross-system PROV traversal
+A DICOM imaging Activity and a blood-draw Activity are the **same entity shape**. They differ in:
 
-**Per-therapeutic-area assessment instruments** (e.g., EQ-5D-5L, ADAS-Cog, RECIST):
-- COSMoS BC catalog already handles these via NCIt + LOINC codes (per the CDISC ecosystem alignment note PR #5)
+| | Blood draw | DICOM MRI | ePRO PHQ-9 | IP administration |
+|---|---|---|---|---|
+| `Activity.biomedicalConceptCode` | NCIt: Phlebotomy | NCIt: MRI Brain | LOINC: PHQ-9 | NCIt: Drug Administration |
+| `Equipment used` | Centrifuge, dry shipper | MRI scanner | Patient device | Infusion pump |
+| `Person performedBy` | Phlebotomist | MR Technologist | Self | Nurse |
+| `Document governedBy` | Lab manual §7.4 | Imaging protocol §4.2 | ePRO SOP | IP handling SOP |
+| `Task.taskValue` | numeric (mL, count) | URI → DICOM Study Instance UID in PACS | enum (0–3 per item) | numeric (mg, mL, route code) |
+| `Task.taskValueType` | NUMERIC | URI_REFERENCE | CODED | NUMERIC + STRUCTURED |
+
+The substrate doesn't know it's DICOM. The PROV chain works identically (`?activity prov:used ?equipment ; prov:wasAssociatedWith ?agent ; prov:generated ?artifact`). The compliance view (the mock-up's per-Activity provenance card) renders identically — what changes is the content of the cells, not the shape of the substrate.
+
+**This is the architectural moat**. A standards-up vendor would model DICOM as one specialized type, ePRO as another, lab as another — and end up with N entity types per therapeutic area. TOP carries one universal Activity + Task pattern that handles all of them.
+
+**Polymorphic taskValue is the key mechanism**:
+- `NUMERIC`: BP=128, weight=72.4
+- `TEXT`: free-text observations
+- `CODED`: enum from a code system (CTCAE grade, RECIST response, ECOG status)
+- `URI_REFERENCE`: URI to external artifact (DICOM PACS, S3 bucket, lab LIS, video file)
+- `STRUCTURED`: nested object (a complex measurement with multiple components — e.g., blood pressure with systolic/diastolic/MAP)
+- `DATE`: a captured date value
+- `IMAGE_REFERENCE`: special case of URI_REFERENCE for radiology/pathology images, often paired with PACS-side metadata
+
+External systems (DICOM PACS, lab LIS, ePRO platform, EHR) hold the implementation specifics. TOP holds the universal trial-conduct-realm reference; the URI points to wherever the specialized artifact lives.
+
+**Federation across substrates** (v0.6+): when an external system (PACS, EHR) publishes its own PROV graph, TOP's PROV chain extends across the boundary via `prov:wasGeneratedBy` references. No translation; PROV is the universal language for cross-system provenance.
+
+**Per-therapeutic-area assessment instruments** (e.g., EQ-5D-5L, ADAS-Cog, RECIST, vital signs panel):
+- COSMoS BC catalog handles these via NCIt + LOINC codes (per the CDISC ecosystem alignment note)
 - TOP Task carries `biomedicalConceptCode` referencing the canonical concept
 - The COSMoS Dataset Specialization carries the per-instrument SDTM projection rules
-- TOP doesn't model the instruments internally; references them and projects through them
+- **TOP doesn't model the instruments internally** — references them via biomedicalConceptCode; specialization is content, not entity-shape
 
-**The bet**: a generic Activity + temporal+PROV native substrate handles 80% of activity diversity through the same patterns. The remaining 20% (specialized data shapes like DICOM, complex spatial-temporal observations, ePRO devices with their own auth flows) lift as dedicated horizontals or sub-objects when the therapeutic-area work demands them. The substrate doesn't try to enumerate every activity type up front; it provides the universal frame in which specialized extensions land cleanly.
+**The bet**: universal Activity + Task + polymorphic taskValue + temporal+PROV native = handles 100% of assessment diversity. Specialized horizontals like ImagingStudy, IPAdministration, QuestionnaireResponse are NOT planned for v0.6+ — they would violate the universal-substrate posture. Instead: when DICOM imaging trials surface needs that exceed the universal pattern, the additions are **constrained** to taskValueType polymorphism + URI references, not new entity types.
+
+The substrate doesn't try to enumerate any activity type. It provides the universal frame; the BC catalog + polymorphic value + URI references handle every therapeutic area's diversity without TOP changing.
 
 ### What the mock-up surfaces for substrate refinement
 
@@ -440,7 +467,7 @@ The mock-up forces several refinements that flow naturally from the temporal+PRO
 6. **`Log` temporal-property enrichment for continuous monitoring** — temperature observations across a window; no-excursion verification is a SHACL-queryable assertion.
 7. **External-system integration** (carrier custody) — TOP federates with external PROV-bearing graphs (FedEx logistics, EHR audit trails). Cross-system PROV interop is v0.6+ federation work.
 
-These refinements don't change the v0.4.1 annotation cleanup; they're items the v0.5 Visit lift, the Equipment/Document/Person enrichments, and v0.6 federation work absorb in turn.
+These refinements don't change the v0.4.1 annotation cleanup; they're items the v0.5 Visit lift and the Equipment/Document/Person enrichments absorb at lift time. **None of them require new entity types** — they extend the universal Activity / Task / Equipment / Document / Person primitives with annotations and temporal-property semantics. The substrate posture stands: universal containers, specialization in content.
 
 ## Convention summary (additions to FIRST-PRINCIPLES)
 
