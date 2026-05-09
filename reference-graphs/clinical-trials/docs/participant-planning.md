@@ -114,6 +114,21 @@ The dimensions the twin synthesizer needs:
 
 **What's NOT in TOP**: the twin model itself (computational artifact), the twin synthesis logic, the twin's predicted outputs, the model-version-vs-Participant linkage. Those live in twin-synthesizer infrastructure, not TOP substrate. TOP provides the contract; the synthesizer fulfills it.
 
+**Deferred enhancement — twin-for-enrollment (game-changing economics)**
+
+The highest-value twin use case for clinical trials is *not* twin-during-trial, it's **twin-before-trial — for enrollment**. Enrollment is the most expensive bottleneck in clinical research (80%+ of trials miss enrollment timelines; ~30% of trial cost is recruitment-related). A patient digital twin substrate enables:
+
+- **Pre-screening at scale** — synthesize twins from EMR populations, simulate eligibility against the protocol's I/E criteria, identify candidate cohorts before any human reviews a chart
+- **Predicted-response cohort selection** — twin predicts who is most likely to respond; recruit those preferentially → smaller trials, faster signal-to-noise
+- **Synthetic control arms** — twins serve as control for single-arm trials (especially oncology / rare disease where placebo is unethical) → 30-50% reduction in actual enrollment needed
+- **Drop-out risk prediction** — twin predicts which candidates are likely to drop out; prioritize resilient candidates → fewer mid-trial replacement enrollments
+- **Trial feasibility simulation** — before opening a site, simulate the local population's twin-set against the protocol → realistic enrollment forecasts replace optimistic guesses
+- **Adaptive recruitment** — as the trial accrues, twin updates from real participant data; recruit to fill the population gaps the trial currently has
+
+**This pattern intersects directly with Decision 9 (Recruit boundary).** The Recruit entity becomes the operational counterpart to the twin: real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials feed a unified twin-synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk *before the trial actually opens*. This is where TOP's substrate discipline (operator-grounded Recruit + Participant + queryable lifecycle trajectories) compounds with downstream twin synthesis to produce a step-change in trial economics.
+
+**Deferred to v0.5+** (when Visit / Activity / Observation lift expand the queryability surface), but the substrate decisions made now (Decision 10 twin-queryability + Decision 9 Recruit-as-separate-entity) are the load-bearing pre-conditions. PMDT's QUALITOP pilot focused on chronic-care use; the trial-conduct-side enrollment use case is the adjacent high-value extension TOP is uniquely positioned to enable.
+
 ### Prior art — PMDT (Patient Medical Digital Twin, El Gammal et al., under review at SoSyM)
 
 The ontology-driven digital-twin direction is validated in real-world deployment: the **Patient Medical Digital Twin (PMDT)** framework (El Gammal et al., authored at ServTech / Cairo University / FernUniversität / Macquarie / UNSW, currently under review at *Software and Systems Modeling*) is an OWL 2.0 ontology for chronic-care patient digital twins, validated in the EU H2020 **QUALITOP** project pilot with real-world immunotherapy patients. Reference for TOP's twin posture; not a dependency.
