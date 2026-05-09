@@ -682,6 +682,55 @@
           }
         ]
       },
+      "VisitDefinition": {
+        "@id": "top:VisitDefinition",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:PlanDefinition (or fhir:Encounter at template profile level)"
+          },
+          {
+            "@id": "usdm:Encounter (template, design-side)"
+          },
+          {
+            "@id": "sdtm:TV (Trial Visits \u2014 design-side reference)"
+          },
+          {
+            "@id": "cdash:VISIT (template fields)"
+          }
+        ]
+      },
+      "visitDefinitionId": {
+        "@id": "top:visitDefinitionId"
+      },
+      "visitNumber": {
+        "@id": "top:visitNumber",
+        "@type": "xsd:string"
+      },
+      "visitName": {
+        "@id": "top:visitName",
+        "@type": "xsd:string"
+      },
+      "visitDay": {
+        "@id": "top:visitDay",
+        "@type": "xsd:integer"
+      },
+      "visitWindowMinDays": {
+        "@id": "top:visitWindowMinDays",
+        "@type": "xsd:integer"
+      },
+      "visitWindowMaxDays": {
+        "@id": "top:visitWindowMaxDays",
+        "@type": "xsd:integer"
+      },
+      "expectedDurationMinutes": {
+        "@id": "top:expectedDurationMinutes",
+        "@type": "xsd:integer"
+      },
+      "visitDefinitionStatus": {
+        "@id": "top:visitDefinitionStatus",
+        "@type": "xsd:string"
+      },
       "Site": {
         "@id": "top:Site",
         "@type": "@id",
@@ -1269,6 +1318,205 @@
         "@id": "top:convertedToParticipant",
         "@type": "@id"
       },
+      "Visit": {
+        "@id": "top:Visit",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Encounter (operational); fhir:QuestionnaireResponse (data-capture projection)"
+          },
+          {
+            "@id": "sdtm:SV (Subject Visits)"
+          },
+          {
+            "@id": "cdash:VISIT"
+          },
+          {
+            "@id": "omop:VISIT_OCCURRENCE"
+          },
+          {
+            "@id": "usdm:N/A (no per-visit-occurrence runtime entity)"
+          }
+        ]
+      },
+      "visitId": {
+        "@id": "top:visitId"
+      },
+      "visitMode": {
+        "@id": "top:visitMode",
+        "@type": "xsd:string"
+      },
+      "visitStatus": {
+        "@id": "top:visitStatus",
+        "@type": "xsd:string"
+      },
+      "plannedEndDate": {
+        "@id": "top:plannedEndDate",
+        "@type": "xsd:date"
+      },
+      "actualStartTime": {
+        "@id": "top:actualStartTime",
+        "@type": "xsd:time"
+      },
+      "actualEndDate": {
+        "@id": "top:actualEndDate",
+        "@type": "xsd:date"
+      },
+      "actualEndTime": {
+        "@id": "top:actualEndTime",
+        "@type": "xsd:time"
+      },
+      "protocolDeviationCode": {
+        "@id": "top:protocolDeviationCode",
+        "@type": "xsd:string"
+      },
+      "unscheduledReason": {
+        "@id": "top:unscheduledReason",
+        "@type": "xsd:string"
+      },
+      "forParticipant": {
+        "@id": "top:forParticipant",
+        "@type": "@id"
+      },
+      "definedBy": {
+        "@id": "top:definedBy",
+        "@type": "@id"
+      },
+      "hasActivity": {
+        "@id": "top:hasActivity",
+        "@type": "@id"
+      },
+      "hasTask": {
+        "@id": "top:hasTask",
+        "@type": "@id"
+      },
+      "hasVisitObservation": {
+        "@id": "top:hasVisitObservation",
+        "@type": "@id"
+      },
+      "partOf": {
+        "@id": "top:partOf",
+        "@type": "@id"
+      },
+      "Activity": {
+        "@id": "top:Activity",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Procedure (procedural Activities); fhir:Observation (assessment Activities); resource selection by activityType"
+          },
+          {
+            "@id": "varies by activityType: VS / EX / PR / LB / EG / IE / CM (each domain row corresponds to Activity + its Tasks)"
+          },
+          {
+            "@id": "usdm:Activity (template-side; runtime-side has no USDM analog)"
+          }
+        ]
+      },
+      "activityId": {
+        "@id": "top:activityId"
+      },
+      "activityName": {
+        "@id": "top:activityName",
+        "@type": "xsd:string"
+      },
+      "activityType": {
+        "@id": "top:activityType",
+        "@type": "xsd:string"
+      },
+      "activityStatus": {
+        "@id": "top:activityStatus",
+        "@type": "xsd:string"
+      },
+      "notPerformedReason": {
+        "@id": "top:notPerformedReason",
+        "@type": "xsd:string"
+      },
+      "biomedicalConceptCode": {
+        "@id": "top:biomedicalConceptCode",
+        "@type": "xsd:string"
+      },
+      "Task": {
+        "@id": "top:Task",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Observation (one per Task); fhir:QuestionnaireResponse.item.answer (when in a Questionnaire context)"
+          },
+          {
+            "@id": "varies by domain: VS / LB / EX / EG / IE / etc. \u2014 each Task projects to a domain row keyed by USUBJID + VISITNUM + TEST"
+          },
+          {
+            "@id": "fhir:QuestionnaireResponse.item; CDASH form items"
+          }
+        ]
+      },
+      "taskId": {
+        "@id": "top:taskId"
+      },
+      "taskName": {
+        "@id": "top:taskName",
+        "@type": "xsd:string"
+      },
+      "taskValueType": {
+        "@id": "top:taskValueType",
+        "@type": "xsd:string"
+      },
+      "taskValue": {
+        "@id": "top:taskValue",
+        "@type": "xsd:string"
+      },
+      "taskUnit": {
+        "@id": "top:taskUnit",
+        "@type": "xsd:string"
+      },
+      "taskStatus": {
+        "@id": "top:taskStatus",
+        "@type": "xsd:string"
+      },
+      "observedAt": {
+        "@id": "top:observedAt",
+        "@type": "xsd:dateTime"
+      },
+      "VisitObservation": {
+        "@id": "top:VisitObservation",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Observation (with category=note) or fhir:Encounter.note[]"
+          },
+          {
+            "@id": "varies: NV (Non-Standard Variables), DV (Protocol Deviations), or domain-specific note fields"
+          }
+        ]
+      },
+      "observationId": {
+        "@id": "top:observationId"
+      },
+      "observationText": {
+        "@id": "top:observationText",
+        "@type": "xsd:string"
+      },
+      "observationCategory": {
+        "@id": "top:observationCategory",
+        "@type": "xsd:string"
+      },
+      "observationDate": {
+        "@id": "top:observationDate",
+        "@type": "xsd:date"
+      },
+      "observationTime": {
+        "@id": "top:observationTime",
+        "@type": "xsd:time"
+      },
+      "escalated": {
+        "@id": "top:escalated",
+        "@type": "xsd:boolean"
+      },
+      "escalationDate": {
+        "@id": "top:escalationDate",
+        "@type": "xsd:date"
+      },
       "Organization": {
         "@id": "topc:Organization",
         "@type": "@id",
@@ -1749,13 +1997,14 @@
     }
   ],
   "_meta": {
-    "source_version": "0.4.1-strawman",
+    "source_version": "0.5.0-strawman",
     "top_levels": [
       "Sponsor",
       "Study",
       "Site",
       "Participant",
-      "Recruit"
+      "Recruit",
+      "Visit"
     ],
     "horizontals": [
       "Organization",
