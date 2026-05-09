@@ -1,7 +1,7 @@
 {
-  "_comment": "TOP v0.1 reference graph intermediate (strawman). The OOUX hierarchy is now locked at eight top-levels for the clinical-trials reference graph: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven boundary decisions resolved (see top_ooux-hierarchy_v1.html, 2026-05-07). This source currently scaffolds three of the eight (Sponsor, Study, Site) plus two horizontals (Organization, Document), enough to verify the federation pattern (clinical-trials @context imports a TOP commons @context). The remaining five top-levels lift in subsequent passes following the Sponsor spec template (top_sponsor-spec_v1.html). The build_context.py and build_shacl.py emitters do not change as top-levels are added; both carry a polysemous-verb guard that fails loudly on duplicate predicate names within a focus class. Sub-objects locked from OOUX: Visit Observation under Visit, Other Clinical Event under Event with derivedFrom audit chain. Equipment is fully horizontal with equipmentBinding enum (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Sample stays horizontal for the trials commons; specialty reference graphs (cell therapy, rare disease) may elevate it via the federation pattern.",
+  "_comment": "TOP v0.4 reference graph intermediate (strawman). v0.4.0 lift (2026-05-09) adds Participant + Recruit. The OOUX hierarchy was originally locked at eight top-levels (Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event). v0.4 adds Recruit as a ninth top-level per planning-note Decision 9: pre-consent recruitment-funnel work has its own operator role (recruitment coordinator), workflow, and lighter PHI surface, so it lifts as its own entity rather than as a pre-consent state on Participant. This source now scaffolds five of nine top-levels (Sponsor, Study, Site, Participant, Recruit) plus the commons horizontals (Organization, Document, StudySite, Person, System, Log, Equipment, StorageLocation, Credential). Remaining four top-levels (Visit, InvestigationalProduct, OversightBody, Event) lift in subsequent passes following the Sponsor/Site/Study/Participant template. Per FIRST-PRINCIPLES.md (operator-grounded substrate, ephemeral projections), entity names and attribute names come from operator vocabulary; cross-walks to FHIR/SDTM/CDASH/USDM live below the line as projection-adapter rules. Participant cross-walks: FHIR R5 ResearchSubject, SDTM DM/DS/IE, CDASH DM. participantStatus is a NGSI-LD temporal property (validFrom/validUntil) for twin-queryability discipline (planning-note Decision 10). Recruit -> Participant transition is via Participant.convertedFromRecruit (with InformedConsent sub-object existence as the canonical conversion event). The build_context.py and build_shacl.py emitters do not change as top-levels are added; both carry a polysemous-verb guard that fails loudly on duplicate predicate names within a focus class. Sub-objects under Participant: InformedConsent (re-consent supported via 0..N), ScreeningRecord (re-screening), EnrollmentRecord, WithdrawalRecord. Equipment is fully horizontal with equipmentBinding enum (SITE_BOUND, VENDOR_OWNED, PARTICIPANT_LOANED). Sample stays horizontal for the trials commons; specialty reference graphs (cell therapy, rare disease) may elevate it via the federation pattern.",
 
-  "version": "0.3.0-strawman",
+  "version": "0.4.0-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
 
@@ -375,6 +375,215 @@
         { "action": "Monitor Site", "persona": "Sponsor CRA", "note": "Schedule or conduct a monitoring visit at the Site for a specific StudySite." },
         { "action": "Close Site", "persona": "Site Admin", "note": "Close out the Site's clinical-research program; cascades to closing all StudySite records." },
         { "action": "Update Feasibility Profile", "persona": "Site Admin", "note": "Update the Site's SFQ-derived feasibility attributes (therapeutic areas, infrastructure, staff capacity). Triggers a versioned feasibility snapshot for sponsor SFQ matching." }
+      ]
+    },
+
+    {
+      "id": "Participant",
+      "role": "the human subject in the trial-conduct realm",
+      "description": "A Participant is a real human enrolled in a Study at a StudySite. Per FIRST-PRINCIPLES (operator-grounded substrate, ephemeral projections), Participant is the trial-conduct-realm role-entity for the underlying human; the same human is a Patient in their care realm, a Claimant in their claims realm, an RWE-Patient in research-warehouse projections — those are projection targets, not TOP entities. The operational hierarchy: Site -> StudySite -> Study -> Protocol -> SOA -> Visit -> Activity, with Participant anchored at StudySite (1..1; multi-Study participation is modeled as separate Participant entities). Lifecycle events (Consent, Screening, Enrollment, Withdrawal) are sub-objects under Participant — the SDTM DS-record pattern; operators see workflow events, the projection adapters emit DS rows. participantStatus is a NGSI-LD temporal property (validFrom/validUntil) so trajectory is queryable for downstream digital-twin synthesis (key enabler for twin-for-enrollment in v0.5+).",
+      "ooux_editor_note": "v0.4.0 introduction (2026-05-09): lifted from OOUX Participant object with the Site->StudySite anchoring correction (OOUX has Participant->1 Site; should be Participant->1 StudySite). Participant lifecycle starts at SCREENING (post-consent); pre-consent Recruit lifts as a separate top-level (per planning-note Decision 9). Demographics are identification-status-agnostic (per planning-note Decision 2): same fields exist; deployment populates real values for operator-facing systems and Datavant/de-identified values for research-facing systems. participantStatus carries 11 operationally-distinct states with documented FHIR ResearchSubjectStatus + SDTM DSDECOD projection mapping (cross-walks below the line, per FIRST-PRINCIPLES). Sub-objects: InformedConsent (re-consent supported via 0..N), ScreeningRecord (re-screening supported), EnrollmentRecord (1 typically, multi if re-enrolled), WithdrawalRecord (1 per withdrawal event). USDM v4 has no per-subject runtime entity; cross-walk targets for Participant runtime are FHIR R5 ResearchSubject, SDTM DM/DS/IE, CDASH DM. Participant is operational-side of the USDM/M11 ingest boundary: created at runtime by EDC/eConsent/IRT/CTMS, NOT by USDM ingest. Twin-queryability discipline (planning-note Decision 10): every participantStatus transition produces a queryable record — sub-objects for canonical events plus temporal-property semantics for mid-trial states. PMDT (Patient Medical Digital Twin, El Gammal et al.) is prior art for ontology-driven twin substrate; TOP carries the contract, downstream synthesizers fulfill it.",
+      "crosswalks": {
+        "fhir": "fhir:ResearchSubject",
+        "sdtm": "sdtm:DM (Demographics) + sdtm:DS (Disposition) + sdtm:IE (Inclusion/Exclusion Exceptions)",
+        "cdash": "cdash:DM",
+        "usdm": "usdm:N/A (no per-subject runtime entity; design-side connections via Study/Arm/EligibilityCriterion)",
+        "omop": "omop:PERSON (RWE-realm projection)"
+      },
+      "attributes": [
+        { "name": "participantId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier. Operators type the parts (screeningNumber + randomizationNumber); USUBJID = STUDYID-SITEID-SUBJID concatenation is a SDTM-projection-time derivation, not a TOP attribute." },
+        { "name": "screeningNumber", "type": "xsd:string", "doc": "Site-assigned screening identifier (operator-facing). Maps to SDTM SUBJID. CDASH SUBJID. Operator types this when registering a new Participant after consent.", "mapsTo": { "sdtm": "DM.SUBJID", "cdash": "DM.SUBJID", "fhir": "ResearchSubject.identifier (use=secondary)" } },
+        { "name": "randomizationNumber", "type": "xsd:string", "optional": true, "doc": "Sponsor-assigned identifier issued at randomization. Often used for IP kit assignment. Empty until randomization. SDTM has no canonical column; carried in SUPPDM or kit-level records.", "mapsTo": { "sdtm": "(SUPPDM or kit-level qualifier)", "fhir": "ResearchSubject.identifier (use=secondary)" } },
+        { "name": "randomizationDate", "type": "xsd:date", "optional": true, "doc": "Date of randomization. Empty until randomization. Required when participantStatus=RANDOMIZED (SHACL hard violation)." },
+        { "name": "firstName", "type": "xsd:string", "optional": true, "doc": "Operator-grounded; populated with real value for site-coordinator UX or empty/de-identified for research-warehouse projections per deployment-side identification policy." },
+        { "name": "middleName", "type": "xsd:string", "optional": true },
+        { "name": "lastName", "type": "xsd:string", "optional": true, "doc": "Operator-grounded; same de-identification posture as firstName." },
+        { "name": "dateOfBirth", "type": "xsd:date", "optional": true, "doc": "Real DOB, or year-only approximation, or shifted date depending on deployment. Maps to SDTM BRTHDTC (ISO 8601). FHIR Patient.birthDate.", "mapsTo": { "sdtm": "DM.BRTHDTC", "fhir": "Patient.birthDate (linked via ResearchSubject.subject)", "cdash": "DM.BRTHDAT" } },
+        { "name": "sex", "type": "xsd:string", "optional": true, "enum": ["MALE", "FEMALE", "INTERSEX", "UNKNOWN", "NOT_REPORTED"], "doc": "Biological sex per ICH E5 / FDA guidance. Operator-meaningful enum; SDTM projection emits the terser M/F/U/UNDIFFERENTIATED codes (INTERSEX -> UNDIFFERENTIATED per CDISC controlled term). Gender identity is a separate concern when needed.", "mapsTo": { "sdtm": "DM.SEX", "fhir": "Patient.gender", "cdash": "DM.SEX" } },
+        { "name": "race", "type": "xsd:string", "optional": true, "doc": "Comma-separated for multiracial. Maps to SDTM RACE (CDISC controlled term); SDTM uses MULTIPLE + SUPPDM RACEMUL for multiracial.", "mapsTo": { "sdtm": "DM.RACE", "fhir": "Patient.extension[us-core-race]", "cdash": "DM.RACE" } },
+        { "name": "ethnicity", "type": "xsd:string", "optional": true, "enum": ["HISPANIC_OR_LATINO", "NOT_HISPANIC_OR_LATINO", "NOT_REPORTED", "UNKNOWN"], "doc": "CDISC controlled term.", "mapsTo": { "sdtm": "DM.ETHNIC", "fhir": "Patient.extension[us-core-ethnicity]", "cdash": "DM.ETHNIC" } },
+        { "name": "primaryLanguage", "type": "xsd:string", "optional": true, "doc": "ISO 639-1 code (en, es, fr, zh, etc.). Operator-grounded for site-coordinator UX (preferred language for visit interactions). Not in SDTM DM core.", "mapsTo": { "fhir": "Patient.communication.language" } },
+        { "name": "country", "type": "xsd:string", "optional": true, "doc": "ISO 3166-1 alpha-3 country code. For multi-region trials.", "mapsTo": { "sdtm": "DM.COUNTRY", "fhir": "Patient.address.country", "cdash": "DM.COUNTRY" } },
+        { "name": "participantStatus", "type": "xsd:string", "enum": ["SCREENING", "SCREEN_FAILED", "CONSENTED", "ENROLLED", "RANDOMIZED", "ON_TREATMENT", "IN_FOLLOW_UP", "COMPLETED", "WITHDRAWN", "DISCONTINUED", "LOST_TO_FOLLOW_UP"], "doc": "Operationally-distinct lifecycle states (11). Operator-meaningful; standards projections live below the line. NGSI-LD temporal property (validFrom/validUntil bracketing each value) so trajectory is queryable downstream (Decision 10 twin-queryability discipline).", "mapsTo": { "fhir": "ResearchSubject.status (many-to-one collapse to: screening / ineligible / pending-on-study / on-study / on-study-intervention / follow-up / off-study / withdrawn)", "sdtm": "DS.DSDECOD per state-change event (in DS records, not as a Participant column)" } },
+        { "name": "enrollmentDate", "type": "xsd:date", "optional": true, "doc": "Date of enrollment (single canonical Sponsor-assigned moment). Distinct from randomizationDate (later) and consent date (on InformedConsent sub-object). Maps to SDTM RFSTDTC.", "mapsTo": { "sdtm": "DM.RFSTDTC (or close)", "fhir": "ResearchSubject.period.start" } },
+        { "name": "completionDate", "type": "xsd:date", "optional": true, "doc": "Date the Participant completed protocol participation (LPLV-equivalent for this Participant). SOFT SHACL: should be populated when participantStatus=COMPLETED.", "mapsTo": { "sdtm": "DM.RFENDTC (or close)", "fhir": "ResearchSubject.period.end" } },
+        { "name": "withdrawalDate", "type": "xsd:date", "optional": true, "doc": "Most recent withdrawal event date (canonical query convenience; full history lives on WithdrawalRecord sub-objects)." },
+        { "name": "tags", "type": "xsd:string", "optional": true, "doc": "Comma-separated user-defined tags (per OOUX Tag pattern)." },
+        { "name": "validFrom", "type": "xsd:dateTime", "optional": true, "doc": "NGSI-LD-native temporal property: datetime from which this Participant record is operationally valid. Pattern parallels Sponsor and StudySite." },
+        { "name": "validUntil", "type": "xsd:dateTime", "optional": true, "doc": "NGSI-LD-native temporal property: datetime through which this Participant record was operationally valid. Empty for currently-active Participants." }
+      ],
+      "relationships": [
+        { "name": "forStudySite", "target": "StudySite", "cardinality": "1..1", "doc": "The StudySite where this Participant is enrolled. Per the operational hierarchy correction (Site -> StudySite -> Study), Participant anchors at StudySite, not Site directly. The OOUX Participant->1 Site direct edge is a correction surfaced during the Site spec lift; tracked." },
+        { "name": "forStudy", "target": "Study", "cardinality": "1..1", "doc": "The Study this Participant is enrolled in. Reachable via forStudySite.forStudy traversal but kept as a direct edge for query convenience and SHACL invariant simplicity (Participant.assignedToArm.forStudy == Participant.forStudy)." },
+        { "name": "assignedToArm", "target": "Arm", "cardinality": "0..1", "doc": "The Study Arm the Participant is assigned to. 0 in pre-randomization phases; 1..1 once randomized. Hard SHACL: when participantStatus=RANDOMIZED, assignedToArm must be populated AND the Arm must belong to the same Study as Participant.forStudy (cross-entity consistency)." },
+        { "name": "hasInformedConsent", "target": "InformedConsent", "cardinality": "0..N", "doc": "Informed consent event records. 0..N to support re-consent (after protocol amendment, ICF version change, lapse-and-re-establish). Each InformedConsent sub-object is one consent event with its own date, consenter, witness, document reference, lifecycle status." },
+        { "name": "hasScreeningRecord", "target": "ScreeningRecord", "cardinality": "0..N", "doc": "Screening event records. 0..N to support re-screening attempts. Hard SHACL: when participantStatus=SCREEN_FAILED, at least one ScreeningRecord with screeningOutcome=SCREEN_FAILED must exist." },
+        { "name": "hasEnrollmentRecord", "target": "EnrollmentRecord", "cardinality": "0..N", "doc": "Enrollment event records. Typically 1 per Participant; multi-enrollment supported for re-enrollment scenarios." },
+        { "name": "hasWithdrawalRecord", "target": "WithdrawalRecord", "cardinality": "0..N", "doc": "Withdrawal event records. Hard SHACL: when participantStatus=WITHDRAWN, at least one WithdrawalRecord must exist with withdrawalCategory=CONSENT_WITHDRAWN." },
+        { "name": "convertedFromRecruit", "target": "Recruit", "cardinality": "0..1", "doc": "The Recruit entity that converted to this Participant when consent was obtained. Empty when Participant was registered without going through a tracked recruitment funnel (direct site walk-in). The InformedConsent sub-object's existence IS the conversion event; this relationship is the operational-funnel-side trace." },
+        { "name": "hasVisit", "target": "Visit", "cardinality": "0..N", "doc": "Visit-occurrences for this Participant. Inverse of Visit.atParticipant (when Visit lifts).", "_targetMissing": "Visit is a top-level in OOUX (one of the locked 8) but not yet in TOP source; lifts post-Participant per planning sequencing." },
+        { "name": "hasAdverseEvent", "target": "Event", "cardinality": "0..N", "doc": "Adverse-event records linked to this Participant.", "_targetMissing": "Event is a top-level in OOUX (one of the locked 8) but not yet in TOP source." },
+        { "name": "hasTag", "target": "Tag", "cardinality": "0..N", "doc": "User-defined tags applied to this Participant.", "_targetMissing": "Tag is in OOUX v0.2 catalog but not yet in TOP source." }
+      ],
+      "ctas": [
+        { "action": "Register Participant", "persona": "Site Coordinator", "note": "Create a new Participant record after consent is obtained. Triggered by InformedConsent sub-object creation." },
+        { "action": "Screen Participant", "persona": "Site Coordinator / PI", "note": "Conduct eligibility screening; creates ScreeningRecord. Outcomes route the Participant to ENROLLED or SCREEN_FAILED states." },
+        { "action": "Enroll Participant", "persona": "Site Coordinator", "note": "Create EnrollmentRecord; transitions participantStatus to ENROLLED. Eligibility is confirmed by the PI per ICH E6(R3) Section 2.4." },
+        { "action": "Randomize Participant", "persona": "Site Coordinator (via IRT)", "note": "Assign Participant to an Arm via the Sponsor-provisioned IRT system; transitions to RANDOMIZED; populates assignedToArm + randomizationDate + randomizationNumber." },
+        { "action": "Begin Treatment", "persona": "Site Coordinator / PI", "note": "First IP administration; transitions participantStatus to ON_TREATMENT." },
+        { "action": "Move to Follow-Up", "persona": "Site Coordinator", "note": "Treatment phase complete; transitions to IN_FOLLOW_UP." },
+        { "action": "Complete Participation", "persona": "Site Coordinator / PI", "note": "Last visit completed per protocol; transitions to COMPLETED; populates completionDate." },
+        { "action": "Withdraw Participant", "persona": "Site Coordinator / PI / Participant-initiated", "note": "Subject-initiated withdrawal; creates WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN; transitions to WITHDRAWN. Distinct from Discontinue (investigator-initiated)." },
+        { "action": "Discontinue Participant", "persona": "PI / Medical Monitor", "note": "Investigator-initiated discontinuation (safety, non-compliance); creates WithdrawalRecord with appropriate withdrawalCategory; transitions to DISCONTINUED." },
+        { "action": "Mark Lost to Follow-Up", "persona": "Site Coordinator", "note": "Unable to contact for required follow-up procedures despite documented attempts; transitions to LOST_TO_FOLLOW_UP." },
+        { "action": "Re-Screen Participant", "persona": "Site Coordinator / PI", "note": "After a screen failure, conduct a new screening attempt (per protocol re-screening rules); creates a new ScreeningRecord." },
+        { "action": "Re-Consent Participant", "persona": "Site Coordinator", "note": "After a protocol amendment requiring re-consent or an ICF version update, obtain new consent; creates a new InformedConsent sub-object with reconsentRequired=true." }
+      ],
+      "sub_objects": [
+        {
+          "id": "InformedConsent",
+          "role": "an informed-consent event under GCP",
+          "description": "An InformedConsent sub-object captures one consent event for a Participant: the moment the participant (or LAR) signed an ICF acknowledging the study's purpose, procedures, risks, and benefits. ICH E6(R3) Section 2.4 GCP-required. Re-consent (after amendment, ICF version change, or lapse) creates additional InformedConsent records under the same Participant — full event history. Maps to FHIR Consent resource (one per record) and SDTM DS records with DSDECOD=INFORMED CONSENT OBTAINED / WITHDRAWAL OF CONSENT.",
+          "crosswalks": {
+            "fhir": "fhir:Consent",
+            "sdtm": "sdtm:DS (DSDECOD=INFORMED CONSENT OBTAINED, WITHDRAWAL OF CONSENT)",
+            "usdm": "usdm:N/A (runtime, not design-time)"
+          },
+          "attributes": [
+            { "name": "consentId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "consentVersion", "type": "xsd:string", "doc": "ICF document version (e.g., 'v3.2'). Tracks which Protocol/ICF revision the consent was given against." },
+            { "name": "consentDate", "type": "xsd:date", "doc": "Date consent was obtained. Maps to SDTM DSSTDTC for the corresponding DS record." },
+            { "name": "consentTime", "type": "xsd:time", "optional": true, "doc": "Time of day consent was obtained, if recorded (eConsent typically captures this; paper consent often does not)." },
+            { "name": "consentMethod", "type": "xsd:string", "enum": ["PAPER", "ELECTRONIC", "ELECTRONIC_REMOTE"], "doc": "Method of consent capture. ELECTRONIC_REMOTE supports DCT/decentralized-trial workflows (telehealth consent)." },
+            { "name": "consenterRelationship", "type": "xsd:string", "enum": ["SELF", "LEGALLY_AUTHORIZED_REPRESENTATIVE", "PARENT_GUARDIAN", "OTHER"], "doc": "Who is consenting on the Participant's behalf. SELF for adult competent participants; LAR for incapacitated adults; PARENT_GUARDIAN for pediatric." },
+            { "name": "language", "type": "xsd:string", "optional": true, "doc": "ISO 639-1 code of the language the ICF was presented in. Maps to FHIR Consent.language." },
+            { "name": "translatorUsed", "type": "xsd:boolean", "optional": true, "doc": "Whether a translator/interpreter was used. FHIR represents this as Consent.actor with role=interpreter." },
+            { "name": "consentStatus", "type": "xsd:string", "enum": ["OBTAINED", "WITHDRAWN", "EXPIRED", "RECONSENTED"], "doc": "Lifecycle of this specific consent record. OBTAINED on creation; WITHDRAWN if subject withdraws; EXPIRED if ICF expires; RECONSENTED if a new InformedConsent supersedes this one (the new record points back via reconsentReason)." },
+            { "name": "reconsentRequired", "type": "xsd:boolean", "optional": true, "doc": "True if this consent record was created because a reconsent was required (e.g., after a protocol amendment changed risk profile)." },
+            { "name": "reconsentReason", "type": "xsd:string", "optional": true, "doc": "Reason for reconsent (e.g., 'Protocol Amendment v3.2 added a new procedure'). Free text or coded." },
+            { "name": "withdrawalDate", "type": "xsd:date", "optional": true, "doc": "Date this specific consent was withdrawn (if applicable). Distinct from Participant.withdrawalDate (which is the most-recent across all WithdrawalRecords)." }
+          ],
+          "relationships": [
+            { "name": "consentingPerson", "target": "Person", "cardinality": "0..1", "doc": "The Person who consented (often the Participant themselves; or the LAR / parent / guardian). 0..1 because the Participant entity itself is the most common case and TOP doesn't always model the human-as-Person entity." },
+            { "name": "personObtainingConsent", "target": "Person", "cardinality": "1..1", "doc": "The site staff member (Person, drawn from forStudySite.delegatesAuthorityTo) who obtained the consent. ICH E6(R3) Section 2.4 GCP-required attribution." },
+            { "name": "consentWitness", "target": "Person", "cardinality": "0..1", "doc": "Witness to the consent process, where required by jurisdictional regulation or sponsor SOP." },
+            { "name": "consentDocument", "target": "Document", "cardinality": "0..1", "doc": "The signed ICF document in the eTMF/ISF.", "_targetMissing": "Document is a horizontal in TOP source; relationship valid." }
+          ]
+        },
+        {
+          "id": "ScreeningRecord",
+          "role": "an eligibility-screening event",
+          "description": "A ScreeningRecord captures one screening attempt for a Participant against the Study's inclusion/exclusion criteria. ICH E6(R3) Section 2.5 GCP-anchored. Re-screening (after a screen failure, per protocol re-screening rules) creates additional ScreeningRecords. Maps to FHIR ResearchSubject.progress entries with subjectState=screening / off-study and SDTM DS records with DSDECOD=SCREEN FAILURE (when failed) plus SDTM IE records (Inclusion/Exclusion Not Met) for failed criteria.",
+          "crosswalks": {
+            "fhir": "fhir:ResearchSubject.progress (subjectState=screening / off-study)",
+            "sdtm": "sdtm:DS (DSDECOD=SCREEN FAILURE) + sdtm:IE (failed criteria)",
+            "usdm": "usdm:N/A (runtime)"
+          },
+          "attributes": [
+            { "name": "screeningRecordId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "screeningStartDate", "type": "xsd:date", "doc": "Date screening began (often consent date or shortly after)." },
+            { "name": "screeningEndDate", "type": "xsd:date", "optional": true, "doc": "Date screening concluded (with outcome). Empty for in-progress screening." },
+            { "name": "screeningOutcome", "type": "xsd:string", "enum": ["IN_PROGRESS", "ENROLLED", "SCREEN_FAILED", "RE_SCREENING_PENDING", "WITHDREW_BEFORE_DECISION"], "doc": "Final outcome of this screening attempt. IN_PROGRESS while open; one of the terminal states once concluded." },
+            { "name": "screenFailReason", "type": "xsd:string", "optional": true, "doc": "Verbatim reason for screen failure (free text or coded). Maps to SDTM DSTERM (verbatim) and DSDECOD." },
+            { "name": "failedInclusionCriteria", "type": "xsd:string", "optional": true, "doc": "Comma-separated list of inclusion criterion numbers (e.g., 'I1, I3') the Participant failed. SDTM IE domain is the canonical projection (one IE record per failed criterion)." },
+            { "name": "failedExclusionCriteria", "type": "xsd:string", "optional": true, "doc": "Comma-separated list of exclusion criterion numbers (e.g., 'E2, E5') the Participant met. SDTM IE domain is the canonical projection." },
+            { "name": "reScreeningEligibility", "type": "xsd:boolean", "optional": true, "doc": "Whether the Participant is eligible to be re-screened (per protocol re-screening rules; some screen failures are permanent disqualifications)." }
+          ],
+          "relationships": [
+            { "name": "screenedBy", "target": "Person", "cardinality": "0..1", "doc": "The site staff member (PI or sub-investigator, drawn from forStudySite.delegatesAuthorityTo) who conducted/signed-off-on the screening." }
+          ]
+        },
+        {
+          "id": "EnrollmentRecord",
+          "role": "an enrollment event",
+          "description": "An EnrollmentRecord captures the moment a Participant was enrolled into the Study (eligibility confirmed; assigned to the trial). Distinct from RANDOMIZED (which may follow). Typically 1 per Participant; multi-enrollment supported for re-enrollment scenarios where a previously withdrawn Participant rejoins (rare; some long-running registries). Maps to FHIR ResearchSubject.progress (milestone=Enrolled) and SDTM DS DSDECOD=ENROLLED.",
+          "crosswalks": {
+            "fhir": "fhir:ResearchSubject.progress (milestone=Enrolled)",
+            "sdtm": "sdtm:DS (DSDECOD=ENROLLED)",
+            "usdm": "usdm:N/A (runtime)"
+          },
+          "attributes": [
+            { "name": "enrollmentRecordId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "enrollmentDate", "type": "xsd:date", "doc": "Date of enrollment. Maps to SDTM RFSTDTC and DS DSSTDTC for DSDECOD=ENROLLED." },
+            { "name": "enrollmentMethod", "type": "xsd:string", "optional": true, "enum": ["ON_SITE", "REMOTE", "HYBRID"], "doc": "Method of enrollment. ON_SITE is traditional; REMOTE supports DCT (decentralized trial) workflows; HYBRID for partial-DCT designs." },
+            { "name": "enrollmentNumber", "type": "xsd:string", "optional": true, "doc": "Sponsor-assigned enrollment number (often sequential, distinct from screeningNumber and randomizationNumber)." },
+            { "name": "protocolVersionAtEnrollment", "type": "xsd:string", "optional": true, "doc": "Protocol version in force at time of enrollment. References the USDM StudyVersion identifier in force; useful for audit when amendments cascade." }
+          ],
+          "relationships": [
+            { "name": "eligibilityConfirmedBy", "target": "Person", "cardinality": "1..1", "doc": "The Principal Investigator (Person, drawn from forStudySite.hasPrincipalInvestigator typically) who confirmed eligibility per ICH E6(R3) Section 2.4 GCP-required attribution." }
+          ]
+        },
+        {
+          "id": "WithdrawalRecord",
+          "role": "a withdrawal/discontinuation event",
+          "description": "A WithdrawalRecord captures the moment a Participant left the Study (subject-initiated withdrawal of consent, investigator-initiated discontinuation, lost-to-follow-up, etc.). Each event is a separate record so the full lifecycle is auditable. Maps to FHIR ResearchSubject.progress (milestone=Withdrawn) and SDTM DS records with DSDECOD per CDISC controlled term.",
+          "crosswalks": {
+            "fhir": "fhir:ResearchSubject.progress (milestone=Withdrawn) + ResearchSubject.period.end",
+            "sdtm": "sdtm:DS (DSDECOD per controlled term: WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP / etc.)",
+            "usdm": "usdm:N/A (runtime)"
+          },
+          "attributes": [
+            { "name": "withdrawalRecordId", "type": "ngsi-ld:URI", "unique": true },
+            { "name": "withdrawalDate", "type": "xsd:date", "doc": "Date of withdrawal/discontinuation. Maps to SDTM DSSTDTC." },
+            { "name": "withdrawalCategory", "type": "xsd:string", "enum": ["CONSENT_WITHDRAWN", "INVESTIGATOR_DECISION", "ADVERSE_EVENT", "LOST_TO_FOLLOW_UP", "PROTOCOL_DEVIATION", "NON_COMPLIANCE", "DEATH", "OTHER"], "doc": "Category of the withdrawal event. Maps to SDTM DSDECOD: CONSENT_WITHDRAWN -> WITHDRAWAL OF CONSENT; INVESTIGATOR_DECISION -> DISCONTINUED; etc." },
+            { "name": "withdrawalReason", "type": "xsd:string", "optional": true, "doc": "Verbatim reason for withdrawal (free text or coded). Maps to SDTM DSTERM." },
+            { "name": "continueDataCollection", "type": "xsd:boolean", "optional": true, "doc": "True if the Participant withdrew from active treatment but data collection (follow-up visits) continues per protocol. FHIR represents as continued ResearchSubject without period.end despite withdrawn status." },
+            { "name": "withdrawnFromAllProcedures", "type": "xsd:boolean", "optional": true, "doc": "True if the Participant withdrew consent for all study procedures including data use (full withdrawal). When true, deployment-side data-handling policies apply (data deletion, retention exception, etc.)." },
+            { "name": "notes", "type": "xsd:string", "optional": true, "doc": "Free-text notes (often used by site coordinators for context that doesn't fit the controlled fields)." }
+          ],
+          "relationships": [
+            { "name": "documentedBy", "target": "Person", "cardinality": "0..1", "doc": "The site staff member (Person) who documented the withdrawal event. Required by GCP audit; relationship optional in TOP source because some legacy data may lack the attribution." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "Recruit",
+      "role": "the human in the recruitment-realm, pre-consent",
+      "description": "A Recruit is a person who has responded to or been identified by a recruitment funnel for a Study but has NOT yet given informed consent. The recruitment realm has its own operator (recruitment coordinator / outreach lead) and its own workflow (advertising response, pre-screening calls, eligibility pre-check, scheduling, contact attempts). Per FIRST-PRINCIPLES, Recruit is a separate top-level entity rather than a pre-consent state on Participant: the recruiter's workflow is operationally distinct from the coordinator's, the data shape is lighter (no consent, often just contact info + light eligibility pre-check), and PHI handling differs (recruiter does not need full demographics or medical history). When a Recruit consents, they convert to a Participant via Participant.convertedFromRecruit. Recruit data persists as recruitment-funnel analytics (conversion rates per source) regardless of whether conversion occurred.",
+      "ooux_editor_note": "v0.4.0 introduction (2026-05-09): lifted as a separate top-level alongside Participant per planning-note Decision 9. The OOUX-locked-8 boundary moves to 9 (or Recruit lifts as a horizontal alternative — chosen as top-level here because the recruiter is a distinct operator role with first-class workflow). Recruit -> Participant transition: when Recruit.recruitStatus=CONVERTED_TO_PARTICIPANT, a Participant entity is created with convertedFromRecruit pointing back. The InformedConsent sub-object's existence on the Participant is the canonical conversion event; the Recruit -> Participant linkage is the operational-funnel-side trace. Recruit-for-twin: the deferred twin-for-enrollment use case (planning-note 'twin-for-enrollment' subsection) uses Recruit as the operational counterpart to synthetic-Recruit twin generation; substrate decisions made now preserve that option.",
+      "crosswalks": {
+        "fhir": "fhir:Person (or no canonical resource; some sponsors model as Patient pre-trial)",
+        "sdtm": "sdtm:N/A (no canonical pre-consent SDTM domain; sponsor-internal recruitment systems)",
+        "usdm": "usdm:N/A (no recruitment modeling)"
+      },
+      "attributes": [
+        { "name": "recruitId", "type": "ngsi-ld:URI", "unique": true, "doc": "Globally unique NGSI-LD identifier." },
+        { "name": "firstName", "type": "xsd:string", "optional": true, "doc": "Operator-grounded; populated when recruitment coordinator has captured contact info. Identification-status-agnostic posture (same as Participant)." },
+        { "name": "lastName", "type": "xsd:string", "optional": true },
+        { "name": "phone", "type": "xsd:string", "optional": true, "doc": "Phone number for recruiter contact. Often the only identifier captured at first response (radio ad call-in, web-form submission)." },
+        { "name": "email", "type": "xsd:string", "optional": true },
+        { "name": "preferredContactMethod", "type": "xsd:string", "optional": true, "enum": ["PHONE", "EMAIL", "TEXT", "PORTAL", "OTHER"], "doc": "Recruit's stated preferred contact method." },
+        { "name": "recruitStatus", "type": "xsd:string", "enum": ["RESPONDED", "CONTACTED", "PRE_SCREENING_SCHEDULED", "PRE_SCREENED", "QUALIFIED_PENDING_CONSENT", "CONVERTED_TO_PARTICIPANT", "DECLINED", "NO_SHOW", "NOT_QUALIFIED", "DROPPED"], "doc": "Recruitment-funnel state. CONVERTED_TO_PARTICIPANT terminates the Recruit lifecycle (Participant record now exists). DECLINED / NO_SHOW / NOT_QUALIFIED / DROPPED are terminal failure states. NGSI-LD temporal property (validFrom/validUntil) for trajectory queryability (parallel to Participant.participantStatus)." },
+        { "name": "recruitmentSource", "type": "xsd:string", "optional": true, "enum": ["SITE_DATABASE", "EMR_OUTREACH", "ADVERTISING_DIGITAL", "ADVERTISING_PRINT", "ADVERTISING_RADIO", "REFERRAL_PROVIDER", "REFERRAL_PARTICIPANT", "REGISTRY", "PATIENT_ADVOCACY", "WALK_IN", "OTHER"], "doc": "How the Recruit entered the funnel. Drives recruitment-channel ROI analysis." },
+        { "name": "recruitmentSourceDetails", "type": "xsd:string", "optional": true, "doc": "Free-text detail (e.g., specific ad campaign ID, specific registry name, referring physician)." },
+        { "name": "responseDate", "type": "xsd:date", "doc": "Date the Recruit first entered the funnel (responded to ad / referred / identified by EMR mining)." },
+        { "name": "preScreeningOutcome", "type": "xsd:string", "optional": true, "enum": ["QUALIFIED", "NOT_QUALIFIED", "DEFERRED", "PENDING"], "doc": "Outcome of the recruiter's pre-screening assessment (NOT formal protocol screening; that happens post-consent on the Participant via ScreeningRecord). PENDING while in progress; QUALIFIED proceeds to consent scheduling." },
+        { "name": "preScreeningNotes", "type": "xsd:string", "optional": true, "doc": "Free-text notes from pre-screening conversation (high-level eligibility flags, concerns, motivations). Limited PHI by design — full medical history not captured here." },
+        { "name": "contactAttempts", "type": "xsd:integer", "optional": true, "doc": "Count of contact attempts made by the recruiter (calls, emails, texts). Operational metric; drives recruiter follow-up cadence." },
+        { "name": "lastContactDate", "type": "xsd:date", "optional": true, "doc": "Most recent contact attempt date (successful or not)." },
+        { "name": "consentScheduled", "type": "xsd:boolean", "optional": true, "doc": "True if a consent appointment is scheduled. Bridges to Participant creation." },
+        { "name": "consentAppointmentDate", "type": "xsd:date", "optional": true },
+        { "name": "country", "type": "xsd:string", "optional": true, "doc": "ISO 3166-1 alpha-3. Useful for multi-country recruitment funnel analytics." },
+        { "name": "primaryLanguage", "type": "xsd:string", "optional": true, "doc": "ISO 639-1. Drives recruiter language-matching." },
+        { "name": "tags", "type": "xsd:string", "optional": true, "doc": "Comma-separated user-defined tags." },
+        { "name": "validFrom", "type": "xsd:dateTime", "optional": true, "doc": "NGSI-LD temporal property for recruit-record validity." },
+        { "name": "validUntil", "type": "xsd:dateTime", "optional": true }
+      ],
+      "relationships": [
+        { "name": "forStudy", "target": "Study", "cardinality": "1..1", "doc": "The Study this Recruit was identified for. Recruits are scoped per-Study (a person responding to two trial ads is two Recruits, even if same human; cross-Study identity resolution is federation, not substrate)." },
+        { "name": "forStudySite", "target": "StudySite", "cardinality": "0..1", "doc": "The StudySite the Recruit was funneled to (often known by recruitment-source channel). 0..1 because some Recruits enter the funnel before site assignment is finalized (multi-site studies with central-recruitment-then-site-routing)." },
+        { "name": "recruitedBy", "target": "Person", "cardinality": "0..1", "doc": "The recruitment coordinator (Person) handling this Recruit. From forStudySite.delegatesAuthorityTo with role=recruitment-coordinator (when delegation is per-Study) or from a sponsor-side recruitment team." },
+        { "name": "convertedToParticipant", "target": "Participant", "cardinality": "0..1", "doc": "The Participant entity that was created when this Recruit consented. Empty until conversion. Inverse of Participant.convertedFromRecruit." }
+      ],
+      "ctas": [
+        { "action": "Capture Recruit", "persona": "Recruitment Coordinator", "note": "Register a new Recruit from any source (ad response, web-form, EMR list, referral)." },
+        { "action": "Pre-Screen Recruit", "persona": "Recruitment Coordinator", "note": "Conduct light pre-screening conversation (high-level eligibility flags); records preScreeningOutcome." },
+        { "action": "Schedule Consent Appointment", "persona": "Recruitment Coordinator", "note": "Schedule the formal consent appointment at the StudySite. Transition to QUALIFIED_PENDING_CONSENT." },
+        { "action": "Convert Recruit to Participant", "persona": "Site Coordinator", "note": "After consent is obtained at the appointment, create a Participant entity with convertedFromRecruit pointing here; transitions Recruit.recruitStatus to CONVERTED_TO_PARTICIPANT." },
+        { "action": "Mark Recruit Declined", "persona": "Recruitment Coordinator", "note": "Recruit declines participation (or fails pre-screening); transitions to DECLINED / NOT_QUALIFIED / DROPPED." },
+        { "action": "Log Contact Attempt", "persona": "Recruitment Coordinator", "note": "Increment contactAttempts; update lastContactDate. Used for follow-up-cadence dashboards." }
       ]
     }
   ],

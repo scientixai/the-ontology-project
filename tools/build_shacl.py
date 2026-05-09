@@ -664,6 +664,214 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === Participant invariants (v0.4.0) ===
+    invariants.append("# === Participant invariants (v0.4.0) ===")
+    invariants.append("")
+
+    # 17. Hard: a Participant in any post-consent on-trial state must have at least
+    #     one InformedConsent sub-object with consentStatus=OBTAINED. ICH E6(R3)
+    #     Section 2.4 GCP-required: cannot be on study without consent.
+    invariants.append(sub("""__P__:ParticipantOnTrialNeedsConsentShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant has participantStatus in {ENROLLED, RANDOMIZED, ON_TREATMENT, IN_FOLLOW_UP, COMPLETED, WITHDRAWN, DISCONTINUED, LOST_TO_FOLLOW_UP} but no InformedConsent sub-object with consentStatus=OBTAINED. ICH E6(R3) Section 2.4 GCP-required: cannot be on study without documented consent." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:participantStatus ?status .
+                FILTER (?status IN ("ENROLLED", "RANDOMIZED", "ON_TREATMENT", "IN_FOLLOW_UP", "COMPLETED", "WITHDRAWN", "DISCONTINUED", "LOST_TO_FOLLOW_UP"))
+                FILTER NOT EXISTS {
+                    $this __P__:hasInformedConsent ?consent .
+                    ?consent __P__:consentStatus "OBTAINED" .
+                }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 18. Hard: a Participant with participantStatus=SCREEN_FAILED must have at least
+    #     one ScreeningRecord with screeningOutcome=SCREEN_FAILED. The status implies
+    #     the event; the event must be on file.
+    invariants.append(sub("""__P__:ParticipantScreenFailedNeedsRecordShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant has participantStatus=SCREEN_FAILED but no ScreeningRecord with screeningOutcome=SCREEN_FAILED. The status implies a recorded screening event with documented failure." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:participantStatus "SCREEN_FAILED" .
+                FILTER NOT EXISTS {
+                    $this __P__:hasScreeningRecord ?sr .
+                    ?sr __P__:screeningOutcome "SCREEN_FAILED" .
+                }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 19. Hard: a Participant with participantStatus=RANDOMIZED must have assignedToArm
+    #     populated AND randomizationDate populated. Randomization is a discrete event
+    #     that requires both the arm assignment and the date.
+    invariants.append(sub("""__P__:ParticipantRandomizedNeedsArmAndDateShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant has participantStatus=RANDOMIZED but is missing assignedToArm or randomizationDate (or both). Randomization is a discrete event requiring both an arm assignment and a date." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:participantStatus "RANDOMIZED" .
+                FILTER (NOT EXISTS { $this __P__:assignedToArm ?arm } || NOT EXISTS { $this __P__:randomizationDate ?d })
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 20. Hard: a Participant with participantStatus=WITHDRAWN must have at least one
+    #     WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. WITHDRAWN is
+    #     reserved for subject-initiated withdrawal of consent specifically;
+    #     investigator-initiated discontinuation uses participantStatus=DISCONTINUED.
+    invariants.append(sub("""__P__:ParticipantWithdrawnNeedsConsentWithdrawalShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant has participantStatus=WITHDRAWN but no WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. The WITHDRAWN status is reserved for subject-initiated withdrawal of consent; investigator-initiated discontinuation should use participantStatus=DISCONTINUED instead." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:participantStatus "WITHDRAWN" .
+                FILTER NOT EXISTS {
+                    $this __P__:hasWithdrawalRecord ?wr .
+                    ?wr __P__:withdrawalCategory "CONSENT_WITHDRAWN" .
+                }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 21. Soft warning: a Participant with participantStatus=COMPLETED should have
+    #     completionDate populated. A COMPLETED status without a completion date
+    #     suggests data-entry omission.
+    invariants.append(sub("""__P__:ParticipantCompletedNeedsCompletionDateShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant has participantStatus=COMPLETED but no completionDate populated. Verify the completion date is recorded; this is the Participant-level last-visit date." ;
+        sh:severity sh:Warning ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:participantStatus "COMPLETED" .
+                FILTER NOT EXISTS { $this __P__:completionDate ?d }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 22. Hard: cross-entity consistency — a Participant's assignedToArm must belong
+    #     to the same Study as the Participant's forStudy. The arm is part of THIS
+    #     study's design, not another study's design.
+    invariants.append(sub("""__P__:ParticipantArmStudyConsistencyShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant.assignedToArm references an Arm that does not belong to Participant.forStudy. The Arm must come from this Study's design, not from another Study." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:assignedToArm ?arm .
+                $this __P__:forStudy ?participantStudy .
+                FILTER NOT EXISTS {
+                    ?armStudy a __P__:Study .
+                    ?armStudy __P__:hasArm ?arm .
+                    FILTER (?armStudy = ?participantStudy)
+                }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 23. Hard: cross-entity consistency — a Participant's forStudySite must reference
+    #     a StudySite whose forStudy matches the Participant's forStudy. Same
+    #     consistency principle as the arm rule above, applied to the site anchor.
+    invariants.append(sub("""__P__:ParticipantStudySiteStudyConsistencyShape a sh:NodeShape ;
+    sh:targetClass __P__:Participant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Participant.forStudySite references a StudySite whose forStudy does not match Participant.forStudy. The StudySite anchor and the Study anchor must agree." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Participant .
+                $this __P__:forStudySite ?ss .
+                $this __P__:forStudy ?participantStudy .
+                ?ss __C__:forStudy ?ssStudy .
+                FILTER (?ssStudy != ?participantStudy)
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # === Recruit invariants (v0.4.0) ===
+    invariants.append("# === Recruit invariants (v0.4.0) ===")
+    invariants.append("")
+
+    # 24. Hard: a Recruit with recruitStatus=CONVERTED_TO_PARTICIPANT must have
+    #     convertedToParticipant populated. The status is the terminal funnel state
+    #     that signals conversion; the relationship is the operational trace.
+    invariants.append(sub("""__P__:RecruitConvertedNeedsParticipantShape a sh:NodeShape ;
+    sh:targetClass __P__:Recruit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Recruit has recruitStatus=CONVERTED_TO_PARTICIPANT but convertedToParticipant relationship is not populated. The terminal-funnel-success status requires the operational link to the created Participant." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Recruit .
+                $this __P__:recruitStatus "CONVERTED_TO_PARTICIPANT" .
+                FILTER NOT EXISTS { $this __P__:convertedToParticipant ?p }
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 25. Soft warning: a Recruit with contactAttempts > 5 and still in {RESPONDED,
+    #     CONTACTED} states (i.e., not progressing past initial outreach) should
+    #     probably be moved to DROPPED. Surfaces stale recruits to the recruiter.
+    invariants.append(sub("""__P__:RecruitStalledManyAttemptsShape a sh:NodeShape ;
+    sh:targetClass __P__:Recruit ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Recruit has contactAttempts > 5 but is still in early-funnel state (RESPONDED or CONTACTED). Consider moving to DROPPED to keep the funnel clean and surface true conversion-rate metrics." ;
+        sh:severity sh:Warning ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:Recruit .
+                $this __P__:recruitStatus ?status .
+                FILTER (?status IN ("RESPONDED", "CONTACTED"))
+                $this __P__:contactAttempts ?n .
+                FILTER (?n > 5)
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -731,7 +939,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 16 (2 soft warnings + 14 hard violations)")
+    print(f"  domain invariants: 25 (4 soft warnings + 21 hard violations)")
 
 
 if __name__ == "__main__":
