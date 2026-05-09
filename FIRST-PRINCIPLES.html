@@ -181,6 +181,7 @@
   <li>Nesting under regulatory taxonomies for browsing (e.g., ICH E6(R3) Section 2.x as primary navigation).</li>
   <li>Carrying every standards-mandated field that operators don't actually use ("we have to carry it because USDM has it" — no).</li>
   <li>Treating standards alignment as the deliverable.</li>
+  <li><strong>Therapeutic-area-specific or modality-specific entity types</strong> (<span class="inline">OncologyImagingStudy</span>, <span class="inline">CardiologyECGRecording</span>, <span class="inline">PHQ9Response</span>, <span class="inline">DICOMSeriesAnnotation</span>, <span class="inline">EProSession</span>, <span class="inline">LabResult</span>). Specialization is content, never entity shape. See "Universal substrate" below.</li>
 </ul>
 
 <h2 class="section">What this rules in</h2>
@@ -207,6 +208,53 @@
 </blockquote>
 
 <p>That's the bet.</p>
+
+<h2 class="section">Universal substrate — specialization is content, not shape</h2>
+
+<p>A third structural commitment, alongside operator-grounded vocabulary and native temporal+provenance: <strong>the substrate accommodates any assessment without modeling its specifics. Specialization is content; specialization is never entity-shape.</strong></p>
+
+<p>Therapeutic-area diversity (oncology, cardiology, neurology, vaccines, rare disease, mental health, endocrinology) and modality diversity (DICOM imaging, ePRO questionnaires, ECG, biopsy, IP administration, lab values, sequencing) generate enormous variation in <em>what</em> gets captured during a trial. Standards-up vendors model that variation as N entity types per therapeutic area (<span class="inline">OncologyImagingStudy</span>, <span class="inline">CardiologyECGRecording</span>, <span class="inline">PHQ9Response</span>, <span class="inline">DICOMSeriesAnnotation</span>). The substrate then grows linearly with the union of clinical specialties — and breaks every time a new modality lifts.</p>
+
+<p>TOP carries <strong>one universal pattern</strong>: <span class="inline">Activity + Task + polymorphic taskValue + biomedicalConceptCode + URI references</span>. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape. They differ in:</p>
+
+<ul>
+  <li><span class="inline">biomedicalConceptCode</span> (what the Activity / Task is — via NCIt / LOINC / SNOMED, anchored in the COSMoS BC catalog)</li>
+  <li><span class="inline">taskValueType</span> and <span class="inline">taskValue</span> content (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE)</li>
+  <li>The Equipment they <span class="inline">prov:used</span>, the Person they <span class="inline">prov:wasAssociatedWith</span>, the Document they <span class="inline">governedBy</span></li>
+</ul>
+
+<p>External systems (DICOM PACS, lab LIS, ePRO platform, EHR, sequencing pipelines) hold the implementation specifics. TOP holds the universal trial-conduct-realm reference; URI references point to wherever the specialized artifact actually lives.</p>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">What this rules out — never</h3>
+
+<ul>
+  <li>Therapeutic-area-specific entity types in the substrate. <strong>No <span class="inline">OncologyImagingStudy</span>, no <span class="inline">CardiologyECGRecording</span>, no <span class="inline">PHQ9Response</span>, no instrument-specific or modality-specific entities. Ever.</strong> If a future requirement appears to need one, the answer is to reformulate it as content variation: project it through <span class="inline">taskValue</span> polymorphism + concept-code identification + URI references to the implementation.</li>
+  <li>Modality-specific shape (<span class="inline">DICOMImagingStudy</span>, <span class="inline">EProSession</span>, <span class="inline">LabResult</span>, <span class="inline">GenomicVariant</span>). Same answer — content, not shape.</li>
+  <li>Instrument-specific entities (<span class="inline">PHQ9Item</span>, <span class="inline">ADASCogResult</span>, <span class="inline">EQ5D5LCapture</span>). Same answer.</li>
+  <li>"Just-in-case" specialization driven by anticipated future requirements. The discipline is reactive: only lift entities when a real operator workflow forces them, and only as substrate primitives, not specialization.</li>
+</ul>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">What this <em>doesn't</em> rule out — substrate primitives</h3>
+
+<p>Universal entities that operators across all therapeutic areas talk about as first-class things lift legitimately. These aren't specialization; they're substrate primitives:</p>
+
+<ul>
+  <li><span class="inline">Sample</span> — every trial that takes specimens has Samples; not oncology-specific</li>
+  <li><span class="inline">AuditEvent</span> — every regulated workflow generates audit events; not therapeutic-area-specific</li>
+  <li><span class="inline">InvestigationalProduct</span> — every interventional trial has IP</li>
+  <li><span class="inline">Event</span> (the OOUX-locked Event container with discriminator) — every trial has events</li>
+  <li>The other entries in the OOUX-locked-9: <span class="inline">Visit</span>, <span class="inline">OversightBody</span></li>
+</ul>
+
+<p>Lifting these expands the substrate horizontally without specializing it. The test: does this entity exist as a first-class concept in operator vocabulary across therapeutic areas, or only within a specific clinical specialty?</p>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">The discipline</h3>
+
+<p>Every proposed new TOP entity must defend itself as a <strong>substrate primitive</strong> (universal across therapeutic areas, operator-vocabulary-grounded) — not as <strong>therapeutic-area or modality specialization</strong>. If it can't pass that test, it belongs in implementation (sponsor workflow tools, vendor platforms, EHR integrations), not in TOP.</p>
+
+<blockquote class="pull-quote">
+  <p>Standards-up vendors model N entity types per therapeutic area. TOP carries one universal pattern that handles all of them — and stays small enough for an operator to comprehend in their head.</p>
+</blockquote>
 
 <h2 class="section">When TOP is anchored around the human and accelerating human work, it always wins</h2>
 
