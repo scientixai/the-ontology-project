@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Recruit / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a; background: #f4f4f1;
+    padding: 22px 26px 32px; line-height: 1.55; font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #111; margin: 26px 0 10px;
+    padding-bottom: 4px; border-bottom: 1px solid #c8c8c0;
+  }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr { background: #fff; border-left: 3px solid #1e6fd9; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; margin-bottom: 12px; font-size: 12px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th { background: #f0f0e9; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555; border-bottom: 1px solid #d6d6cf; }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  .decision, .scenario { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 12px 16px; margin-bottom: 10px; }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves { font-size: 11.5px; color: #1a1a1a; background: #f7faf8; border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px; margin-top: 6px; line-height: 1.65; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .diagram { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 14px 16px; margin-bottom: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.7; white-space: pre; overflow-x: auto; }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  .toc { background: #fff; border: 1px solid #d6d6cf; border-radius: 3px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; }
+  .toc strong { color: #111; }
+  .toc a { color: #1e6fd9; text-decoration: none; margin-right: 12px; display: inline-block; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Recruit / spec / v1</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.4.0-strawman) · the human in the recruitment realm, pre-consent · 2 SHACL invariants · ninth top-level (lifted alongside Participant per Decision 9)</div>
+</header>
+
+<div class="toc">
+  <strong>Sections:</strong>
+  <a href="#tldr">1. TL;DR</a>
+  <a href="#why">2. Why a separate entity</a>
+  <a href="#anchor">3. Architectural anchor</a>
+  <a href="#model">4. Model summary</a>
+  <a href="#funnel">5. Funnel state machine</a>
+  <a href="#twin">6. Twin-for-enrollment context</a>
+  <a href="#shacl">7. SHACL invariants</a>
+  <a href="#stress">8. Stress-test scenarios</a>
+  <a href="#queries">9. Query patterns</a>
+  <a href="#open">10. Open issues</a>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">pre-consent funnel · separate entity · light data shape · fuels twin-for-enrollment</span></h2>
+
+<p class="tldr"><strong>Recruit is the human in the recruitment realm — pre-consent.</strong> Separate top-level (top-level count moves 8 → 9), not a pre-consent state on Participant. Recruiter is a distinct operator role with its own workflow (ad response, pre-screening calls, eligibility pre-check, scheduling, contact attempts). Data shape is lighter than Participant — no consent, often only contact info + light eligibility flags. PHI handling differs (no full medical history; HIPAA Safe Harbor easier to maintain). Recruit→Participant transition: when Recruit consents, a Participant entity is created with <span class="inline">convertedFromRecruit</span> pointing back. Recruit data persists post-conversion as recruitment-funnel analytics (conversion rates per source, channel ROI).</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="why"><span class="num">2.</span>Why a separate entity <span class="subnote">first-principles reasoning</span></h2>
+
+<p>Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, each operator role with a distinct workflow gets a first-class entity. The recruiter's day is operationally different from the coordinator's:</p>
+
+<ul>
+  <li><strong>Recruiter</strong> works pre-consent with people who may never enter the trial. Mary-on-the-phone is not yet Mary-the-Participant. The recruiter is a sales / outreach / qualification role.</li>
+  <li><strong>Coordinator</strong> works post-consent with people who are formally enrolled. Mary-the-Participant has rights, obligations, and a regulated record under GCP.</li>
+</ul>
+
+<p>Folding the Recruit into a pre-consent <span class="inline">participantStatus</span> state would mean:</p>
+
+<ol>
+  <li>Stretching Participant's data shape to accommodate light pre-consent data (most fields empty for Recruits) — schema-noisy.</li>
+  <li>Mixing the recruiter's workflow into Participant's CTAs — UX-confusing.</li>
+  <li>Forcing PHI handling on data that doesn't yet need it — compliance-burdening.</li>
+  <li>Losing the analytical separation between "people who entered the funnel" and "people who became participants" — analytics-impeding.</li>
+</ol>
+
+<p>Separate entity solves all four.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="anchor"><span class="num">3.</span>Architectural anchor <span class="subnote">where Recruit sits</span></h2>
+
+<div class="diagram">                                                         ad / referral / EMR-mining
+                                                                  │
+                                                                  ▼
+              Site ── manages ──▶ StudySite ── for ──▶ Study ── attracts ──▶ Recruit
+                                       │                                       │
+                                       │                                       │ (when consent obtained)
+                                       │                                       ▼
+                                       └── enrolledAt ────────────────▶ Participant
+                                                                              ▲
+                                                                              │ convertedFromRecruit
+                                                                              │
+                                                                              └── consentedTo ──▶ InformedConsent
+</div>
+
+<p>Recruit is anchored at <span class="inline">forStudy</span> (1..1) and optionally at <span class="inline">forStudySite</span> (0..1; some Recruits enter the funnel before site assignment is finalized in multi-site studies with central recruitment routing). The Recruit→Participant transition is via <span class="inline">convertedToParticipant</span> (and the inverse <span class="inline">Participant.convertedFromRecruit</span>). The <strong>InformedConsent sub-object's existence on the Participant IS the canonical conversion event</strong>; the Recruit→Participant linkage is the operational-funnel-side trace.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="model"><span class="num">4.</span>Model summary <span class="subnote">attributes, relationships</span></h2>
+
+<h3 class="subsection">Recruit attributes (~18) — selected</h3>
+
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">recruitId</td><td>NGSI-LD URI</td><td>Globally unique.</td></tr>
+    <tr><td class="code">firstName / lastName</td><td>string · optional</td><td>Operator-grounded; identification-status-agnostic posture (same as Participant).</td></tr>
+    <tr><td class="code">phone / email</td><td>string · optional</td><td>Often the only identifiers captured at first response.</td></tr>
+    <tr><td class="code">preferredContactMethod</td><td>enum (5)</td><td>PHONE / EMAIL / TEXT / PORTAL / OTHER.</td></tr>
+    <tr><td class="code">recruitStatus</td><td>enum (10)</td><td>Funnel state (NGSI-LD temporal property for trajectory queryability). See Section 5.</td></tr>
+    <tr><td class="code">recruitmentSource</td><td>enum (11) · optional</td><td>How the Recruit entered the funnel; drives channel ROI analysis.</td></tr>
+    <tr><td class="code">recruitmentSourceDetails</td><td>string · optional</td><td>Free-text detail (campaign ID, registry name, referring physician).</td></tr>
+    <tr><td class="code">responseDate</td><td>date</td><td>Date Recruit first entered the funnel.</td></tr>
+    <tr><td class="code">preScreeningOutcome</td><td>enum (4) · optional</td><td>QUALIFIED / NOT_QUALIFIED / DEFERRED / PENDING. Light recruiter assessment, not formal protocol screening.</td></tr>
+    <tr><td class="code">preScreeningNotes</td><td>string · optional</td><td>High-level eligibility flags. Limited PHI by design.</td></tr>
+    <tr><td class="code">contactAttempts</td><td>integer · optional</td><td>Operational metric for follow-up cadence.</td></tr>
+    <tr><td class="code">lastContactDate</td><td>date · optional</td><td>Most recent contact attempt.</td></tr>
+    <tr><td class="code">consentScheduled / consentAppointmentDate</td><td>boolean · date · optional</td><td>Bridges to Participant creation.</td></tr>
+    <tr><td class="code">country / primaryLanguage</td><td>ISO codes · optional</td><td>Useful for multi-country recruitment funnel analytics + recruiter language-matching.</td></tr>
+    <tr><td class="code">validFrom / validUntil</td><td>dateTime · optional</td><td>NGSI-LD temporal-property semantics on the entity record.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Recruit relationships (4)</h3>
+
+<table>
+  <thead><tr><th>Relationship</th><th>Target</th><th>Card.</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">forStudy</td><td>Study</td><td>1..1</td><td>Recruits are scoped per-Study.</td></tr>
+    <tr><td class="code">forStudySite</td><td>StudySite</td><td>0..1</td><td>Site assignment may not be finalized in multi-site studies with central recruitment routing.</td></tr>
+    <tr><td class="code">recruitedBy</td><td>Person</td><td>0..1</td><td>The recruitment coordinator (Person) handling this Recruit.</td></tr>
+    <tr><td class="code">convertedToParticipant</td><td>Participant</td><td>0..1</td><td>Inverse of Participant.convertedFromRecruit. Empty until conversion. Required when recruitStatus=CONVERTED_TO_PARTICIPANT (SHACL hard, Inv. #24).</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="funnel"><span class="num">5.</span>Funnel state machine <span class="subnote">10 states · NGSI-LD temporal property</span></h2>
+
+<div class="diagram">    RESPONDED ──▶ CONTACTED ──▶ PRE_SCREENING_SCHEDULED ──▶ PRE_SCREENED
+                                                                  │
+                                                                  ▼
+                                                        QUALIFIED_PENDING_CONSENT
+                                                                  │
+                                                                  ▼
+                                                  CONVERTED_TO_PARTICIPANT  (terminal, success)
+        ┌─────────────┬──────────────┬──────────────┐
+        │             │              │              │
+    DECLINED     NO_SHOW    NOT_QUALIFIED      DROPPED  (terminal, attrition)
+</div>
+
+<p>The recruiter's day moves Recruits along this funnel. Each state transition produces a NGSI-LD temporal-property change on <span class="inline">recruitStatus</span> (validFrom/validUntil bracketing) so the trajectory is queryable for funnel analytics and twin-for-enrollment downstream.</p>
+
+<p><strong>Conversion-rate analytics</strong> (a recruiter's primary metric) compute as: count(CONVERTED_TO_PARTICIPANT) / count(all Recruits with same recruitmentSource), grouped by source. Channel ROI emerges directly from the substrate.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="twin"><span class="num">6.</span>Twin-for-enrollment context <span class="subnote">deferred game-changing use case</span></h2>
+
+<p>Recruit is the operational counterpart to <strong>twin-for-enrollment</strong> — the highest-value digital-twin use case for clinical trials. Enrollment is the most expensive bottleneck (80%+ of trials miss timelines; ~30% of trial cost is recruitment-related). A patient-twin substrate enables:</p>
+
+<ul>
+  <li><strong>Pre-screening at scale</strong> — synthesize twins from EMR populations, simulate eligibility, identify candidate cohorts before any human reviews a chart.</li>
+  <li><strong>Predicted-response cohort selection</strong> — twin predicts who is most likely to respond; recruit those preferentially → smaller trials, faster signal.</li>
+  <li><strong>Synthetic control arms</strong> — twins as control for single-arm trials (especially oncology / rare disease) → 30-50% reduction in actual enrollment.</li>
+  <li><strong>Drop-out risk prediction</strong> — twin predicts which candidates will drop out; prioritize resilient candidates → fewer mid-trial replacements.</li>
+  <li><strong>Trial feasibility simulation</strong> — before opening a site, simulate the local population's twin-set against the protocol → realistic enrollment forecasts.</li>
+  <li><strong>Adaptive recruitment</strong> — twin updates from accruing trial data; recruit to fill the population gaps the trial currently has.</li>
+</ul>
+
+<p><strong>Real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials</strong> feed a unified twin synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk <em>before the trial opens</em>. TOP's substrate decisions made now (Recruit-as-separate-entity + twin-queryability discipline on participantStatus) are the load-bearing pre-conditions; twin synthesis itself is computational infrastructure for v0.5+ when Visit / Activity / Observation lift expands the queryability surface.</p>
+
+<p>See the <a href="participant-spec.html#twin">Participant spec § 5 (digital-twin posture)</a> for the substrate contract and PMDT prior-art context.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="shacl"><span class="num">7.</span>SHACL invariants <span class="subnote">2 new Recruit invariants · 25 total in the graph</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Severity</th><th>Constraint</th></tr></thead>
+  <tbody>
+    <tr><td>24</td><td>Hard</td><td><strong>Converted recruit needs participant.</strong> Recruit with recruitStatus=CONVERTED_TO_PARTICIPANT must have convertedToParticipant relationship populated. The terminal-funnel-success status requires the operational link to the created Participant.</td></tr>
+    <tr><td>25</td><td>Soft</td><td><strong>Stalled recruit (many attempts).</strong> Recruit with contactAttempts &gt; 5 still in {RESPONDED, CONTACTED} states should probably transition to DROPPED. Surfaces stale recruits to the recruiter for funnel hygiene.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="stress"><span class="num">8.</span>Stress-test scenarios <span class="subnote">three cases</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Successful conversion</div><div class="scn-tag">Funnel happy path</div></div>
+  <p>Mary responded to a digital ad, qualified at pre-screening, attended consent appointment. Coordinator obtained consent.</p>
+  <div class="resolves">Recruit_r001 created with recruitStatus=RESPONDED. Through funnel: CONTACTED → PRE_SCREENED → QUALIFIED_PENDING_CONSENT. At consent: Coordinator creates Participant_p001 with convertedFromRecruit=Recruit_r001. Recruit_r001.recruitStatus → CONVERTED_TO_PARTICIPANT, convertedToParticipant=Participant_p001 (Inv. #24 satisfied). Participant_p001.hasInformedConsent populated. Both records persist; Recruit_r001 stays for analytics.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Funnel attrition (declined)</div><div class="scn-tag">Funnel sad path</div></div>
+  <p>Robert qualified at pre-screening but declined at consent appointment (concerns about randomization).</p>
+  <div class="resolves">Recruit_r002 reaches QUALIFIED_PENDING_CONSENT. Recruiter logs decline; recruitStatus → DECLINED with notes. No Participant created. Recruit_r002 persists for funnel-attrition analytics (declined-at-consent vs declined-at-pre-screen vs no-show patterns inform recruitment process improvements).</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Stalled recruit (cadence trigger)</div><div class="scn-tag">SHACL soft warning</div></div>
+  <p>Jennifer responded to an ad; recruiter has tried 6 times to reach her with no response.</p>
+  <div class="resolves">Recruit_r003.contactAttempts=6, recruitStatus=CONTACTED. SHACL Inv. #25 fires soft warning to surface in recruiter dashboard. Recruiter decides: continue trying (rare) or transition to DROPPED. Soft (not hard) because there are legitimate cases where high contact-attempts reflect a hard-to-reach but eligible candidate.</div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="queries"><span class="num">9.</span>Query patterns <span class="subnote">three concrete NGSI-LD HTTP shapes</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Recruiter: today's funnel queue</div><div class="scn-tag">Operational</div></div>
+  <p>"Who do I need to follow up with today?"</p>
+  <pre style="background: #1e1e1c; color: #e8e8e0; padding: 10px 12px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.55; margin: 8px 0; overflow-x: auto;">GET /ngsi-ld/v1/entities?type=Recruit&amp;q=recruitedBy=="urn:ngsi-ld:Person:jones";recruitStatus=="CONTACTED","PRE_SCREENING_SCHEDULED","QUALIFIED_PENDING_CONSENT"</pre>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Sponsor PM: channel ROI for this study</div><div class="scn-tag">Analytics</div></div>
+  <p>"Which recruitment sources are converting at the highest rate?"</p>
+  <pre style="background: #1e1e1c; color: #e8e8e0; padding: 10px 12px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.55; margin: 8px 0; overflow-x: auto;">GET /ngsi-ld/v1/entities?type=Recruit&amp;q=forStudy=="urn:ngsi-ld:Study:ONCO-423"
+[group by recruitmentSource client-side; count CONVERTED_TO_PARTICIPANT vs total]</pre>
+  <p style="font-size: 11.5px; color: #555;">Client-side aggregation in v0.4; SPARQL backing query later for direct GROUP BY.</p>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Twin synthesizer: recruit population for synthetic enrollment simulation</div><div class="scn-tag">v0.5+ deferred</div></div>
+  <p>"What recruit-population characteristics for studies in this therapeutic area / geography?"</p>
+  <pre style="background: #1e1e1c; color: #e8e8e0; padding: 10px 12px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.55; margin: 8px 0; overflow-x: auto;">[Federated query across Studies — defer until federation lifts in v0.6+]
+[For now, single-Study recruit population queryable per-Study]</pre>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="open"><span class="num">10.</span>Open issues</h2>
+
+<ol>
+  <li><strong>Recruit data retention policy</strong>: how long do unconverted Recruit records persist? Channel ROI analytics value declines over time; PHI minimization argues for a sunset (12-24 months for unconverted). Deployment-side concern; document the recommendation here, leave the policy to deployment.</li>
+  <li><strong>Cross-Study Recruit reuse</strong>: a single human responding to two trial ads creates two Recruit records (per-Study scoping). Analytics on "this person is repeatedly responding to studies but not converting" is a cross-Study federation concern, deferred to v0.6+ alongside Participant cross-Study federation.</li>
+  <li><strong>Pre-screening question bank</strong>: TOP doesn't model the pre-screening questionnaire structure (questions, answers, scoring rules). When operational complexity warrants, lift as a sub-object on Recruit (PreScreeningQuestionnaire) or as a separate horizontal — not in v0.4.0.</li>
+  <li><strong>Twin-for-enrollment substrate readiness</strong>: when Visit / Activity / Observation lift, the substrate gains the time-varying observation surface a twin synthesizer needs. Recruit's role as "real-Recruit-corpus + synthetic-Recruit-from-twin populations" becomes architecturally available in v0.5+.</li>
+</ol>
+
+<div class="footer">
+  TOP / Recruit / spec / v1 · backed by source/top-strawman.json (v0.4.0-strawman) · 2026-05-09<br>
+  See also: <a href="participant-spec.html">participant-spec.html</a> · <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> · <a href="participant-planning.md">participant-planning.md</a><br>
+  Per first principles, the operator-facing layer is the prize.
+</div>
+
+</div>
+</body>
+</html>

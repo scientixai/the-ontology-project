@@ -807,7 +807,7 @@ def emit_domain_invariants(source):
     # 23. Hard: cross-entity consistency — a Participant's forStudySite must reference
     #     a StudySite whose forStudy matches the Participant's forStudy. Same
     #     consistency principle as the arm rule above, applied to the site anchor.
-    invariants.append(sub("""__P__:ParticipantStudySiteStudyConsistencyShape a sh:NodeShape ;
+    invariants.append(sub2("""__P__:ParticipantStudySiteStudyConsistencyShape a sh:NodeShape ;
     sh:targetClass __P__:Participant ;
     sh:sparql [
         a sh:SPARQLConstraint ;

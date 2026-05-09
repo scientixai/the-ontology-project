@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Participant / spec / v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 22px 26px 32px;
+    line-height: 1.55;
+    font-size: 13px;
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+  header { border-bottom: 1px solid #c8c8c0; padding-bottom: 10px; margin-bottom: 14px; }
+  header .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+  header .meta { font-size: 11px; color: #6a6a64; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+  h2.section {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #111; margin: 26px 0 10px;
+    padding-bottom: 4px; border-bottom: 1px solid #c8c8c0;
+  }
+  h2.section .num { color: #888; font-weight: 400; margin-right: 8px; }
+  h2.section .subnote { font-weight: 400; text-transform: none; letter-spacing: 0; color: #888; font-size: 11px; font-style: italic; margin-left: 8px; }
+  h3.subsection { font-size: 12px; font-weight: 600; color: #333; margin: 14px 0 6px; }
+  p { margin-bottom: 10px; }
+  p.tldr {
+    background: #fff; border-left: 3px solid #1e6fd9;
+    padding: 12px 14px; margin-bottom: 12px; font-size: 13px;
+  }
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; background: #eef0ed; padding: 1px 4px; border-radius: 2px; color: #1e6fd9; }
+  table {
+    width: 100%; border-collapse: collapse; background: #fff;
+    border: 1px solid #d6d6cf; border-radius: 3px;
+    margin-bottom: 12px; font-size: 12px;
+  }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ececea; vertical-align: top; }
+  th {
+    background: #f0f0e9; font-weight: 700; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.04em; color: #555;
+    border-bottom: 1px solid #d6d6cf;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #1e6fd9; white-space: nowrap; }
+  td.muted { color: #888; font-style: italic; }
+  .decision, .scenario, .query, .persona-card {
+    background: #fff; border: 1px solid #d6d6cf;
+    border-radius: 3px; padding: 12px 16px; margin-bottom: 10px;
+  }
+  .decision .title { font-weight: 700; font-size: 13px; color: #111; margin-bottom: 4px; }
+  .scenario .title-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .scenario .scn-title { font-size: 13px; font-weight: 700; color: #111; }
+  .scenario .scn-tag { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .scenario .resolves {
+    font-size: 11.5px; color: #1a1a1a; background: #f7faf8;
+    border: 1px solid #cde4d8; border-radius: 3px; padding: 8px 12px;
+    margin-top: 6px; line-height: 1.65;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .query .persona { font-weight: 700; font-size: 12px; color: #111; margin-bottom: 4px; }
+  .query .ask { font-style: italic; color: #555; margin-bottom: 8px; font-size: 12.5px; }
+  .query pre {
+    background: #1e1e1c; color: #e8e8e0; padding: 10px 12px;
+    border-radius: 3px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; line-height: 1.55; overflow-x: auto; margin-bottom: 6px;
+  }
+  .query .reads { font-size: 11.5px; color: #555; }
+  .persona-card .persona-name { font-weight: 700; font-size: 12.5px; color: #111; margin-bottom: 4px; }
+  .persona-card .persona-jtbd { font-style: italic; color: #555; font-size: 12px; margin-bottom: 6px; }
+  .diagram {
+    background: #fff; border: 1px solid #d6d6cf; border-radius: 3px;
+    padding: 14px 16px; margin-bottom: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px; line-height: 1.7;
+    white-space: pre; overflow-x: auto;
+  }
+  .footer { margin-top: 18px; font-size: 10.5px; color: #888; line-height: 1.55; font-style: italic; }
+  .toc {
+    background: #fff; border: 1px solid #d6d6cf;
+    border-radius: 3px; padding: 10px 14px;
+    margin-bottom: 14px; font-size: 12px;
+  }
+  .toc strong { color: #111; }
+  .toc a { color: #1e6fd9; text-decoration: none; margin-right: 12px; display: inline-block; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="title">TOP / Participant / spec / v1</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.4.0-strawman) · the human in the trial-conduct realm · 7 new Participant invariants + 2 new Recruit invariants · 25 SHACL invariants total</div>
+</header>
+
+<div class="toc">
+  <strong>Sections:</strong>
+  <a href="#tldr">1. TL;DR</a>
+  <a href="#principles">2. First-principles posture</a>
+  <a href="#anchor">3. Architectural anchor</a>
+  <a href="#realms">4. Multi-realm projection</a>
+  <a href="#twin">5. Digital-twin posture</a>
+  <a href="#model">6. Model summary</a>
+  <a href="#decisions">7. Architectural decisions</a>
+  <a href="#lifecycle">8. Lifecycle state machine</a>
+  <a href="#crosswalks">9. Cross-walks</a>
+  <a href="#shacl">10. SHACL invariants</a>
+  <a href="#stress">11. Stress-test scenarios</a>
+  <a href="#personas">12. Personas</a>
+  <a href="#queries">13. Query patterns</a>
+  <a href="#open">14. Open issues</a>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a participant is a participant, full stop · operator-grounded · projection-edge for standards</span></h2>
+
+<p class="tldr"><strong>Participant is the human subject in the trial-conduct realm.</strong> Anchored at <span class="inline">StudySite</span> (1..1; multi-Study participation = separate Participant entities). Operator-grounded vocabulary (<span class="inline">screeningNumber</span>, <span class="inline">randomizationNumber</span>, <span class="inline">participantStatus</span>, <span class="inline">firstName</span>) — not standards-shaped (no <span class="inline">USUBJID</span> column on the entity; SDTM is a projection edge). Lifecycle events as sub-objects: <span class="inline">InformedConsent</span>, <span class="inline">ScreeningRecord</span>, <span class="inline">EnrollmentRecord</span>, <span class="inline">WithdrawalRecord</span> — same pattern as SDTM DS records, surfaced as workflow events to the coordinator. <span class="inline">participantStatus</span> is an 11-state enum with NGSI-LD temporal-property semantics for queryable trajectory (twin-queryability discipline). USDM v4 has no per-subject runtime entity; cross-walk targets are FHIR R5 <span class="inline">ResearchSubject</span>, SDTM <span class="inline">DM</span> + <span class="inline">DS</span> + <span class="inline">IE</span>, CDASH <span class="inline">DM</span>. Pre-consent realm is the separate <span class="inline">Recruit</span> entity (see <a href="recruit-spec.html">recruit-spec.html</a>).</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="principles"><span class="num">2.</span>First-principles posture <span class="subnote">why the entity looks the way it looks</span></h2>
+
+<p>Per <a href="../../../FIRST-PRINCIPLES.md"><span class="inline">FIRST-PRINCIPLES.md</span></a>: <strong>a participant is a participant, full stop.</strong> Operators say "Mary." The substrate carries Mary in the operator's vocabulary. Standards (FHIR <span class="inline">ResearchSubject</span>, SDTM <span class="inline">DM</span>, CDASH <span class="inline">DM</span>, USDM design-side links) are projection edges below the line — adapters emit them, the operator never sees them.</p>
+
+<p>Six rules from the first principles, applied here:</p>
+
+<ul>
+  <li><strong>Entity name is operator-grounded.</strong> <span class="inline">Participant</span> — what a coordinator says — not <span class="inline">ResearchSubject</span> (FHIR's name) or <span class="inline">StudySubject</span> (CDISC framing).</li>
+  <li><strong>Attribute names match what coordinators type.</strong> <span class="inline">screeningNumber</span> + <span class="inline">randomizationNumber</span> — not <span class="inline">USUBJID</span> (SDTM concatenation, projection-time derivation) or <span class="inline">SUBJID</span> alone (loses the randomization layer).</li>
+  <li><strong>Enum values are operator-meaningful.</strong> <span class="inline">ON_TREATMENT</span> / <span class="inline">IN_FOLLOW_UP</span> / <span class="inline">WITHDRAWN</span> — not FHIR <span class="inline">on-study-intervention</span> / <span class="inline">follow-up</span> / <span class="inline">withdrawn</span>. Mapping table (Section 9) handles the projection.</li>
+  <li><strong>Sub-objects match workflow events.</strong> <span class="inline">InformedConsent</span> is a moment in the coordinator's day; the SDTM DS record it projects to is a serialization detail. The first three principles already make sub-objects-as-workflow-events feel obvious — this rule formalizes it.</li>
+  <li><strong>Cross-walks below the line.</strong> Section 9 documents them thoroughly; they are NOT entity-shape constraints.</li>
+  <li><strong>Standards adapters ephemeral.</strong> When FHIR R6 lands, the adapter changes; <span class="inline">Participant</span> doesn't. When CDISC CT updates DSDECOD codes, the adapter map updates; <span class="inline">participantStatus</span> enum doesn't.</li>
+</ul>
+
+<!-- ============================================================== -->
+<h2 class="section" id="anchor"><span class="num">3.</span>Architectural anchor <span class="subnote">where Participant sits in the operational hierarchy</span></h2>
+
+<div class="diagram">Site ── manages ──▶ StudySite ── for ──▶ Study ── has ──▶ Protocol ── defines ──▶ SOA ── schedules ──▶ Visit ── runs ──▶ Activity
+                              │
+                              ↓ enrolledAt
+                          Participant ── consentedTo ──▶ InformedConsent (sub-object)
+                              │            screenedVia ──▶ ScreeningRecord (sub-object)
+                              │            enrolledVia ──▶ EnrollmentRecord (sub-object)
+                              │            withdrewVia ──▶ WithdrawalRecord (sub-object, 0..N)
+                              │
+                              └── convertedFrom ──▶ Recruit (separate top-level; pre-consent realm)
+                              └── assignedToArm ──▶ Arm (Study sub-object; randomization-time link)
+                              └── hasVisit ──▶ Visit (per-Participant occurrences; flagged-missing)
+                              └── hasAdverseEvent ──▶ Event (flagged-missing)
+</div>
+
+<p><strong>StudySite is the anchor</strong> (1..1), not Site. The OOUX Participant→1 Site direct edge is a correction surfaced during the Site spec lift (v0.2.0); applied here. Reasons:</p>
+<ul>
+  <li>Site is study-independent (its IRB defaults, staff roster, qualifications exist regardless of any specific Study).</li>
+  <li>StudySite is the per-Study site participation pivot — where per-Study delegation, IRB approval, oversight tier, and contracts live.</li>
+  <li>A Participant's enrollment is bound to <em>this Site's role on this Study</em>, not to the Site as an institution.</li>
+</ul>
+
+<p><strong>Multi-Study participation</strong> = separate Participant entities. A real human enrolled in two Studies has two Participant records (one per Study × StudySite pair). Cross-Study identity resolution is federation, not substrate (Datavant tokens, MPI, deployment-edge trust).</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="realms"><span class="num">4.</span>Multi-realm projection <span class="subnote">Mary in five rooms · TOP carries one</span></h2>
+
+<p>Per FIRST-PRINCIPLES, the same human appears in different realms depending on which operator's lens. TOP carries one realm — trial conduct. The others are projection-adapter targets, not TOP entities.</p>
+
+<table>
+  <thead><tr><th>Realm</th><th>Operator role</th><th>Mary appears as</th><th>Standards projection</th></tr></thead>
+  <tbody>
+    <tr><td>Recruitment</td><td>Recruiter / outreach coordinator</td><td><span class="inline">Recruit</span> (TOP top-level; pre-consent funnel)</td><td>(no canonical standard)</td></tr>
+    <tr><td><strong>Trial conduct</strong></td><td><strong>Study coordinator / PI / monitor</strong></td><td><strong><span class="inline">Participant</span> (THIS spec)</strong></td><td>FHIR <span class="inline">ResearchSubject</span>, SDTM DM/DS, USDM (no per-subject)</td></tr>
+    <tr><td>Standard care</td><td>Primary care nurse / treating physician</td><td><span class="inline">Patient</span> (projection-only, not in TOP)</td><td>FHIR <span class="inline">Patient</span>, USCDI, OMOP <span class="inline">PERSON</span></td></tr>
+    <tr><td>Claims / payer</td><td>Claims processor / payer ops</td><td><span class="inline">Claimant</span> / <span class="inline">Member</span> (projection-only)</td><td>FHIR <span class="inline">Claim</span> / <span class="inline">Coverage</span>, X12 837</td></tr>
+    <tr><td>Real-world evidence</td><td>Epidemiologist / RWE analyst</td><td><span class="inline">Patient</span> (post-trial; projection-only)</td><td>OMOP CDM, Sentinel, PCORnet CDM</td></tr>
+  </tbody>
+</table>
+
+<p>This is the same projection-edge pattern as standards. Just as TOP doesn't carry FHIR-shaped <span class="inline">Patient</span> but emits Patient via the FHIR adapter, TOP doesn't carry Mary-as-Claimant but emits a Claimant view via a claims adapter. The substrate persists; the projections are ephemeral. <strong>Identity resolution across realms is federation, not substrate</strong> — Datavant tokens, master patient indexes, cross-realm trust agreements at the deployment edge.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="twin"><span class="num">5.</span>Digital-twin posture <span class="subnote">substrate carries the contract; synthesizers fulfill it</span></h2>
+
+<p>A Participant — at every stage — must be <strong>spec-able as a digital twin</strong>. Twin synthesis is a major axis of research workflow now: synthetic control arms, in-silico trials, individual outcome prediction, shadow-enrollment dashboards. TOP's posture: <strong>digital twin is a projection lens, not an entity.</strong> The TOP Participant carries the substrate; a downstream twin synthesizer (computational, not part of TOP) reads from TOP and emits a twin representation.</p>
+
+<p>What TOP guarantees so the substrate is twin-spec-able: every Participant — at every stage — is queryable along the dimensions a twin needs.</p>
+
+<table>
+  <thead><tr><th>Twin dimension</th><th>TOP source</th></tr></thead>
+  <tbody>
+    <tr><td>Demographic substrate</td><td>Participant attributes (sex, dateOfBirth, race, ethnicity, country)</td></tr>
+    <tr><td>Disease state at entry</td><td>ScreeningRecord + Activity occurrences during screening (when Visit/Activity lift)</td></tr>
+    <tr><td>Treatment assignment</td><td>EnrollmentRecord + assignedToArm + protocolVersionAtEnrollment</td></tr>
+    <tr><td>Time-varying observations</td><td>Visit / Activity / Observation occurrences (when those lift)</td></tr>
+    <tr><td>Lifecycle state trajectory</td><td>participantStatus over time (NGSI-LD temporal property; sub-objects carry transition events)</td></tr>
+    <tr><td>Outcome trajectory</td><td>Endpoint values + AE occurrences (when those lift) + final state (COMPLETED / WITHDRAWN / DISCONTINUED)</td></tr>
+    <tr><td>Cross-realm context</td><td>Linked Patient (FHIR), Claimant (claims), historical Patient (OMOP) — at the deployment edge, not in TOP substrate</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Twin-for-enrollment</strong> is the deferred game-changing use case. Real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials feed a unified twin synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk <em>before the trial opens</em>. Enrollment is the most expensive bottleneck (80%+ trials miss timelines; ~30% trial cost is recruitment). Substrate decisions made in this spec (Decision 9 Recruit-as-separate-entity + Decision 10 twin-queryability) are the load-bearing pre-conditions; twin synthesis itself is computational infrastructure for v0.5+.</p>
+
+<p><strong>Prior art</strong>: PMDT (Patient Medical Digital Twin, El Gammal et al., under review at <em>Software and Systems Modeling</em>) is an OWL 2.0 ontology for chronic-care patient digital twins, validated in EU H2020 QUALITOP pilot with real-world immunotherapy patients. Validates the ontology-driven twin direction. PMDT serves chronic care (continuous, longitudinal); TOP serves trial conduct (bounded, protocol-driven). Adjacent realms; same human anchor; different operational tempos. PMDT is OWL 2.0 (DL-classical, SPARQL); TOP is NGSI-LD (broker-mediated, temporal-property). Both legitimate paradigms — TOP can export to OWL/RDF as another projection edge.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="model"><span class="num">6.</span>Model summary <span class="subnote">attributes, relationships, sub-objects · full set in source/top-strawman.json</span></h2>
+
+<h3 class="subsection">Participant attributes (~22) — selected</h3>
+
+<table>
+  <thead><tr><th>Attribute</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">participantId</td><td>NGSI-LD URI</td><td>Globally unique. Operators type the parts (screeningNumber + randomizationNumber); USUBJID is a SDTM-projection-time derivation.</td></tr>
+    <tr><td class="code">screeningNumber</td><td>string</td><td>Site-assigned. Maps to SDTM/CDASH SUBJID.</td></tr>
+    <tr><td class="code">randomizationNumber</td><td>string · optional</td><td>Sponsor-assigned at randomization. Often used for IP kit assignment.</td></tr>
+    <tr><td class="code">randomizationDate</td><td>date · optional</td><td>Required when participantStatus=RANDOMIZED (SHACL hard).</td></tr>
+    <tr><td class="code">firstName / middleName / lastName</td><td>string · optional</td><td>Operator-grounded. Identification-status-agnostic schema (Decision 2): same fields, deployment populates real or de-identified values.</td></tr>
+    <tr><td class="code">dateOfBirth</td><td>date · optional</td><td>Real DOB / year-only / shifted depending on deployment. Maps to SDTM BRTHDTC.</td></tr>
+    <tr><td class="code">sex</td><td>enum (5)</td><td>MALE / FEMALE / INTERSEX / UNKNOWN / NOT_REPORTED. Per ICH E5 / FDA. SDTM projection collapses INTERSEX → UNDIFFERENTIATED.</td></tr>
+    <tr><td class="code">race</td><td>string · optional</td><td>Comma-separated for multiracial. Maps to SDTM RACE; SDTM uses MULTIPLE + SUPPDM RACEMUL.</td></tr>
+    <tr><td class="code">ethnicity</td><td>enum (4)</td><td>HISPANIC_OR_LATINO / NOT_HISPANIC_OR_LATINO / NOT_REPORTED / UNKNOWN. CDISC controlled term.</td></tr>
+    <tr><td class="code">primaryLanguage</td><td>ISO 639-1 · optional</td><td>Operator-grounded for site-coordinator UX.</td></tr>
+    <tr><td class="code">country</td><td>ISO 3166-1 alpha-3 · optional</td><td>Multi-region trials.</td></tr>
+    <tr><td class="code">participantStatus</td><td>enum (11)</td><td>NGSI-LD temporal property (validFrom/validUntil) for trajectory queryability. See Section 8.</td></tr>
+    <tr><td class="code">enrollmentDate</td><td>date · optional</td><td>Single canonical Sponsor-assigned moment. Maps to SDTM RFSTDTC.</td></tr>
+    <tr><td class="code">completionDate</td><td>date · optional</td><td>Soft SHACL: should be populated when participantStatus=COMPLETED.</td></tr>
+    <tr><td class="code">withdrawalDate</td><td>date · optional</td><td>Most-recent-withdrawal convenience attribute; full history on WithdrawalRecord sub-objects.</td></tr>
+    <tr><td class="code">validFrom / validUntil</td><td>dateTime · optional</td><td>NGSI-LD-native temporal properties; pattern from Sponsor / StudySite.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Participant relationships (11)</h3>
+
+<table>
+  <thead><tr><th>Relationship</th><th>Target</th><th>Card.</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="code">forStudySite</td><td>StudySite</td><td>1..1</td><td>The operational anchor. Per OOUX correction (was Site directly).</td></tr>
+    <tr><td class="code">forStudy</td><td>Study</td><td>1..1</td><td>Reachable via forStudySite.forStudy traversal but kept direct for SHACL invariant simplicity.</td></tr>
+    <tr><td class="code">assignedToArm</td><td>Arm</td><td>0..1</td><td>0 pre-randomization; 1..1 once randomized. Cross-entity SHACL: Arm must belong to Participant.forStudy.</td></tr>
+    <tr><td class="code">hasInformedConsent</td><td>InformedConsent</td><td>0..N</td><td>Re-consent supported (after amendment / ICF version change / lapse-and-re-establish).</td></tr>
+    <tr><td class="code">hasScreeningRecord</td><td>ScreeningRecord</td><td>0..N</td><td>Re-screening attempts.</td></tr>
+    <tr><td class="code">hasEnrollmentRecord</td><td>EnrollmentRecord</td><td>0..N</td><td>Typically 1 per Participant.</td></tr>
+    <tr><td class="code">hasWithdrawalRecord</td><td>WithdrawalRecord</td><td>0..N</td><td>Multi-event support.</td></tr>
+    <tr><td class="code">convertedFromRecruit</td><td>Recruit</td><td>0..1</td><td>Operational-funnel-side trace; empty for direct walk-ins.</td></tr>
+    <tr><td class="code">hasVisit</td><td>Visit</td><td>0..N</td><td>Flagged-missing (Visit lifts post-Participant).</td></tr>
+    <tr><td class="code">hasAdverseEvent</td><td>Event</td><td>0..N</td><td>Flagged-missing (Event lifts later).</td></tr>
+    <tr><td class="code">hasTag</td><td>Tag</td><td>0..N</td><td>Flagged-missing.</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Sub-objects (4)</h3>
+
+<table>
+  <thead><tr><th>Sub-object</th><th>Role</th><th>Key attrs</th></tr></thead>
+  <tbody>
+    <tr><td class="code">InformedConsent</td><td>One consent event (ICH E6(R3) §2.4 GCP-required).</td><td>consentVersion, consentDate, consentMethod, consenterRelationship, consentStatus (OBTAINED/WITHDRAWN/EXPIRED/RECONSENTED), reconsentRequired</td></tr>
+    <tr><td class="code">ScreeningRecord</td><td>One eligibility-screening attempt (ICH E6(R3) §2.5).</td><td>screeningStartDate, screeningEndDate, screeningOutcome, screenFailReason, failedInclusionCriteria, failedExclusionCriteria</td></tr>
+    <tr><td class="code">EnrollmentRecord</td><td>The enrollment event (eligibility confirmed, on the trial).</td><td>enrollmentDate, enrollmentMethod (ON_SITE/REMOTE/HYBRID), enrollmentNumber, protocolVersionAtEnrollment</td></tr>
+    <tr><td class="code">WithdrawalRecord</td><td>One withdrawal/discontinuation event.</td><td>withdrawalDate, withdrawalCategory (CONSENT_WITHDRAWN/INVESTIGATOR_DECISION/AE/LOST/etc.), withdrawalReason, continueDataCollection, withdrawnFromAllProcedures</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================== -->
+<h2 class="section" id="decisions"><span class="num">7.</span>Why this shape — architectural decisions</h2>
+
+<div class="decision">
+  <div class="title">Decision 1 — Sub-objects for lifecycle events (vs flat attributes)</div>
+  <p>Sub-objects: InformedConsent, ScreeningRecord, EnrollmentRecord, WithdrawalRecord. Each carries its own dates, signatures, witnesses, document references, lifecycle status. Aligns with GCP audit-trail discipline (full event history); supports re-consent after protocol amendment, re-screening, multiple withdrawals if re-enrolled. Flat attributes would lose event-history audit fidelity.</p>
+  <p><strong>Cross-walk validation</strong>: this decision lines up with both authoritative standards that DO model per-subject events. FHIR R5 <span class="inline">ResearchSubject.progress</span> is a 0..N list of state-change events (TOP sub-objects map 1:1). CDISC SDTM <span class="inline">DS</span> domain has every disposition event as its own DS record with DSDECOD controlled term. Sub-objects-as-events is the SDTM DS pattern.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 2 — Demographics PHI posture: identification-status-agnostic schema</div>
+  <p>Same fields exist (firstName, lastName, dateOfBirth); deployment populates real values for operator-facing systems and Datavant tokens / de-identified values for research-warehouse projections. The schema doesn't encode identification status — the deployment handles tokenization, date-shifting, and redaction at the boundary. Same posture as Site spec for de-identification.</p>
+  <p>Datavant + John Snow Labs are the canonical privacy-engineering layer. TOP is upstream of de-id; PHI engineering happens at the deployment edge.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 3 — StudySite anchoring (apply OOUX correction)</div>
+  <p>Participant.forStudySite → StudySite (1..1). NOT Participant → Site directly. The OOUX has Participant pointing at <span class="inline">1 Site</span>; correction tracked in Site spec, applied here. Reasoning per Section 3 (architectural anchor).</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 4 — Subject vs Person</div>
+  <p>Person (TOP commons horizontal, lifted in v0.2.0) is for staff: investigators, coordinators, monitors, pharmacists, regulatory affairs. Participant is for trial subjects. Different role, different entity. Subject identity is bound to the Study; Person identity is independent of any Study.</p>
+  <p>Edge case: a study staff member who is also enrolled as a participant in the same study (rare; some Phase 1 dose-escalation studies have staff as healthy volunteers). In TOP, that's two entities — one Person record (staff role) and one Participant record (subject role) — backed by the same real human. The schema doesn't link them; that's deliberate (privacy-preserving).</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 5 — Arm assignment as simple relationship (RandomizationRecord defers to v0.5+)</div>
+  <p><span class="inline">Participant.assignedToArm → Arm</span> (0..1) plus <span class="inline">randomizationNumber</span> and <span class="inline">randomizationDate</span> as Participant attributes. RandomizationRecord lifts as a sub-object in v0.5+ if studies with complex stratification or multiple-arm-reassignments warrant richer modeling.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 6 — Lifecycle status enum: 11 states</div>
+  <p>SCREENING / SCREEN_FAILED / CONSENTED / ENROLLED / RANDOMIZED / ON_TREATMENT / IN_FOLLOW_UP / COMPLETED / WITHDRAWN / DISCONTINUED / LOST_TO_FOLLOW_UP. Operationally meaningful — operators distinguish all 11 in their daily workflow. State-machine SHACL invariants encode legal transitions. See Section 8.</p>
+  <p>Per FIRST-PRINCIPLES, the enum is operator-grounded (ON_TREATMENT, not <span class="inline">on-study-intervention</span>); cross-walk to FHIR ResearchSubjectStatus + SDTM DSDECOD lives in Section 9.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 7 — Multi-Study participation: separate Participant entities</div>
+  <p>OOUX has Participant with <span class="inline">1 Study</span>. TOP follows: each Study participation is its own Participant entity. A real human enrolling in two studies has two Participant entities. Cross-Study identity resolution (the same human across multiple Participant records) is federation, not substrate.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 8 — Adverse event / lab result / sample / IP-dispensation reach</div>
+  <p>Direct on Participant: subject-bound facts (demographics, identifiers, lifecycle status, lifecycle sub-objects). Reached via traversal: Visit-occurrences (via Visit.atParticipant inverse, when Visit lifts), AEs (via Event.atParticipant), CRFs (via CRF.forParticipant), etc. Direct edges flagged-missing where target entity not yet lifted.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 9 — Recruit (pre-consent) lifts as separate top-level</div>
+  <p>The recruitment realm has its own operator (recruitment coordinator), its own workflow, its own data shape (lighter than Participant — no consent, often only contact info + light eligibility pre-check), and a different PHI boundary. Per FIRST-PRINCIPLES (each operator role gets first-class entities), Recruit lifts as a separate top-level rather than as a pre-consent state on Participant.</p>
+  <p>Top-level count moves 8 → 9. Recruit→Participant transition is captured by <span class="inline">Participant.convertedFromRecruit</span>; the InformedConsent sub-object's existence on the Participant IS the canonical conversion event. See <a href="recruit-spec.html">recruit-spec.html</a>.</p>
+</div>
+
+<div class="decision">
+  <div class="title">Decision 10 — Twin-queryability discipline</div>
+  <p>Every Participant lifecycle transition produces a queryable record so a downstream twin synthesizer can reconstruct the trajectory. Combination: (a) sub-objects for canonical events (Consent, Screening, Enrollment, Withdrawal — already in design), and (c) NGSI-LD temporal-property semantics with validFrom/validUntil bracketing on <span class="inline">participantStatus</span> for mid-trial state changes (RANDOMIZED → ON_TREATMENT → IN_FOLLOW_UP → COMPLETED).</p>
+  <p>The Sponsor entity already established the temporal-property pattern for relationship handoffs; Participant extends it to the lifecycle attribute itself. Broker layer answers "what was Mary's status on 2026-08-15?" cleanly.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="lifecycle"><span class="num">8.</span>Lifecycle state machine <span class="subnote">11 states · operator-meaningful · NGSI-LD temporal property</span></h2>
+
+<div class="diagram">                  ┌──────────────────────────────────┐
+                  ▼                                  │
+              SCREENING ─────────▶ SCREEN_FAILED     │ (re-screen
+                  │                                  │  per protocol)
+                  ▼                                  │
+              CONSENTED ──────────▶─────────────────┘
+                  │
+                  ▼
+              ENROLLED ──────────▶ RANDOMIZED ──────▶ ON_TREATMENT
+                                                           │
+                                                           ▼
+                                                      IN_FOLLOW_UP
+                                                           │
+                                                           ▼
+                                                      COMPLETED
+   (any post-consent on-study state)
+              │
+              ├─────────▶ WITHDRAWN          (subject-initiated; consent withdrawn)
+              ├─────────▶ DISCONTINUED       (investigator-initiated)
+              └─────────▶ LOST_TO_FOLLOW_UP  (unable to contact)
+</div>
+
+<p>Each state transition produces either a sub-object (Consent / Screening / Enrollment / Withdrawal — the canonical events) or a NGSI-LD temporal-property change on <span class="inline">participantStatus</span> (mid-trial transitions like ON_TREATMENT → IN_FOLLOW_UP). Trajectory is queryable downstream for digital-twin synthesis (Decision 10).</p>
+
+<h3 class="subsection">State guards (SHACL-enforced)</h3>
+<ul>
+  <li>Any post-consent state requires at least one InformedConsent with consentStatus=OBTAINED (Inv. #17).</li>
+  <li>SCREEN_FAILED requires a ScreeningRecord with screeningOutcome=SCREEN_FAILED (Inv. #18).</li>
+  <li>RANDOMIZED requires assignedToArm AND randomizationDate (Inv. #19).</li>
+  <li>WITHDRAWN requires WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN (Inv. #20). DISCONTINUED is for investigator-initiated; the distinction is operator-meaningful.</li>
+  <li>Soft: COMPLETED should have completionDate populated (Inv. #21).</li>
+</ul>
+
+<!-- ============================================================== -->
+<h2 class="section" id="crosswalks"><span class="num">9.</span>Cross-walks <span class="subnote">FHIR R5 / SDTM / CDASH / USDM · projection-edge documentation</span></h2>
+
+<p>Every Participant attribute, relationship, and sub-object resolves to recognizable FHIR / CDISC structures. Cross-walks are <strong>projection-adapter rules</strong>, not entity-shape constraints.</p>
+
+<h3 class="subsection">Demographics → SDTM DM / FHIR / CDASH</h3>
+
+<table>
+  <thead><tr><th>TOP attribute</th><th>SDTM DM</th><th>FHIR R5</th><th>CDASH DM</th></tr></thead>
+  <tbody>
+    <tr><td class="code">screeningNumber</td><td>SUBJID</td><td>ResearchSubject.identifier (use=secondary)</td><td>SUBJID</td></tr>
+    <tr><td class="code">randomizationNumber</td><td>(SUPPDM)</td><td>ResearchSubject.identifier</td><td>RANDNO (custom)</td></tr>
+    <tr><td class="code">firstName/middleName/lastName</td><td>(PHI excluded)</td><td>Patient.name (linked via ResearchSubject.subject)</td><td>(not in CDASH)</td></tr>
+    <tr><td class="code">dateOfBirth</td><td>BRTHDTC</td><td>Patient.birthDate</td><td>BRTHDAT / BRTHDD/BRTHMO/BRTHYY</td></tr>
+    <tr><td class="code">sex</td><td>SEX (M/F/U/UNDIFFERENTIATED)</td><td>Patient.gender (male/female/other/unknown)</td><td>SEX</td></tr>
+    <tr><td class="code">race</td><td>RACE</td><td>Patient.extension[us-core-race]</td><td>RACE</td></tr>
+    <tr><td class="code">ethnicity</td><td>ETHNIC</td><td>Patient.extension[us-core-ethnicity]</td><td>ETHNIC</td></tr>
+    <tr><td class="code">country</td><td>COUNTRY</td><td>Patient.address.country</td><td>COUNTRY</td></tr>
+  </tbody>
+</table>
+
+<h3 class="subsection">Lifecycle → FHIR ResearchSubjectStatus / SDTM DSDECOD</h3>
+
+<table>
+  <thead><tr><th>TOP participantStatus</th><th>FHIR R5 ResearchSubject.status</th><th>SDTM DS DSDECOD</th></tr></thead>
+  <tbody>
+    <tr><td class="code">SCREENING</td><td>screening</td><td>(no DS event during screening window)</td></tr>
+    <tr><td class="code">SCREEN_FAILED</td><td>ineligible</td><td>SCREEN FAILURE</td></tr>
+    <tr><td class="code">CONSENTED</td><td>pending-on-study</td><td>INFORMED CONSENT OBTAINED</td></tr>
+    <tr><td class="code">ENROLLED</td><td>on-study</td><td>ENROLLED</td></tr>
+    <tr><td class="code">RANDOMIZED</td><td>on-study</td><td>RANDOMIZED</td></tr>
+    <tr><td class="code">ON_TREATMENT</td><td>on-study-intervention</td><td>(treatment events)</td></tr>
+    <tr><td class="code">IN_FOLLOW_UP</td><td>follow-up</td><td>(follow-up start)</td></tr>
+    <tr><td class="code">COMPLETED</td><td>off-study</td><td>COMPLETED</td></tr>
+    <tr><td class="code">WITHDRAWN</td><td>withdrawn</td><td>WITHDRAWAL OF CONSENT</td></tr>
+    <tr><td class="code">DISCONTINUED</td><td>off-study</td><td>DISCONTINUED</td></tr>
+    <tr><td class="code">LOST_TO_FOLLOW_UP</td><td>off-study</td><td>LOST TO FOLLOW-UP</td></tr>
+  </tbody>
+</table>
+
+<p>TOP enum is a superset of FHIR ResearchSubjectStatus (FHIR collapses several operational states under <span class="inline">on-study</span> and <span class="inline">off-study</span>). TOP-to-FHIR mapping is many-to-one and well-defined; the inverse requires sub-object/DS context to disambiguate.</p>
+
+<h3 class="subsection">USDM positioning</h3>
+
+<p>USDM v4 doesn't model per-subject runtime data (verified: <span class="inline">cdisc-org/usdm/main/src/usdm_model/</span> has no <span class="inline">study_subject.py</span>; the closest entity <span class="inline">SubjectEnrollment</span> is aggregate-only — a planned-quantity entity for cohort/site/geo-scope, not per-subject). USDM is a study-definition model; per-subject data lives at FHIR / SDTM / CDASH layers.</p>
+
+<p>What TOP Participant connects to USDM via:</p>
+<ul>
+  <li><span class="inline">forStudy → Study</span> — TOP Study cross-walks to USDM <span class="inline">StudyVersion / StudyDesign</span></li>
+  <li><span class="inline">assignedToArm → Arm</span> — TOP Arm cross-walks to USDM <span class="inline">StudyArm</span></li>
+  <li>Inclusion/Exclusion criteria — TOP cross-walks to USDM <span class="inline">EligibilityCriterion</span></li>
+  <li><span class="inline">EnrollmentRecord.protocolVersionAtEnrollment</span> — references USDM <span class="inline">StudyVersion</span> identifier</li>
+</ul>
+
+<p>Net: TOP carries USDM at the design layer (Study), CDISC SDTM at the analysis layer (DM/DS/IE), FHIR R5 at the operational/exchange layer (ResearchSubject + Consent + Patient), CDASH at the acquisition layer. No standards conflict; TOP is the operator-grounded substrate that all four standards project through.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="shacl"><span class="num">10.</span>SHACL invariants <span class="subnote">7 new Participant invariants · 25 total in the graph</span></h2>
+
+<table>
+  <thead><tr><th>#</th><th>Severity</th><th>Constraint</th></tr></thead>
+  <tbody>
+    <tr><td>17</td><td>Hard</td><td><strong>Post-consent state requires consent.</strong> Any participantStatus in {ENROLLED, RANDOMIZED, ON_TREATMENT, IN_FOLLOW_UP, COMPLETED, WITHDRAWN, DISCONTINUED, LOST_TO_FOLLOW_UP} requires at least one InformedConsent with consentStatus=OBTAINED. ICH E6(R3) §2.4 GCP-required.</td></tr>
+    <tr><td>18</td><td>Hard</td><td><strong>SCREEN_FAILED requires record.</strong> participantStatus=SCREEN_FAILED requires a ScreeningRecord with screeningOutcome=SCREEN_FAILED.</td></tr>
+    <tr><td>19</td><td>Hard</td><td><strong>RANDOMIZED requires arm and date.</strong> participantStatus=RANDOMIZED requires both assignedToArm and randomizationDate populated.</td></tr>
+    <tr><td>20</td><td>Hard</td><td><strong>WITHDRAWN requires consent-withdrawal.</strong> participantStatus=WITHDRAWN requires a WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. WITHDRAWN is reserved for subject-initiated withdrawal; investigator-initiated uses DISCONTINUED.</td></tr>
+    <tr><td>21</td><td>Soft</td><td><strong>COMPLETED needs date.</strong> participantStatus=COMPLETED should have completionDate populated.</td></tr>
+    <tr><td>22</td><td>Hard</td><td><strong>Arm-Study consistency.</strong> Participant.assignedToArm must reference an Arm whose parent Study matches Participant.forStudy.</td></tr>
+    <tr><td>23</td><td>Hard</td><td><strong>StudySite-Study consistency.</strong> Participant.forStudySite must reference a StudySite whose forStudy matches Participant.forStudy.</td></tr>
+  </tbody>
+</table>
+
+<p>Plus 2 new Recruit invariants (24 hard converted-needs-participant; 25 soft stalled-many-attempts) — see <a href="recruit-spec.html">recruit-spec.html</a>.</p>
+
+<!-- ============================================================== -->
+<h2 class="section" id="stress"><span class="num">11.</span>Stress-test scenarios <span class="subnote">six cases · plain English to graph shape</span></h2>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Re-consent after protocol amendment</div><div class="scn-tag">Lifecycle</div></div>
+  <p>Mary consented under ICF v3.1. Protocol amended (new biomarker assay added with separate informed-consent implications). Site re-consents Mary under ICF v3.2.</p>
+  <div class="resolves">Original InformedConsent_c1 (consentVersion="ICF v3.1") gets consentStatus=RECONSENTED. New InformedConsent_c2 created (consentVersion="ICF v3.2", reconsentRequired=true, reconsentReason="Protocol Amendment v3.2 added biomarker assay"). Both linked from Participant.hasInformedConsent. Full event history preserved per GCP.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Re-screening after screen failure</div><div class="scn-tag">Lifecycle</div></div>
+  <p>Initial screening fails on lab criterion (out-of-range value). Per protocol re-screening rules, Participant returns 4 weeks later for new screen.</p>
+  <div class="resolves">First ScreeningRecord (screeningOutcome=SCREEN_FAILED, screenFailReason populated, reScreeningEligibility=true). Second ScreeningRecord (screeningOutcome=ENROLLED). Participant.participantStatus transitions SCREENING → SCREEN_FAILED → SCREENING → ENROLLED via NGSI-LD temporal property; broker carries the trajectory. Both records visible to coordinator via traversal.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Withdrawn from treatment but follow-up continues</div><div class="scn-tag">Withdrawal</div></div>
+  <p>Mary withdraws consent for further IP administration but agrees to continue follow-up visits for safety data collection.</p>
+  <div class="resolves">WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN, continueDataCollection=true, withdrawnFromAllProcedures=false. Participant.participantStatus transitions to WITHDRAWN; SHACL Inv. #20 satisfied. FHIR projection: ResearchSubject.status=withdrawn but ResearchSubject.period.end may be empty (continued follow-up). Operational realism preserved.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Discontinuation by investigator (safety)</div><div class="scn-tag">Withdrawal</div></div>
+  <p>Investigator discontinues a Participant after a Grade 3 AE that meets the protocol's discontinuation criteria.</p>
+  <div class="resolves">WithdrawalRecord with withdrawalCategory=ADVERSE_EVENT (not CONSENT_WITHDRAWN — that's a different operator action). Participant.participantStatus=DISCONTINUED, NOT WITHDRAWN. The semantic split between subject-initiated and investigator-initiated is preserved at the substrate. FHIR projects to ResearchSubject.status=off-study with reason; SDTM DS records DSDECOD=DISCONTINUED with DSTERM=AE-related reason text.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Recruit conversion to Participant</div><div class="scn-tag">Funnel</div></div>
+  <p>Mary responded to a digital ad in late February. Recruitment coordinator pre-screened, scheduled consent. On consent day at the site, coordinator converts.</p>
+  <div class="resolves">Recruit_r001 (recruitStatus=QUALIFIED_PENDING_CONSENT). Coordinator action creates Participant_p001 with convertedFromRecruit=Recruit_r001. Participant_p001.hasInformedConsent populated (the consent-obtaining action IS the conversion event). Recruit_r001.recruitStatus → CONVERTED_TO_PARTICIPANT, convertedToParticipant=Participant_p001 (Recruit invariant #24 satisfied). Operational-funnel-side trace preserved for recruitment analytics.</div>
+</div>
+
+<div class="scenario">
+  <div class="title-row"><div class="scn-title">Twin-queryability — what was Mary's status on a specific date?</div><div class="scn-tag">Trajectory</div></div>
+  <p>Twin synthesizer (downstream tool) needs to know Mary's lifecycle state as of 2026-08-15.</p>
+  <div class="resolves">NGSI-LD broker query against Participant_p001 with temporal filter <span class="inline">timeAt=2026-08-15T00:00:00Z</span>. participantStatus temporal property carries validFrom/validUntil brackets per state value. Broker returns the active value at that timestamp (e.g., ON_TREATMENT). Sub-object queries (hasInformedConsent etc.) similarly time-filtered. Twin synthesizer reconstructs the trajectory; substrate carries the contract; computational synthesis is downstream.</div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="personas"><span class="num">12.</span>Personas <span class="subnote">six roles · what each cares about</span></h2>
+
+<div class="persona-card">
+  <div class="persona-name">Site Coordinator (the central operator for Participant)</div>
+  <div class="persona-jtbd">"Get Mary through her visits, make sure consent is current, surface any deviations to the PI."</div>
+  <p>Primary entity user. Creates Participant, conducts screening, manages re-consent, schedules visits. Sees Participant in operator-vocabulary terms; SDTM/FHIR projections happen at export-time. Cares about: contact info, current status, next-visit-date, consent-currency, AE-flagging.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Principal Investigator</div>
+  <div class="persona-jtbd">"Confirm eligibility, sign off on enrollment, manage discontinuations."</div>
+  <p>Authority over EnrollmentRecord (eligibilityConfirmedBy 1..1) and DISCONTINUED transitions. Reviews ScreeningRecord outcomes. Cares about: cohort-level eligibility patterns, AE-related discontinuations, protocol-deviation-flagged participants.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Recruitment Coordinator</div>
+  <div class="persona-jtbd">"Move people through the funnel; convert qualified Recruits to consented Participants."</div>
+  <p>Primary user of <a href="recruit-spec.html">Recruit</a>. Hands off to Site Coordinator at consent appointment (Recruit→Participant conversion). Cares about: funnel conversion rate, source-channel ROI, contact-attempt cadence.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Sponsor Project Manager</div>
+  <div class="persona-jtbd">"Track enrollment progress against target; surface site-level enrollment risk."</div>
+  <p>Reads aggregate Participant counts per StudySite and per status. Cares about: targetEnrollment vs actualEnrollment, time-to-first-enrollment, drop-out rate by site.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Sponsor CRA / Monitor</div>
+  <div class="persona-jtbd">"Verify source documents match Participant records; flag discrepancies."</div>
+  <p>Audits Participant records against site source documents during monitoring visits. Cares about: consent-form-vs-record consistency, randomization-date traceability, withdrawal-documentation completeness.</p>
+</div>
+
+<div class="persona-card">
+  <div class="persona-name">Medical Monitor / Medical Affairs</div>
+  <div class="persona-jtbd">"Adjudicate AEs; review discontinuation patterns; surface safety signals."</div>
+  <p>Reviews DISCONTINUED Participants and their WithdrawalRecord categories. Cares about: AE-related discontinuation rate, dose-modification patterns, cohort-vs-cohort safety profile.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="queries"><span class="num">13.</span>Query patterns <span class="subnote">three concrete NGSI-LD HTTP shapes</span></h2>
+
+<div class="query">
+  <div class="persona">Site Coordinator: today's active participants</div>
+  <div class="ask">"Who do I have at MSKCC today, and where are they in the trial?"</div>
+  <pre>GET /ngsi-ld/v1/entities?type=Participant&amp;q=forStudySite=="urn:ngsi-ld:StudySite:mskcc-onco423";participantStatus=="ON_TREATMENT","IN_FOLLOW_UP","RANDOMIZED"</pre>
+  <div class="reads">Returns active Participants at this StudySite. Coordinator sees screeningNumber, firstName/lastName, current status, next-visit-date. Per-participant detail follows up with separate GET on each entity.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Sponsor PM: enrollment trajectory across all sites</div>
+  <div class="ask">"How many randomized at each site, vs target, vs forecast?"</div>
+  <pre>GET /ngsi-ld/v1/entities?type=Participant&amp;q=forStudy=="urn:ngsi-ld:Study:ONCO-423";participantStatus=="RANDOMIZED","ON_TREATMENT","IN_FOLLOW_UP","COMPLETED"&amp;count=true</pre>
+  <div class="reads">Aggregate count of Participants past the randomization milestone, scoped to this Study. Cross-tabulated by forStudySite client-side (or via GROUP BY in a SPARQL backing query). Compared to StudySite.enrollmentTarget for site-level shortfall surfacing.</div>
+</div>
+
+<div class="query">
+  <div class="persona">Twin synthesizer: trajectory query for a specific Participant at a specific time</div>
+  <div class="ask">"What was Mary's lifecycle state and treatment context on 2026-08-15?"</div>
+  <pre>GET /ngsi-ld/v1/temporal/entities/urn:ngsi-ld:Participant:onco-423-mskcc-p001?timeAt=2026-08-15T00:00:00Z&amp;attrs=participantStatus,assignedToArm,randomizationDate</pre>
+  <div class="reads">NGSI-LD temporal endpoint returns the values active at that timestamp. participantStatus temporal property's validFrom/validUntil brackets resolve to the right value. Synthesizer combines this with sub-object queries (InformedConsent valid at the time, ScreeningRecord outcomes, etc.) to reconstruct the trajectory for twin synthesis. Substrate provides the contract; computational synthesis is downstream.</div>
+</div>
+
+<!-- ============================================================== -->
+<h2 class="section" id="open"><span class="num">14.</span>Open issues</h2>
+
+<ol>
+  <li><strong>Visit lift</strong>: when Visit lifts (next priority), Participant gains <span class="inline">hasVisit</span> as a real edge (not flagged-missing) and per-Visit Activity records become traversable. Visit-level Observations expand the twin-queryability surface beyond what v0.4.0 carries.</li>
+  <li><strong>Adverse Event lift</strong>: <span class="inline">hasAdverseEvent → Event</span> remains flagged-missing; lifts when Event entity is designed. AE grading uses CTCAE controlled terminology (a CDISC dependency for the dependency-pipeline manifest).</li>
+  <li><strong>RandomizationRecord</strong>: deferred to v0.5+. If multi-arm-reassignment scenarios or stratified-randomization audit becomes operationally needed, lift as a sub-object with rich attributes (stratification factor values, randomization seed, IRT system reference).</li>
+  <li><strong>Twin spec as standalone document</strong>: when Visit / Activity / Observation lift expand the queryability surface, capture the twin-synthesizer contract as <span class="inline">twin-spec.md</span> (or HTML) — what queries the synthesizer expects, what TOP guarantees about temporal coverage, what's out of scope.</li>
+  <li><strong>Cross-realm federation</strong>: identity resolution across Recruit / Participant / Patient / Claimant realms is deferred to v0.6+ federation work. PMDT's QUALITOP architecture and pilot lessons are direct prior art.</li>
+</ol>
+
+<div class="footer">
+  TOP / Participant / spec / v1 · backed by source/top-strawman.json (v0.4.0-strawman) · 2026-05-09<br>
+  Generated artifacts (cross-walks · SHACL shapes · JSON-LD context) live in onto/clinical/v1/.<br>
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, the operator-facing layer is the prize.
+</div>
+
+</div>
+</body>
+</html>
