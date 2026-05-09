@@ -51,7 +51,7 @@
         "@type": "xsd:string"
       },
       "orcid": {
-        "@id": "top:orcid",
+        "@id": "topc:orcid",
         "@type": "xsd:string"
       },
       "address": {
@@ -63,11 +63,11 @@
         "@type": "xsd:string"
       },
       "phone": {
-        "@id": "top:phone",
+        "@id": "topc:phone",
         "@type": "xsd:string"
       },
       "email": {
-        "@id": "top:email",
+        "@id": "topc:email",
         "@type": "xsd:string"
       },
       "website": {
@@ -99,11 +99,11 @@
         "@type": "xsd:boolean"
       },
       "validFrom": {
-        "@id": "top:validFrom",
+        "@id": "topc:validFrom",
         "@type": "xsd:dateTime"
       },
       "validUntil": {
-        "@id": "top:validUntil",
+        "@id": "topc:validUntil",
         "@type": "xsd:dateTime"
       },
       "primaryTherapeuticArea": {
@@ -218,10 +218,16 @@
             "@id": "fhir:ResearchStudy"
           },
           {
-            "@id": "usdm:Study"
+            "@id": "usdm:Study (with the StudyVersion + StudyDesign nesting collapsed; TOP carries the design content directly as sub-objects)"
           },
           {
             "@id": "cdash:DM"
+          },
+          {
+            "@id": "ClinicalTrials.gov ProtocolSection"
+          },
+          {
+            "@id": "no direct OMOP equivalent (trial-side; OMOP CDM is observational/research-warehouse-shaped). Per-Participant data flowing through this Study projects to OMOP via StudySite \u2192 Participant traversal."
           }
         ]
       },
@@ -232,12 +238,140 @@
         "@id": "top:sponsorProtocolId",
         "@type": "xsd:string"
       },
-      "clinicalTrialsGovId": {
-        "@id": "top:clinicalTrialsGovId",
+      "studyTitle": {
+        "@id": "top:studyTitle",
+        "@type": "xsd:string"
+      },
+      "studyShortTitle": {
+        "@id": "top:studyShortTitle",
+        "@type": "xsd:string"
+      },
+      "studyAcronym": {
+        "@id": "top:studyAcronym",
+        "@type": "xsd:string"
+      },
+      "studyDescription": {
+        "@id": "top:studyDescription",
+        "@type": "xsd:string"
+      },
+      "studyType": {
+        "@id": "top:studyType",
+        "@type": "xsd:string"
+      },
+      "studyPhase": {
+        "@id": "top:studyPhase",
+        "@type": "xsd:string"
+      },
+      "interventionModel": {
+        "@id": "top:interventionModel",
+        "@type": "xsd:string"
+      },
+      "allocation": {
+        "@id": "top:allocation",
+        "@type": "xsd:string"
+      },
+      "masking": {
+        "@id": "top:masking",
+        "@type": "xsd:string"
+      },
+      "primaryPurpose": {
+        "@id": "top:primaryPurpose",
         "@type": "xsd:string"
       },
       "studyStatus": {
         "@id": "top:studyStatus",
+        "@type": "xsd:string"
+      },
+      "conditionStudied": {
+        "@id": "top:conditionStudied",
+        "@type": "xsd:string"
+      },
+      "therapeuticArea": {
+        "@id": "top:therapeuticArea",
+        "@type": "xsd:string"
+      },
+      "targetEnrollment": {
+        "@id": "top:targetEnrollment",
+        "@type": "xsd:integer"
+      },
+      "actualEnrollment": {
+        "@id": "topc:actualEnrollment",
+        "@type": "xsd:integer"
+      },
+      "enrollmentType": {
+        "@id": "top:enrollmentType",
+        "@type": "xsd:string"
+      },
+      "minAge": {
+        "@id": "top:minAge",
+        "@type": "xsd:string"
+      },
+      "maxAge": {
+        "@id": "top:maxAge",
+        "@type": "xsd:string"
+      },
+      "sexEligibility": {
+        "@id": "top:sexEligibility",
+        "@type": "xsd:string"
+      },
+      "acceptsHealthyVolunteers": {
+        "@id": "top:acceptsHealthyVolunteers",
+        "@type": "xsd:boolean"
+      },
+      "plannedStartDate": {
+        "@id": "top:plannedStartDate",
+        "@type": "xsd:date"
+      },
+      "actualStartDate": {
+        "@id": "top:actualStartDate",
+        "@type": "xsd:date"
+      },
+      "primaryCompletionDate": {
+        "@id": "top:primaryCompletionDate",
+        "@type": "xsd:date"
+      },
+      "plannedCompletionDate": {
+        "@id": "top:plannedCompletionDate",
+        "@type": "xsd:date"
+      },
+      "actualCompletionDate": {
+        "@id": "top:actualCompletionDate",
+        "@type": "xsd:date"
+      },
+      "responsibleParty": {
+        "@id": "topc:responsibleParty",
+        "@type": "xsd:string"
+      },
+      "studyVersion": {
+        "@id": "top:studyVersion",
+        "@type": "xsd:string"
+      },
+      "clinicalTrialsGovId": {
+        "@id": "top:clinicalTrialsGovId",
+        "@type": "xsd:string"
+      },
+      "eudraCT": {
+        "@id": "top:eudraCT",
+        "@type": "xsd:string"
+      },
+      "euCtisId": {
+        "@id": "top:euCtisId",
+        "@type": "xsd:string"
+      },
+      "isrctn": {
+        "@id": "top:isrctn",
+        "@type": "xsd:string"
+      },
+      "nciId": {
+        "@id": "top:nciId",
+        "@type": "xsd:string"
+      },
+      "otherRegistryIds": {
+        "@id": "top:otherRegistryIds",
+        "@type": "xsd:string"
+      },
+      "tags": {
+        "@id": "top:tags",
         "@type": "xsd:string"
       },
       "hasProtocol": {
@@ -248,6 +382,62 @@
         "@id": "top:hasArm",
         "@type": "@id"
       },
+      "hasSchedule": {
+        "@id": "top:hasSchedule",
+        "@type": "@id"
+      },
+      "hasEndpoint": {
+        "@id": "top:hasEndpoint",
+        "@type": "@id"
+      },
+      "hasInclusionCriterion": {
+        "@id": "top:hasInclusionCriterion",
+        "@type": "@id"
+      },
+      "hasExclusionCriterion": {
+        "@id": "top:hasExclusionCriterion",
+        "@type": "@id"
+      },
+      "hasAmendment": {
+        "@id": "top:hasAmendment",
+        "@type": "@id"
+      },
+      "hasMilestone": {
+        "@id": "top:hasMilestone",
+        "@type": "@id"
+      },
+      "suppliesInvestigationalProduct": {
+        "@id": "top:suppliesInvestigationalProduct",
+        "@type": "@id"
+      },
+      "hasOversightBody": {
+        "@id": "top:hasOversightBody",
+        "@type": "@id"
+      },
+      "hasStudyStartupPackage": {
+        "@id": "top:hasStudyStartupPackage",
+        "@type": "@id"
+      },
+      "usesSystem": {
+        "@id": "top:usesSystem",
+        "@type": "@id"
+      },
+      "hasStatisticalAnalysisPlan": {
+        "@id": "top:hasStatisticalAnalysisPlan",
+        "@type": "@id"
+      },
+      "hasStudyTeam": {
+        "@id": "top:hasStudyTeam",
+        "@type": "@id"
+      },
+      "hasTag": {
+        "@id": "top:hasTag",
+        "@type": "@id"
+      },
+      "hasRiskAssessment": {
+        "@id": "top:hasRiskAssessment",
+        "@type": "@id"
+      },
       "Protocol": {
         "@id": "top:Protocol",
         "@type": "@id",
@@ -256,9 +446,23 @@
             "@id": "fhir:PlanDefinition"
           },
           {
-            "@id": "usdm:Protocol"
+            "@id": "usdm:StudyProtocolDocumentVersion"
+          },
+          {
+            "@id": "ClinicalTrials.gov ProtocolDocument"
           }
         ]
+      },
+      "protocolId": {
+        "@id": "top:protocolId"
+      },
+      "protocolNumber": {
+        "@id": "top:protocolNumber",
+        "@type": "xsd:string"
+      },
+      "protocolTitle": {
+        "@id": "top:protocolTitle",
+        "@type": "xsd:string"
       },
       "protocolVersion": {
         "@id": "top:protocolVersion",
@@ -266,6 +470,26 @@
       },
       "protocolStatus": {
         "@id": "top:protocolStatus",
+        "@type": "xsd:string"
+      },
+      "approvalDate": {
+        "@id": "top:approvalDate",
+        "@type": "xsd:date"
+      },
+      "effectiveDate": {
+        "@id": "topc:effectiveDate",
+        "@type": "xsd:date"
+      },
+      "protocolDocumentRef": {
+        "@id": "top:protocolDocumentRef",
+        "@type": "xsd:anyURI"
+      },
+      "ddfDocumentRef": {
+        "@id": "top:ddfDocumentRef",
+        "@type": "xsd:anyURI"
+      },
+      "studyDesignRationale": {
+        "@id": "top:studyDesignRationale",
         "@type": "xsd:string"
       },
       "Arm": {
@@ -280,16 +504,183 @@
           },
           {
             "@id": "cdash:DM.ARM"
+          },
+          {
+            "@id": "ClinicalTrials.gov ArmGroup"
           }
         ]
+      },
+      "armId": {
+        "@id": "top:armId"
       },
       "armName": {
         "@id": "top:armName",
         "@type": "xsd:string"
       },
+      "armShortName": {
+        "@id": "top:armShortName",
+        "@type": "xsd:string"
+      },
       "armType": {
         "@id": "top:armType",
         "@type": "xsd:string"
+      },
+      "armDescription": {
+        "@id": "top:armDescription",
+        "@type": "xsd:string"
+      },
+      "armSize": {
+        "@id": "top:armSize",
+        "@type": "xsd:integer"
+      },
+      "interventionDescription": {
+        "@id": "top:interventionDescription",
+        "@type": "xsd:string"
+      },
+      "isPlaceboArm": {
+        "@id": "top:isPlaceboArm",
+        "@type": "xsd:boolean"
+      },
+      "isControlArm": {
+        "@id": "top:isControlArm",
+        "@type": "xsd:boolean"
+      },
+      "ScheduleOfAssessments": {
+        "@id": "top:ScheduleOfAssessments",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "usdm:ScheduleTimeline"
+          },
+          {
+            "@id": "(implicit in ProtocolSection)"
+          },
+          {
+            "@id": "cdash:VS / VISIT"
+          }
+        ]
+      },
+      "soaId": {
+        "@id": "top:soaId"
+      },
+      "soaName": {
+        "@id": "top:soaName",
+        "@type": "xsd:string"
+      },
+      "soaVersion": {
+        "@id": "top:soaVersion",
+        "@type": "xsd:string"
+      },
+      "soaStatus": {
+        "@id": "top:soaStatus",
+        "@type": "xsd:string"
+      },
+      "soaDocumentRef": {
+        "@id": "top:soaDocumentRef",
+        "@type": "xsd:anyURI"
+      },
+      "description": {
+        "@id": "top:description",
+        "@type": "xsd:string"
+      },
+      "Endpoint": {
+        "@id": "top:Endpoint",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchStudy.objective"
+          },
+          {
+            "@id": "usdm:Endpoint"
+          },
+          {
+            "@id": "ClinicalTrials.gov OutcomeMeasure"
+          }
+        ]
+      },
+      "endpointId": {
+        "@id": "top:endpointId"
+      },
+      "endpointName": {
+        "@id": "top:endpointName",
+        "@type": "xsd:string"
+      },
+      "endpointDescription": {
+        "@id": "top:endpointDescription",
+        "@type": "xsd:string"
+      },
+      "endpointType": {
+        "@id": "top:endpointType",
+        "@type": "xsd:string"
+      },
+      "endpointMeasurementType": {
+        "@id": "top:endpointMeasurementType",
+        "@type": "xsd:string"
+      },
+      "measurementUnit": {
+        "@id": "top:measurementUnit",
+        "@type": "xsd:string"
+      },
+      "timeFrame": {
+        "@id": "top:timeFrame",
+        "@type": "xsd:string"
+      },
+      "statisticalApproach": {
+        "@id": "top:statisticalApproach",
+        "@type": "xsd:string"
+      },
+      "InclusionCriterion": {
+        "@id": "top:InclusionCriterion",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Group.characteristic (with exclude=false)"
+          },
+          {
+            "@id": "usdm:EligibilityCriterion (with code=inclusion)"
+          },
+          {
+            "@id": "ClinicalTrials.gov EligibilityCriteria.criteria"
+          }
+        ]
+      },
+      "criterionId": {
+        "@id": "top:criterionId"
+      },
+      "criterionNumber": {
+        "@id": "top:criterionNumber",
+        "@type": "xsd:string"
+      },
+      "criterionText": {
+        "@id": "top:criterionText",
+        "@type": "xsd:string"
+      },
+      "criterionCategory": {
+        "@id": "top:criterionCategory",
+        "@type": "xsd:string"
+      },
+      "waiverAllowed": {
+        "@id": "top:waiverAllowed",
+        "@type": "xsd:boolean"
+      },
+      "waiverConditions": {
+        "@id": "top:waiverConditions",
+        "@type": "xsd:string"
+      },
+      "ExclusionCriterion": {
+        "@id": "top:ExclusionCriterion",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Group.characteristic (with exclude=true)"
+          },
+          {
+            "@id": "usdm:EligibilityCriterion (with code=exclusion)"
+          },
+          {
+            "@id": "ClinicalTrials.gov EligibilityCriteria.criteria"
+          }
+        ]
       },
       "Site": {
         "@id": "top:Site",
@@ -299,10 +690,13 @@
             "@id": "fhir:Organization"
           },
           {
-            "@id": "usdm:StudySite"
+            "@id": "usdm:Organization (with type=Code(Site))"
           },
           {
             "@id": "cdash:DM.SITEID"
+          },
+          {
+            "@id": "omop:CARE_SITE + omop:LOCATION"
           }
         ]
       },
@@ -313,9 +707,169 @@
         "@id": "top:siteName",
         "@type": "xsd:string"
       },
+      "siteAlias": {
+        "@id": "top:siteAlias",
+        "@type": "xsd:string"
+      },
       "siteType": {
         "@id": "top:siteType",
         "@type": "xsd:string"
+      },
+      "city": {
+        "@id": "top:city",
+        "@type": "xsd:string"
+      },
+      "state": {
+        "@id": "top:state",
+        "@type": "xsd:string"
+      },
+      "postalCode": {
+        "@id": "top:postalCode",
+        "@type": "xsd:string"
+      },
+      "gcpQualified": {
+        "@id": "top:gcpQualified",
+        "@type": "xsd:boolean"
+      },
+      "facilitiesAdequate": {
+        "@id": "top:facilitiesAdequate",
+        "@type": "xsd:boolean"
+      },
+      "therapeuticAreasExperienced": {
+        "@id": "top:therapeuticAreasExperienced",
+        "@type": "xsd:string"
+      },
+      "indicationExperience": {
+        "@id": "top:indicationExperience",
+        "@type": "xsd:object"
+      },
+      "patientPopulationAccess": {
+        "@id": "top:patientPopulationAccess",
+        "@type": "xsd:object"
+      },
+      "patientReferralSources": {
+        "@id": "top:patientReferralSources",
+        "@type": "xsd:string"
+      },
+      "totalTrialsConducted": {
+        "@id": "top:totalTrialsConducted",
+        "@type": "xsd:integer"
+      },
+      "trialsByPhase": {
+        "@id": "top:trialsByPhase",
+        "@type": "xsd:object"
+      },
+      "averageEnrollmentRate": {
+        "@id": "top:averageEnrollmentRate",
+        "@type": "xsd:decimal"
+      },
+      "firstPatientInToActivationDays": {
+        "@id": "top:firstPatientInToActivationDays",
+        "@type": "xsd:integer"
+      },
+      "queryResponseTimeHours": {
+        "@id": "top:queryResponseTimeHours",
+        "@type": "xsd:decimal"
+      },
+      "sponsorRetentionRate": {
+        "@id": "top:sponsorRetentionRate",
+        "@type": "xsd:decimal"
+      },
+      "freezerCapacity": {
+        "@id": "top:freezerCapacity",
+        "@type": "xsd:object"
+      },
+      "imagingCapabilities": {
+        "@id": "top:imagingCapabilities",
+        "@type": "xsd:string"
+      },
+      "labCapabilities": {
+        "@id": "top:labCapabilities",
+        "@type": "xsd:string"
+      },
+      "pharmacyOnSite": {
+        "@id": "top:pharmacyOnSite",
+        "@type": "xsd:boolean"
+      },
+      "dctCapable": {
+        "@id": "top:dctCapable",
+        "@type": "xsd:boolean"
+      },
+      "econsentCapable": {
+        "@id": "top:econsentCapable",
+        "@type": "xsd:boolean"
+      },
+      "eproCapable": {
+        "@id": "top:eproCapable",
+        "@type": "xsd:boolean"
+      },
+      "edcVendorExperience": {
+        "@id": "top:edcVendorExperience",
+        "@type": "xsd:string"
+      },
+      "irbType": {
+        "@id": "top:irbType",
+        "@type": "xsd:string"
+      },
+      "typicalIrbApprovalDays": {
+        "@id": "top:typicalIrbApprovalDays",
+        "@type": "xsd:integer"
+      },
+      "regulatoryAuthorityExperience": {
+        "@id": "top:regulatoryAuthorityExperience",
+        "@type": "xsd:string"
+      },
+      "sopsAvailable": {
+        "@id": "top:sopsAvailable",
+        "@type": "xsd:boolean"
+      },
+      "sopLibrarySize": {
+        "@id": "top:sopLibrarySize",
+        "@type": "xsd:integer"
+      },
+      "insuranceCarrier": {
+        "@id": "top:insuranceCarrier",
+        "@type": "xsd:string"
+      },
+      "insuranceCoverageAmount": {
+        "@id": "top:insuranceCoverageAmount",
+        "@type": "xsd:decimal"
+      },
+      "insuranceCurrency": {
+        "@id": "top:insuranceCurrency",
+        "@type": "xsd:string"
+      },
+      "insuranceExpiry": {
+        "@id": "top:insuranceExpiry",
+        "@type": "xsd:date"
+      },
+      "subInvestigatorCount": {
+        "@id": "top:subInvestigatorCount",
+        "@type": "xsd:integer"
+      },
+      "coordinatorCount": {
+        "@id": "top:coordinatorCount",
+        "@type": "xsd:integer"
+      },
+      "regulatoryCoordinatorCount": {
+        "@id": "top:regulatoryCoordinatorCount",
+        "@type": "xsd:integer"
+      },
+      "studyNurseCount": {
+        "@id": "top:studyNurseCount",
+        "@type": "xsd:integer"
+      },
+      "labTechCount": {
+        "@id": "top:labTechCount",
+        "@type": "xsd:integer"
+      },
+      "languagesSupported": {
+        "@id": "top:languagesSupported",
+        "@type": "xsd:string"
+      },
+      "gcpTrainingCurrencyRate": {
+        "@id": "top:gcpTrainingCurrencyRate",
+        "@type": "xsd:decimal"
       },
       "partOfSiteNetwork": {
         "@id": "top:partOfSiteNetwork",
@@ -325,12 +879,394 @@
         "@id": "top:parentSite",
         "@type": "@id"
       },
-      "hasPrincipalInvestigator": {
-        "@id": "top:hasPrincipalInvestigator",
+      "hasStaff": {
+        "@id": "top:hasStaff",
         "@type": "@id"
       },
-      "participatesIn": {
-        "@id": "top:participatesIn",
+      "headOfClinicalResearch": {
+        "@id": "top:headOfClinicalResearch",
+        "@type": "@id"
+      },
+      "hostsEquipment": {
+        "@id": "top:hostsEquipment",
+        "@type": "@id"
+      },
+      "hasStorageLocation": {
+        "@id": "top:hasStorageLocation",
+        "@type": "@id"
+      },
+      "hasInstitutionalDocument": {
+        "@id": "top:hasInstitutionalDocument",
+        "@type": "@id"
+      },
+      "hasInstitutionalCredential": {
+        "@id": "top:hasInstitutionalCredential",
+        "@type": "@id"
+      },
+      "Participant": {
+        "@id": "top:Participant",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchSubject"
+          },
+          {
+            "@id": "sdtm:DM (Demographics) + sdtm:DS (Disposition) + sdtm:IE (Inclusion/Exclusion Exceptions)"
+          },
+          {
+            "@id": "cdash:DM"
+          },
+          {
+            "@id": "usdm:N/A (no per-subject runtime entity; design-side connections via Study/Arm/EligibilityCriterion)"
+          },
+          {
+            "@id": "omop:PERSON (RWE-realm projection)"
+          }
+        ]
+      },
+      "participantId": {
+        "@id": "top:participantId"
+      },
+      "screeningNumber": {
+        "@id": "top:screeningNumber",
+        "@type": "xsd:string"
+      },
+      "randomizationNumber": {
+        "@id": "top:randomizationNumber",
+        "@type": "xsd:string"
+      },
+      "randomizationDate": {
+        "@id": "top:randomizationDate",
+        "@type": "xsd:date"
+      },
+      "firstName": {
+        "@id": "topc:firstName",
+        "@type": "xsd:string"
+      },
+      "middleName": {
+        "@id": "topc:middleName",
+        "@type": "xsd:string"
+      },
+      "lastName": {
+        "@id": "topc:lastName",
+        "@type": "xsd:string"
+      },
+      "dateOfBirth": {
+        "@id": "top:dateOfBirth",
+        "@type": "xsd:date"
+      },
+      "sex": {
+        "@id": "top:sex",
+        "@type": "xsd:string"
+      },
+      "race": {
+        "@id": "top:race",
+        "@type": "xsd:string"
+      },
+      "ethnicity": {
+        "@id": "top:ethnicity",
+        "@type": "xsd:string"
+      },
+      "primaryLanguage": {
+        "@id": "top:primaryLanguage",
+        "@type": "xsd:string"
+      },
+      "participantStatus": {
+        "@id": "top:participantStatus",
+        "@type": "xsd:string"
+      },
+      "enrollmentDate": {
+        "@id": "top:enrollmentDate",
+        "@type": "xsd:date"
+      },
+      "completionDate": {
+        "@id": "top:completionDate",
+        "@type": "xsd:date"
+      },
+      "withdrawalDate": {
+        "@id": "top:withdrawalDate",
+        "@type": "xsd:date"
+      },
+      "forStudySite": {
+        "@id": "top:forStudySite",
+        "@type": "@id"
+      },
+      "forStudy": {
+        "@id": "top:forStudy",
+        "@type": "@id"
+      },
+      "assignedToArm": {
+        "@id": "top:assignedToArm",
+        "@type": "@id"
+      },
+      "hasInformedConsent": {
+        "@id": "top:hasInformedConsent",
+        "@type": "@id"
+      },
+      "hasScreeningRecord": {
+        "@id": "top:hasScreeningRecord",
+        "@type": "@id"
+      },
+      "hasEnrollmentRecord": {
+        "@id": "top:hasEnrollmentRecord",
+        "@type": "@id"
+      },
+      "hasWithdrawalRecord": {
+        "@id": "top:hasWithdrawalRecord",
+        "@type": "@id"
+      },
+      "convertedFromRecruit": {
+        "@id": "top:convertedFromRecruit",
+        "@type": "@id"
+      },
+      "hasVisit": {
+        "@id": "top:hasVisit",
+        "@type": "@id"
+      },
+      "hasAdverseEvent": {
+        "@id": "top:hasAdverseEvent",
+        "@type": "@id"
+      },
+      "InformedConsent": {
+        "@id": "top:InformedConsent",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Consent"
+          },
+          {
+            "@id": "sdtm:DS (DSDECOD=INFORMED CONSENT OBTAINED, WITHDRAWAL OF CONSENT)"
+          },
+          {
+            "@id": "usdm:N/A (runtime, not design-time)"
+          }
+        ]
+      },
+      "consentId": {
+        "@id": "top:consentId"
+      },
+      "consentVersion": {
+        "@id": "top:consentVersion",
+        "@type": "xsd:string"
+      },
+      "consentDate": {
+        "@id": "top:consentDate",
+        "@type": "xsd:date"
+      },
+      "consentTime": {
+        "@id": "top:consentTime",
+        "@type": "xsd:time"
+      },
+      "consentMethod": {
+        "@id": "top:consentMethod",
+        "@type": "xsd:string"
+      },
+      "consenterRelationship": {
+        "@id": "top:consenterRelationship",
+        "@type": "xsd:string"
+      },
+      "language": {
+        "@id": "topc:language",
+        "@type": "xsd:string"
+      },
+      "translatorUsed": {
+        "@id": "top:translatorUsed",
+        "@type": "xsd:boolean"
+      },
+      "consentStatus": {
+        "@id": "top:consentStatus",
+        "@type": "xsd:string"
+      },
+      "reconsentRequired": {
+        "@id": "top:reconsentRequired",
+        "@type": "xsd:boolean"
+      },
+      "reconsentReason": {
+        "@id": "top:reconsentReason",
+        "@type": "xsd:string"
+      },
+      "ScreeningRecord": {
+        "@id": "top:ScreeningRecord",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchSubject.progress (subjectState=screening / off-study)"
+          },
+          {
+            "@id": "sdtm:DS (DSDECOD=SCREEN FAILURE) + sdtm:IE (failed criteria)"
+          },
+          {
+            "@id": "usdm:N/A (runtime)"
+          }
+        ]
+      },
+      "screeningRecordId": {
+        "@id": "top:screeningRecordId"
+      },
+      "screeningStartDate": {
+        "@id": "top:screeningStartDate",
+        "@type": "xsd:date"
+      },
+      "screeningEndDate": {
+        "@id": "top:screeningEndDate",
+        "@type": "xsd:date"
+      },
+      "screeningOutcome": {
+        "@id": "top:screeningOutcome",
+        "@type": "xsd:string"
+      },
+      "screenFailReason": {
+        "@id": "top:screenFailReason",
+        "@type": "xsd:string"
+      },
+      "failedInclusionCriteria": {
+        "@id": "top:failedInclusionCriteria",
+        "@type": "xsd:string"
+      },
+      "failedExclusionCriteria": {
+        "@id": "top:failedExclusionCriteria",
+        "@type": "xsd:string"
+      },
+      "reScreeningEligibility": {
+        "@id": "top:reScreeningEligibility",
+        "@type": "xsd:boolean"
+      },
+      "EnrollmentRecord": {
+        "@id": "top:EnrollmentRecord",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchSubject.progress (milestone=Enrolled)"
+          },
+          {
+            "@id": "sdtm:DS (DSDECOD=ENROLLED)"
+          },
+          {
+            "@id": "usdm:N/A (runtime)"
+          }
+        ]
+      },
+      "enrollmentRecordId": {
+        "@id": "top:enrollmentRecordId"
+      },
+      "enrollmentMethod": {
+        "@id": "top:enrollmentMethod",
+        "@type": "xsd:string"
+      },
+      "enrollmentNumber": {
+        "@id": "top:enrollmentNumber",
+        "@type": "xsd:string"
+      },
+      "protocolVersionAtEnrollment": {
+        "@id": "top:protocolVersionAtEnrollment",
+        "@type": "xsd:string"
+      },
+      "WithdrawalRecord": {
+        "@id": "top:WithdrawalRecord",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:ResearchSubject.progress (milestone=Withdrawn) + ResearchSubject.period.end"
+          },
+          {
+            "@id": "sdtm:DS (DSDECOD per controlled term: WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP / etc.)"
+          },
+          {
+            "@id": "usdm:N/A (runtime)"
+          }
+        ]
+      },
+      "withdrawalRecordId": {
+        "@id": "top:withdrawalRecordId"
+      },
+      "withdrawalCategory": {
+        "@id": "top:withdrawalCategory",
+        "@type": "xsd:string"
+      },
+      "withdrawalReason": {
+        "@id": "top:withdrawalReason",
+        "@type": "xsd:string"
+      },
+      "continueDataCollection": {
+        "@id": "top:continueDataCollection",
+        "@type": "xsd:boolean"
+      },
+      "withdrawnFromAllProcedures": {
+        "@id": "top:withdrawnFromAllProcedures",
+        "@type": "xsd:boolean"
+      },
+      "notes": {
+        "@id": "top:notes",
+        "@type": "xsd:string"
+      },
+      "Recruit": {
+        "@id": "top:Recruit",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Person (or no canonical resource; some sponsors model as Patient pre-trial)"
+          },
+          {
+            "@id": "sdtm:N/A (no canonical pre-consent SDTM domain; sponsor-internal recruitment systems)"
+          },
+          {
+            "@id": "usdm:N/A (no recruitment modeling)"
+          }
+        ]
+      },
+      "recruitId": {
+        "@id": "top:recruitId"
+      },
+      "preferredContactMethod": {
+        "@id": "top:preferredContactMethod",
+        "@type": "xsd:string"
+      },
+      "recruitStatus": {
+        "@id": "top:recruitStatus",
+        "@type": "xsd:string"
+      },
+      "recruitmentSource": {
+        "@id": "top:recruitmentSource",
+        "@type": "xsd:string"
+      },
+      "recruitmentSourceDetails": {
+        "@id": "top:recruitmentSourceDetails",
+        "@type": "xsd:string"
+      },
+      "responseDate": {
+        "@id": "top:responseDate",
+        "@type": "xsd:date"
+      },
+      "preScreeningOutcome": {
+        "@id": "top:preScreeningOutcome",
+        "@type": "xsd:string"
+      },
+      "preScreeningNotes": {
+        "@id": "top:preScreeningNotes",
+        "@type": "xsd:string"
+      },
+      "contactAttempts": {
+        "@id": "top:contactAttempts",
+        "@type": "xsd:integer"
+      },
+      "lastContactDate": {
+        "@id": "top:lastContactDate",
+        "@type": "xsd:date"
+      },
+      "consentScheduled": {
+        "@id": "top:consentScheduled",
+        "@type": "xsd:boolean"
+      },
+      "consentAppointmentDate": {
+        "@id": "top:consentAppointmentDate",
+        "@type": "xsd:date"
+      },
+      "recruitedBy": {
+        "@id": "top:recruitedBy",
+        "@type": "@id"
+      },
+      "convertedToParticipant": {
+        "@id": "top:convertedToParticipant",
         "@type": "@id"
       },
       "Organization": {
@@ -392,6 +1328,13 @@
           }
         ]
       },
+      "documentId": {
+        "@id": "topc:documentId"
+      },
+      "documentTitle": {
+        "@id": "topc:documentTitle",
+        "@type": "xsd:string"
+      },
       "documentType": {
         "@id": "topc:documentType",
         "@type": "xsd:string"
@@ -400,22 +1343,430 @@
         "@id": "topc:documentVersion",
         "@type": "xsd:string"
       },
+      "documentStatus": {
+        "@id": "topc:documentStatus",
+        "@type": "xsd:string"
+      },
+      "essentialRecordPurpose": {
+        "@id": "topc:essentialRecordPurpose",
+        "@type": "xsd:string"
+      },
+      "isfSection": {
+        "@id": "topc:isfSection",
+        "@type": "xsd:string"
+      },
       "etmfLocation": {
         "@id": "topc:etmfLocation",
         "@type": "xsd:anyURI"
+      },
+      "creationDate": {
+        "@id": "topc:creationDate",
+        "@type": "xsd:date"
+      },
+      "expirationDate": {
+        "@id": "topc:expirationDate",
+        "@type": "xsd:date"
+      },
+      "retentionUntil": {
+        "@id": "topc:retentionUntil",
+        "@type": "xsd:date"
+      },
+      "StudySite": {
+        "@id": "topc:StudySite",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "usdm:StudySite"
+          },
+          {
+            "@id": "fhir:ResearchStudy.site"
+          }
+        ]
+      },
+      "studySiteId": {
+        "@id": "topc:studySiteId"
+      },
+      "siteNumber": {
+        "@id": "topc:siteNumber",
+        "@type": "xsd:string"
+      },
+      "studySiteStatus": {
+        "@id": "topc:studySiteStatus",
+        "@type": "xsd:string"
+      },
+      "activationDate": {
+        "@id": "topc:activationDate",
+        "@type": "xsd:date"
+      },
+      "deactivationDate": {
+        "@id": "topc:deactivationDate",
+        "@type": "xsd:date"
+      },
+      "enrollmentTarget": {
+        "@id": "topc:enrollmentTarget",
+        "@type": "xsd:integer"
+      },
+      "lastMonitoringVisitDate": {
+        "@id": "topc:lastMonitoringVisitDate",
+        "@type": "xsd:date"
+      },
+      "oversightTier": {
+        "@id": "topc:oversightTier",
+        "@type": "xsd:string"
+      },
+      "recruitmentPotential": {
+        "@id": "topc:recruitmentPotential",
+        "@type": "xsd:integer"
+      },
+      "staffingAdequate": {
+        "@id": "topc:staffingAdequate",
+        "@type": "xsd:boolean"
+      },
+      "essentialRecordsRetentionUntil": {
+        "@id": "topc:essentialRecordsRetentionUntil",
+        "@type": "xsd:date"
+      },
+      "irbApprovalStatus": {
+        "@id": "topc:irbApprovalStatus",
+        "@type": "xsd:string"
+      },
+      "irbApprovalDate": {
+        "@id": "topc:irbApprovalDate",
+        "@type": "xsd:date"
+      },
+      "regulatoryAuthorizationStatus": {
+        "@id": "topc:regulatoryAuthorizationStatus",
+        "@type": "xsd:string"
+      },
+      "Person": {
+        "@id": "topc:Person",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Practitioner"
+          },
+          {
+            "@id": "usdm:AssignedPerson"
+          },
+          {
+            "@id": "omop:PROVIDER"
+          }
+        ]
+      },
+      "personId": {
+        "@id": "topc:personId"
+      },
+      "title": {
+        "@id": "topc:title",
+        "@type": "xsd:string"
+      },
+      "jobTitle": {
+        "@id": "topc:jobTitle",
+        "@type": "xsd:string"
+      },
+      "npi": {
+        "@id": "topc:npi",
+        "@type": "xsd:string"
+      },
+      "preferredLanguages": {
+        "@id": "topc:preferredLanguages",
+        "@type": "xsd:string"
+      },
+      "gcpTrainingStatus": {
+        "@id": "topc:gcpTrainingStatus",
+        "@type": "xsd:string"
+      },
+      "gcpTrainingExpiry": {
+        "@id": "topc:gcpTrainingExpiry",
+        "@type": "xsd:date"
+      },
+      "System": {
+        "@id": "topc:System",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Device (where the System is a medical-device-class platform; otherwise no direct FHIR equivalent)"
+          }
+        ]
+      },
+      "systemId": {
+        "@id": "topc:systemId"
+      },
+      "vendor": {
+        "@id": "topc:vendor",
+        "@type": "xsd:string"
+      },
+      "productName": {
+        "@id": "topc:productName",
+        "@type": "xsd:string"
+      },
+      "instanceId": {
+        "@id": "topc:instanceId",
+        "@type": "xsd:string"
+      },
+      "baseUrl": {
+        "@id": "topc:baseUrl",
+        "@type": "xsd:anyURI"
+      },
+      "systemType": {
+        "@id": "topc:systemType",
+        "@type": "xsd:string"
+      },
+      "version": {
+        "@id": "topc:version",
+        "@type": "xsd:string"
+      },
+      "validatedFor21CfrPart11": {
+        "@id": "topc:validatedFor21CfrPart11",
+        "@type": "xsd:boolean"
+      },
+      "validatedForEuAnnex11": {
+        "@id": "topc:validatedForEuAnnex11",
+        "@type": "xsd:boolean"
+      },
+      "validationStatus": {
+        "@id": "topc:validationStatus",
+        "@type": "xsd:string"
+      },
+      "validationApproach": {
+        "@id": "topc:validationApproach",
+        "@type": "xsd:string"
+      },
+      "lastValidationDate": {
+        "@id": "topc:lastValidationDate",
+        "@type": "xsd:date"
+      },
+      "releaseStatus": {
+        "@id": "topc:releaseStatus",
+        "@type": "xsd:string"
+      },
+      "auditTrailEnabled": {
+        "@id": "topc:auditTrailEnabled",
+        "@type": "xsd:boolean"
+      },
+      "Log": {
+        "@id": "topc:Log",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:AuditEvent (for system-generated audit-trail logs); fhir:DocumentReference (for archival-form logs)"
+          }
+        ]
+      },
+      "logId": {
+        "@id": "topc:logId"
+      },
+      "logType": {
+        "@id": "topc:logType",
+        "@type": "xsd:string"
+      },
+      "logTitle": {
+        "@id": "topc:logTitle",
+        "@type": "xsd:string"
+      },
+      "openedDate": {
+        "@id": "topc:openedDate",
+        "@type": "xsd:date"
+      },
+      "closedDate": {
+        "@id": "topc:closedDate",
+        "@type": "xsd:date"
+      },
+      "entryCount": {
+        "@id": "topc:entryCount",
+        "@type": "xsd:integer"
+      },
+      "Equipment": {
+        "@id": "topc:Equipment",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Device"
+          },
+          {
+            "@id": "omop:DEVICE_EXPOSURE (per-use event at Visit-occurrence; Equipment entity itself has no direct OMOP table)"
+          },
+          {
+            "@id": "obi:device (partial; OBI covers some equipment classes but coverage is fragmentary)"
+          }
+        ]
+      },
+      "equipmentId": {
+        "@id": "topc:equipmentId"
+      },
+      "equipmentName": {
+        "@id": "topc:equipmentName",
+        "@type": "xsd:string"
+      },
+      "equipmentClass": {
+        "@id": "topc:equipmentClass",
+        "@type": "xsd:string"
+      },
+      "equipmentBinding": {
+        "@id": "topc:equipmentBinding",
+        "@type": "xsd:string"
+      },
+      "manufacturer": {
+        "@id": "topc:manufacturer",
+        "@type": "xsd:string"
+      },
+      "model": {
+        "@id": "topc:model",
+        "@type": "xsd:string"
+      },
+      "serialNumber": {
+        "@id": "topc:serialNumber",
+        "@type": "xsd:string"
+      },
+      "purchaseDate": {
+        "@id": "topc:purchaseDate",
+        "@type": "xsd:date"
+      },
+      "installationDate": {
+        "@id": "topc:installationDate",
+        "@type": "xsd:date"
+      },
+      "lastCalibrationDate": {
+        "@id": "topc:lastCalibrationDate",
+        "@type": "xsd:date"
+      },
+      "nextCalibrationDueDate": {
+        "@id": "topc:nextCalibrationDueDate",
+        "@type": "xsd:date"
+      },
+      "calibrationFrequency": {
+        "@id": "topc:calibrationFrequency",
+        "@type": "xsd:string"
+      },
+      "lastMaintenanceDate": {
+        "@id": "topc:lastMaintenanceDate",
+        "@type": "xsd:date"
+      },
+      "maintenanceSchedule": {
+        "@id": "topc:maintenanceSchedule",
+        "@type": "xsd:string"
+      },
+      "locationDescription": {
+        "@id": "topc:locationDescription",
+        "@type": "xsd:string"
+      },
+      "temperatureRange": {
+        "@id": "topc:temperatureRange",
+        "@type": "xsd:object"
+      },
+      "StorageLocation": {
+        "@id": "topc:StorageLocation",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Location"
+          }
+        ]
+      },
+      "storageLocationId": {
+        "@id": "topc:storageLocationId"
+      },
+      "locationName": {
+        "@id": "topc:locationName",
+        "@type": "xsd:string"
+      },
+      "storageType": {
+        "@id": "topc:storageType",
+        "@type": "xsd:string"
+      },
+      "temperatureRangeC": {
+        "@id": "topc:temperatureRangeC",
+        "@type": "xsd:string"
+      },
+      "capacity": {
+        "@id": "topc:capacity",
+        "@type": "xsd:integer"
+      },
+      "capacityUnit": {
+        "@id": "topc:capacityUnit",
+        "@type": "xsd:string"
+      },
+      "currentOccupancy": {
+        "@id": "topc:currentOccupancy",
+        "@type": "xsd:integer"
+      },
+      "accessRestriction": {
+        "@id": "topc:accessRestriction",
+        "@type": "xsd:string"
+      },
+      "securityLevel": {
+        "@id": "topc:securityLevel",
+        "@type": "xsd:string"
+      },
+      "gpsCoordinates": {
+        "@id": "topc:gpsCoordinates",
+        "@type": "xsd:string"
+      },
+      "Credential": {
+        "@id": "topc:Credential",
+        "@type": "@id",
+        "owl:equivalentClass": [
+          {
+            "@id": "fhir:Credential (Practitioner.qualification for person-credentials)"
+          }
+        ]
+      },
+      "credentialId": {
+        "@id": "topc:credentialId"
+      },
+      "credentialType": {
+        "@id": "topc:credentialType",
+        "@type": "xsd:string"
+      },
+      "credentialNumber": {
+        "@id": "topc:credentialNumber",
+        "@type": "xsd:string"
+      },
+      "issuingAuthorityName": {
+        "@id": "topc:issuingAuthorityName",
+        "@type": "xsd:string"
+      },
+      "issueDate": {
+        "@id": "topc:issueDate",
+        "@type": "xsd:date"
+      },
+      "verificationStatus": {
+        "@id": "topc:verificationStatus",
+        "@type": "xsd:string"
+      },
+      "verificationDate": {
+        "@id": "topc:verificationDate",
+        "@type": "xsd:date"
+      },
+      "lastReviewDate": {
+        "@id": "topc:lastReviewDate",
+        "@type": "xsd:date"
+      },
+      "nextReviewDate": {
+        "@id": "topc:nextReviewDate",
+        "@type": "xsd:date"
       }
     }
   ],
   "_meta": {
-    "source_version": "0.1.4-strawman",
+    "source_version": "0.4.0-strawman",
     "top_levels": [
       "Sponsor",
       "Study",
-      "Site"
+      "Site",
+      "Participant",
+      "Recruit"
     ],
     "horizontals": [
       "Organization",
-      "Document"
+      "Document",
+      "StudySite",
+      "Person",
+      "System",
+      "Log",
+      "Equipment",
+      "StorageLocation",
+      "Credential"
     ]
   }
 }
