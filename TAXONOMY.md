@@ -11,44 +11,51 @@ The original namespace structure had two compounding errors:
 
 The corrected taxonomy is layered, not siblinged: a single commons substrate (universal cross-cutting concepts) plus composable workflow extensions (workflow-specific concepts that compose on top of the substrate). Workflows are NOT mutually exclusive — a real-world deployment uses as many extensions as it needs, all over the same commons.
 
-## The architecture (Option B — commons-as-vocabulary, workflows-as-shape)
+## The architecture (Option B — commons holds universal primitive shapes; workflows extend with specialization)
 
-After working through whether `clinical-research/visit` and `healthcare/visit` both feel right (they do — same word, different shapes per workflow), the architecture commits to **Option B**: commons holds the *concept vocabulary* (the operator-grounded names everyone recognizes); workflow extensions hold the *shapes* (the operational attributes that vary per workflow). Workflow shapes subClassOf the commons concept so cross-workflow queries against the commons supertype find every workflow's specialized shape.
+After working through whether `clinical-research/visit` and `healthcare/visit` both feel right (they do — same word, different shapes per workflow), then whether Document's primitive attrs are durable across every domain (yes — id, title, version, status, dates, retention are universal), the architecture commits to **Option B properly scoped**:
+
+- **Commons holds universal primitive shapes** for entities with attributes durable across every workflow. Most entities qualify at the primitive level — Document, Equipment, System, Log, StorageLocation, Credential, Visit, Event, Site, OversightBody, Activity, Task, VisitObservation, Person, Organization. Each has a universal primitive shape that any workflow can use directly.
+- **Workflow extensions specialize via subClassOf** when they need workflow-specific attributes. The clinical-research workflow adds essentialRecordPurpose to Document, visitDay+visitWindow to Visit, CTCAE grade to Event, etc.
+- **Workflow-native entities** (no commons supertype) live in workflow extensions when the concept itself only exists in that workflow — Sponsor, Study, Participant, Recruit, InvestigationalProduct in clinical research.
+- Cross-workflow queries against the commons supertype find every workflow's specialized shape via subClassOf inheritance.
 
 ```
 TOP (the project framework — top.scientix.ai)
   │
-  └── Commons substrate (universal layer — topc:)
+  └── Commons (universal layer — topc:) — 15 entities WITH SHAPE
         │
-        ├── CONCEPTS (vocabulary anchors; SKOS-only, no shape) —
-        │   the words operators across workflows recognize:
-        │   topc:Visit, topc:Event, topc:Site, topc:OversightBody,
-        │   topc:Activity, topc:Task, topc:VisitObservation,
-        │   topc:Document, topc:Equipment, topc:System, topc:Log,
-        │   topc:StorageLocation, topc:Credential
+        ├── Identity primitives (truly identical across workflows):
+        │   topc:Person, topc:Organization
         │
-        └── COMMONS WITH SHAPE (truly identical attrs across workflows):
-            topc:Person (universal identity attrs)
-            topc:Organization (universal corporate attrs)
+        └── Operational primitives (universal core attrs; workflows specialize):
+            topc:Site, topc:Visit, topc:Event, topc:OversightBody,
+            topc:Document, topc:Equipment, topc:System, topc:Log,
+            topc:StorageLocation, topc:Credential,
+            topc:Activity, topc:Task, topc:VisitObservation
 
   └── Workflow extensions (composable; not mutually exclusive)
         │
         ├── Clinical Research (topcr:) — current, in flight
         │     │
-        │     ├── SHAPES that subClassOf commons concepts:
-        │     │   topcr:Visit subClassOf topc:Visit
-        │     │   topcr:Event subClassOf topc:Event
-        │     │   topcr:Site subClassOf topc:Site
-        │     │   topcr:OversightBody subClassOf topc:OversightBody
-        │     │   topcr:Activity subClassOf topc:Activity
-        │     │   topcr:Task subClassOf topc:Task
-        │     │   topcr:VisitObservation subClassOf topc:VisitObservation
-        │     │   topcr:Document subClassOf topc:Document
-        │     │   topcr:Equipment subClassOf topc:Equipment
-        │     │   topcr:System subClassOf topc:System
-        │     │   topcr:Log subClassOf topc:Log
-        │     │   topcr:StorageLocation subClassOf topc:StorageLocation
-        │     │   topcr:Credential subClassOf topc:Credential
+        │     ├── SPECIALIZATIONS that subClassOf commons (add workflow-specific attrs):
+        │     │   topcr:Document   (adds ICH E6(R3) Appendix C essentialRecordPurpose
+        │     │                     + responsibleParty + isfSection + etmfLocation
+        │     │                     + clinical-research documentType enum values)
+        │     │   topcr:Equipment  (adds equipmentBinding enum)
+        │     │   topcr:System     (adds three-axis pattern operatedBy/usedBy/oversightHeldBy)
+        │     │   topcr:Log        (adds clinical-research log-type specifics)
+        │     │   topcr:StorageLocation (adds temperature / sample-storage specifics)
+        │     │   topcr:Credential (adds GCP/CLIA/IATA-specific credential types)
+        │     │   topcr:Visit      (adds visitNumber, visitDay, visitWindow, definedBy,
+        │     │                     forParticipant, forStudySite, protocolDeviationCode)
+        │     │   topcr:Event      (adds CTCAE grade, expedited reporting, ICH E2A
+        │     │                     reportability, eventCategory enum AE/SAE/Deviation/etc.)
+        │     │   topcr:Site       (adds SFQ feasibility profile)
+        │     │   topcr:OversightBody (adds IRB-registration / DSMB-charter specifics)
+        │     │   topcr:Activity   (adds biomedicalConceptCode → COSMoS BC catalog)
+        │     │   topcr:Task       (adds biomedicalConceptCode)
+        │     │   topcr:VisitObservation (adds Path C Event-escalation specifics)
         │     │
         │     └── CLINICAL-RESEARCH-NATIVE entities (no commons supertype —
         │         these concepts only exist in clinical-research workflow):
@@ -61,30 +68,34 @@ TOP (the project framework — top.scientix.ai)
         │         + InvestigationalProduct sub-objects (Lot, Kit)
         │
         ├── Care Delivery (topcd:) — future
-        │     SHAPES that subClassOf commons (topcd:Visit, topcd:Encounter,
-        │     topcd:Event, topcd:Site, topcd:OversightBody — for P&T committees, etc.)
-        │     + CARE-DELIVERY-NATIVE entities (topcd:Patient, topcd:Order,
-        │       topcd:Diagnosis, topcd:Discharge, ...)
+        │     SPECIALIZATIONS (topcd:Visit subClassOf topc:Visit; topcd:Event;
+        │     topcd:OversightBody for P&T committees)
+        │     + CARE-DELIVERY-NATIVE (topcd:Patient, topcd:Order, topcd:Diagnosis,
+        │       topcd:Discharge)
         │
         ├── Manufacturing (topmfg:) — future
-        │     SHAPES that subClassOf commons (topmfg:InspectionVisit subClassOf
-        │     topc:Visit; topmfg:Event subClassOf topc:Event for OOS / Batch
-        │     Failure / Contamination; topmfg:Site for manufacturing plants)
-        │     + MANUFACTURING-NATIVE entities (ManufacturingBatch, BatchRecord,
-        │       ProcessParameters, ...)
+        │     SPECIALIZATIONS (topmfg:InspectionVisit subClassOf topc:Visit;
+        │     topmfg:Event for OOS / Batch Failure / Contamination;
+        │     topmfg:Site for manufacturing plants)
+        │     + MANUFACTURING-NATIVE (ManufacturingBatch, BatchRecord,
+        │       ProcessParameters)
         │
         └── Supply Chain (topsc:) — future
-              SHAPES that subClassOf commons (topsc:DeliveryVisit subClassOf
-              topc:Visit; topsc:Event subClassOf topc:Event for cold-chain
-              excursions; topsc:Warehouse subClassOf topc:Site)
-              + SUPPLY-CHAIN-NATIVE entities (Shipment, CustodyHandoff, Carrier, ...)
+              SPECIALIZATIONS (topsc:DeliveryVisit subClassOf topc:Visit;
+              topsc:Event for cold-chain excursions; topsc:Warehouse subClassOf
+              topc:Site)
+              + SUPPLY-CHAIN-NATIVE (Shipment, CustodyHandoff, Carrier)
 ```
 
-**Two kinds of entities exist in workflow extensions**:
-1. **Shapes that subClassOf a commons concept** — when the operator's word (Visit, Event, Site, etc.) is universal across workflows but the ATTRIBUTES diverge. Cross-workflow queries against the commons supertype work via inheritance.
-2. **Workflow-native entities** (no commons supertype) — when the concept itself only exists in that workflow. Sponsor / Study / Participant / Recruit / InvestigationalProduct / StudySite are clinical-research-native; manufacturing has its native concepts; etc.
+**The pattern in plain language**: Commons gives you usable entities at the primitive-attributes level — a `topc:Document` instance is a real, queryable, validatable thing. Workflow extensions ADD attributes by subclassing. A clinical-research deployment uses `topc:Document` directly when the universal attrs are sufficient, or `topcr:Document subClassOf topc:Document` when it needs `essentialRecordPurpose`. Cross-workflow queries against `topc:Document` find every workflow's specialized Document via subClassOf inheritance.
 
-**The same example reads consistently**: a smart hospital sponsoring a clinical trial uses commons substrate (`topc:Person`, `topc:Organization`) + clinical-research workflow shapes (`topcr:Sponsor`, `topcr:Study`, `topcr:Visit subClassOf topc:Visit`) + (future) care-delivery workflow shapes (`topcd:Patient`, `topcd:Visit subClassOf topc:Visit`). Same Visit *concept*; two specialized shapes; cross-workflow queries find both.
+**This is the FHIR-base-resource + profile pattern.** FHIR Encounter is a usable resource with universal attrs; US Core / AU Core / IPS profiles extend it with regional/jurisdictional specifics. TOP commons + workflow extensions follows the same pattern.
+
+**Two kinds of entities exist in workflow extensions**:
+1. **Specialization shapes that subClassOf a commons primitive** — when the primitive shape is universal but workflow needs additional attributes (Document, Equipment, Visit, Event, etc.).
+2. **Workflow-native entities** (no commons supertype) — when the concept itself only exists in that workflow (Sponsor, Study, Participant, etc.).
+
+**The same example reads consistently**: a smart hospital sponsoring a clinical trial uses commons substrate (`topc:Person`, `topc:Organization`, `topc:Site`, `topc:Visit`, `topc:Event`, `topc:Document`, `topc:Equipment`, etc. — directly usable) + clinical-research workflow extensions (`topcr:Sponsor`, `topcr:Study`, `topcr:Visit subClassOf topc:Visit` for the protocol-specific attrs, etc.) + (future) care-delivery workflow extensions (`topcd:Patient`, `topcd:Visit subClassOf topc:Visit` for billing/encounter specifics). Same Visit *primitive*; multiple specialized shapes; cross-workflow queries find them all.
 
 ## URI / prefix conventions
 
