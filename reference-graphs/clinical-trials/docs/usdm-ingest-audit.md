@@ -1,19 +1,19 @@
-# USDM v3 / ICH M11 ingest audit (working draft)
+# USDM v4 / ICH M11 ingest audit (working draft)
 
-> Working document. Audits TOP Study v0.3.0 (Sponsor v0.1.4 / Site v0.2.0 alongside) against the USDM v3 model in `cdisc-org/usdm/main/src/usdm_model/` to determine whether a USDM v3 / ICH M11 compliant protocol document can be deterministically ingested into TOP NGSI-LD entities. Output: a punch list of structural gaps in both directions and recommended TOP-side adjustments before the ingester is built.
+> Working document. Audits TOP Study v0.3.0 (Sponsor v0.1.4 / Site v0.2.0 alongside) against the USDM v4 model in `cdisc-org/usdm/main/src/usdm_model/` to determine whether a USDM v4 / ICH M11 compliant protocol document can be deterministically ingested into TOP NGSI-LD entities. Output: a punch list of structural gaps in both directions and recommended TOP-side adjustments before the ingester is built.
 > Last touched 2026-05-09.
 
 ## Goal
 
-TOP must support **automated ingestion** of a USDM v3 / ICH M11 compliant protocol JSON into NGSI-LD entities. Pipeline: USDM JSON in → TOP NGSI-LD entities out (Study, Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion, future Visit/Activity). No human in the loop for design-side entity creation.
+TOP must support **automated ingestion** of a USDM v4 / ICH M11 compliant protocol JSON into NGSI-LD entities. Pipeline: USDM JSON in → TOP NGSI-LD entities out (Study, Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion, future Visit/Activity). No human in the loop for design-side entity creation.
 
 This audit asks: **can the current Study v0.3.0 source intermediate accept a USDM document without lossy reshape, and is anything missing on the TOP side that the ingester would need?**
 
-Verified against the live USDM v3 source: 72 files in `src/usdm_model/`. Field inventories captured for `study.py`, `study_version.py`, `study_design.py`, `study_arm.py`, `schedule_timeline.py`, `endpoint.py`, `objective.py`, `eligibility_criterion.py`, `encounter.py`, `activity.py`, `study_definition_document.py`, `study_definition_document_version.py`, `subject_enrollment.py`.
+Verified against the live USDM v4 source: 72 files in `src/usdm_model/`. Field inventories captured for `study.py`, `study_version.py`, `study_design.py`, `study_arm.py`, `schedule_timeline.py`, `endpoint.py`, `objective.py`, `eligibility_criterion.py`, `encounter.py`, `activity.py`, `study_definition_document.py`, `study_definition_document_version.py`, `subject_enrollment.py`.
 
 ## Top finding
 
-**TOP Study v0.3.0 is mostly compatible with USDM v3 ingestion**, but there are **eight structural mismatches** that need explicit decisions before the ingester is built. Two are big enough to potentially affect TOP's design layer; the other six are routine mapping concerns that need a documented convention.
+**TOP Study v0.3.0 is mostly compatible with USDM v4 ingestion**, but there are **eight structural mismatches** that need explicit decisions before the ingester is built. Two are big enough to potentially affect TOP's design layer; the other six are routine mapping concerns that need a documented convention.
 
 The big two:
 1. **StudyVersion is not modeled in TOP** — USDM treats every Study as having multiple versions; each StudyVersion carries its own studyDesigns, identifiers, dates, eligibility. TOP collapses to a single current effective set + Amendments. The ingester has to pick a StudyVersion to project; multi-version protocols lose fidelity unless TOP adds StudyVersion as a first-class entity.
@@ -27,7 +27,7 @@ The other six are routine:
 7. Eligibility text living in a separate Item entity (USDM EligibilityCriterion → criterionItemId → EligibilityCriterionItem.text)
 8. studyDesignRationale lives on Study/StudyDesign in USDM but TOP has it on Protocol
 
-## USDM v3 architecture (verified)
+## USDM v4 architecture (verified)
 
 ```
 Study (id, name, description, label, versions[], documentedBy[])
@@ -174,7 +174,7 @@ For each TOP attribute: where it comes from in a USDM document, and any concern.
 
 ### Gap 1 — StudyVersion not modeled in TOP (architectural)
 
-USDM v3 treats every Study as having `versions[]` of StudyVersion, each carrying its own studyDesigns, identifiers, dates, eligibility, organizations. TOP collapses to a single current effective set + Amendments[] (Amendment not yet in source).
+USDM v4 treats every Study as having `versions[]` of StudyVersion, each carrying its own studyDesigns, identifiers, dates, eligibility, organizations. TOP collapses to a single current effective set + Amendments[] (Amendment not yet in source).
 
 **Implication**: ingester picks one StudyVersion to project (typically the most recent EFFECTIVE version). Multi-version protocols where amendments are substantively different (different study designs, different eligibility) lose fidelity.
 
@@ -262,14 +262,98 @@ Overall: TOP Study v0.3.0 is **ready for first-pass USDM ingest** with the conve
 4. **Document the URI policy formally** in a new `tools/ingest_usdm_uri_policy.md` (or as part of the ingester spec). Provisional pattern from Participant planning note: `urn:top:study:{usdm_study_id}/...`.
 5. **Document the Code→enum mapping table** in the source intermediate as `_codeMap` annotations or in a separate `ingester-mappings.md`.
 
-## What this audit does NOT cover
+## Validation against USDM integration test files
 
-- **Visit / Activity / Procedure**: not yet lifted in TOP. When those lift (post-Participant), the audit must be extended to USDM Encounter / Activity / Procedure.
-- **Population / StudyDesignPopulation**: not fetched in this round; expected to map cleanly to TOP Study eligibility-roll-up fields.
-- **Indication / Condition / BiomedicalConcept**: USDM models clinical concepts richly; TOP keeps `conditionStudied` as free text. Adequate for v0.3.0; deeper alignment needed when TOP starts ingesting Activity content (procedures reference BiomedicalConcepts).
-- **NarrativeContent / SyntaxTemplate**: USDM models the protocol prose (M11 sections) as structured NarrativeContent. TOP doesn't aspire to ingest prose; the protocol PDF reference is enough for operators.
+The audit above was constructed from per-class field inventories. To validate against real USDM documents, I read several files from `cdisc-org/usdm/main/tests/integration_test_files/`:
 
-## Open questions for Bo
+- `minimum.json` — minimal valid USDM Study (Phase II Alzheimer's, single-arm, no scheduleTimelines, no eligibility criteria, no documentedBy)
+- `full_1.json` — full USDM Study (Phase III diabetes, two arms, four epochs, six encounters, four amendments, multiple eligibility criteria, multiple objectives/endpoints)
+- `eligibility_criteria_1.json` — full eligibility-criteria patterns
+- `arms_epochs.json` — arm/epoch/cell structure
+- `interventions.json` — StudyIntervention examples
+
+Concrete findings that supplement or amend the audit above:
+
+### Finding A — USDM is at v4.0.0 (corrected)
+
+The integration test files carry `"usdmVersion": "4.0.0"` and `"systemVersion": "0.67.0"`. The python source on `main` is the v4 model. References throughout this audit corrected from v3 to v4. **Action**: ingester targets USDM v4. Earlier-version compatibility is a separate concern.
+
+### Finding B — Protocol is OPTIONAL in USDM (new Gap 9)
+
+`minimum.json` has `"documentedBy": []`. A valid USDM Study with no attached `StudyDefinitionDocument` exists. TOP's `Study.hasProtocol` is currently `1..1`.
+
+**This is a structural mismatch that breaks ingest of valid USDM documents.**
+
+**Action (Gap 9)**: change `Study.hasProtocol` cardinality from `1..1` to `0..1`. Update the SHACL invariant to say "Protocol is required once the Study reaches RECRUITING status" rather than "Protocol is required for all Studies." A planning-state Study from M11 may have no formal protocol document yet.
+
+### Finding C — Identifier scope is via Organization reference, not Code directly (refines Gap 6)
+
+Audit Gap 6 said "studyIdentifiers[scope] is a Code." Wrong. `StudyIdentifier` has `scopeId` referencing `StudyVersion.organizations[id == scopeId]`. The scope is an Organization (FDA, EMA, ClinicalTrials.gov, NCI, sponsor's own — all modeled as Organization entities, with the Organization's `type.code` indicating role).
+
+**Action (refines Gap 6)**: ingester resolves `studyIdentifiers[].scopeId` → Organization → check `Organization.type.code` to dispatch into TOP's `clinicalTrialsGovId` / `eudraCT` / `nciId` / `sponsorProtocolId` / etc. The `Organization.type` Code values are the discriminator (e.g., `C42627` for Clinical Trial Registry; sponsor org has `type.code` like `C54149` for Drug Company).
+
+### Finding D — EligibilityCriterionItem text uses placeholder substitution (refines Gap 7)
+
+`eligibility_criteria_1.json`: `EligibilityCriterionItem.text = "Subjects shall be between [min_age] and [max_age]"` with `dictionaryId` referencing a `SyntaxTemplateDictionary` that holds the substitution values.
+
+**Action (refines Gap 7)**: ingester does TWO steps:
+1. Dereference `EligibilityCriterion.criterionItemId` → `EligibilityCriterionItem.text` (the templated form)
+2. Resolve `[placeholder]` substitutions via `EligibilityCriterionItem.dictionaryId` → `SyntaxTemplateDictionary`
+
+TOP `criterionText` should hold the **resolved** form (operator reading: "Subjects shall be between 18 and 70 years old"). The templated form can be preserved in a TOP-side annotation if needed for round-trip fidelity, but the resolved form is the operator-grounded value.
+
+### Finding E — StudyVersion.amendments[] is the Amendment ingest source
+
+Confirmed against `full_1.json`: 4 amendments live in `StudyVersion.amendments[]` with reasons (TYPO_FIX, DESIGN_CHANGE, UNBLINDING_SECTION, INCLUSION_CRITERIA_UPDATE) and per-amendment enrollment-scope changes by geography. When TOP lifts Amendment (currently flagged-missing in `Study.hasAmendment`), ingest source is `usdm:StudyAmendment` from this list.
+
+### Finding F — Every USDM entity carries `extensionAttributes[]`
+
+`extensionAttributes: []` appears on every entity (Study, StudyVersion, StudyDesign, StudyArm, StudyEpoch, StudyCell, GovernanceDate, etc.). This is for sponsor-specific extensions in the M11 spec.
+
+**Action (new convention)**: ingester preserves `extensionAttributes[]` in a TOP-side `_usdmExtensions` map per entity. Lossy by convention if extensions are dropped; round-trip-safe if preserved. **Recommend preserving** by default (just JSON; cheap to keep).
+
+### Finding G — StudyDesignPopulation is the canonical source for TOP eligibility-roll-up fields (verified)
+
+Verified against `minimum.json`:
+- `population.includesHealthySubjects` (bool) → TOP `acceptsHealthyVolunteers`
+- `population.plannedEnrollmentNumber.value` (Quantity float) → TOP `targetEnrollment` (cast to int)
+- `population.plannedSex[].decode` (Code list, often "Both" / "Male" / "Female") → TOP `sexEligibility`
+- `population.plannedAge.minValue.value` + unit Code → TOP `minAge` (formatted as "{value} {unit}")
+- `population.plannedAge.maxValue.value` + unit Code → TOP `maxAge`
+- `population.cohorts[]` — multi-cohort detail (TOP currently rolls into Study; per-cohort fidelity lost unless TOP adds Cohort)
+- `population.criterionIds[]` — per-population eligibility scoping (vs cross-cutting `StudyDesign.eligibilityCriteria`)
+
+`plannedCompletionNumber` (planned-to-complete) is a separate Quantity; TOP doesn't have a corresponding field. Information loss; could add `targetCompletion` if operationally useful.
+
+### Finding H — StudyInterventionIds is on StudyDesign and StudyElement, NOT on StudyArm (refines Gap 2)
+
+Verified against `study_arm.py`, `study_design.py`, `minimum.json` StudyElement field. The chain is:
+- `StudyDesign.studyInterventionIds[]` lists which interventions are used in this design
+- `StudyDesign.studyInterventions[]` defines them (on StudyVersion, referenced by id)
+- `StudyDesign.studyCells[]` joins (Arm × Epoch × Elements[])
+- `StudyElement.studyInterventionIds[]` lists which interventions are administered in this element
+
+So per-arm intervention assignment traverses: Arm → Cells (filtered by armId) → Elements (filtered by epoch) → Interventions. Three levels of indirection.
+
+**Action (refines Gap 2)**: ingester's "Arm.interventionDescription" derivation walks this chain. For TOP v0.3.0 (no StudyIntervention sub-object), produce a comma-joined list of intervention names per arm. When TOP adds StudyIntervention as a sub-object/horizontal in v0.4+, the proper graph projection lifts.
+
+### Finding I — Visit modes encoded in Encounter.type Code
+
+`full_1.json` Encounter type decodes include "Visit, Clinic, In Person" and "Visit, Home, Telephone Call". The Encounter type Code carries (visit-or-not, location, mode) as a triple. **For Visit lift**: TOP Visit.visitMode and Visit.visitLocation should derive from this Code structure. Worth noting for the Visit-lift planning note.
+
+### Finding J — IntentTypes vs primaryPurpose mapping
+
+`InterventionalStudyDesign.intentTypes[]` is a list (e.g., `["Treatment Study"]` in minimum.json). TOP `primaryPurpose` is single-valued. If the list has multiple entries, TOP must pick one or join. **Action**: ingester takes the first entry; documents convention.
+
+---
+
+**Net effect on the audit**: One new gap added (Gap 9 — Protocol cardinality), two routine gaps refined (Gap 6 — scope-via-Organization; Gap 7 — placeholder resolution), one new convention added (extensionAttributes preservation), and minor refinements to Gaps 2 and the cross-walk tables.
+
+The audit's overall verdict is unchanged: **Study v0.3.0 is ready for first-pass USDM v4 ingest with the gaps and conventions documented**. Gap 9 (Protocol cardinality) is the only new TOP-side change required before the ingester is built; trivial fix.
+
+## Updated open questions for Bo
+
+(Adds Gap 9 to the original six.)
 
 1. **Gap 1 (StudyVersion)**: keep flat with Amendment-tracking (Option A/C), or lift StudyVersion to first-class (Option B)?
 2. **Gap 2 (Estimand)**: add Estimand sub-object in v0.4 (recommended), or accept lossy ingest for now?
@@ -277,12 +361,21 @@ Overall: TOP Study v0.3.0 is **ready for first-pass USDM ingest** with the conve
 4. **URI policy commitment**: `urn:top:study:{usdm_id}/...` (provisional), or different scheme?
 5. **Code→enum mapping policy**: emit `mapsToCode` annotations in source intermediate (heavier), or maintain a side `ingester-mappings.md` (lighter)?
 6. **Ingester sequencing**: build ingester now (v0.4) before Participant lift, OR after Participant lift, OR after Visit/Activity lift?
+7. **Gap 9 (Protocol cardinality)**: change `Study.hasProtocol` from `1..1` to `0..1` to accept USDM documents with no `documentedBy[]`. Recommended; trivial.
+
+## What this audit does NOT cover
+
+- **Visit / Activity / Procedure**: not yet lifted in TOP. When those lift (post-Participant), the audit must be extended to USDM Encounter / Activity / Procedure.
+- **Population / StudyDesignPopulation**: not fetched in this round; expected to map cleanly to TOP Study eligibility-roll-up fields.
+- **Indication / Condition / BiomedicalConcept**: USDM models clinical concepts richly; TOP keeps `conditionStudied` as free text. Adequate for v0.3.0; deeper alignment needed when TOP starts ingesting Activity content (procedures reference BiomedicalConcepts).
+- **NarrativeContent / SyntaxTemplate**: USDM models the protocol prose (M11 sections) as structured NarrativeContent. TOP doesn't aspire to ingest prose; the protocol PDF reference is enough for operators.
 
 ## Pointers
 
 - [`top-strawman.json`](../source/top-strawman.json) — TOP source intermediate audited here.
 - [`study-spec.html`](study-spec.html) — Study v0.3.0 spec (sealed).
 - [`participant-planning.md`](participant-planning.md) — Participant planning note; introduced the USDM/M11 ingest boundary.
-- [USDM v3 source](https://github.com/cdisc-org/usdm/tree/main/src/usdm_model) — verified against this revision.
+- [USDM v4 source](https://github.com/cdisc-org/usdm/tree/main/src/usdm_model) — verified against this revision.
+- [USDM integration test files](https://github.com/cdisc-org/usdm/tree/main/tests/integration_test_files) — used to validate the audit (`minimum.json`, `full_1.json`, `eligibility_criteria_1.json`, `arms_epochs.json`, `interventions.json`).
 - [ICH E9(R1) Addendum](https://www.ich.org/page/efficacy-guidelines) — Estimands framework (motivates Gap 2).
 - [ICH M11](https://www.ich.org/page/efficacy-guidelines) — protocol template the USDM digital instantiation conforms to.
