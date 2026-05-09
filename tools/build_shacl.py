@@ -1080,6 +1080,54 @@ def emit_domain_invariants(source):
     ] ."""))
     invariants.append("")
 
+    # === OversightBody invariants (v0.5.1) ===
+    invariants.append("# === OversightBody invariants (v0.5.1) ===")
+    invariants.append("")
+
+    # 35. Hard: an OversightBody with oversightBodyType in {IRB, EC} must have
+    #     scope=LOCAL or scope=CENTRAL. IRBs and ECs are review boards with
+    #     defined geographic / institutional scope; SPONSOR or REGULATORY scopes
+    #     are operational mismatches.
+    invariants.append(sub("""__P__:OversightBodyIRBScopeShape a sh:NodeShape ;
+    sh:targetClass __P__:OversightBody ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "OversightBody has oversightBodyType in {IRB, EC} but scope is not LOCAL or CENTRAL. IRBs and ECs are review boards with defined geographic / institutional scope; SPONSOR or REGULATORY scopes indicate a typing mismatch." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:OversightBody .
+                $this __P__:oversightBodyType ?type .
+                FILTER (?type IN ("IRB", "EC"))
+                $this __P__:scope ?scope .
+                FILTER (?scope NOT IN ("LOCAL", "CENTRAL"))
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
+    # 36. Hard: an OversightBody with oversightBodyType in {DSMB, IDMC} must have
+    #     scope=SPONSOR. These are sponsor-convened safety review boards.
+    invariants.append(sub("""__P__:OversightBodyDSMBScopeShape a sh:NodeShape ;
+    sh:targetClass __P__:OversightBody ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "OversightBody has oversightBodyType in {DSMB, IDMC} but scope is not SPONSOR. DSMB / IDMC are sponsor-convened safety review boards." ;
+        sh:severity sh:Violation ;
+        sh:select \"\"\"
+            PREFIX __P__: <__IRI__>
+            SELECT $this WHERE {
+                $this a __P__:OversightBody .
+                $this __P__:oversightBodyType ?type .
+                FILTER (?type IN ("DSMB", "IDMC"))
+                $this __P__:scope ?scope .
+                FILTER (?scope != "SPONSOR")
+            }
+        \"\"\" ;
+    ] ."""))
+    invariants.append("")
+
     return "\n".join(invariants)
 
 
@@ -1147,7 +1195,7 @@ def main():
 
     print(f"  shapes: {n_tlo + n_sub + n_hor} ({n_tlo} top-levels, {n_sub} sub-objects, {n_hor} horizontals)")
     print(f"  property shapes: {n_attrs} attributes + {n_rels} relationships = {n_attrs + n_rels}")
-    print(f"  domain invariants: 34 (5 soft warnings + 29 hard violations)")
+    print(f"  domain invariants: 36 (5 soft warnings + 31 hard violations)")
 
 
 if __name__ == "__main__":

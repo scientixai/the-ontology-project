@@ -1,6 +1,6 @@
 {
-  "_comment": "TOP v0.5.0 reference graph intermediate (strawman). v0.5.0 lift (2026-05-09) adds Visit (sixth top-level) with three Visit sub-objects (Activity, Task, VisitObservation) plus VisitDefinition as a Study sub-object. Per FIRST-PRINCIPLES.md universal-substrate posture, Activity and Task are universal containers \u2014 specialization is content (taskValue polymorphism + biomedicalConceptCode + URI references), never entity shape. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape; they differ in content. Per the temporal+PROV native conventions, every entity declares provType (prov:Agent / prov:Activity / prov:Entity); status attributes declare _temporalProperty: true; relationships carrying PROV semantics declare provSemantics. Task carries observedAt as Property metadata on taskValue (NOT a separate flat performedDateTime attribute). Top-level count: 6 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit); remaining: InvestigationalProduct, OversightBody, Event. Study sub-objects: 7 (Protocol, Arm, ScheduleOfAssessments, Endpoint, InclusionCriterion, ExclusionCriterion, VisitDefinition). Visit sub-objects: 3 (Activity, Task, VisitObservation). Total entities scaffolded: 6 top-levels + 13 sub-objects + 9 horizontals = 28 NodeShapes. SHACL invariants grow from 25 to 34 (4 soft + 30 hard). build_context.py and build_shacl.py emitters unchanged from v0.4.1. The OOUX Visit->Site direct edge correction is applied: Visit.forStudySite -> StudySite (1..1), not Site directly.",
-  "version": "0.5.0-strawman",
+  "_comment": "TOP v0.5.1 reference graph intermediate (strawman). v0.5.1 lift (2026-05-09) adds OversightBody as the seventh top-level. OversightBody covers the regulatory / ethics / safety committees that hold review authority over a Study or StudySite \u2014 IRB / EC / DSMB / IDMC / Steering Committee / CEC. Per FIRST-PRINCIPLES universal-substrate posture, OversightBody is a substrate primitive (every regulated trial has oversight bodies; not therapeutic-area-specific), so it lifts as a top-level. Un-flag-misses Sponsor.interfacesWith, StudySite.hasIRB, Study.hasOversightBody \u2014 three existing relationships now have a real target. Per temporal+PROV native: OversightBody declares provType: prov:Agent (committees that hold authority and bear responsibility for review decisions); reviewDecisions sub-object declares provType: prov:Activity (the review event itself). PROV chain: ReviewDecision wasAssociatedWith committee members (prov:Agent); the Study or StudySite review approval / disapproval / suspension is queryable as a graph traversal. Top-level count: 7 of 9 OOUX-locked top-levels scaffolded (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody). Remaining: InvestigationalProduct, Event.",
+  "version": "0.5.1-strawman",
   "prefix": "top",
   "horizontal_prefix": "topc",
   "namespaces": {
@@ -729,8 +729,7 @@
           "name": "hasOversightBody",
           "target": "OversightBody",
           "cardinality": "0..N",
-          "doc": "Study-level oversight bodies (DSMB, IDMC). Per-Site IRB/EC of record lives on StudySite.hasIRB.",
-          "_targetMissing": "OversightBody is a top-level in OOUX (one of the locked 8) but not yet in TOP source."
+          "doc": "Study-level oversight bodies (DSMB, IDMC). Per-Site IRB/EC of record lives on StudySite.hasIRB."
         },
         {
           "name": "hasStudyStartupPackage",
@@ -3160,6 +3159,192 @@
           ]
         }
       ]
+    },
+    {
+      "id": "OversightBody",
+      "role": "regulatory / ethics / safety committee with review authority over a Study or StudySite",
+      "description": "An OversightBody is a committee that holds review authority over a Study or StudySite \u2014 IRB (Institutional Review Board) for site-level ethics review, EC (Ethics Committee) for the EU equivalent, DSMB / IDMC (Data Safety Monitoring Board / Independent Data Monitoring Committee) for sponsor-level interim safety review, Steering Committee for cross-site governance, CEC (Clinical Events Committee) for endpoint adjudication. Per FIRST-PRINCIPLES universal-substrate posture, OversightBody is a substrate primitive (every regulated trial has oversight bodies regardless of therapeutic area). The oversight body holds authority; the review activities happen through ReviewDecision sub-objects.",
+      "ooux_editor_note": "v0.5.1 introduction (2026-05-09): seventh TOP top-level. Per OOUX-locked-9 sequencing. Un-flag-misses three existing relationships: Sponsor.interfacesWith, StudySite.hasIRB, Study.hasOversightBody. Per the temporal+PROV native commitment, OversightBody is prov:Agent (it bears responsibility); ReviewDecision sub-object is prov:Activity (the review event). reviewType enum carries the operator-grounded discrimination (IRB / EC / DSMB / IDMC / STEERING_COMMITTEE / CEC / OTHER) without splitting into specialized entities \u2014 universal substrate posture preserved. The cross-jurisdictional reality is that the same human committee can play different oversightBodyType roles on different studies (a hospital IRB can act as central IRB for some studies and local IRB for others); each role is a separate OversightBody record per the per-Org-per-Role pattern from Sponsor.",
+      "provType": "prov:Agent",
+      "crosswalks": {
+        "fhir": "fhir:Organization (with type=committee or type=ethics-board)",
+        "usdm": "usdm:Organization (with type=Code for committee subtype)",
+        "ich": "ICH E6(R3) Section 5 (IRB/EC); ICH E9 (DSMB/IDMC); ICH E2A (Safety Reporting)"
+      },
+      "attributes": [
+        {
+          "name": "oversightBodyId",
+          "type": "ngsi-ld:URI",
+          "unique": true,
+          "doc": "Globally unique NGSI-LD identifier."
+        },
+        {
+          "name": "oversightBodyName",
+          "type": "xsd:string",
+          "doc": "Display name (e.g., 'Memorial Sloan Kettering Cancer Center IRB', 'ONCO-423 Independent Data Monitoring Committee')."
+        },
+        {
+          "name": "oversightBodyType",
+          "type": "xsd:string",
+          "enum": [
+            "IRB",
+            "EC",
+            "DSMB",
+            "IDMC",
+            "STEERING_COMMITTEE",
+            "CEC",
+            "OTHER"
+          ],
+          "doc": "Type of oversight body. IRB for US institutional review boards; EC for European ethics committees; DSMB / IDMC are interchangeable terms for sponsor-level interim safety review boards; STEERING_COMMITTEE for cross-site governance; CEC for clinical events committees doing endpoint adjudication; OTHER for catch-all."
+        },
+        {
+          "name": "scope",
+          "type": "xsd:string",
+          "enum": [
+            "LOCAL",
+            "CENTRAL",
+            "SPONSOR",
+            "REGULATORY",
+            "OTHER"
+          ],
+          "doc": "Scope of authority. LOCAL for site-specific (typical IRB at a single institution); CENTRAL for multi-site coverage (a single IRB serving multiple sites); SPONSOR for sponsor-level (DSMB/IDMC); REGULATORY for regulator-affiliated; OTHER for catch-all."
+        },
+        {
+          "name": "registrationNumber",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "Registration identifier (e.g., FDA OHRP IRB registration number IRB00000123, FWA00001234, EU EC reference)."
+        },
+        {
+          "name": "registrationAuthority",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "The authority that issued the registration (e.g., 'FDA OHRP', 'EU CTIS', 'NHS HRA')."
+        },
+        {
+          "name": "registrationCountry",
+          "type": "xsd:string",
+          "optional": true,
+          "doc": "ISO 3166-1 alpha-3 country code where the body is registered."
+        },
+        {
+          "name": "address",
+          "type": "xsd:object",
+          "optional": true,
+          "doc": "Mailing address (line1, city, region, postalCode, country)."
+        },
+        {
+          "name": "phone",
+          "type": "xsd:string",
+          "optional": true
+        },
+        {
+          "name": "email",
+          "type": "xsd:string",
+          "optional": true
+        },
+        {
+          "name": "website",
+          "type": "xsd:anyURI",
+          "optional": true
+        },
+        {
+          "name": "operatingProcedure",
+          "type": "xsd:anyURI",
+          "optional": true,
+          "doc": "URI to the body's published operating procedure / charter / SOP. References a Document horizontal entity for full lineage when uploaded."
+        },
+        {
+          "name": "establishedDate",
+          "type": "xsd:date",
+          "optional": true,
+          "doc": "Date the body was established."
+        },
+        {
+          "name": "status",
+          "type": "xsd:string",
+          "enum": [
+            "ACTIVE",
+            "SUSPENDED",
+            "DISBANDED"
+          ],
+          "_temporalProperty": true,
+          "doc": "Lifecycle state. NGSI-LD temporal property \u2014 bodies can be suspended (regulatory hold) or disbanded after study completion."
+        },
+        {
+          "name": "validFrom",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this OversightBody record became operationally valid for the trial."
+        },
+        {
+          "name": "validUntil",
+          "type": "xsd:dateTime",
+          "optional": true,
+          "doc": "NGSI-LD temporal property: when this OversightBody record was superseded or closed."
+        }
+      ],
+      "relationships": [
+        {
+          "name": "belongsToOrganization",
+          "target": "Organization",
+          "cardinality": "0..1",
+          "doc": "The Organization that hosts / sponsors / convened the oversight body. 0..1 because some bodies (especially DSMBs) are convened ad-hoc without a hosting Organization. PROV: the Organization is a higher-order Agent."
+        },
+        {
+          "name": "hasMember",
+          "target": "Person",
+          "cardinality": "0..N",
+          "doc": "Committee members. Each Person has expertise relevant to the body's mandate (clinical, statistical, ethical, patient advocacy). PROV: each member is a prov:Agent acting on behalf of the OversightBody.",
+          "provSemantics": "actedOnBehalfOf"
+        },
+        {
+          "name": "chair",
+          "target": "Person",
+          "cardinality": "0..1",
+          "doc": "The committee chair. 0..1 because some bodies operate with co-chairs or rotating chairs."
+        },
+        {
+          "name": "reviewsStudy",
+          "target": "Study",
+          "cardinality": "0..N",
+          "doc": "Studies this body has review authority over. 0..N: an IRB reviews many studies; a DSMB typically reviews one."
+        },
+        {
+          "name": "reviewsStudySite",
+          "target": "StudySite",
+          "cardinality": "0..N",
+          "doc": "StudySites this body has review authority over. Site-level IRBs typically review per-StudySite; central IRBs review multiple StudySites under one Study.",
+          "_targetMissing": "StudySite is a horizontal but the relationship target resolves correctly; no flag needed in v0.5.1."
+        }
+      ],
+      "ctas": [
+        {
+          "action": "Register OversightBody",
+          "persona": "Sponsor Regulatory / Site Admin",
+          "note": "Create a new OversightBody record with registration number, scope, and member list."
+        },
+        {
+          "action": "Update Member Roster",
+          "persona": "Committee Coordinator",
+          "note": "Add or remove Person members; track validFrom/validUntil for membership terms."
+        },
+        {
+          "action": "Record Review Decision",
+          "persona": "Committee Coordinator / Chair",
+          "note": "Create a ReviewDecision record (sub-object when lifted) with decision, decision date, conditions, next review date."
+        },
+        {
+          "action": "Suspend OversightBody",
+          "persona": "Regulatory / Sponsor",
+          "note": "Transition status to SUSPENDED (regulatory hold or institutional suspension)."
+        },
+        {
+          "action": "Disband OversightBody",
+          "persona": "Sponsor / Site Admin",
+          "note": "Transition status to DISBANDED after study close-out and document retention period ends."
+        }
+      ]
     }
   ],
   "horizontals": [
@@ -3643,8 +3828,7 @@
           "name": "hasIRB",
           "target": "OversightBody",
           "cardinality": "1..N",
-          "doc": "Per-Study IRB(s)/IEC(s) of record for this StudySite. 1..N for multi-IRB cases.",
-          "_targetMissing": "OversightBody is a top-level in OOUX (one of the locked 8) but not yet in TOP source."
+          "doc": "Per-Study IRB(s)/IEC(s) of record for this StudySite. 1..N for multi-IRB cases."
         },
         {
           "name": "submitsTo",
