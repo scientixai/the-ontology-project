@@ -360,7 +360,7 @@
 
 <div class="tagline">AI as a force multiplier for the people who run regulated industries — not a force reduction agent that replaces them.</div>
 
-<p class="lead">There are plenty of ontologies for biomarkers, proteins, gene products, disease taxonomies, and clinical terminologies. They were built for research and reporting. None of them encode what a clinical research coordinator carries in her head when she walks into a site, or what a Sponsor PM clicks on through the day, or what a pharmacist needs to verify before dispensing investigational product. <strong>Operators don't benefit from ontologies that don't understand their workflows.</strong> TOP is the missing layer: industry-agnostic infrastructure for reference ontologies grounded in the operator's mental model — the substrate that lets AI surface the next thing the operator needs to do, with provenance, instead of replacing the operator entirely. The first reference graph being built on TOP is for clinical research; CMC, drug discovery, regulatory, claims, healthcare delivery, energy and process industries, manufacturing, cell therapy, and rare disease are queued.</p>
+<p class="lead">There are plenty of ontologies for biomarkers, proteins, gene products, disease taxonomies, and clinical terminologies. They were built for research and reporting. None of them encode what a clinical research coordinator carries in her head when she walks into a site, or what a Sponsor PM clicks on through the day, or what a pharmacist needs to verify before dispensing investigational product. <strong>Operators don't benefit from ontologies that don't understand their workflows.</strong> TOP is the missing layer: industry-agnostic infrastructure for reference ontologies grounded in the operator's mental model, the foundation that lets AI surface the next thing the operator needs to do, with provenance, instead of replacing the operator entirely. The first reference graph being built on TOP is for clinical research; CMC, drug discovery, regulatory, claims, healthcare delivery, energy and process industries, manufacturing, cell therapy, and rare disease are queued.</p>
 
 <!-- ============================================================== -->
 <h2 class="block" id="manifesto">The TOP Manifesto</h2>
@@ -372,7 +372,7 @@
   <cite>Frédéric Verhelst, PhD · public analysis on the joint-venture pattern, May 2026</cite>
 </blockquote>
 
-<p>The compounding gap is that even where ontologies exist for healthcare, they were built by domain scientists for research and reporting — biomarkers, proteins, disease taxonomies, clinical terminologies. They serve their original purpose well. They do not serve the operator. A clinical research coordinator running five active studies, a pharmacist preparing investigational product for tomorrow's visits, a study monitor covering twelve sites — none of them have the substrate they need to deploy AI as augmentation. Without operator-shaped ontology, the AI offered to them is force-reduction (replace the coordinator) rather than force-multiplication (let one coordinator run ten studies instead of two). TOP is the substrate that makes the second choice possible.</p>
+<p>The compounding gap is that even where ontologies exist for healthcare, they were built by domain scientists for research and reporting (biomarkers, proteins, disease taxonomies, clinical terminologies). They serve their original purpose well. They do not serve the operator. A clinical research coordinator running five active studies, a pharmacist preparing investigational product for tomorrow's visits, a study monitor covering twelve sites: none of them have the foundation they need to deploy AI as augmentation. Without operator-shaped ontology, the AI offered to them is force-reduction (replace the coordinator) rather than force-multiplication (let one coordinator run ten studies instead of two). TOP is the foundation that makes the second choice possible.</p>
 
 <p>We are starting in healthcare and life sciences because the cost there is measured in patients. The architecture transfers.</p>
 
@@ -398,6 +398,10 @@
 
 <ul class="doc-list">
   <li>
+    <a href="primitives/v1/">TOP Primitives spec &amp; namespace</a><span class="status status-shipped-new">Shipped v1</span>
+    <div class="desc">The universal layer of TOP. Eight Category-Level Objects (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) and twenty-eight leaves that operators across every domain recognize as first-class concepts. PROV-O aligned with twenty-three skos:exactMatch / skos:closeMatch annotations; the provenance contract (identifier, observedAt, status) is enforced underneath as SHACL. Domain reference graphs extend primitives and inherit PROV alignment, NGSI-LD wire format, and contract enforcement at zero cost. Resolves at <span class="inline">https://top.scientix.ai/v1#</span>.</div>
+  </li>
+  <li>
     <a href="reference-graphs/clinical-trials/docs/sponsor-spec.html">Sponsor spec</a><span class="status status-shipped">Shipped v1</span>
     <div class="desc">The first complete top-level. Per-Org-per-Study architecture, five boolean responsibility flags, multi-jurisdictional sponsor of record. Template for the remaining seven top-levels.</div>
   </li>
@@ -414,12 +418,8 @@
     <div class="desc">The eight top-levels of the clinical-trials reference graph with all seven boundary decisions resolved.</div>
   </li>
   <li>
-    <a href="onto/clinical/v1/">Clinical-trials namespace</a>
-    <div class="desc">The <span class="inline">top:</span> namespace landing page. Resolves URIs of the form <span class="inline">top:Sponsor</span>, <span class="inline">top:Site</span>, etc. JSON-LD <span class="inline">@context</span> and SHACL shapes available for download.</div>
-  </li>
-  <li>
-    <a href="onto/commons/v1/">TOP commons namespace</a>
-    <div class="desc">The <span class="inline">topc:</span> namespace landing page. Cross-cutting horizontals shared across every industry graph (Organization, Document, Person, Equipment, Credential, System, Log, StorageLocation, StudySite).</div>
+    <a href="onto/clinical/v1/">Clinical-trials reference graph</a><span class="status status-queued">Namespace rebase queued</span>
+    <div class="desc">The first reference graph built on TOP Primitives. Currently published under the <span class="inline">top:</span> prefix from before primitives claimed that namespace; rebase to <span class="inline">topcr:</span> is queued so <span class="inline">top:</span> cleanly means primitives everywhere. JSON-LD <span class="inline">@context</span> and SHACL shapes available for download.</div>
   </li>
   <li>
     <a href="ROADMAP.html">Roadmap</a>
@@ -448,7 +448,7 @@
 
 <div class="contribute-step">
   <div class="step-title">3. Propose a working group for an adjacent domain</div>
-  CMC, drug discovery, regulatory, commercial, claims, healthcare delivery, energy and process industries, manufacturing, cell therapy, rare disease — the architecture transfers. If you carry a reference-graph need in any of these, the right move is to convene the practitioners who would steward it. The TOP commons (<span class="inline">topc:</span>) is governed jointly across working groups; each domain owns its own reference graph (<span class="inline">top:</span>, <span class="inline">topcmc:</span>, etc.) under its own working group.
+  CMC, drug discovery, regulatory, commercial, claims, healthcare delivery, energy and process industries, manufacturing, cell therapy, rare disease: the architecture transfers. If you carry a reference-graph need in any of these, the right move is to convene the practitioners who would steward it. TOP Primitives (<span class="inline">top:</span>) is governed centrally as the universal layer that every domain inherits; each domain owns its own reference graph (<span class="inline">topcr:</span>, <span class="inline">topcmc:</span>, etc.) under its own working group, extending primitives rather than redeclaring them.
 </div>
 
 <div class="contribute-step">
@@ -461,7 +461,7 @@
 <div class="convener">
   <div class="name">Bo Lora</div>
   <div class="role">Convener · Healthcare and Life Sciences</div>
-  <div class="ctx">Founder, Scientix.ai Inc. Thirty years across regulated finance, travel, e-commerce, and healthcare and life sciences AI strategy. Sponsor of the founding reference graph and the operational substrate that supports it.</div>
+  <div class="ctx">Founder, Scientix.ai Inc. Thirty years across regulated finance, travel, e-commerce, and healthcare and life sciences AI strategy. Sponsor of the founding reference graph and the universal Primitives layer that supports it.</div>
   <div class="contact"><a href="https://bolora.me">bolora.me</a></div>
 </div>
 

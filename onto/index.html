@@ -122,29 +122,28 @@
   </div>
 </header>
 
-<p class="lead">The Ontology Project federates by namespace. Each reference graph (clinical research, future CMC, future energy, future manufacturing) gets its own prefix and its own resolution target; cross-cutting concepts shared across every domain live in the commons. Every URI of the form <span class="inline">https://top.scientix.ai/onto/&lt;namespace&gt;/&lt;version&gt;#ClassName</span> resolves to the matching namespace page below, with the fragment scrolling to the class definition.</p>
+<p class="lead">The Ontology Project federates by namespace. The universal layer (TOP Primitives) lives at <span class="inline">top:</span> and holds the eight Category-Level Objects and twenty-eight leaves that operators across every domain recognize as first-class concepts. Each reference graph (clinical research, future CMC, future energy, future manufacturing) gets its own prefix, its own resolution target, and extends primitives by declaring <span class="inline">rdfs:subClassOf</span> against a primitive class. Domain extensions inherit the provenance contract, PROV-O alignment, and NGSI-LD wire format from primitives at zero cost.</p>
 
 <h2 class="section">Active namespaces</h2>
 
 <div class="ns">
   <div class="prefix">top:</div>
-  <div class="name"><a href="clinical/v1/">Clinical Research</a> <span class="status status-strawman">v1 strawman</span></div>
-  <div class="desc">The founding reference graph. Eight top-levels (Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event) plus the StudySite operational pivot. Sponsor is sealed at v0.1.4; Site has lifted to v0.2.0; Study, Visit, Event, Participant, IP, and Oversight Body queued.</div>
+  <div class="name"><a href="../primitives/v1/">TOP Primitives</a> <span class="status status-shipped">v1 shipped</span></div>
+  <div class="desc">The universal layer. Eight Category-Level Objects (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) and twenty-eight leaves (Person, Organization, Group, Autonomous Agent, Schedule, Window, Activity, Milestone, Document, Log, Attestation, Credential, Observation, Status Change, Artifact, Conclusion, Physical, Virtual, Storage, System, Equipment, Material, Portfolio, Program, Project, Physical Limit, Regulatory Law, Safety Guardrail). Twenty-three PROV-O alignments via skos:exactMatch / skos:closeMatch; provenance contract (identifier, observedAt, status) enforced as SHACL underneath.</div>
   <div class="links">
-    <a href="clinical/v1/">Browse classes</a>
-    <a href="clinical/v1/context.jsonld">context.jsonld</a>
-    <a href="clinical/v1/shapes.ttl">shapes.ttl</a>
+    <a href="../primitives/v1/">Browse the spec</a>
+    <a href="../taxonomy/taxonomy.ttl">taxonomy.ttl</a>
   </div>
 </div>
 
 <div class="ns">
-  <div class="prefix">topc:</div>
-  <div class="name"><a href="commons/v1/">Commons</a> <span class="status status-strawman">v1 strawman</span></div>
-  <div class="desc">Cross-cutting horizontals shared across every reference graph: Organization, Document, Person, Audit Trail Entry, Contract, Budget, Sample, Shipment, Equipment, System, StorageLocation, Action Item. The same Organization is the same Organization whether it shows up in clinical research, energy, or manufacturing.</div>
+  <div class="prefix">topcr:</div>
+  <div class="name"><a href="clinical/v1/">Clinical Research</a> <span class="status status-queued">Namespace rebase queued</span></div>
+  <div class="desc">The first reference graph built on TOP Primitives. Eight top-levels (Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event) plus the StudySite operational pivot. Sponsor is sealed at v0.1.4; Site has lifted to v0.2.0; Study at v0.3.0; Visit, Event, Participant, IP, and Oversight Body queued. Currently published under the legacy <span class="inline">top:</span> prefix from before primitives claimed that namespace; rebase to <span class="inline">topcr:</span> is the next priority so <span class="inline">top:</span> cleanly means primitives everywhere.</div>
   <div class="links">
-    <a href="commons/v1/">Browse horizontals</a>
-    <a href="commons/v1/context.jsonld">context.jsonld</a>
-    <a href="commons/v1/shapes.ttl">shapes.ttl</a>
+    <a href="clinical/v1/">Browse classes</a>
+    <a href="clinical/v1/context.jsonld">context.jsonld</a>
+    <a href="clinical/v1/shapes.ttl">shapes.ttl</a>
   </div>
 </div>
 
@@ -184,13 +183,14 @@
 
 <h2 class="section">How a URI resolves</h2>
 
-<p>Every class in TOP has a hash URI of the form <span class="inline">https://top.scientix.ai/onto/&lt;namespace&gt;/&lt;version&gt;#&lt;ClassName&gt;</span>. When a JSON-LD or RDF tool follows that URI, it lands on the namespace page; the fragment scrolls to the matching class definition. Examples:</p>
+<p>TOP Primitives use hash URIs at a single namespace document: <span class="inline">https://top.scientix.ai/v1#&lt;ClassName&gt;</span>. Domain reference graphs use the per-namespace pattern <span class="inline">https://top.scientix.ai/onto/&lt;namespace&gt;/&lt;version&gt;#&lt;ClassName&gt;</span>. When a JSON-LD or RDF tool follows either URI, it lands on the matching page; the fragment scrolls to the class definition. Examples:</p>
 
 <p style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; line-height: 1.7; padding-left: 12px;">
+  <a href="../primitives/v1/#Agent">https://top.scientix.ai/v1#Agent</a><br>
+  <a href="../primitives/v1/#Activity">https://top.scientix.ai/v1#Activity</a><br>
+  <a href="../primitives/v1/#Document">https://top.scientix.ai/v1#Document</a><br>
   <a href="clinical/v1/#Sponsor">https://top.scientix.ai/onto/clinical/v1#Sponsor</a><br>
-  <a href="clinical/v1/#Site">https://top.scientix.ai/onto/clinical/v1#Site</a><br>
-  <a href="commons/v1/#Organization">https://top.scientix.ai/onto/commons/v1#Organization</a><br>
-  <a href="commons/v1/#Document">https://top.scientix.ai/onto/commons/v1#Document</a>
+  <a href="clinical/v1/#Site">https://top.scientix.ai/onto/clinical/v1#Site</a>
 </p>
 
 <p>The same fragment-on-page pattern applies to every future namespace. Versions stay in the URI so a graph that pinned to <span class="inline">v1</span> is never silently retargeted at a later version; new versions resolve at <span class="inline">v2</span>, <span class="inline">v3</span>, and so on, alongside their predecessors.</p>

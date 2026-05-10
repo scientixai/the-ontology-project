@@ -8,21 +8,27 @@
 # every domain and every industry; clinical-trial-specific concepts do
 # not live here.
 #
-# THREE-LEVEL STRUCTURE:
+# STRUCTURE:
 #
-#   Level 1 — Universal DNA (top:UniversalDNA): the three properties
-#             every TOP entity inherits, top:identifier, top:observedAt,
-#             top:status. Defined as OWL/SHACL in commons/source/core.ttl
-#             (rebuild pending after this taxonomy is locked).
+#   The SKOS taxonomy carries OPERATOR VOCABULARY only, the concepts
+#   operators actually name and reach for. Two levels:
 #
-#   Level 2 — Category-Level Objects (8 categories under top:Primitives):
-#             Agent, Location, Resource, Scope, Temporal, Evidence,
-#             Outcome, Constraint.
+#     L1 — Category-Level Objects (8 categories under top:Primitives):
+#          Agent, Location, Resource, Scope, Temporal, Evidence,
+#          Outcome, Constraint.
 #
-#   Level 3 — Leaves (28 nodes): the universal primitive entities under
-#             each category. Property names per leaf live in the OWL/SHACL
-#             substrate; the SKOS taxonomy carries vocabulary, definition,
-#             and scope only.
+#     L2 — Leaves (28 nodes): the universal primitive entities under
+#          each category.
+#
+#   The infrastructure floor (three properties every entity must carry,
+#   top:identifier, top:observedAt, top:status — the provenance contract)
+#   lives in commons/source/core.ttl as SHACL, NOT in this SKOS file.
+#   That is enforcement, not vocabulary, and the operator never names it.
+#   Earlier drafts modeled it as a SKOS top concept ("Universal DNA");
+#   removed because it's metadata, not a thing operators recognize as
+#   first-class. Property names per leaf also live in the OWL/SHACL
+#   substrate; this SKOS taxonomy carries vocabulary, definition, and
+#   scope only.
 #
 # AUTHORING RULES (Termboard quality conformance):
 #   - skos:definition body never contains the concept's own prefLabel
@@ -41,16 +47,25 @@
 # errors in some SKOS tools.
 #
 # Concept URIs:
-#   top.scientix.ai/v1#                       — project-level concepts (top:)
-#   top.scientix.ai/v1/primitives/            — TOP Primitives (topp:)
+#   top.scientix.ai/v1#   — single namespace for everything in The Ontology
+#                           Project: the TaxonomyV1 scheme, the top concept
+#                           Primitives, the eight L1 categories, the twenty-
+#                           eight L2 leaves, and the SHACL substrate
+#                           properties (top:identifier, top:observedAt,
+#                           top:status). Hash-form URIs in PROV-O / SKOS
+#                           idiom; everything resolves at one namespace
+#                           document. Earlier drafts split primitives into
+#                           a separate top: prefix; collapsed because the
+#                           split added complexity without benefit and the
+#                           single-prefix form reads cleaner in extensions.
 
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix dct:   <http://purl.org/dc/terms/> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
 
 @prefix top:   <https://top.scientix.ai/v1#> .
-@prefix topp:  <https://top.scientix.ai/v1/primitives/> .
 
 
 # ====================================================================
@@ -59,28 +74,19 @@
 
 top:TaxonomyV1 a skos:ConceptScheme ;
     dct:title "TOP Taxonomy v1"@en ;
-    dct:description "Classification scheme for The Ontology Project. Primitives are organized in a three-level structure: Universal DNA (L1), eight Category-Level Objects (L2), and twenty-eight universal leaves (L3) that operators across every domain and industry recognize as first-class concepts."@en ;
+    dct:description "Classification scheme for The Ontology Project. Primitives are organized in a two-level structure: eight Category-Level Objects (L1) and twenty-eight universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
     dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
     dct:created "2026-05-09"^^xsd:date ;
     dct:license "Apache-2.0" ;
-    skos:hasTopConcept top:UniversalDNA, top:Primitives ;
+    skos:hasTopConcept top:Primitives ;
     rdfs:seeAlso <https://top.scientix.ai/FIRST-PRINCIPLES.html>,
                  <https://top.scientix.ai/MANIFESTO.html>,
                  <https://top.scientix.ai/ROADMAP.html> .
 
 
 # ====================================================================
-# Two top concepts — Universal DNA and TOP Primitives
+# Top concept — TOP Primitives
 # ====================================================================
-
-top:UniversalDNA a skos:Concept ;
-    skos:inScheme top:TaxonomyV1 ;
-    skos:topConceptOf top:TaxonomyV1 ;
-    skos:prefLabel "Universal DNA"@en ;
-    skos:altLabel "Common Interface"@en, "Inherited Properties"@en ;
-    skos:definition "The smallest possible inherited interface every entity in The Ontology Project must carry, regardless of category. Only three properties live here, and only three: identifier answers what is this thing, observedAt answers when it was captured or recorded, and status answers whether it is current. Three properties total, never more. Operators ask these of every entity, enforced uniformly so any query against any entity in this taxonomy can rely on the three being present and populated. Provenance, value, and unit are not part of this root layer; they live where they semantically belong rather than at the inherited root."@en ;
-    skos:scopeNote "Properties: top:identifier, top:observedAt, top:status. Defined as OWL/SHACL in commons/source/core.ttl. Per ADR-0013 (practitioner-first), The Ontology Project enforces what every operator must answer about every entity, and no more. Provenance, value, and unit are NOT inherited at the root; they live where they semantically belong."@en ;
-    skos:notation "top:" .
 
 top:Primitives a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
@@ -89,7 +95,7 @@ top:Primitives a skos:Concept ;
     skos:altLabel "Primitives"@en, "Universal Primitives"@en ;
     skos:definition "The eight categories and twenty-eight leaves of universal first-class entities that operators across every domain and industry recognize as foundational concepts in The Ontology Project. The eight categories are Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, and Constraint. Workflow extensions for clinical research, care delivery, manufacturing, and supply chain compose on top of this layer rather than living inside it, keeping the universal layer free of domain-specific concerns and reusable across every industry."@en ;
     skos:scopeNote "Membership test: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and does not pollute the universal layer."@en ;
-    skos:notation "topp:" ;
+    skos:notation "top:" ;
     rdfs:seeAlso <https://top.scientix.ai/FIRST-PRINCIPLES.md> .
 
 
@@ -97,378 +103,441 @@ top:Primitives a skos:Concept ;
 # L2 — The eight Category-Level Objects under TOP Primitives
 # ====================================================================
 
-topp:Agent a skos:Concept ;
+top:Agent a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Agent"@en ;
     skos:altLabel "Authority"@en, "Actor"@en ;
     skos:definition "The Primitives category for entities that act on their own behalf or on behalf of others, hold decision rights over operations, and bear accountability for outcomes. Such entities are the performers of any operation: they initiate Activities, sign Documents, hold Credentials, and stand responsible for what gets done. Four kinds of performer fall under this category: an individual human, a formal legal organization, a collective body without legal personhood, and a non-human autonomous software system. Distinct from Resource: Resources are used; performers in this category use them."@en ;
     skos:scopeNote "Category-level relational extensions: hasCredential, memberOf, authorizedBy. Leaves: Person, Organization, Group, Autonomous Agent. An autonomous AI system is a performer here when it is the entity acting in a transaction; the same software is a Resource when it is the tool another performer uses."@en ;
-    skos:notation "topp:Agent" .
+    skos:notation "top:Agent" .
 
-topp:Location a skos:Concept ;
+top:Location a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Location"@en ;
     skos:altLabel "Space"@en, "Place"@en ;
     skos:definition "The Primitives category for places where work happens, where Agents act, or where Resources and outputs are held. Such places span the physical real world (geographic places with coordinates), virtual digital systems (network-addressable spaces reached through computation), and storage containers (designated holding areas, physical or digital). Every Activity occurs at some place in this category, every Resource resides somewhere within it, and every Agent has a current locale here."@en ;
     skos:scopeNote "Category-level relational extensions: withinLocation, geoSpatialData, accessRequirement. Leaves: Physical, Virtual, Storage. This category answers where; the Temporal category answers when; together they bound any operation in space and time."@en ;
-    skos:notation "topp:Location" .
+    skos:notation "top:Location" .
 
-topp:Resource a skos:Concept ;
+top:Resource a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Resource"@en ;
     skos:altLabel "Tools"@en, "Operational Asset"@en ;
     skos:definition "The Primitives category for operational assets that Activities consume, use, or operate. As the means of production, members of this category are what Agents reach for to get work done: software systems process information, physical equipment performs tasks, and material stocks flow through operations. A member of this category is owned by some Agent, may carry a maintenance history, and reports an operational state distinct from its lifecycle status. Distinct from Agent: Agents act; members of this category are used."@en ;
     skos:scopeNote "Category-level relational extensions: ownedBy, hasMaintenanceLog, operationalState. Leaves: System, Equipment, Material. Distinct from Location: members of this category are used at Locations; Locations are where members of this category reside."@en ;
-    skos:notation "topp:Resource" .
+    skos:notation "top:Resource" .
 
-topp:Scope a skos:Concept ;
+top:Scope a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Scope"@en ;
     skos:altLabel "Intent"@en, "Bounded Effort"@en ;
     skos:definition "The Primitives category for bounded efforts with stated purpose, governance, and a defined boundary. Members of this category are how organizations frame what they are doing and why. They scale from strategic Portfolios at the top, through Programs that group related work under a single mandate, down to specific Projects with start and end dates. Every Activity belongs to one such effort, every Outcome contributes to its stated purpose, and every effort here is governed by some Agent."@en ;
     skos:scopeNote "Category-level relational extensions: governedBy, containsActivity, objectiveStatement. Leaves: Portfolio, Program, Project. Workflow-specific scopes (a clinical Study, a manufacturing Campaign) are workflow extensions that specialize this category."@en ;
-    skos:notation "topp:Scope" .
+    skos:notation "top:Scope" .
 
-topp:Temporal a skos:Concept ;
+top:Temporal a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Temporal"@en ;
     skos:altLabel "Rhythm"@en, "Time-Bound Occurrence"@en ;
     skos:definition "The Primitives category for anything that exists in time, whether as a recurring pattern, a bounded interval, a performed event, or a marker on a timeline. Concepts in this category answer the question of when something happens, must happen, or has happened-and-mattered. Four shapes fall here: Schedules (the cadence of recurrence), Windows (the bounds of validity), Activities (the performance itself), and Milestones (the points of significance in a Scope's progression)."@en ;
     skos:scopeNote "Category-level relational extensions: startTime, endTime, precededBy, occursAt. Leaves: Schedule, Window, Activity, Milestone. This category complements Location: when complements where. Workflow-specific temporal entities (a clinical Visit, a manufacturing Run) specialize the Activity leaf rather than introducing new universal time-bound shapes."@en ;
-    skos:notation "topp:Temporal" .
+    skos:notation "top:Temporal" .
 
-topp:Evidence a skos:Concept ;
+top:Evidence a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Evidence"@en ;
     skos:altLabel "Proof"@en, "Verifiable Artifact"@en ;
     skos:definition "The Primitives category for verifiable artifacts that prove a fact, a claim, or a state of affairs. Concepts here answer the question of how do we know what we know. They carry integrity through cryptographic hashes, signatures, version control, and audit trails. Four leaves fall in this category: Documents (formal authored records and files), Logs (temporal trails of entries), Attestations (signed statements verifying facts), and Credentials (qualifications held by an Agent)."@en ;
     skos:scopeNote "Category-level relational extensions: verifiesOutcome, integrityHash, signedBy. Leaves: Document, Log, Attestation, Credential. Distinct from Outcome: Outcomes are produced by work; concepts in this category prove the work happened. An Artifact (Outcome) becomes a member of this category when it is signed or attested."@en ;
-    skos:notation "topp:Evidence" .
+    skos:notation "top:Evidence" .
 
-topp:Outcome a skos:Concept ;
+top:Outcome a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Outcome"@en ;
     skos:altLabel "Results"@en, "Observable Result"@en ;
     skos:definition "The Primitives category for observable, recordable products of work. Concepts here answer the question of what happened or what came of it. Four shapes fall here: Observations capture data points produced by an Activity, Status Changes record transitions from one state to another, Artifacts are the files and records produced as outputs of work, and Conclusions are reasoned determinations supported by Evidence. Each closes the loop between work performed and the result that work produced."@en ;
     skos:scopeNote "Category-level relational extensions: measuredBy, satisfiesConstraint, variance. Leaves: Observation, Status Change, Artifact, Conclusion. Workflow-specific outcomes (a clinical Adverse Event, a manufacturing Out-of-Specification result) specialize the appropriate leaf rather than introducing new universal result shapes."@en ;
-    skos:notation "topp:Outcome" .
+    skos:notation "top:Outcome" .
 
-topp:Constraint a skos:Concept ;
+top:Constraint a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:broader top:Primitives ;
     skos:prefLabel "Constraint"@en ;
     skos:altLabel "Validity Rule"@en, "Guardrail"@en ;
     skos:definition "The Primitives category for rules, limits, and bounds that govern what counts as valid operation. Concepts here are the rails along which work runs, the boundary conditions that separate compliant from non-compliant. Three leaves fall in this category: Physical Limits (numeric thresholds and tolerances drawn from physics or engineering), Regulatory Laws (statutes and binding standards under jurisdictional authority), and Safety Guardrails (operational rules with severity classification and remediation paths)."@en ;
     skos:scopeNote "Category-level relational extensions: enforcedBy, severityLevel, appliesTo. Leaves: Physical Limit, Regulatory Law, Safety Guardrail. A member of this category is enforced by some Agent (typically an Organization, a regulator, or an oversight body) and applies to one or more entities in this taxonomy."@en ;
-    skos:notation "topp:Constraint" .
+    skos:notation "top:Constraint" .
 
 
 # ====================================================================
 # L3 — Agent leaves (4)
 # ====================================================================
 
-topp:Person a skos:Concept ;
+top:Person a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Agent ;
+    skos:broader top:Agent ;
     skos:prefLabel "Person"@en ;
     skos:altLabel "Individual"@en, "Human"@en ;
     skos:definition "An Agent representing an individual human in any operational context. The human performers of an operation live here: staff, members, contractors, regulators, recipients, observers, and decision-makers. A member of this leaf is identified by an institutional or external identifier, reachable at an email or other contact endpoint, and assigned a role title that names what they do in the current context. The same human may play multiple roles across different contexts; resolution of identity across contexts is a federation concern, not a concern of this taxonomy."@en ;
     skos:scopeNote "Property hints (for the OWL/SHACL substrate): email, publicKey, roleTitle. Distinct from Group (one human versus a collective). Distinct from Autonomous Agent (a member of this leaf is human; Autonomous Agents are not)."@en ;
-    skos:notation "topp:Person" .
+    skos:notation "top:Person" .
 
-topp:Organization a skos:Concept ;
+top:Organization a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Agent ;
+    skos:broader top:Agent ;
     skos:prefLabel "Organization"@en ;
     skos:altLabel "Legal Entity"@en, "Corporate Entity"@en, "Institution"@en ;
     skos:definition "An Agent representing a legal or business entity recognized as a distinct actor by jurisdictions, regulators, or social conventions. Corporations, hospitals, government agencies, vendors, academic bodies, regulatory authorities, non-governmental bodies, and trade associations all live here. A member of this leaf carries legal identifiers (tax ID, registration number, DUNS, ORCID for individual investigator-sponsors) and operational addresses (a registered headquarters location). A member of this leaf can hold Credentials, sign Attestations, and own Resources."@en ;
     skos:scopeNote "Property hints: legalTaxId, hqLocation. Distinct from Group: members of this leaf are formally incorporated; Groups are not. Distinct from Person: members of this leaf are legal entities; Persons are individual humans."@en ;
-    skos:notation "topp:Organization" .
+    skos:notation "top:Organization" .
 
-topp:Group a skos:Concept ;
+top:Group a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Agent ;
+    skos:broader top:Agent ;
     skos:prefLabel "Group"@en ;
     skos:altLabel "Collective"@en, "Team"@en ;
     skos:definition "An Agent representing a collective body acting together toward a shared purpose, without the formal legal incorporation that defines an Organization. The working collectives that real operations rely on live here: working bodies, committees, ad-hoc teams, communities of practice, panels of reviewers, oversight bodies, and review boards. Membership in such a collective is a recognized fact even when the collective itself is not a legal entity, and the collective can hold Credentials and produce shared determinations as one Agent."@en ;
     skos:scopeNote "Property hints: memberCount, groupType. Distinct from Organization: members of this leaf lack independent legal personality. Workflow-specific collectives (a clinical Institutional Review Board, a manufacturing Change Control Board) specialize this leaf."@en ;
-    skos:notation "topp:Group" .
+    skos:notation "top:Group" .
 
-topp:AutonomousAgent a skos:Concept ;
+top:AutonomousAgent a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Agent ;
+    skos:broader top:Agent ;
     skos:prefLabel "Autonomous Agent"@en ;
     skos:altLabel "AI Agent"@en, "Software Agent"@en, "Bot"@en ;
     skos:definition "An Agent that takes action, makes decisions, or executes operations without direct human control on each step. Members of this leaf are non-human performers: AI models that produce outputs, software services that act on schedules or events, robotic systems that perform physical tasks, and other actors that hold an identity, expose an interface, and bear traceable accountability. The defining feature is autonomy of action; the responsible party (the deployer or operator, itself an Agent) is recorded separately so the chain of accountability is preserved."@en ;
     skos:scopeNote "Property hints: softwareVersion, modelReference, apiEndpoint. Distinct from System: a member of this leaf acts; a System is operated. The same software may appear as either, depending on whether it is the entity acting in a given transaction or the tool another entity uses."@en ;
-    skos:notation "topp:AutonomousAgent" .
+    skos:notation "top:AutonomousAgent" .
 
 
 # ====================================================================
 # L3 — Location leaves (3)
 # ====================================================================
 
-topp:Physical a skos:Concept ;
+top:Physical a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Location ;
+    skos:broader top:Location ;
     skos:prefLabel "Physical"@en ;
     skos:altLabel "Physical Location"@en, "Site"@en, "Facility"@en ;
     skos:definition "A Location subtype for real-world places that occupy space and can be reached by bodily presence. A member of this leaf has geographic coordinates, a postal address where applicable, and a position within a containing structure (a floor level, a room number, a building wing). Buildings, campuses, clinical sites, manufacturing plants, warehouses, distribution centers, field sites, vehicles in transit, and outdoor environments under monitoring all fall under this leaf. Distinct from Virtual: members of this leaf exist in the real world; Virtual locations exist in networks."@en ;
     skos:scopeNote "Property hints: geoCoordinates, address, floorLevel. Distinct from Storage: members of this leaf are the place; Storage is the designated holding area within or outside a place."@en ;
-    skos:notation "topp:Physical" .
+    skos:notation "top:Physical" .
 
-topp:Virtual a skos:Concept ;
+top:Virtual a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Location ;
+    skos:broader top:Location ;
     skos:prefLabel "Virtual"@en ;
     skos:altLabel "Virtual Location"@en, "Digital Address"@en ;
     skos:definition "A Location subtype for non-physical places that exist within a network or digital system rather than the real world. A member of this leaf is reached through computation rather than bodily presence: it is identified by a network address (URL, IP, hostname), a protocol-specific endpoint, or a session identifier. Service endpoints, web portals, online meeting rooms, cloud storage buckets, VPN tunnels, message queues, and addressable services in distributed systems all live here. Activities can occur at a member of this leaf just as they do at physical Locations."@en ;
     skos:scopeNote "Property hints: url, protocol, ipAddress. Distinct from Physical: members of this leaf have no real-world coordinates. Distinct from System: a member of this leaf is where; a System is what runs there. A member of this leaf can host a System, but the two are separate concepts."@en ;
-    skos:notation "topp:Virtual" .
+    skos:notation "top:Virtual" .
 
-topp:Storage a skos:Concept ;
+top:Storage a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Location ;
+    skos:broader top:Location ;
     skos:prefLabel "Storage"@en ;
     skos:altLabel "Storage Location"@en, "Container"@en ;
     skos:definition "A Location subtype for spaces designated specifically for holding things, whether physical or digital. A member of this leaf is defined by what it can contain (containmentType, the kind of thing held) and how much of it (capacityVolume). Freezer slots, refrigerator shelves, secure vaults, supply bins, archive boxes, database partitions, archive buckets, document repositories, and object stores all live here. Equipment provides such spaces; such spaces are held inside Equipment or other Locations."@en ;
     skos:scopeNote "Property hints: containmentType, capacityVolume. Distinct from Physical: members of this leaf are purpose-built for holding; not every Physical place is one. Distinct from Equipment: a freezer is Equipment; the slot inside it is a member of this leaf."@en ;
-    skos:notation "topp:Storage" .
+    skos:notation "top:Storage" .
 
 
 # ====================================================================
 # L3 — Resource leaves (3)
 # ====================================================================
 
-topp:System a skos:Concept ;
+top:System a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Resource ;
+    skos:broader top:Resource ;
     skos:prefLabel "System"@en ;
     skos:altLabel "Software System"@en, "Application"@en ;
     skos:definition "A Resource that performs operational work or holds operational data through software. Members of this leaf are the software pillars of an operation: applications that run business logic, platforms that host services, databases that hold records, control software that orchestrates physical equipment, integration buses that move information, and analytics engines that produce insights. A member of this leaf runs at some Location (often a Virtual one), is operated by some Agent, and supports some Scope."@en ;
     skos:scopeNote "Property hints: osType, uptimeStatus, dbBackend. Distinct from Equipment: members of this leaf are software Resources; Equipment is hardware. Distinct from Autonomous Agent: a member of this leaf is operated; an Autonomous Agent acts. The same software can be modeled as either, depending on whether it is the tool or the actor."@en ;
-    skos:notation "topp:System" .
+    skos:notation "top:System" .
 
-topp:Equipment a skos:Concept ;
+top:Equipment a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Resource ;
+    skos:broader top:Resource ;
     skos:prefLabel "Equipment"@en ;
     skos:altLabel "Device"@en, "Instrument"@en ;
     skos:definition "A Resource leaf for physical devices and instruments used in operational work. As the hardware Resource of an operation, members of this leaf are sensors that capture data, machines that transform inputs, vehicles that move things, measurement instruments that quantify, manufacturing tools, medical devices, lab analyzers, and field instrumentation. A member of this leaf carries a serial number, requires periodic calibration and maintenance, and operates within a defined maintenance interval."@en ;
     skos:scopeNote "Property hints: serialNumber, calibrationDate, maintenanceInterval. Distinct from System: members of this leaf are physical hardware; a System is software. A member of this leaf may host or interface with a System (a control system runs on it), but the two are separate concepts."@en ;
-    skos:notation "topp:Equipment" .
+    skos:notation "top:Equipment" .
 
-topp:Material a skos:Concept ;
+top:Material a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Resource ;
+    skos:broader top:Resource ;
     skos:prefLabel "Material"@en ;
     skos:altLabel "Substance"@en, "Stock"@en, "Consumable"@en ;
     skos:definition "A Resource leaf for physical substances, batches, and stocks that flow through operations. Members of this leaf get consumed, transformed, stored, shipped, or produced: raw feedstocks, intermediate products, finished goods, reagents, samples, parts, supplies, fuels, and consumables. As a Resource, a member of this leaf carries identity through batch numbers, provenance through chain-of-custody records, and lifetimes set by expiration dates and storage requirements that constrain how it can be held."@en ;
     skos:scopeNote "Property hints: batchNumber, expirationDate, storageRequirement. Distinct from Equipment: members of this leaf are consumed or transformed; Equipment is durable and reused. Members of this leaf are typically held in Storage Locations under specific environmental conditions."@en ;
-    skos:notation "topp:Material" .
+    skos:notation "top:Material" .
 
 
 # ====================================================================
 # L3 — Scope leaves (3)
 # ====================================================================
 
-topp:Portfolio a skos:Concept ;
+top:Portfolio a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Scope ;
+    skos:broader top:Scope ;
     skos:prefLabel "Portfolio"@en ;
     skos:altLabel "Strategic Portfolio"@en ;
     skos:definition "A Scope at the largest unit of bounded effort that an organization manages as a single concern. A member of this leaf aggregates Programs aligned to a strategic objective and is governed at the executive or board level. Members carry the highest-level strategic narrative (why this collection of work exists) and the highest-level financial frame (totalBudget across all contained Programs). Enterprise R&D collections, capital investment collections, product line collections, and policy collections all live here."@en ;
     skos:scopeNote "Property hints: strategicObjective, totalBudget. Distinct from Program: members of this leaf contain Programs; a Program is contained by one. Distinct from Project: members of this leaf do not directly contain Projects, they contain Programs which contain Projects."@en ;
-    skos:notation "topp:Portfolio" .
+    skos:notation "top:Portfolio" .
 
-topp:Program a skos:Concept ;
+top:Program a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Scope ;
+    skos:broader top:Scope ;
     skos:prefLabel "Program"@en ;
     skos:altLabel "Programme"@en ;
     skos:definition "A Scope that contains several related Projects sharing a common mandate, sponsor, or theme. A member of this leaf is run by a designated lead and exists to coordinate Projects whose value compounds when delivered together. Members sit between the strategic frame of a Portfolio and the deliverable focus of an individual Project. Development efforts, research efforts, transformation efforts, capital efforts, and policy implementation efforts all fall here. The relatedProjects link is the canonical way to traverse from a member of this leaf to its constituent Projects."@en ;
     skos:scopeNote "Property hints: programLead, relatedProjects. Distinct from Portfolio: members of this leaf sit inside Portfolios. Distinct from Project: members of this leaf contain Projects; Projects do not contain members of this leaf."@en ;
-    skos:notation "topp:Program" .
+    skos:notation "top:Program" .
 
-topp:Project a skos:Concept ;
+top:Project a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Scope ;
+    skos:broader top:Scope ;
     skos:prefLabel "Project"@en ;
     skos:altLabel "Initiative"@en, "Engagement"@en ;
     skos:definition "A Scope at a specific bounded effort with a defined phase, a start date, and an end date, organized to produce a stated deliverable or outcome. Members of this leaf are where work meets the calendar: each has a current phase (planning, executing, monitoring, closing), assigned Resources, and a defined acceptance criterion. Construction efforts, software development efforts, clinical research efforts, regulatory submission efforts, process improvement efforts, and policy initiatives all fall here. Workflow-specific scopes specialize this leaf with workflow-specific attributes."@en ;
     skos:scopeNote "Property hints: phase, startDate, endDate. Workflow-specific scopes (a clinical Study, a manufacturing Campaign, a supply-chain Shipment) specialize this leaf with workflow-specific attributes."@en ;
-    skos:notation "topp:Project" .
+    skos:notation "top:Project" .
 
 
 # ====================================================================
 # L3 — Temporal leaves (4)
 # ====================================================================
 
-topp:Schedule a skos:Concept ;
+top:Schedule a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Temporal ;
+    skos:broader top:Temporal ;
     skos:prefLabel "Schedule"@en ;
     skos:altLabel "Recurrence"@en, "Cadence"@en ;
     skos:definition "A Temporal pattern for repeating times that determine when Activities occur. A member of this leaf encodes the rhythm of work as a recurrence rule (often expressed as iCalendar RRULE or a cron-style expression), scoped to a timezone so that local-time semantics are preserved across daylight-saving transitions and cross-region operations. Production runs, maintenance cycles, sampling intervals, batch jobs, periodic reports, recurring meetings, and dosing regimens all rely on a member of this leaf to set when they fire."@en ;
     skos:scopeNote "Property hints: recurrenceRule, timezone. Distinct from Window: a member of this leaf says when something starts; a Window says when it must complete. Distinct from Activity: a member of this leaf is the pattern; an Activity is the actual occurrence performed under that pattern."@en ;
-    skos:notation "topp:Schedule" .
+    skos:notation "top:Schedule" .
 
-topp:Window a skos:Concept ;
+top:Window a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Temporal ;
+    skos:broader top:Temporal ;
     skos:prefLabel "Window"@en ;
     skos:altLabel "Time Window"@en, "Validity Window"@en ;
     skos:definition "A Temporal interval within which an Activity must occur to be considered valid. A member of this leaf is defined by an earliest acceptable start, a latest acceptable end, and an optional grace period that handles boundary tolerance. Delivery commitments, procedure adherence per protocol, maintenance compliance, regulatory filing deadlines, contractual service-level agreements, and assessment intervals all rely on a member of this leaf to enforce timing where timing matters."@en ;
     skos:scopeNote "Property hints: earliestStart, latestEnd, gracePeriod. Distinct from Schedule: a member of this leaf is one specific interval; a Schedule generates many. Distinct from Milestone: a member of this leaf is a duration; a Milestone is a point."@en ;
-    skos:notation "topp:Window" .
+    skos:notation "top:Window" .
 
-topp:Activity a skos:Concept ;
+top:Activity a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Temporal ;
+    skos:broader top:Temporal ;
     skos:prefLabel "Activity"@en ;
     skos:altLabel "Procedure"@en, "Work Unit"@en ;
     skos:definition "A Temporal performance leaf, a unit of operational work actually performed at a definite time. A member of this leaf is the act of doing, distinct from the Schedule that may have triggered it and from the Window in which it must occur: a measurement is taken, a procedure is performed, a task is completed, a process step executes, a test is conducted. Members of this leaf consume Resources, occur at Locations, are performed by Agents, and produce Outcomes. Workflow-specific performances specialize this leaf with workflow-specific attributes."@en ;
     skos:scopeNote "Property hints: actualDuration, completionRate. Workflow-specific performances (a clinical Visit, a manufacturing Run, a supply-chain Delivery) specialize this leaf with workflow-specific attributes."@en ;
-    skos:notation "topp:Activity" .
+    skos:notation "top:Activity" .
 
-topp:Milestone a skos:Concept ;
+top:Milestone a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Temporal ;
+    skos:broader top:Temporal ;
     skos:prefLabel "Milestone"@en ;
     skos:altLabel "Significant Marker"@en ;
     skos:definition "A Temporal marker for a significant time-bound point in a Scope's progression. A member of this leaf names a moment that matters: a phase gate that must be cleared before work continues, a release point at which something becomes available, a regulatory deadline by which a filing must be made, a contractual point at which a payment comes due. Members of this leaf carry significance level (the consequence of missing them) and dependency links (what they unlock or block downstream)."@en ;
     skos:scopeNote "Property hints: significanceLevel, dependencyLink. Distinct from Window: a member of this leaf is a point; a Window is a duration. Distinct from Activity: a member of this leaf is the marker; an Activity is the work that gets done to reach it."@en ;
-    skos:notation "topp:Milestone" .
+    skos:notation "top:Milestone" .
 
 
 # ====================================================================
 # L3 — Evidence leaves (4)
 # ====================================================================
 
-topp:Document a skos:Concept ;
+top:Document a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Evidence ;
+    skos:broader top:Evidence ;
     skos:prefLabel "Document"@en ;
     skos:altLabel "Record"@en, "File"@en ;
     skos:definition "An Evidence leaf for formal files and records produced and maintained for operational, regulatory, or evidentiary purposes. A member of this leaf is identified by its version number, anchored to its content by a file hash, and attributed to an authoring Agent. Policies, procedures, reports, contracts, specifications, manuals, plans, certificates, regulatory submissions, and protocols all live here. Members of this leaf are the readable Evidence layer of an operation, distinct from generated outputs (Artifacts) and from running trails of events (Logs)."@en ;
     skos:scopeNote "Property hints: versionNumber, fileHash, author. Distinct from Artifact: members of this leaf are authored deliberately; Artifacts are generated as outputs of work. Distinct from Log: members of this leaf are static at a version; Logs accumulate entries over time."@en ;
-    skos:notation "topp:Document" .
+    skos:notation "top:Document" .
 
-topp:Log a skos:Concept ;
+top:Log a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Evidence ;
+    skos:broader top:Evidence ;
     skos:prefLabel "Log"@en ;
     skos:altLabel "Trail"@en, "Audit Log"@en ;
     skos:definition "An Evidence leaf for temporal trails of entries that record what happened, in order, as it happened. A member of this leaf is identified by its sequence (each entry has an ordered position) and characterized by the count of entries it carries. Audit trails that record access and changes, communication trails that record who said what to whom, monitoring trails that record sensor readings or system state over time, change trails for managed assets, and event trails for categorized occurrences all live here. Members of this leaf are append-only by design."@en ;
     skos:scopeNote "Property hints: sequenceId, entryCount. Distinct from Document: members of this leaf grow over time; Documents are static at a version. Distinct from Observation: a member of this leaf is the trail; an Observation is one captured data point, which may be one entry within the trail."@en ;
-    skos:notation "topp:Log" .
+    skos:notation "top:Log" .
 
-topp:Attestation a skos:Concept ;
+top:Attestation a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Evidence ;
+    skos:broader top:Evidence ;
     skos:prefLabel "Attestation"@en ;
     skos:altLabel "Signed Statement"@en, "Declaration"@en ;
     skos:definition "An Evidence leaf for signed statements verifying a specific fact, claim, or condition. A member of this leaf carries a signature value (cryptographic, biometric, or witnessed) and a verification method that explains how the signature can be checked by a relying party. Digital signatures on Documents, notarized declarations, regulatory sign-offs, peer reviews, witnessed approvals, identity verifications, and oversight-body decisions all fall here. As Evidence, a member of this leaf makes a claim auditable by tying it to a specific Agent at a specific moment."@en ;
     skos:scopeNote "Property hints: signatureValue, verificationMethod. Distinct from Document: a member of this leaf is the signature event; a Document is what gets signed. Distinct from Conclusion: a member of this leaf is a verifying signature; a Conclusion is a reasoned determination."@en ;
-    skos:notation "topp:Attestation" .
+    skos:notation "top:Attestation" .
 
-topp:Credential a skos:Concept ;
+top:Credential a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Evidence ;
+    skos:broader top:Evidence ;
     skos:prefLabel "Credential"@en ;
     skos:altLabel "Qualification"@en, "Certification"@en, "License"@en ;
     skos:definition "An Evidence leaf for qualifications, licenses, and certifications held by an Agent that prove the Agent's right or competence to act in a particular role. A member of this leaf is issued by an authoritative Agent (the issuer) and pertains to a specific category of skill, scope, or clearance. Professional licenses to practice, training certifications, institutional accreditations, security clearances, technical qualifications, and granted authorizations all live here. As Evidence, a member of this leaf answers the question of whether someone is allowed and able to do this."@en ;
     skos:scopeNote "Property hints: issuerAgent, skillCategory. Distinct from Attestation: a member of this leaf is held over time; an Attestation is a one-time signature. Members of this leaf carry expiration and revocation states; an expired one no longer proves what it once proved."@en ;
-    skos:notation "topp:Credential" .
+    skos:notation "top:Credential" .
 
 
 # ====================================================================
 # L3 — Outcome leaves (4)
 # ====================================================================
 
-topp:Observation a skos:Concept ;
+top:Observation a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Outcome ;
+    skos:broader top:Outcome ;
     skos:prefLabel "Observation"@en ;
     skos:altLabel "Measurement"@en, "Reading"@en, "Data Point"@en ;
     skos:definition "An Outcome leaf for data points captured by an Activity, recorded with the raw signal and a confidence assessment. A member of this leaf is the smallest unit of data that operations care about: a measurement read off an instrument, a sensor reading at a moment, a survey response, a manually recorded note, or a calculated value derived from inputs. Members of this leaf preserve raw telemetry so the original signal can be re-examined, and they carry a confidence score that downstream consumers (humans or AI systems) can act on appropriately."@en ;
     skos:scopeNote "Property hints: rawTelemetry, confidenceScore. Distinct from Artifact: a member of this leaf is one data point; an Artifact is a compiled output. Distinct from a Log entry: a member of this leaf is what was measured; a Log entry is a trail entry that may reference one or more of them."@en ;
-    skos:notation "topp:Observation" .
+    skos:notation "top:Observation" .
 
-topp:StatusChange a skos:Concept ;
+top:StatusChange a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Outcome ;
+    skos:broader top:Outcome ;
     skos:prefLabel "Status Change"@en ;
     skos:altLabel "State Transition"@en, "Lifecycle Event"@en ;
     skos:definition "An Outcome leaf for recorded transitions from a previous status to a new one, with the trigger that caused the transition. A member of this leaf captures the moments where things move between states: a Project advancing from planning to execution, a Document moving from draft to approved, an Equipment going from operational to maintenance, an Order shifting from open to fulfilled, an Activity transitioning from in-progress to complete. As an Outcome, each member records previousStatus, newStatus, and the trigger reason that explains the move."@en ;
     skos:scopeNote "Property hints: previousStatus, triggerReason. Distinct from Activity: a member of this leaf is the transition itself; the Activity that caused it is separate. Distinct from a Log entry: a member of this leaf is a categorized state transition; a Log entry can record any kind of event."@en ;
-    skos:notation "topp:StatusChange" .
+    skos:notation "top:StatusChange" .
 
-topp:Artifact a skos:Concept ;
+top:Artifact a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Outcome ;
+    skos:broader top:Outcome ;
     skos:prefLabel "Artifact"@en ;
     skos:altLabel "Output File"@en, "Produced Asset"@en ;
     skos:definition "An Outcome leaf for produced files and records that are the output of an Activity, distinct from a Document in that a member of this leaf is generated rather than authored. Such an output carries a file link to the produced asset and a checksum that anchors its integrity. Generated datasets, rendered reports, build outputs, compiled binaries, exported records, processed images, machine-learning model files, and synthesized derivatives all live here. As an Outcome, a member of this leaf closes the loop between work performed and the produced thing by giving the produced thing a stable identity."@en ;
     skos:scopeNote "Property hints: fileLink, checksum. Distinct from Document: members of this leaf are generated; Documents are authored. Distinct from Observation: a member of this leaf is a compiled or generated output; an Observation is a single captured data point that may have contributed to producing one."@en ;
-    skos:notation "topp:Artifact" .
+    skos:notation "top:Artifact" .
 
-topp:Conclusion a skos:Concept ;
+top:Conclusion a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Outcome ;
+    skos:broader top:Outcome ;
     skos:prefLabel "Conclusion"@en ;
     skos:altLabel "Decision"@en, "Determination"@en ;
     skos:definition "An Outcome leaf for reasoned decisions and determinations supported by stated evidence and explainable logic. A member of this leaf records decisionLogic (the reasoning that connected inputs to outputs) and supportingEvidence (the Artifacts, Observations, or Attestations the determination rests on). Findings from investigations, recommendations from reviews, adjudicated outcomes from disputes, regulatory determinations, oversight-body decisions, and AI-generated determinations that require traceable provenance all live here."@en ;
     skos:scopeNote "Property hints: decisionLogic, supportingEvidence. Distinct from Attestation: a member of this leaf is the reasoning and decision; an Attestation is the signature on a fact. A member of this leaf is often the input to an Attestation: the decision is made, then someone signs it."@en ;
-    skos:notation "topp:Conclusion" .
+    skos:notation "top:Conclusion" .
 
 
 # ====================================================================
 # L3 — Constraint leaves (3)
 # ====================================================================
 
-topp:PhysicalLimit a skos:Concept ;
+top:PhysicalLimit a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Constraint ;
+    skos:broader top:Constraint ;
     skos:prefLabel "Physical Limit"@en ;
     skos:altLabel "Threshold"@en, "Operational Range"@en ;
     skos:definition "A Constraint leaf for numerical thresholds and tolerance ranges that define what counts as physically acceptable operation. A member of this leaf specifies a thresholdValue beyond which behavior is invalid, plus a toleranceRange around expected values that bounds acceptable variation. Temperature ranges for storage, pressure ceilings for vessels, stress tolerances for materials, capacity bounds for facilities, concentration ranges for samples, dose ceilings, and bandwidth thresholds all fall here. As a Constraint, members of this leaf are the numeric boundaries the physical world imposes on operations."@en ;
     skos:scopeNote "Property hints: thresholdValue, toleranceRange. Distinct from Regulatory Law: members of this leaf come from physics or engineering; Regulatory Laws come from jurisdictions. Distinct from Safety Guardrail: members of this leaf are numeric boundaries; Safety Guardrails are operational rules with severity classification."@en ;
-    skos:notation "topp:PhysicalLimit" .
+    skos:notation "top:PhysicalLimit" .
 
-topp:RegulatoryLaw a skos:Concept ;
+top:RegulatoryLaw a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Constraint ;
+    skos:broader top:Constraint ;
     skos:prefLabel "Regulatory Law"@en ;
     skos:altLabel "Regulation"@en, "Statute"@en ;
     skos:definition "A Constraint leaf for formal laws and rules that govern operations under the authority of a jurisdiction. A member of this leaf carries a legal citation that uniquely identifies the source text (statute number, regulation reference, directive identifier) and a jurisdiction that scopes where it applies (a country, a state, a region, a sector). National statutes, agency regulations, supranational directives, binding industry standards adopted by reference, and treaty obligations enforced through domestic law all live here."@en ;
     skos:scopeNote "Property hints: legalCitation, jurisdiction. Distinct from Physical Limit: members of this leaf are jurisdictional Constraints; Physical Limits are physics-driven. Distinct from Safety Guardrail: members of this leaf come from external authority; Safety Guardrails come from internal operational policy, though policy often implements regulation."@en ;
-    skos:notation "topp:RegulatoryLaw" .
+    skos:notation "top:RegulatoryLaw" .
 
-topp:SafetyGuardrail a skos:Concept ;
+top:SafetyGuardrail a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader topp:Constraint ;
+    skos:broader top:Constraint ;
     skos:prefLabel "Safety Guardrail"@en ;
     skos:altLabel "Safety Rule"@en, "Operational Guardrail"@en ;
     skos:definition "A Constraint leaf for safety rules that prevent harm to people, equipment, or operations, classified by the severity of the harm prevented and paired with a defined remediation path when the rule is at risk of being breached. Operational rails for routine work, hazard controls for known risks, emergency procedure triggers, sterility constraints, lockout-tagout rules, dose-limiting rules, and exposure ceilings all live here. As a Constraint, members of this leaf are the protective boundaries beyond which operations should not go without explicit authorization or remediation."@en ;
     skos:scopeNote "Property hints: severityLevel, remediationPath. Distinct from Regulatory Law: members of this leaf are operational Constraints; Regulatory Laws are jurisdictional, though members often implement Regulatory Law requirements. Distinct from Physical Limit: a member of this leaf is a rule with severity and remediation; a Physical Limit is a numeric threshold."@en ;
-    skos:notation "topp:SafetyGuardrail" .
+    skos:notation "top:SafetyGuardrail" .
+
+
+# ====================================================================
+# PROV-O alignment (skos:exactMatch / skos:closeMatch)
+# ====================================================================
+# SKOS-level signaling that each primitive aligns to a PROV-O peer.
+# Three layers of provenance adherence in TOP:
+#
+#   1. SKOS (here)  - skos:exactMatch / skos:closeMatch annotations
+#                     for browse-tool visibility and human comprehension.
+#   2. SHACL (commons/source/core.ttl, rebuild pending) - shapes that
+#                     ENFORCE PROV-O properties: every Evidence requires
+#                     prov:wasGeneratedBy and prov:wasAttributedTo, every
+#                     Activity requires prov:used and prov:wasAssociatedWith,
+#                     and so on.
+#   3. JSON-LD (primitives/v1/context.jsonld, queued) - NGSI-LD profile
+#                     mapping each primitive to its NGSI-LD type with
+#                     observedAt / identifier / status declared as
+#                     standard NGSI-LD attributes for wire compatibility.
+#
+# exactMatch is used where the PROV-O class and the TOP primitive name
+# the same conceptual category. closeMatch is used where the alignment
+# is real but the TOP primitive specializes or narrows the PROV-O class.
+# Constraint leaves (PhysicalLimit, RegulatoryLaw, SafetyGuardrail) have
+# no PROV-O peer; constraints align to ODRL/SHACL conceptually, which is
+# a separate alignment pass.
+
+# Agent category and leaves
+top:Agent             skos:exactMatch  prov:Agent .
+top:Person            skos:exactMatch  prov:Person .
+top:Organization      skos:exactMatch  prov:Organization .
+top:Group             skos:closeMatch  prov:Agent .
+top:AutonomousAgent   skos:closeMatch  prov:SoftwareAgent .
+
+# Activity (the Temporal performance leaf, not the Temporal category)
+top:Activity          skos:exactMatch  prov:Activity .
+
+# Evidence leaves - all are kinds of prov:Entity; Log is a prov:Collection
+top:Document          skos:closeMatch  prov:Entity .
+top:Log               skos:closeMatch  prov:Collection .
+top:Attestation       skos:closeMatch  prov:Entity .
+top:Credential        skos:closeMatch  prov:Entity .
+
+# Outcome leaves - all are kinds of prov:Entity
+top:Observation       skos:closeMatch  prov:Entity .
+top:StatusChange      skos:closeMatch  prov:Entity .
+top:Artifact          skos:closeMatch  prov:Entity .
+top:Conclusion        skos:closeMatch  prov:Entity .
+
+# Resource leaves - all are kinds of prov:Entity
+top:System            skos:closeMatch  prov:Entity .
+top:Equipment         skos:closeMatch  prov:Entity .
+top:Material          skos:closeMatch  prov:Entity .
+
+# Scope leaves - all are kinds of prov:Plan (PROV's "intended set of actions")
+top:Portfolio         skos:closeMatch  prov:Plan .
+top:Program           skos:closeMatch  prov:Plan .
+top:Project           skos:closeMatch  prov:Plan .
+
+# Location leaves - all are kinds of prov:Location (PROV admits virtual)
+top:Physical          skos:closeMatch  prov:Location .
+top:Virtual           skos:closeMatch  prov:Location .
+top:Storage           skos:closeMatch  prov:Location .
 
 
 # ====================================================================
 # Concept count summary
 # ====================================================================
-# L1 — Universal DNA marker concept: 1 (top:UniversalDNA)
-# L2 — Category-Level Objects: 8
+# Top concept: 1 (top:Primitives)
+# L1 — Category-Level Objects: 8
 #       Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint
-# L3 — TOP Primitives leaves: 28
+# L2 — TOP Primitives leaves: 28
 #       Agent: Person, Organization, Group, AutonomousAgent (4)
 #       Location: Physical, Virtual, Storage (3)
 #       Resource: System, Equipment, Material (3)
@@ -477,4 +546,7 @@ topp:SafetyGuardrail a skos:Concept ;
 #       Evidence: Document, Log, Attestation, Credential (4)
 #       Outcome: Observation, StatusChange, Artifact, Conclusion (4)
 #       Constraint: PhysicalLimit, RegulatoryLaw, SafetyGuardrail (3)
-# Total concepts: 1 + 1 + 8 + 28 = 38
+# Total SKOS concepts: 1 + 8 + 28 = 37
+#
+# The provenance contract (top:identifier, top:observedAt, top:status)
+# is SHACL in commons/source/core.ttl, not a SKOS concept here.
