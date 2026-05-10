@@ -7,68 +7,63 @@
 
 # The Ontology Project
 
-> An open commons of reference knowledge graphs, governed by domain working groups, hosted under Apache 2.0.
+> An open ontology for high-consequence regulated industries, governed by domain working groups, hosted under Apache 2.0.
 
-The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. TOP is NGSI-LD with JSON-LD as connective tissue. The first reference graph being built on TOP is for clinical research; CMC, drug discovery, energy and process industries, manufacturing, cell therapy, and rare disease are queued as separate working groups form.
+The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. The substrate is **TOP Core** — one root, eight categories, twenty-eight leaves — authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Workflow extensions (clinical research, care delivery, manufacturing, supply chain, …) compose on top of Core; they never sibling.
 
-If you are reading this in 2026 you are early. The clinical-research reference graph is shipping its first complete top-level (Sponsor) at v0.1.4-strawman and the second (Site) is queued. The translator scaffold is stdlib-only Python, no pip installs needed for the basic pipeline, unzip and run.
+Practitioner-first by design. AI agents and ontologist tooling are honored at the edge — via the PROV-O / BFO alignment — but they never shape Core. The manifesto's "we owe it to humans" stance is structural, not aspirational.
+
+If you are reading this in 2026 you are early. TOP Core landed at v1; workflow extensions are queuing up.
 
 ## What you will find here
 
-- [`commons/`](commons/) — the `topc:` namespace, cross-cutting horizontals shared across every industry graph (Organization, Document, Person, Audit Trail Entry, Contract). One graph for all of HCLS, energy, manufacturing, and beyond.
-- [`reference-graphs/clinical-trials/`](reference-graphs/clinical-trials/) — the `top:` namespace, the founding reference graph. Eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event.
-- [`tools/`](tools/) — the translator scaffold. `build_context.py` emits the JSON-LD `@context`. `build_shacl.py` emits the SHACL Turtle shapes. Stdlib only.
-- [`reference-patterns/`](reference-patterns/) — placeholder for role-specific projections and views (Sponsor PM Daily View, Investigator Today View, Regulator Audit View). Community-contributable. See [ROADMAP.md](ROADMAP.md) for the framework.
+- [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) — the SKOS view: 1 top concept (`top:Core`) + 8 categories + 28 leaves. TermBoard-importable. Pure SKOS; loads cleanly into PoolParty, Synaptica, Protégé.
+- [`taxonomy/taxonomy.csv`](taxonomy/taxonomy.csv) — flat companion for spreadsheet review of the SKOS.
+- [`core/v1/shapes.ttl`](core/v1/shapes.ttl) — the OWL/SHACL view: same URIs as the SKOS, expressed as `owl:Class` with `rdfs:subClassOf` chains, the three Universal DNA properties, the category relational extensions, and the SHACL `top:UniversalDNAShape` that enforces `identifier` + `observedAt` + `status` on every TOP entity.
+- [`core/v1/index.html`](core/v1/index.html) — the spec page (web view) for sharing with reviewers and conveners.
+- [`core/v1/walkthroughs/person.ttl`](core/v1/walkthroughs/person.ttl) — a single concrete instance demonstrating the L0 → L1 → L2 pattern end-to-end. Useful for verifying the structure resolves in any tool.
+- [`TAXONOMY.md`](TAXONOMY.md) — prose narrative of the taxonomy: three layers, eight categories, twenty-eight leaves, authoring rules.
+- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules every spec doc, planning note, and PR can cite by name.
 - [`governance/`](governance/) — working group structure, RFC process, release process, and the [architectural decision log](governance/decision-log.md). Where new contributors learn the rules.
-- [`MANIFESTO.html`](MANIFESTO.html) — v0.2 manifesto with founding signatories.
+- [`MANIFESTO.html`](MANIFESTO.html) — manifesto with founding signatories.
 - [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued behind it, how community contributions enter the project.
+
+Workflow extensions live in their own directories at the repository root. The first one — `clinical-research/` — is being rebuilt against Core; treat its contents as in-flight until announced. The earlier `reference-graphs/clinical-trials/` directory holds substrate work that pre-dates Core and is being migrated into the new structure.
 
 ## Quickstart
 
-Run the translator on the clinical-trials source intermediate. No pip installs needed for the basic pipeline.
+Load the SKOS taxonomy into any SKOS-aware tool ([TermBoard](https://termboard.com), PoolParty, Synaptica, Protégé). The full tree — `top:Core` → 8 categories → 28 leaves — appears with PROV-O alignment via `skos:exactMatch` / `skos:closeMatch`.
 
 ```bash
-python3 tools/build_context.py reference-graphs/clinical-trials/source/top-strawman.json reference-graphs/clinical-trials/contexts/clinical-trials-context.jsonld
-python3 tools/build_shacl.py reference-graphs/clinical-trials/source/top-strawman.json reference-graphs/clinical-trials/shapes/clinical-trials-shapes.ttl
+# Direct fetch (no auth)
+curl -L https://raw.githubusercontent.com/scientixai/the-ontology-project/main/taxonomy/taxonomy.ttl -o taxonomy.ttl
 ```
 
-Validate the worked example against the SHACL shapes (requires pyshacl, which requires `pip install pyshacl rdflib`).
+Validate a concrete entity against the Universal DNA SHACL contract (requires `pyshacl` and `rdflib`).
 
 ```bash
 python3 -m pyshacl --advanced \
-  -s reference-graphs/clinical-trials/shapes/clinical-trials-shapes.ttl \
-  -d reference-graphs/clinical-trials/examples/sponsor-pfizer-iqvia.ttl
+  -s core/v1/shapes.ttl \
+  -d core/v1/walkthroughs/person.ttl
 ```
 
-The `--advanced` flag enables SHACL-SPARQL constraint processing, which the v0.1.4 emitter relies on for the four domain invariants (one soft warning, three hard violations). Without `--advanced`, property-shape constraints still validate but the SHACL-SPARQL constraints are silently skipped.
-
-Read the [Sponsor spec](reference-graphs/clinical-trials/docs/sponsor-spec.html) to see what a complete top-level looks like. The Sponsor object is the first finished spec and the template for the remaining seven.
+The `--advanced` flag enables SHACL-SPARQL processing. The walkthrough conforms cleanly; modifying it (removing `top:identifier`, `top:observedAt`, or `top:status`) surfaces a violation against the `top:UniversalDNAShape`.
 
 ## What problem this solves
 
-Frontier AI is being deployed against healthcare and life sciences data faster than the data itself can be made trustworthy. Models hallucinate ("AI slop"). Provenance gets lost. Outputs get hand-waved as "good enough" by people who do not have to live with the consequences. The clinical lifecycle is one of the highest-stakes domains in this collision: a hallucinated dose, a misattributed adverse event, a missing audit trail can kill someone.
+Frontier AI is being deployed against high-consequence regulated data faster than the data itself can be made trustworthy. Models hallucinate. Provenance gets lost. Outputs get hand-waved as "good enough" by people who do not have to live with the consequences. The clinical lifecycle is one of the highest-stakes domains in this collision: a hallucinated dose, a misattributed adverse event, a missing audit trail can kill someone. The same dynamics show up in pharmaceutical manufacturing, supply chain, energy, defense.
 
-TOP is TOP for verifiable, source-grounded AI in regulated environments. The ontology defines what entities exist and how they relate. The SHACL shapes encode the structural invariants. The reference patterns define how each role consumes the graph for their specific job. Downstream tools (LLMs grounded in the graph, decision-support systems, regulatory analytics) project from the same source of truth and stay traceable.
+TOP is the substrate for verifiable, source-grounded AI in regulated environments. The taxonomy defines what entities exist and how they relate. The SHACL contract encodes the structural invariants every entity must carry. PROV-O alignment at the class level means audit-trail tooling that consumes PROV gets a free seat at the table. BFO alignment on the four clean categories means OBO Foundry interop is available where it lands cleanly. Downstream tools (LLMs grounded in the graph, decision-support systems, regulatory analytics) project from the same source of truth and stay traceable.
 
-The same TOP layer works outside HCLS. Energy and process industries (analogues to ISO 15926 and CFIHOS), manufacturing, defense supply chains, anywhere AI is being deployed against high-consequence data and provenance cannot be optional.
+The same Core works outside healthcare and life sciences. Energy and process industries (analogues to ISO 15926 and CFIHOS), manufacturing, defense supply chains, anywhere AI is being deployed against high-consequence data and provenance cannot be optional.
 
 ## How to contribute
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the working-group model, the RFC process, and per-domain ownership.
 
-In short: every domain has a working group. The working group owns its reference graph's source intermediate. Amendments arrive as RFCs (markdown documents in `governance/rfcs/`), get reviewed by the working group, and merge through PR with at least one approving review from a working-group member. The commons (`topc:`) is governed jointly across working groups because changes affect every domain.
+In short: every domain has a working group. The working group owns its workflow extension's source files. Amendments to Core are governed jointly across working groups because changes affect every domain. RFCs land as markdown documents in `governance/rfcs/`, get reviewed by the relevant working group, and merge through PR with at least one approving review from a working-group member.
 
-For now, while working groups are forming, Bo Lora as convener is the review pool of one. As working groups spin up, governance rotates to those groups, and founding signatories on the manifesto (named there as they accept the invitation) step into advisory roles.
-
-## Releases
-
-Each artifact in this repo carries its own semver: the commons (`topc:`), each reference graph (`top:`, future `topcmc:`, etc.), and the tools. Tagged GitHub releases include both the source intermediates and the emitted artifacts so consumers can pin a specific commons-plus-graph-plus-tools combination.
-
-Current state:
-
-- Commons (`topc:`) — embedded in the clinical-trials source intermediate at v0.1.4. Will split into its own source file once a second reference graph needs it.
-- Clinical-trials reference graph (`top:`) — v0.1.4-strawman. Sponsor object complete; Site partial; Study minimal; Participant, Visit, IP, Oversight Body, Event not yet scaffolded.
-- Tools — stdlib-only, no version tag yet. Versioning starts when the second domain begins consuming them.
+For now, while working groups are forming, Bo Lora as convener is the review pool of one. As working groups spin up, governance rotates to those groups, and founding signatories on the manifesto step into advisory roles.
 
 ## License
 
