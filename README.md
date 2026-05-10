@@ -9,7 +9,7 @@
 
 > An open ontology for high-consequence regulated industries, governed by domain working groups, hosted under Apache 2.0.
 
-The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. The substrate is **TOP Core** — one root, eight categories, twenty-eight leaves — authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Workflow extensions (clinical research, care delivery, manufacturing, supply chain, …) compose on top of Core; they never sibling.
+The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. The foundation is **TOP Core** — one root, eight categories, twenty-eight leaves — authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Workflow extensions (clinical research, care delivery, manufacturing, supply chain, …) compose on top of Core; they never sibling.
 
 Practitioner-first by design. AI agents and ontologist tooling are honored at the edge — via the PROV-O / BFO alignment — but they never shape Core. The manifesto's "we owe it to humans" stance is structural, not aspirational.
 
@@ -28,7 +28,7 @@ If you are reading this in 2026 you are early. TOP Core landed at v1; workflow e
 - [`MANIFESTO.html`](MANIFESTO.html) — manifesto with founding signatories.
 - [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued behind it, how community contributions enter the project.
 
-Workflow extensions live in their own directories at the repository root. The first one — `clinical-research/` — is being rebuilt against Core; treat its contents as in-flight until announced. The earlier `reference-graphs/clinical-trials/` directory holds substrate work that pre-dates Core and is being migrated into the new structure.
+Workflow extensions live in their own directories at the repository root. The first one — `clinical-research/` — is being rebuilt against Core; treat its contents as in-flight until announced. The earlier `reference-graphs/clinical-trials/` directory holds groundwork that pre-dates Core and is being migrated into the new structure.
 
 ## Quickstart
 
@@ -53,7 +53,7 @@ The `--advanced` flag enables SHACL-SPARQL processing. The walkthrough conforms 
 
 Frontier AI is being deployed against high-consequence regulated data faster than the data itself can be made trustworthy. Models hallucinate. Provenance gets lost. Outputs get hand-waved as "good enough" by people who do not have to live with the consequences. The clinical lifecycle is one of the highest-stakes domains in this collision: a hallucinated dose, a misattributed adverse event, a missing audit trail can kill someone. The same dynamics show up in pharmaceutical manufacturing, supply chain, energy, defense.
 
-TOP is the substrate for verifiable, source-grounded AI in regulated environments. The taxonomy defines what entities exist and how they relate. The SHACL contract encodes the structural invariants every entity must carry. PROV-O alignment at the class level means audit-trail tooling that consumes PROV gets a free seat at the table. BFO alignment on the four clean categories means OBO Foundry interop is available where it lands cleanly. Downstream tools (LLMs grounded in the graph, decision-support systems, regulatory analytics) project from the same source of truth and stay traceable.
+TOP is the foundation for verifiable, source-grounded AI in regulated environments. The taxonomy defines what entities exist and how they relate. The SHACL contract encodes the structural invariants every entity must carry. PROV-O alignment at the class level means audit-trail tooling that consumes PROV gets a free seat at the table. BFO alignment on the four clean categories means OBO Foundry interop is available where it lands cleanly. Downstream tools (LLMs grounded in the graph, decision-support systems, regulatory analytics) project from the same source of truth and stay traceable.
 
 The same Core works outside healthcare and life sciences. Energy and process industries (analogues to ISO 15926 and CFIHOS), manufacturing, defense supply chains, anywhere AI is being deployed against high-consequence data and provenance cannot be optional.
 

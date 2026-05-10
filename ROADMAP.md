@@ -7,7 +7,7 @@ This roadmap captures what is in flight now, what is queued behind it, and the i
 
 ## Where we are (2026-05-10)
 
-**TOP Core landed.** The substrate has consolidated into a clean three-layer architecture:
+**TOP Core landed.** The foundation has consolidated into a clean three-layer architecture:
 
 - **L0 — Root (`top:CommonEntity`).** Carries Universal DNA: `top:identifier`, `top:observedAt`, `top:status`. Three properties practitioners universally encounter (*what is this thing, when was it captured, is it current*). Per ADR-0013 (practitioner-first).
 - **L1 — Eight categories.** `top:Agent`, `top:Location`, `top:Resource`, `top:Scope`, `top:Temporal`, `top:Evidence`, `top:Outcome`, `top:Constraint`. Each `rdfs:subClassOf top:CommonEntity` plus class-level PROV-O alignment (`prov:Agent` / `prov:Activity` / `prov:Entity` / `prov:Plan` / `prov:Location`). Four carry light-edge BFO alignment (Agent → IndependentContinuant, Location → Site, Temporal → Process, Evidence → GenericallyDependentContinuant) for OBO interop.
@@ -24,11 +24,11 @@ The architectural decisions are documented in [`governance/decision-log.md`](gov
 
 ## What ships next, in order
 
-**Clinical-research workflow extension rebuilt against Core.** The legacy `reference-graphs/clinical-trials/` substrate work (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody, InvestigationalProduct, Event lifted across PRs #1–#14) was authored before Core landed. The rebuild migrates those concepts into `clinical-research/` as workflow specializations: each clinical-research class declares `rdfs:subClassOf` against the appropriate Core leaf (e.g., a clinical-research Investigator is `rdfs:subClassOf top:Person`; a clinical-research Protocol is `rdfs:subClassOf top:Document`; a clinical-research Visit is `rdfs:subClassOf top:Activity`). Universal DNA, the category's relational extensions, and the PROV-O / BFO alignment all flow through automatically. The translator scaffold under `tools/` either follows the migration or is retired in favor of direct OWL/SHACL authoring; that decision rides with the rebuild.
+**Clinical-research workflow extension rebuilt against Core.** The legacy `reference-graphs/clinical-trials/` work (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody, InvestigationalProduct, Event lifted across PRs #1–#14) was authored before Core landed. The rebuild migrates those concepts into `clinical-research/` as workflow specializations: each clinical-research class declares `rdfs:subClassOf` against the appropriate Core leaf (e.g., a clinical-research Investigator is `rdfs:subClassOf top:Person`; a clinical-research Protocol is `rdfs:subClassOf top:Document`; a clinical-research Visit is `rdfs:subClassOf top:Activity`). Universal DNA, the category's relational extensions, and the PROV-O / BFO alignment all flow through automatically. The translator scaffold under `tools/` either follows the migration or is retired in favor of direct OWL/SHACL authoring; that decision rides with the rebuild.
 
 **TermBoard curation pass.** The SKOS file imports clean now; the curation pass refines definitions, alt-labels, scope notes, and concept relationships against the live tooling. No code changes; the curation produces a v1.x SKOS file that the workflow rebuilds consume.
 
-**Care-delivery workflow extension** (`care-delivery/`). Every sponsored hospital trial uses both clinical-research and care-delivery workflows over the same Person / Organization / Site / Visit substrate — the smart-hospital-sponsoring-a-trial test from ADR-0004 forced this design. Care-delivery is the natural second workflow because the composition cost lands immediately; the rebuild verifies the L0 → L1 → L2 inheritance chain holds across two workflows.
+**Care-delivery workflow extension** (`care-delivery/`). Every sponsored hospital trial uses both clinical-research and care-delivery workflows over the same Person / Organization / Site / Visit foundation — the smart-hospital-sponsoring-a-trial test from ADR-0004 forced this design. Care-delivery is the natural second workflow because the composition cost lands immediately; the rebuild verifies the L0 → L1 → L2 inheritance chain holds across two workflows.
 
 **Manufacturing workflow extension** (`manufacturing/`). Pharmaceutical CMC, batch records, and IP-supply chains. Anchored on `top:Material` and `top:Artifact` leaves; pulls the Constraint category for batch-release rules.
 
@@ -75,5 +75,5 @@ Reference patterns live next to TOP in the same repository (a future `reference-
 - [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules.
 - [`MANIFESTO.html`](MANIFESTO.html) — manifesto, signatories pending.
 - [`governance/decision-log.md`](governance/decision-log.md) — architectural decision log (ADRs 1–14).
-- [`reference-graphs/clinical-trials/`](reference-graphs/clinical-trials/) — pre-Core substrate work; being migrated into `clinical-research/`.
+- [`reference-graphs/clinical-trials/`](reference-graphs/clinical-trials/) — pre-Core groundwork; being migrated into `clinical-research/`.
 - [`clinical-research/`](clinical-research/) — clinical-research workflow extension; rebuild in flight.

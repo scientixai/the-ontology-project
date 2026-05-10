@@ -118,7 +118,7 @@ These rules are enforced by inspection on every change. They are not load-bearin
 ## What this rules out
 
 - **Sibling-by-industry.** TOP is not federations of separate ontologies (Healthcare-TOP, Manufacturing-TOP, Supply-Chain-TOP). Workflows are composable extensions on top of one Core, not siblings. (See ADR-0004.)
-- **Specialized entity types for cross-cutting shapes.** A Visit is a Visit. The substrate doesn't mint `topcr:Visit` and `topcd:Visit` as separate class types — it specializes through subClassOf where workflow specifics demand it. (See ADR-0002, ADR-0007, ADR-0008, refined by ADR-0012.)
+- **Specialized entity types for cross-cutting shapes.** A Visit is a Visit. TOP doesn't mint `topcr:Visit` and `topcd:Visit` as separate class types — it specializes through subClassOf where workflow specifics demand it. (See ADR-0002, ADR-0007, ADR-0008, refined by ADR-0012.)
 - **Universal-level provenance shortcuts.** PROV-O lives where PROV-O puts it. Record-level metadata uses Dublin Core. No record-level vs. domain-level fork. (See ADR-0013.)
 - **AI-agent-shaped Core.** AI agents and ontologist tooling reason against TOP via the PROV-O + BFO alignment at the class edge. They do not shape the Core. The practitioner shapes the Core. (See ADR-0013.)
 
