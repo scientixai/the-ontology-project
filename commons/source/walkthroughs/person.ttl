@@ -1,0 +1,99 @@
+# TOP Commons — Person walkthrough
+#
+# Demonstrates the L1 + L2 + L3 + workflow-shape pattern end-to-end on a single
+# concrete entity. Loads alongside taxonomy/taxonomy.ttl and commons/source/
+# core.ttl in any SKOS-aware or OWL-aware tool to verify the structure resolves.
+#
+# Per ADR-0013 (practitioner-first), Universal DNA is three properties:
+# top:identifier, top:observedAt, top:status. PROV-O semantics live at the
+# class level via rdfs:subClassOf. Record-level metadata (who created the
+# row, when, etc.) uses Dublin Core; not Universal DNA.
+#
+# What this file shows:
+#   - One concrete topc:Person instance (`example:dr-jin-park`)
+#   - Universal DNA filled in (identifier, observedAt, status)
+#   - Class-level PROV inheritance: example:dr-jin-park rdf:type topc:Person,
+#     which is subClassOf topc:Agent, which is subClassOf prov:Agent (and
+#     bfo:IndependentContinuant for OBO interop)
+#   - One Agent-category relation (topc:hasCredential pointing at a Credential
+#     instance, demonstrating the L2 relational extension)
+#   - Dublin Core record metadata (dcterms:creator, dcterms:created) for the
+#     audit-trail need without polluting Universal DNA semantics
+#
+# Reasoner queries this answers:
+#   - SPARQL: SELECT ?p WHERE { ?p a/rdfs:subClassOf* topc:Agent }
+#       → returns example:dr-jin-park (and any other agents)
+#   - SPARQL: SELECT ?p WHERE { ?p a/rdfs:subClassOf* prov:Agent }
+#       → returns the same set (PROV view, automatic via inheritance)
+#   - SPARQL: SELECT ?p WHERE { ?p a/rdfs:subClassOf* bfo:IndependentContinuant }
+#       → returns the same set (BFO/OBO view, automatic via inheritance)
+#   - SPARQL: SELECT ?p ?id WHERE { ?p top:identifier ?id }
+#       → returns every TOP entity (Universal DNA query, no class filter needed)
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+@prefix top:   <https://top.scientix.ai/v1#> .
+@prefix topc:  <https://top.scientix.ai/commons/v1#> .
+@prefix example: <https://top.scientix.ai/example/v1#> .
+
+
+# ====================================================================
+# A concrete Person — Dr. Jin Park, principal investigator
+# ====================================================================
+
+example:dr-jin-park a topc:Person ;
+    # Universal DNA — the three properties every TOP entity carries
+    top:identifier "urn:top:person:0000-0002-9999-0001"^^xsd:anyURI ;
+    top:observedAt "2026-04-12T14:23:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    # Practitioner-grounded labels
+    rdfs:label "Dr. Jin Park" ;
+    rdfs:comment "Demonstrates Universal DNA + Agent-category classification + PROV/BFO class-level inheritance on a single concrete instance." ;
+    # Agent-category relational extension (from topc:Agent)
+    topc:hasCredential example:credential-jin-gcp-2026 ;
+    # Record-level metadata via Dublin Core — distinct from Universal DNA
+    dcterms:creator example:steward-mariana ;
+    dcterms:created "2026-04-12T14:23:00Z"^^xsd:dateTime .
+
+
+# ====================================================================
+# Supporting instances (just enough to make the Person record valid)
+# ====================================================================
+
+example:steward-mariana a topc:Person ;
+    top:identifier "urn:top:person:0000-0002-9999-0002"^^xsd:anyURI ;
+    top:observedAt "2026-04-01T09:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    rdfs:label "Mariana (data steward)" ;
+    dcterms:creator example:steward-mariana ;
+    dcterms:created "2026-04-01T09:00:00Z"^^xsd:dateTime .
+
+example:credential-jin-gcp-2026 a topc:Credential ;
+    top:identifier "urn:top:credential:gcp:jin-park:2026"^^xsd:anyURI ;
+    top:observedAt "2026-04-12T14:25:00Z"^^xsd:dateTime ;
+    top:status "VALID" ;
+    rdfs:label "GCP Training — Dr. Jin Park, 2026 cycle" ;
+    topc:integrityHash "sha256:f4a8c2e9d7b1a6f3e2c8b5d9a1f7e4c8b2d6a9f3e7c1b5d8a2f6e9c3b7d1a5f8" ;
+    topc:signedBy example:dr-jin-park ;
+    dcterms:creator example:steward-mariana ;
+    dcterms:created "2026-04-12T14:25:00Z"^^xsd:dateTime .
+
+
+# ====================================================================
+# What's NOT in this walkthrough (intentionally)
+# ====================================================================
+#   - A clinical-research specialization (topcr:Investigator subClassOf
+#     topc:Person). When the workflow extension lifts, the same person
+#     instance can be classified as both topc:Person and topcr:Investigator,
+#     and the rdfs:subClassOf chain ensures Universal DNA + Agent + PROV +
+#     BFO all flow through.
+#   - Domain-level prov:wasAttributedTo / prov:wasGeneratedBy claims.
+#     These are workflow-specific and live in workflow extensions where
+#     the domain semantics demand them, with proper PROV-O domain (entity).
+#   - Any record-level provenance pretending to be domain provenance.
+#     dcterms:creator is metadata about the row; it doesn't claim PROV-O
+#     domain semantics, and it cannot be confused with them.

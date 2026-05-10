@@ -7,9 +7,9 @@
 The original namespace structure had two compounding errors:
 
 1. **`top:` was bound to clinical-trials.** "TOP" stands for *The Ontology Project* — the framework. A prefix called `top:` should belong to the project, not to one of its reference graphs. The prefix label said "top is clinical"; the meaning said "top is the whole project." Mismatch.
-2. **The reference graphs were imagined as sibling industry-domains.** Like FIWARE Smart Data Models — Healthcare, Manufacturing, Supply Chain, Smart City as walled-off siblings. But healthcare CONTAINS manufacturing (pharma), supply chain (drug distribution), and regulatory (FDA, EMA) — and those exist outside healthcare too. Sibling-by-industry collapses under the simplest test: a smart hospital sponsoring a clinical trial uses both clinical-research and care-delivery workflows simultaneously over the same substrate.
+2. **The reference graphs were imagined as sibling industry-domains.** Like FIWARE Smart Data Models — Healthcare, Manufacturing, Supply Chain, Smart City as walled-off siblings. But healthcare CONTAINS manufacturing (pharma), supply chain (drug distribution), and regulatory (FDA, EMA) — and those exist outside healthcare too. Sibling-by-industry collapses under the simplest test: a smart hospital sponsoring a clinical trial uses both clinical-research and care-delivery workflows simultaneously over the same TOP.
 
-The corrected taxonomy is layered, not siblinged: a single commons substrate (universal cross-cutting concepts) plus composable workflow extensions (workflow-specific concepts that compose on top of the substrate). Workflows are NOT mutually exclusive — a real-world deployment uses as many extensions as it needs, all over the same commons.
+The corrected taxonomy is layered, not siblinged: a single TOP Primitives (universal cross-cutting concepts) plus composable workflow extensions (workflow-specific concepts that compose on top of TOP). Workflows are NOT mutually exclusive — a real-world deployment uses as many extensions as it needs, all over the same commons.
 
 ## The architecture (Option B — commons holds universal primitive shapes; workflows extend with specialization)
 
@@ -95,13 +95,13 @@ TOP (the project framework — top.scientix.ai)
 1. **Specialization shapes that subClassOf a commons primitive** — when the primitive shape is universal but workflow needs additional attributes (Document, Equipment, Visit, Event, etc.).
 2. **Workflow-native entities** (no commons supertype) — when the concept itself only exists in that workflow (Sponsor, Study, Participant, etc.).
 
-**The same example reads consistently**: a smart hospital sponsoring a clinical trial uses commons substrate (`topc:Person`, `topc:Organization`, `topc:Site`, `topc:Visit`, `topc:Event`, `topc:Document`, `topc:Equipment`, etc. — directly usable) + clinical-research workflow extensions (`topcr:Sponsor`, `topcr:Study`, `topcr:Visit subClassOf topc:Visit` for the protocol-specific attrs, etc.) + (future) care-delivery workflow extensions (`topcd:Patient`, `topcd:Visit subClassOf topc:Visit` for billing/encounter specifics). Same Visit *primitive*; multiple specialized shapes; cross-workflow queries find them all.
+**The same example reads consistently**: a smart hospital sponsoring a clinical trial uses TOP Primitives (`topc:Person`, `topc:Organization`, `topc:Site`, `topc:Visit`, `topc:Event`, `topc:Document`, `topc:Equipment`, etc. — directly usable) + clinical-research workflow extensions (`topcr:Sponsor`, `topcr:Study`, `topcr:Visit subClassOf topc:Visit` for the protocol-specific attrs, etc.) + (future) care-delivery workflow extensions (`topcd:Patient`, `topcd:Visit subClassOf topc:Visit` for billing/encounter specifics). Same Visit *primitive*; multiple specialized shapes; cross-workflow queries find them all.
 
 ## URI / prefix conventions
 
 ```
 top.scientix.ai/v1#                       ← project-level concepts (top:)
-top.scientix.ai/commons/v1#               ← universal substrate (topc:)
+top.scientix.ai/commons/v1#               ← TOP Primitives (topc:)
 top.scientix.ai/clinical-research/v1#     ← clinical research workflow extension (topcr:)
 top.scientix.ai/care-delivery/v1#         ← future workflow extension (topcd:)
 top.scientix.ai/manufacturing/v1#         ← future workflow extension (topmfg:)
@@ -111,12 +111,12 @@ top.scientix.ai/supply-chain/v1#          ← future workflow extension (topsc:)
 Three rules:
 
 1. **`top:` is reserved for project-level concepts only** (the taxonomy itself, top concepts, layer markers). It is NOT a domain prefix.
-2. **Commons gets the `topc:` prefix** with IRI `top.scientix.ai/commons/v1#`. One commons. Universal substrate primitives.
+2. **Commons gets the `topc:` prefix** with IRI `top.scientix.ai/commons/v1#`. One commons. TOP Primitives.
 3. **Each workflow extension gets its own prefix** with IRI `top.scientix.ai/{workflow-name}/v1#`. Workflow names are kebab-case (`clinical-research`, `care-delivery`, `supply-chain`). Each extension is self-contained but composes on top of commons.
 
 The path `/onto/` is removed — operator-grounded over jargon-y.
 
-## The classification rule (substrate-primitive test)
+## The classification rule (TOP Primitive test)
 
 For every entity in TOP, the inclusion test for commons:
 
@@ -140,7 +140,7 @@ If yes, commons. If no, workflow extension.
 | **InvestigationalProduct** | No — IND-track regulatory specifics are clinical-research-specific | Clinical Research |
 | **StudySite** | No — per-Study site role is clinical-research-specific | Clinical Research |
 
-The discipline is reactive: only lift entities when a real operator workflow forces them, and only put them in commons if they actually pass the substrate-primitive test. This avoids over-pre-modeling and avoids the FIWARE mistake.
+The discipline is reactive: only lift entities when a real operator workflow forces them, and only put them in commons if they actually pass the TOP Primitive test. This avoids over-pre-modeling and avoids the FIWARE mistake.
 
 ## Workflows compose — the smart-hospital-sponsors-a-trial test
 
@@ -160,7 +160,7 @@ Person:dr-kim                             ← topc:Person (commons)
   └── plays role: Hospital Staff          ← care-delivery role context (future)
 ```
 
-The hospital doesn't *belong* to one reference graph. The same Organization, Person, Site, Visit, Event entities serve multiple workflows simultaneously. Roles are role-relationships pointing at the same substrate entities.
+The hospital doesn't *belong* to one reference graph. The same Organization, Person, Site, Visit, Event entities serve multiple workflows simultaneously. Roles are role-relationships pointing at the same TOP entities.
 
 This is exactly the pattern already established with Sponsor (per-Organization-per-Study role) and the IIT case (same Organization plays managesSite + playsSponsorRole). We just hadn't generalized it to the project taxonomy.
 
@@ -198,7 +198,7 @@ Migration under Option B is more nuanced than the prior single-prefix shuffle. W
 
 **IRI path correction**: `/onto/clinical/v1#` → `/clinical-research/v1#`; `/onto/commons/v1#` → `/commons/v1#` (drops `/onto/`).
 
-**What the substrate looks like in practice**:
+**What TOP looks like in practice**:
 
 - **Commons-with-shape**: 2 entities (Person, Organization) — usable directly from `topc:`
 - **Commons concepts only** (vocabulary anchors): 13 — Visit, Event, Site, OversightBody, Activity, Task, VisitObservation, Document, Equipment, System, Log, StorageLocation, Credential
@@ -212,8 +212,8 @@ Total clinical-research workflow entity count: 19 native + 13 shape extensions =
 Three sequential PRs:
 
 1. **PR — Taxonomy artifacts (this PR)** — TAXONOMY.md prose, taxonomy.ttl SKOS canonical, taxonomy.csv companion. No code changes; foundational documentation that captures the corrected classification scheme.
-2. **PR — Namespace refactor (mechanical)** — rename prefixes (`top:` → `topcr:` for clinical research), reassign Site/Visit/OversightBody to commons, move StudySite to clinical-research extension, drop `/onto/` from IRI paths, bump version to v0.7.0. Source intermediate, emitters, examples, spec docs, ROADMAP, FIRST-PRINCIPLES all updated lockstep. The substrate decisions don't change; only namespace labels.
-3. **PR — Event lift as `topc:Event`** — proceed with the original Event plan but in correct namespace as a commons substrate primitive with cross-realm posture.
+2. **PR — Namespace refactor (mechanical)** — rename prefixes (`top:` → `topcr:` for clinical research), reassign Site/Visit/OversightBody to commons, move StudySite to clinical-research extension, drop `/onto/` from IRI paths, bump version to v0.7.0. Source intermediate, emitters, examples, spec docs, ROADMAP, FIRST-PRINCIPLES all updated lockstep. TOP decisions don't change; only namespace labels.
+3. **PR — Event lift as `topc:Event`** — proceed with the original Event plan but in correct namespace as a TOP Primitives primitive with cross-realm posture.
 
 ## Working with the SKOS file
 
@@ -228,7 +228,7 @@ The Markdown narrative (this file) is the human-readable accompaniment; it shoul
 2. Regenerate the CSV companion (a small script could automate this; for now, manual sync)
 3. Update TAXONOMY.md prose to reflect the change
 4. Open a PR with all three lockstep changes
-5. The substrate-primitive test (does this concept belong in commons or in a workflow extension?) is the discipline; cite it in the PR description
+5. The TOP Primitive test (does this concept belong in commons or in a workflow extension?) is the discipline; cite it in the PR description
 
 ## Forward-looking — adding a new workflow extension
 
@@ -238,15 +238,15 @@ When TOP-Manufacturing or TOP-CareDelivery or TOP-SupplyChain comes alive:
 2. **Extend the SKOS taxonomy** with the workflow's top concepts under `top:WorkflowExtensions`
 3. **Add concepts** for each workflow-specific top-level entity, with broader = the workflow concept
 4. **Reference commons concepts** for cross-cutting reuse (the Manufacturing workflow uses `topc:Site`, `topc:Equipment`, `topc:Event`, etc.)
-5. **Document the substrate-primitive test outcomes** for the new entities — what's workflow-specific (extension), what's cross-cutting and might bubble up to commons
+5. **Document the TOP Primitive test outcomes** for the new entities — what's workflow-specific (extension), what's cross-cutting and might bubble up to commons
 
-The architecture handles cross-workflow integration naturally: a hospital with a manufacturing pharmacy that also runs trials uses commons + clinical-research + manufacturing + (future) care-delivery extensions all over the same Organization, Person, Site, Equipment, Event substrate. No walls.
+The architecture handles cross-workflow integration naturally: a hospital with a manufacturing pharmacy that also runs trials uses commons + clinical-research + manufacturing + (future) care-delivery extensions all over the same Organization, Person, Site, Equipment, Event TOP. No walls.
 
 ## Pointers
 
 - [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) — SKOS Turtle canonical (importable into TermBoard, PoolParty, Synaptica, Protégé)
 - [`taxonomy/taxonomy.csv`](taxonomy/taxonomy.csv) — CSV companion (spreadsheet-friendly review)
-- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules; the universal-substrate posture is the discipline that grounds this taxonomy
+- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules; the universal-pattern posture is the discipline that grounds this taxonomy
 - [`MANIFESTO.html`](MANIFESTO.html) — the philosophical foundation
 - [`ROADMAP.md`](ROADMAP.md) — build sequence; lift order respects the taxonomy
 - The discipline applied here: classification BEFORE construction. The mistake we're correcting is having skipped this step at the start. Better late than later.
