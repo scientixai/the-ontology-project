@@ -1820,7 +1820,7 @@ top:Participant rdfs:subClassOf prov:Entity .
 top:ParticipantShape a sh:NodeShape ;
     sh:targetClass top:Participant ;
     sh:name "Participant" ;
-    sh:description "A Participant is a real human enrolled in a Study at a StudySite. Per FIRST-PRINCIPLES (operator-grounded substrate, ephemeral projections), Participant is the trial-conduct-realm role-entity for the underlying human; the same human is a Patient in their care realm, a Claimant in their claims realm, an RWE-Patient in research-warehouse projections — those are projection targets, not TOP entities. The operational hierarchy: Site -> StudySite -> Study -> Protocol -> SOA -> Visit -> Activity, with Participant anchored at StudySite (1..1; multi-Study participation is modeled as separate Participant entities). Lifecycle events (Consent, Screening, Enrollment, Withdrawal) are sub-objects under Participant — the SDTM DS-record pattern; operators see workflow events, the projection adapters emit DS rows. participantStatus is a NGSI-LD temporal property (validFrom/validUntil) so trajectory is queryable for downstream digital-twin synthesis (key enabler for twin-for-enrollment in v0.5+)." ;
+    sh:description "A Participant is a real human enrolled in a Study at a StudySite. Per FIRST-PRINCIPLES (operator-grounded foundation, ephemeral projections), Participant is the trial-conduct-realm role-entity for the underlying human; the same human is a Patient in their care realm, a Claimant in their claims realm, an RWE-Patient in research-warehouse projections — those are projection targets, not TOP entities. The operational hierarchy: Site -> StudySite -> Study -> Protocol -> SOA -> Visit -> Activity, with Participant anchored at StudySite (1..1; multi-Study participation is modeled as separate Participant entities). Lifecycle events (Consent, Screening, Enrollment, Withdrawal) are sub-objects under Participant — the SDTM DS-record pattern; operators see workflow events, the projection adapters emit DS rows. participantStatus is a NGSI-LD temporal property (validFrom/validUntil) so trajectory is queryable for downstream digital-twin synthesis (key enabler for twin-for-enrollment in v0.5+)." ;
     sh:property [
         sh:path top:participantId ;
         sh:datatype xsd:anyURI ;
@@ -2617,7 +2617,7 @@ top:RecruitShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;
-        sh:description "The Study this Recruit was identified for. Recruits are scoped per-Study (a person responding to two trial ads is two Recruits, even if same human; cross-Study identity resolution is federation, not substrate)." ;
+        sh:description "The Study this Recruit was identified for. Recruits are scoped per-Study (a person responding to two trial ads is two Recruits, even if same human; cross-Study identity resolution is federation, not foundation)." ;
         sh:name "forStudy" ;
     ] ;
     sh:property [
@@ -2655,7 +2655,7 @@ top:Visit rdfs:subClassOf prov:Activity .
 top:VisitShape a sh:NodeShape ;
     sh:targetClass top:Visit ;
     sh:name "Visit" ;
-    sh:description "A Visit is an actual visit-occurrence: a Participant attended at a StudySite on a specific date. Distinct from VisitDefinition (the protocol-template). Visits carry actual datetimes, status, mode (in-person / telehealth / remote / async), Activities performed, Tasks captured, and any Observations the operator noted. Per FIRST-PRINCIPLES universal-substrate posture, the Visit > Activity > Task hierarchy handles ANY assessment without modeling specifics — a DICOM imaging Activity and a blood-draw Activity are the same TOP shape. The OOUX Visit->Site direct edge is corrected: Visit.forStudySite -> StudySite (1..1)." ;
+    sh:description "A Visit is an actual visit-occurrence: a Participant attended at a StudySite on a specific date. Distinct from VisitDefinition (the protocol-template). Visits carry actual datetimes, status, mode (in-person / telehealth / remote / async), Activities performed, Tasks captured, and any Observations the operator noted. Per FIRST-PRINCIPLES universal-foundation posture, the Visit > Activity > Task hierarchy handles ANY assessment without modeling specifics — a DICOM imaging Activity and a blood-draw Activity are the same TOP shape. The OOUX Visit->Site direct edge is corrected: Visit.forStudySite -> StudySite (1..1)." ;
     sh:property [
         sh:path top:visitId ;
         sh:datatype xsd:anyURI ;
@@ -2826,7 +2826,7 @@ top:VisitShape a sh:NodeShape ;
         sh:class top:Activity ;
         sh:minCount 0 ;
         sh:nodeKind sh:IRI ;
-        sh:description "Activities performed at this Visit (universal sub-objects: vitals, MRI, ePRO, biopsy, IP-admin, etc.). Per FIRST-PRINCIPLES universal-substrate posture, Activity is the same TOP shape regardless of activity type." ;
+        sh:description "Activities performed at this Visit (universal sub-objects: vitals, MRI, ePRO, biopsy, IP-admin, etc.). Per FIRST-PRINCIPLES universal-foundation posture, Activity is the same TOP shape regardless of activity type." ;
         sh:name "hasActivity" ;
     ] ;
     sh:property [
@@ -2878,7 +2878,7 @@ top:Activity rdfs:subClassOf prov:Activity .
 top:ActivityShape a sh:NodeShape ;
     sh:targetClass top:Activity ;
     sh:name "Activity" ;
-    sh:description "Activity is the universal work unit at a Visit — Vitals, Blood Draw, MRI, ePRO session, IP administration, ECG, biopsy, sequencing draw, ADAS-Cog session, anything. Per FIRST-PRINCIPLES universal-substrate posture, the SAME entity shape handles all activity types; specialization is content (biomedicalConceptCode + activityType for filter/sort + linked Equipment + governing Document), never entity shape. activityStatus is a NGSI-LD temporal property. PROV: each Activity is a prov:Activity with wasAssociatedWith Person agents, used Equipment, governed-by Documents." ;
+    sh:description "Activity is the universal work unit at a Visit — Vitals, Blood Draw, MRI, ePRO session, IP administration, ECG, biopsy, sequencing draw, ADAS-Cog session, anything. Per FIRST-PRINCIPLES universal-foundation posture, the SAME entity shape handles all activity types; specialization is content (biomedicalConceptCode + activityType for filter/sort + linked Equipment + governing Document), never entity shape. activityStatus is a NGSI-LD temporal property. PROV: each Activity is a prov:Activity with wasAssociatedWith Person agents, used Equipment, governed-by Documents." ;
     sh:property [
         sh:path top:activityId ;
         sh:datatype xsd:anyURI ;
@@ -2900,7 +2900,7 @@ top:ActivityShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:in ( "PROCEDURE" "ASSESSMENT" "IP_ADMINISTRATION" "SAMPLE_COLLECTION" "QUESTIONNAIRE" "IMAGING" "OTHER" ) ;
-        sh:description "Coarse categorization for operator sort/filter, NOT for specialization. Per FIRST-PRINCIPLES universal-substrate posture, the entity shape is the same for all types — activityType is a hint, not a discriminator that changes structure." ;
+        sh:description "Coarse categorization for operator sort/filter, NOT for specialization. Per FIRST-PRINCIPLES universal-foundation posture, the entity shape is the same for all types — activityType is a hint, not a discriminator that changes structure." ;
         sh:name "activityType" ;
     ] ;
     sh:property [
@@ -2977,7 +2977,7 @@ top:Task rdfs:subClassOf prov:Activity .
 top:TaskShape a sh:NodeShape ;
     sh:targetClass top:Task ;
     sh:name "Task" ;
-    sh:description "Task is the universal leaf data-capture unit at a Visit (one Task per measurement / response / dose / observation). Per FIRST-PRINCIPLES universal-substrate posture, Task handles ANY captured data via polymorphic taskValue (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE). A BP measurement, an MRI Study Instance UID reference, a PHQ-9 item response, a drug dose record, a tumor lesion measurement — all the same TOP entity shape. The specialization lives in content. Each Task carries observedAt as Property metadata on taskValue (NOT a separate flat performedDateTime attribute) per NGSI-LD temporal conventions. Maps to FHIR Observation (one Observation per Task) and per-domain SDTM rows (VS/LB/EX/etc.)." ;
+    sh:description "Task is the universal leaf data-capture unit at a Visit (one Task per measurement / response / dose / observation). Per FIRST-PRINCIPLES universal-foundation posture, Task handles ANY captured data via polymorphic taskValue (NUMERIC / TEXT / CODED / URI_REFERENCE / STRUCTURED / DATE / IMAGE_REFERENCE). A BP measurement, an MRI Study Instance UID reference, a PHQ-9 item response, a drug dose record, a tumor lesion measurement — all the same TOP entity shape. The specialization lives in content. Each Task carries observedAt as Property metadata on taskValue (NOT a separate flat performedDateTime attribute) per NGSI-LD temporal conventions. Maps to FHIR Observation (one Observation per Task) and per-domain SDTM rows (VS/LB/EX/etc.)." ;
     sh:property [
         sh:path top:taskId ;
         sh:datatype xsd:anyURI ;
@@ -3161,7 +3161,7 @@ top:OversightBody rdfs:subClassOf prov:Agent .
 top:OversightBodyShape a sh:NodeShape ;
     sh:targetClass top:OversightBody ;
     sh:name "OversightBody" ;
-    sh:description "An OversightBody is a committee that holds review authority over a Study or StudySite — IRB (Institutional Review Board) for site-level ethics review, EC (Ethics Committee) for the EU equivalent, DSMB / IDMC (Data Safety Monitoring Board / Independent Data Monitoring Committee) for sponsor-level interim safety review, Steering Committee for cross-site governance, CEC (Clinical Events Committee) for endpoint adjudication. Per FIRST-PRINCIPLES universal-substrate posture, OversightBody is a substrate primitive (every regulated trial has oversight bodies regardless of therapeutic area). The oversight body holds authority; the review activities happen through ReviewDecision sub-objects." ;
+    sh:description "An OversightBody is a committee that holds review authority over a Study or StudySite — IRB (Institutional Review Board) for site-level ethics review, EC (Ethics Committee) for the EU equivalent, DSMB / IDMC (Data Safety Monitoring Board / Independent Data Monitoring Committee) for sponsor-level interim safety review, Steering Committee for cross-site governance, CEC (Clinical Events Committee) for endpoint adjudication. Per FIRST-PRINCIPLES universal-foundation posture, OversightBody is a foundation primitive (every regulated trial has oversight bodies regardless of therapeutic area). The oversight body holds authority; the review activities happen through ReviewDecision sub-objects." ;
     sh:property [
         sh:path top:oversightBodyId ;
         sh:datatype xsd:anyURI ;
@@ -3339,7 +3339,7 @@ top:InvestigationalProduct rdfs:subClassOf prov:Entity .
 top:InvestigationalProductShape a sh:NodeShape ;
     sh:targetClass top:InvestigationalProduct ;
     sh:name "InvestigationalProduct" ;
-    sh:description "An InvestigationalProduct (IP) is the substance, biologic, medical device, or combination being studied in a Study. Per FIRST-PRINCIPLES universal-substrate posture, IP is a single entity covering all product types — drugs, biologics, devices, diagnostics, combination products — discriminated by investigationalProductType enum. Specialization is content (productCode, dosageForm, mechanismOfAction, regulatorySource); not entity shape. Per ICH E6(R3) Section 2.7 and 21 CFR 312.6, IPs require lot tracking, blinded kit packaging (when applicable), and dispensation accountability. TOP models these via two sub-objects: Lot (per-batch manufacturing identity) and Kit (per-blinded-packaging-unit). Dispensation events live as Visit Activities (activityType=IP_ADMINISTRATION) per the universal Visit > Activity > Task substrate; no separate Dispensation entity needed." ;
+    sh:description "An InvestigationalProduct (IP) is the substance, biologic, medical device, or combination being studied in a Study. Per FIRST-PRINCIPLES universal-foundation posture, IP is a single entity covering all product types — drugs, biologics, devices, diagnostics, combination products — discriminated by investigationalProductType enum. Specialization is content (productCode, dosageForm, mechanismOfAction, regulatorySource); not entity shape. Per ICH E6(R3) Section 2.7 and 21 CFR 312.6, IPs require lot tracking, blinded kit packaging (when applicable), and dispensation accountability. TOP models these via two sub-objects: Lot (per-batch manufacturing identity) and Kit (per-blinded-packaging-unit). Dispensation events live as Visit Activities (activityType=IP_ADMINISTRATION) per the universal Visit > Activity > Task foundation; no separate Dispensation entity needed." ;
     sh:property [
         sh:path top:investigationalProductId ;
         sh:datatype xsd:anyURI ;
@@ -3378,7 +3378,7 @@ top:InvestigationalProductShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:in ( "DRUG" "BIOLOGIC" "DEVICE" "DIAGNOSTIC" "COMBINATION_PRODUCT" "OTHER" ) ;
-        sh:description "Coarse type discriminator. DRUG for small-molecule pharmaceuticals; BIOLOGIC for biologics including monoclonal antibodies, vaccines, cell/gene therapies; DEVICE for medical devices; DIAGNOSTIC for in vitro diagnostics; COMBINATION_PRODUCT for drug-device or biologic-device combinations; OTHER for catch-all. Per FIRST-PRINCIPLES universal-substrate posture, this is a category discriminator for sort/filter, NOT a shape discriminator — the entity is the same shape regardless of type." ;
+        sh:description "Coarse type discriminator. DRUG for small-molecule pharmaceuticals; BIOLOGIC for biologics including monoclonal antibodies, vaccines, cell/gene therapies; DEVICE for medical devices; DIAGNOSTIC for in vitro diagnostics; COMBINATION_PRODUCT for drug-device or biologic-device combinations; OTHER for catch-all. Per FIRST-PRINCIPLES universal-foundation posture, this is a category discriminator for sort/filter, NOT a shape discriminator — the entity is the same shape regardless of type." ;
         sh:name "investigationalProductType" ;
     ] ;
     sh:property [
@@ -3641,7 +3641,7 @@ top:KitShape a sh:NodeShape ;
         sh:datatype xsd:string ;
         sh:minCount 0 ;
         sh:maxCount 1 ;
-        sh:description "IRT-issued treatment-assignment code. For blinded studies, this is a coded label (e.g., 'A', 'B', 'PLACEBO_GROUP_2') whose unblinding key is held separately by the IRT vendor; the substrate carries the code without the unblinding map." ;
+        sh:description "IRT-issued treatment-assignment code. For blinded studies, this is a coded label (e.g., 'A', 'B', 'PLACEBO_GROUP_2') whose unblinding key is held separately by the IRT vendor; the foundation carries the code without the unblinding map." ;
         sh:name "treatmentAssignment" ;
     ] ;
     sh:property [
@@ -3685,7 +3685,7 @@ top:Event rdfs:subClassOf prov:Activity .
 top:EventShape a sh:NodeShape ;
     sh:targetClass top:Event ;
     sh:name "Event" ;
-    sh:description "An Event is a single container holding occurrences related to a Study lifecycle: Adverse Event (AE), Serious Adverse Event (SAE), Protocol Deviation, Data Discrepancy, Safety Signal, Safety Report, Other Clinical Event. Per FIRST-PRINCIPLES universal-substrate posture, Event is one entity for all categories — discriminated by eventCategory enum rather than split into specialized classes. Per ICH E2A / E2B(R3) and 21 CFR 312.32, regulatory reportability is a first-class attribute with submission timeline tracking. Per ICH E6(R3) Section 6, protocol deviations carry category and impact. Other Clinical Event carries derivedFrom back to a VisitObservation when a routine observation escalates to a tracked Event." ;
+    sh:description "An Event is a single container holding occurrences related to a Study lifecycle: Adverse Event (AE), Serious Adverse Event (SAE), Protocol Deviation, Data Discrepancy, Safety Signal, Safety Report, Other Clinical Event. Per FIRST-PRINCIPLES universal-foundation posture, Event is one entity for all categories — discriminated by eventCategory enum rather than split into specialized classes. Per ICH E2A / E2B(R3) and 21 CFR 312.32, regulatory reportability is a first-class attribute with submission timeline tracking. Per ICH E6(R3) Section 6, protocol deviations carry category and impact. Other Clinical Event carries derivedFrom back to a VisitObservation when a routine observation escalates to a tracked Event." ;
     sh:property [
         sh:path top:eventId ;
         sh:datatype xsd:anyURI ;
@@ -3749,7 +3749,7 @@ top:EventShape a sh:NodeShape ;
         sh:minCount 0 ;
         sh:maxCount 1 ;
         sh:in ( "MILD" "MODERATE" "SEVERE" "LIFE_THREATENING" "FATAL" "LOW" "MEDIUM" "HIGH" "CRITICAL" ) ;
-        sh:description "Severity grading. MILD/MODERATE/SEVERE/LIFE_THREATENING/FATAL for AE/SAE per CTCAE/ICH E2A; LOW/MEDIUM/HIGH/CRITICAL for non-clinical event categories (DEVIATION, DISCREPANCY). Mutually-exclusive scales kept in one enum for substrate simplicity; controlled-vocabulary projection at the adapter layer enforces the right scale per category." ;
+        sh:description "Severity grading. MILD/MODERATE/SEVERE/LIFE_THREATENING/FATAL for AE/SAE per CTCAE/ICH E2A; LOW/MEDIUM/HIGH/CRITICAL for non-clinical event categories (DEVIATION, DISCREPANCY). Mutually-exclusive scales kept in one enum for foundation simplicity; controlled-vocabulary projection at the adapter layer enforces the right scale per category." ;
         sh:name "severity" ;
     ] ;
     sh:property [

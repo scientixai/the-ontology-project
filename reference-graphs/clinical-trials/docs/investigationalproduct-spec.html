@@ -45,7 +45,7 @@
 
 <h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">universal IP entity · Lot + Kit sub-objects · dispensation lives as Visit Activity</span></h2>
 
-<p class="tldr"><strong>InvestigationalProduct (IP) is the substance, biologic, device, or combination under investigation.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> universal-substrate posture, IP is one TOP entity covering all product types — <span class="inline">investigationalProductType</span> enum (DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER) is the operator-grounded discriminator, NOT a shape discriminator. IP supply chain modeled via two sub-objects: <span class="inline">Lot</span> (per-batch manufacturing identity, expiration, release status) and <span class="inline">Kit</span> (per-blinded-packaging-unit, IRT-assigned to Participant). Dispensation events live as Visit Activities (<span class="inline">activityType=IP_ADMINISTRATION</span> with STRUCTURED <span class="inline">taskValue</span> carrying dose/lot/kit references) — no separate Dispensation entity needed; the universal Visit > Activity > Task substrate from v0.5 covers it cleanly. PROV: IP / Lot / Kit are <span class="inline">prov:Entity</span> (defined artifacts). Un-flag-misses <span class="inline">Sponsor.supplies</span> + <span class="inline">Study.suppliesInvestigationalProduct</span>.</p>
+<p class="tldr"><strong>InvestigationalProduct (IP) is the substance, biologic, device, or combination under investigation.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> universal-foundation posture, IP is one TOP entity covering all product types — <span class="inline">investigationalProductType</span> enum (DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER) is the operator-grounded discriminator, NOT a shape discriminator. IP supply chain modeled via two sub-objects: <span class="inline">Lot</span> (per-batch manufacturing identity, expiration, release status) and <span class="inline">Kit</span> (per-blinded-packaging-unit, IRT-assigned to Participant). Dispensation events live as Visit Activities (<span class="inline">activityType=IP_ADMINISTRATION</span> with STRUCTURED <span class="inline">taskValue</span> carrying dose/lot/kit references) — no separate Dispensation entity needed; the universal Visit > Activity > Task foundation from v0.5 covers it cleanly. PROV: IP / Lot / Kit are <span class="inline">prov:Entity</span> (defined artifacts). Un-flag-misses <span class="inline">Sponsor.supplies</span> + <span class="inline">Study.suppliesInvestigationalProduct</span>.</p>
 
 <h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor</h2>
 
@@ -65,13 +65,13 @@
 
 Dispensation events (where IP gets administered) live as:
   Visit > Activity (activityType=IP_ADMINISTRATION) > Task (STRUCTURED taskValue
-  with dose/route/lot/kit references) — universal substrate, no specialization.</div>
+  with dose/route/lot/kit references) — universal foundation, no specialization.</div>
 
 <p>The IP's responsibility chain runs from Sponsor (supplies, regulatorily accountable per 21 CFR 312.6) → Lot (manufacturing batch with expiry / release / lot status) → Kit (blinded packaging unit assigned to a Participant via IRT). Per ICH E6(R3) Section 2.7 and 21 CFR 312.62, this chain is required for IP accountability and recall response.</p>
 
 <h2 class="section" id="universal"><span class="num">3.</span>Universal IP — one shape for all product types</h2>
 
-<p>Per FIRST-PRINCIPLES universal-substrate posture, the same TOP entity shape handles drugs, biologics, devices, diagnostics, and combination products. Specialization is content (<span class="inline">investigationalProductType</span> + <span class="inline">biomedicalConceptCode</span> + <span class="inline">dosageForm</span> + <span class="inline">routeOfAdministration</span> + <span class="inline">mechanismOfAction</span>), never entity shape.</p>
+<p>Per FIRST-PRINCIPLES universal-foundation posture, the same TOP entity shape handles drugs, biologics, devices, diagnostics, and combination products. Specialization is content (<span class="inline">investigationalProductType</span> + <span class="inline">biomedicalConceptCode</span> + <span class="inline">dosageForm</span> + <span class="inline">routeOfAdministration</span> + <span class="inline">mechanismOfAction</span>), never entity shape.</p>
 
 <table>
   <thead><tr><th>investigationalProductType</th><th>Example</th><th>biomedicalConceptCode</th><th>dosageForm</th><th>route</th></tr></thead>
@@ -85,7 +85,7 @@ Dispensation events (where IP gets administered) live as:
   </tbody>
 </table>
 
-<p>The substrate doesn't know the type-specific specifics. External systems (electronic Drug Master Files, device databases, IRT systems) hold implementation specifics; TOP holds the universal trial-conduct-realm reference and the supply-chain accountability (Lot, Kit, Sponsor).</p>
+<p>The foundation doesn't know the type-specific specifics. External systems (electronic Drug Master Files, device databases, IRT systems) hold implementation specifics; TOP holds the universal trial-conduct-realm reference and the supply-chain accountability (Lot, Kit, Sponsor).</p>
 
 <h2 class="section" id="model"><span class="num">4.</span>Model summary</h2>
 
@@ -153,8 +153,8 @@ Dispensation events (where IP gets administered) live as:
 <h2 class="section" id="decisions"><span class="num">5.</span>Architectural decisions</h2>
 
 <div class="decision">
-  <div class="title">Decision 1 — Single IP entity with type discriminator (universal substrate)</div>
-  <p>Per FIRST-PRINCIPLES universal-substrate posture: don't split into separate Drug / Biologic / Device entities. One TOP entity with <span class="inline">investigationalProductType</span> enum carries the operator-grounded discrimination. Same architectural moat as Activity + Task in v0.5 and OversightBody in v0.5.1: standards-up vendors model N entity types per product family; TOP carries one universal pattern.</p>
+  <div class="title">Decision 1 — Single IP entity with type discriminator (universal foundation)</div>
+  <p>Per FIRST-PRINCIPLES universal-foundation posture: don't split into separate Drug / Biologic / Device entities. One TOP entity with <span class="inline">investigationalProductType</span> enum carries the operator-grounded discrimination. Same architectural moat as Activity + Task in v0.5 and OversightBody in v0.5.1: standards-up vendors model N entity types per product family; TOP carries one universal pattern.</p>
 </div>
 
 <div class="decision">
@@ -164,7 +164,7 @@ Dispensation events (where IP gets administered) live as:
 
 <div class="decision">
   <div class="title">Decision 3 — No separate Dispensation entity</div>
-  <p>Dispensation events (where IP gets administered to a Participant) live in the universal Visit > Activity > Task substrate from v0.5: an Activity with <span class="inline">activityType=IP_ADMINISTRATION</span>, plus a Task with <span class="inline">taskValueType=STRUCTURED</span> carrying the dose/route/lot/kit reference. Per universal-substrate posture, no specialized DispensationRecord entity. The Task can reference Lot and Kit by URI for accountability.</p>
+  <p>Dispensation events (where IP gets administered to a Participant) live in the universal Visit > Activity > Task foundation from v0.5: an Activity with <span class="inline">activityType=IP_ADMINISTRATION</span>, plus a Task with <span class="inline">taskValueType=STRUCTURED</span> carrying the dose/route/lot/kit reference. Per universal-foundation posture, no specialized DispensationRecord entity. The Task can reference Lot and Kit by URI for accountability.</p>
 </div>
 
 <div class="decision">
@@ -174,7 +174,7 @@ Dispensation events (where IP gets administered) live as:
 
 <div class="decision">
   <div class="title">Decision 5 — PROV typing: prov:Entity for IP / Lot / Kit (defined artifacts)</div>
-  <p>IP is the artifact under investigation; Lot is a manufacturing batch; Kit is a packaging unit. All are <span class="inline">prov:Entity</span> in PROV terms. The dispensation Activity (in Visit) is <span class="inline">prov:Activity</span> that <span class="inline">prov:used</span> the Lot/Kit (the kit is consumed in the act of dispensation). PROV chain queries: "which kits did Maria receive at which visits, from which lots, manufactured when?" assemble cleanly from substrate triples.</p>
+  <p>IP is the artifact under investigation; Lot is a manufacturing batch; Kit is a packaging unit. All are <span class="inline">prov:Entity</span> in PROV terms. The dispensation Activity (in Visit) is <span class="inline">prov:Activity</span> that <span class="inline">prov:used</span> the Lot/Kit (the kit is consumed in the act of dispensation). PROV chain queries: "which kits did Maria receive at which visits, from which lots, manufactured when?" assemble cleanly from foundation triples.</p>
 </div>
 
 <h2 class="section" id="shacl"><span class="num">6.</span>SHACL invariants <span class="subnote">4 new (40 total)</span></h2>
@@ -201,7 +201,7 @@ Dispensation events (where IP gets administered) live as:
   </tbody>
 </table>
 
-<p><strong>Key insight</strong>: TOP doesn't have a separate Dispensation entity because the universal Visit > Activity > Task substrate handles it. The Activity (activityType=IP_ADMINISTRATION) projects to FHIR MedicationAdministration and SDTM EX rows; the Task carries the structured dose/route/lot/kit data. The PROV chain assembles automatically.</p>
+<p><strong>Key insight</strong>: TOP doesn't have a separate Dispensation entity because the universal Visit > Activity > Task foundation handles it. The Activity (activityType=IP_ADMINISTRATION) projects to FHIR MedicationAdministration and SDTM EX rows; the Task carries the structured dose/route/lot/kit data. The PROV chain assembles automatically.</p>
 
 <h2 class="section" id="stress"><span class="num">8.</span>Stress-test scenarios</h2>
 
@@ -220,13 +220,13 @@ Dispensation events (where IP gets administered) live as:
 <div class="scenario">
   <div class="title-row"><div class="scn-title">Lot recall — safety-driven retirement</div><div class="scn-tag">Recall</div></div>
   <p>Manufacturing investigation surfaces a contamination issue with Lot DRX-2026-0117. Sponsor recalls.</p>
-  <div class="resolves">Lot.lotStatus transitions DISTRIBUTED → RECALLED. NGSI-LD temporal property captures the trajectory (validFrom for the new RECALLED state). All Kits packaged from this Lot need reconciliation: Kit.kitStatus transitions to RETURNED for unused kits, RECONCILED for accountability sign-off. Cross-Lot query "show me all Kits from this Lot and their current status" is a substrate traversal.</div>
+  <div class="resolves">Lot.lotStatus transitions DISTRIBUTED → RECALLED. NGSI-LD temporal property captures the trajectory (validFrom for the new RECALLED state). All Kits packaged from this Lot need reconciliation: Kit.kitStatus transitions to RETURNED for unused kits, RECONCILED for accountability sign-off. Cross-Lot query "show me all Kits from this Lot and their current status" is a foundation traversal.</div>
 </div>
 
 <div class="scenario">
   <div class="title-row"><div class="scn-title">PROV chain — chain of custody for a single dispensation</div><div class="scn-tag">Provenance</div></div>
   <p>A regulator asks: "show me the full chain of custody for the Drug X dose Maria received at C1D1."</p>
-  <div class="resolves">SPARQL traverses: Visit.hasActivity (IP_ADMINISTRATION) → Activity.prov:wasAssociatedWith (administering Person) + Activity.prov:used (infusion equipment, with calibration credential) → Activity.hasTask → Task with STRUCTURED taskValue → kit reference → Kit.belongsToLot → Lot (with manufacturedDate, releaseDate, expirationDate, manufacturer) → Lot back to IP (suppliedBySponsor). Full chain assembles from substrate triples — no audit-log join. This is the v0.5 chain-of-custody view extended to IP supply chain.</div>
+  <div class="resolves">SPARQL traverses: Visit.hasActivity (IP_ADMINISTRATION) → Activity.prov:wasAssociatedWith (administering Person) + Activity.prov:used (infusion equipment, with calibration credential) → Activity.hasTask → Task with STRUCTURED taskValue → kit reference → Kit.belongsToLot → Lot (with manufacturedDate, releaseDate, expirationDate, manufacturer) → Lot back to IP (suppliedBySponsor). Full chain assembles from foundation triples — no audit-log join. This is the v0.5 chain-of-custody view extended to IP supply chain.</div>
 </div>
 
 <h2 class="section" id="open"><span class="num">9.</span>Open issues</h2>
@@ -235,12 +235,12 @@ Dispensation events (where IP gets administered) live as:
   <li><strong>IRT system integration.</strong> Kit.treatmentAssignment is a free-text code; the unblinding key is held by the IRT vendor outside TOP. When IRT integration becomes operational, an adapter projects TOP Kit ↔ IRT API for assignment events.</li>
   <li><strong>IP destruction record (Document linkage).</strong> Lot.lotStatus=DESTROYED implies an IP destruction record exists; the governedByDocument relationship links it to a Document with documentType=IP_DESTRUCTION_RECORD. SHACL invariant could enforce this when needed (deferred).</li>
   <li><strong>Multi-IP combination products.</strong> Combination products (drug-eluting stents, drug-device combinations) have multiple component IPs. Currently a single IP entity carries the combination; explicit component-IP relationships could lift in v0.7+ if combination-product workflows force it.</li>
-  <li><strong>Storage temperature / cold-chain integration.</strong> Per the v0.4.1 chain-of-custody mock-up, cold-chain monitoring (temperature logs during shipment and at site) is the Equipment + Log substrate. IP doesn't directly carry storage requirements — they live on the linked Equipment / StorageLocation entities. When the Equipment.calibrationStatus enrichment lands, IP storage requirements become queryable via substrate traversal.</li>
+  <li><strong>Storage temperature / cold-chain integration.</strong> Per the v0.4.1 chain-of-custody mock-up, cold-chain monitoring (temperature logs during shipment and at site) is the Equipment + Log foundation. IP doesn't directly carry storage requirements — they live on the linked Equipment / StorageLocation entities. When the Equipment.calibrationStatus enrichment lands, IP storage requirements become queryable via foundation traversal.</li>
 </ol>
 
 <div class="footer">
   TOP / InvestigationalProduct / spec / v1 · backed by source/top-strawman.json (v0.6.0-strawman) · 2026-05-09<br>
-  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: universal substrate (one entity for all product types — content-discriminated), native temporal+PROV (prov:Entity + temporal lifecycle), operator-grounded vocabulary.
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: universal foundation (one entity for all product types — content-discriminated), native temporal+PROV (prov:Entity + temporal lifecycle), operator-grounded vocabulary.
 </div>
 
 </div>

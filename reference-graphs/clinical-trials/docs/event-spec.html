@@ -46,7 +46,7 @@
 
 <h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">one container, all the categories operators actually deal with</span></h2>
 
-<p class="tldr"><strong>Event is the single container for clinical-trial occurrences requiring tracking, reporting, or escalation.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> universal-substrate posture, one Event entity covers Adverse Event, Serious Adverse Event, Protocol Deviation, Data Discrepancy, Safety Signal, Safety Report, and Other Clinical Event — discriminated by <span class="inline">eventCategory</span> enum, not by entity type. Per ICH E2A / E2B(R3) / 21 CFR 312.32, regulatory reportability is a first-class attribute with submission-timeline tracking. Per ICH E6(R3) Section 6, deviations carry category and impact. PROV: Event is <span class="inline">prov:Activity</span> (the event IS the thing that happened); <span class="inline">reportedBy → Person</span> carries <span class="inline">prov:wasAssociatedWith</span>; <span class="inline">derivedFrom → VisitObservation</span> carries <span class="inline">prov:wasInformedBy</span> (the operator-meaningful escalation chain). Un-flag-misses three relationships: <span class="inline">Participant.hasAdverseEvent</span>, <span class="inline">Visit.hasAdverseEvent</span>, <span class="inline">VisitObservation.escalatedTo</span>. Closes the OOUX-locked-9 top-level set.</p>
+<p class="tldr"><strong>Event is the single container for clinical-trial occurrences requiring tracking, reporting, or escalation.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a> universal-foundation posture, one Event entity covers Adverse Event, Serious Adverse Event, Protocol Deviation, Data Discrepancy, Safety Signal, Safety Report, and Other Clinical Event — discriminated by <span class="inline">eventCategory</span> enum, not by entity type. Per ICH E2A / E2B(R3) / 21 CFR 312.32, regulatory reportability is a first-class attribute with submission-timeline tracking. Per ICH E6(R3) Section 6, deviations carry category and impact. PROV: Event is <span class="inline">prov:Activity</span> (the event IS the thing that happened); <span class="inline">reportedBy → Person</span> carries <span class="inline">prov:wasAssociatedWith</span>; <span class="inline">derivedFrom → VisitObservation</span> carries <span class="inline">prov:wasInformedBy</span> (the operator-meaningful escalation chain). Un-flag-misses three relationships: <span class="inline">Participant.hasAdverseEvent</span>, <span class="inline">Visit.hasAdverseEvent</span>, <span class="inline">VisitObservation.escalatedTo</span>. Closes the OOUX-locked-9 top-level set.</p>
 
 <h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor</h2>
 
@@ -130,8 +130,8 @@ Event ────────────────────┼─→ Stud
 <h2 class="section" id="decisions"><span class="num">4.</span>Architectural decisions</h2>
 
 <div class="decision">
-  <div class="title">Decision 1 — Single Event entity with category discriminator (universal substrate)</div>
-  <p>Per FIRST-PRINCIPLES universal-substrate posture: don't split into separate AdverseEvent / Deviation / Discrepancy / SafetySignal classes. One TOP entity shape; <span class="inline">eventCategory</span> enum carries the operator-grounded discrimination. Same architectural moat as Activity + Task (v0.5), OversightBody (v0.5.1), and InvestigationalProduct (v0.6.0). Standards-up vendors model N entity types per category; TOP carries one universal shape and projects to FHIR / SDTM / E2B at the adapter layer.</p>
+  <div class="title">Decision 1 — Single Event entity with category discriminator (universal foundation)</div>
+  <p>Per FIRST-PRINCIPLES universal-foundation posture: don't split into separate AdverseEvent / Deviation / Discrepancy / SafetySignal classes. One TOP entity shape; <span class="inline">eventCategory</span> enum carries the operator-grounded discrimination. Same architectural moat as Activity + Task (v0.5), OversightBody (v0.5.1), and InvestigationalProduct (v0.6.0). Standards-up vendors model N entity types per category; TOP carries one universal shape and projects to FHIR / SDTM / E2B at the adapter layer.</p>
 </div>
 
 <div class="decision">
@@ -146,7 +146,7 @@ Event ────────────────────┼─→ Stud
 
 <div class="decision">
   <div class="title">Decision 4 — Severity uses one enum spanning both AE/SAE and non-clinical scales</div>
-  <p>AE/SAE per ICH E2A grade severity as MILD / MODERATE / SEVERE / LIFE_THREATENING / FATAL. Non-clinical events (DEVIATION, DISCREPANCY) typically use LOW / MEDIUM / HIGH / CRITICAL. Two scales kept in one enum for substrate simplicity; the projection adapter restricts to the right scale per category. CTCAE grading is a separate field (<span class="inline">ctcaeGrade</span>) because CTCAE 5.0 grading is more granular and only applies to AE/SAE.</p>
+  <p>AE/SAE per ICH E2A grade severity as MILD / MODERATE / SEVERE / LIFE_THREATENING / FATAL. Non-clinical events (DEVIATION, DISCREPANCY) typically use LOW / MEDIUM / HIGH / CRITICAL. Two scales kept in one enum for foundation simplicity; the projection adapter restricts to the right scale per category. CTCAE grading is a separate field (<span class="inline">ctcaeGrade</span>) because CTCAE 5.0 grading is more granular and only applies to AE/SAE.</p>
 </div>
 
 <div class="decision">
@@ -243,7 +243,7 @@ Event ────────────────────┼─→ Stud
 
 <h2 class="section" id="closure"><span class="num">10.</span>Closure of OOUX-locked-9 top-level set</h2>
 
-<p>Event closes the OOUX-locked-9 top-level sequence: Sponsor (v0.1) → Site (v0.3) → Study (v0.3) → Participant + Recruit (v0.4) → Visit (v0.5) → OversightBody (v0.5.1) → InvestigationalProduct (v0.6) → Event (v0.7). The substrate is now structurally complete for an end-to-end clinical-research deployment. Forward work: namespace refactor (per <a href="../../../TAXONOMY.md">TAXONOMY.md</a>); workflow-extension lifts (Care Delivery, Manufacturing, Supply Chain) under their own prefixes; sub-object refinements (ReviewDecision under OversightBody; Activity-template under Study); reference patterns (operator-specific projections).</p>
+<p>Event closes the OOUX-locked-9 top-level sequence: Sponsor (v0.1) → Site (v0.3) → Study (v0.3) → Participant + Recruit (v0.4) → Visit (v0.5) → OversightBody (v0.5.1) → InvestigationalProduct (v0.6) → Event (v0.7). The foundation is now structurally complete for an end-to-end clinical-research deployment. Forward work: namespace refactor (per <a href="../../../TAXONOMY.md">TAXONOMY.md</a>); workflow-extension lifts (Care Delivery, Manufacturing, Supply Chain) under their own prefixes; sub-object refinements (ReviewDecision under OversightBody; Activity-template under Study); reference patterns (operator-specific projections).</p>
 
 <div class="footer">TOP / Event / spec / v1 · 2026-05-09 · backed by source/top-strawman.json (v0.7.0-strawman) · 5 new SHACL invariants · 22 attributes · 14 relationships · ninth and final OOUX-locked top-level · governed by The Ontology Project under Apache 2.0</div>
 

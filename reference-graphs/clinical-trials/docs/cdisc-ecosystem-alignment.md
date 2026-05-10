@@ -111,7 +111,7 @@ DM, DS, AE, VS, EX, IE, EC, MH, CM, etc. are defined in SDTMIG. The Implementati
 
 **Implication for TOP**: TOP's per-Participant SDTM cross-walks (in the Participant planning note) are claims that need SDTMIG validation. The Participant→DM column mapping I wrote (USUBJID, SUBJID, SEX, RACE, etc.) is correct against SDTMIG, but the *exact* expected values, formats, and controlled terminology come from CDISC Library SDTM CT.
 
-**Action**: when TOP starts emitting SDTM-shaped exports (deployment-side, not in TOP substrate), the export logic dereferences SDTMIG specs from CDISC Library.
+**Action**: when TOP starts emitting SDTM-shaped exports (deployment-side, not in TOP), the export logic dereferences SDTMIG specs from CDISC Library.
 
 ### CDASH — acquisition-side equivalents
 
@@ -121,9 +121,9 @@ Same pattern — CDASH IG defines the CRF-level acquisition variables. CDASH is 
 
 ### ADaM — analysis-ready datasets
 
-ADaM IG defines analysis-ready dataset structures (ADSL, ADAE, ADTTE, etc.). Downstream of SDTM. Not directly relevant to TOP's operator-grounded substrate; ADaM lives in the analysis layer.
+ADaM IG defines analysis-ready dataset structures (ADSL, ADAE, ADTTE, etc.). Downstream of SDTM. Not directly relevant to TOP's operator-grounded foundation; ADaM lives in the analysis layer.
 
-**Implication for TOP**: out of scope for the substrate; relevant only when TOP-deployed analysis pipelines emerge.
+**Implication for TOP**: out of scope for the foundation; relevant only when TOP-deployed analysis pipelines emerge.
 
 ### SEND — non-clinical (preclinical)
 
@@ -137,7 +137,7 @@ The big question this survey surfaces:
 
 ### What we'd gain
 
-1. **Free generators**: JSON-LD context (the NGSI-LD substrate), JSON Schema (broker validation), OWL/Turtle (exports), SHACL (replaces `tools/build_shacl.py`), Pydantic (broker code generation), GraphQL.
+1. **Free generators**: JSON-LD context (the NGSI-LD foundation), JSON Schema (broker validation), OWL/Turtle (exports), SHACL (replaces `tools/build_shacl.py`), Pydantic (broker code generation), GraphQL.
 2. **CDISC interop**: speak the same schema language as COSMoS / future-USDM. When TOP ingests a USDM document, the ingester can leverage shared LinkML tooling. When TOP imports a COSMoS BC, it's natively compatible.
 3. **OBO Foundry / NIH alignment**: LinkML is the schema language for the NIH Common Data Elements project, the OBO Foundry's Data Standards work, and several HL7 FHIR adjacent efforts. TOP becomes part of an established ecosystem rather than an island.
 4. **Cleaner versioning**: LinkML has explicit schema-evolution patterns (slot deprecation, class renames, migration paths).
@@ -161,14 +161,14 @@ This is exactly the kind of decision Bo would want to make deliberately, not sli
 2. **Document CDISC Library CT path for the Code→enum mapping (audit Gap 3)** — currently the audit recommends a side `ingester-mappings.md`. Add a note that the mapping should derive from CDISC Library CT exports, not be hand-curated. (Update to PR #4 audit.)
 3. **Schedule LinkML evaluation as v0.5 milestone** — Bo's call. If yes, the evaluation lifts as a planning note then; if no, document the decision to stay custom.
 4. **Don't model BiomedicalConcept inside TOP** — defer to COSMoS. TOP carries the *reference* (NCIt code or COSMoS conceptId), not the definition.
-5. **Don't try to ingest COSMoS specializations directly now** — those are runtime / submission concerns, not substrate concerns.
+5. **Don't try to ingest COSMoS specializations directly now** — those are runtime / submission concerns, not foundation concerns.
 
 ## Open questions for Bo
 
 1. **LinkML evaluation**: schedule for v0.5 milestone? Or punt indefinitely until USDM ingester is operational and we've actually seen the toolchain pain?
 2. **CDISC Library access**: do we want TOP to depend on CDISC Library API (free with registration) for fresh CT exports? Or maintain a static mapping table?
 3. **COSMoS BC reference convention**: when Activity lifts, do we use NCIt C-codes (e.g., `C25208` for Heart Rate) or COSMoS conceptIds, or both?
-4. **Per-instrument SDTM specializations**: relevant only to deployment-side export pipelines; TOP substrate stays clean. Confirm the boundary?
+4. **Per-instrument SDTM specializations**: relevant only to deployment-side export pipelines; TOP stays clean. Confirm the boundary?
 
 ## Pointers
 

@@ -7,20 +7,20 @@
 
 TOP's differentiation argument has three legs:
 
-1. **Operator-grounded substrate** (per FIRST-PRINCIPLES) — entity vocabulary matches how operators talk; standards are projection edges.
+1. **Operator-grounded foundation** (per FIRST-PRINCIPLES) — entity vocabulary matches how operators talk; standards are projection edges.
 2. **Native temporal capabilities** — every property and relationship can be queried over time without a separate audit-log mechanism.
 3. **Native provenance backbone** — every change, every derivation, every attribution is queryable as a W3C PROV graph without translation.
 
 Standards-up vendors don't have (1). Workflow-up vendors don't have (2) or (3) natively — they bolt them on as audit-log tables, change-tracking shims, or after-the-fact lineage tools.
 
-**TOP's claim**: the substrate carries temporal and provenance natively, so every regulator question, every monitor query, every twin-synthesis lineage trace, every M&A transfer audit is a *graph traversal*, not a join across audit tables.
+**TOP's claim**: the foundation carries temporal and provenance natively, so every regulator question, every monitor query, every twin-synthesis lineage trace, every M&A transfer audit is a *graph traversal*, not a join across audit tables.
 
 This is what makes TOP defensible against:
 - Compliance vendors who say "we have audit trails" (their audit trails are bolt-on logs, not the graph itself)
 - Workflow vendors who say "we have versioning" (their versioning is row-level row_history, not temporal-property semantics)
 - Standards bodies who say "use FHIR Provenance + NGSI-LD" (correct in principle; nobody operationalizes it natively at the ontology layer)
 
-The substrate decisions in this note are the architectural moat.
+The foundation decisions in this note are the architectural moat.
 
 ## Audit 1 — NGSI-LD temporal compliance
 
@@ -109,7 +109,7 @@ EMITTER UPDATES:
 A cross-walk says "TOP InformedConsent maps to prov:Activity via owl:sameAs." That works for export but:
 - TOP queries don't natively traverse PROV chains (have to go through the cross-walk)
 - Downstream PROV-aware tools (provenance dashboards, lineage tracers, regulatory audit tools) need translation
-- The substrate isn't itself a PROV graph
+- The foundation isn't itself a PROV graph
 
 **Native** says "TOP InformedConsent IS a prov:Activity by definition (rdfs:subClassOf prov:Activity)." That changes:
 - Every TOP entity instance is automatically a typed PROV-graph node
@@ -258,7 +258,7 @@ NEW STRUCTURAL ELEMENTS:
 
 ### Worked-example projection
 
-Take Maria from the MSKCC ONCO-423 example. The current substrate carries the entities; with PROV annotations, the same data answers PROV-canonical questions natively:
+Take Maria from the MSKCC ONCO-423 example. The current foundation carries the entities; with PROV annotations, the same data answers PROV-canonical questions natively:
 
 ```sparql
 # Question: Who did what to Maria's consent?
@@ -293,7 +293,7 @@ SELECT ?activity ?actor ?date WHERE {
 ORDER BY ?date
 ```
 
-These queries work natively. No translation layer. No audit-log-table join. Pure PROV traversal against the operator-grounded substrate.
+These queries work natively. No translation layer. No audit-log-table join. Pure PROV traversal against the operator-grounded foundation.
 
 This is what differentiation looks like.
 
@@ -320,7 +320,7 @@ Operators see "Informed Consent" / "Person Obtaining Consent" in UX. The same in
 - `?ic a top:InformedConsent` (operator-vocabulary query)
 - `?ic a prov:Activity` (PROV-canonical query)
 
-Both views, one substrate. Per FIRST-PRINCIPLES — operator vocabulary primary; standards/PROV layered as native structural commitments below the line.
+Both views, one foundation. Per FIRST-PRINCIPLES — operator vocabulary primary; standards/PROV layered as native structural commitments below the line.
 
 ## Differentiation framing (for ROADMAP / public-facing)
 
@@ -333,11 +333,11 @@ The market reality:
 
 **TOP carries both natively, by definition.** A regulator's "show me the chain of custody for this data point" or a sponsor's "what derivations did this synthetic-control twin use" or a CRA's "what was Mary's status on date X and who attributed it" are all single graph traversals.
 
-This is the architectural moat that complements the operator-grounded-substrate moat.
+This is the architectural moat that complements the operator-grounded-foundation moat.
 
 ## The consuming view — what this enables for operators and auditors
 
-The substrate decisions in this audit are not abstract. They enable **per-Activity provenance views** that render the complete chain of custody for any data point as a graph traversal — not as a pre-computed audit log. Bo shared the following mock-up of the end-state UX:
+The foundation decisions in this audit are not abstract. They enable **per-Activity provenance views** that render the complete chain of custody for any data point as a graph traversal — not as a pre-computed audit log. Bo shared the following mock-up of the end-state UX:
 
 ```
 Activity: Blood draw · Subject 423-MU07-018 · Visit 04
@@ -372,9 +372,9 @@ Trial ONCO-423 · Site Munich-07 · Protocol v3.2
    ✓ Carrier custody trace complete                FedEx CC
 ```
 
-Every numbered step is a `prov:Activity`. The chain itself is a `prov:wasInformedBy` sequence (consent → collection → processing → packaging → transit). Every checkmark is a SHACL/SPARQL-queryable assertion against substrate state at a specific point in time. Operators see a clean compliance-grade view; underneath, every fact is a graph traversal answered natively by the substrate's PROV typing and NGSI-LD temporal properties.
+Every numbered step is a `prov:Activity`. The chain itself is a `prov:wasInformedBy` sequence (consent → collection → processing → packaging → transit). Every checkmark is a SHACL/SPARQL-queryable assertion against foundation state at a specific point in time. Operators see a clean compliance-grade view; underneath, every fact is a graph traversal answered natively by the foundation's PROV typing and NGSI-LD temporal properties.
 
-This view is what differentiates TOP. Compliance vendors render the same view from a hand-curated audit log. Workflow vendors can't render it at all (no provenance graph). TOP renders it from substrate facts, in real time, against any Activity, with full traceability — because the substrate IS the audit graph by construction.
+This view is what differentiates TOP. Compliance vendors render the same view from a hand-curated audit log. Workflow vendors can't render it at all (no provenance graph). TOP renders it from foundation facts, in real time, against any Activity, with full traceability — because the foundation IS the audit graph by construction.
 
 ### Activity diversity — therapeutic areas, modalities, and spatial data
 
@@ -396,11 +396,11 @@ Each Activity type has different equipment, credentials, data shapes, and standa
 - DICOM SR (Structured Reports) and W3C Web Annotation are the standard layers for spatial provenance
 - Tumor segmentation across timepoints is BOTH temporal AND spatial — a 4D problem
 
-**Substrate posture for diversity — universal containers, not specialized entities**:
+**Foundation posture for diversity — universal containers, not specialized entities**:
 
-Per Bo's clarification: **TOP must accommodate any assessment without modeling its specifics. Specific visit structures, therapeutic-area assessments, instrument configurations are implementation details — they belong in sponsor-side workflow tools, vendor platforms, and EHR integrations. The substrate stays universal.**
+Per Bo's clarification: **TOP must accommodate any assessment without modeling its specifics. Specific visit structures, therapeutic-area assessments, instrument configurations are implementation details — they belong in sponsor-side workflow tools, vendor platforms, and EHR integrations. The foundation stays universal.**
 
-The substrate carries **`Activity` and `Task` as universal containers**:
+The foundation carries **`Activity` and `Task` as universal containers**:
 
 ```
 Visit (occurrence)
@@ -428,7 +428,7 @@ A DICOM imaging Activity and a blood-draw Activity are the **same entity shape**
 | `Task.taskValue` | numeric (mL, count) | URI → DICOM Study Instance UID in PACS | enum (0–3 per item) | numeric (mg, mL, route code) |
 | `Task.taskValueType` | NUMERIC | URI_REFERENCE | CODED | NUMERIC + STRUCTURED |
 
-The substrate doesn't know it's DICOM. The PROV chain works identically (`?activity prov:used ?equipment ; prov:wasAssociatedWith ?agent ; prov:generated ?artifact`). The compliance view (the mock-up's per-Activity provenance card) renders identically — what changes is the content of the cells, not the shape of the substrate.
+The foundation doesn't know it's DICOM. The PROV chain works identically (`?activity prov:used ?equipment ; prov:wasAssociatedWith ?agent ; prov:generated ?artifact`). The compliance view (the mock-up's per-Activity provenance card) renders identically — what changes is the content of the cells, not the shape of the foundation.
 
 **This is the architectural moat**. A standards-up vendor would model DICOM as one specialized type, ePRO as another, lab as another — and end up with N entity types per therapeutic area. TOP carries one universal Activity + Task pattern that handles all of them.
 
@@ -443,7 +443,7 @@ The substrate doesn't know it's DICOM. The PROV chain works identically (`?activ
 
 External systems (DICOM PACS, lab LIS, ePRO platform, EHR) hold the implementation specifics. TOP holds the universal trial-conduct-realm reference; the URI points to wherever the specialized artifact lives.
 
-**Federation across substrates** (v0.6+): when an external system (PACS, EHR) publishes its own PROV graph, TOP's PROV chain extends across the boundary via `prov:wasGeneratedBy` references. No translation; PROV is the universal language for cross-system provenance.
+**Federation across foundations** (v0.6+): when an external system (PACS, EHR) publishes its own PROV graph, TOP's PROV chain extends across the boundary via `prov:wasGeneratedBy` references. No translation; PROV is the universal language for cross-system provenance.
 
 **Per-therapeutic-area assessment instruments** (e.g., EQ-5D-5L, ADAS-Cog, RECIST, vital signs panel):
 - COSMoS BC catalog handles these via NCIt + LOINC codes (per the CDISC ecosystem alignment note)
@@ -451,13 +451,13 @@ External systems (DICOM PACS, lab LIS, ePRO platform, EHR) hold the implementati
 - The COSMoS Dataset Specialization carries the per-instrument SDTM projection rules
 - **TOP doesn't model the instruments internally** — references them via biomedicalConceptCode; specialization is content, not entity-shape
 
-**The bet**: universal Activity + Task + polymorphic taskValue + temporal+PROV native = handles 100% of assessment diversity. Specialized horizontals like ImagingStudy, IPAdministration, QuestionnaireResponse are NOT planned for v0.6+ — they would violate the universal-substrate posture. Instead: when DICOM imaging trials surface needs that exceed the universal pattern, the additions are **constrained** to taskValueType polymorphism + URI references, not new entity types.
+**The bet**: universal Activity + Task + polymorphic taskValue + temporal+PROV native = handles 100% of assessment diversity. Specialized horizontals like ImagingStudy, IPAdministration, QuestionnaireResponse are NOT planned for v0.6+ — they would violate the universal-foundation posture. Instead: when DICOM imaging trials surface needs that exceed the universal pattern, the additions are **constrained** to taskValueType polymorphism + URI references, not new entity types.
 
-The substrate doesn't try to enumerate any activity type. It provides the universal frame; the BC catalog + polymorphic value + URI references handle every therapeutic area's diversity without TOP changing.
+The foundation doesn't try to enumerate any activity type. It provides the universal frame; the BC catalog + polymorphic value + URI references handle every therapeutic area's diversity without TOP changing.
 
-### What the mock-up surfaces for substrate refinement
+### What the mock-up surfaces for foundation refinement
 
-The mock-up forces several refinements that flow naturally from the temporal+PROV commitment but aren't yet in the substrate. These are architectural deferrals (v0.5+ work, not v0.4.1 cleanup):
+The mock-up forces several refinements that flow naturally from the temporal+PROV commitment but aren't yet in the foundation. These are architectural deferrals (v0.5+ work, not v0.4.1 cleanup):
 
 1. **`Equipment.calibrationStatus` must be a NGSI-LD temporal property** (current vs lapsed; `validUntil >= activity time` is the SHACL check).
 2. **`Person.hasCredential` (multi-realm)** — IATA shipping certs, phlebotomy certs, GCP training certs all surface here. Credential horizontal already exists; richer credentialType enum needed.
@@ -467,7 +467,7 @@ The mock-up forces several refinements that flow naturally from the temporal+PRO
 6. **`Log` temporal-property enrichment for continuous monitoring** — temperature observations across a window; no-excursion verification is a SHACL-queryable assertion.
 7. **External-system integration** (carrier custody) — TOP federates with external PROV-bearing graphs (FedEx logistics, EHR audit trails). Cross-system PROV interop is v0.6+ federation work.
 
-These refinements don't change the v0.4.1 annotation cleanup; they're items the v0.5 Visit lift and the Equipment/Document/Person enrichments absorb at lift time. **None of them require new entity types** — they extend the universal Activity / Task / Equipment / Document / Person primitives with annotations and temporal-property semantics. The substrate posture stands: universal containers, specialization in content.
+These refinements don't change the v0.4.1 annotation cleanup; they're items the v0.5 Visit lift and the Equipment/Document/Person enrichments absorb at lift time. **None of them require new entity types** — they extend the universal Activity / Task / Equipment / Document / Person primitives with annotations and temporal-property semantics. The foundation posture stands: universal containers, specialization in content.
 
 ## Convention summary (additions to FIRST-PRINCIPLES)
 

@@ -45,7 +45,7 @@
 
 <header>
   <div class="title">TOP / Visit / spec / v1</div>
-  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.5.0-strawman) · sixth top-level · universal Activity + Task substrate · 9 new SHACL invariants (34 total)</div>
+  <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.5.0-strawman) · sixth top-level · universal Activity + Task foundation · 9 new SHACL invariants (34 total)</div>
 </header>
 
 <div class="toc">
@@ -65,9 +65,9 @@
   <a href="#open">13. Open issues</a>
 </div>
 
-<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a Visit is a Visit · universal Activity + Task substrate · accommodates any assessment</span></h2>
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a Visit is a Visit · universal Activity + Task foundation · accommodates any assessment</span></h2>
 
-<p class="tldr"><strong>Visit is the operational visit-occurrence — a Participant attended a real visit at a StudySite on a real date.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, the substrate carries one universal pattern: <span class="inline">Visit → Activity → Task</span>, where Activity is the universal work unit (Vitals, MRI, ePRO, biopsy, IP administration — same shape) and Task is the universal leaf data-capture (BP, MRI Study reference, PHQ-9 item, drug dose — same shape, polymorphic taskValue). Specialization is content (biomedicalConceptCode + taskValueType + URI references), never entity shape. Visit-occurrence is distinct from <span class="inline">VisitDefinition</span> (the protocol template, USDM-ingest-derivable). Per the temporal+PROV native commitment: every entity is a typed PROV node (Visit and Activity are <span class="inline">prov:Activity</span>, VisitDefinition is <span class="inline">prov:Entity</span>); status attributes are NGSI-LD temporal properties; Task captures <span class="inline">observedAt</span> as Property metadata. The substrate IS a W3C PROV graph by construction.</p>
+<p class="tldr"><strong>Visit is the operational visit-occurrence — a Participant attended a real visit at a StudySite on a real date.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, the foundation carries one universal pattern: <span class="inline">Visit → Activity → Task</span>, where Activity is the universal work unit (Vitals, MRI, ePRO, biopsy, IP administration — same shape) and Task is the universal leaf data-capture (BP, MRI Study reference, PHQ-9 item, drug dose — same shape, polymorphic taskValue). Specialization is content (biomedicalConceptCode + taskValueType + URI references), never entity shape. Visit-occurrence is distinct from <span class="inline">VisitDefinition</span> (the protocol template, USDM-ingest-derivable). Per the temporal+PROV native commitment: every entity is a typed PROV node (Visit and Activity are <span class="inline">prov:Activity</span>, VisitDefinition is <span class="inline">prov:Entity</span>); status attributes are NGSI-LD temporal properties; Task captures <span class="inline">observedAt</span> as Property metadata. The foundation IS a W3C PROV graph by construction.</p>
 
 <h2 class="section" id="principles"><span class="num">2.</span>First-principles posture <span class="subnote">why the entity looks the way it looks</span></h2>
 
@@ -76,7 +76,7 @@
 <ol>
   <li><strong>Operator-grounded vocabulary.</strong> "Visit," "Activity," "Task" — what coordinators say. Not "Encounter" (FHIR's name), not "ScheduledActivityInstance" (USDM's name). Cross-walks live below the line.</li>
   <li><strong>Native temporal + provenance.</strong> Visit, Activity, Task all declare <span class="inline">provType: prov:Activity</span> via <span class="inline">rdfs:subClassOf</span>. VisitDefinition declares <span class="inline">prov:Entity</span>. <span class="inline">visitStatus</span> / <span class="inline">activityStatus</span> / <span class="inline">taskStatus</span> are NGSI-LD temporal properties. <span class="inline">Task.observedAt</span> is canonical Property metadata, not a flat <span class="inline">performedDateTime</span> attribute. <span class="inline">performedBy</span> declares <span class="inline">provSemantics: wasAssociatedWith</span>; <span class="inline">usedEquipment</span> declares <span class="inline">used</span>.</li>
-  <li><strong>Universal substrate.</strong> Activity and Task are universal containers. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape. Specialization is content (<span class="inline">biomedicalConceptCode</span>, <span class="inline">taskValueType</span>, <span class="inline">taskValue</span>) and links (<span class="inline">usedEquipment</span>, <span class="inline">governedBy</span>), never entity-type discrimination.</li>
+  <li><strong>Universal foundation.</strong> Activity and Task are universal containers. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape. Specialization is content (<span class="inline">biomedicalConceptCode</span>, <span class="inline">taskValueType</span>, <span class="inline">taskValue</span>) and links (<span class="inline">usedEquipment</span>, <span class="inline">governedBy</span>), never entity-type discrimination.</li>
 </ol>
 
 <h2 class="section" id="anchor"><span class="num">3.</span>Architectural anchor <span class="subnote">Visit's place in the operational hierarchy</span></h2>
@@ -99,7 +99,7 @@
 
 <h2 class="section" id="universal"><span class="num">4.</span>Universal Activity + Task <span class="subnote">specialization is content, not shape</span></h2>
 
-<p>Per the universal-substrate posture in <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES</a>, Visit's sub-objects accommodate any assessment without modeling its specifics. The same TOP entity shape handles vitals, MRI, ePRO, biopsy, IP administration, lab draws, ECGs, sequencing — anything.</p>
+<p>Per the universal-foundation posture in <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES</a>, Visit's sub-objects accommodate any assessment without modeling its specifics. The same TOP entity shape handles vitals, MRI, ePRO, biopsy, IP administration, lab draws, ECGs, sequencing — anything.</p>
 
 <table>
   <thead><tr><th>Activity</th><th>activityName</th><th>activityType</th><th>biomedicalConceptCode</th><th>Task example</th><th>Task.taskValueType</th></tr></thead>
@@ -116,7 +116,7 @@
 
 <p><strong>The architectural moat</strong>: standards-up vendors model N entity types per therapeutic area (<span class="inline">DICOMImagingStudy</span>, <span class="inline">PHQ9Response</span>, <span class="inline">LabResult</span>, <span class="inline">EProSession</span>). TOP carries one universal pattern that handles all of them. External systems (DICOM PACS, lab LIS, ePRO platform, EHR, sequencing pipelines) hold implementation specifics; TOP holds the universal trial-conduct-realm reference; URI references point to wherever the specialized artifact actually lives.</p>
 
-<h2 class="section" id="temporal-prov"><span class="num">5.</span>Native temporal + PROV — applied <span class="subnote">substrate IS a W3C PROV graph by construction</span></h2>
+<h2 class="section" id="temporal-prov"><span class="num">5.</span>Native temporal + PROV — applied <span class="subnote">foundation IS a W3C PROV graph by construction</span></h2>
 
 <p>Every Visit-related entity declares its PROV type via <span class="inline">rdfs:subClassOf</span> in the emitted shapes (per the v0.4.1 commitment):</p>
 
@@ -152,7 +152,7 @@
 <p>TOP's universal Visit → Activity → Task hierarchy projects cleanly to FHIR R5 <span class="inline">Questionnaire</span> (form template) and <span class="inline">QuestionnaireResponse</span> (captured data). This is the consuming view that turns TOP into a single-source-of-truth for clinical-trial forms across Epic, Cerner, SMART on FHIR apps, ePRO vendors.</p>
 
 <table>
-  <thead><tr><th>TOP substrate</th><th>FHIR Questionnaire (form template)</th><th>FHIR QuestionnaireResponse (captured)</th></tr></thead>
+  <thead><tr><th>TOP</th><th>FHIR Questionnaire (form template)</th><th>FHIR QuestionnaireResponse (captured)</th></tr></thead>
   <tbody>
     <tr><td>VisitDefinition</td><td>Questionnaire (root)</td><td>(framing context)</td></tr>
     <tr><td>VisitDefinition.visitName</td><td>Questionnaire.title</td><td>—</td></tr>
@@ -173,9 +173,9 @@
 
 <p><strong>Adapter implementation deferred to v0.6+</strong>: <span class="inline">tools/project_to_fhir_questionnaire.py</span> takes a VisitDefinition (with linked Activity-template and Task-template metadata) and emits Questionnaire JSON. ~200-300 lines of Python. Bidirectional: also <span class="inline">tools/ingest_fhir_questionnaire_response.py</span>.</p>
 
-<h2 class="section" id="chain-of-custody"><span class="num">7.</span>Chain-of-custody view <span class="subnote">the consuming view that compliance vendors render from audit logs; TOP renders from substrate facts</span></h2>
+<h2 class="section" id="chain-of-custody"><span class="num">7.</span>Chain-of-custody view <span class="subnote">the consuming view that compliance vendors render from audit logs; TOP renders from foundation facts</span></h2>
 
-<p>The substrate decisions in this lift enable per-Activity provenance views. Compliance vendors render these from hand-curated audit logs; TOP renders them from substrate facts in real time, against any Activity, by graph traversal. Example query for "show me the chain of custody for Maria's blood draw at C1D1":</p>
+<p>The foundation decisions in this lift enable per-Activity provenance views. Compliance vendors render these from hand-curated audit logs; TOP renders them from foundation facts in real time, against any Activity, by graph traversal. Example query for "show me the chain of custody for Maria's blood draw at C1D1":</p>
 
 <pre class="code">PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;
 PREFIX top:  &lt;https://top.scientix.ai/onto/clinical/v1#&gt;
@@ -192,7 +192,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
   ?activity top:hasTask / top:observedAt ?observedAt .
 }</pre>
 
-<p>No audit-log table. No translation layer. The chain assembles from substrate triples. Every checkmark in a regulator's compliance view is one of these triples.</p>
+<p>No audit-log table. No translation layer. The chain assembles from foundation triples. Every checkmark in a regulator's compliance view is one of these triples.</p>
 
 <h2 class="section" id="model"><span class="num">8.</span>Model summary <span class="subnote">attributes, relationships, sub-objects · full set in source/top-strawman.json</span></h2>
 
@@ -281,7 +281,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
 
 <div class="decision">
   <div class="title">Decision 4 — Activity + Task as universal sub-objects (specialization is content)</div>
-  <p>Per Bo's clarification: TOP must accommodate any assessment without modeling its specifics. The substrate carries Activity + Task as universal containers; specialization is content (biomedicalConceptCode + taskValueType + URI references), never entity shape. This eliminates the need for ImagingStudy / IPAdministration / QuestionnaireResponse / per-instrument horizontals. Implementation specifics live in external systems (DICOM PACS, lab LIS, ePRO platform); TOP carries the universal trial-conduct-realm reference. The architectural moat: standards-up vendors model N entity types per therapeutic area; TOP carries one.</p>
+  <p>Per Bo's clarification: TOP must accommodate any assessment without modeling its specifics. The foundation carries Activity + Task as universal containers; specialization is content (biomedicalConceptCode + taskValueType + URI references), never entity shape. This eliminates the need for ImagingStudy / IPAdministration / QuestionnaireResponse / per-instrument horizontals. Implementation specifics live in external systems (DICOM PACS, lab LIS, ePRO platform); TOP carries the universal trial-conduct-realm reference. The architectural moat: standards-up vendors model N entity types per therapeutic area; TOP carries one.</p>
 </div>
 
 <div class="decision">
@@ -306,7 +306,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
 
 <div class="decision">
   <div class="title">Decision 9 — Twin-queryability extension</div>
-  <p>Visit lifts the queryability surface for digital-twin synthesis significantly. Per-Participant time-series of Visits + per-Visit Activities + per-Activity Tasks + visit-window adherence as a covariate. The substrate decisions made in Participant v0.4 pay off here. Twin synthesis is downstream tooling (not in TOP); the substrate provides the contract.</p>
+  <p>Visit lifts the queryability surface for digital-twin synthesis significantly. Per-Participant time-series of Visits + per-Visit Activities + per-Activity Tasks + visit-window adherence as a covariate. The foundation decisions made in Participant v0.4 pay off here. Twin synthesis is downstream tooling (not in TOP); the foundation provides the contract.</p>
 </div>
 
 <h2 class="section" id="crosswalks"><span class="num">10.</span>Cross-walks <span class="subnote">FHIR R5 / SDTM / CDASH / USDM / OMOP · projection-edge documentation</span></h2>
@@ -405,7 +405,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
 </div>
 
 <div class="scenario">
-  <div class="title-row"><div class="scn-title">DICOM imaging visit (universal substrate handles it)</div><div class="scn-tag">Imaging</div></div>
+  <div class="title-row"><div class="scn-title">DICOM imaging visit (universal foundation handles it)</div><div class="scn-tag">Imaging</div></div>
   <p>Maria's End-of-Treatment MRI scan on Day 90.</p>
   <div class="resolves">Visit (visitMode=IN_PERSON_CLINIC, status=COMPLETED). One Activity (activityName="MRI Brain", activityType=IMAGING, biomedicalConceptCode=NCIt:C16809). One Task (taskName="MRI Study", taskValueType=URI_REFERENCE, taskValue="urn:dicom:study/1.2.840.113654...", biomedicalConceptCode=NCIt:C16809). The DICOM Study Instance UID is referenced — TOP doesn't store pixels, the PACS does. Same TOP entity shape as a blood draw; specialization is in content.</div>
 </div>
@@ -413,7 +413,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
 <div class="scenario">
   <div class="title-row"><div class="scn-title">Compliance query — chain of custody for a single Activity</div><div class="scn-tag">Provenance</div></div>
   <p>A regulator asks: "Show me the full chain of custody for Maria's blood draw at C1D1."</p>
-  <div class="resolves">SPARQL query over substrate (no audit-log join): finds the Activity by Visit + activityName, traverses prov:wasAssociatedWith to the phlebotomist, prov:used to the centrifuge Equipment (which carries its calibration Credential chain), top:governedBy to the lab SOP Document, top:hasTask to the captured measurements. All from substrate triples. The compliance view renders from this in real time — no curated audit log required.</div>
+  <div class="resolves">SPARQL query over foundation (no audit-log join): finds the Activity by Visit + activityName, traverses prov:wasAssociatedWith to the phlebotomist, prov:used to the centrifuge Equipment (which carries its calibration Credential chain), top:governedBy to the lab SOP Document, top:hasTask to the captured measurements. All from foundation triples. The compliance view renders from this in real time — no curated audit log required.</div>
 </div>
 
 <h2 class="section" id="open"><span class="num">13.</span>Open issues</h2>
@@ -424,7 +424,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
   <li><strong>Equipment.calibrationStatus as NGSI-LD temporal property.</strong> Per the chain-of-custody mock-up, Equipment calibration currency is a SHACL-queryable assertion at activity-time. Defers to a small Equipment enrichment PR.</li>
   <li><strong>Person.hasCredential richer credentialType enum.</strong> Per the chain-of-custody mock-up: phlebotomy certs, IATA shipping certs, GCP training certs all surface as Credentials. Defers to a Credential horizontal enrichment.</li>
   <li><strong>Document section anchors (§7.4, §7.6 references).</strong> Per the chain-of-custody mock-up. Defers to a Document horizontal enrichment.</li>
-  <li><strong>Continuous monitoring data (Log temporal-property enrichment).</strong> Cold-chain temperature logs, CGM streams, wearable data. Log horizontal extension; URI_REFERENCE on Task to the log file is the substrate-side handle.</li>
+  <li><strong>Continuous monitoring data (Log temporal-property enrichment).</strong> Cold-chain temperature logs, CGM streams, wearable data. Log horizontal extension; URI_REFERENCE on Task to the log file is the foundation-side handle.</li>
   <li><strong>Event lift (v0.7+).</strong> AdverseEvent / Other Clinical Event with eventCategory enum + the OOUX Path C reportability handoff. Visit.hasAdverseEvent + VisitObservation.escalatedTo unlocks at that point.</li>
   <li><strong>Twin-spec planning note.</strong> Now that Visit + Activity + Task expand the queryability surface significantly, the twin-synthesizer contract spec lifts as a planning note in v0.6+.</li>
 </ol>
@@ -432,7 +432,7 @@ SELECT ?activity ?actor ?equipment ?document ?observedAt WHERE {
 <div class="footer">
   TOP / Visit / spec / v1 · backed by source/top-strawman.json (v0.5.0-strawman) · 2026-05-09<br>
   Generated artifacts (cross-walks · SHACL shapes · JSON-LD context) live in onto/clinical/v1/.<br>
-  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: operator-grounded substrate, native temporal+PROV, universal substrate.
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: operator-grounded foundation, native temporal+PROV, universal foundation.
 </div>
 
 </div>

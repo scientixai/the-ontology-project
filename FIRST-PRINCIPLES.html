@@ -114,7 +114,7 @@
 </div>
 
 <h1 class="title">First Principles</h1>
-<div class="subtitle">Operator-grounded substrate. Ephemeral standards projections. A participant is a participant — full stop.</div>
+<div class="subtitle">Operator-grounded foundation. Ephemeral standards projections. A participant is a participant — full stop.</div>
 <div class="doc-meta">Operationalizes the Manifesto · cited by every spec doc · 2026-05-09</div>
 
 <p class="tagline">The design rule every architectural argument can cite. When "but USDM does it this way" or "but SDTM has this column" enters the room, this is the document that wins.</p>
@@ -125,7 +125,7 @@
   <p>A participant is a participant. Full stop.</p>
 </blockquote>
 
-<p>Operators are the customer. The substrate is built from their workday down, not from the standards up. Standards become projection edges — ephemeral by design — and live below the operator-facing line.</p>
+<p>Operators are the customer. The foundation is built from their workday down, not from the standards up. Standards become projection edges — ephemeral by design — and live below the operator-facing line.</p>
 
 <h2 class="section">The inversion</h2>
 
@@ -136,7 +136,7 @@
     <tr><td>SDTM / FHIR / USDM shape entities</td><td>Operator workflow shapes entities</td></tr>
     <tr><td>Operators see standards-shaped UX</td><td>Operators see what they actually do</td></tr>
     <tr><td>Cross-walks are the deliverable</td><td>Cross-walks are projection rules below the line</td></tr>
-    <tr><td>Standards alignment <em>is</em> the substrate</td><td>Standards alignment is the <em>projection layer</em></td></tr>
+    <tr><td>Standards alignment <em>is</em> the foundation</td><td>Standards alignment is the <em>projection layer</em></td></tr>
   </tbody>
 </table>
 
@@ -158,7 +158,7 @@
     <div class="yes-no"><span class="label">Yes:</span> <span class="inline">InformedConsent</span>, <span class="inline">ScreeningRecord</span>, <span class="inline">EnrollmentRecord</span>, <span class="inline">WithdrawalRecord</span> — each a moment in a coordinator's day. <span class="no-label">No:</span> <span class="inline">ResearchSubjectProgressEntry</span>, <span class="inline">DSRecord</span> — those are how the projection adapter renders the TOP sub-object as FHIR or SDTM at export time.</div>
   </li>
   <li><strong>Cross-walks live below the entity definition, never as the shape.</strong> Every spec doc carries its FHIR / SDTM / CDASH / USDM / OMOP cross-walks as documentation of what the projection adapter will emit — not as constraints on the entity's shape.</li>
-  <li><strong>Standards adapters are ephemeral by design.</strong> The USDM ingester, the FHIR exporter, the SDTM emitter, the OMOP projector — they evolve with their target standards. The entity layer doesn't. When CDISC ships a CT update or USDM bumps to v5, the adapter changes; the substrate persists.</li>
+  <li><strong>Standards adapters are ephemeral by design.</strong> The USDM ingester, the FHIR exporter, the SDTM emitter, the OMOP projector — they evolve with their target standards. The entity layer doesn't. When CDISC ships a CT update or USDM bumps to v5, the adapter changes; the foundation persists.</li>
 </ol>
 
 <h2 class="section">Decision rule when in doubt</h2>
@@ -181,7 +181,7 @@
   <li>Nesting under regulatory taxonomies for browsing (e.g., ICH E6(R3) Section 2.x as primary navigation).</li>
   <li>Carrying every standards-mandated field that operators don't actually use ("we have to carry it because USDM has it" — no).</li>
   <li>Treating standards alignment as the deliverable.</li>
-  <li><strong>Therapeutic-area-specific or modality-specific entity types</strong> (<span class="inline">OncologyImagingStudy</span>, <span class="inline">CardiologyECGRecording</span>, <span class="inline">PHQ9Response</span>, <span class="inline">DICOMSeriesAnnotation</span>, <span class="inline">EProSession</span>, <span class="inline">LabResult</span>). Specialization is content, never entity shape. See "Universal substrate" below.</li>
+  <li><strong>Therapeutic-area-specific or modality-specific entity types</strong> (<span class="inline">OncologyImagingStudy</span>, <span class="inline">CardiologyECGRecording</span>, <span class="inline">PHQ9Response</span>, <span class="inline">DICOMSeriesAnnotation</span>, <span class="inline">EProSession</span>, <span class="inline">LabResult</span>). Specialization is content, never entity shape. See "Universal foundation" below.</li>
 </ul>
 
 <h2 class="section">What this rules in</h2>
@@ -191,20 +191,20 @@
   <li>Workflow-bound entity boundaries.</li>
   <li>Sub-objects that match operator events.</li>
   <li>Cross-walks documented thoroughly, but always as projection rules below the line.</li>
-  <li>Standards alignment as a quality of the projection layer, not of the substrate.</li>
-  <li>Aggressive simplification of the substrate. <strong>Less is the win.</strong></li>
+  <li>Standards alignment as a quality of the projection layer, not of the foundation.</li>
+  <li>Aggressive simplification of the foundation. <strong>Less is the win.</strong></li>
 </ul>
 
 <h2 class="section">Why this matters beyond the architecture</h2>
 
 <p>CDISC alone publishes 11+ standards across SDTM / CDASH / ADaM / SEND / ODM / USDM / M11 / COSMoS / CT / TAUGs / Implementation Guides. FHIR adds research-side resources. ICH layers governance vocabulary. NCIt feeds terminology. <strong>No human can hold all of this in working memory.</strong> Sponsors burn millions on standards-compliance headcount; CROs charge premiums for CDISC expertise; coordinators and PIs either ignore standards (creating downstream submission pain) or drown in them (and don't actually conduct trials).</p>
 
-<p>TOP's bet is that <strong>the substrate eats the standards complexity so operators don't have to</strong>. A coordinator sees "Participant" — that's it. The Participant→SDTM, Participant→FHIR, Participant→USDM cross-walks happen at the edges, automatically, maintained by ephemeral adapters that ride upstream releases.</p>
+<p>TOP's bet is that <strong>the foundation eats the standards complexity so operators don't have to</strong>. A coordinator sees "Participant" — that's it. The Participant→SDTM, Participant→FHIR, Participant→USDM cross-walks happen at the edges, automatically, maintained by ephemeral adapters that ride upstream releases.</p>
 
 <p>This is the force-multiplier story made structural. The notes that look like overhead — audits, cross-walks, dependency pipelines — are the absorber. The point is the absorber itself is the product.</p>
 
 <blockquote class="pull-quote">
-  <p>Standards-up ontologies make humans pay the integration cost forever. TOP makes the substrate pay it once, and then again whenever the standards change.</p>
+  <p>Standards-up ontologies make humans pay the integration cost forever. TOP makes the foundation pay it once, and then again whenever the standards change.</p>
 </blockquote>
 
 <p>That's the bet.</p>
@@ -214,8 +214,8 @@
 <p>Two structural commitments differentiate TOP from compliance vendors, workflow vendors, and most knowledge-graph projects:</p>
 
 <ol>
-  <li><strong>NGSI-LD temporal-property semantics native.</strong> Status / outcome / state attributes that operators see change over time are NGSI-LD temporal properties (<span class="inline">validFrom</span> / <span class="inline">validUntil</span> per value), not flat enums with separate audit-log mechanisms. Measurement timestamps use the canonical <span class="inline">observedAt</span> Property metadata. Trajectory queries work directly against the substrate.</li>
-  <li><strong>W3C PROV native typing.</strong> Every TOP entity declares its PROV type (<span class="inline">prov:Agent</span> / <span class="inline">prov:Activity</span> / <span class="inline">prov:Entity</span>) via <span class="inline">rdfs:subClassOf</span>. Relationships that carry PROV semantics (<span class="inline">wasAssociatedWith</span>, <span class="inline">wasAttributedTo</span>, <span class="inline">wasGeneratedBy</span>, <span class="inline">wasDerivedFrom</span>, <span class="inline">actedOnBehalfOf</span>, <span class="inline">wasInformedBy</span>, <span class="inline">wasInvalidatedBy</span>) declare those via <span class="inline">rdfs:subPropertyOf</span>. The substrate IS a PROV graph by construction, not via cross-walk translation.</li>
+  <li><strong>NGSI-LD temporal-property semantics native.</strong> Status / outcome / state attributes that operators see change over time are NGSI-LD temporal properties (<span class="inline">validFrom</span> / <span class="inline">validUntil</span> per value), not flat enums with separate audit-log mechanisms. Measurement timestamps use the canonical <span class="inline">observedAt</span> Property metadata. Trajectory queries work directly against the foundation.</li>
+  <li><strong>W3C PROV native typing.</strong> Every TOP entity declares its PROV type (<span class="inline">prov:Agent</span> / <span class="inline">prov:Activity</span> / <span class="inline">prov:Entity</span>) via <span class="inline">rdfs:subClassOf</span>. Relationships that carry PROV semantics (<span class="inline">wasAssociatedWith</span>, <span class="inline">wasAttributedTo</span>, <span class="inline">wasGeneratedBy</span>, <span class="inline">wasDerivedFrom</span>, <span class="inline">actedOnBehalfOf</span>, <span class="inline">wasInformedBy</span>, <span class="inline">wasInvalidatedBy</span>) declare those via <span class="inline">rdfs:subPropertyOf</span>. The foundation IS a PROV graph by construction, not via cross-walk translation.</li>
 </ol>
 
 <p>These two commitments answer compliance-grade questions as graph traversals:</p>
@@ -229,19 +229,19 @@
 
 <p>No audit-log table. No bespoke versioning shim. No translation layer.</p>
 
-<p>This is what compliance vendors, workflow vendors, and most ontologies <em>don't</em> have natively. TOP's claim — that the substrate carries temporal and provenance natively — is the architectural moat that complements the operator-grounded vocabulary moat.</p>
+<p>This is what compliance vendors, workflow vendors, and most ontologies <em>don't</em> have natively. TOP's claim — that the foundation carries temporal and provenance natively — is the architectural moat that complements the operator-grounded vocabulary moat.</p>
 
-<p>Per FIRST-PRINCIPLES, the operator vocabulary remains primary. The PROV typing layers structurally — the same instance answers <span class="inline">?ic a top:InformedConsent</span> (operator query) and <span class="inline">?ic a prov:Activity</span> (compliance query). Both views, one substrate.</p>
+<p>Per FIRST-PRINCIPLES, the operator vocabulary remains primary. The PROV typing layers structurally — the same instance answers <span class="inline">?ic a top:InformedConsent</span> (operator query) and <span class="inline">?ic a prov:Activity</span> (compliance query). Both views, one foundation.</p>
 
 <blockquote class="pull-quote">
-  <p>The consuming view: a per-Activity provenance card showing the complete chain of custody for a single blood draw — consent, collection, processing, packaging, transit — with every evidentiary checkmark traceable to a substrate fact. Compliance vendors render that card from hand-curated audit logs. TOP renders it from substrate facts, in real time, against any Activity.</p>
+  <p>The consuming view: a per-Activity provenance card showing the complete chain of custody for a single blood draw — consent, collection, processing, packaging, transit — with every evidentiary checkmark traceable to a foundation fact. Compliance vendors render that card from hand-curated audit logs. TOP renders it from foundation facts, in real time, against any Activity.</p>
 </blockquote>
 
-<h2 class="section">Universal substrate — specialization is content, not shape</h2>
+<h2 class="section">Universal foundation — specialization is content, not shape</h2>
 
-<p>A third structural commitment, alongside operator-grounded vocabulary and native temporal+provenance: <strong>the substrate accommodates any assessment without modeling its specifics. Specialization is content; specialization is never entity-shape.</strong></p>
+<p>A third structural commitment, alongside operator-grounded vocabulary and native temporal+provenance: <strong>the foundation accommodates any assessment without modeling its specifics. Specialization is content; specialization is never entity-shape.</strong></p>
 
-<p>Therapeutic-area diversity (oncology, cardiology, neurology, vaccines, rare disease, mental health, endocrinology) and modality diversity (DICOM imaging, ePRO questionnaires, ECG, biopsy, IP administration, lab values, sequencing) generate enormous variation in <em>what</em> gets captured during a trial. Standards-up vendors model that variation as N entity types per therapeutic area (<span class="inline">OncologyImagingStudy</span>, <span class="inline">CardiologyECGRecording</span>, <span class="inline">PHQ9Response</span>, <span class="inline">DICOMSeriesAnnotation</span>). The substrate then grows linearly with the union of clinical specialties — and breaks every time a new modality lifts.</p>
+<p>Therapeutic-area diversity (oncology, cardiology, neurology, vaccines, rare disease, mental health, endocrinology) and modality diversity (DICOM imaging, ePRO questionnaires, ECG, biopsy, IP administration, lab values, sequencing) generate enormous variation in <em>what</em> gets captured during a trial. Standards-up vendors model that variation as N entity types per therapeutic area (<span class="inline">OncologyImagingStudy</span>, <span class="inline">CardiologyECGRecording</span>, <span class="inline">PHQ9Response</span>, <span class="inline">DICOMSeriesAnnotation</span>). The foundation then grows linearly with the union of clinical specialties — and breaks every time a new modality lifts.</p>
 
 <p>TOP carries <strong>one universal pattern</strong>: <span class="inline">Activity + Task + polymorphic taskValue + biomedicalConceptCode + URI references</span>. A DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape. They differ in:</p>
 
@@ -256,7 +256,7 @@
 <h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">What this rules out — never</h3>
 
 <ul>
-  <li>Therapeutic-area-specific entity types in the substrate. <strong>No <span class="inline">OncologyImagingStudy</span>, no <span class="inline">CardiologyECGRecording</span>, no <span class="inline">PHQ9Response</span>, no instrument-specific or modality-specific entities. Ever.</strong> If a future requirement appears to need one, the answer is to reformulate it as content variation: project it through <span class="inline">taskValue</span> polymorphism + concept-code identification + URI references to the implementation.</li>
+  <li>Therapeutic-area-specific entity types in the foundation. <strong>No <span class="inline">OncologyImagingStudy</span>, no <span class="inline">CardiologyECGRecording</span>, no <span class="inline">PHQ9Response</span>, no instrument-specific or modality-specific entities. Ever.</strong> If a future requirement appears to need one, the answer is to reformulate it as content variation: project it through <span class="inline">taskValue</span> polymorphism + concept-code identification + URI references to the implementation.</li>
   <li>Modality-specific shape (<span class="inline">DICOMImagingStudy</span>, <span class="inline">EProSession</span>, <span class="inline">LabResult</span>, <span class="inline">GenomicVariant</span>). Same answer — content, not shape.</li>
   <li>Instrument-specific entities (<span class="inline">PHQ9Item</span>, <span class="inline">ADASCogResult</span>, <span class="inline">EQ5D5LCapture</span>). Same answer.</li>
   <li>"Just-in-case" specialization driven by anticipated future requirements. The discipline is reactive: only lift entities when a real operator workflow forces them, and only as Core concepts, not specialization.</li>
@@ -274,7 +274,7 @@
   <li>The other entries in the OOUX-locked-9: <span class="inline">Visit</span>, <span class="inline">OversightBody</span></li>
 </ul>
 
-<p>Lifting these expands the substrate horizontally without specializing it. The test: does this entity exist as a first-class concept in operator vocabulary across therapeutic areas, or only within a specific clinical specialty?</p>
+<p>Lifting these expands the foundation horizontally without specializing it. The test: does this entity exist as a first-class concept in operator vocabulary across therapeutic areas, or only within a specific clinical specialty?</p>
 
 <h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">The discipline</h3>
 
@@ -291,12 +291,12 @@
 <ul>
   <li><strong>Standards-up vendors</strong> — CDISC consultancies, eClinical SaaS that wraps SDTM/USDM. They compete on standards coverage. They never win operator love because they're tools <em>for compliance</em>, not tools <em>for doing the work</em>.</li>
   <li><strong>Workflow-up vendors</strong> — EDC, CTMS, eTMF. They compete on UX but lack ontological grounding. Each is a silo that doesn't federate.</li>
-  <li><strong>TOP-shape</strong>: human-anchored substrate + grounded AI + ephemeral projection adapters. Carries all three sides of the triangle.</li>
+  <li><strong>TOP-shape</strong>: human-anchored foundation + grounded AI + ephemeral projection adapters. Carries all three sides of the triangle.</li>
 </ul>
 
-<p>Most products carry one side. A few carry two. Nobody who anchored standards-up can rebuild around the human without throwing away their data model. Nobody who anchored UX-up has the substrate to add grounding without becoming yet another silo. TOP starts where they'd have to retreat to — and the retreat is impossibly expensive for them.</p>
+<p>Most products carry one side. A few carry two. Nobody who anchored standards-up can rebuild around the human without throwing away their data model. Nobody who anchored UX-up has the foundation to add grounding without becoming yet another silo. TOP starts where they'd have to retreat to — and the retreat is impossibly expensive for them.</p>
 
-<p>The compliance moat (GxP, GAMP5, SOC 2, HIPAA, 21 CFR Part 11) protects the commercial product. The architectural moat — the human anchor itself — is what makes the substrate uncopyable.</p>
+<p>The compliance moat (GxP, GAMP5, SOC 2, HIPAA, 21 CFR Part 11) protects the commercial product. The architectural moat — the human anchor itself — is what makes the foundation uncopyable.</p>
 
 <div class="footer">
   Cite as: <strong>FIRST-PRINCIPLES.md</strong>, or in prose, <strong>"TOP first principles"</strong>. The principle in one line — <em>a participant is a participant, full stop</em> — is the quotable form.<br><br>
