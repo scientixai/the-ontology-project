@@ -8,8 +8,8 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 
 | # | Date | Title | Status |
 | --- | --- | --- | --- |
-| [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-substrate) | 2026-05-08 | Temporal and PROV native at the substrate | Accepted |
-| [ADR-0002](#adr-0002-universal-substrate-posture-no-specialized-entity-types-for-cross-cutting-shapes) | 2026-05-08 | Universal substrate posture — no specialized entity types for cross-cutting shapes | Accepted |
+| [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation) | 2026-05-08 | Temporal and PROV native at the foundation | Accepted |
+| [ADR-0002](#adr-0002-universal-foundation-posture-no-specialized-entity-types-for-cross-cutting-shapes) | 2026-05-08 | Universal foundation posture — no specialized entity types for cross-cutting shapes | Accepted |
 | [ADR-0003](#adr-0003-correct-the-namespace-mislabeling-top-is-the-project) | 2026-05-09 | Correct the namespace mislabeling — `top:` is the project | Accepted |
 | [ADR-0004](#adr-0004-composable-workflow-extensions-not-sibling-reference-graphs) | 2026-05-09 | Composable workflow extensions, not sibling reference graphs | Accepted |
 | [ADR-0005](#adr-0005-drop-onto-from-uri-paths) | 2026-05-09 | Drop `/onto/` from URI paths | Accepted |
@@ -25,7 +25,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 
 ---
 
-## ADR-0001: Temporal and PROV native at the substrate
+## ADR-0001: Temporal and PROV native at the foundation
 
 **Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#8](https://github.com/scientixai/the-ontology-project/pull/8) · **Refs:** [FIRST-PRINCIPLES.md § Temporal and provenance, native](../FIRST-PRINCIPLES.md)
 
@@ -35,31 +35,31 @@ Operators in regulated industries do not get to bolt provenance on later. GxP, 2
 
 ### Decision
 
-The substrate adopts NGSI-LD temporal semantics and W3C PROV native typing as first-class concerns. Every entity declares its `provType` (Agent / Activity / Entity); every property declares its `provSemantics` where one applies (`prov:wasGeneratedBy`, `prov:wasAttributedTo`, `prov:wasAssociatedWith`, `prov:wasDerivedFrom`, `prov:actedOnBehalfOf`, `prov:wasInformedBy`, `prov:wasInvalidatedBy`, `prov:hadRole`). The translator emits `rdfs:subClassOf prov:*` and `rdfs:subPropertyOf prov:*` from these annotations. Audit-trail entries are container-typed; not specialized.
+The foundation adopts NGSI-LD temporal semantics and W3C PROV native typing as first-class concerns. Every entity declares its `provType` (Agent / Activity / Entity); every property declares its `provSemantics` where one applies (`prov:wasGeneratedBy`, `prov:wasAttributedTo`, `prov:wasAssociatedWith`, `prov:wasDerivedFrom`, `prov:actedOnBehalfOf`, `prov:wasInformedBy`, `prov:wasInvalidatedBy`, `prov:hadRole`). The translator emits `rdfs:subClassOf prov:*` and `rdfs:subPropertyOf prov:*` from these annotations. Audit-trail entries are container-typed; not specialized.
 
 ### Consequences
 
 - Audit-trail tooling that consumes PROV gets a free seat at the table. No special-case adapters.
-- The substrate cannot drift away from PROV without breaking every downstream provenance query.
+- The foundation cannot drift away from PROV without breaking every downstream provenance query.
 - Future ADRs (notably [ADR-0011](#adr-0011-prov-as-taxonomy-governance-dogfood)) can extend the same discipline to the taxonomy itself, not just instance data.
 
 ---
 
-## ADR-0002: Universal substrate posture — no specialized entity types for cross-cutting shapes
+## ADR-0002: Universal foundation posture — no specialized entity types for cross-cutting shapes
 
-**Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#9](https://github.com/scientixai/the-ontology-project/pull/9) · **Refs:** [FIRST-PRINCIPLES.md § Universal substrate](../FIRST-PRINCIPLES.md)
+**Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#9](https://github.com/scientixai/the-ontology-project/pull/9) · **Refs:** [FIRST-PRINCIPLES.md § Universal foundation](../FIRST-PRINCIPLES.md)
 
 ### Context
 
-A draft of the Visit lift introduced `VisitObservation` as a specialized entity type. That triggered a question: do we keep adding specialized types every time a workflow expresses a shape, or do we treat the substrate as universal containers that get specialized through *content* rather than *shape*?
+A draft of the Visit lift introduced `VisitObservation` as a specialized entity type. That triggered a question: do we keep adding specialized types every time a workflow expresses a shape, or do we treat the foundation as universal containers that get specialized through *content* rather than *shape*?
 
 ### Decision
 
-Cross-cutting shapes (Activity, Task, observation) are expressed as universal containers in the substrate. Specialization happens through reference data, role bindings, and projection — not by minting new entity types every time a workflow expresses the same shape with different content.
+Cross-cutting shapes (Activity, Task, observation) are expressed as universal containers in the foundation. Specialization happens through reference data, role bindings, and projection — not by minting new entity types every time a workflow expresses the same shape with different content.
 
 ### Consequences
 
-- The substrate stays small and stable. Shapes that recur across workflows are recognizable.
+- The foundation stays small and stable. Shapes that recur across workflows are recognizable.
 - This decision sets up the question that ADR-0007 and ADR-0008 answer in the affirmative: if cross-cutting shapes belong to the universal layer, *which layer is that*, and how does workflow-specific specialization actually attach?
 
 ---
@@ -108,13 +108,13 @@ It does feel off. A smart hospital sponsoring a trial is a healthcare-delivery o
 
 ### Decision
 
-Workflows are **composable extensions** layered on a single commons substrate, not siblings. A smart hospital is not in `topcd:`-or-`topcr:`; it is in both, simultaneously, by binding the same `topc:Person` (the patient) to both a `topcd:Encounter` and a `topcr:Visit`. The commons provides the primitives; workflows specialize them.
+Workflows are **composable extensions** layered on a single commons foundation, not siblings. A smart hospital is not in `topcd:`-or-`topcr:`; it is in both, simultaneously, by binding the same `topc:Person` (the patient) to both a `topcd:Encounter` and a `topcr:Visit`. The commons provides the primitives; workflows specialize them.
 
 ### Consequences
 
 - New workflow extensions ship as additive packages, not as new top-of-tree concept schemes.
 - Cross-workflow composition (the smart-hospital-as-sponsor case) becomes a first-class scenario rather than an edge case.
-- The taxonomy explicitly models **WorkflowExtensions** as a top concept distinct from the substrate, so contributors can see at a glance which layer they are touching.
+- The taxonomy explicitly models **WorkflowExtensions** as a top concept distinct from the foundation, so contributors can see at a glance which layer they are touching.
 
 ---
 
@@ -163,7 +163,7 @@ Author the taxonomy in SKOS Turtle as the source of truth (`taxonomy/taxonomy.tt
 
 - The taxonomy round-trips through TermBoard and equivalent tools.
 - The CSV is the curator's working surface; the Turtle is the system of record; the Markdown is the readers' entry point.
-- Every concept in the substrate is now traceable to a single canonical record.
+- Every concept in the foundation is now traceable to a single canonical record.
 
 ---
 
@@ -224,7 +224,7 @@ Workflow-extension shapes are *narrower* than the commons primitive — they add
 
 ### Consequences
 
-- The commons stops being a vocabulary stub and becomes the actual reusable substrate.
+- The commons stops being a vocabulary stub and becomes the actual reusable foundation.
 - Workflow extensions stay small — they only own the delta.
 - The line between "belongs in commons" and "belongs in a workflow extension" is now testable: *if every workflow needs this property with this meaning, it's commons; if even one workflow disagrees, it's an extension.*
 - This refines ADR-0007 in the direction Bo wanted but the original ADR didn't quite reach.
@@ -301,11 +301,11 @@ Drift prevention runs on four layers, each catching what the layer above it migh
 
 ## ADR-0011: PROV as taxonomy governance — dogfood
 
-**Date:** 2026-05-09 · **Status:** Proposed · **Refs:** [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-substrate)
+**Date:** 2026-05-09 · **Status:** Proposed · **Refs:** [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation)
 
 ### Context
 
-ADR-0001 commits the substrate to PROV native typing for instance data. The taxonomy itself is data — concepts get proposed, reviewed, approved, deprecated, replaced, attributed to people. If we believe what ADR-0001 says, the taxonomy should carry the same provenance discipline it imposes on the data below it.
+ADR-0001 commits the foundation to PROV native typing for instance data. The taxonomy itself is data — concepts get proposed, reviewed, approved, deprecated, replaced, attributed to people. If we believe what ADR-0001 says, the taxonomy should carry the same provenance discipline it imposes on the data below it.
 
 > "Should the taxonomy itself use PROV as a way to document governance and accountability?"
 
@@ -338,7 +338,7 @@ Three named PROV roles are introduced for taxonomy governance: `top:ProposerRole
 
 - The taxonomy is auditable by the same tools as the data it governs.
 - New concept proposals must carry a provenance chain to merge — the meta-shape will block PRs that don't.
-- The substrate now dogfoods its own provenance discipline at every layer.
+- The foundation now dogfoods its own provenance discipline at every layer.
 - Status remains **Proposed** until the meta-shapes ship and the taxonomy is backfilled with concept-level provenance for the existing 52 concepts.
 
 ---
@@ -352,7 +352,7 @@ Three named PROV roles are introduced for taxonomy governance: `top:ProposerRole
 ADR-0008 committed commons to a flat set of 15 universal primitive shapes (Person, Organization, Site, Visit, Event, OversightBody, Document, Equipment, System, Log, StorageLocation, Credential, Activity, Task, VisitObservation). The classification told Termboard which concepts were universal versus workflow-specific, but it did not tell Termboard — or any reasoner — *what those concepts have in common*. When Bo loaded `taxonomy/taxonomy.ttl` into Termboard for the first SKOS round-trip, the result was a mess. Two compounding causes:
 
 1. **Mechanical:** every commons and workflow concept ended with a malformed PROV typing line of the form `prov:Agent "prov:Agent" .` — using a class as a predicate, with a string literal as object. ADR-0001 specified `rdfs:subClassOf prov:*` as the encoding; the SKOS lift in PR #13 emitted a placeholder that no SKOS-aware tool could interpret. Forty-six concepts carried this defect.
-2. **Architectural:** the 15 TOP Primitives had no shared structural parentage. Each one declared `skos:broader top:CommonsSubstrate` and `prov:Agent` / `prov:Activity` / `prov:Entity`, but nothing tied a Person, an Organization, and an OversightBody together as *Agents*; nothing tied a Site and a StorageLocation together as *Locations*; nothing tied a Document, a Log, and a Credential together as *Evidence*. TOP was a flat bag of 15 primitives with PROV typing as the only (broken) cross-cutting structure.
+2. **Architectural:** the 15 TOP Primitives had no shared structural parentage. Each one declared `skos:broader top:CommonsFoundation` and `prov:Agent` / `prov:Activity` / `prov:Entity`, but nothing tied a Person, an Organization, and an OversightBody together as *Agents*; nothing tied a Site and a StorageLocation together as *Locations*; nothing tied a Document, a Log, and a Credential together as *Evidence*. TOP was a flat bag of 15 primitives with PROV typing as the only (broken) cross-cutting structure.
 
 The architectural fix forced itself: between TOP Primitives and the leaves, a **categorical layer** was missing. The categorical layer is what gives a reasoner — and a reviewer — a way to ask "what kind of thing is this?" before drilling into specifics.
 
@@ -439,7 +439,7 @@ ADR-0012 introduced a three-level architecture with seven Universal DNA properti
 
 Bo's call:
 
-> "TOP has to be practitioner friendly — hence the focus on OOUX as the way to model from a practitioner perspective and goal to provide a substrate that AI agents can reason to help humans be super human. The manifesto says that we owe it to humans. Decades have gone by where humans are asked to conform to non-sensical user experiences because they are shaped by a database developer priority. In the end, we want to augment the humans, machines have plenty of help."
+> "TOP has to be practitioner friendly — hence the focus on OOUX as the way to model from a practitioner perspective and goal to provide a foundation that AI agents can reason to help humans be super human. The manifesto says that we owe it to humans. Decades have gone by where humans are asked to conform to non-sensical user experiences because they are shaped by a database developer priority. In the end, we want to augment the humans, machines have plenty of help."
 
 This is principle-level, not tactical. It belongs in the decision log and in FIRST-PRINCIPLES, named explicitly so future contributors can cite it.
 
@@ -491,7 +491,7 @@ Accepted. The artifacts on this branch (`commons/source/core.ttl`, `taxonomy/tax
 
 Three architectural rough edges accumulated across PR #16 and the homepage build that followed. Each was small individually; together they were large enough to deserve a single decision rather than three quiet edits.
 
-First, the SKOS top concept was named "Primitives" (computer-science precise: atomic, irreducible building blocks). The rename followed an earlier rename from "Commons Substrate" → "TOP Primitives," because "substrate" was jargon nobody recognized in a room. Reviewing the result with the same audience-fit lens, "Primitives" requires technical literacy to land, while "Core" is immediately accessible to executives, operators, and working group conveners without losing architectural meaning. Cost of the switch: a collision with the existing SHACL file `commons/source/core.ttl` (a "which core" ambiguity), which had to be resolved by moving and renaming that file.
+First, the SKOS top concept was named "Primitives" (computer-science precise: atomic, irreducible building blocks). The rename followed an earlier rename from "Commons Foundation" → "TOP Primitives," because "foundation" was jargon nobody recognized in a room. Reviewing the result with the same audience-fit lens, "Primitives" requires technical literacy to land, while "Core" is immediately accessible to executives, operators, and working group conveners without losing architectural meaning. Cost of the switch: a collision with the existing SHACL file `commons/source/core.ttl` (a "which core" ambiguity), which had to be resolved by moving and renaming that file.
 
 Second, the URI namespace had been split into `top:` (project-level concepts) and `topp:` (the primitive concepts), with primitives at `https://top.scientix.ai/v1/primitives/`. The split was a leftover from an earlier draft. Single-prefix form reads cleaner in extensions and matches the standard W3C ontology pattern (PROV-O at one namespace document, SKOS at one, etc.).
 

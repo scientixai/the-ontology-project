@@ -43,9 +43,9 @@
   <div class="meta">2026-05-09 · backed by source/top-strawman.json (v0.5.1-strawman) · seventh top-level · IRB / EC / DSMB / IDMC / Steering Committee / CEC · 2 new SHACL invariants (36 total)</div>
 </header>
 
-<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a substrate primitive — every regulated trial has oversight bodies</span></h2>
+<h2 class="section" id="tldr"><span class="num">1.</span>TL;DR <span class="subnote">a foundation primitive — every regulated trial has oversight bodies</span></h2>
 
-<p class="tldr"><strong>OversightBody is the regulatory / ethics / safety committee with review authority over a Study or StudySite.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, OversightBody is a substrate primitive (every regulated trial has oversight bodies regardless of therapeutic area; not specialization). Six types via <span class="inline">oversightBodyType</span> enum: IRB (US institutional review), EC (EU ethics committees), DSMB / IDMC (sponsor-level safety review), Steering Committee (cross-site governance), CEC (clinical events adjudication). PROV: <span class="inline">prov:Agent</span> (committees bear responsibility); members act on behalf of the body via <span class="inline">prov:actedOnBehalfOf</span>. Status is a NGSI-LD temporal property — bodies can be SUSPENDED (regulatory hold) or DISBANDED (post-trial). Un-flag-misses three existing relationships: <span class="inline">Sponsor.interfacesWith</span>, <span class="inline">StudySite.hasIRB</span>, <span class="inline">Study.hasOversightBody</span>.</p>
+<p class="tldr"><strong>OversightBody is the regulatory / ethics / safety committee with review authority over a Study or StudySite.</strong> Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>, OversightBody is a foundation primitive (every regulated trial has oversight bodies regardless of therapeutic area; not specialization). Six types via <span class="inline">oversightBodyType</span> enum: IRB (US institutional review), EC (EU ethics committees), DSMB / IDMC (sponsor-level safety review), Steering Committee (cross-site governance), CEC (clinical events adjudication). PROV: <span class="inline">prov:Agent</span> (committees bear responsibility); members act on behalf of the body via <span class="inline">prov:actedOnBehalfOf</span>. Status is a NGSI-LD temporal property — bodies can be SUSPENDED (regulatory hold) or DISBANDED (post-trial). Un-flag-misses three existing relationships: <span class="inline">Sponsor.interfacesWith</span>, <span class="inline">StudySite.hasIRB</span>, <span class="inline">Study.hasOversightBody</span>.</p>
 
 <h2 class="section" id="anchor"><span class="num">2.</span>Architectural anchor</h2>
 
@@ -95,13 +95,13 @@ OversightBody ────────────┼─→ Study        (review
 <h2 class="section" id="decisions"><span class="num">4.</span>Architectural decisions</h2>
 
 <div class="decision">
-  <div class="title">Decision 1 — Single OversightBody entity with type discriminator (universal substrate)</div>
-  <p>Per FIRST-PRINCIPLES universal-substrate posture: don't split into separate IRB / EC / DSMB / IDMC entities. One TOP entity shape; <span class="inline">oversightBodyType</span> enum carries the operator-grounded discrimination. Same architectural moat as the Activity + Task pattern in Visit: standards-up vendors model N entity types per oversight category; TOP carries one universal pattern.</p>
+  <div class="title">Decision 1 — Single OversightBody entity with type discriminator (universal foundation)</div>
+  <p>Per FIRST-PRINCIPLES universal-foundation posture: don't split into separate IRB / EC / DSMB / IDMC entities. One TOP entity shape; <span class="inline">oversightBodyType</span> enum carries the operator-grounded discrimination. Same architectural moat as the Activity + Task pattern in Visit: standards-up vendors model N entity types per oversight category; TOP carries one universal pattern.</p>
 </div>
 
 <div class="decision">
   <div class="title">Decision 2 — Per-Role-per-Study records (Sponsor pattern applied)</div>
-  <p>The same human committee (e.g., MSKCC IRB) can play different oversightBodyType roles on different studies. Each role gets a separate OversightBody record. Mirrors the Sponsor per-Organization-per-Study pattern — the substrate carries operational reality, not corporate ledger.</p>
+  <p>The same human committee (e.g., MSKCC IRB) can play different oversightBodyType roles on different studies. Each role gets a separate OversightBody record. Mirrors the Sponsor per-Organization-per-Study pattern — the foundation carries operational reality, not corporate ledger.</p>
 </div>
 
 <div class="decision">
@@ -116,7 +116,7 @@ OversightBody ────────────┼─→ Study        (review
 
 <div class="decision">
   <div class="title">Decision 5 — Defer ReviewDecision sub-object to v0.6+</div>
-  <p>ReviewDecision (the Activity capturing a single review event with decision, conditions, next-review-date) is operationally meaningful but not blocking. v0.5.1 lifts the body itself; the review-event substrate adds when sponsors / IRBs need explicit decision tracking. Until then, IRB approvals are tracked on StudySite.irbApprovalStatus + irbApprovalDate (already in source).</p>
+  <p>ReviewDecision (the Activity capturing a single review event with decision, conditions, next-review-date) is operationally meaningful but not blocking. v0.5.1 lifts the body itself; the review-event foundation adds when sponsors / IRBs need explicit decision tracking. Until then, IRB approvals are tracked on StudySite.irbApprovalStatus + irbApprovalDate (already in source).</p>
 </div>
 
 <h2 class="section" id="shacl"><span class="num">5.</span>SHACL invariants <span class="subnote">2 new (36 total)</span></h2>
@@ -166,7 +166,7 @@ OversightBody ────────────┼─→ Study        (review
 
 <div class="footer">
   TOP / OversightBody / spec / v1 · backed by source/top-strawman.json (v0.5.1-strawman) · 2026-05-09<br>
-  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: substrate primitive (universal across therapeutic areas), native temporal+PROV (prov:Agent + status temporal property), operator-grounded vocabulary.
+  Per <a href="../../../FIRST-PRINCIPLES.md">FIRST-PRINCIPLES.md</a>: foundation primitive (universal across therapeutic areas), native temporal+PROV (prov:Agent + status temporal property), operator-grounded vocabulary.
 </div>
 
 </div>

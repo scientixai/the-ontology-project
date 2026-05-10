@@ -20,7 +20,7 @@ Without explicit dependency tracking:
 - The TOP ↔ CDISC story (which is half of TOP's value proposition) erodes
 
 With *naive* auto-update (Dependabot-style):
-- TOP breaks GxP change-control: every upstream code change becomes an unassessed change to a TOP-substrate artifact
+- TOP breaks GxP change-control: every upstream code change becomes an unassessed change to a TOP-foundation artifact
 - 21 CFR Part 11 audit trails would mark TOP as non-compliant for treating regulated reference data as a passively-tracked dependency
 - Sponsors can't validate against TOP if TOP's reference codes silently shifted under them between yesterday and today
 
@@ -35,7 +35,7 @@ What TOP actually depends on, by CDISC-ecosystem layer:
 | USDM model | Major: ~yearly. Minor: quarterly | Pydantic + JSON schema | New entities, deprecated fields, shape changes (e.g., StudyVersion structure), new Code categories | High — affects ingester directly |
 | USDM example documents | Continuous | JSON | New patterns to validate against | Low — informational |
 | COSMoS BC catalog | Quarterly (r-numbered) | LinkML YAML | New BCs, definition changes, deprecated BCs, NCIt code reassignments | Medium — affects Activity reach when lifted |
-| COSMoS Dataset Specializations | Quarterly | LinkML YAML | New per-instrument specializations, SDTMIG-version-bound updates | Low (substrate); High (deployment export pipelines) |
+| COSMoS Dataset Specializations | Quarterly | LinkML YAML | New per-instrument specializations, SDTMIG-version-bound updates | Low (foundation); High (deployment export pipelines) |
 | CDISC Controlled Terminology | Quarterly | XML / Excel / RDF / API | New codes added, codes deprecated, decodes occasionally renamed, hierarchy changes | High — affects every Code→enum mapping |
 | SDTMIG | Major (multi-year) | PDF + structured XML | New domains, variable additions, expected-value changes, role reassignments | High — affects all SDTM cross-walks |
 | CDASH IG | Major | PDF + structured | Acquisition-side variable evolution | Medium — affects CDASH cross-walks |
@@ -232,7 +232,7 @@ Why this matters more for TOP than for typical software dependency tracking:
 1. **Reference data IS controlled documentation.** A code controlled-terminology file is a regulated artifact under GxP/21 CFR Part 11; updating it is a "change to controlled documents" subject to formal change control.
 2. **Auto-update without assessment is non-compliant.** Dependabot-style behavior (silent merge of upstream changes) breaks change-control discipline. Sponsors deploying TOP-derived data products in regulated workflows would be unable to validate.
 3. **The assessment PR IS the change-control record.** Auditors looking for "how did TOP handle the 2027-Q1 CT update?" find the assessment file in `cdisc-changelog/cdisc_ct-2027-01-15.md` with the impact analysis, the reviewer decision, and the resulting refactor PR. Closes the audit loop.
-4. **Validation impact is mandatory.** Each assessment includes "Validation impact: none / minor / major". Major-impact updates trigger re-validation cycles (which deployments-side; but TOP substrate must surface the trigger).
+4. **Validation impact is mandatory.** Each assessment includes "Validation impact: none / minor / major". Major-impact updates trigger re-validation cycles (which deployments-side; but TOP must surface the trigger).
 
 This pattern is **more robust than typical software dependency management** because the assessment is mandatory, not optional. It's also closer to how regulated industries actually want to consume open dependencies — they don't want unbounded automation, they want assisted decision-making.
 
@@ -280,12 +280,12 @@ Each milestone is independently valuable; the manifest alone (v0.5) gives TOP a 
 1. **Pinning policy: latest stable.** TOP pins to the latest stable CDISC release as soon as it's stable. Aggressive currency posture; aligned with TOP's force-multiplier framing (operators benefit from current standards alignment without bearing the upgrade cost themselves; TOP absorbs it).
 2. **Assessment SLA: one month.** Between "watcher detects change" and "assessment PR is decided" — 30 days. Watcher opens the assessment PR with diff + impact analysis; reviewer has 30 days to apply / apply-with-edits / defer / reject. Auto-escalation if SLA breached; the assessment PR title and label both surface the deadline.
 3. **Multi-dependency coordination: each as it arrives.** No batching. Finer granularity, more PRs, but each assessment stays focused. USDM v5 + COSMoS r20 + CT 2027-Q1 landing in close succession means three concurrent assessment PRs; reviewer addresses each independently. Trade-off accepted for cleaner audit trail.
-4. **Public vs internal change-tracker: public.** The `cdisc-changelog/` directory is public-by-default. *Transparency is king* — community sees TOP's CDISC currency posture in real time; operators considering adoption verify what TOP is aligned with; sponsors planning deployments read the change-control record without an NDA. The operator-grade move; aligned with the open-substrate posture.
+4. **Public vs internal change-tracker: public.** The `cdisc-changelog/` directory is public-by-default. *Transparency is king* — community sees TOP's CDISC currency posture in real time; operators considering adoption verify what TOP is aligned with; sponsors planning deployments read the change-control record without an NDA. The operator-grade move; aligned with the open-foundation posture.
 5. **Approver authority: Bo solo for now**, until other TOP maintainers join. Each assessment PR's "Reviewer decision" section is signed by Bo. As community matures (per ROADMAP governance), approver authority distributes — likely to a small assessment-review committee, with Bo retaining veto until the working group structure is operational.
 
 ## Still open
 
-6. **Defer-to-deployment escape hatch**: some CDISC changes might be *deliberately not* propagated to TOP substrate because they're deployment-specific (e.g., a per-sponsor CT extension). Do we model that as a "deferred to deployment" classification (a fifth alongside Cosmetic / Additive / Breaking / Semantic)? Recommended: yes; not blocking; can be added when the first deployment-specific CDISC update surfaces and forces the call.
+6. **Defer-to-deployment escape hatch**: some CDISC changes might be *deliberately not* propagated to TOP because they're deployment-specific (e.g., a per-sponsor CT extension). Do we model that as a "deferred to deployment" classification (a fifth alongside Cosmetic / Additive / Breaking / Semantic)? Recommended: yes; not blocking; can be added when the first deployment-specific CDISC update surfaces and forces the call.
 
 ## What this note does NOT cover
 

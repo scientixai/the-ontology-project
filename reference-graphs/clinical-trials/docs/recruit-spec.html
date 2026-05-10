@@ -169,12 +169,12 @@
 
 <p>The recruiter's day moves Recruits along this funnel. Each state transition produces a NGSI-LD temporal-property change on <span class="inline">recruitStatus</span> (validFrom/validUntil bracketing) so the trajectory is queryable for funnel analytics and twin-for-enrollment downstream.</p>
 
-<p><strong>Conversion-rate analytics</strong> (a recruiter's primary metric) compute as: count(CONVERTED_TO_PARTICIPANT) / count(all Recruits with same recruitmentSource), grouped by source. Channel ROI emerges directly from the substrate.</p>
+<p><strong>Conversion-rate analytics</strong> (a recruiter's primary metric) compute as: count(CONVERTED_TO_PARTICIPANT) / count(all Recruits with same recruitmentSource), grouped by source. Channel ROI emerges directly from the foundation.</p>
 
 <!-- ============================================================== -->
 <h2 class="section" id="twin"><span class="num">6.</span>Twin-for-enrollment context <span class="subnote">deferred game-changing use case</span></h2>
 
-<p>Recruit is the operational counterpart to <strong>twin-for-enrollment</strong> — the highest-value digital-twin use case for clinical trials. Enrollment is the most expensive bottleneck (80%+ of trials miss timelines; ~30% of trial cost is recruitment-related). A patient-twin substrate enables:</p>
+<p>Recruit is the operational counterpart to <strong>twin-for-enrollment</strong> — the highest-value digital-twin use case for clinical trials. Enrollment is the most expensive bottleneck (80%+ of trials miss timelines; ~30% of trial cost is recruitment-related). A patient-twin foundation enables:</p>
 
 <ul>
   <li><strong>Pre-screening at scale</strong> — synthesize twins from EMR populations, simulate eligibility, identify candidate cohorts before any human reviews a chart.</li>
@@ -185,9 +185,9 @@
   <li><strong>Adaptive recruitment</strong> — twin updates from accruing trial data; recruit to fill the population gaps the trial currently has.</li>
 </ul>
 
-<p><strong>Real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials</strong> feed a unified twin synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk <em>before the trial opens</em>. TOP's substrate decisions made now (Recruit-as-separate-entity + twin-queryability discipline on participantStatus) are the load-bearing pre-conditions; twin synthesis itself is computational infrastructure for v0.5+ when Visit / Activity / Observation lift expands the queryability surface.</p>
+<p><strong>Real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials</strong> feed a unified twin synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk <em>before the trial opens</em>. TOP's foundation decisions made now (Recruit-as-separate-entity + twin-queryability discipline on participantStatus) are the load-bearing pre-conditions; twin synthesis itself is computational infrastructure for v0.5+ when Visit / Activity / Observation lift expands the queryability surface.</p>
 
-<p>See the <a href="participant-spec.html#twin">Participant spec § 5 (digital-twin posture)</a> for the substrate contract and PMDT prior-art context.</p>
+<p>See the <a href="participant-spec.html#twin">Participant spec § 5 (digital-twin posture)</a> for the foundation contract and PMDT prior-art context.</p>
 
 <!-- ============================================================== -->
 <h2 class="section" id="shacl"><span class="num">7.</span>SHACL invariants <span class="subnote">2 new Recruit invariants · 25 total in the graph</span></h2>
@@ -252,7 +252,7 @@
   <li><strong>Recruit data retention policy</strong>: how long do unconverted Recruit records persist? Channel ROI analytics value declines over time; PHI minimization argues for a sunset (12-24 months for unconverted). Deployment-side concern; document the recommendation here, leave the policy to deployment.</li>
   <li><strong>Cross-Study Recruit reuse</strong>: a single human responding to two trial ads creates two Recruit records (per-Study scoping). Analytics on "this person is repeatedly responding to studies but not converting" is a cross-Study federation concern, deferred to v0.6+ alongside Participant cross-Study federation.</li>
   <li><strong>Pre-screening question bank</strong>: TOP doesn't model the pre-screening questionnaire structure (questions, answers, scoring rules). When operational complexity warrants, lift as a sub-object on Recruit (PreScreeningQuestionnaire) or as a separate horizontal — not in v0.4.0.</li>
-  <li><strong>Twin-for-enrollment substrate readiness</strong>: when Visit / Activity / Observation lift, the substrate gains the time-varying observation surface a twin synthesizer needs. Recruit's role as "real-Recruit-corpus + synthetic-Recruit-from-twin populations" becomes architecturally available in v0.5+.</li>
+  <li><strong>Twin-for-enrollment foundation readiness</strong>: when Visit / Activity / Observation lift, the foundation gains the time-varying observation surface a twin synthesizer needs. Recruit's role as "real-Recruit-corpus + synthetic-Recruit-from-twin populations" becomes architecturally available in v0.5+.</li>
 </ol>
 
 <div class="footer">

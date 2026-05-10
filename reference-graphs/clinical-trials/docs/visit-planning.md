@@ -74,7 +74,7 @@ The `Visit.definedBy → VisitDefinition` link uses the URI policy established i
 | Clinical care | Treating physician / PCP | `Encounter` in their EMR | FHIR `Encounter` (in their care realm), USCDI |
 | Real-world evidence | RWE analyst | `VISIT_OCCURRENCE` row | OMOP CDM, Sentinel, PCORnet |
 
-Per FIRST-PRINCIPLES, TOP carries the trial-conduct realm; the others are projection-adapter targets at deployment edge. Cross-realm linkage (this trial visit happened the day after a standard-care ER visit) is federation, not substrate.
+Per FIRST-PRINCIPLES, TOP carries the trial-conduct realm; the others are projection-adapter targets at deployment edge. Cross-realm linkage (this trial visit happened the day after a standard-care ER visit) is federation, not foundation.
 
 ## Architectural decisions to seal
 
@@ -129,11 +129,11 @@ The OOUX-locked sub-object that lands under Visit during the boundary decisions 
 
 Captures the reportability handoff workflow per OOUX boundary decision Path C: the CRA's "this looks like an AE — escalate" action.
 
-### Decision 4 — Activity + Task as universal sub-objects (universal substrate posture)
+### Decision 4 — Activity + Task as universal sub-objects (universal foundation posture)
 
-Per Bo: TOP must accommodate any assessment without modeling its specifics. Specific visit structures, therapeutic-area assessments, instrument configurations are implementation details — they belong in sponsor-side workflow tools, vendor platforms, EHR integrations. The substrate stays universal.
+Per Bo: TOP must accommodate any assessment without modeling its specifics. Specific visit structures, therapeutic-area assessments, instrument configurations are implementation details — they belong in sponsor-side workflow tools, vendor platforms, EHR integrations. The foundation stays universal.
 
-The substrate carries **`Activity` and `Task` as universal containers** under Visit. Specialization happens via content (biomedicalConceptCode, polymorphic taskValue, Equipment used, Document governing), never via specialized entity shapes. A DICOM imaging Activity and a blood-draw Activity are the same TOP shape; they differ in content, not in entity type.
+The foundation carries **`Activity` and `Task` as universal containers** under Visit. Specialization happens via content (biomedicalConceptCode, polymorphic taskValue, Equipment used, Document governing), never via specialized entity shapes. A DICOM imaging Activity and a blood-draw Activity are the same TOP shape; they differ in content, not in entity type.
 
 ```
 Visit (occurrence)
@@ -176,7 +176,7 @@ PROV typing: `Activity rdfs:subClassOf prov:Activity` (per the v0.4.1 temporal+P
 
 External systems (DICOM PACS, lab LIS, ePRO platform, EHR) hold implementation specifics. TOP holds the universal trial-conduct-realm reference; the URI points to wherever the specialized artifact actually lives.
 
-**This eliminates the need for specialized horizontals** like ImagingStudy, IPAdministration, QuestionnaireResponse. The substrate stays universal; specialization is content. The architectural moat: standards-up vendors model N entity types per therapeutic area; TOP carries one universal pattern that handles all of them.
+**This eliminates the need for specialized horizontals** like ImagingStudy, IPAdministration, QuestionnaireResponse. The foundation stays universal; specialization is content. The architectural moat: standards-up vendors model N entity types per therapeutic area; TOP carries one universal pattern that handles all of them.
 
 **FHIR Questionnaire projection target**: TOP's universal Visit > Activity > Task hierarchy projects cleanly to FHIR R5 `Questionnaire` (form template) and `QuestionnaireResponse` (captured data). VisitDefinition + Activity-templates + Task-templates → Questionnaire JSON (consumable by Epic, Cerner, SMART on FHIR apps, ePRO vendors). Reverse projection (FHIR QuestionnaireResponse → TOP) ingests captured data from EHR/ePRO devices. One source of truth → many ephemeral renderings — exactly the projection-edge pattern.
 
@@ -248,7 +248,7 @@ Visit lifts the queryability surface for digital-twin synthesis significantly:
 
 **Recommendation: every Visit-occurrence and every Activity-occurrence is a queryable temporal record.** NGSI-LD temporal property on `visitStatus` (parallel to Participant); every Activity has `performedDate` + `performedTime` for time-series queries.
 
-This is where the substrate decisions made in Participant pay off: Participant.hasVisit (when it un-flagged-misses) provides the trajectory the twin synthesizer needs.
+This is where the foundation decisions made in Participant pay off: Participant.hasVisit (when it un-flagged-misses) provides the trajectory the twin synthesizer needs.
 
 ## Cross-walk verification (FHIR R5 / SDTM / CDASH / USDM / OMOP)
 
@@ -391,6 +391,6 @@ Single PR. Follows the patterns established by Sponsor / Site / Study / Particip
 - [`top-strawman.json`](../source/top-strawman.json) — source intermediate.
 - [`study-spec.html`](study-spec.html) — Study spec; SOA + future VisitDefinition reach into Study sub-objects.
 - [`site-spec.html`](site-spec.html) — Site/StudySite spec; StudySite.hostsVisit is the un-flag-missed edge after this lift.
-- [`FIRST-PRINCIPLES.md`](../../../FIRST-PRINCIPLES.md) — operator-grounded substrate; cross-walks below the line.
+- [`FIRST-PRINCIPLES.md`](../../../FIRST-PRINCIPLES.md) — operator-grounded foundation; cross-walks below the line.
 - [USDM v4 Encounter](https://github.com/cdisc-org/usdm/blob/main/src/usdm_model/encounter.py) — verified reference for VisitDefinition cross-walk.
 - ICH E6(R3) Annex 2 — DCT framing for visitMode enum.

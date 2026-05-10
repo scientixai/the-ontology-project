@@ -80,9 +80,9 @@ Per [`FIRST-PRINCIPLES.md`](../../../../FIRST-PRINCIPLES.md): a participant is a
 
 **TOP carries one realm: trial conduct.** TOP `Participant` is the Mary-as-trial-subject role-entity. Other realms are out of TOP's scope as entities — they are *projection targets* handled by separate adapters (FHIR adapter for Patient, OMOP projector for RWE, claims adapter for Claimant).
 
-**This is the same projection-edge pattern as standards.** Just as TOP doesn't carry FHIR `Patient` shape but emits Patient via the FHIR adapter, TOP doesn't carry Mary-as-Claimant but emits a Claimant view via a claims adapter. The substrate persists; the projections are ephemeral.
+**This is the same projection-edge pattern as standards.** Just as TOP doesn't carry FHIR `Patient` shape but emits Patient via the FHIR adapter, TOP doesn't carry Mary-as-Claimant but emits a Claimant view via a claims adapter. The foundation persists; the projections are ephemeral.
 
-**Identity resolution across realms is federation, not substrate.** Mary's Participant URI in TOP, Mary's Patient URI in her PCP's FHIR server, Mary's Claimant ID in her insurer's system — these resolve to the same human via Datavant tokens, master patient indexes, or cross-realm trust agreements. TOP doesn't model this resolution; it provides the substrate that *can be resolved against* at the deployment edge.
+**Identity resolution across realms is federation, not foundation.** Mary's Participant URI in TOP, Mary's Patient URI in her PCP's FHIR server, Mary's Claimant ID in her insurer's system — these resolve to the same human via Datavant tokens, master patient indexes, or cross-realm trust agreements. TOP doesn't model this resolution; it provides the foundation that *can be resolved against* at the deployment edge.
 
 **Pre-consent is a real workflow boundary** (new architectural decision below — see Decision 9). Recruiters work with people who haven't yet entered the trial-conduct realm. Whether `Recruit` becomes a separate TOP entity or is folded as a pre-consent state on `Participant` is the architectural call.
 
@@ -90,33 +90,33 @@ Per [`FIRST-PRINCIPLES.md`](../../../../FIRST-PRINCIPLES.md): a participant is a
 
 A participant — at any stage (recruit, screening, randomized, on-treatment, post-trial) — needs to be **spec-able as a digital twin**. Twin synthesis is a major axis of research workflow now (synthetic control arms, in-silico trials, individual outcome prediction, shadow-enrollment dashboards) and TOP's posture matters because the twin is a high-value derivative.
 
-**TOP's posture: digital twin is a projection lens, not an entity.** Same pattern as everything else in this note. The TOP Participant carries the substrate; a *twin synthesizer* (model-driven, not part of TOP) reads from TOP and emits a twin representation.
+**TOP's posture: digital twin is a projection lens, not an entity.** Same pattern as everything else in this note. The TOP Participant carries the foundation; a *twin synthesizer* (model-driven, not part of TOP) reads from TOP and emits a twin representation.
 
-**What TOP must guarantee for the substrate to be twin-spec-able**: every Participant — at every stage — must be queryable along the dimensions a twin needs. Not "TOP carries the twin"; *"TOP carries enough that a twin can be derived."*
+**What TOP must guarantee for the foundation to be twin-spec-able**: every Participant — at every stage — must be queryable along the dimensions a twin needs. Not "TOP carries the twin"; *"TOP carries enough that a twin can be derived."*
 
 The dimensions the twin synthesizer needs:
 
 | Twin dimension | TOP source |
 | --- | --- |
-| **Demographic substrate** | Participant attributes (sex, dateOfBirth, race, ethnicity, country) |
+| **Demographic foundation** | Participant attributes (sex, dateOfBirth, race, ethnicity, country) |
 | **Disease state at entry** | ScreeningRecord + Activity occurrences during screening (when Visit/Activity lift) |
 | **Treatment assignment** | EnrollmentRecord + assignedToArm + protocolVersionAtEnrollment (Arm carries intervention reach via the USDM-ingester chain) |
 | **Time-varying observations** | Visit / Activity / Observation occurrences (when those lift) |
 | **Lifecycle state trajectory** | participantStatus over time (the 11-state enum carries this; sub-objects carry the state-change events) |
 | **Outcome trajectory** | Endpoint values + AE occurrences (when those lift) + final state (COMPLETED / WITHDRAWN / DISCONTINUED / etc.) |
-| **Cross-realm context** (when federation provides it) | Linked Patient (FHIR), Claimant (claims), historical Patient (OMOP) — at the deployment edge, not in TOP substrate |
+| **Cross-realm context** (when federation provides it) | Linked Patient (FHIR), Claimant (claims), historical Patient (OMOP) — at the deployment edge, not in TOP |
 
 **Implication for Participant entity design**: every attribute, every relationship, every sub-object is queryable across the participant's lifetime. The lifecycle states (SCREENING → CONSENTED → ENROLLED → RANDOMIZED → ON_TREATMENT → ...) are not just labels; they are *queryable temporal axes* the twin synthesizer reads. The `validFrom` / `validUntil` temporal pattern (already used on Sponsor and StudySite for relationship handoffs) extends to Participant attributes that change over time.
 
 **Implication for the lifecycle enum (Decision 6)**: every state transition must produce a queryable record. The sub-object pattern already does this for the canonical events (Consent, Screening, Enrollment, Withdrawal). State transitions inside on-trial states (ON_TREATMENT → IN_FOLLOW_UP) need either a new sub-object (`StateTransition`?) or temporal-property semantics on `participantStatus` itself.
 
-**Twin spec is a separate document, not a TOP substrate decision** — but it shapes the substrate. The actionable implication for v0.4 Participant: ensure every lifecycle transition leaves an audit-queryable record (sub-object OR temporal-property change) so a twin synthesizer downstream can reconstruct the trajectory.
+**Twin spec is a separate document, not a TOP decision** — but it shapes the foundation. The actionable implication for v0.4 Participant: ensure every lifecycle transition leaves an audit-queryable record (sub-object OR temporal-property change) so a twin synthesizer downstream can reconstruct the trajectory.
 
-**What's NOT in TOP**: the twin model itself (computational artifact), the twin synthesis logic, the twin's predicted outputs, the model-version-vs-Participant linkage. Those live in twin-synthesizer infrastructure, not TOP substrate. TOP provides the contract; the synthesizer fulfills it.
+**What's NOT in TOP**: the twin model itself (computational artifact), the twin synthesis logic, the twin's predicted outputs, the model-version-vs-Participant linkage. Those live in twin-synthesizer infrastructure, not TOP. TOP provides the contract; the synthesizer fulfills it.
 
 **Deferred enhancement — twin-for-enrollment (game-changing economics)**
 
-The highest-value twin use case for clinical trials is *not* twin-during-trial, it's **twin-before-trial — for enrollment**. Enrollment is the most expensive bottleneck in clinical research (80%+ of trials miss enrollment timelines; ~30% of trial cost is recruitment-related). A patient digital twin substrate enables:
+The highest-value twin use case for clinical trials is *not* twin-during-trial, it's **twin-before-trial — for enrollment**. Enrollment is the most expensive bottleneck in clinical research (80%+ of trials miss enrollment timelines; ~30% of trial cost is recruitment-related). A patient digital twin foundation enables:
 
 - **Pre-screening at scale** — synthesize twins from EMR populations, simulate eligibility against the protocol's I/E criteria, identify candidate cohorts before any human reviews a chart
 - **Predicted-response cohort selection** — twin predicts who is most likely to respond; recruit those preferentially → smaller trials, faster signal-to-noise
@@ -125,9 +125,9 @@ The highest-value twin use case for clinical trials is *not* twin-during-trial, 
 - **Trial feasibility simulation** — before opening a site, simulate the local population's twin-set against the protocol → realistic enrollment forecasts replace optimistic guesses
 - **Adaptive recruitment** — as the trial accrues, twin updates from real participant data; recruit to fill the population gaps the trial currently has
 
-**This pattern intersects directly with Decision 9 (Recruit boundary).** The Recruit entity becomes the operational counterpart to the twin: real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials feed a unified twin-synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk *before the trial actually opens*. This is where TOP's substrate discipline (operator-grounded Recruit + Participant + queryable lifecycle trajectories) compounds with downstream twin synthesis to produce a step-change in trial economics.
+**This pattern intersects directly with Decision 9 (Recruit boundary).** The Recruit entity becomes the operational counterpart to the twin: real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials feed a unified twin-synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk *before the trial actually opens*. This is where TOP's foundation discipline (operator-grounded Recruit + Participant + queryable lifecycle trajectories) compounds with downstream twin synthesis to produce a step-change in trial economics.
 
-**Deferred to v0.5+** (when Visit / Activity / Observation lift expand the queryability surface), but the substrate decisions made now (Decision 10 twin-queryability + Decision 9 Recruit-as-separate-entity) are the load-bearing pre-conditions. PMDT's QUALITOP pilot focused on chronic-care use; the trial-conduct-side enrollment use case is the adjacent high-value extension TOP is uniquely positioned to enable.
+**Deferred to v0.5+** (when Visit / Activity / Observation lift expand the queryability surface), but the foundation decisions made now (Decision 10 twin-queryability + Decision 9 Recruit-as-separate-entity) are the load-bearing pre-conditions. PMDT's QUALITOP pilot focused on chronic-care use; the trial-conduct-side enrollment use case is the adjacent high-value extension TOP is uniquely positioned to enable.
 
 ### Prior art — PMDT (Patient Medical Digital Twin, El Gammal et al., under review at SoSyM)
 
@@ -147,7 +147,7 @@ The ontology-driven digital-twin direction is validated in real-world deployment
 
 PMDT's structural carving is good prior-art for what TOP will need to address as the clinical-trials reference graph matures past Participant. Useful as a sanity check rather than a blueprint to copy directly — PMDT serves *chronic care* (continuous, longitudinal, post-diagnosis) while TOP clinical-trials serves *trial conduct* (bounded, protocol-driven). Adjacent realms; different operational tempos; same underlying human anchor.
 
-**Substrate divergence**: PMDT is **OWL 2.0** (DL-classical, optimized for SPARQL reasoning). TOP is **NGSI-LD / JSON-LD-native** (broker-based, optimized for operational data exchange + temporal-property semantics + streaming). These are different ontology paradigms, both legitimate. **TOP can export to OWL/RDF as another projection edge** — same pattern as FHIR/SDTM/USDM exports — for downstream tools that prefer classical-reasoning toolchains. This is one more projection adapter, not a substrate change. Per FIRST-PRINCIPLES, the substrate stays in the operator-grounded paradigm; OWL is downstream.
+**Foundation divergence**: PMDT is **OWL 2.0** (DL-classical, optimized for SPARQL reasoning). TOP is **NGSI-LD / JSON-LD-native** (broker-based, optimized for operational data exchange + temporal-property semantics + streaming). These are different ontology paradigms, both legitimate. **TOP can export to OWL/RDF as another projection edge** — same pattern as FHIR/SDTM/USDM exports — for downstream tools that prefer classical-reasoning toolchains. This is one more projection adapter, not a foundation change. Per FIRST-PRINCIPLES, the foundation stays in the operator-grounded paradigm; OWL is downstream.
 
 **Reference-ontology alignments PMDT uses, that TOP will need when it lifts the relevant entities:**
 - **Disease Ontology (DO)** — for `Condition` semantics (when Condition lifts; currently absent in TOP)
@@ -159,7 +159,7 @@ These reference ontologies belong in the [CDISC dependency pipeline manifest](cd
 
 **Federation lessons from QUALITOP**: PMDT's multi-institutional, privacy-preserving federation in real-world immunotherapy deployment is direct prior art for what TOP will need when cross-realm identity resolution becomes operational (per the multi-realm posture above). When TOP reaches v0.6+ federation work, the QUALITOP architecture and pilot lessons are reference material.
 
-**Net read**: PMDT validates the ontology-driven twin approach, sanity-checks TOP's expected entity lift trajectory, and provides useful federation prior-art. TOP's clinical-trials reference graph and PMDT's chronic-care framework cover different realms with the same underlying conviction (semantic substrate + ephemeral analytics on top). Citing PMDT alongside FHIR / SDTM / USDM in the spec doc strengthens the standards-and-prior-art posture for community/regulator review.
+**Net read**: PMDT validates the ontology-driven twin approach, sanity-checks TOP's expected entity lift trajectory, and provides useful federation prior-art. TOP's clinical-trials reference graph and PMDT's chronic-care framework cover different realms with the same underlying conviction (semantic foundation + ephemeral analytics on top). Citing PMDT alongside FHIR / SDTM / USDM in the spec doc strengthens the standards-and-prior-art posture for community/regulator review.
 
 ## Architectural decisions to seal
 
@@ -389,7 +389,7 @@ Consolidated cross-walk for the spec doc. Every Participant attribute, relations
 - Inclusion/Exclusion criteria the Participant was screened against — TOP `InclusionCriterion`/`ExclusionCriterion` cross-walk to USDM `EligibilityCriterion`
 - `Participant.hasEnrollmentRecord.protocolVersionAtEnrollment` — references the USDM `StudyVersion` in force at enrollment
 
-So USDM/CDISC reviewers see: TOP carries USDM at the design layer (Study), CDISC SDTM at the analysis layer (DM/DS/IE/EX domains projected from Participant + sub-objects), FHIR R5 at the operational/exchange layer (`ResearchSubject` + `Consent` + `Patient`), CDASH at the acquisition layer. No standards conflict; TOP is the operator-grounded substrate that all four standards project through.
+So USDM/CDISC reviewers see: TOP carries USDM at the design layer (Study), CDISC SDTM at the analysis layer (DM/DS/IE/EX domains projected from Participant + sub-objects), FHIR R5 at the operational/exchange layer (`ResearchSubject` + `Consent` + `Patient`), CDASH at the acquisition layer. No standards conflict; TOP is the operator-grounded foundation that all four standards project through.
 
 ## Source intermediate scope (the implementation lift)
 

@@ -124,7 +124,7 @@
 <!-- ============================================================== -->
 <h2 class="section" id="principles"><span class="num">2.</span>First-principles posture <span class="subnote">why the entity looks the way it looks</span></h2>
 
-<p>Per <a href="../../../FIRST-PRINCIPLES.md"><span class="inline">FIRST-PRINCIPLES.md</span></a>: <strong>a participant is a participant, full stop.</strong> Operators say "Mary." The substrate carries Mary in the operator's vocabulary. Standards (FHIR <span class="inline">ResearchSubject</span>, SDTM <span class="inline">DM</span>, CDASH <span class="inline">DM</span>, USDM design-side links) are projection edges below the line — adapters emit them, the operator never sees them.</p>
+<p>Per <a href="../../../FIRST-PRINCIPLES.md"><span class="inline">FIRST-PRINCIPLES.md</span></a>: <strong>a participant is a participant, full stop.</strong> Operators say "Mary." The foundation carries Mary in the operator's vocabulary. Standards (FHIR <span class="inline">ResearchSubject</span>, SDTM <span class="inline">DM</span>, CDASH <span class="inline">DM</span>, USDM design-side links) are projection edges below the line — adapters emit them, the operator never sees them.</p>
 
 <p>Six rules from the first principles, applied here:</p>
 
@@ -161,7 +161,7 @@
   <li>A Participant's enrollment is bound to <em>this Site's role on this Study</em>, not to the Site as an institution.</li>
 </ul>
 
-<p><strong>Multi-Study participation</strong> = separate Participant entities. A real human enrolled in two Studies has two Participant records (one per Study × StudySite pair). Cross-Study identity resolution is federation, not substrate (Datavant tokens, MPI, deployment-edge trust).</p>
+<p><strong>Multi-Study participation</strong> = separate Participant entities. A real human enrolled in two Studies has two Participant records (one per Study × StudySite pair). Cross-Study identity resolution is federation, not foundation (Datavant tokens, MPI, deployment-edge trust).</p>
 
 <!-- ============================================================== -->
 <h2 class="section" id="realms"><span class="num">4.</span>Multi-realm projection <span class="subnote">Mary in five rooms · TOP carries one</span></h2>
@@ -179,29 +179,29 @@
   </tbody>
 </table>
 
-<p>This is the same projection-edge pattern as standards. Just as TOP doesn't carry FHIR-shaped <span class="inline">Patient</span> but emits Patient via the FHIR adapter, TOP doesn't carry Mary-as-Claimant but emits a Claimant view via a claims adapter. The substrate persists; the projections are ephemeral. <strong>Identity resolution across realms is federation, not substrate</strong> — Datavant tokens, master patient indexes, cross-realm trust agreements at the deployment edge.</p>
+<p>This is the same projection-edge pattern as standards. Just as TOP doesn't carry FHIR-shaped <span class="inline">Patient</span> but emits Patient via the FHIR adapter, TOP doesn't carry Mary-as-Claimant but emits a Claimant view via a claims adapter. The foundation persists; the projections are ephemeral. <strong>Identity resolution across realms is federation, not foundation</strong> — Datavant tokens, master patient indexes, cross-realm trust agreements at the deployment edge.</p>
 
 <!-- ============================================================== -->
-<h2 class="section" id="twin"><span class="num">5.</span>Digital-twin posture <span class="subnote">substrate carries the contract; synthesizers fulfill it</span></h2>
+<h2 class="section" id="twin"><span class="num">5.</span>Digital-twin posture <span class="subnote">foundation carries the contract; synthesizers fulfill it</span></h2>
 
-<p>A Participant — at every stage — must be <strong>spec-able as a digital twin</strong>. Twin synthesis is a major axis of research workflow now: synthetic control arms, in-silico trials, individual outcome prediction, shadow-enrollment dashboards. TOP's posture: <strong>digital twin is a projection lens, not an entity.</strong> The TOP Participant carries the substrate; a downstream twin synthesizer (computational, not part of TOP) reads from TOP and emits a twin representation.</p>
+<p>A Participant — at every stage — must be <strong>spec-able as a digital twin</strong>. Twin synthesis is a major axis of research workflow now: synthetic control arms, in-silico trials, individual outcome prediction, shadow-enrollment dashboards. TOP's posture: <strong>digital twin is a projection lens, not an entity.</strong> The TOP Participant carries the foundation; a downstream twin synthesizer (computational, not part of TOP) reads from TOP and emits a twin representation.</p>
 
-<p>What TOP guarantees so the substrate is twin-spec-able: every Participant — at every stage — is queryable along the dimensions a twin needs.</p>
+<p>What TOP guarantees so the foundation is twin-spec-able: every Participant — at every stage — is queryable along the dimensions a twin needs.</p>
 
 <table>
   <thead><tr><th>Twin dimension</th><th>TOP source</th></tr></thead>
   <tbody>
-    <tr><td>Demographic substrate</td><td>Participant attributes (sex, dateOfBirth, race, ethnicity, country)</td></tr>
+    <tr><td>Demographic foundation</td><td>Participant attributes (sex, dateOfBirth, race, ethnicity, country)</td></tr>
     <tr><td>Disease state at entry</td><td>ScreeningRecord + Activity occurrences during screening (when Visit/Activity lift)</td></tr>
     <tr><td>Treatment assignment</td><td>EnrollmentRecord + assignedToArm + protocolVersionAtEnrollment</td></tr>
     <tr><td>Time-varying observations</td><td>Visit / Activity / Observation occurrences (when those lift)</td></tr>
     <tr><td>Lifecycle state trajectory</td><td>participantStatus over time (NGSI-LD temporal property; sub-objects carry transition events)</td></tr>
     <tr><td>Outcome trajectory</td><td>Endpoint values + AE occurrences (when those lift) + final state (COMPLETED / WITHDRAWN / DISCONTINUED)</td></tr>
-    <tr><td>Cross-realm context</td><td>Linked Patient (FHIR), Claimant (claims), historical Patient (OMOP) — at the deployment edge, not in TOP substrate</td></tr>
+    <tr><td>Cross-realm context</td><td>Linked Patient (FHIR), Claimant (claims), historical Patient (OMOP) — at the deployment edge, not in TOP</td></tr>
   </tbody>
 </table>
 
-<p><strong>Twin-for-enrollment</strong> is the deferred game-changing use case. Real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials feed a unified twin synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk <em>before the trial opens</em>. Enrollment is the most expensive bottleneck (80%+ trials miss timelines; ~30% trial cost is recruitment). Substrate decisions made in this spec (Decision 9 Recruit-as-separate-entity + Decision 10 twin-queryability) are the load-bearing pre-conditions; twin synthesis itself is computational infrastructure for v0.5+.</p>
+<p><strong>Twin-for-enrollment</strong> is the deferred game-changing use case. Real Recruits + synthetic-Recruits-from-twin populations + historical Participants from completed trials feed a unified twin synthesizer that predicts cohort composition, recruitment timeline, and drop-out risk <em>before the trial opens</em>. Enrollment is the most expensive bottleneck (80%+ trials miss timelines; ~30% trial cost is recruitment). Foundation decisions made in this spec (Decision 9 Recruit-as-separate-entity + Decision 10 twin-queryability) are the load-bearing pre-conditions; twin synthesis itself is computational infrastructure for v0.5+.</p>
 
 <p><strong>Prior art</strong>: PMDT (Patient Medical Digital Twin, El Gammal et al., under review at <em>Software and Systems Modeling</em>) is an OWL 2.0 ontology for chronic-care patient digital twins, validated in EU H2020 QUALITOP pilot with real-world immunotherapy patients. Validates the ontology-driven twin direction. PMDT serves chronic care (continuous, longitudinal); TOP serves trial conduct (bounded, protocol-driven). Adjacent realms; same human anchor; different operational tempos. PMDT is OWL 2.0 (DL-classical, SPARQL); TOP is NGSI-LD (broker-mediated, temporal-property). Both legitimate paradigms — TOP can export to OWL/RDF as another projection edge.</p>
 
@@ -302,7 +302,7 @@
 
 <div class="decision">
   <div class="title">Decision 7 — Multi-Study participation: separate Participant entities</div>
-  <p>OOUX has Participant with <span class="inline">1 Study</span>. TOP follows: each Study participation is its own Participant entity. A real human enrolling in two studies has two Participant entities. Cross-Study identity resolution (the same human across multiple Participant records) is federation, not substrate.</p>
+  <p>OOUX has Participant with <span class="inline">1 Study</span>. TOP follows: each Study participation is its own Participant entity. A real human enrolling in two studies has two Participant entities. Cross-Study identity resolution (the same human across multiple Participant records) is federation, not foundation.</p>
 </div>
 
 <div class="decision">
@@ -412,7 +412,7 @@
   <li><span class="inline">EnrollmentRecord.protocolVersionAtEnrollment</span> — references USDM <span class="inline">StudyVersion</span> identifier</li>
 </ul>
 
-<p>Net: TOP carries USDM at the design layer (Study), CDISC SDTM at the analysis layer (DM/DS/IE), FHIR R5 at the operational/exchange layer (ResearchSubject + Consent + Patient), CDASH at the acquisition layer. No standards conflict; TOP is the operator-grounded substrate that all four standards project through.</p>
+<p>Net: TOP carries USDM at the design layer (Study), CDISC SDTM at the analysis layer (DM/DS/IE), FHIR R5 at the operational/exchange layer (ResearchSubject + Consent + Patient), CDASH at the acquisition layer. No standards conflict; TOP is the operator-grounded foundation that all four standards project through.</p>
 
 <!-- ============================================================== -->
 <h2 class="section" id="shacl"><span class="num">10.</span>SHACL invariants <span class="subnote">7 new Participant invariants · 25 total in the graph</span></h2>
@@ -456,7 +456,7 @@
 <div class="scenario">
   <div class="title-row"><div class="scn-title">Discontinuation by investigator (safety)</div><div class="scn-tag">Withdrawal</div></div>
   <p>Investigator discontinues a Participant after a Grade 3 AE that meets the protocol's discontinuation criteria.</p>
-  <div class="resolves">WithdrawalRecord with withdrawalCategory=ADVERSE_EVENT (not CONSENT_WITHDRAWN — that's a different operator action). Participant.participantStatus=DISCONTINUED, NOT WITHDRAWN. The semantic split between subject-initiated and investigator-initiated is preserved at the substrate. FHIR projects to ResearchSubject.status=off-study with reason; SDTM DS records DSDECOD=DISCONTINUED with DSTERM=AE-related reason text.</div>
+  <div class="resolves">WithdrawalRecord with withdrawalCategory=ADVERSE_EVENT (not CONSENT_WITHDRAWN — that's a different operator action). Participant.participantStatus=DISCONTINUED, NOT WITHDRAWN. The semantic split between subject-initiated and investigator-initiated is preserved at the foundation. FHIR projects to ResearchSubject.status=off-study with reason; SDTM DS records DSDECOD=DISCONTINUED with DSTERM=AE-related reason text.</div>
 </div>
 
 <div class="scenario">
@@ -468,7 +468,7 @@
 <div class="scenario">
   <div class="title-row"><div class="scn-title">Twin-queryability — what was Mary's status on a specific date?</div><div class="scn-tag">Trajectory</div></div>
   <p>Twin synthesizer (downstream tool) needs to know Mary's lifecycle state as of 2026-08-15.</p>
-  <div class="resolves">NGSI-LD broker query against Participant_p001 with temporal filter <span class="inline">timeAt=2026-08-15T00:00:00Z</span>. participantStatus temporal property carries validFrom/validUntil brackets per state value. Broker returns the active value at that timestamp (e.g., ON_TREATMENT). Sub-object queries (hasInformedConsent etc.) similarly time-filtered. Twin synthesizer reconstructs the trajectory; substrate carries the contract; computational synthesis is downstream.</div>
+  <div class="resolves">NGSI-LD broker query against Participant_p001 with temporal filter <span class="inline">timeAt=2026-08-15T00:00:00Z</span>. participantStatus temporal property carries validFrom/validUntil brackets per state value. Broker returns the active value at that timestamp (e.g., ON_TREATMENT). Sub-object queries (hasInformedConsent etc.) similarly time-filtered. Twin synthesizer reconstructs the trajectory; foundation carries the contract; computational synthesis is downstream.</div>
 </div>
 
 <!-- ============================================================== -->
@@ -531,7 +531,7 @@
   <div class="persona">Twin synthesizer: trajectory query for a specific Participant at a specific time</div>
   <div class="ask">"What was Mary's lifecycle state and treatment context on 2026-08-15?"</div>
   <pre>GET /ngsi-ld/v1/temporal/entities/urn:ngsi-ld:Participant:onco-423-mskcc-p001?timeAt=2026-08-15T00:00:00Z&amp;attrs=participantStatus,assignedToArm,randomizationDate</pre>
-  <div class="reads">NGSI-LD temporal endpoint returns the values active at that timestamp. participantStatus temporal property's validFrom/validUntil brackets resolve to the right value. Synthesizer combines this with sub-object queries (InformedConsent valid at the time, ScreeningRecord outcomes, etc.) to reconstruct the trajectory for twin synthesis. Substrate provides the contract; computational synthesis is downstream.</div>
+  <div class="reads">NGSI-LD temporal endpoint returns the values active at that timestamp. participantStatus temporal property's validFrom/validUntil brackets resolve to the right value. Synthesizer combines this with sub-object queries (InformedConsent valid at the time, ScreeningRecord outcomes, etc.) to reconstruct the trajectory for twin synthesis. Foundation provides the contract; computational synthesis is downstream.</div>
 </div>
 
 <!-- ============================================================== -->
