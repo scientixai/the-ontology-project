@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Core / v1</title>
+<meta name="description" content="TOP Core — the universal layer of The Ontology Project. Eight Category-Level Objects and twenty-eight leaves that operators across every domain recognize as first-class concepts. PROV-O aligned, NGSI-LD wire-compatible.">
+<link rel="alternate" type="text/turtle" href="../../taxonomy/taxonomy.ttl" title="SKOS taxonomy (Turtle)">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #f4f4f1;
+    padding: 24px 28px 36px;
+    line-height: 1.55;
+    font-size: 14px;
+  }
+  .page { max-width: 980px; margin: 0 auto; }
+
+  /* Site-wide header */
+  .site-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid #c8c8c0; }
+  .site-header .site-logo { display: block; flex-shrink: 0; }
+  .site-header .site-logo img { display: block; height: auto; max-width: 210px; }
+  .site-header .site-meta { text-align: right; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .site-header .site-meta-primary { font-size: 13px; font-weight: 700; color: #111; }
+  .site-header .site-meta-secondary { font-size: 10.5px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+
+  .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #0e7490; margin-bottom: 18px; }
+
+  h2.section {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #111;
+    margin: 32px 0 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #c8c8c0;
+  }
+  h3.category {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111;
+    margin: 26px 0 6px;
+    letter-spacing: -0.01em;
+  }
+  h3.category .cat-id {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: #888;
+    font-weight: 400;
+    margin-left: 8px;
+  }
+  p { margin-bottom: 12px; }
+  p.lead {
+    background: #fff;
+    border-left: 3px solid #0e7490;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; background: #eef0ed; padding: 1px 5px; border-radius: 2px; color: #0e7490; }
+
+  pre.code-block {
+    background: #fafaf6;
+    border: 1px solid #d6d6cf;
+    border-left: 3px solid #0e7490;
+    border-radius: 0 3px 3px 0;
+    padding: 14px 18px;
+    margin: 10px 0 16px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #2a2a2a;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  pre.code-block .ns-domain { color: #c08410; font-weight: 600; }
+  pre.code-block .ns-prim { color: #0e7490; font-weight: 600; }
+  pre.code-block .kw { color: #777; }
+  pre.code-block .cmt { color: #888; font-style: italic; }
+  .ex-caption {
+    font-size: 12.5px;
+    color: #555;
+    font-style: italic;
+    margin: -6px 0 14px;
+  }
+
+  /* Architecture diagram */
+  .arch {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+  }
+  .arch .level {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #e0e0d8;
+  }
+  .arch .level:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .arch .level-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0e7490;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .arch .level-name { font-size: 14px; font-weight: 700; color: #111; }
+  .arch .level-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.55; }
+
+  .downloads {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .downloads h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; }
+  .downloads a { color: #0e7490; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+  .downloads a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .downloads .row { padding: 4px 0; }
+
+  /* Category card (L2) */
+  .category-card {
+    background: #fafaf6;
+    border: 1px solid #d6d6cf;
+    border-left: 3px solid #0e7490;
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    scroll-margin-top: 16px;
+  }
+  .category-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
+  .category-card .name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .category-card .name a { color: #888; text-decoration: none; font-weight: 400; font-size: 12px; margin-left: 8px; }
+  .category-card .name a:hover { color: #0e7490; }
+  .category-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 6px; }
+  .category-card .meta { font-size: 11.5px; color: #555; margin-top: 4px; }
+  .category-card .meta strong { color: #111; }
+
+  /* Leaf grid (L3 children of an L2 category) */
+  .leaves {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+    margin: 10px 0 18px 16px;
+  }
+  .leaf {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 14px;
+    scroll-margin-top: 16px;
+  }
+  .leaf .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; color: #888; margin-bottom: 2px; }
+  .leaf .name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .leaf .name a { color: #ccc; text-decoration: none; font-weight: 400; font-size: 11px; margin-left: 6px; }
+  .leaf .name a:hover { color: #0e7490; }
+  .leaf .desc { color: #2a2a2a; font-size: 12.5px; line-height: 1.55; margin-bottom: 4px; }
+  .leaf .alt { font-size: 11px; color: #777; font-style: italic; }
+
+  /* Universal DNA card (L1) */
+  .dna-card {
+    background: #f4faf7;
+    border: 1px solid #cde4d8;
+    border-left: 3px solid #1e8e6f;
+    border-radius: 3px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .dna-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
+  .dna-card .name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .dna-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+  .dna-card .props {
+    background: #fff;
+    border: 1px solid #cde4d8;
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+  }
+  .dna-card .props .prop { padding: 4px 0; }
+  .dna-card .props .prop-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #1e8e6f; font-weight: 600; }
+  .dna-card .props .prop-desc { color: #2a2a2a; }
+
+  /* Status / counts strip */
+  .stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 18px;
+    padding: 12px 18px;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    font-size: 12.5px;
+  }
+  .stats .stat-num { font-size: 22px; font-weight: 700; color: #0e7490; line-height: 1; }
+  .stats .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+  .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
+  .footer a { color: #888; text-decoration: underline; }
+
+  a { color: #0e7490; }
+  a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  /* Site-wide footer */
+  .site-footer { margin-top: 40px; padding-top: 22px; border-top: 1px solid #e0e0d8; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .site-footer .site-footer-links { font-size: 12px; margin-bottom: 14px; }
+  .site-footer .site-footer-links a { color: #0e7490; text-decoration: none; font-weight: 600; margin: 0 6px; }
+  .site-footer .site-footer-links a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .site-footer .site-footer-sponsor { margin: 18px 0 14px; }
+  .site-footer .site-footer-sponsor a { display: inline-block; transition: opacity 0.15s ease; }
+  .site-footer .site-footer-sponsor a:hover { opacity: 0.75; }
+  .site-footer .site-footer-sponsor img { max-width: 200px; height: auto; }
+  .site-footer .site-footer-license { font-size: 10.5px; color: #888; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="site-header">
+  <a href="../../index.html" class="site-logo" aria-label="The Ontology Project — home">
+    <img src="top-logo.svg" alt="The Ontology Project" width="210">
+  </a>
+  <div class="site-meta">
+    <div class="site-meta-primary">Core · v1</div>
+    <div class="site-meta-secondary">top: namespace · the universal layer</div>
+  </div>
+</header>
+
+<div class="uri">https://top.scientix.ai/v1#</div>
+
+<p class="lead"><strong>TOP Core</strong> is the universal layer of The Ontology Project. It holds the first-class concepts that operators across every domain and every industry recognize: clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere. The layer is small on purpose. Workflow extensions for specific domains compose on top of the Core layer, never inside them, so the universal layer stays free of domain-specific concerns and reusable across every industry.</p>
+
+<div class="stats">
+  <div><div class="stat-num">8</div><div class="stat-label">Category-Level Objects</div></div>
+  <div><div class="stat-num">28</div><div class="stat-label">Universal leaves</div></div>
+  <div><div class="stat-num">23</div><div class="stat-label">PROV-O alignments</div></div>
+  <div><div class="stat-num">3</div><div class="stat-label">SHACL invariants underneath</div></div>
+</div>
+
+<h2 class="section">Architecture</h2>
+
+<div class="arch">
+  <div class="level">
+    <div class="level-label">L1 — Operator vocabulary, categories</div>
+    <div class="level-name">Eight Category-Level Objects</div>
+    <div class="level-desc">Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint. Each category groups the leaves that share a structural role across every operation.</div>
+  </div>
+  <div class="level">
+    <div class="level-label">L2 — Operator vocabulary, leaves</div>
+    <div class="level-name">Twenty-eight universal entities</div>
+    <div class="level-desc">The concrete first-class concepts operators reach for: Person, Organization, Schedule, Document, Observation, Safety Guardrail, and so on. Each leaf belongs to exactly one category. Workflow extensions specialize a leaf rather than introducing a new universal one.</div>
+  </div>
+  <div class="level">
+    <div class="level-label">Infrastructure floor — Provenance contract (SHACL, not SKOS)</div>
+    <div class="level-name">Three properties enforced underneath every entity</div>
+    <div class="level-desc">Beneath the operator vocabulary, three SHACL invariants apply to every entity in any TOP graph: <span class="inline">identifier</span> (what is this thing), <span class="inline">observedAt</span> (when it was captured or recorded), <span class="inline">status</span> (whether it is current). Together they are the provenance contract that lets a graph be traceable and version-able. The operator never names this layer, which is why it lives in <span class="inline">commons/source/core.ttl</span> as SHACL rather than as a concept in the taxonomy.</div>
+  </div>
+</div>
+
+<h2 class="section">Artifacts</h2>
+
+<div class="downloads">
+  <h3>Source of truth</h3>
+  <div class="row"><a href="../../taxonomy/taxonomy.ttl">taxonomy.ttl</a> &nbsp;·&nbsp; SKOS canonical taxonomy in Turtle (357 triples, 38 concepts, Termboard-clean)</div>
+
+  <h3 style="margin-top: 14px;">Companion (rebuild pending)</h3>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">commons/source/core.ttl — OWL/SHACL substrate, currently on prior namespace, rebuild scheduled to follow this taxonomy locking in Termboard</span></div>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/context.jsonld — JSON-LD context, queued</span></div>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/shapes.ttl — SHACL shapes, queued</span></div>
+</div>
+
+<h2 class="section">PROV-O and NGSI-LD adherence · three layers</h2>
+
+<p>Provenance is the mission, so the Core layer binds to the W3C PROV-O standard explicitly rather than running parallel to it. The binding is layered so each layer earns its keep:</p>
+
+<div class="arch">
+  <div class="level">
+    <div class="level-label">Layer 1 — SKOS signaling (this taxonomy, shipped)</div>
+    <div class="level-name">23 PROV-O alignments via skos:exactMatch and skos:closeMatch</div>
+    <div class="level-desc">Every Core concept that has an honest PROV-O peer carries a mapping. <span class="inline">top:Person skos:exactMatch prov:Person</span>. <span class="inline">top:Activity skos:exactMatch prov:Activity</span>. Every Evidence and Outcome leaf <span class="inline">skos:closeMatch prov:Entity</span>. Every Scope leaf <span class="inline">skos:closeMatch prov:Plan</span>. Every Location leaf <span class="inline">skos:closeMatch prov:Location</span>. Constraint leaves have no PROV-O peer; they align to ODRL/SHACL conceptually, which is a separate alignment pass. The mappings make the alignment visible in any SKOS browse tool without requiring OWL inference.</div>
+  </div>
+  <div class="level">
+    <div class="level-label">Layer 2 — SHACL enforcement (commons/source/core.ttl, rebuild pending)</div>
+    <div class="level-name">PROV-O properties required per category</div>
+    <div class="level-desc">The SHACL substrate carries the strict adherence. Every Evidence instance is required to carry <span class="inline">prov:wasGeneratedBy</span> (where it came from) and <span class="inline">prov:wasAttributedTo</span> (who is responsible). Every Activity is required to carry <span class="inline">prov:used</span> and <span class="inline">prov:wasAssociatedWith</span>. Every Artifact carries <span class="inline">prov:wasGeneratedBy</span> linking it to the producing Activity. This is what makes a TOP graph a provenance-grade graph rather than a vocabulary list. The strawman shapes ship as part of the shapes.ttl rebuild scheduled to follow this taxonomy locking in Termboard.</div>
+  </div>
+  <div class="level">
+    <div class="level-label">Layer 3 — NGSI-LD wire format (core/v1/context.jsonld, queued)</div>
+    <div class="level-name">JSON-LD context with the NGSI-LD profile</div>
+    <div class="level-desc">The JSON-LD context maps each Core concept to its NGSI-LD type and declares the substrate properties (<span class="inline">identifier</span>, <span class="inline">observedAt</span>, <span class="inline">status</span>) as standard NGSI-LD attributes. Anything emitting NGSI-LD JSON-LD against this context is automatically wire-compatible with FIWARE, Orion, Stellio, and any other NGSI-LD broker. The context.jsonld lands alongside the shapes.ttl rebuild.</div>
+  </div>
+</div>
+
+<h2 class="section">Provenance contract · enforced underneath, not modeled as vocabulary</h2>
+
+<div class="dna-card" id="ProvenanceContract">
+  <div class="name">Three properties every entity must carry</div>
+  <div class="desc">The operator never sees a concept called "Provenance Contract" because there isn't one in the taxonomy. What the operator sees is a Phlebotomist with cert# 2024-088, a Centrifuge with calibration current through 2026-09-15, an eConsent v3.2 signed at Day -7 · 14:22 CET. The metadata that makes those references trustworthy and version-able is the contract underneath: every entity carries an identifier, an observedAt, and a status. Enforced as SHACL in <span class="inline">commons/source/core.ttl</span>, applied to every leaf in every workflow extension, asked of every entity by every query. This is the floor that makes the rest of TOP a provenance-grade ontology rather than a vocabulary list.</div>
+  <div class="props">
+    <div class="prop"><span class="prop-name">identifier</span> &nbsp;·&nbsp; <span class="prop-desc">what is this thing, uniquely addressable</span></div>
+    <div class="prop"><span class="prop-name">observedAt</span> &nbsp;·&nbsp; <span class="prop-desc">when it was captured or recorded, temporally anchored</span></div>
+    <div class="prop"><span class="prop-name">status</span> &nbsp;·&nbsp; <span class="prop-desc">whether it is current, supersedes-aware</span></div>
+  </div>
+</div>
+
+<h2 class="section">The eight categories and their leaves</h2>
+
+<!-- ============================================================== -->
+<h3 class="category">1 / Agent <span class="cat-id">top:Agent</span></h3>
+
+<div class="category-card" id="Agent">
+  <div class="id">top:Agent</div>
+  <div class="name">Agent <a href="#Agent">¶</a></div>
+  <div class="desc">The Core category for entities that act on their own behalf or on behalf of others, hold decision rights over operations, and bear accountability for outcomes. Such entities are the performers of any operation: they initiate Activities, sign Documents, hold Credentials, and stand responsible for what gets done. Distinct from Resource: Resources are used; performers in this category use them.</div>
+  <div class="meta"><strong>Alt labels:</strong> Authority, Actor &nbsp;·&nbsp; <strong>Relations:</strong> hasCredential, memberOf, authorizedBy</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="Person">
+    <div class="id">top:Person</div>
+    <div class="name">Person <a href="#Person">¶</a></div>
+    <div class="desc">An Agent representing an individual human in any operational context: staff, members, contractors, regulators, recipients, observers, decision-makers. The same human may play multiple roles across different contexts; identity resolution is a federation concern.</div>
+    <div class="alt">Alt: Individual, Human</div>
+  </div>
+  <div class="leaf" id="Organization">
+    <div class="id">top:Organization</div>
+    <div class="name">Organization <a href="#Organization">¶</a></div>
+    <div class="desc">An Agent representing a legal or business entity recognized as a distinct actor: corporations, hospitals, government agencies, vendors, academic bodies, regulatory authorities, NGOs, trade associations. Carries legal identifiers and operational addresses.</div>
+    <div class="alt">Alt: Legal Entity, Corporate Entity, Institution</div>
+  </div>
+  <div class="leaf" id="Group">
+    <div class="id">top:Group</div>
+    <div class="name">Group <a href="#Group">¶</a></div>
+    <div class="desc">An Agent representing a collective body acting together toward a shared purpose, without the formal legal incorporation that defines an Organization: working bodies, committees, ad-hoc teams, panels of reviewers, oversight bodies, review boards.</div>
+    <div class="alt">Alt: Collective, Team</div>
+  </div>
+  <div class="leaf" id="AutonomousAgent">
+    <div class="id">top:AutonomousAgent</div>
+    <div class="name">Autonomous Agent <a href="#AutonomousAgent">¶</a></div>
+    <div class="desc">An Agent that takes action, makes decisions, or executes operations without direct human control on each step: AI models that produce outputs, software services that act on schedules or events, robotic systems. Responsible party is recorded separately so accountability is preserved.</div>
+    <div class="alt">Alt: AI Agent, Software Agent, Bot</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">2 / Location <span class="cat-id">top:Location</span></h3>
+
+<div class="category-card" id="Location">
+  <div class="id">top:Location</div>
+  <div class="name">Location <a href="#Location">¶</a></div>
+  <div class="desc">The Core category for places where work happens, where Agents act, or where Resources and outputs are held. Such places span the physical real world, virtual digital systems, and storage containers. Every Activity occurs at some place in this category, every Resource resides somewhere within it, and every Agent has a current locale here.</div>
+  <div class="meta"><strong>Alt labels:</strong> Space, Place &nbsp;·&nbsp; <strong>Relations:</strong> withinLocation, geoSpatialData, accessRequirement</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="Physical">
+    <div class="id">top:Physical</div>
+    <div class="name">Physical <a href="#Physical">¶</a></div>
+    <div class="desc">A Location subtype for real-world places that occupy space and can be reached by bodily presence: buildings, campuses, clinical sites, manufacturing plants, warehouses, distribution centers, field sites, vehicles in transit, outdoor environments under monitoring.</div>
+    <div class="alt">Alt: Physical Location, Site, Facility</div>
+  </div>
+  <div class="leaf" id="Virtual">
+    <div class="id">top:Virtual</div>
+    <div class="name">Virtual <a href="#Virtual">¶</a></div>
+    <div class="desc">A Location subtype for non-physical places that exist within a network or digital system: service endpoints, web portals, online meeting rooms, cloud storage buckets, VPN tunnels, message queues, addressable services in distributed systems.</div>
+    <div class="alt">Alt: Virtual Location, Digital Address</div>
+  </div>
+  <div class="leaf" id="Storage">
+    <div class="id">top:Storage</div>
+    <div class="name">Storage <a href="#Storage">¶</a></div>
+    <div class="desc">A Location subtype for spaces designated specifically for holding things, whether physical or digital: freezer slots, refrigerator shelves, secure vaults, supply bins, archive boxes, database partitions, archive buckets, document repositories, object stores.</div>
+    <div class="alt">Alt: Storage Location, Container</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">3 / Resource <span class="cat-id">top:Resource</span></h3>
+
+<div class="category-card" id="Resource">
+  <div class="id">top:Resource</div>
+  <div class="name">Resource <a href="#Resource">¶</a></div>
+  <div class="desc">The Core category for operational assets that Activities consume, use, or operate. As the means of production, members of this category are what Agents reach for to get work done: software systems process information, physical equipment performs tasks, material stocks flow through operations. Distinct from Agent: Agents act; members of this category are used.</div>
+  <div class="meta"><strong>Alt labels:</strong> Tools, Operational Asset &nbsp;·&nbsp; <strong>Relations:</strong> ownedBy, hasMaintenanceLog, operationalState</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="System">
+    <div class="id">top:System</div>
+    <div class="name">System <a href="#System">¶</a></div>
+    <div class="desc">A Resource that performs operational work or holds operational data through software: applications, platforms, databases, control software that orchestrates physical equipment, integration buses, analytics engines.</div>
+    <div class="alt">Alt: Software System, Application</div>
+  </div>
+  <div class="leaf" id="Equipment">
+    <div class="id">top:Equipment</div>
+    <div class="name">Equipment <a href="#Equipment">¶</a></div>
+    <div class="desc">A Resource leaf for physical devices and instruments used in operational work: sensors, machines, vehicles, measurement instruments, manufacturing tools, medical devices, lab analyzers, field instrumentation. Carries serial number, calibration date, maintenance interval.</div>
+    <div class="alt">Alt: Device, Instrument</div>
+  </div>
+  <div class="leaf" id="Material">
+    <div class="id">top:Material</div>
+    <div class="name">Material <a href="#Material">¶</a></div>
+    <div class="desc">A Resource leaf for physical substances, batches, and stocks that flow through operations: raw feedstocks, intermediate products, finished goods, reagents, samples, parts, supplies, fuels, consumables. Carries batch numbers, chain-of-custody, expiration dates.</div>
+    <div class="alt">Alt: Substance, Stock, Consumable</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">4 / Scope <span class="cat-id">top:Scope</span></h3>
+
+<div class="category-card" id="Scope">
+  <div class="id">top:Scope</div>
+  <div class="name">Scope <a href="#Scope">¶</a></div>
+  <div class="desc">The Core category for bounded efforts with stated purpose, governance, and a defined boundary. Members of this category are how organizations frame what they are doing and why. They scale from strategic Portfolios at the top, through Programs that group related work under a single mandate, down to specific Projects with start and end dates.</div>
+  <div class="meta"><strong>Alt labels:</strong> Intent, Bounded Effort &nbsp;·&nbsp; <strong>Relations:</strong> governedBy, containsActivity, objectiveStatement</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="Portfolio">
+    <div class="id">top:Portfolio</div>
+    <div class="name">Portfolio <a href="#Portfolio">¶</a></div>
+    <div class="desc">A Scope at the largest unit of bounded effort that an organization manages as a single concern. Aggregates Programs aligned to a strategic objective, governed at executive or board level. Carries strategic narrative and financial frame.</div>
+    <div class="alt">Alt: Strategic Portfolio</div>
+  </div>
+  <div class="leaf" id="Program">
+    <div class="id">top:Program</div>
+    <div class="name">Program <a href="#Program">¶</a></div>
+    <div class="desc">A Scope that contains several related Projects sharing a common mandate, sponsor, or theme. Run by a designated lead. Sits between the strategic frame of a Portfolio and the deliverable focus of an individual Project.</div>
+    <div class="alt">Alt: Programme</div>
+  </div>
+  <div class="leaf" id="Project">
+    <div class="id">top:Project</div>
+    <div class="name">Project <a href="#Project">¶</a></div>
+    <div class="desc">A Scope at a specific bounded effort with a defined phase, a start date, and an end date, organized to produce a stated deliverable. Where work meets the calendar. Workflow-specific scopes (a clinical Study, a manufacturing Campaign) specialize this leaf.</div>
+    <div class="alt">Alt: Initiative, Engagement</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">5 / Temporal <span class="cat-id">top:Temporal</span></h3>
+
+<div class="category-card" id="Temporal">
+  <div class="id">top:Temporal</div>
+  <div class="name">Temporal <a href="#Temporal">¶</a></div>
+  <div class="desc">The Core category for anything that exists in time, whether as a recurring pattern, a bounded interval, a performed event, or a marker on a timeline. Concepts in this category answer the question of when something happens, must happen, or has happened-and-mattered. Complements Location: when complements where.</div>
+  <div class="meta"><strong>Alt labels:</strong> Rhythm, Time-Bound Occurrence &nbsp;·&nbsp; <strong>Relations:</strong> startTime, endTime, precededBy, occursAt</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="Schedule">
+    <div class="id">top:Schedule</div>
+    <div class="name">Schedule <a href="#Schedule">¶</a></div>
+    <div class="desc">A Temporal pattern for repeating times that determine when Activities occur. Encodes the rhythm of work as a recurrence rule (often iCalendar RRULE or cron-style), scoped to a timezone for daylight-saving and cross-region correctness.</div>
+    <div class="alt">Alt: Recurrence, Cadence</div>
+  </div>
+  <div class="leaf" id="Window">
+    <div class="id">top:Window</div>
+    <div class="name">Window <a href="#Window">¶</a></div>
+    <div class="desc">A Temporal interval within which an Activity must occur to be considered valid. Defined by an earliest acceptable start, a latest acceptable end, and an optional grace period.</div>
+    <div class="alt">Alt: Time Window, Validity Window</div>
+  </div>
+  <div class="leaf" id="Activity">
+    <div class="id">top:Activity</div>
+    <div class="name">Activity <a href="#Activity">¶</a></div>
+    <div class="desc">A Temporal performance leaf, a unit of operational work actually performed at a definite time. The act of doing, distinct from the Schedule that may have triggered it and from the Window in which it must occur. Workflow-specific performances (a clinical Visit, a manufacturing Run) specialize this leaf.</div>
+    <div class="alt">Alt: Procedure, Work Unit</div>
+  </div>
+  <div class="leaf" id="Milestone">
+    <div class="id">top:Milestone</div>
+    <div class="name">Milestone <a href="#Milestone">¶</a></div>
+    <div class="desc">A Temporal marker for a significant time-bound point in a Scope's progression: phase gates, release points, regulatory deadlines, contractual payment points. Carries significance level and dependency links.</div>
+    <div class="alt">Alt: Significant Marker</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">6 / Evidence <span class="cat-id">top:Evidence</span></h3>
+
+<div class="category-card" id="Evidence">
+  <div class="id">top:Evidence</div>
+  <div class="name">Evidence <a href="#Evidence">¶</a></div>
+  <div class="desc">The Core category for verifiable artifacts that prove a fact, a claim, or a state of affairs. Concepts here answer the question of how do we know what we know. They carry integrity through cryptographic hashes, signatures, version control, and audit trails. Distinct from Outcome: Outcomes are produced by work; Evidence proves work happened.</div>
+  <div class="meta"><strong>Alt labels:</strong> Proof, Verifiable Artifact &nbsp;·&nbsp; <strong>Relations:</strong> verifiesOutcome, integrityHash, signedBy</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="Document">
+    <div class="id">top:Document</div>
+    <div class="name">Document <a href="#Document">¶</a></div>
+    <div class="desc">An Evidence leaf for formal files and records produced and maintained for operational, regulatory, or evidentiary purposes: policies, procedures, reports, contracts, specifications, manuals, plans, certificates, regulatory submissions, protocols. Authored deliberately, distinct from generated outputs (Artifacts).</div>
+    <div class="alt">Alt: Record, File</div>
+  </div>
+  <div class="leaf" id="Log">
+    <div class="id">top:Log</div>
+    <div class="name">Log <a href="#Log">¶</a></div>
+    <div class="desc">An Evidence leaf for temporal trails of entries that record what happened, in order, as it happened: audit trails, communication trails, monitoring trails, change trails, event trails. Append-only by design.</div>
+    <div class="alt">Alt: Trail, Audit Log</div>
+  </div>
+  <div class="leaf" id="Attestation">
+    <div class="id">top:Attestation</div>
+    <div class="name">Attestation <a href="#Attestation">¶</a></div>
+    <div class="desc">An Evidence leaf for signed statements verifying a specific fact, claim, or condition. Carries a signature value (cryptographic, biometric, or witnessed) and a verification method. Digital signatures, notarized declarations, regulatory sign-offs, peer reviews, oversight-body decisions.</div>
+    <div class="alt">Alt: Signed Statement, Declaration</div>
+  </div>
+  <div class="leaf" id="Credential">
+    <div class="id">top:Credential</div>
+    <div class="name">Credential <a href="#Credential">¶</a></div>
+    <div class="desc">An Evidence leaf for qualifications, licenses, and certifications held by an Agent that prove the right or competence to act in a particular role: professional licenses, training certifications, institutional accreditations, security clearances. Carries expiration and revocation states.</div>
+    <div class="alt">Alt: Qualification, Certification, License</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">7 / Outcome <span class="cat-id">top:Outcome</span></h3>
+
+<div class="category-card" id="Outcome">
+  <div class="id">top:Outcome</div>
+  <div class="name">Outcome <a href="#Outcome">¶</a></div>
+  <div class="desc">The Core category for observable, recordable products of work. Concepts here answer the question of what happened or what came of it. Workflow-specific outcomes (a clinical Adverse Event, a manufacturing Out-of-Specification result) specialize the appropriate leaf rather than introducing new universal result shapes.</div>
+  <div class="meta"><strong>Alt labels:</strong> Results, Observable Result &nbsp;·&nbsp; <strong>Relations:</strong> measuredBy, satisfiesConstraint, variance</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="Observation">
+    <div class="id">top:Observation</div>
+    <div class="name">Observation <a href="#Observation">¶</a></div>
+    <div class="desc">An Outcome leaf for data points captured by an Activity, recorded with the raw signal and a confidence assessment: a measurement read off an instrument, a sensor reading, a survey response, a manually recorded note, a calculated value derived from inputs.</div>
+    <div class="alt">Alt: Measurement, Reading, Data Point</div>
+  </div>
+  <div class="leaf" id="StatusChange">
+    <div class="id">top:StatusChange</div>
+    <div class="name">Status Change <a href="#StatusChange">¶</a></div>
+    <div class="desc">An Outcome leaf for recorded transitions from a previous status to a new one, with the trigger that caused the transition: a Project advancing from planning to execution, a Document moving from draft to approved, an Equipment going from operational to maintenance.</div>
+    <div class="alt">Alt: State Transition, Lifecycle Event</div>
+  </div>
+  <div class="leaf" id="Artifact">
+    <div class="id">top:Artifact</div>
+    <div class="name">Artifact <a href="#Artifact">¶</a></div>
+    <div class="desc">An Outcome leaf for produced files and records that are the output of an Activity, distinct from a Document in that an Artifact is generated rather than authored: generated datasets, rendered reports, build outputs, compiled binaries, exported records, processed images, model files.</div>
+    <div class="alt">Alt: Output File, Produced Asset</div>
+  </div>
+  <div class="leaf" id="Conclusion">
+    <div class="id">top:Conclusion</div>
+    <div class="name">Conclusion <a href="#Conclusion">¶</a></div>
+    <div class="desc">An Outcome leaf for reasoned decisions and determinations supported by stated evidence and explainable logic. Records decision logic and supporting evidence: findings from investigations, recommendations from reviews, regulatory determinations, AI-generated determinations that require traceable provenance.</div>
+    <div class="alt">Alt: Decision, Determination</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<h3 class="category">8 / Constraint <span class="cat-id">top:Constraint</span></h3>
+
+<div class="category-card" id="Constraint">
+  <div class="id">top:Constraint</div>
+  <div class="name">Constraint <a href="#Constraint">¶</a></div>
+  <div class="desc">The Core category for rules, limits, and bounds that govern what counts as valid operation. Concepts here are the rails along which work runs, the boundary conditions that separate compliant from non-compliant. A member of this category is enforced by some Agent and applies to one or more entities in this taxonomy.</div>
+  <div class="meta"><strong>Alt labels:</strong> Validity Rule, Guardrail &nbsp;·&nbsp; <strong>Relations:</strong> enforcedBy, severityLevel, appliesTo</div>
+</div>
+
+<div class="leaves">
+  <div class="leaf" id="PhysicalLimit">
+    <div class="id">top:PhysicalLimit</div>
+    <div class="name">Physical Limit <a href="#PhysicalLimit">¶</a></div>
+    <div class="desc">A Constraint leaf for numerical thresholds and tolerance ranges that define what counts as physically acceptable operation: temperature ranges for storage, pressure ceilings for vessels, stress tolerances for materials, capacity bounds, concentration ranges, dose ceilings, bandwidth thresholds.</div>
+    <div class="alt">Alt: Threshold, Operational Range</div>
+  </div>
+  <div class="leaf" id="RegulatoryLaw">
+    <div class="id">top:RegulatoryLaw</div>
+    <div class="name">Regulatory Law <a href="#RegulatoryLaw">¶</a></div>
+    <div class="desc">A Constraint leaf for formal laws and rules that govern operations under the authority of a jurisdiction: national statutes, agency regulations, supranational directives, binding industry standards adopted by reference, treaty obligations enforced through domestic law.</div>
+    <div class="alt">Alt: Regulation, Statute</div>
+  </div>
+  <div class="leaf" id="SafetyGuardrail">
+    <div class="id">top:SafetyGuardrail</div>
+    <div class="name">Safety Guardrail <a href="#SafetyGuardrail">¶</a></div>
+    <div class="desc">A Constraint leaf for safety rules that prevent harm to people, equipment, or operations, classified by severity and paired with a defined remediation path: operational rails, hazard controls, emergency procedure triggers, sterility constraints, lockout-tagout rules, dose-limiting rules, exposure ceilings.</div>
+    <div class="alt">Alt: Safety Rule, Operational Guardrail</div>
+  </div>
+</div>
+
+<h2 class="section">Composition rule · domain KGs extend Core, inherit everything</h2>
+
+<p>Workflow extensions for specific domains (clinical research at <span class="inline">topcr:</span>, future CMC at <span class="inline">topcmc:</span>, future energy at <span class="inline">topenergy:</span>) compose on top of the Core layer by specializing a Core concept. A clinical Visit specializes <span class="inline">top:Activity</span>. A clinical Study specializes <span class="inline">top:Project</span>. A clinical IRB specializes <span class="inline">top:Group</span>. A manufacturing Run specializes <span class="inline">top:Activity</span>. A supply-chain Shipment specializes <span class="inline">top:Activity</span>. The universal layer stays small and reusable; the domain-specific concerns live in the domain's own namespace.</p>
+
+<p><strong>By specializing a Core concept, a domain class inherits the full alignment stack at no additional cost.</strong> A clinical Visit, declared as <span class="inline">topcr:Visit rdfs:subClassOf top:Activity</span>, automatically gets:</p>
+
+<div class="arch">
+  <div class="level">
+    <div class="level-label">Inherited · The provenance contract</div>
+    <div class="level-name">identifier, observedAt, status enforced on every instance</div>
+    <div class="level-desc">The SHACL invariants on <span class="inline">top:Activity</span> apply to every <span class="inline">topcr:Visit</span> automatically. No per-domain declaration of the contract; no risk of a domain forgetting to enforce it.</div>
+  </div>
+  <div class="level">
+    <div class="level-label">Inherited · PROV-O peer mapping</div>
+    <div class="level-name">Every clinical Visit is automatically a prov:Activity</div>
+    <div class="level-desc">Because <span class="inline">top:Activity skos:exactMatch prov:Activity</span>, any PROV-aware reasoner treats a <span class="inline">topcr:Visit</span> as a <span class="inline">prov:Activity</span> without further declaration. Same for clinical Documents (prov:Entity), clinical IRBs (prov:Agent), clinical Investigators (prov:Person).</div>
+  </div>
+  <div class="level">
+    <div class="level-label">Inherited · NGSI-LD wire compatibility</div>
+    <div class="level-name">FIWARE / Orion / Stellio interop without per-domain mapping</div>
+    <div class="level-desc">When <span class="inline">core/v1/context.jsonld</span> lands, every domain class extending a Core concept maps to the right NGSI-LD type and emits the standard observedAt / identifier / status attributes automatically. A clinical KG that extends Core is wire-compatible with any NGSI-LD broker on day one.</div>
+  </div>
+  <div class="level">
+    <div class="level-label">Inherited · SHACL property requirements</div>
+    <div class="level-name">PROV-O property shapes apply down the inheritance chain</div>
+    <div class="level-desc">Every Activity subtype inherits the requirement to carry <span class="inline">prov:used</span> and <span class="inline">prov:wasAssociatedWith</span>. Every Evidence subtype inherits <span class="inline">prov:wasGeneratedBy</span> and <span class="inline">prov:wasAttributedTo</span>. Every Artifact subtype inherits <span class="inline">prov:wasGeneratedBy</span>. Domain-specific properties extend the shape rather than redefining the floor.</div>
+  </div>
+</div>
+
+<p>This is the architectural payoff. A working group convening for cell therapy, for rare disease, for energy and process industries does not have to reinvent provenance, redeclare the Core layer, or rewrite NGSI-LD compatibility. They specialize the Core concepts that fit, declare the domain-specific properties they need, and inherit the constitutional commitments at zero cost.</p>
+
+<p>The membership test that decides what lives at the universal layer stays sharp: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and inherits from the right Core concept.</p>
+
+<h2 class="section">Worked examples · what extension looks like in practice</h2>
+
+<p>Two angles on the inheritance pattern: one universal Core concept specialized many ways across industries, and one industry specializing many Core concepts at once. Both are class-declaration sketches in Turtle; the actual workflow extensions live in their own files (clinical research at <span class="inline">clinical-research/source/owl-classes.ttl</span>) and add domain-specific properties beyond what is shown here.</p>
+
+<h3 class="category">Angle 1 / One Core concept, every industry that needs it</h3>
+
+<p>Take <span class="inline">top:Activity</span>, the universal performance leaf for any unit of operational work performed at a definite time. Every industry that has things-that-happen-at-a-time specializes it:</p>
+
+<pre class="code-block"><span class="cmt"># Clinical research</span>
+<span class="ns-domain">topcr:Visit</span>             <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Activity</span> .
+
+<span class="cmt"># Manufacturing</span>
+<span class="ns-domain">topmfg:BatchRun</span>         <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Activity</span> .
+
+<span class="cmt"># Care delivery</span>
+<span class="ns-domain">topcd:Encounter</span>         <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Activity</span> .
+
+<span class="cmt"># Energy and process industries</span>
+<span class="ns-domain">topenergy:Inspection</span>    <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Activity</span> .
+
+<span class="cmt"># Cell and gene therapy</span>
+<span class="ns-domain">topct:HarvestRun</span>        <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Activity</span> .</pre>
+
+<p class="ex-caption">Five domain classes, one parent. None of those five domains had to declare identifier / observedAt / status. None had to declare PROV-O alignment. None will have to declare NGSI-LD compatibility when context.jsonld lands. None will have to redeclare the prov:used / prov:wasAssociatedWith requirements. All five inherit them through the SubClassOf chain.</p>
+
+<h3 class="category">Angle 2 / One industry, many Core concepts at once</h3>
+
+<p>The clinical research workflow extension declares roughly fifteen domain classes, each anchored to the Core concept that fits. The full clinical research vocabulary then composes by adding domain-specific properties to each subclass (an InvestigatorCredential carries IRB-approval-date and country scope; a Visit carries protocol-section and visit-window; an AdverseEvent carries CTCAE-grade and causality), but the constitutional commitments come down through the inheritance chain at zero cost.</p>
+
+<pre class="code-block"><span class="cmt"># Agents — who acts in a clinical trial</span>
+<span class="ns-domain">topcr:Sponsor</span>                  <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Organization</span> .
+<span class="ns-domain">topcr:CRO</span>                      <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Organization</span> .
+<span class="ns-domain">topcr:Investigator</span>             <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Person</span> .
+<span class="ns-domain">topcr:IRB</span>                      <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Group</span> .
+
+<span class="cmt"># Scope — the bounded effort itself</span>
+<span class="ns-domain">topcr:Study</span>                    <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Project</span> .
+
+<span class="cmt"># Locations and resources used by the trial</span>
+<span class="ns-domain">topcr:Site</span>                     <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Physical</span> .
+<span class="ns-domain">topcr:EDCSystem</span>                <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:System</span> .
+<span class="ns-domain">topcr:InvestigationalProduct</span>   <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Material</span> .
+
+<span class="cmt"># Time-bound things</span>
+<span class="ns-domain">topcr:Visit</span>                    <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Activity</span> .
+<span class="ns-domain">topcr:VisitWindow</span>              <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Window</span> .
+
+<span class="cmt"># Evidence — the trustworthy artifacts</span>
+<span class="ns-domain">topcr:Protocol</span>                 <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Document</span> .
+<span class="ns-domain">topcr:eConsent</span>                 <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Attestation</span> .
+<span class="ns-domain">topcr:InvestigatorCredential</span>   <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Credential</span> .
+
+<span class="cmt"># Outcomes — what the work produces</span>
+<span class="ns-domain">topcr:AdverseEvent</span>             <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Observation</span> .
+<span class="ns-domain">topcr:EnrollmentStatusChange</span>   <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:StatusChange</span> .
+<span class="ns-domain">topcr:CSR</span>                      <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Artifact</span> .
+<span class="ns-domain">topcr:RegulatoryDecision</span>       <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Conclusion</span> .</pre>
+
+<p class="ex-caption">Sixteen domain classes anchored to thirteen distinct Core concepts across six categories. Every one becomes a prov:Agent, prov:Activity, prov:Entity, or prov:Plan automatically. Every one carries identifier / observedAt / status. Every one is NGSI-LD wire-compatible. The clinical research extension is then this skeleton plus the domain-specific properties each subclass adds, not a re-declaration of the floor.</p>
+
+<h2 class="section">Status</h2>
+
+<p>This namespace is at <strong>v1.0.0-strawman</strong> as of May 2026. The SKOS taxonomy is locked and Termboard-clean (zero circular-definition flags, zero anti-pattern words, zero standalone-acronym flags, every L3 leaf names its L2 parent). The OWL/SHACL companion (<span class="inline">commons/source/core.ttl</span>) and the JSON-LD context are scheduled to follow this taxonomy locking in Termboard.</p>
+
+<div class="footer">
+  Resolution target for the top: namespace · v1 of TOP Core · governed by The Ontology Project under Apache 2.0
+</div>
+
+<footer class="site-footer">
+  <div class="site-footer-links">
+    <a href="../../index.html">Home</a> ·
+    <a href="../../MANIFESTO.html">Manifesto</a> ·
+    <a href="../../FIRST-PRINCIPLES.html">First Principles</a> ·
+    <a href="../../ROADMAP.html">Roadmap</a> ·
+    <a href="../../onto/">Namespaces</a> ·
+    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
+  </div>
+  <div class="site-footer-sponsor">
+    <a href="https://scientix.ai">
+      <img src="sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
+    </a>
+  </div>
+  <div class="site-footer-license">Apache License 2.0</div>
+</footer>
+
+</div>
+</body>
+</html>

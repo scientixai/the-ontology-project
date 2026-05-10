@@ -56,7 +56,7 @@ If a CDISC C-code, an HL7 resource name, or a USDM class name shows up in a TOP 
 
 Per [ADR-0013](governance/decision-log.md#adr-0013-practitioner-first-tops-primary-customer), TOP's primary customer is the human practitioner. AI agents reason against TOP to help humans become superhuman; they do not shape it. Ontologist tooling (Termboard, OBO reasoners, BFO/PROV-O alignment checkers) is honored at the edge; it does not shape TOP either.
 
-This is the manifesto position made structural. *"Decades have gone by where humans are asked to conform to non-sensical user experiences because they are shaped by a database developer priority. In the end, we want to augment the humans, machines have plenty of help."* TOP's vocabulary, primitives, and universal interface are all answerable to the operator's workday — not to the ontologist's elegance, not to the agent's reasoning convenience, not to the database administrator's normalization preferences.
+This is the manifesto position made structural. *"Decades have gone by where humans are asked to conform to non-sensical user experiences because they are shaped by a database developer priority. In the end, we want to augment the humans, machines have plenty of help."* TOP's vocabulary, Core concepts, and universal interface are all answerable to the operator's workday — not to the ontologist's elegance, not to the agent's reasoning convenience, not to the database administrator's normalization preferences.
 
 What this looks like in practice:
 
@@ -160,11 +160,11 @@ External systems (DICOM PACS, lab LIS, ePRO platform, EHR, sequencing pipelines)
 - Therapeutic-area-specific entity types in TOP. **No `OncologyImagingStudy`, no `CardiologyECGRecording`, no `PHQ9Response`, no instrument-specific or modality-specific entities. Ever.** If a future requirement appears to need one, the answer is to reformulate it as content variation: project it through `taskValue` polymorphism + concept-code identification + URI references to the implementation.
 - Modality-specific shape (`DICOMImagingStudy`, `EProSession`, `LabResult`, `GenomicVariant`). Same answer — content, not shape.
 - Instrument-specific entities (`PHQ9Item`, `ADASCogResult`, `EQ5D5LCapture`). Same answer.
-- "Just-in-case" specialization driven by anticipated future requirements. The discipline is reactive: only lift entities when a real operator workflow forces them, and only as TOP Primitives, not specialization.
+- "Just-in-case" specialization driven by anticipated future requirements. The discipline is reactive: only lift entities when a real operator workflow forces them, and only as TOP Core, not specialization.
 
-### What this *doesn't* rule out — TOP Primitives
+### What this *doesn't* rule out — TOP Core
 
-Universal entities that operators across all therapeutic areas talk about as first-class things lift legitimately. These aren't specialization; they're TOP Primitives:
+Universal entities that operators across all therapeutic areas talk about as first-class things lift legitimately. These aren't specialization; they're TOP Core:
 
 - `Sample` — every trial that takes specimens has Samples; not oncology-specific
 - `AuditEvent` — every regulated workflow generates audit events; not therapeutic-area-specific
@@ -176,7 +176,7 @@ Lifting these expands TOP horizontally without specializing it. The test: does t
 
 ### The discipline
 
-Every proposed new TOP entity must defend itself as a **TOP Primitive** (universal across therapeutic areas, operator-vocabulary-grounded) — not as **therapeutic-area or modality specialization**. If it can't pass that test, it belongs in implementation (sponsor workflow tools, vendor platforms, EHR integrations), not in TOP.
+Every proposed new TOP entity must defend itself as a **TOP Core concept** (universal across therapeutic areas, operator-vocabulary-grounded) — not as **therapeutic-area or modality specialization**. If it can't pass that test, it belongs in implementation (sponsor workflow tools, vendor platforms, EHR integrations), not in TOP.
 
 This is the architectural moat made structural: standards-up vendors model N entity types per therapeutic area. TOP carries one universal pattern that handles all of them — and stays small enough for an operator to comprehend in their head.
 
