@@ -1,256 +1,130 @@
-# TOP Taxonomy v1
+# TOP Taxonomy
 
-> **Status: pending rewrite.** This document predates the current architecture (TOP Core + the eight-category, twenty-eight-leaf SKOS taxonomy aligned to PROV-O, with the SHACL provenance contract enforced underneath). Several core decisions referenced here have evolved: "Commons" / "TOP Primitives" became "TOP Core"; the `topc:` and `topp:` prefixes collapsed into a single `top:` namespace; the path `/onto/primitives/v1/` became `/primitives/v1/` and then `/core/v1/`; `commons/source/core.ttl` moved to `core/v1/shapes.ttl`. The current authoritative sources are [taxonomy/taxonomy.ttl](taxonomy/taxonomy.ttl) (SKOS) and [core/v1/index.html](core/v1/index.html) (the spec page). This document will be rewritten in a later pass.
+> The classification scheme for The Ontology Project. One root, eight categories, twenty-eight leaves. Authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Practitioner-first: AI agents and ontologist tooling are honored at the edge, never as primary customers of TOP.
 
----
+## Three layers
 
-> Classification before construction. The taxonomy comes first; the ontology builds on it. This document is the corrected classification scheme that should have been written before the first lift; written now after eight reference-graph entities surfaced the architectural ambiguities.
+| Layer | What it is | What it carries |
+| --- | --- | --- |
+| **L0 — Root** (`top:CommonEntity`) | The lattice every TOP entity inherits | Universal DNA: identifier, observed-at, status |
+| **L1 — Categories** (the 8) | Operational-context buckets | Class-level PROV-O alignment + 3 relational extensions each + light-edge BFO on the four clean categories |
+| **L2 — Leaves** (the 28) | First-class operator concepts | Their own class-level PROV-O alignment; workflow extensions specialize from here |
 
 ## What this fixes
 
-The original namespace structure had two compounding errors:
+The earlier draft of the SKOS taxonomy had two compounding faults that surfaced when [TermBoard](https://termboard.com) loaded the file for the first round-trip:
 
-1. **`top:` was bound to clinical-trials.** "TOP" stands for *The Ontology Project* — the framework. A prefix called `top:` should belong to the project, not to one of its reference graphs. The prefix label said "top is clinical"; the meaning said "top is the whole project." Mismatch.
-2. **The reference graphs were imagined as sibling industry-domains.** Like FIWARE Smart Data Models — Healthcare, Manufacturing, Supply Chain, Smart City as walled-off siblings. But healthcare CONTAINS manufacturing (pharma), supply chain (drug distribution), and regulatory (FDA, EMA) — and those exist outside healthcare too. Sibling-by-industry collapses under the simplest test: a smart hospital sponsoring a clinical trial uses both clinical-research and care-delivery workflows simultaneously over the same TOP.
+1. **Mechanical.** Forty-six concepts carried a malformed PROV typing line of the form `prov:Agent "prov:Agent" .` — using a class as a predicate, with a string literal as object. No SKOS-aware tool could interpret it. ADR-0001's encoding (`rdfs:subClassOf prov:*`) had been replaced with a placeholder during the SKOS lift.
+2. **Architectural.** The fifteen "TOP Primitives" had no shared structural parentage. Person, Organization, and OversightBody were each a primitive but nothing tied them together as Agents. Site and StorageLocation didn't share Location. Document, Log, and Credential didn't share Evidence. The taxonomy was a flat bag with PROV typing as the only (broken) cross-cutting structure.
 
-The corrected taxonomy is layered, not siblinged: a single TOP Core (universal cross-cutting concepts) plus composable workflow extensions (workflow-specific concepts that compose on top of TOP). Workflows are NOT mutually exclusive — a real-world deployment uses as many extensions as it needs, all over the same commons.
+The fix is the three-layer architecture below, with Universal DNA at the root and a categorical layer between the root and the leaves. A reviewer in TermBoard now drills from TOP Core → Agent → Person rather than scanning a flat list. A reasoner walks `?x rdfs:subClassOf top:Agent` to find every kind of agent across every workflow without enumerating each leaf. (See [governance/decision-log.md](governance/decision-log.md), ADR-0012 and ADR-0013.)
 
-## The architecture (Option B — commons holds universal primitive shapes; workflows extend with specialization)
+## L0 — Root: `top:CommonEntity` and Universal DNA
 
-After working through whether `clinical-research/visit` and `healthcare/visit` both feel right (they do — same word, different shapes per workflow), then whether Document's primitive attrs are durable across every domain (yes — id, title, version, status, dates, retention are universal), the architecture commits to **Option B properly scoped**:
+Three properties every TOP entity carries, no exceptions:
 
-- **Commons holds universal primitive shapes** for entities with attributes durable across every workflow. Most entities qualify at the primitive level — Document, Equipment, System, Log, StorageLocation, Credential, Visit, Event, Site, OversightBody, Activity, Task, VisitObservation, Person, Organization. Each has a universal primitive shape that any workflow can use directly.
-- **Workflow extensions specialize via subClassOf** when they need workflow-specific attributes. The clinical-research workflow adds essentialRecordPurpose to Document, visitDay+visitWindow to Visit, CTCAE grade to Event, etc.
-- **Workflow-native entities** (no commons supertype) live in workflow extensions when the concept itself only exists in that workflow — Sponsor, Study, Participant, Recruit, InvestigationalProduct in clinical research.
-- Cross-workflow queries against the commons supertype find every workflow's specialized shape via subClassOf inheritance.
+- **`top:identifier`** — globally unique URI / URN. Functional.
+- **`top:observedAt`** — when the entity-state was observed or recorded.
+- **`top:status`** — current lifecycle / health state.
 
-```
-TOP (the project framework — top.scientix.ai)
-  │
-  └── Commons (universal layer — topc:) — 15 entities WITH SHAPE
-        │
-        ├── Identity Core (truly identical across workflows):
-        │   topc:Person, topc:Organization
-        │
-        └── Operational Core (universal core attrs; workflows specialize):
-            topc:Site, topc:Visit, topc:Event, topc:OversightBody,
-            topc:Document, topc:Equipment, topc:System, topc:Log,
-            topc:StorageLocation, topc:Credential,
-            topc:Activity, topc:Task, topc:VisitObservation
+These are the three an operator universally encounters: *what is this thing, when was it captured, is it current.* The earlier draft listed seven Universal DNA properties (identifier, wasAttributedTo, wasGeneratedBy, observedAt, status, value, unit). ADR-0013 trimmed to three because the other four overreached — they were universal in the engineering sense, not in the practitioner sense, and forced the taxonomy into record-level vs. domain-level provenance gymnastics.
 
-  └── Workflow extensions (composable; not mutually exclusive)
-        │
-        ├── Clinical Research (topcr:) — current, in flight
-        │     │
-        │     ├── SPECIALIZATIONS that subClassOf commons (add workflow-specific attrs):
-        │     │   topcr:Document   (adds ICH E6(R3) Appendix C essentialRecordPurpose
-        │     │                     + responsibleParty + isfSection + etmfLocation
-        │     │                     + clinical-research documentType enum values)
-        │     │   topcr:Equipment  (adds equipmentBinding enum)
-        │     │   topcr:System     (adds three-axis pattern operatedBy/usedBy/oversightHeldBy)
-        │     │   topcr:Log        (adds clinical-research log-type specifics)
-        │     │   topcr:StorageLocation (adds temperature / sample-storage specifics)
-        │     │   topcr:Credential (adds GCP/CLIA/IATA-specific credential types)
-        │     │   topcr:Visit      (adds visitNumber, visitDay, visitWindow, definedBy,
-        │     │                     forParticipant, forStudySite, protocolDeviationCode)
-        │     │   topcr:Event      (adds CTCAE grade, expedited reporting, ICH E2A
-        │     │                     reportability, eventCategory enum AE/SAE/Deviation/etc.)
-        │     │   topcr:Site       (adds SFQ feasibility profile)
-        │     │   topcr:OversightBody (adds IRB-registration / DSMB-charter specifics)
-        │     │   topcr:Activity   (adds biomedicalConceptCode → COSMoS BC catalog)
-        │     │   topcr:Task       (adds biomedicalConceptCode)
-        │     │   topcr:VisitObservation (adds Path C Event-escalation specifics)
-        │     │
-        │     └── CLINICAL-RESEARCH-NATIVE entities (no commons supertype —
-        │         these concepts only exist in clinical-research workflow):
-        │         topcr:Sponsor, topcr:Study, topcr:Participant, topcr:Recruit,
-        │         topcr:InvestigationalProduct, topcr:StudySite
-        │         + Study sub-objects (Protocol, Arm, SOA, Endpoint, InclusionCriterion,
-        │           ExclusionCriterion, VisitDefinition)
-        │         + Participant sub-objects (InformedConsent, ScreeningRecord,
-        │           EnrollmentRecord, WithdrawalRecord)
-        │         + InvestigationalProduct sub-objects (Lot, Kit)
-        │
-        ├── Care Delivery (topcd:) — future
-        │     SPECIALIZATIONS (topcd:Visit subClassOf topc:Visit; topcd:Event;
-        │     topcd:OversightBody for P&T committees)
-        │     + CARE-DELIVERY-NATIVE (topcd:Patient, topcd:Order, topcd:Diagnosis,
-        │       topcd:Discharge)
-        │
-        ├── Manufacturing (topmfg:) — future
-        │     SPECIALIZATIONS (topmfg:InspectionVisit subClassOf topc:Visit;
-        │     topmfg:Event for OOS / Batch Failure / Contamination;
-        │     topmfg:Site for manufacturing plants)
-        │     + MANUFACTURING-NATIVE (ManufacturingBatch, BatchRecord,
-        │       ProcessParameters)
-        │
-        └── Supply Chain (topsc:) — future
-              SPECIALIZATIONS (topsc:DeliveryVisit subClassOf topc:Visit;
-              topsc:Event for cold-chain excursions; topsc:Warehouse subClassOf
-              topc:Site)
-              + SUPPLY-CHAIN-NATIVE (Shipment, CustodyHandoff, Carrier)
-```
+Provenance lives where PROV-O puts it, at the class level, not as a universal-level shortcut property. Record-level metadata uses Dublin Core (`dcterms:creator`, `dcterms:created`, `dcterms:modified`) — clearly metadata, never confused with domain claims. Value and unit live where measurement happens (Outcome leaves), not at the universal level.
 
-**The pattern in plain language**: Commons gives you usable entities at the primitive-attributes level — a `topc:Document` instance is a real, queryable, validatable thing. Workflow extensions ADD attributes by subclassing. A clinical-research deployment uses `topc:Document` directly when the universal attrs are sufficient, or `topcr:Document subClassOf topc:Document` when it needs `essentialRecordPurpose`. Cross-workflow queries against `topc:Document` find every workflow's specialized Document via subClassOf inheritance.
+A SHACL `top:UniversalDNAShape` enforces the three properties on every `top:CommonEntity` instance. It targets the root class so every leaf inherits the obligation through `rdfs:subClassOf`.
 
-**This is the FHIR-base-resource + profile pattern.** FHIR Encounter is a usable resource with universal attrs; US Core / AU Core / IPS profiles extend it with regional/jurisdictional specifics. TOP commons + workflow extensions follows the same pattern.
+## L1 — The eight categories
 
-**Two kinds of entities exist in workflow extensions**:
-1. **Specialization shapes that subClassOf a commons primitive** — when the primitive shape is universal but workflow needs additional attributes (Document, Equipment, Visit, Event, etc.).
-2. **Workflow-native entities** (no commons supertype) — when the concept itself only exists in that workflow (Sponsor, Study, Participant, etc.).
+Each category is `rdfs:subClassOf top:CommonEntity` and `rdfs:subClassOf prov:Agent | prov:Activity | prov:Entity | prov:Plan | prov:Location` per its PROV-O peer. Each carries three category-level relational extensions — the verbs that category brings to TOP. Four also declare `rdfs:subClassOf bfo:*` for OBO Foundry interop on the cases where BFO membership is clean.
 
-**The same example reads consistently**: a smart hospital sponsoring a clinical trial uses TOP Core (`topc:Person`, `topc:Organization`, `topc:Site`, `topc:Visit`, `topc:Event`, `topc:Document`, `topc:Equipment`, etc. — directly usable) + clinical-research workflow extensions (`topcr:Sponsor`, `topcr:Study`, `topcr:Visit subClassOf topc:Visit` for the protocol-specific attrs, etc.) + (future) care-delivery workflow extensions (`topcd:Patient`, `topcd:Visit subClassOf topc:Visit` for billing/encounter specifics). Same Visit *primitive*; multiple specialized shapes; cross-workflow queries find them all.
+| # | Category | Focus | PROV-O peer | BFO peer | Relational extensions |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `top:Agent` | Authority | `prov:Agent` | `bfo:IndependentContinuant` | `hasCredential`, `memberOf`, `authorizedBy` |
+| 2 | `top:Location` | Space | `prov:Location` | `bfo:Site` | `withinLocation`, `geoSpatialData`, `accessRequirement` |
+| 3 | `top:Resource` | Tools | `prov:Entity` | (mixed; leaf-level) | `ownedBy`, `hasMaintenanceLog`, `operationalState` |
+| 4 | `top:Scope` | Intent | `prov:Plan` | (mixed; leaf-level) | `governedBy`, `containsActivity`, `objectiveStatement` |
+| 5 | `top:Temporal` | Rhythm | `prov:Activity` | `bfo:Process` | `startTime`, `endTime`, `precededBy`, `occursAt` |
+| 6 | `top:Evidence` | Proof | `prov:Entity` | `bfo:GenericallyDependentContinuant` | `verifiesOutcome`, `integrityHash`, `signedBy` |
+| 7 | `top:Outcome` | Results | `prov:Entity` | (mixed; leaf-level) | `measuredBy`, `satisfiesConstraint`, `variance` |
+| 8 | `top:Constraint` | Validity | `prov:Entity` | (mixed; leaf-level) | `enforcedBy`, `severityLevel`, `appliesTo` |
 
-## URI / prefix conventions
+The four mixed-membership categories (Resource, Scope, Outcome, Constraint) carry BFO scope notes documenting their alignment rationale, but no forced subClassOf at the category level. Leaves under those categories declare their BFO type if and when OBO interop demands it. This buys the clean OBO interop where it lands cleanly without paying the BFO maintenance tax across all of TOP.
+
+## L2 — The twenty-eight leaves
+
+Each leaf is `rdfs:subClassOf` its category (and transitively `top:CommonEntity`) and carries its own class-level PROV-O alignment.
+
+**Agent (4)** — `Person`, `Organization`, `Group`, `AutonomousAgent`. Person → `prov:Person`; Organization → `prov:Organization`; Group → `prov:Agent`; AutonomousAgent → `prov:SoftwareAgent`.
+
+**Location (3)** — `Physical`, `Virtual`, `Storage`. All → `prov:Location`.
+
+**Resource (3)** — `System`, `Equipment`, `Material`. All → `prov:Entity`.
+
+**Scope (3)** — `Portfolio`, `Program`, `Project`. All → `prov:Plan`.
+
+**Temporal (4)** — `Schedule`, `Window`, `Activity`, `Milestone`. All → `prov:Activity`.
+
+**Evidence (4)** — `Document`, `Log`, `Attestation`, `Credential`. Document/Attestation/Credential → `prov:Entity`; Log → `prov:Collection` (a time-ordered set).
+
+**Outcome (4)** — `Observation`, `StatusChange`, `Artifact`, `Conclusion`. All → `prov:Entity`.
+
+**Constraint (3)** — `PhysicalLimit`, `RegulatoryLaw`, `SafetyGuardrail`. All → `prov:Entity`. (Constraints have no clean PROV-O peer; the alignment to ODRL/SHACL conceptually is a separate alignment pass.)
+
+## How the layers compose
 
 ```
-top.scientix.ai/v1#                       ← project-level concepts (top:)
-top.scientix.ai/commons/v1#               ← TOP Core (topc:)
-top.scientix.ai/clinical-research/v1#     ← clinical research workflow extension (topcr:)
-top.scientix.ai/care-delivery/v1#         ← future workflow extension (topcd:)
-top.scientix.ai/manufacturing/v1#         ← future workflow extension (topmfg:)
-top.scientix.ai/supply-chain/v1#          ← future workflow extension (topsc:)
+top:CommonEntity                          ← root, Universal DNA
+   ├── top:Agent                          ← L1 category, PROV+BFO alignment
+   │     ├── top:Person                   ← L2 leaf, prov:Person
+   │     ├── top:Organization             ← L2 leaf, prov:Organization
+   │     ├── top:Group                    ← L2 leaf, prov:Agent
+   │     └── top:AutonomousAgent          ← L2 leaf, prov:SoftwareAgent
+   ├── top:Location ...
+   ├── top:Resource ...
+   ├── top:Scope ...
+   ├── top:Temporal ...
+   ├── top:Evidence ...
+   ├── top:Outcome ...
+   └── top:Constraint ...
 ```
 
-Three rules:
+Workflow extensions — clinical research, care delivery, manufacturing, supply chain — layer on top by declaring their workflow-specific classes `rdfs:subClassOf` a TOP leaf. A clinical-research `Investigator` is `rdfs:subClassOf top:Person`. A manufacturing `BatchRecord` is `rdfs:subClassOf top:Document`. The same instance can carry both classifications; Universal DNA, the category's relational extensions, and the PROV-O / BFO alignment all flow through automatically.
 
-1. **`top:` is reserved for project-level concepts only** (the taxonomy itself, top concepts, layer markers). It is NOT a domain prefix.
-2. **Commons gets the `topc:` prefix** with IRI `top.scientix.ai/commons/v1#`. One commons. TOP Core.
-3. **Each workflow extension gets its own prefix** with IRI `top.scientix.ai/{workflow-name}/v1#`. Workflow names are kebab-case (`clinical-research`, `care-delivery`, `supply-chain`). Each extension is self-contained but composes on top of commons.
+The same instance answers a coordinator's "is this protocol current?" query and an OBO reasoner's "give me every IndependentContinuant in this graph" query. The first query gets the practitioner shape; the second gets the formal alignment; both work; neither distorts the other.
 
-The path `/onto/` is removed — operator-grounded over jargon-y.
+## Authoring layers
 
-## The classification rule (TOP Primitive test)
+| File | View | Audience |
+| --- | --- | --- |
+| [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) | Pure SKOS | TermBoard, PoolParty, Synaptica, Protégé. Vocabulary, definitions, scope notes only. |
+| [`taxonomy/taxonomy.csv`](taxonomy/taxonomy.csv) | Flat companion | Spreadsheet review of the SKOS. |
+| [`core/v1/shapes.ttl`](core/v1/shapes.ttl) | OWL classes + SHACL contract | Reasoners, SHACL validators, downstream NGSI-LD tooling. Same URIs as the SKOS. |
+| [`core/v1/walkthroughs/person.ttl`](core/v1/walkthroughs/person.ttl) | Concrete instance | Anyone wanting to verify the pattern end-to-end on a single entity. |
+| [`core/v1/index.html`](core/v1/index.html) | Spec page | Web view; what gets shared with reviewers and conveners. |
 
-For every entity in TOP, the inclusion test for commons:
+The SKOS file carries operator vocabulary only. Property names, types, ranges, and the SHACL contract live in the OWL/SHACL layer. Earlier drafts modeled the contract as a SKOS top concept ("Universal DNA") — removed because the contract is metadata, not a thing operators recognize as first-class.
 
-> **Do operators in workflows beyond a single domain recognize this concept as a first-class thing?**
+## How to read the SKOS file
 
-If yes, commons. If no, workflow extension.
+The TTL is annotated with authoring rules sourced from TermBoard's quality conformance:
 
-| Entity | Test outcome | Placement |
-|---|---|---|
-| Person | Yes — every workflow has people | Commons |
-| Organization | Yes — every workflow has organizations | Commons |
-| Site | Yes — hospitals, factories, warehouses, research facilities all have "sites" | Commons |
-| Document | Yes — every regulated workflow has documents | Commons |
-| Equipment | Yes — every operational workflow has equipment | Commons |
-| Visit | Yes — patient visits, audit visits, delivery visits, manufacturing site visits | Commons |
-| Event | Yes — AE, OOS, code blue, temperature excursion, regulatory finding | Commons |
-| OversightBody | Yes — IRBs, P&T committees, audit boards, ethics committees | Commons |
-| **Sponsor** | No — sponsor-as-per-Org-per-Study is clinical-research-specific | Clinical Research |
-| **Study** | No — research study with protocol/arms is clinical-research-specific | Clinical Research |
-| **Participant** | No — trial-subject role is clinical-research-specific | Clinical Research |
-| **InvestigationalProduct** | No — IND-track regulatory specifics are clinical-research-specific | Clinical Research |
-| **StudySite** | No — per-Study site role is clinical-research-specific | Clinical Research |
+- A concept's `skos:definition` never repeats the concept's own `prefLabel` (avoids circular-definition flag).
+- Definitions never use "include" / "includes" / "including" / "included" (anti-pattern flag).
+- Each L2 leaf names its L1 parent in the first sentence of its definition (parent-in-description rule).
+- The acronym "TOP" is expanded to "The Ontology Project" the few times it must appear.
 
-The discipline is reactive: only lift entities when a real operator workflow forces them, and only put them in commons if they actually pass the TOP Primitive test. This avoids over-pre-modeling and avoids the FIWARE mistake.
+These rules are enforced by inspection on every change. They are not load-bearing for the meaning, but they are load-bearing for clean SKOS round-trip.
 
-## Workflows compose — the smart-hospital-sponsors-a-trial test
+## What this rules out
 
-The classification was forced by a simple test: what happens when a smart hospital sponsors a clinical trial? In sibling-domain models (FIWARE, my prior proposal), the hospital straddles two walled-off domains and every cross-domain query becomes integration work.
-
-In composable workflows on a single commons:
-
-```
-Organization:mskcc                        ← topc:Organization (commons)
-  ├── plays role: Sponsor:mskcc-iit-001   ← topcr:Sponsor (clinical-research)
-  ├── plays role: Site:mskcc-main         ← topc:Site (commons)
-  └── plays role: care-delivery facility  ← topcd:* (future, when care-delivery extension lifts)
-
-Person:dr-kim                             ← topc:Person (commons)
-  ├── plays role: Investigator on Sponsor ← clinical-research role context
-  ├── plays role: Treating Physician      ← care-delivery role context (future)
-  └── plays role: Hospital Staff          ← care-delivery role context (future)
-```
-
-The hospital doesn't *belong* to one reference graph. The same Organization, Person, Site, Visit, Event entities serve multiple workflows simultaneously. Roles are role-relationships pointing at the same TOP entities.
-
-This is exactly the pattern already established with Sponsor (per-Organization-per-Study role) and the IIT case (same Organization plays managesSite + playsSponsorRole). We just hadn't generalized it to the project taxonomy.
-
-## Migration from current state (Option B)
-
-The current source intermediate (v0.6.0-strawman) carries:
-
-- `top:` prefix → `https://top.scientix.ai/onto/clinical/v1#` (mislabeled clinical)
-- `topc:` prefix → `https://top.scientix.ai/onto/commons/v1#` (correct intent, wrong path)
-
-Migration under Option B is more nuanced than the prior single-prefix shuffle. Workflow-specific SHAPES move to `topcr:`; the corresponding commons CONCEPTS get added to `topc:` (vocabulary-only; SKOS).
-
-| Current | Corrected | Type of move |
-|---|---|---|
-| `top:Sponsor` | `topcr:Sponsor` | Clinical-research-native (no commons supertype) |
-| `top:Study` | `topcr:Study` | Clinical-research-native |
-| `top:Participant` | `topcr:Participant` | Clinical-research-native |
-| `top:Recruit` | `topcr:Recruit` | Clinical-research-native |
-| `top:InvestigationalProduct` | `topcr:InvestigationalProduct` | Clinical-research-native |
-| `top:Site` | `topcr:Site subClassOf topc:Site` | Shape stays in clinical-research; commons gets concept |
-| `top:Visit` | `topcr:Visit subClassOf topc:Visit` | Shape stays in clinical-research; commons gets concept |
-| `top:OversightBody` | `topcr:OversightBody subClassOf topc:OversightBody` | Shape stays in clinical-research; commons gets concept |
-| Future `top:Event` (about to lift) | `topcr:Event subClassOf topc:Event` | Shape lifts in clinical-research; commons concept anchors it |
-| `topc:StudySite` | `topcr:StudySite` | Move from commons to clinical-research-native |
-| `topc:Document` | `topcr:Document subClassOf topc:Document` | Shape moves to clinical-research; commons keeps concept |
-| `topc:Equipment` | `topcr:Equipment subClassOf topc:Equipment` | Shape moves; commons keeps concept |
-| `topc:System` | `topcr:System subClassOf topc:System` | Shape moves; commons keeps concept |
-| `topc:Log` | `topcr:Log subClassOf topc:Log` | Shape moves; commons keeps concept |
-| `topc:StorageLocation` | `topcr:StorageLocation subClassOf topc:StorageLocation` | Shape moves; commons keeps concept |
-| `topc:Credential` | `topcr:Credential subClassOf topc:Credential` | Shape moves; commons keeps concept |
-| **`topc:Person`** | **`topc:Person`** (stays as commons class with shape) | Truly identical attrs across workflows; commons-with-shape |
-| **`topc:Organization`** | **`topc:Organization`** (stays as commons class with shape) | Truly identical attrs across workflows; commons-with-shape |
-
-**Sub-object shapes** (Activity, Task, VisitObservation, Protocol, Arm, etc.) follow the same pattern: workflow-specific shapes in `topcr:` with subClassOf to commons concepts where applicable.
-
-**IRI path correction**: `/onto/clinical/v1#` → `/clinical-research/v1#`; `/onto/commons/v1#` → `/commons/v1#` (drops `/onto/`).
-
-**What TOP looks like in practice**:
-
-- **Commons-with-shape**: 2 entities (Person, Organization) — usable directly from `topc:`
-- **Commons concepts only** (vocabulary anchors): 13 — Visit, Event, Site, OversightBody, Activity, Task, VisitObservation, Document, Equipment, System, Log, StorageLocation, Credential
-- **Clinical-research workflow-native entities**: 6 top-level + 13 sub-objects = 19 entities, all in `topcr:` with no commons supertype
-- **Clinical-research workflow-shaped extensions** (subClassOf commons concepts): 13 entities in `topcr:` matching the 13 commons concepts
-
-Total clinical-research workflow entity count: 19 native + 13 shape extensions = 32. Plus 2 commons-with-shape (Person, Organization) the workflow uses directly. Plus the 13 commons concepts the workflow's shapes reference.
-
-## Migration plan
-
-Three sequential PRs:
-
-1. **PR — Taxonomy artifacts (this PR)** — TAXONOMY.md prose, taxonomy.ttl SKOS canonical, taxonomy.csv companion. No code changes; foundational documentation that captures the corrected classification scheme.
-2. **PR — Namespace refactor (mechanical)** — rename prefixes (`top:` → `topcr:` for clinical research), reassign Site/Visit/OversightBody to commons, move StudySite to clinical-research extension, drop `/onto/` from IRI paths, bump version to v0.7.0. Source intermediate, emitters, examples, spec docs, ROADMAP, FIRST-PRINCIPLES all updated lockstep. TOP decisions don't change; only namespace labels.
-3. **PR — Event lift as `topc:Event`** — proceed with the original Event plan but in correct namespace as a TOP Core primitive with cross-realm posture.
-
-## Working with the SKOS file
-
-The canonical taxonomy lives in `taxonomy/taxonomy.ttl` (SKOS Turtle, importable into TermBoard, PoolParty, Synaptica, Protégé, any SKOS-aware tool).
-
-A flat CSV companion (`taxonomy/taxonomy.csv`) is provided for spreadsheet-based review and lighter-weight import.
-
-The Markdown narrative (this file) is the human-readable accompaniment; it should track changes to the SKOS canonically.
-
-**Contributor workflow** when proposing taxonomy changes:
-1. Edit the SKOS Turtle in TermBoard (or your preferred tool); export back to `taxonomy/taxonomy.ttl`
-2. Regenerate the CSV companion (a small script could automate this; for now, manual sync)
-3. Update TAXONOMY.md prose to reflect the change
-4. Open a PR with all three lockstep changes
-5. The TOP Primitive test (does this concept belong in commons or in a workflow extension?) is the discipline; cite it in the PR description
-
-## Forward-looking — adding a new workflow extension
-
-When TOP-Manufacturing or TOP-CareDelivery or TOP-SupplyChain comes alive:
-
-1. **Define the prefix and IRI** (`topmfg:` at `top.scientix.ai/manufacturing/v1#`)
-2. **Extend the SKOS taxonomy** with the workflow's top concepts under `top:WorkflowExtensions`
-3. **Add concepts** for each workflow-specific top-level entity, with broader = the workflow concept
-4. **Reference commons concepts** for cross-cutting reuse (the Manufacturing workflow uses `topc:Site`, `topc:Equipment`, `topc:Event`, etc.)
-5. **Document the TOP Primitive test outcomes** for the new entities — what's workflow-specific (extension), what's cross-cutting and might bubble up to commons
-
-The architecture handles cross-workflow integration naturally: a hospital with a manufacturing pharmacy that also runs trials uses commons + clinical-research + manufacturing + (future) care-delivery extensions all over the same Organization, Person, Site, Equipment, Event TOP. No walls.
+- **Sibling-by-industry.** TOP is not federations of separate ontologies (Healthcare-TOP, Manufacturing-TOP, Supply-Chain-TOP). Workflows are composable extensions on top of one Core, not siblings. (See ADR-0004.)
+- **Specialized entity types for cross-cutting shapes.** A Visit is a Visit. TOP doesn't mint `topcr:Visit` and `topcd:Visit` as separate class types — it specializes through subClassOf where workflow specifics demand it. (See ADR-0002, ADR-0007, ADR-0008, refined by ADR-0012.)
+- **Universal-level provenance shortcuts.** PROV-O lives where PROV-O puts it. Record-level metadata uses Dublin Core. No record-level vs. domain-level fork. (See ADR-0013.)
+- **AI-agent-shaped Core.** AI agents and ontologist tooling reason against TOP via the PROV-O + BFO alignment at the class edge. They do not shape the Core. The practitioner shapes the Core. (See ADR-0013.)
 
 ## Pointers
 
-- [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) — SKOS Turtle canonical (importable into TermBoard, PoolParty, Synaptica, Protégé)
-- [`taxonomy/taxonomy.csv`](taxonomy/taxonomy.csv) — CSV companion (spreadsheet-friendly review)
-- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules; the universal-pattern posture is the discipline that grounds this taxonomy
-- [`MANIFESTO.html`](MANIFESTO.html) — the philosophical foundation
-- [`ROADMAP.md`](ROADMAP.md) — build sequence; lift order respects the taxonomy
-- The discipline applied here: classification BEFORE construction. The mistake we're correcting is having skipped this step at the start. Better late than later.
+- [`governance/decision-log.md`](governance/decision-log.md) — architectural decision log; ADR-0012, ADR-0013, ADR-0014 record this layer's commitments
+- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules; the practitioner-first posture grounded here
+- [`MANIFESTO.html`](MANIFESTO.html) — philosophical foundation; "we owe it to humans"
+- [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued
