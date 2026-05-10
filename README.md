@@ -9,7 +9,7 @@
 
 > An open commons of reference knowledge graphs, governed by domain working groups, hosted under Apache 2.0.
 
-The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. The substrate is NGSI-LD with JSON-LD as connective tissue. The first reference graph being built on TOP is for clinical research; CMC, drug discovery, energy and process industries, manufacturing, cell therapy, and rare disease are queued as separate working groups form.
+The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. TOP is NGSI-LD with JSON-LD as connective tissue. The first reference graph being built on TOP is for clinical research; CMC, drug discovery, energy and process industries, manufacturing, cell therapy, and rare disease are queued as separate working groups form.
 
 If you are reading this in 2026 you are early. The clinical-research reference graph is shipping its first complete top-level (Sponsor) at v0.1.4-strawman and the second (Site) is queued. The translator scaffold is stdlib-only Python, no pip installs needed for the basic pipeline, unzip and run.
 
@@ -48,9 +48,9 @@ Read the [Sponsor spec](reference-graphs/clinical-trials/docs/sponsor-spec.html)
 
 Frontier AI is being deployed against healthcare and life sciences data faster than the data itself can be made trustworthy. Models hallucinate ("AI slop"). Provenance gets lost. Outputs get hand-waved as "good enough" by people who do not have to live with the consequences. The clinical lifecycle is one of the highest-stakes domains in this collision: a hallucinated dose, a misattributed adverse event, a missing audit trail can kill someone.
 
-TOP is the substrate for verifiable, source-grounded AI in regulated environments. The ontology defines what entities exist and how they relate. The SHACL shapes encode the structural invariants. The reference patterns define how each role consumes the graph for their specific job. Downstream tools (LLMs grounded in the graph, decision-support systems, regulatory analytics) project from the same source of truth and stay traceable.
+TOP is TOP for verifiable, source-grounded AI in regulated environments. The ontology defines what entities exist and how they relate. The SHACL shapes encode the structural invariants. The reference patterns define how each role consumes the graph for their specific job. Downstream tools (LLMs grounded in the graph, decision-support systems, regulatory analytics) project from the same source of truth and stay traceable.
 
-The same substrate works outside HCLS. Energy and process industries (analogues to ISO 15926 and CFIHOS), manufacturing, defense supply chains, anywhere AI is being deployed against high-consequence data and provenance cannot be optional.
+The same TOP layer works outside HCLS. Energy and process industries (analogues to ISO 15926 and CFIHOS), manufacturing, defense supply chains, anywhere AI is being deployed against high-consequence data and provenance cannot be optional.
 
 ## How to contribute
 

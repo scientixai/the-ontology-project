@@ -1,0 +1,474 @@
+# TOP Primitives — Core OWL/SHACL definitions
+#
+# The L1 Universal DNA + L2 Category-Level Object definitions, per ADR-0012.
+# Companion to taxonomy/taxonomy.ttl (which carries the SKOS view for
+# TermBoard / PoolParty / Synaptica round-trip).
+#
+# What this file defines:
+#   - L1: seven Universal DNA properties on top:CommonEntity (the root class
+#         every TOP entity is a subClassOf, by construction)
+#   - L2: eight Category-Level Object classes with their relational extensions
+#         (the verbs each category brings to TOP)
+#   - SHACL meta-shape for L1 (UniversalDNAShape) — every entity must answer
+#         identifier and record-level provenance; the rest are optional but
+#         carry intent
+#
+# What this file defines:
+#   - L1: top:CommonEntity root + the three Universal DNA properties
+#   - L2: the eight Category-Level Object classes + their relational extensions
+#   - L3: leaf OWL classes that mirror the SKOS concepts in taxonomy.ttl
+#     (Person, Organization, Site, Document, etc.) with their rdfs:subClassOf
+#     chains pointing at L2 categories + prov:* types. The same URI carries
+#     the SKOS view in taxonomy.ttl and the OWL view here; reasoners load
+#     both, SKOS tools (Termboard) load only taxonomy.ttl.
+#   - top:UniversalDNAShape — the SHACL shape that enforces L1 on every
+#     instance of every TOP class
+#
+# What this file does NOT define:
+#   - Workflow-extension OWL classes (topcr:*, topcd:*, topmfg:*, topsc:*).
+#     Each workflow lives in its own file. Clinical Research lives in
+#     clinical-research/source/owl-classes.ttl. TOP Primitives must serve
+#     all domains; workflow-specific declarations belong in their workflow.
+#   - Concrete instances — those live in commons/source/walkthroughs/<name>.ttl
+#   - Record-level provenance properties (creator, created, modified). Those
+#     are metadata, not Universal DNA. Use dcterms:creator / dcterms:created
+#     where you need them; they don't pretend to be domain provenance.
+#
+# PRACTITIONER-FIRST POSTURE (per ADR-0013):
+#
+#   Universal DNA carries only the three properties practitioners universally
+#   encounter: identifier (what is this thing?), observedAt (when was it
+#   captured?), status (is it current?). Provenance lives where PROV-O puts
+#   it, not at the universal level. Value / unit live where measurement
+#   happens (Outcome subclasses), not at the universal level. TOP is shaped
+#   by what operators do; AI agents reason against it via the PROV-O + BFO
+#   alignment at the categorical layer, but TOP is not shaped to make the
+#   agents' job easier at the cost of operator legibility.
+#
+# PROV-O alignment is strict at the class level:
+#   topc:Person rdfs:subClassOf prov:Agent
+#   topc:Document rdfs:subClassOf prov:Entity
+#   topc:Visit rdfs:subClassOf prov:Activity
+# This is the only PROV semantics commons commits to. Record-level metadata
+# uses Dublin Core / DCAT vocabulary, where it is needed.
+#
+# BFO alignment is light, edge-only:
+#   The four L2 categories with clean BFO membership (Agent, Location,
+#   Temporal, Evidence) declare a single rdfs:subClassOf bfo:* . The four
+#   categories with mixed continuant/occurrent membership (Resource, Scope,
+#   Outcome, Constraint) carry a BFO scope-note instead of forced alignment.
+#   This buys OBO Foundry interop where it is clean and avoids forcing
+#   awkward alignments where it is not. ADR-0013 carries the rationale.
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo.owl#> .
+
+@prefix top:   <https://top.scientix.ai/v1#> .
+@prefix topc:  <https://top.scientix.ai/commons/v1#> .
+
+
+# ====================================================================
+# Ontology metadata
+# ====================================================================
+
+<https://top.scientix.ai/commons/v1> a owl:Ontology ;
+    dct:title "TOP Primitives — Core OWL/SHACL definitions"@en ;
+    dct:description "L1 Universal DNA properties and L2 Category-Level Object classes for The Ontology Project (TOP Primitives layer). Per ADR-0012."@en ;
+    owl:versionInfo "0.8.0-strawman" ;
+    dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
+    dct:license "Apache-2.0" ;
+    rdfs:seeAlso <https://top.scientix.ai/taxonomy/taxonomy.ttl>,
+                 <https://top.scientix.ai/governance/decision-log.md> .
+
+
+# ====================================================================
+# L1 — Root class and Universal DNA properties
+# ====================================================================
+
+top:CommonEntity a owl:Class ;
+    rdfs:label "Common Entity"@en ;
+    rdfs:comment "The root class of TOP. Every TOP class — every L2 category, every L3 leaf, every workflow specialization — is rdfs:subClassOf top:CommonEntity by construction. Carries the three Universal DNA properties."@en ;
+    skos:scopeNote "Not a SKOS concept itself; not a target for operator navigation. The categorical layer (topc:Agent / topc:Location / etc.) is the entry point operators see; CommonEntity is the structural root reasoners traverse."@en .
+
+
+# --- Universal DNA properties (3) ---
+# Only the three properties practitioners universally encounter at every entity.
+# Provenance lives where PROV-O puts it (class-level subClassOf prov:Entity |
+# prov:Activity | prov:Agent). Value / unit live where measurement happens
+# (Outcome subclasses). Record-level metadata (creator, created, modified) is
+# Dublin Core, not Universal DNA.
+
+top:identifier a owl:DatatypeProperty ;
+    rdfs:label "identifier"@en ;
+    rdfs:comment "Globally unique URI/URN for this entity. The technical anchor. Required on every TOP instance."@en ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:anyURI .
+
+top:observedAt a owl:DatatypeProperty ;
+    rdfs:label "observedAt"@en ;
+    rdfs:comment "NGSI-LD-style temporal anchor. The point in time at which the record's value was observed or asserted. Aligns with NGSI-LD `observedAt` Property metadata convention. Where a value changes over time, NGSI-LD temporal-property semantics (validFrom / validUntil per value) layer over this anchor."@en ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:dateTime .
+
+top:status a owl:DatatypeProperty ;
+    rdfs:label "status"@en ;
+    rdfs:comment "Lifecycle or health state of the entity. Per-entity enum (an Agent's status is ACTIVE / INACTIVE / SUSPENDED; a Document's is DRAFT / FINAL / SUPERSEDED; an Equipment's is OPERATIONAL / DOWN / DECOMMISSIONED). Subclasses define their own enumeration via SHACL sh:in constraints."@en ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:string .
+
+
+# ====================================================================
+# L2 — Category-Level Object classes (eight)
+# ====================================================================
+# OWL declarations only; the SKOS view of these lives in taxonomy/taxonomy.ttl.
+# Each L2 class is rdfs:subClassOf top:CommonEntity AND its appropriate
+# prov:* type. Category-level relational extensions follow each class.
+
+# --- Agent (Authority) ---
+
+topc:Agent a owl:Class ;
+    rdfs:label "Agent"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Agent, bfo:IndependentContinuant ;
+    rdfs:comment "Any entity that can act, hold authority, or be held accountable — humans, organizations, formal bodies, autonomous systems."@en ;
+    skos:scopeNote "BFO alignment: bfo:IndependentContinuant. Agents persist through time and exist independently. Clean alignment; full subClassOf declared."@en .
+
+topc:hasCredential a owl:ObjectProperty ;
+    rdfs:label "hasCredential"@en ;
+    rdfs:domain topc:Agent ;
+    rdfs:range topc:Credential ;
+    rdfs:comment "Credentials this Agent holds — license, certification, training, qualification."@en .
+
+topc:memberOf a owl:ObjectProperty ;
+    rdfs:label "memberOf"@en ;
+    rdfs:domain topc:Agent ;
+    rdfs:range topc:Agent ;
+    rdfs:comment "Agent membership relation (Person memberOf Organization; Organization memberOf parent Organization). Range is topc:Agent because membership is recursive across agent kinds."@en .
+
+topc:authorizedBy a owl:ObjectProperty ;
+    rdfs:label "authorizedBy"@en ;
+    rdfs:domain topc:Agent ;
+    rdfs:range topc:Agent ;
+    rdfs:comment "The Agent (typically OversightBody or Organization) that authorizes this Agent to perform their role."@en .
+
+
+# --- Location (Space) ---
+
+topc:Location a owl:Class ;
+    rdfs:label "Location"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity, bfo:Site ;
+    rdfs:comment "Any place where work happens or things are stored — physical, virtual, or storage-scoped."@en ;
+    skos:scopeNote "BFO alignment: bfo:Site. Locations are sites in BFO terms — bona fide places where things happen. Virtual locations (URLs, IP ranges) are an arguable edge case; documented as a known minor stretch in the alignment, not a forced reclassification."@en .
+
+topc:withinLocation a owl:ObjectProperty ;
+    rdfs:label "withinLocation"@en ;
+    rdfs:domain topc:Location ;
+    rdfs:range topc:Location ;
+    rdfs:comment "Containment relation between Locations (a StorageLocation withinLocation a Site; a Site withinLocation a parent Site). Recursive."@en .
+
+topc:geoSpatialData a owl:DatatypeProperty ;
+    rdfs:label "geoSpatialData"@en ;
+    rdfs:domain topc:Location ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Geospatial reference (preferred: GeoJSON-encoded string; future: rdfs:range geo:Geometry once GeoSPARQL is adopted)."@en .
+
+topc:accessRequirement a owl:DatatypeProperty ;
+    rdfs:label "accessRequirement"@en ;
+    rdfs:domain topc:Location ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Access control requirement (e.g., BADGE_REQUIRED, ESCORT_REQUIRED, PUBLIC). Per-Location enum bound by SHACL on subclasses."@en .
+
+
+# --- Resource (Tools) ---
+
+topc:Resource a owl:Class ;
+    rdfs:label "Resource"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity ;
+    rdfs:comment "Any operational asset that work uses — equipment, software systems, materials."@en ;
+    skos:scopeNote "BFO alignment: mixed. Equipment is bfo:MaterialEntity (a kind of IndependentContinuant). System (software) is bfo:GenericallyDependentContinuant. Material can be either depending on whether it's a physical batch or a formulation. No single forced subClassOf at the category level; leaves declare their BFO type if needed for OBO interop."@en .
+
+topc:ownedBy a owl:ObjectProperty ;
+    rdfs:label "ownedBy"@en ;
+    rdfs:domain topc:Resource ;
+    rdfs:range topc:Agent ;
+    rdfs:comment "The Agent that owns this Resource (Organization for institutional equipment, Person for personal devices)."@en .
+
+topc:hasMaintenanceLog a owl:ObjectProperty ;
+    rdfs:label "hasMaintenanceLog"@en ;
+    rdfs:domain topc:Resource ;
+    rdfs:range topc:Log ;
+    rdfs:comment "The Log capturing this Resource's maintenance, calibration, and qualification history."@en .
+
+topc:operationalState a owl:DatatypeProperty ;
+    rdfs:label "operationalState"@en ;
+    rdfs:domain topc:Resource ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Operational condition enum (e.g., OPERATIONAL, DEGRADED, OUT_OF_SERVICE). Per-Resource enum bound by SHACL on subclasses. Distinct from top:status — operationalState is real-time health; status is lifecycle."@en .
+
+
+# --- Scope (Intent) ---
+
+topc:Scope a owl:Class ;
+    rdfs:label "Scope"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity ;
+    rdfs:comment "Any bounded effort with intent and governance — portfolio, program, project, study."@en ;
+    skos:scopeNote "BFO alignment: arguable. A Scope as planning artifact is bfo:GenericallyDependentContinuant (the plan is informational); a Scope as ongoing initiative could be modeled as bfo:Process. The OBO Information Artifact Ontology (IAO) has 'plan specification' for the planning case. No forced subClassOf at the category level; leaves declare their BFO type if needed."@en .
+
+topc:governedBy a owl:ObjectProperty ;
+    rdfs:label "governedBy"@en ;
+    rdfs:domain topc:Scope ;
+    rdfs:range topc:Agent ;
+    rdfs:comment "The Agent (Organization, OversightBody) that governs this Scope."@en .
+
+topc:containsActivity a owl:ObjectProperty ;
+    rdfs:label "containsActivity"@en ;
+    rdfs:domain topc:Scope ;
+    rdfs:range topc:Activity ;
+    rdfs:comment "Activities executed within this Scope's bounds."@en .
+
+topc:objectiveStatement a owl:DatatypeProperty ;
+    rdfs:label "objectiveStatement"@en ;
+    rdfs:domain topc:Scope ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The intent — what this Scope exists to achieve. Operator-grounded prose; not standards-shaped."@en .
+
+
+# --- Temporal (Rhythm) ---
+
+topc:Temporal a owl:Class ;
+    rdfs:label "Temporal"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Activity, bfo:Process ;
+    rdfs:comment "Any time-bound occurrence — visits, activities, scheduled windows, milestones."@en ;
+    skos:scopeNote "BFO alignment: bfo:Process. Temporal entities are occurrents that unfold over time. Clean alignment; full subClassOf declared."@en .
+
+topc:startTime a owl:DatatypeProperty ;
+    rdfs:label "startTime"@en ;
+    rdfs:domain topc:Temporal ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "When this temporal entity began."@en .
+
+topc:endTime a owl:DatatypeProperty ;
+    rdfs:label "endTime"@en ;
+    rdfs:domain topc:Temporal ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "When this temporal entity ended. Optional for ongoing entities."@en .
+
+topc:precededBy a owl:ObjectProperty ;
+    rdfs:label "precededBy"@en ;
+    rdfs:domain topc:Temporal ;
+    rdfs:range topc:Temporal ;
+    rdfs:comment "The Temporal entity that immediately preceded this one. PROV-aligned; rdfs:subPropertyOf candidate for prov:wasInformedBy in workflows that need it."@en .
+
+topc:occursAt a owl:ObjectProperty ;
+    rdfs:label "occursAt"@en ;
+    rdfs:domain topc:Temporal ;
+    rdfs:range topc:Location ;
+    rdfs:comment "The Location at which this Temporal entity occurred."@en .
+
+
+# --- Evidence (Proof) ---
+
+topc:Evidence a owl:Class ;
+    rdfs:label "Evidence"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "Any verifiable artifact that proves a fact — documents, logs, attestations, credentials."@en ;
+    skos:scopeNote "BFO alignment: bfo:GenericallyDependentContinuant (information artifacts). Documents, logs, credentials are informational entities that depend generically on bearers (a Document depends on something to store / display it but is not bound to a specific bearer). Clean alignment; full subClassOf declared."@en .
+
+topc:verifiesOutcome a owl:ObjectProperty ;
+    rdfs:label "verifiesOutcome"@en ;
+    rdfs:domain topc:Evidence ;
+    rdfs:range topc:Outcome ;
+    rdfs:comment "The Outcome this Evidence verifies — a Document verifying an Event, a Log verifying a Status Change."@en .
+
+topc:integrityHash a owl:DatatypeProperty ;
+    rdfs:label "integrityHash"@en ;
+    rdfs:domain topc:Evidence ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Cryptographic hash anchoring the Evidence's content (preferred: SHA-256 hex). Required for any Evidence used in regulatory submissions."@en .
+
+topc:signedBy a owl:ObjectProperty ;
+    rdfs:label "signedBy"@en ;
+    rdfs:domain topc:Evidence ;
+    rdfs:range topc:Agent ;
+    rdfs:comment "The Agent who signed / attested to this Evidence. Distinct from top:wasAttributedTo (record-level creator) — a Document may be created by a steward and later signed by the responsible PI."@en .
+
+
+# --- Outcome (Results) ---
+
+topc:Outcome a owl:Class ;
+    rdfs:label "Outcome"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity ;
+    rdfs:comment "Any observable result of work — measurements, status changes, events, conclusions."@en ;
+    skos:scopeNote "BFO alignment: mixed. A measurement value (Task) is bfo:GenericallyDependentContinuant (informational). An Event (occurrence) could be modeled as bfo:Process or as a process-boundary. A physical Sample as outcome is bfo:MaterialEntity. No forced subClassOf at the category level; leaves declare their BFO type if needed."@en .
+
+topc:measuredBy a owl:ObjectProperty ;
+    rdfs:label "measuredBy"@en ;
+    rdfs:domain topc:Outcome ;
+    rdfs:range topc:Activity ;
+    rdfs:comment "The Activity that produced this Outcome. PROV-aligned: rdfs:subPropertyOf prov:wasGeneratedBy candidate."@en .
+
+topc:satisfiesConstraint a owl:ObjectProperty ;
+    rdfs:label "satisfiesConstraint"@en ;
+    rdfs:domain topc:Outcome ;
+    rdfs:range topc:Constraint ;
+    rdfs:comment "The Constraint(s) this Outcome satisfies (or fails — failure is captured by absence of this triple plus presence of a Constraint that targets the Outcome via topc:appliesTo)."@en .
+
+topc:variance a owl:DatatypeProperty ;
+    rdfs:label "variance"@en ;
+    rdfs:domain topc:Outcome ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Numeric variance from expected / target value. Optional; meaningful for measured Outcomes."@en .
+
+
+# --- Constraint (Validity) ---
+
+topc:Constraint a owl:Class ;
+    rdfs:label "Constraint"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity ;
+    rdfs:comment "Any rule, limit, or guardrail that constrains valid operation — physical limits, regulatory laws, safety rules."@en ;
+    skos:scopeNote "BFO alignment: mixed. A regulatory rule (RegulatoryLaw) is bfo:GenericallyDependentContinuant (informational rule text). A physical limit is closer to bfo:Disposition or bfo:RealizableEntity (a propensity to behave a certain way). The OBO Information Artifact Ontology has IAO:document for the rule case. No forced subClassOf at the category level; leaves declare their BFO type if needed."@en .
+
+topc:enforcedBy a owl:ObjectProperty ;
+    rdfs:label "enforcedBy"@en ;
+    rdfs:domain topc:Constraint ;
+    rdfs:range topc:Agent ;
+    rdfs:comment "The Agent (OversightBody, Organization, regulatory authority) that enforces this Constraint."@en .
+
+topc:severityLevel a owl:DatatypeProperty ;
+    rdfs:label "severityLevel"@en ;
+    rdfs:domain topc:Constraint ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Severity if violated (e.g., INFO, WARNING, ERROR, CRITICAL). Per-Constraint enum bound by SHACL on subclasses."@en .
+
+topc:appliesTo a owl:ObjectProperty ;
+    rdfs:label "appliesTo"@en ;
+    rdfs:domain topc:Constraint ;
+    rdfs:range top:CommonEntity ;
+    rdfs:comment "The TOP entity (or class of entities) this Constraint applies to. Range is the root because constraints can target any kind of entity."@en .
+
+
+# ====================================================================
+# SHACL — Universal DNA shape (L1 enforcement)
+# ====================================================================
+# Targets every instance of every TOP class via top:CommonEntity. Three
+# properties: identifier (required), observedAt (required for runtime entities,
+# relaxed via subclass shapes for structural classes), status (recommended
+# but not enforced at the universal level — subclasses bind their lifecycle
+# enums via sh:in). Per ADR-0013 (practitioner-first), TOP enforces
+# what every operator must answer about every entity, and no more.
+
+top:UniversalDNAShape a sh:NodeShape ;
+    sh:targetClass top:CommonEntity ;
+    sh:name "Universal DNA"@en ;
+    sh:description "Every TOP entity must answer identification and operational timing. Status is recommended; subclasses bind status enums."@en ;
+    sh:property [
+        sh:path top:identifier ;
+        sh:datatype xsd:anyURI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "identifier" ;
+        sh:description "Globally unique URI/URN. Required."@en ;
+    ] ;
+    sh:property [
+        sh:path top:observedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "observedAt" ;
+        sh:description "NGSI-LD temporal anchor. Required at the universal level; the question 'when was this captured?' has a real answer for every TOP entity."@en ;
+    ] ;
+    sh:property [
+        sh:path top:status ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:name "status" ;
+        sh:description "Lifecycle / health state. Subclasses bind enum via sh:in. Optional at the universal level."@en ;
+    ] .
+
+
+# ====================================================================
+# L3 — Commons leaf OWL classes (mirror of SKOS in taxonomy.ttl)
+# ====================================================================
+# Each leaf is owl:Class with rdfs:subClassOf to its L2 category AND its
+# prov:* type. Same URIs as the SKOS concepts in taxonomy.ttl. Reasoners
+# load both files and resolve the chain by URI match.
+
+# --- Agent leaves (3) ---
+
+topc:Person a owl:Class ;
+    rdfs:label "Person"@en ;
+    rdfs:subClassOf topc:Agent, prov:Agent .
+
+topc:Organization a owl:Class ;
+    rdfs:label "Organization"@en ;
+    rdfs:subClassOf topc:Agent, prov:Agent .
+
+topc:OversightBody a owl:Class ;
+    rdfs:label "Oversight Body"@en ;
+    rdfs:subClassOf topc:Agent, prov:Agent .
+
+# --- Location leaves (2) ---
+
+topc:Site a owl:Class ;
+    rdfs:label "Site"@en ;
+    rdfs:subClassOf topc:Location, prov:Entity .
+
+topc:StorageLocation a owl:Class ;
+    rdfs:label "Storage Location"@en ;
+    rdfs:subClassOf topc:Location, prov:Entity .
+
+# --- Resource leaves (2) ---
+
+topc:Equipment a owl:Class ;
+    rdfs:label "Equipment"@en ;
+    rdfs:subClassOf topc:Resource, prov:Entity .
+
+topc:System a owl:Class ;
+    rdfs:label "System"@en ;
+    rdfs:subClassOf topc:Resource, prov:Entity .
+
+# --- Evidence leaves (3) ---
+
+topc:Document a owl:Class ;
+    rdfs:label "Document"@en ;
+    rdfs:subClassOf topc:Evidence, prov:Entity .
+
+topc:Log a owl:Class ;
+    rdfs:label "Log"@en ;
+    rdfs:subClassOf topc:Evidence, prov:Entity .
+
+topc:Credential a owl:Class ;
+    rdfs:label "Credential"@en ;
+    rdfs:subClassOf topc:Evidence, prov:Entity .
+
+# --- Temporal leaves (2) ---
+
+topc:Visit a owl:Class ;
+    rdfs:label "Visit"@en ;
+    rdfs:subClassOf topc:Temporal, prov:Activity .
+
+topc:Activity a owl:Class ;
+    rdfs:label "Activity"@en ;
+    rdfs:subClassOf topc:Temporal, prov:Activity .
+
+# --- Outcome leaves (3) ---
+
+topc:Event a owl:Class ;
+    rdfs:label "Event"@en ;
+    rdfs:subClassOf topc:Outcome, prov:Entity .
+
+topc:VisitObservation a owl:Class ;
+    rdfs:label "Visit Observation"@en ;
+    rdfs:subClassOf topc:Outcome, prov:Entity .
+
+topc:Task a owl:Class ;
+    rdfs:label "Task"@en ;
+    rdfs:subClassOf topc:Outcome, prov:Entity .
+

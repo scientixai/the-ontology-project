@@ -19,6 +19,8 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof) | 2026-05-09 | Specialization pattern — workflow concepts extend commons primitives via `subClassOf` | Accepted |
 | [ADR-0010](#adr-0010-four-layer-enforcement-against-drift) | 2026-05-09 | Four-layer enforcement against drift | Accepted |
 | [ADR-0011](#adr-0011-prov-as-taxonomy-governance-dogfood) | 2026-05-09 | PROV as taxonomy governance — dogfood | Proposed |
+| [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) | 2026-05-09 | Three-level architecture — Universal DNA, eight categories, leaves | Accepted (refined by ADR-0013; supersedes part of ADR-0008) |
+| [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) | 2026-05-09 | Practitioner-first — TOP's primary customer | Accepted |
 
 ---
 
@@ -337,6 +339,146 @@ Three named PROV roles are introduced for taxonomy governance: `top:ProposerRole
 - New concept proposals must carry a provenance chain to merge — the meta-shape will block PRs that don't.
 - The substrate now dogfoods its own provenance discipline at every layer.
 - Status remains **Proposed** until the meta-shapes ship and the taxonomy is backfilled with concept-level provenance for the existing 52 concepts.
+
+---
+
+## ADR-0012: Three-level architecture — Universal DNA, eight categories, leaves
+
+**Date:** 2026-05-09 · **Status:** Proposed · **Supersedes part of [ADR-0008](#adr-0008-option-b-properly-scoped-commons-carries-universal-primitive-shapes)** · **Refs:** [`taxonomy/taxonomy.ttl`](../taxonomy/taxonomy.ttl), [`commons/source/core.ttl`](../commons/source/core.ttl)
+
+### Context
+
+ADR-0008 committed commons to a flat set of 15 universal primitive shapes (Person, Organization, Site, Visit, Event, OversightBody, Document, Equipment, System, Log, StorageLocation, Credential, Activity, Task, VisitObservation). The classification told Termboard which concepts were universal versus workflow-specific, but it did not tell Termboard — or any reasoner — *what those concepts have in common*. When Bo loaded `taxonomy/taxonomy.ttl` into Termboard for the first SKOS round-trip, the result was a mess. Two compounding causes:
+
+1. **Mechanical:** every commons and workflow concept ended with a malformed PROV typing line of the form `prov:Agent "prov:Agent" .` — using a class as a predicate, with a string literal as object. ADR-0001 specified `rdfs:subClassOf prov:*` as the encoding; the SKOS lift in PR #13 emitted a placeholder that no SKOS-aware tool could interpret. Forty-six concepts carried this defect.
+2. **Architectural:** the 15 TOP Primitives had no shared structural parentage. Each one declared `skos:broader top:CommonsSubstrate` and `prov:Agent` / `prov:Activity` / `prov:Entity`, but nothing tied a Person, an Organization, and an OversightBody together as *Agents*; nothing tied a Site and a StorageLocation together as *Locations*; nothing tied a Document, a Log, and a Credential together as *Evidence*. TOP was a flat bag of 15 primitives with PROV typing as the only (broken) cross-cutting structure.
+
+The architectural fix forced itself: between TOP Primitives and the leaves, a **categorical layer** was missing. The categorical layer is what gives a reasoner — and a reviewer — a way to ask "what kind of thing is this?" before drilling into specifics.
+
+### Decision
+
+Commons adopts a **three-level architecture**:
+
+**Level 1 — Universal DNA.** Every TOP entity, regardless of category, inherits a fixed set of seven properties:
+
+- `top:identifier` — globally unique URI/URN (the technical anchor)
+- `top:wasAttributedTo` — the Agent responsible for the existence of this record (record-level provenance, distinct from domain-level `prov:wasAttributedTo` semantics; documented in `commons/source/core.ttl`)
+- `top:wasGeneratedBy` — the Activity that produced this record (record-level provenance)
+- `top:observedAt` — NGSI-LD-style timestamp anchor
+- `top:status` — lifecycle / health state
+- `top:value` — core data payload (optional; meaningful for data-bearing entities, blank for structural ones)
+- `top:unit` — standardized unit of measure (optional; paired with `top:value` where data is dimensional)
+
+The `top:` prefix is correct here per ADR-0003: these are project-level structural properties, not workflow-specific. Universal DNA lives in `commons/source/core.ttl`; the SKOS taxonomy carries a marker concept (`top:UniversalDNA`) so reviewers in Termboard see that the layer exists.
+
+**Level 2 — Category-Level Objects.** TOP Primitives organize around eight categories. Every primitive is a subclass of exactly one (with multi-classification permitted only when explicitly justified — see *Consequences*):
+
+| Category | Primary focus | Category-level relational extensions |
+| --- | --- | --- |
+| `topc:Agent` | Authority | `hasCredential`, `memberOf`, `authorizedBy` |
+| `topc:Location` | Space | `withinLocation`, `geoSpatialData`, `accessRequirement` |
+| `topc:Resource` | Tools | `ownedBy`, `hasMaintenanceLog`, `operationalState` |
+| `topc:Scope` | Intent | `governedBy`, `containsActivity`, `objectiveStatement` |
+| `topc:Temporal` | Rhythm | `startTime`, `endTime`, `precededBy`, `occursAt` |
+| `topc:Evidence` | Proof | `verifiesOutcome`, `integrityHash`, `signedBy` |
+| `topc:Outcome` | Results | `measuredBy`, `satisfiesConstraint`, `variance` |
+| `topc:Constraint` | Validity | `enforcedBy`, `severityLevel`, `appliesTo` |
+
+**Level 3 — Leaves.** The 15 commons primitives from ADR-0008 are preserved, re-homed under their L2 category:
+
+- **Agent** — Person, Organization, OversightBody
+- **Location** — Site, StorageLocation
+- **Resource** — Equipment, System
+- **Evidence** — Document, Log, Credential
+- **Temporal** — Visit, Activity
+- **Outcome** — Event, VisitObservation, Task
+
+`Scope` and `Constraint` ship without leaves in this ADR. They are reserved as L2 anchors; concrete leaves (Portfolio / Program / Project under Scope; PhysicalLimit / RegulatoryLaw / SafetyGuardrail under Constraint) defend themselves under [ADR-0010](#adr-0010-four-layer-enforcement-against-drift) Layer 2 (RFC) when a real workflow forces them.
+
+### What this changes vs. ADR-0008
+
+ADR-0008's 15 primitive shapes survive intact at L3. What changes is their parentage: instead of all sharing `skos:broader top:Primitives` flatly, they now declare `skos:broader topc:<Category>` and `rdfs:subClassOf topc:<Category>, prov:<provType>`. TOP becomes navigable — a reviewer in Termboard can drill from TOP Primitives → Agent → Person, or query `?x rdfs:subClassOf topc:Agent` to find every kind of agent across every workflow.
+
+### Consequences
+
+- **Termboard renders cleanly.** With the 46 malformed PROV lines repaired and a real categorical hierarchy, Termboard's tree view shows Universal DNA → 8 categories → 15 leaves → workflow specializations.
+- **Cross-workflow queries get more powerful.** "Find every Agent across every workflow" now resolves to a `subClassOf topc:Agent` traversal that picks up `topc:Person`, `topc:Organization`, `topc:OversightBody`, plus their workflow specializations (`topcr:Investigator subClassOf topc:Person`, etc.) — without enumerating each leaf.
+- **The 8 categories are not perfectly orthogonal, by design.** An autonomous AI agent is both an Agent (it acts) and a Resource (it can be deployed and maintained). A clinical site is both a Location (it has geospatial coordinates) and a Resource (it can be allocated). Multi-classification is permitted but must be explicit and justified in the leaf concept's `skos:scopeNote`. Drift-prevention Layer 1 (per ADR-0010) gets a new SHACL meta-shape: a leaf may declare `rdfs:subClassOf` against multiple L2 categories only if its `skos:scopeNote` cites the operator workflow that requires the multi-classification.
+- **Universal DNA at the root has PROV-O semantics implications.** `prov:wasAttributedTo` in PROV-O is a property of `prov:Entity`, not of `prov:Agent` or `prov:Activity`. Putting `top:wasAttributedTo` on every entity (including Agents and Activities) inverts the domain semantics. The resolution: `top:wasAttributedTo` is **record-level provenance** — the Agent responsible for the existence of this record, distinct from domain-level `prov:wasAttributedTo` (the Agent the entity is attributed to in domain semantics). Workflow extensions that need PROV-O-aligned semantics declare a separate domain-typed `prov:wasAttributedTo` relation; commons stays at the record level. This distinction is documented in `commons/source/core.ttl`.
+- **"Less is the win" is preserved.** The TOP Primitives count rises from 15 leaves to 8 categories + 15 leaves = 23 commons concepts. The increase is the categorical layer that was already implicit in PROV typing; it's now explicit and navigable. New leaves (Portfolio, RegulatoryLaw, etc.) do not auto-lift; each defends itself per ADR-0010.
+- **ADR-0011 (PROV-as-taxonomy-governance) becomes easier to land.** With `rdfs:subClassOf prov:*` correctly declared on every concept, the per-concept PROV provenance chain in ADR-0011 has a stable anchor.
+
+### Migration
+
+Three artifacts ship together with this ADR:
+
+1. **`taxonomy/taxonomy.ttl`** — rewritten with `owl:` prefix, 8 L2 category concepts, re-homed leaves, repaired PROV typing (`rdfs:subClassOf prov:*`).
+2. **`commons/source/core.ttl`** (new) — L1 Universal DNA properties + L2 category classes + category-level relational extensions, with the record-level vs. domain-level PROV distinction documented inline.
+3. **`commons/source/walkthroughs/person.ttl`** (new) — one concrete `topc:Person` instance with Universal DNA filled in, Agent category classification declared, and PROV typing exercised end-to-end. Reviewers verify the pattern by loading this into Termboard or any SKOS/OWL tool.
+
+`onto/commons/v1/shapes.ttl` (the legacy SHACL definitions carrying mixed clinical+commons content) is not touched in this PR. Its rebuild against the L2 category shapes is a follow-on once the L1+L2+L3 structure verifies in Termboard.
+
+### Status
+
+Accepted. Status moved from Proposed to Accepted on 2026-05-09 after Bo locked the path. Refined by ADR-0013, which trims Universal DNA from seven properties to three and locks practitioner-first as TOP's primary commitment.
+
+---
+
+## ADR-0013: Practitioner-first — TOP's primary customer
+
+**Date:** 2026-05-09 · **Status:** Accepted · **Refines:** [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) · **Refs:** [`commons/source/core.ttl`](../commons/source/core.ttl), [FIRST-PRINCIPLES.md](../FIRST-PRINCIPLES.md), [MANIFESTO.html](../MANIFESTO.html)
+
+### Context
+
+ADR-0012 introduced a three-level architecture with seven Universal DNA properties (identifier, wasAttributedTo, wasGeneratedBy, observedAt, status, value, unit). The seven were a first-pass list — practical, not principled. Reviewing the proposal surfaced a deeper question: who is TOP's primary customer? Two coherent answers were on the table:
+
+- **Pure Semantic Path** — strict W3C BFO + PROV-O alignment at every level. Universal DNA stripped to BFO/PROV-O essentials. Every relationship a typed triple between distinct types. Bulletproof against ontologist critique. Earns OBO Foundry interop. Optimizes for the ontologist customer.
+
+- **Practitioner-first** — TOP is shaped by what operators do at work. AI agents reason against TOP via PROV-O + BFO alignment at the categorical edge, but TOP itself is not shaped to make agents' jobs easier at the cost of operator legibility. Optimizes for the operator customer.
+
+Bo's call:
+
+> "TOP has to be practitioner friendly — hence the focus on OOUX as the way to model from a practitioner perspective and goal to provide a substrate that AI agents can reason to help humans be super human. The manifesto says that we owe it to humans. Decades have gone by where humans are asked to conform to non-sensical user experiences because they are shaped by a database developer priority. In the end, we want to augment the humans, machines have plenty of help."
+
+This is principle-level, not tactical. It belongs in the decision log and in FIRST-PRINCIPLES, named explicitly so future contributors can cite it.
+
+### Decision
+
+**TOP's primary customer is the human practitioner.** AI agents and ontologist tooling are honored at the edge — via PROV-O class-level alignment, BFO subClassOf annotations on the four L2 categories where alignment is clean, and SKOS round-trip into Termboard / PoolParty / Synaptica — but they do not shape TOP Primitives, TOP's vocabulary, or TOP's universal interface. The same instance answers a coordinator's "is this protocol current?" query and an OBO reasoner's "give me every IndependentContinuant in this graph" query. The first query gets the practitioner shape; the second gets the formal alignment; both work; neither distorts the other.
+
+Three concrete commitments follow:
+
+1. **Universal DNA trims from seven properties to three.** Only `top:identifier`, `top:observedAt`, `top:status` remain at the universal level. These are the three properties practitioners universally encounter for every entity: *what is this thing*, *when was it captured*, *is it current*. The four dropped properties (`wasAttributedTo`, `wasGeneratedBy`, `value`, `unit`) overreached — they were universal in the engineering sense, not in the practitioner sense, and forcing them at the root invited the record-level vs. domain-level provenance gymnastics ADR-0012 had to invent.
+
+2. **PROV-O alignment is strict at the class level, not at the universal level.** Every TOP class declares its proper `rdfs:subClassOf prov:Agent | prov:Activity | prov:Entity`. Provenance lives where PROV-O says it belongs (with proper domain semantics), not as universal-level shortcut properties. Workflows that need provenance attach it via PROV-O directly. Record-level metadata (who created the row, when, what tool) uses Dublin Core (`dcterms:creator`, `dcterms:created`, `dcterms:modified`) — clearly metadata, never confused with domain claims.
+
+3. **BFO alignment is light, edge-only.** The four L2 categories with clean BFO membership declare a single `rdfs:subClassOf bfo:*`:
+   - `topc:Agent rdfs:subClassOf bfo:IndependentContinuant`
+   - `topc:Location rdfs:subClassOf bfo:Site`
+   - `topc:Temporal rdfs:subClassOf bfo:Process`
+   - `topc:Evidence rdfs:subClassOf bfo:GenericallyDependentContinuant`
+
+   The four mixed-membership categories (Resource, Scope, Outcome, Constraint) carry a BFO scope-note documenting the alignment rationale, but no forced subClassOf at the category level. Leaves under those categories declare their BFO type if and when OBO interop demands it. This buys the OBO Foundry alignment for the clean cases without paying the BFO maintenance tax across all of TOP.
+
+### Consequences
+
+- **The "AI agents reason against TOP, they don't shape it" rule becomes constitutional.** Every future architectural decision asks itself: *did an operator's workday cause this, or did an AI agent's / ontologist's preference cause this?* If the answer is the latter, the change goes to the edge (a projection adapter, an annotation layer, a workflow extension), not into TOP itself.
+- **Universal DNA stays small enough that an operator can hold it in their head.** Three properties. *What is this thing? When was it captured? Is it current?* Every TOP entity answers those three.
+- **The record-level vs. domain-level PROV gymnastics from ADR-0012 § Consequences disappear.** PROV-O class-level subClassOf is the only PROV alignment commons makes. Workflows that need PROV-O domain provenance use it with proper domain. Record-level metadata uses Dublin Core. Two clean lanes; no fork.
+- **OBO Foundry interop is available where it is clean and not forced where it is not.** TOP can cross-reference UBERON, CHEBI, GO, DOID for the four BFO-clean categories without bridging adapters. The four mixed categories carry the BFO discussion in their scope notes, deferred to leaf-level decisions.
+- **FIRST-PRINCIPLES gets a new explicit commitment.** A short addition under the "What this rules OUT" / "What this rules IN" structure: *TOP is shaped by operator workdays. AI agents and ontologist tooling are honored at the edge, never as primary customers of TOP.* Citing this ADR.
+- **The manifesto's "we owe it to humans" stance becomes structural, not aspirational.** TOP's smallness, the operator-vocabulary primacy, the principled rejection of standards-up shaping — all of it now traces to a single named decision in the log.
+
+### What this does NOT change
+
+- The eight L2 Category-Level Objects from ADR-0012 stand. Categories are how operators organize what they do; that's practitioner-grounded.
+- The fifteen L3 commons leaves from ADR-0008 stand, re-homed under their L2 category per ADR-0012.
+- The PROV class-level alignment from ADR-0001 stands and is now the *only* PROV alignment commons commits to.
+- The Universal DNA marker concept (`top:UniversalDNA`) in `taxonomy/taxonomy.ttl` stays — its scope note is updated to reflect the three-property trim and the new posture.
+
+### Status
+
+Accepted. The artifacts on this branch (`commons/source/core.ttl`, `taxonomy/taxonomy.ttl`, `commons/source/walkthroughs/person.ttl`, FIRST-PRINCIPLES addition) implement this ADR. Termboard verification of the SKOS taxonomy is the next gate.
 
 ---
 

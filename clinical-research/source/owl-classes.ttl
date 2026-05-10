@@ -1,0 +1,177 @@
+# Clinical Research workflow extension — OWL classes
+#
+# Workflow-extension OWL declarations for the clinical-research workflow.
+# Lives in clinical-research/, NOT in commons/, because TOP Primitives
+# must serve every domain and industry. Workflow-specific declarations
+# belong in the workflow's own file.
+#
+# Two kinds of classes here:
+#   1. Specializations of TOP Primitives leaves — declare rdfs:subClassOf
+#      against a topc:* leaf. They inherit the full chain through commons:
+#      topcr:Visit → topc:Visit → topc:Temporal → prov:Activity → bfo:Process
+#   2. Workflow-native classes — concepts that exist only in clinical
+#      research (Sponsor, Study, Participant, Recruit, IP, StudySite,
+#      and the Study / Participant / IP sub-objects). They declare only
+#      their prov:* type because no commons leaf fits them.
+#
+# Reasoners load this file alongside commons/source/core.ttl and
+# taxonomy/taxonomy.ttl; the rdfs:subClassOf chain resolves automatically.
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+
+@prefix topc:  <https://top.scientix.ai/commons/v1#> .
+@prefix topcr: <https://top.scientix.ai/clinical-research/v1#> .
+
+
+# ====================================================================
+# Ontology metadata
+# ====================================================================
+
+<https://top.scientix.ai/clinical-research/v1> a owl:Ontology ;
+    dct:title "Clinical Research workflow — OWL classes"@en ;
+    dct:description "Workflow-extension OWL classes for clinical research. Specializes TOP Primitives leaves where applicable; declares workflow-native classes where no commons leaf fits."@en ;
+    owl:versionInfo "0.8.0-strawman" ;
+    dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
+    dct:license "Apache-2.0" ;
+    owl:imports <https://top.scientix.ai/commons/v1> .
+
+
+# ====================================================================
+# Specializations of TOP Primitives leaves (13)
+# ====================================================================
+# Each declares rdfs:subClassOf against a topc:* leaf. The full inheritance
+# chain (topc:Visit → topc:Temporal → prov:Activity → bfo:Process) resolves
+# via the commons OWL file.
+
+topcr:Visit a owl:Class ;
+    rdfs:label "Trial Visit"@en ;
+    rdfs:subClassOf topc:Visit .
+
+topcr:Event a owl:Class ;
+    rdfs:label "Event (clinical-research)"@en ;
+    rdfs:subClassOf topc:Event .
+
+topcr:Site a owl:Class ;
+    rdfs:label "Site (clinical-research)"@en ;
+    rdfs:subClassOf topc:Site .
+
+topcr:OversightBody a owl:Class ;
+    rdfs:label "Oversight Body (clinical-research)"@en ;
+    rdfs:subClassOf topc:OversightBody .
+
+topcr:Activity a owl:Class ;
+    rdfs:label "Activity (clinical-research)"@en ;
+    rdfs:subClassOf topc:Activity .
+
+topcr:Task a owl:Class ;
+    rdfs:label "Task (clinical-research)"@en ;
+    rdfs:subClassOf topc:Task .
+
+topcr:VisitObservation a owl:Class ;
+    rdfs:label "Visit Observation (clinical-research)"@en ;
+    rdfs:subClassOf topc:VisitObservation .
+
+topcr:Document a owl:Class ;
+    rdfs:label "Document (clinical-research)"@en ;
+    rdfs:subClassOf topc:Document .
+
+topcr:Equipment a owl:Class ;
+    rdfs:label "Equipment (clinical-research)"@en ;
+    rdfs:subClassOf topc:Equipment .
+
+topcr:System a owl:Class ;
+    rdfs:label "System (clinical-research)"@en ;
+    rdfs:subClassOf topc:System .
+
+topcr:Log a owl:Class ;
+    rdfs:label "Log (clinical-research)"@en ;
+    rdfs:subClassOf topc:Log .
+
+topcr:StorageLocation a owl:Class ;
+    rdfs:label "Storage Location (clinical-research)"@en ;
+    rdfs:subClassOf topc:StorageLocation .
+
+topcr:Credential a owl:Class ;
+    rdfs:label "Credential (clinical-research)"@en ;
+    rdfs:subClassOf topc:Credential .
+
+
+# ====================================================================
+# Workflow-native classes (no commons leaf fits — prov:* only)
+# ====================================================================
+
+topcr:Sponsor a owl:Class ;
+    rdfs:label "Sponsor"@en ;
+    rdfs:subClassOf prov:Agent .
+
+topcr:Study a owl:Class ;
+    rdfs:label "Study"@en ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:Participant a owl:Class ;
+    rdfs:label "Participant"@en ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:Recruit a owl:Class ;
+    rdfs:label "Recruit"@en ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:InvestigationalProduct a owl:Class ;
+    rdfs:label "Investigational Product"@en ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:StudySite a owl:Class ;
+    rdfs:label "Study Site"@en ;
+    rdfs:subClassOf prov:Agent .
+
+
+# --- Study sub-objects (7) ---
+
+topcr:Protocol a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:Arm a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:ScheduleOfAssessments a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:Endpoint a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:InclusionCriterion a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:ExclusionCriterion a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:VisitDefinition a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+
+# --- Participant sub-objects (4) ---
+
+topcr:InformedConsent a owl:Class ;
+    rdfs:subClassOf prov:Activity .
+
+topcr:ScreeningRecord a owl:Class ;
+    rdfs:subClassOf prov:Activity .
+
+topcr:EnrollmentRecord a owl:Class ;
+    rdfs:subClassOf prov:Activity .
+
+topcr:WithdrawalRecord a owl:Class ;
+    rdfs:subClassOf prov:Activity .
+
+
+# --- InvestigationalProduct sub-objects (2) ---
+
+topcr:Lot a owl:Class ;
+    rdfs:subClassOf prov:Entity .
+
+topcr:Kit a owl:Class ;
+    rdfs:subClassOf prov:Entity .
