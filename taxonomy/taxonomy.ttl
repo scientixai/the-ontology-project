@@ -1,10 +1,10 @@
 # TOP Taxonomy v1 — SKOS canonical
 #
-# The Ontology Project — taxonomy of TOP Primitives.
+# The Ontology Project — taxonomy of TOP Core.
 #
-# This file defines TOP Primitives ONLY. Workflow extensions (clinical
+# This file defines TOP Core ONLY. Workflow extensions (clinical
 # research, care delivery, manufacturing, supply chain, etc.) live in
-# their own files and are imported separately. TOP Primitives must serve
+# their own files and are imported separately. TOP Core must serve
 # every domain and every industry; clinical-trial-specific concepts do
 # not live here.
 #
@@ -13,21 +13,21 @@
 #   The SKOS taxonomy carries OPERATOR VOCABULARY only, the concepts
 #   operators actually name and reach for. Two levels:
 #
-#     L1 — Category-Level Objects (8 categories under top:Primitives):
+#     L1 — Category-Level Objects (8 categories under top:Core):
 #          Agent, Location, Resource, Scope, Temporal, Evidence,
 #          Outcome, Constraint.
 #
-#     L2 — Leaves (28 nodes): the universal primitive entities under
+#     L2 — Leaves (28 nodes): the universal first-class entities under
 #          each category.
 #
 #   The infrastructure floor (three properties every entity must carry,
-#   top:identifier, top:observedAt, top:status — the provenance contract)
-#   lives in commons/source/core.ttl as SHACL, NOT in this SKOS file.
-#   That is enforcement, not vocabulary, and the operator never names it.
+#   top:identifier, top:observedAt, top:status, the provenance contract)
+#   lives in core/v1/shapes.ttl as SHACL, NOT in this SKOS file. That
+#   is enforcement, not vocabulary, and the operator never names it.
 #   Earlier drafts modeled it as a SKOS top concept ("Universal DNA");
 #   removed because it's metadata, not a thing operators recognize as
 #   first-class. Property names per leaf also live in the OWL/SHACL
-#   substrate; this SKOS taxonomy carries vocabulary, definition, and
+#   layer; this SKOS taxonomy carries vocabulary, definition, and
 #   scope only.
 #
 # AUTHORING RULES (Termboard quality conformance):
@@ -36,28 +36,32 @@
 #   - Definitions never use "include" / "includes" / "including" /
 #     "included" (anti-pattern / generalizing word flag).
 #   - Standalone acronym "TOP" is expanded to "The Ontology Project" the
-#     few times it must appear; otherwise the altLabel "Primitives"
-#     carries the parent reference (acronym flag).
-#   - Each L3 leaf names its L2 parent in the first sentence (parent-in-
+#     few times it must appear; otherwise the altLabel "Core" carries
+#     the parent reference (acronym flag).
+#   - Each L2 leaf names its L1 parent in the first sentence (parent-in-
 #     description rule).
 #
 # PURE SKOS for SKOS-aware tools (TermBoard, PoolParty, Synaptica, Protégé).
-# No owl:Class typing, no rdfs:subClassOf chains, those live in the OWL
-# substrate file. Loading dual types causes "duplicate term name" import
-# errors in some SKOS tools.
+# No owl:Class typing, no rdfs:subClassOf chains; those live in the OWL
+# layer. Loading dual types causes "duplicate term name" import errors
+# in some SKOS tools.
 #
 # Concept URIs:
 #   top.scientix.ai/v1#   — single namespace for everything in The Ontology
 #                           Project: the TaxonomyV1 scheme, the top concept
-#                           Primitives, the eight L1 categories, the twenty-
-#                           eight L2 leaves, and the SHACL substrate
-#                           properties (top:identifier, top:observedAt,
-#                           top:status). Hash-form URIs in PROV-O / SKOS
-#                           idiom; everything resolves at one namespace
-#                           document. Earlier drafts split primitives into
-#                           a separate top: prefix; collapsed because the
-#                           split added complexity without benefit and the
-#                           single-prefix form reads cleaner in extensions.
+#                           Core, the eight L1 categories, the twenty-eight
+#                           L2 leaves, and the SHACL invariant properties
+#                           (top:identifier, top:observedAt, top:status).
+#                           Hash-form URIs in PROV-O / SKOS idiom;
+#                           everything resolves at one namespace document.
+#
+# NAMING NOTE:
+#   The SKOS top concept is "Core" rather than "Primitives". Earlier drafts
+#   used "Primitives" (computer-science precision); switched to "Core"
+#   because it lands more accessibly across audiences (executives,
+#   operators, working group conveners) without losing architectural
+#   meaning. The collision with the previously named commons/source/core.ttl
+#   is resolved by renaming that SHACL file to core/v1/shapes.ttl.
 
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix dct:   <http://purl.org/dc/terms/> .
@@ -74,25 +78,25 @@
 
 top:TaxonomyV1 a skos:ConceptScheme ;
     dct:title "TOP Taxonomy v1"@en ;
-    dct:description "Classification scheme for The Ontology Project. Primitives are organized in a two-level structure: eight Category-Level Objects (L1) and twenty-eight universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
+    dct:description "Classification scheme for The Ontology Project. The Core layer is organized in a two-level structure: eight Category-Level Objects (L1) and twenty-eight universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
     dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
     dct:created "2026-05-09"^^xsd:date ;
     dct:license "Apache-2.0" ;
-    skos:hasTopConcept top:Primitives ;
+    skos:hasTopConcept top:Core ;
     rdfs:seeAlso <https://top.scientix.ai/FIRST-PRINCIPLES.html>,
                  <https://top.scientix.ai/MANIFESTO.html>,
                  <https://top.scientix.ai/ROADMAP.html> .
 
 
 # ====================================================================
-# Top concept — TOP Primitives
+# Top concept — TOP Core
 # ====================================================================
 
-top:Primitives a skos:Concept ;
+top:Core a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
     skos:topConceptOf top:TaxonomyV1 ;
-    skos:prefLabel "TOP Primitives"@en ;
-    skos:altLabel "Primitives"@en, "Universal Primitives"@en ;
+    skos:prefLabel "TOP Core"@en ;
+    skos:altLabel "Core"@en, "Universal Core"@en ;
     skos:definition "The eight categories and twenty-eight leaves of universal first-class entities that operators across every domain and industry recognize as foundational concepts in The Ontology Project. The eight categories are Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, and Constraint. Workflow extensions for clinical research, care delivery, manufacturing, and supply chain compose on top of this layer rather than living inside it, keeping the universal layer free of domain-specific concerns and reusable across every industry."@en ;
     skos:scopeNote "Membership test: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and does not pollute the universal layer."@en ;
     skos:notation "top:" ;
@@ -100,84 +104,84 @@ top:Primitives a skos:Concept ;
 
 
 # ====================================================================
-# L2 — The eight Category-Level Objects under TOP Primitives
+# L1 — The eight Category-Level Objects under TOP Core
 # ====================================================================
 
 top:Agent a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Agent"@en ;
     skos:altLabel "Authority"@en, "Actor"@en ;
-    skos:definition "The Primitives category for entities that act on their own behalf or on behalf of others, hold decision rights over operations, and bear accountability for outcomes. Such entities are the performers of any operation: they initiate Activities, sign Documents, hold Credentials, and stand responsible for what gets done. Four kinds of performer fall under this category: an individual human, a formal legal organization, a collective body without legal personhood, and a non-human autonomous software system. Distinct from Resource: Resources are used; performers in this category use them."@en ;
+    skos:definition "The Core category for entities that act on their own behalf or on behalf of others, hold decision rights over operations, and bear accountability for outcomes. Such entities are the performers of any operation: they initiate Activities, sign Documents, hold Credentials, and stand responsible for what gets done. Four kinds of performer fall under this category: an individual human, a formal legal organization, a collective body without legal personhood, and a non-human autonomous software system. Distinct from Resource: Resources are used; performers in this category use them."@en ;
     skos:scopeNote "Category-level relational extensions: hasCredential, memberOf, authorizedBy. Leaves: Person, Organization, Group, Autonomous Agent. An autonomous AI system is a performer here when it is the entity acting in a transaction; the same software is a Resource when it is the tool another performer uses."@en ;
     skos:notation "top:Agent" .
 
 top:Location a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Location"@en ;
     skos:altLabel "Space"@en, "Place"@en ;
-    skos:definition "The Primitives category for places where work happens, where Agents act, or where Resources and outputs are held. Such places span the physical real world (geographic places with coordinates), virtual digital systems (network-addressable spaces reached through computation), and storage containers (designated holding areas, physical or digital). Every Activity occurs at some place in this category, every Resource resides somewhere within it, and every Agent has a current locale here."@en ;
+    skos:definition "The Core category for places where work happens, where Agents act, or where Resources and outputs are held. Such places span the physical real world (geographic places with coordinates), virtual digital systems (network-addressable spaces reached through computation), and storage containers (designated holding areas, physical or digital). Every Activity occurs at some place in this category, every Resource resides somewhere within it, and every Agent has a current locale here."@en ;
     skos:scopeNote "Category-level relational extensions: withinLocation, geoSpatialData, accessRequirement. Leaves: Physical, Virtual, Storage. This category answers where; the Temporal category answers when; together they bound any operation in space and time."@en ;
     skos:notation "top:Location" .
 
 top:Resource a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Resource"@en ;
     skos:altLabel "Tools"@en, "Operational Asset"@en ;
-    skos:definition "The Primitives category for operational assets that Activities consume, use, or operate. As the means of production, members of this category are what Agents reach for to get work done: software systems process information, physical equipment performs tasks, and material stocks flow through operations. A member of this category is owned by some Agent, may carry a maintenance history, and reports an operational state distinct from its lifecycle status. Distinct from Agent: Agents act; members of this category are used."@en ;
+    skos:definition "The Core category for operational assets that Activities consume, use, or operate. As the means of production, members of this category are what Agents reach for to get work done: software systems process information, physical equipment performs tasks, and material stocks flow through operations. A member of this category is owned by some Agent, may carry a maintenance history, and reports an operational state distinct from its lifecycle status. Distinct from Agent: Agents act; members of this category are used."@en ;
     skos:scopeNote "Category-level relational extensions: ownedBy, hasMaintenanceLog, operationalState. Leaves: System, Equipment, Material. Distinct from Location: members of this category are used at Locations; Locations are where members of this category reside."@en ;
     skos:notation "top:Resource" .
 
 top:Scope a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Scope"@en ;
     skos:altLabel "Intent"@en, "Bounded Effort"@en ;
-    skos:definition "The Primitives category for bounded efforts with stated purpose, governance, and a defined boundary. Members of this category are how organizations frame what they are doing and why. They scale from strategic Portfolios at the top, through Programs that group related work under a single mandate, down to specific Projects with start and end dates. Every Activity belongs to one such effort, every Outcome contributes to its stated purpose, and every effort here is governed by some Agent."@en ;
+    skos:definition "The Core category for bounded efforts with stated purpose, governance, and a defined boundary. Members of this category are how organizations frame what they are doing and why. They scale from strategic Portfolios at the top, through Programs that group related work under a single mandate, down to specific Projects with start and end dates. Every Activity belongs to one such effort, every Outcome contributes to its stated purpose, and every effort here is governed by some Agent."@en ;
     skos:scopeNote "Category-level relational extensions: governedBy, containsActivity, objectiveStatement. Leaves: Portfolio, Program, Project. Workflow-specific scopes (a clinical Study, a manufacturing Campaign) are workflow extensions that specialize this category."@en ;
     skos:notation "top:Scope" .
 
 top:Temporal a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Temporal"@en ;
     skos:altLabel "Rhythm"@en, "Time-Bound Occurrence"@en ;
-    skos:definition "The Primitives category for anything that exists in time, whether as a recurring pattern, a bounded interval, a performed event, or a marker on a timeline. Concepts in this category answer the question of when something happens, must happen, or has happened-and-mattered. Four shapes fall here: Schedules (the cadence of recurrence), Windows (the bounds of validity), Activities (the performance itself), and Milestones (the points of significance in a Scope's progression)."@en ;
+    skos:definition "The Core category for anything that exists in time, whether as a recurring pattern, a bounded interval, a performed event, or a marker on a timeline. Concepts in this category answer the question of when something happens, must happen, or has happened-and-mattered. Four shapes fall here: Schedules (the cadence of recurrence), Windows (the bounds of validity), Activities (the performance itself), and Milestones (the points of significance in a Scope's progression)."@en ;
     skos:scopeNote "Category-level relational extensions: startTime, endTime, precededBy, occursAt. Leaves: Schedule, Window, Activity, Milestone. This category complements Location: when complements where. Workflow-specific temporal entities (a clinical Visit, a manufacturing Run) specialize the Activity leaf rather than introducing new universal time-bound shapes."@en ;
     skos:notation "top:Temporal" .
 
 top:Evidence a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Evidence"@en ;
     skos:altLabel "Proof"@en, "Verifiable Artifact"@en ;
-    skos:definition "The Primitives category for verifiable artifacts that prove a fact, a claim, or a state of affairs. Concepts here answer the question of how do we know what we know. They carry integrity through cryptographic hashes, signatures, version control, and audit trails. Four leaves fall in this category: Documents (formal authored records and files), Logs (temporal trails of entries), Attestations (signed statements verifying facts), and Credentials (qualifications held by an Agent)."@en ;
+    skos:definition "The Core category for verifiable artifacts that prove a fact, a claim, or a state of affairs. Concepts here answer the question of how do we know what we know. They carry integrity through cryptographic hashes, signatures, version control, and audit trails. Four leaves fall in this category: Documents (formal authored records and files), Logs (temporal trails of entries), Attestations (signed statements verifying facts), and Credentials (qualifications held by an Agent)."@en ;
     skos:scopeNote "Category-level relational extensions: verifiesOutcome, integrityHash, signedBy. Leaves: Document, Log, Attestation, Credential. Distinct from Outcome: Outcomes are produced by work; concepts in this category prove the work happened. An Artifact (Outcome) becomes a member of this category when it is signed or attested."@en ;
     skos:notation "top:Evidence" .
 
 top:Outcome a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Outcome"@en ;
     skos:altLabel "Results"@en, "Observable Result"@en ;
-    skos:definition "The Primitives category for observable, recordable products of work. Concepts here answer the question of what happened or what came of it. Four shapes fall here: Observations capture data points produced by an Activity, Status Changes record transitions from one state to another, Artifacts are the files and records produced as outputs of work, and Conclusions are reasoned determinations supported by Evidence. Each closes the loop between work performed and the result that work produced."@en ;
+    skos:definition "The Core category for observable, recordable products of work. Concepts here answer the question of what happened or what came of it. Four shapes fall here: Observations capture data points produced by an Activity, Status Changes record transitions from one state to another, Artifacts are the files and records produced as outputs of work, and Conclusions are reasoned determinations supported by Evidence. Each closes the loop between work performed and the result that work produced."@en ;
     skos:scopeNote "Category-level relational extensions: measuredBy, satisfiesConstraint, variance. Leaves: Observation, Status Change, Artifact, Conclusion. Workflow-specific outcomes (a clinical Adverse Event, a manufacturing Out-of-Specification result) specialize the appropriate leaf rather than introducing new universal result shapes."@en ;
     skos:notation "top:Outcome" .
 
 top:Constraint a skos:Concept ;
     skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Primitives ;
+    skos:broader top:Core ;
     skos:prefLabel "Constraint"@en ;
     skos:altLabel "Validity Rule"@en, "Guardrail"@en ;
-    skos:definition "The Primitives category for rules, limits, and bounds that govern what counts as valid operation. Concepts here are the rails along which work runs, the boundary conditions that separate compliant from non-compliant. Three leaves fall in this category: Physical Limits (numeric thresholds and tolerances drawn from physics or engineering), Regulatory Laws (statutes and binding standards under jurisdictional authority), and Safety Guardrails (operational rules with severity classification and remediation paths)."@en ;
+    skos:definition "The Core category for rules, limits, and bounds that govern what counts as valid operation. Concepts here are the rails along which work runs, the boundary conditions that separate compliant from non-compliant. Three leaves fall in this category: Physical Limits (numeric thresholds and tolerances drawn from physics or engineering), Regulatory Laws (statutes and binding standards under jurisdictional authority), and Safety Guardrails (operational rules with severity classification and remediation paths)."@en ;
     skos:scopeNote "Category-level relational extensions: enforcedBy, severityLevel, appliesTo. Leaves: Physical Limit, Regulatory Law, Safety Guardrail. A member of this category is enforced by some Agent (typically an Organization, a regulator, or an oversight body) and applies to one or more entities in this taxonomy."@en ;
     skos:notation "top:Constraint" .
 
 
 # ====================================================================
-# L3 — Agent leaves (4)
+# L2 —Agent leaves (4)
 # ====================================================================
 
 top:Person a skos:Concept ;
@@ -218,7 +222,7 @@ top:AutonomousAgent a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Location leaves (3)
+# L2 —Location leaves (3)
 # ====================================================================
 
 top:Physical a skos:Concept ;
@@ -250,7 +254,7 @@ top:Storage a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Resource leaves (3)
+# L2 —Resource leaves (3)
 # ====================================================================
 
 top:System a skos:Concept ;
@@ -282,7 +286,7 @@ top:Material a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Scope leaves (3)
+# L2 —Scope leaves (3)
 # ====================================================================
 
 top:Portfolio a skos:Concept ;
@@ -314,7 +318,7 @@ top:Project a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Temporal leaves (4)
+# L2 —Temporal leaves (4)
 # ====================================================================
 
 top:Schedule a skos:Concept ;
@@ -355,7 +359,7 @@ top:Milestone a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Evidence leaves (4)
+# L2 —Evidence leaves (4)
 # ====================================================================
 
 top:Document a skos:Concept ;
@@ -396,7 +400,7 @@ top:Credential a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Outcome leaves (4)
+# L2 —Outcome leaves (4)
 # ====================================================================
 
 top:Observation a skos:Concept ;
@@ -437,7 +441,7 @@ top:Conclusion a skos:Concept ;
 
 
 # ====================================================================
-# L3 — Constraint leaves (3)
+# L2 —Constraint leaves (3)
 # ====================================================================
 
 top:PhysicalLimit a skos:Concept ;
@@ -471,27 +475,27 @@ top:SafetyGuardrail a skos:Concept ;
 # ====================================================================
 # PROV-O alignment (skos:exactMatch / skos:closeMatch)
 # ====================================================================
-# SKOS-level signaling that each primitive aligns to a PROV-O peer.
+# SKOS-level signaling that each Core concept aligns to a PROV-O peer.
 # Three layers of provenance adherence in TOP:
 #
 #   1. SKOS (here)  - skos:exactMatch / skos:closeMatch annotations
 #                     for browse-tool visibility and human comprehension.
-#   2. SHACL (commons/source/core.ttl, rebuild pending) - shapes that
+#   2. SHACL (core/v1/shapes.ttl, rebuild pending) - shapes that
 #                     ENFORCE PROV-O properties: every Evidence requires
 #                     prov:wasGeneratedBy and prov:wasAttributedTo, every
 #                     Activity requires prov:used and prov:wasAssociatedWith,
 #                     and so on.
-#   3. JSON-LD (primitives/v1/context.jsonld, queued) - NGSI-LD profile
-#                     mapping each primitive to its NGSI-LD type with
-#                     observedAt / identifier / status declared as
-#                     standard NGSI-LD attributes for wire compatibility.
+#   3. JSON-LD (core/v1/context.jsonld, queued) - NGSI-LD profile mapping
+#                     each Core concept to its NGSI-LD type with observedAt
+#                     / identifier / status declared as standard NGSI-LD
+#                     attributes for wire compatibility.
 #
-# exactMatch is used where the PROV-O class and the TOP primitive name
-# the same conceptual category. closeMatch is used where the alignment
-# is real but the TOP primitive specializes or narrows the PROV-O class.
-# Constraint leaves (PhysicalLimit, RegulatoryLaw, SafetyGuardrail) have
-# no PROV-O peer; constraints align to ODRL/SHACL conceptually, which is
-# a separate alignment pass.
+# exactMatch is used where the PROV-O class and the TOP Core concept
+# name the same conceptual category. closeMatch is used where the
+# alignment is real but the TOP Core concept specializes or narrows the
+# PROV-O class. Constraint leaves (PhysicalLimit, RegulatoryLaw,
+# SafetyGuardrail) have no PROV-O peer; constraints align to ODRL/SHACL
+# conceptually, which is a separate alignment pass.
 
 # Agent category and leaves
 top:Agent             skos:exactMatch  prov:Agent .
@@ -534,10 +538,10 @@ top:Storage           skos:closeMatch  prov:Location .
 # ====================================================================
 # Concept count summary
 # ====================================================================
-# Top concept: 1 (top:Primitives)
+# Top concept: 1 (top:Core)
 # L1 — Category-Level Objects: 8
 #       Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint
-# L2 — TOP Primitives leaves: 28
+# L2 — TOP Core leaves: 28
 #       Agent: Person, Organization, Group, AutonomousAgent (4)
 #       Location: Physical, Virtual, Storage (3)
 #       Resource: System, Equipment, Material (3)
@@ -549,4 +553,4 @@ top:Storage           skos:closeMatch  prov:Location .
 # Total SKOS concepts: 1 + 8 + 28 = 37
 #
 # The provenance contract (top:identifier, top:observedAt, top:status)
-# is SHACL in commons/source/core.ttl, not a SKOS concept here.
+# is SHACL in core/v1/shapes.ttl, not a SKOS concept here.

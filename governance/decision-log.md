@@ -21,6 +21,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0011](#adr-0011-prov-as-taxonomy-governance-dogfood) | 2026-05-09 | PROV as taxonomy governance — dogfood | Proposed |
 | [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) | 2026-05-09 | Three-level architecture — Universal DNA, eight categories, leaves | Accepted (refined by ADR-0013; supersedes part of ADR-0008) |
 | [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) | 2026-05-09 | Practitioner-first — TOP's primary customer | Accepted |
+| [ADR-0014](#adr-0014-rename-primitives-to-core-and-cleanups) | 2026-05-10 | Rename Primitives → Core, and cleanups | Accepted (supersedes naming in ADR-0008, ADR-0012, ADR-0013) |
 
 ---
 
@@ -479,6 +480,71 @@ Three concrete commitments follow:
 ### Status
 
 Accepted. The artifacts on this branch (`commons/source/core.ttl`, `taxonomy/taxonomy.ttl`, `commons/source/walkthroughs/person.ttl`, FIRST-PRINCIPLES addition) implement this ADR. Termboard verification of the SKOS taxonomy is the next gate.
+
+---
+
+## ADR-0014: Rename Primitives → Core, and cleanups
+
+**Date:** 2026-05-10 · **Status:** Accepted · **Refs:** [taxonomy/taxonomy.ttl](../taxonomy/taxonomy.ttl), [core/v1/index.html](../core/v1/index.html)
+
+### Context
+
+Three architectural rough edges accumulated across PR #16 and the homepage build that followed. Each was small individually; together they were large enough to deserve a single decision rather than three quiet edits.
+
+First, the SKOS top concept was named "Primitives" (computer-science precise: atomic, irreducible building blocks). The rename followed an earlier rename from "Commons Substrate" → "TOP Primitives," because "substrate" was jargon nobody recognized in a room. Reviewing the result with the same audience-fit lens, "Primitives" requires technical literacy to land, while "Core" is immediately accessible to executives, operators, and working group conveners without losing architectural meaning. Cost of the switch: a collision with the existing SHACL file `commons/source/core.ttl` (a "which core" ambiguity), which had to be resolved by moving and renaming that file.
+
+Second, the URI namespace had been split into `top:` (project-level concepts) and `topp:` (the primitive concepts), with primitives at `https://top.scientix.ai/v1/primitives/`. The split was a leftover from an earlier draft. Single-prefix form reads cleaner in extensions and matches the standard W3C ontology pattern (PROV-O at one namespace document, SKOS at one, etc.).
+
+Third, the URL path `top.scientix.ai/onto/primitives/v1/` had `/onto/` as a holdover from the time when the project was federating reference graphs as siblings under one umbrella. With Core as the universal layer and domain reference graphs as compositions on top, `/onto/` adds nothing the path doesn't already carry.
+
+Bo's call:
+
+> "I wonder if 'core' is a better term than 'primitives'."
+>
+> "Yes let's go with the core change — I think it is a more accurate representation. Make all the changes necessary and do a pull request and merge."
+>
+> Earlier in the same session: "I also don't care for /onto/ in the path: top.scientix.ai/primitives/v1." (Resolved as `/core/v1/` after the Primitives → Core rename.)
+
+### Decision
+
+Three coupled changes, shipped in one branch:
+
+**1. Rename SKOS top concept Primitives → Core.**
+- `top:Primitives` → `top:Core` (URI change at `https://top.scientix.ai/v1#Core`).
+- prefLabel "TOP Primitives" → "TOP Core".
+- altLabels "Primitives", "Universal Primitives" → "Core", "Universal Core".
+- All eight L1 category definitions update from "The Primitives category for ..." to "The Core category for ...".
+- All cross-references in homepage, namespaces page, spec page, ADR index, and prose docs follow.
+
+**2. Collapse `topp:` into `top:`.** The previously split namespaces become one. Concept URIs are now `https://top.scientix.ai/v1#Agent`, `https://top.scientix.ai/v1#Person`, etc. The taxonomy.ttl prefix declarations and the 23 PROV-O alignment triples all carry the new prefix.
+
+**3. Drop `/onto/` from the spec page URL.** The Core spec page moves from `/onto/primitives/v1/` to `/core/v1/`. The namespaces landing page stays at `/onto/index.html` for now (it serves as the namespace federation index), with a forward-looking note that the legacy clinical reference graph will follow the same path collapse when its `top:` → `topcr:` rebase lands.
+
+**4. Resolve the file collision.** The previously named `commons/source/core.ttl` (the SHACL invariants file) moves to `core/v1/shapes.ttl`. The empty `commons/` scaffolding directory is removed. The walkthroughs directory follows to `core/v1/walkthroughs/`. The relabeled file becomes the canonical SHACL companion to the SKOS taxonomy.
+
+### What this supersedes
+
+- The naming "Primitives" in [ADR-0008](#adr-0008-option-b-properly-scoped-commons-carries-universal-primitive-shapes) (commons-as-vocabulary), [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) (three-level architecture), and [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) (practitioner-first) is superseded by "Core". The architectural commitments those ADRs made about layering, vocabulary scope, and practitioner-first orientation stand unchanged; only the label changes. Each ADR keeps its original prose for the historical record per the append-only rule.
+- The path `/onto/primitives/v1/` introduced informally during the homepage build is superseded by `/core/v1/`. ADR-0005 (drop `/onto/` from URI paths) anticipated this direction; ADR-0014 implements it for the universal layer ahead of the legacy clinical reference graph following.
+
+### Consequences
+
+- **The "which core" ambiguity is resolved.** The SKOS top concept and the SHACL file have different names: top:Core (vocabulary) vs. core/v1/shapes.ttl (SHACL invariants). Both can be referenced in conversation without disambiguation overhead.
+- **Single-prefix URIs.** Anyone reading the taxonomy or extending Core in a workflow sees one prefix (`top:`) instead of two (`top:`, `topp:`). The mental model of "domain X extends Core via topdomain:X subClassOf top:Y" stays clean.
+- **Termboard re-import required.** The 37 concept URIs all change (subdomain of namespace shifts from `/v1/primitives/` to `/v1#`). The 23 PROV-O alignments preserve their semantics across the move. All five Termboard quality rules (circular definition, includes anti-pattern, TOP acronym, parent-in-description, em-dashes) remain at zero violations after the rename.
+- **Legacy clinical-research namespace still uses `top:`.** The legacy `top:Sponsor`, `top:Study`, `top:Site` URIs in `reference-graphs/clinical-trials/` are now technically colliding with the new Core URIs. The clinical files are unchanged in this PR; the rebase to `topcr:` is the next priority precisely because it removes this last inconsistency. The homepage and namespaces page already flag this with a "Namespace rebase queued" badge so readers see the planned end state.
+- **Several stale documents (TAXONOMY.md, core/v1/shapes.ttl) carry pending-rewrite banners.** They predate the current architecture and will be rewritten in a follow-up pass. Banners point readers to the authoritative sources (taxonomy/taxonomy.ttl and core/v1/index.html) so confusion is bounded.
+
+### What this does NOT change
+
+- The eight L1 categories, the twenty-eight L2 leaves, and the membership test that decides what lives at the universal layer. Pure rename.
+- The 23 PROV-O `skos:exactMatch` / `skos:closeMatch` alignments. Same triples, same semantics, the subjects just carry new URIs.
+- The provenance contract (identifier, observedAt, status) as the SHACL invariants enforced underneath every entity.
+- The practitioner-first commitment from ADR-0013. "Core" is more practitioner-friendly than "Primitives," so this rename strengthens the constitutional commitment rather than weakening it.
+
+### Status
+
+Accepted. The artifacts on this branch implement the rename, the namespace collapse, the path move, and the file rename. Deferred: clinical-research namespace rebase to `topcr:`, rebuild of `core/v1/shapes.ttl` content (currently carries stale legacy content under a deprecation banner), JSON-LD context.jsonld for NGSI-LD wire compatibility, and rewrite of TAXONOMY.md to match current architecture.
 
 ---
 

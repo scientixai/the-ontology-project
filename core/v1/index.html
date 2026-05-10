@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TOP / Primitives / v1</title>
-<meta name="description" content="TOP Primitives — the universal layer of The Ontology Project. Three-level architecture: Universal DNA, eight Category-Level Objects, twenty-eight leaves.">
+<title>TOP / Core / v1</title>
+<meta name="description" content="TOP Core — the universal layer of The Ontology Project. Eight Category-Level Objects and twenty-eight leaves that operators across every domain recognize as first-class concepts. PROV-O aligned, NGSI-LD wire-compatible.">
 <link rel="alternate" type="text/turtle" href="../../taxonomy/taxonomy.ttl" title="SKOS taxonomy (Turtle)">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -234,14 +234,14 @@
     <img src="top-logo.svg" alt="The Ontology Project" width="210">
   </a>
   <div class="site-meta">
-    <div class="site-meta-primary">Primitives · v1</div>
+    <div class="site-meta-primary">Core · v1</div>
     <div class="site-meta-secondary">top: namespace · the universal layer</div>
   </div>
 </header>
 
 <div class="uri">https://top.scientix.ai/v1#</div>
 
-<p class="lead"><strong>TOP Primitives</strong> is the universal layer of The Ontology Project. It holds the first-class concepts that operators across every domain and every industry recognize: clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere. The layer is small on purpose. Workflow extensions for specific domains compose on top of these primitives, never inside them, so the universal layer stays free of domain-specific concerns and reusable across every industry.</p>
+<p class="lead"><strong>TOP Core</strong> is the universal layer of The Ontology Project. It holds the first-class concepts that operators across every domain and every industry recognize: clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere. The layer is small on purpose. Workflow extensions for specific domains compose on top of the Core layer, never inside them, so the universal layer stays free of domain-specific concerns and reusable across every industry.</p>
 
 <div class="stats">
   <div><div class="stat-num">8</div><div class="stat-label">Category-Level Objects</div></div>
@@ -278,29 +278,29 @@
 
   <h3 style="margin-top: 14px;">Companion (rebuild pending)</h3>
   <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">commons/source/core.ttl — OWL/SHACL substrate, currently on prior namespace, rebuild scheduled to follow this taxonomy locking in Termboard</span></div>
-  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">primitives/v1/context.jsonld — JSON-LD context, queued</span></div>
-  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">primitives/v1/shapes.ttl — SHACL shapes, queued</span></div>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/context.jsonld — JSON-LD context, queued</span></div>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/shapes.ttl — SHACL shapes, queued</span></div>
 </div>
 
 <h2 class="section">PROV-O and NGSI-LD adherence · three layers</h2>
 
-<p>Provenance is the mission, so the primitives bind to the W3C PROV-O standard explicitly rather than running parallel to it. The binding is layered so each layer earns its keep:</p>
+<p>Provenance is the mission, so the Core layer binds to the W3C PROV-O standard explicitly rather than running parallel to it. The binding is layered so each layer earns its keep:</p>
 
 <div class="arch">
   <div class="level">
     <div class="level-label">Layer 1 — SKOS signaling (this taxonomy, shipped)</div>
     <div class="level-name">23 PROV-O alignments via skos:exactMatch and skos:closeMatch</div>
-    <div class="level-desc">Every primitive that has an honest PROV-O peer carries a mapping. <span class="inline">top:Person skos:exactMatch prov:Person</span>. <span class="inline">top:Activity skos:exactMatch prov:Activity</span>. Every Evidence and Outcome leaf <span class="inline">skos:closeMatch prov:Entity</span>. Every Scope leaf <span class="inline">skos:closeMatch prov:Plan</span>. Every Location leaf <span class="inline">skos:closeMatch prov:Location</span>. Constraint leaves have no PROV-O peer; they align to ODRL/SHACL conceptually, which is a separate alignment pass. The mappings make the alignment visible in any SKOS browse tool without requiring OWL inference.</div>
+    <div class="level-desc">Every Core concept that has an honest PROV-O peer carries a mapping. <span class="inline">top:Person skos:exactMatch prov:Person</span>. <span class="inline">top:Activity skos:exactMatch prov:Activity</span>. Every Evidence and Outcome leaf <span class="inline">skos:closeMatch prov:Entity</span>. Every Scope leaf <span class="inline">skos:closeMatch prov:Plan</span>. Every Location leaf <span class="inline">skos:closeMatch prov:Location</span>. Constraint leaves have no PROV-O peer; they align to ODRL/SHACL conceptually, which is a separate alignment pass. The mappings make the alignment visible in any SKOS browse tool without requiring OWL inference.</div>
   </div>
   <div class="level">
     <div class="level-label">Layer 2 — SHACL enforcement (commons/source/core.ttl, rebuild pending)</div>
     <div class="level-name">PROV-O properties required per category</div>
-    <div class="level-desc">The SHACL substrate carries the strict adherence. Every Evidence instance is required to carry <span class="inline">prov:wasGeneratedBy</span> (where it came from) and <span class="inline">prov:wasAttributedTo</span> (who is responsible). Every Activity is required to carry <span class="inline">prov:used</span> and <span class="inline">prov:wasAssociatedWith</span>. Every Artifact carries <span class="inline">prov:wasGeneratedBy</span> linking it to the producing Activity. This is what makes a TOP graph a provenance-grade graph rather than a vocabulary list. The strawman shapes ship as part of the core.ttl rebuild scheduled to follow this taxonomy locking in Termboard.</div>
+    <div class="level-desc">The SHACL substrate carries the strict adherence. Every Evidence instance is required to carry <span class="inline">prov:wasGeneratedBy</span> (where it came from) and <span class="inline">prov:wasAttributedTo</span> (who is responsible). Every Activity is required to carry <span class="inline">prov:used</span> and <span class="inline">prov:wasAssociatedWith</span>. Every Artifact carries <span class="inline">prov:wasGeneratedBy</span> linking it to the producing Activity. This is what makes a TOP graph a provenance-grade graph rather than a vocabulary list. The strawman shapes ship as part of the shapes.ttl rebuild scheduled to follow this taxonomy locking in Termboard.</div>
   </div>
   <div class="level">
-    <div class="level-label">Layer 3 — NGSI-LD wire format (primitives/v1/context.jsonld, queued)</div>
+    <div class="level-label">Layer 3 — NGSI-LD wire format (core/v1/context.jsonld, queued)</div>
     <div class="level-name">JSON-LD context with the NGSI-LD profile</div>
-    <div class="level-desc">The JSON-LD context maps each primitive to its NGSI-LD type and declares the substrate properties (<span class="inline">identifier</span>, <span class="inline">observedAt</span>, <span class="inline">status</span>) as standard NGSI-LD attributes. Anything emitting NGSI-LD JSON-LD against this context is automatically wire-compatible with FIWARE, Orion, Stellio, and any other NGSI-LD broker. The context.jsonld lands alongside the core.ttl rebuild.</div>
+    <div class="level-desc">The JSON-LD context maps each Core concept to its NGSI-LD type and declares the substrate properties (<span class="inline">identifier</span>, <span class="inline">observedAt</span>, <span class="inline">status</span>) as standard NGSI-LD attributes. Anything emitting NGSI-LD JSON-LD against this context is automatically wire-compatible with FIWARE, Orion, Stellio, and any other NGSI-LD broker. The context.jsonld lands alongside the shapes.ttl rebuild.</div>
   </div>
 </div>
 
@@ -324,7 +324,7 @@
 <div class="category-card" id="Agent">
   <div class="id">top:Agent</div>
   <div class="name">Agent <a href="#Agent">¶</a></div>
-  <div class="desc">The Primitives category for entities that act on their own behalf or on behalf of others, hold decision rights over operations, and bear accountability for outcomes. Such entities are the performers of any operation: they initiate Activities, sign Documents, hold Credentials, and stand responsible for what gets done. Distinct from Resource: Resources are used; performers in this category use them.</div>
+  <div class="desc">The Core category for entities that act on their own behalf or on behalf of others, hold decision rights over operations, and bear accountability for outcomes. Such entities are the performers of any operation: they initiate Activities, sign Documents, hold Credentials, and stand responsible for what gets done. Distinct from Resource: Resources are used; performers in this category use them.</div>
   <div class="meta"><strong>Alt labels:</strong> Authority, Actor &nbsp;·&nbsp; <strong>Relations:</strong> hasCredential, memberOf, authorizedBy</div>
 </div>
 
@@ -361,7 +361,7 @@
 <div class="category-card" id="Location">
   <div class="id">top:Location</div>
   <div class="name">Location <a href="#Location">¶</a></div>
-  <div class="desc">The Primitives category for places where work happens, where Agents act, or where Resources and outputs are held. Such places span the physical real world, virtual digital systems, and storage containers. Every Activity occurs at some place in this category, every Resource resides somewhere within it, and every Agent has a current locale here.</div>
+  <div class="desc">The Core category for places where work happens, where Agents act, or where Resources and outputs are held. Such places span the physical real world, virtual digital systems, and storage containers. Every Activity occurs at some place in this category, every Resource resides somewhere within it, and every Agent has a current locale here.</div>
   <div class="meta"><strong>Alt labels:</strong> Space, Place &nbsp;·&nbsp; <strong>Relations:</strong> withinLocation, geoSpatialData, accessRequirement</div>
 </div>
 
@@ -392,7 +392,7 @@
 <div class="category-card" id="Resource">
   <div class="id">top:Resource</div>
   <div class="name">Resource <a href="#Resource">¶</a></div>
-  <div class="desc">The Primitives category for operational assets that Activities consume, use, or operate. As the means of production, members of this category are what Agents reach for to get work done: software systems process information, physical equipment performs tasks, material stocks flow through operations. Distinct from Agent: Agents act; members of this category are used.</div>
+  <div class="desc">The Core category for operational assets that Activities consume, use, or operate. As the means of production, members of this category are what Agents reach for to get work done: software systems process information, physical equipment performs tasks, material stocks flow through operations. Distinct from Agent: Agents act; members of this category are used.</div>
   <div class="meta"><strong>Alt labels:</strong> Tools, Operational Asset &nbsp;·&nbsp; <strong>Relations:</strong> ownedBy, hasMaintenanceLog, operationalState</div>
 </div>
 
@@ -423,7 +423,7 @@
 <div class="category-card" id="Scope">
   <div class="id">top:Scope</div>
   <div class="name">Scope <a href="#Scope">¶</a></div>
-  <div class="desc">The Primitives category for bounded efforts with stated purpose, governance, and a defined boundary. Members of this category are how organizations frame what they are doing and why. They scale from strategic Portfolios at the top, through Programs that group related work under a single mandate, down to specific Projects with start and end dates.</div>
+  <div class="desc">The Core category for bounded efforts with stated purpose, governance, and a defined boundary. Members of this category are how organizations frame what they are doing and why. They scale from strategic Portfolios at the top, through Programs that group related work under a single mandate, down to specific Projects with start and end dates.</div>
   <div class="meta"><strong>Alt labels:</strong> Intent, Bounded Effort &nbsp;·&nbsp; <strong>Relations:</strong> governedBy, containsActivity, objectiveStatement</div>
 </div>
 
@@ -454,7 +454,7 @@
 <div class="category-card" id="Temporal">
   <div class="id">top:Temporal</div>
   <div class="name">Temporal <a href="#Temporal">¶</a></div>
-  <div class="desc">The Primitives category for anything that exists in time, whether as a recurring pattern, a bounded interval, a performed event, or a marker on a timeline. Concepts in this category answer the question of when something happens, must happen, or has happened-and-mattered. Complements Location: when complements where.</div>
+  <div class="desc">The Core category for anything that exists in time, whether as a recurring pattern, a bounded interval, a performed event, or a marker on a timeline. Concepts in this category answer the question of when something happens, must happen, or has happened-and-mattered. Complements Location: when complements where.</div>
   <div class="meta"><strong>Alt labels:</strong> Rhythm, Time-Bound Occurrence &nbsp;·&nbsp; <strong>Relations:</strong> startTime, endTime, precededBy, occursAt</div>
 </div>
 
@@ -491,7 +491,7 @@
 <div class="category-card" id="Evidence">
   <div class="id">top:Evidence</div>
   <div class="name">Evidence <a href="#Evidence">¶</a></div>
-  <div class="desc">The Primitives category for verifiable artifacts that prove a fact, a claim, or a state of affairs. Concepts here answer the question of how do we know what we know. They carry integrity through cryptographic hashes, signatures, version control, and audit trails. Distinct from Outcome: Outcomes are produced by work; Evidence proves work happened.</div>
+  <div class="desc">The Core category for verifiable artifacts that prove a fact, a claim, or a state of affairs. Concepts here answer the question of how do we know what we know. They carry integrity through cryptographic hashes, signatures, version control, and audit trails. Distinct from Outcome: Outcomes are produced by work; Evidence proves work happened.</div>
   <div class="meta"><strong>Alt labels:</strong> Proof, Verifiable Artifact &nbsp;·&nbsp; <strong>Relations:</strong> verifiesOutcome, integrityHash, signedBy</div>
 </div>
 
@@ -528,7 +528,7 @@
 <div class="category-card" id="Outcome">
   <div class="id">top:Outcome</div>
   <div class="name">Outcome <a href="#Outcome">¶</a></div>
-  <div class="desc">The Primitives category for observable, recordable products of work. Concepts here answer the question of what happened or what came of it. Workflow-specific outcomes (a clinical Adverse Event, a manufacturing Out-of-Specification result) specialize the appropriate leaf rather than introducing new universal result shapes.</div>
+  <div class="desc">The Core category for observable, recordable products of work. Concepts here answer the question of what happened or what came of it. Workflow-specific outcomes (a clinical Adverse Event, a manufacturing Out-of-Specification result) specialize the appropriate leaf rather than introducing new universal result shapes.</div>
   <div class="meta"><strong>Alt labels:</strong> Results, Observable Result &nbsp;·&nbsp; <strong>Relations:</strong> measuredBy, satisfiesConstraint, variance</div>
 </div>
 
@@ -565,7 +565,7 @@
 <div class="category-card" id="Constraint">
   <div class="id">top:Constraint</div>
   <div class="name">Constraint <a href="#Constraint">¶</a></div>
-  <div class="desc">The Primitives category for rules, limits, and bounds that govern what counts as valid operation. Concepts here are the rails along which work runs, the boundary conditions that separate compliant from non-compliant. A member of this category is enforced by some Agent and applies to one or more entities in this taxonomy.</div>
+  <div class="desc">The Core category for rules, limits, and bounds that govern what counts as valid operation. Concepts here are the rails along which work runs, the boundary conditions that separate compliant from non-compliant. A member of this category is enforced by some Agent and applies to one or more entities in this taxonomy.</div>
   <div class="meta"><strong>Alt labels:</strong> Validity Rule, Guardrail &nbsp;·&nbsp; <strong>Relations:</strong> enforcedBy, severityLevel, appliesTo</div>
 </div>
 
@@ -590,11 +590,11 @@
   </div>
 </div>
 
-<h2 class="section">Composition rule · domain KGs extend primitives, inherit everything</h2>
+<h2 class="section">Composition rule · domain KGs extend Core, inherit everything</h2>
 
-<p>Workflow extensions for specific domains (clinical research at <span class="inline">topcr:</span>, future CMC at <span class="inline">topcmc:</span>, future energy at <span class="inline">topenergy:</span>) compose on top of these primitives by specializing a primitive class. A clinical Visit specializes <span class="inline">top:Activity</span>. A clinical Study specializes <span class="inline">top:Project</span>. A clinical IRB specializes <span class="inline">top:Group</span>. A manufacturing Run specializes <span class="inline">top:Activity</span>. A supply-chain Shipment specializes <span class="inline">top:Activity</span>. The universal layer stays small and reusable; the domain-specific concerns live in the domain's own namespace.</p>
+<p>Workflow extensions for specific domains (clinical research at <span class="inline">topcr:</span>, future CMC at <span class="inline">topcmc:</span>, future energy at <span class="inline">topenergy:</span>) compose on top of the Core layer by specializing a Core concept. A clinical Visit specializes <span class="inline">top:Activity</span>. A clinical Study specializes <span class="inline">top:Project</span>. A clinical IRB specializes <span class="inline">top:Group</span>. A manufacturing Run specializes <span class="inline">top:Activity</span>. A supply-chain Shipment specializes <span class="inline">top:Activity</span>. The universal layer stays small and reusable; the domain-specific concerns live in the domain's own namespace.</p>
 
-<p><strong>By specializing a primitive, a domain class inherits the full alignment stack at no additional cost.</strong> A clinical Visit, declared as <span class="inline">topcr:Visit rdfs:subClassOf top:Activity</span>, automatically gets:</p>
+<p><strong>By specializing a Core concept, a domain class inherits the full alignment stack at no additional cost.</strong> A clinical Visit, declared as <span class="inline">topcr:Visit rdfs:subClassOf top:Activity</span>, automatically gets:</p>
 
 <div class="arch">
   <div class="level">
@@ -610,7 +610,7 @@
   <div class="level">
     <div class="level-label">Inherited · NGSI-LD wire compatibility</div>
     <div class="level-name">FIWARE / Orion / Stellio interop without per-domain mapping</div>
-    <div class="level-desc">When <span class="inline">primitives/v1/context.jsonld</span> lands, every domain class extending a primitive maps to the right NGSI-LD type and emits the standard observedAt / identifier / status attributes automatically. A clinical KG that extends primitives is wire-compatible with any NGSI-LD broker on day one.</div>
+    <div class="level-desc">When <span class="inline">core/v1/context.jsonld</span> lands, every domain class extending a Core concept maps to the right NGSI-LD type and emits the standard observedAt / identifier / status attributes automatically. A clinical KG that extends Core is wire-compatible with any NGSI-LD broker on day one.</div>
   </div>
   <div class="level">
     <div class="level-label">Inherited · SHACL property requirements</div>
@@ -619,15 +619,15 @@
   </div>
 </div>
 
-<p>This is the architectural payoff. A working group convening for cell therapy, for rare disease, for energy and process industries does not have to reinvent provenance, redeclare the substrate, or rewrite NGSI-LD compatibility. They specialize the primitives that fit, declare the domain-specific properties they need, and inherit the constitutional commitments at zero cost.</p>
+<p>This is the architectural payoff. A working group convening for cell therapy, for rare disease, for energy and process industries does not have to reinvent provenance, redeclare the Core layer, or rewrite NGSI-LD compatibility. They specialize the Core concepts that fit, declare the domain-specific properties they need, and inherit the constitutional commitments at zero cost.</p>
 
-<p>The membership test that decides what lives at the universal layer stays sharp: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and inherits from the right primitive.</p>
+<p>The membership test that decides what lives at the universal layer stays sharp: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and inherits from the right Core concept.</p>
 
 <h2 class="section">Worked examples · what extension looks like in practice</h2>
 
-<p>Two angles on the inheritance pattern: one universal primitive specialized many ways across industries, and one industry specializing many primitives at once. Both are class-declaration sketches in Turtle; the actual workflow extensions live in their own files (clinical research at <span class="inline">clinical-research/source/owl-classes.ttl</span>) and add domain-specific properties beyond what is shown here.</p>
+<p>Two angles on the inheritance pattern: one universal Core concept specialized many ways across industries, and one industry specializing many Core concepts at once. Both are class-declaration sketches in Turtle; the actual workflow extensions live in their own files (clinical research at <span class="inline">clinical-research/source/owl-classes.ttl</span>) and add domain-specific properties beyond what is shown here.</p>
 
-<h3 class="category">Angle 1 / One primitive, every industry that needs it</h3>
+<h3 class="category">Angle 1 / One Core concept, every industry that needs it</h3>
 
 <p>Take <span class="inline">top:Activity</span>, the universal performance leaf for any unit of operational work performed at a definite time. Every industry that has things-that-happen-at-a-time specializes it:</p>
 
@@ -648,9 +648,9 @@
 
 <p class="ex-caption">Five domain classes, one parent. None of those five domains had to declare identifier / observedAt / status. None had to declare PROV-O alignment. None will have to declare NGSI-LD compatibility when context.jsonld lands. None will have to redeclare the prov:used / prov:wasAssociatedWith requirements. All five inherit them through the SubClassOf chain.</p>
 
-<h3 class="category">Angle 2 / One industry, many primitives at once</h3>
+<h3 class="category">Angle 2 / One industry, many Core concepts at once</h3>
 
-<p>The clinical research workflow extension declares roughly fifteen domain classes, each anchored to the primitive that fits. The full clinical research vocabulary then composes by adding domain-specific properties to each subclass (an InvestigatorCredential carries IRB-approval-date and country scope; a Visit carries protocol-section and visit-window; an AdverseEvent carries CTCAE-grade and causality), but the constitutional commitments come down through the inheritance chain at zero cost.</p>
+<p>The clinical research workflow extension declares roughly fifteen domain classes, each anchored to the Core concept that fits. The full clinical research vocabulary then composes by adding domain-specific properties to each subclass (an InvestigatorCredential carries IRB-approval-date and country scope; a Visit carries protocol-section and visit-window; an AdverseEvent carries CTCAE-grade and causality), but the constitutional commitments come down through the inheritance chain at zero cost.</p>
 
 <pre class="code-block"><span class="cmt"># Agents — who acts in a clinical trial</span>
 <span class="ns-domain">topcr:Sponsor</span>                  <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Organization</span> .
@@ -681,14 +681,14 @@
 <span class="ns-domain">topcr:CSR</span>                      <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Artifact</span> .
 <span class="ns-domain">topcr:RegulatoryDecision</span>       <span class="kw">rdfs:subClassOf</span>  <span class="ns-prim">top:Conclusion</span> .</pre>
 
-<p class="ex-caption">Sixteen domain classes anchored to thirteen distinct primitives across six categories. Every one becomes a prov:Agent, prov:Activity, prov:Entity, or prov:Plan automatically. Every one carries identifier / observedAt / status. Every one is NGSI-LD wire-compatible. The clinical research extension is then this skeleton plus the domain-specific properties each subclass adds — not a re-declaration of the floor.</p>
+<p class="ex-caption">Sixteen domain classes anchored to thirteen distinct Core concepts across six categories. Every one becomes a prov:Agent, prov:Activity, prov:Entity, or prov:Plan automatically. Every one carries identifier / observedAt / status. Every one is NGSI-LD wire-compatible. The clinical research extension is then this skeleton plus the domain-specific properties each subclass adds, not a re-declaration of the floor.</p>
 
 <h2 class="section">Status</h2>
 
 <p>This namespace is at <strong>v1.0.0-strawman</strong> as of May 2026. The SKOS taxonomy is locked and Termboard-clean (zero circular-definition flags, zero anti-pattern words, zero standalone-acronym flags, every L3 leaf names its L2 parent). The OWL/SHACL companion (<span class="inline">commons/source/core.ttl</span>) and the JSON-LD context are scheduled to follow this taxonomy locking in Termboard.</p>
 
 <div class="footer">
-  Resolution target for the top: namespace · v1 of TOP Primitives · governed by The Ontology Project under Apache 2.0
+  Resolution target for the top: namespace · v1 of TOP Core · governed by The Ontology Project under Apache 2.0
 </div>
 
 <footer class="site-footer">
