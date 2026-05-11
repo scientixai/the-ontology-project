@@ -284,6 +284,68 @@
   <p>Standards-up vendors model N entity types per therapeutic area. TOP carries one universal pattern that handles all of them — and stays small enough for an operator to comprehend in their head.</p>
 </blockquote>
 
+<h2 class="section">Promote facts to entities — no bespoke flags</h2>
+
+<p>A fourth structural commitment, alongside operator-grounded vocabulary, native temporal+provenance, and universal pattern: <strong>when you reach for a boolean or a bespoke enum, you're hiding a fact that wants to be a first-class entity. Model the fact.</strong></p>
+
+<p>Every "is X" flag squashes information. The thing the flag is hiding usually has:</p>
+
+<ul>
+  <li>a <strong>time</strong> (when did this become true)</li>
+  <li>an <strong>authority</strong> (who declared it)</li>
+  <li>a <strong>scope</strong> (over what jurisdiction, study, participant)</li>
+  <li>a <strong>revocability</strong> (can it be undone, and what supersedes it)</li>
+  <li><strong>evidence</strong> (a letter, a ruling, a signed record)</li>
+</ul>
+
+<p>A boolean strips all of that to <code class="inline">true / false</code>. The result is a bespoke vocabulary on each entity that only the engineer who wrote it understands — the same digital archaeology that makes relational databases full of opaque enums unreadable to anyone but the original author. The graph loses the ability to answer <em>who</em> designated this, <em>when</em>, under <em>what authority</em>, and <em>whether it has been revoked</em>.</p>
+
+<p>The Core categories were designed to absorb these patterns:</p>
+
+<ul>
+  <li><em>"Is designated"</em> claims → <code class="inline">top:Attestation</code> (an Evidence leaf). The Agent who designated, the date, the scope, and the revocation chain all live on the Attestation.</li>
+  <li><em>"Is bounded by"</em> rules → <code class="inline">top:Constraint</code>. The bound, the severity, who enforces, what it applies to.</li>
+  <li><em>"Has transitioned"</em> state changes → <code class="inline">top:StatusChange</code> (an Outcome leaf). The transition, the time, the cause.</li>
+  <li><em>"Is documented in"</em> artifacts → <code class="inline">top:Document</code> or <code class="inline">top:Attestation</code>. The artifact carries its own provenance.</li>
+  <li><em>"Was measured"</em> facts → <code class="inline">top:Observation</code> (an Outcome leaf). Value, unit, instrument, observer.</li>
+</ul>
+
+<p>When an entity inherits from a Core primitive, the system <em>understands the meaning</em> — Universal DNA carries identity, time, and status; PROV-O semantics carry attribution and chain of custody. The boolean approach forces every consumer to learn a private vocabulary; the primitive approach is predictable across every workflow.</p>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">Two rules to internalize</h3>
+
+<ol>
+  <li><strong>A boolean is evidence in disguise — model the evidence.</strong> Before adding a boolean property, ask: <em>who declares this true, when, under what authority?</em> If any of those has an answer, the boolean is hiding an Attestation, a Constraint, or a StatusChange.</li>
+  <li><strong>If you can't say which primitive it inherits from, you haven't named the thing yet.</strong> Every entity in TOP traces to one of the 8 Core categories. A flag that can't be reified to a primitive is a flag that hasn't earned its place — refactor before shipping.</li>
+</ol>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">What this rules out</h3>
+
+<ul>
+  <li>Boolean flags that hide a designation, an authority, or a time-bounded claim (<code class="inline">isSponsorOfRecord</code>, <code class="inline">hasRegulatoryResponsibility</code>, <code class="inline">isBlinded</code> on a Study, <code class="inline">isPrimaryInvestigator</code>, …). These reify to Attestations.</li>
+  <li>Bespoke enums that aren't a finite, stable, operator-vocabulary set. The boundary: <code class="inline">staffRole</code> (a stable, finite, universally-recognized operator vocabulary) earns its keep; <code class="inline">portfolioType</code> (varies by sponsor org, drifts with reorg, every domain extends it) does not.</li>
+  <li>Per-entity status booleans (<code class="inline">isActive</code>, <code class="inline">isClosed</code>, <code class="inline">isFinalized</code>) where the underlying truth is a lifecycle state. Use <code class="inline">top:status</code> and the temporal trajectory.</li>
+  <li>Properties that look universal but only one workflow uses. Promote to a Core primitive only when a real second workflow forces the lift; otherwise the property lives in the workflow extension.</li>
+</ul>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">When a primitive is genuinely missing</h3>
+
+<p>The discipline is purist but not dogmatic. If a real operator workflow surfaces a fact that none of the 8 Core categories absorbs cleanly, the path is an ADR proposing a new Core leaf — not a workaround through bespoke flags. Bespoke flags accumulate; new primitives stay rare. The current 8 categories were designed to be the smallest set that covers the operator space; adding a ninth is a structural event, governed by the same rigor as any Core change.</p>
+
+<p>The bar for a new primitive: at least two unrelated workflows need the same shape and none of the existing 8 absorb it. The cost of a wrong addition is propagation across every domain forever; the cost of an honest absence is one workflow modeling a slightly awkward variant for a while.</p>
+
+<h3 style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; margin: 22px 0 10px;">Already-applied — what this prevents going forward</h3>
+
+<p>The earlier clinical-research draft modeled Sponsor with four booleans (<code class="inline">isSponsorOfRecord</code>, <code class="inline">hasRegulatoryResponsibility</code>, <code class="inline">hasFinancialResponsibility</code>, <code class="inline">hasOperationalResponsibility</code>) and one bespoke enum (<code class="inline">regulatoryAuthorityScope</code>). Under this principle, the honest model is:</p>
+
+<ul>
+  <li>"Pfizer-US is sponsor-of-record with FDA on KEYNOTE-189" → an instance of <code class="inline">top:Attestation</code> granting that responsibility, with the FDA as the granting Agent, the timestamp of designation, the regulatory jurisdiction, and the Study scope. Revocation creates a new Attestation that supersedes the first.</li>
+  <li>The dual-sponsor case (Pfizer-US for FDA, Pfizer-Ireland for EMA) is two Attestations on the same Study with different scopes. No flags. No bespoke enum.</li>
+  <li>A query "who is the current sponsor of record for KEYNOTE-189 under FDA jurisdiction?" walks the Attestation graph, finds the most recent unsuperseded Attestation in that scope, returns the granting Agent. Auditable end-to-end. PROV-traversable. Time-bounded.</li>
+</ul>
+
+<p>This is the architectural reset for the clinical-research rebuild and every workflow that follows.</p>
+
 <h2 class="section">When TOP is anchored around the human and accelerating human work, it always wins</h2>
 
 <p>The "always" is structural, not motivational. Three vectors compete in this space:</p>
