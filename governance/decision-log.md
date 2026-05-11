@@ -22,6 +22,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) | 2026-05-09 | Three-level architecture — Universal DNA, eight categories, leaves | Accepted (refined by ADR-0013; supersedes part of ADR-0008) |
 | [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) | 2026-05-09 | Practitioner-first — TOP's primary customer | Accepted |
 | [ADR-0014](#adr-0014-rename-primitives-to-core-and-cleanups) | 2026-05-10 | Rename Primitives → Core, and cleanups | Accepted (supersedes naming in ADR-0008, ADR-0012, ADR-0013) |
+| [ADR-0015](#adr-0015-monorepo-with-directory-scoped-ownership) | 2026-05-11 | Monorepo with directory-scoped ownership | Accepted |
 
 ---
 
@@ -545,6 +546,61 @@ Three coupled changes, shipped in one branch:
 ### Status
 
 Accepted. The artifacts on this branch implement the rename, the namespace collapse, the path move, and the file rename. Deferred: clinical-research namespace rebase to `topcr:`, rebuild of `core/v1/shapes.ttl` content (currently carries stale legacy content under a deprecation banner), JSON-LD context.jsonld for NGSI-LD wire compatibility, and rewrite of TAXONOMY.md to match current architecture.
+
+---
+
+## ADR-0015: Monorepo with directory-scoped ownership
+
+**Date:** 2026-05-11 · **Status:** Accepted · **Refs:** [`.github/CODEOWNERS`](../.github/CODEOWNERS), [`governance/working-groups.md`](working-groups.md), [`governance/rfcs/README.md`](rfcs/README.md), [`governance/branch-protection.md`](branch-protection.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md)
+
+### Context
+
+TOP today is a single repository at [scientixai/the-ontology-project](https://github.com/scientixai/the-ontology-project), with the convener as the review pool of one. The Core layer has stabilized (ADR-0012, ADR-0013, ADR-0014); workflow extensions (clinical-research first, then care-delivery, manufacturing, supply-chain) are queued. Before the workflow rebuilds begin and additional working groups form, the project needs a structural answer to the question: *how does TOP manage multiple domains over time across multiple working groups?*
+
+> "Let's go with the best option now before we go down a path of a lot of work and then it's tough to unravel."
+
+Three structural options were on the table:
+
+1. **Monorepo** — single repository, all working groups contribute, directory-scoped ownership via `CODEOWNERS`.
+2. **Polyrepo with git submodules** — Core in one repo, each workflow in its own repo, parent repo pulls them in as submodules.
+3. **Polyrepo with cadence-based imports** — Core and each workflow in separate repos; a release pipeline assembles `top.scientix.ai` from pinned versions.
+
+Submodules are conceptually clean but operationally cursed (detached HEADs, stale pointers, brittle CI). Cadence-based imports work for releases (the Linux-distribution pattern) but add real cost during active development and require a build pipeline that TOP does not yet need. Monorepo, paired with directory-scoped ownership and an RFC process for structural change, handles the multi-WG case at TOP's current and reachable-future scale.
+
+### Decision
+
+TOP stays a single repository. Working group ownership is enforced by:
+
+1. **`.github/CODEOWNERS`** — each top-level directory has a designated owner. Pull requests modifying files in a directory require approval from at least one of that directory's owners. Cross-cutting changes require each affected owner's approval.
+
+2. **`governance/working-groups.md`** — five-state lifecycle (Proposed → Forming → Active → Mature → Archived) for how a working group comes into being, operates, and dissolves. Each WG owns one or more directories; the WG's authority and accountability are mapped to those directories.
+
+3. **`governance/rfcs/`** — the formal coordination mechanism for structural changes. RFCs are required for: changes to Core, cross-WG changes, governance changes, WG formation/dissolution, URI/namespace changes, and tooling/standards adoption. The cost is small (a markdown file, a PR, a review); the benefit is a durable artifact recording the decision.
+
+4. **Branch protection** — `main` requires PR + CODEOWNER approval + linear history. No force pushes, no direct commits, no bypassing the rules. Documented in [`governance/branch-protection.md`](branch-protection.md) because branch protection is a GitHub Settings concern, not an in-repo file.
+
+5. **Per-directory versioning** — each working group releases its directory on its own schedule (`core/v1/`, `clinical-research/v0.2/`, `manufacturing/v0.1-draft/`). No working group blocks any other; nobody waits for anyone else.
+
+6. **Source topology and deployment topology are decoupled.** Today both are monorepo. If a workflow ever needs to spin out into its own repository, the deployment pipeline for `top.scientix.ai` can keep the public site unified across multiple source repositories. The deployment can adapt without forcing the source to.
+
+### Consequences
+
+- **Scales to many working groups without repo proliferation.** Ten WGs in one repository is fine when their ownership boundaries are honored at the directory level.
+- **Operator trust grows on a single review surface.** Anyone tracking TOP can read every change in one place, file PRs against one place, and trust one set of governance rules.
+- **GitHub Pages stays simple.** `top.scientix.ai` is served straight from `main`. No assembly pipeline, no submodule materialization, no release manifests.
+- **Cross-cutting changes are atomic.** When Core renames a class (the Primitives → Core rename was an example), every affected workflow can be updated in the same commit. Polyrepo would have made that a multi-step coordinated dance.
+- **Governance enforcement depends on GitHub features.** CODEOWNERS, branch protection, and required reviews are configured in GitHub Settings — not in the repository. The configuration is documented in [`governance/branch-protection.md`](branch-protection.md) so it can be reconstructed if it drifts.
+- **The convener as review pool of one is the only practical operating mode today.** The structure documented here graduates cleanly as WGs form: rename a CODEOWNERS line to point at a team, raise the required-reviewer count if needed, no architectural rework.
+- **Reassessment trigger documented.** If a specific WG's pace of change overwhelms the monorepo's PR queue, or if a working group requires repository-level autonomy that CODEOWNERS cannot deliver, a new ADR proposes spinning that WG out. The polyrepo + deployment-pipeline option stays available; it is not the default today.
+- **What this commits us NOT to do:** Submodules. The project explicitly rejects them as an internal-organization tool. If polyrepo ever lands, it lands without submodules — via deployment-time assembly, not version-controlled repo nesting.
+
+### What this changes vs. earlier ADRs
+
+This ADR is structural / process-level. It does not change any taxonomy, OWL/SHACL, or vocabulary decisions. It formalizes what TOP has been doing informally and adds the discipline that makes the informal mode scale.
+
+### Status
+
+Accepted. Artifacts shipping with this ADR: `.github/CODEOWNERS`, `governance/working-groups.md`, `governance/rfcs/README.md`, `governance/rfcs/0000-template.md`, `governance/branch-protection.md`, `CONTRIBUTING.md`.
 
 ---
 
