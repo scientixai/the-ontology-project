@@ -180,6 +180,58 @@ Every proposed new TOP entity must defend itself as a **TOP Core concept** (univ
 
 This is the architectural moat made structural: standards-up vendors model N entity types per therapeutic area. TOP carries one universal pattern that handles all of them — and stays small enough for an operator to comprehend in their head.
 
+## Promote facts to entities — no bespoke flags
+
+A fourth structural commitment, alongside operator-grounded vocabulary, native temporal+provenance, and universal pattern: **when you reach for a boolean or a bespoke enum, you're hiding a fact that wants to be a first-class entity. Model the fact.**
+
+Every "is X" flag squashes information. The thing the flag is hiding usually has:
+
+- a **time** (when did this become true)
+- an **authority** (who declared it)
+- a **scope** (over what jurisdiction, study, participant)
+- a **revocability** (can it be undone, and what supersedes it)
+- **evidence** (a letter, a ruling, a signed record)
+
+A boolean strips all of that to `true / false`. The result is a bespoke vocabulary on each entity that only the engineer who wrote it understands — the same digital archaeology that makes relational databases full of opaque enums unreadable to anyone but the original author. The graph loses the ability to answer *who* designated this, *when*, under *what authority*, and *whether it has been revoked*.
+
+The Core categories were designed to absorb these patterns:
+
+- *"Is designated"* claims → `top:Attestation` (an Evidence leaf). The Agent who designated, the date, the scope, and the revocation chain all live on the Attestation.
+- *"Is bounded by"* rules → `top:Constraint`. The bound, the severity, who enforces, what it applies to.
+- *"Has transitioned"* state changes → `top:StatusChange` (an Outcome leaf). The transition, the time, the cause.
+- *"Is documented in"* artifacts → `top:Document` or `top:Attestation`. The artifact carries its own provenance.
+- *"Was measured"* facts → `top:Observation` (an Outcome leaf). Value, unit, instrument, observer.
+
+When an entity inherits from a Core primitive, the system *understands the meaning* — Universal DNA carries identity, time, and status; PROV-O semantics carry attribution and chain of custody. The boolean approach forces every consumer to learn a private vocabulary; the primitive approach is predictable across every workflow.
+
+### Two rules to internalize
+
+1. **A boolean is evidence in disguise — model the evidence.** Before adding a boolean property, ask: *who declares this true, when, under what authority?* If any of those has an answer, the boolean is hiding an Attestation, a Constraint, or a StatusChange.
+2. **If you can't say which primitive it inherits from, you haven't named the thing yet.** Every entity in TOP traces to one of the 8 Core categories. A flag that can't be reified to a primitive is a flag that hasn't earned its place — refactor before shipping.
+
+### What this rules out
+
+- Boolean flags that hide a designation, an authority, or a time-bounded claim (`isSponsorOfRecord`, `hasRegulatoryResponsibility`, `isBlinded` on a Study, `isPrimaryInvestigator`, …). These reify to Attestations.
+- Bespoke enums that aren't a finite, stable, operator-vocabulary set. The boundary: `staffRole` (a stable, finite, universally-recognized operator vocabulary) earns its keep; `portfolioType` (varies by sponsor org, drifts with reorg, every domain extends it) does not.
+- Per-entity status booleans (`isActive`, `isClosed`, `isFinalized`) where the underlying truth is a lifecycle state. Use `top:status` and the temporal trajectory.
+- Properties that look universal but only one workflow uses. Promote to a Core primitive only when a real second workflow forces the lift; otherwise the property lives in the workflow extension.
+
+### When a primitive is genuinely missing
+
+The discipline is purist but not dogmatic. If a real operator workflow surfaces a fact that none of the 8 Core categories absorbs cleanly, the path is an ADR proposing a new Core leaf — not a workaround through bespoke flags. Bespoke flags accumulate; new primitives stay rare. The current 8 categories were designed to be the smallest set that covers the operator space; adding a ninth is a structural event, governed by the same rigor as any Core change.
+
+The bar for a new primitive: at least two unrelated workflows need the same shape and none of the existing 8 absorb it. The cost of a wrong addition is propagation across every domain forever; the cost of an honest absence is one workflow modeling a slightly awkward variant for a while.
+
+### Already-applied — what this prevents going forward
+
+The earlier clinical-research draft modeled Sponsor with four booleans (`isSponsorOfRecord`, `hasRegulatoryResponsibility`, `hasFinancialResponsibility`, `hasOperationalResponsibility`) and one bespoke enum (`regulatoryAuthorityScope`). Under this principle, the honest model is:
+
+- "Pfizer-US is sponsor-of-record with FDA on KEYNOTE-189" → an instance of `top:Attestation` granting that responsibility, with the FDA as the granting Agent, the timestamp of designation, the regulatory jurisdiction, and the Study scope. Revocation creates a new Attestation that supersedes the first.
+- The dual-sponsor case (Pfizer-US for FDA, Pfizer-Ireland for EMA) is two Attestations on the same Study with different scopes. No flags. No bespoke enum.
+- A query "who is the current sponsor of record for KEYNOTE-189 under FDA jurisdiction?" walks the Attestation graph, finds the most recent unsuperseded Attestation in that scope, returns the granting Agent. Auditable end-to-end. PROV-traversable. Time-bounded.
+
+This is the architectural reset for the clinical-research rebuild and every workflow that follows.
+
 ## Naming and citation
 
 Cite as: **`FIRST-PRINCIPLES.md`** or, in prose, as **"TOP first principles"**. The principle in one line — *a participant is a participant, full stop* — is the quotable form.

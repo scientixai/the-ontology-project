@@ -22,6 +22,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) | 2026-05-09 | Three-level architecture — Universal DNA, eight categories, leaves | Accepted (refined by ADR-0013; supersedes part of ADR-0008) |
 | [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) | 2026-05-09 | Practitioner-first — TOP's primary customer | Accepted |
 | [ADR-0014](#adr-0014-rename-primitives-to-core-and-cleanups) | 2026-05-10 | Rename Primitives → Core, and cleanups | Accepted (supersedes naming in ADR-0008, ADR-0012, ADR-0013) |
+| [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags) | 2026-05-11 | Promote facts to entities — no bespoke flags | Accepted |
 
 ---
 
@@ -545,6 +546,56 @@ Three coupled changes, shipped in one branch:
 ### Status
 
 Accepted. The artifacts on this branch implement the rename, the namespace collapse, the path move, and the file rename. Deferred: clinical-research namespace rebase to `topcr:`, rebuild of `core/v1/shapes.ttl` content (currently carries stale legacy content under a deprecation banner), JSON-LD context.jsonld for NGSI-LD wire compatibility, and rewrite of TAXONOMY.md to match current architecture.
+
+---
+
+## ADR-0015: Promote facts to entities — no bespoke flags
+
+**Date:** 2026-05-11 · **Status:** Accepted · **Refs:** [FIRST-PRINCIPLES.md § Promote facts to entities](../FIRST-PRINCIPLES.md)
+
+### Context
+
+The clinical-research rebuild surfaced a recurring modeling temptation: when a Sponsor "is the sponsor of record" or "has regulatory responsibility," the natural reflex is to add boolean flags (`isSponsorOfRecord`, `hasRegulatoryResponsibility`, …). The earlier draft of Sponsor in `reference-graphs/clinical-trials/` carried four such flags plus a `regulatoryAuthorityScope` bespoke enum.
+
+> "I don't like a bunch of Boolean flags — we need to do better."
+>
+> "Whenever you introduce a bespoke boolean, you take a strike at predictability. Now, for an object that inherits an evidence or an attestation primitive, then the system doesn't have to predict it. It understands what that meaning is."
+>
+> "In a lot of systems that I've seen in the past, relational databases are full of enums that only the database engineer who built them really truly understands, and it requires a lot of digging, again, digital archaeology."
+
+Boolean flags and bespoke enums hide structure. The thing they hide — *who declared this, when, under what authority, against what scope, with what evidence, can it be revoked* — is exactly the kind of structure the Core categories were designed to absorb. Attestation, Constraint, StatusChange, Observation, Document each carry the time, authority, scope, and provenance that booleans throw away.
+
+The current 8 Core categories (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) were the result of a deliberate design pass to be the smallest set that covers the operator space. Every time a workflow extension reaches for a flag instead of a primitive, the architecture's predictability erodes. Without a principle that names this discipline, every clinical-research, manufacturing, supply-chain, and care-delivery workflow will independently rediscover the boolean trap.
+
+### Decision
+
+**A boolean is evidence in disguise — model the evidence.** Promoted from a modeling preference to a structural commitment.
+
+The rule:
+
+1. When reaching for a boolean property or a bespoke enum on a workflow-extension entity, ask: *who declares this true, when, under what authority?* If any of those has an answer, the boolean is hiding an Attestation, a Constraint, or a StatusChange — model the underlying entity.
+2. Every entity in TOP traces to one of the 8 Core categories. A flag that can't be reified to a primitive is a flag that hasn't earned its place.
+3. The discipline is purist but not dogmatic. If a real operator workflow surfaces a fact that none of the 8 absorbs cleanly, the path is an ADR proposing a new Core leaf — not a workaround through bespoke flags. The bar for a new primitive: at least two unrelated workflows need the same shape, and none of the existing 8 absorb it.
+
+### Consequences
+
+- **Predictability across workflows.** Every "is designated" claim is an Attestation in clinical-research, manufacturing, supply-chain, care-delivery. The same query patterns work everywhere.
+- **PROV-O auditability flows through.** Attestation inherits PROV-O semantics via the Core hierarchy. Boolean flags inherit nothing.
+- **Time and revocability become first-class.** A booleanized "is sponsor of record" can't answer "as of when, under what authority, and has that authority since revoked it?" An Attestation can.
+- **No bespoke vocabulary tax.** Future contributors don't need to learn each workflow's private boolean dictionary. They read the Core categories, which are operator-vocabulary and stable.
+- **The clinical-research rebuild applies this from the first commit.** Sponsor, sponsorships, regulatory designations, financial responsibilities, oversight authorities — all reify to Core primitives. No boolean flag escapes.
+- **Some bespoke flags survive — when they meet the bar.** `staffRole` (finite, stable, operator-vocabulary, universally recognized across clinical-research) is fine. `portfolioType` (varies by sponsor org, drifts with reorg, every domain extends it differently) is not. The principle distinguishes between *operator vocabulary* and *engineer shorthand*; only the former earns its place.
+- **The Core stays small.** The pressure released by this principle is the pressure to add bespoke flags. New Core primitives stay rare because most candidates resolve to existing primitives once the discipline applies.
+
+### What this does NOT change
+
+- Universal DNA stays at three properties (`top:identifier`, `top:observedAt`, `top:status`). Status is the one universal-level enum that survives; it represents lifecycle, not designation.
+- The 8 Core categories stand. This principle protects them from drift; it doesn't add or remove any.
+- Workflow extensions can still declare their own classes (e.g., `topcr:ClinicalSupplyChain rdfs:subClassOf top:Program`) — class-level specialization is fine when shape differs. The principle bites property-level flags, not class-level subclassing.
+
+### Status
+
+Accepted. FIRST-PRINCIPLES.md (and its .html mirror) carry the canonical rule as a fourth structural commitment alongside operator-grounded vocabulary, native temporal+provenance, and universal pattern. The clinical-research rebuild applies this discipline from its first commit.
 
 ---
 
