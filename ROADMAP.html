@@ -193,17 +193,21 @@
 
 <h1 class="sr-only">The Ontology Project · Roadmap · v1</h1>
 
-<div class="tagline">A working document. Edited frequently. The single place where future TOP work is tracked once more than one finished top-level exists.</div>
+<div class="tagline">A working document. Edited frequently. The single place where future TOP work is tracked.</div>
+
+<div style="background: #fff8e1; border-left: 3px solid #d4a017; padding: 12px 14px; margin: 12px 0; font-size: 12px;">
+  <strong>Status note (2026-05-12):</strong> The narrative below pre-dates TOP Core landing and reflects the old OOUX-9 framing. Cross-references to the archived pre-Core artifacts have been updated to point under <a href="legacy/"><code class="inline">legacy/</code></a>, but the prose itself describes the historical lift sequence (Sponsor → Site → Study → … → Event) and not the current architecture. For current state see <a href="ROADMAP.md">ROADMAP.md</a>. This HTML mirror will be regenerated once the clinical-research workflow rebuild is underway.
+</div>
 
 <p>This roadmap captures the work queued behind the core ontology effort, the decisions about how that work is staged, and the items that need to land before TOP moves out of <code class="inline">CLAUDE OUTPUTS/</code> into <a href="https://github.com/scientixai/the-ontology-project">github.com/scientixai/the-ontology-project</a> under Apache 2.0. It supplements the per-spec open-issues tables and becomes the single place where future work is tracked once we have more than one finished top-level.</p>
 
-<h2 class="section">Where we are (2026-05-08)</h2>
+<h2 class="section">Where we were (2026-05-08, pre-Core)</h2>
 
-<p>The clinical-trials reference graph is the first reference graph being built on TOP. The OOUX hierarchy is locked at eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven OOUX boundary decisions are resolved (see <a href="reference-graphs/clinical-trials/docs/ooux-hierarchy.html">ooux-hierarchy.html</a>).</p>
+<p>The clinical-trials reference graph is the first reference graph being built on TOP. The OOUX hierarchy is locked at eight top-levels: Sponsor, Study, Site, Participant, Visit, Investigational Product, Oversight Body, Event. All seven OOUX boundary decisions are resolved (see <a href="legacy/reference-graphs/clinical-trials/docs/ooux-hierarchy.html">ooux-hierarchy.html</a>).</p>
 
-<p><strong>Sponsor</strong> is fully sealed at v0.1.4-strawman with eight verification questions answered, four SHACL-SPARQL domain invariants encoded (one soft warning, three hard violations), one worked example validating clean against pyshacl, and a complete spec document (<a href="reference-graphs/clinical-trials/docs/sponsor-spec.html">sponsor-spec.html</a>).</p>
+<p><strong>Sponsor</strong> is fully sealed at v0.1.4-strawman with eight verification questions answered, four SHACL-SPARQL domain invariants encoded (one soft warning, three hard violations), one worked example validating clean against pyshacl, and a complete spec document (<a href="legacy/reference-graphs/clinical-trials/docs/sponsor-spec.html">sponsor-spec.html</a>).</p>
 
-<p><strong>Study</strong> is fully sealed at v0.3.0-strawman with twelve verification questions pending Bo's review, six SHACL-SPARQL domain invariants encoded covering Study lifecycle and design constraints, four worked examples extended with Endpoint / InclusionCriterion / ScheduleOfAssessments entities and validating clean against pyshacl, and a complete spec document (<a href="reference-graphs/clinical-trials/docs/study-spec.html">study-spec.html</a>).</p>
+<p><strong>Study</strong> is fully sealed at v0.3.0-strawman with twelve verification questions pending Bo's review, six SHACL-SPARQL domain invariants encoded covering Study lifecycle and design constraints, four worked examples extended with Endpoint / InclusionCriterion / ScheduleOfAssessments entities and validating clean against pyshacl, and a complete spec document (<a href="legacy/reference-graphs/clinical-trials/docs/study-spec.html">study-spec.html</a>).</p>
 
 <p><strong>Participant</strong> is fully sealed at v0.4.0-strawman as the human in the trial-conduct realm. The lift forced two architectural extensions surfaced during planning: <strong>Recruit</strong> lifts as a separate ninth top-level (top-level count moves 8 → 9) for the pre-consent recruitment realm, recognizing the recruiter as a distinct operator role with its own workflow and lighter PHI surface; and a <strong>multi-realm projection posture</strong> — the same human is a Participant in trial conduct, a Patient in care, a Claimant in claims, an RWE-Patient in research warehouses; TOP carries one realm (trial conduct), the others are projection-adapter targets. Outcomes:</p>
 
@@ -214,7 +218,7 @@
   <li><strong>1 worked example extended</strong> (site-mskcc-onco423.ttl) with one Participant (ON_TREATMENT) and three Recruits demonstrating different funnel states. Conforms under pyshacl --advanced.</li>
   <li><strong>Operator-grounded vocabulary</strong> per <a href="FIRST-PRINCIPLES.html">FIRST-PRINCIPLES</a>: <code class="inline">screeningNumber</code>, <code class="inline">randomizationNumber</code>, <code class="inline">participantStatus</code> values like <code class="inline">ON_TREATMENT</code> / <code class="inline">WITHDRAWN</code>. Standards cross-walks (FHIR R5 <code class="inline">ResearchSubject</code>, SDTM <code class="inline">DM</code> + <code class="inline">DS</code> + <code class="inline">IE</code>, CDASH <code class="inline">DM</code>) live below the line as projection-adapter rules. USDM v4 has no per-subject runtime entity.</li>
   <li><strong>Twin-queryability discipline</strong>: every lifecycle transition produces a queryable record (sub-objects for canonical events; NGSI-LD temporal property for mid-trial states). Foundation carries the contract; downstream twin synthesizers fulfill it. Foundation decisions made now are the load-bearing pre-conditions for twin-for-enrollment in v0.5+ — the highest-value digital-twin use case (synthetic control arms, predicted-response cohort selection, drop-out risk prediction, trial feasibility simulation).</li>
-  <li><strong>Spec docs</strong>: <a href="reference-graphs/clinical-trials/docs/participant-spec.html">participant-spec.html</a> and <a href="reference-graphs/clinical-trials/docs/recruit-spec.html">recruit-spec.html</a>.</li>
+  <li><strong>Spec docs</strong>: <a href="legacy/reference-graphs/clinical-trials/docs/participant-spec.html">participant-spec.html</a> and <a href="legacy/reference-graphs/clinical-trials/docs/recruit-spec.html">recruit-spec.html</a>.</li>
 </ul>
 
 <p><strong>Visit</strong> is fully sealed at v0.5.0-strawman as the sixth top-level — the operational visit-occurrence (a Participant attended a real visit at a StudySite on a real date). Per the universal-foundation posture in <a href="FIRST-PRINCIPLES.html">FIRST-PRINCIPLES</a>, the Visit lift introduces three universal sub-objects that accommodate any assessment without modeling its specifics: a DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape, distinguished only by content (<code class="inline">biomedicalConceptCode</code>, <code class="inline">taskValueType</code>, <code class="inline">taskValue</code>, linked Equipment, governing Document). Outcomes:</p>
@@ -229,7 +233,7 @@
   <li><strong>1 worked example extended</strong> (site-mskcc-onco423.ttl) — Maria's Cycle 1 Day 1 visit at MSKCC: 1 Visit (IN_PERSON_CLINIC, COMPLETED) + 3 Activities (Vital Signs, Blood Draw — CBC, Drug X Administration) + 8 Tasks (4 vitals NUMERIC, 3 lab NUMERIC, 1 IP-admin STRUCTURED with dose/unit/route/lot). Conforms under pyshacl --advanced.</li>
   <li><strong>FHIR Questionnaire projection</strong> — TOP's universal Visit → Activity → Task hierarchy projects cleanly to FHIR R5 <code class="inline">Questionnaire</code> (form template) and <code class="inline">QuestionnaireResponse</code> (captured data); consumable by Epic / Cerner / SMART on FHIR apps / ePRO vendors. Single source of truth → many ephemeral renderings. Adapter implementation deferred to v0.6+.</li>
   <li><strong>Chain-of-custody view</strong> enabled — every Activity becomes queryable as a complete provenance chain (consent → performance → equipment-with-calibration → governing-SOP → captured-Tasks). Compliance vendors render this from hand-curated audit logs; TOP renders it from foundation facts in real time.</li>
-  <li><strong>Spec doc</strong>: <a href="reference-graphs/clinical-trials/docs/visit-spec.html">visit-spec.html</a>.</li>
+  <li><strong>Spec doc</strong>: <a href="legacy/reference-graphs/clinical-trials/docs/visit-spec.html">visit-spec.html</a>.</li>
 </ul>
 
 <p><strong>OversightBody</strong> is fully sealed at v0.5.1-strawman as the seventh top-level — IRB / EC / DSMB / IDMC / Steering Committee / CEC. Per FIRST-PRINCIPLES universal-foundation posture, OversightBody is a TOP Core concept (every regulated trial has oversight bodies regardless of therapeutic area; not specialization). Single TOP entity with <code class="inline">oversightBodyType</code> enum carries the operator-grounded discrimination — same architectural moat as Activity + Task. Outcomes:</p>
@@ -240,7 +244,7 @@
   <li><strong>Three flagged-missing relationships un-flagged</strong>: <code class="inline">Sponsor.interfacesWith</code>, <code class="inline">StudySite.hasIRB</code>, <code class="inline">Study.hasOversightBody</code> now have a real target with sh:class enforcement active.</li>
   <li><strong>2 new SHACL invariants</strong> added (36 total: 5 soft + 31 hard). Type/scope alignment: IRB / EC require LOCAL or CENTRAL scope; DSMB / IDMC require SPONSOR scope.</li>
   <li><strong>3 worked examples extended</strong>: MSKCC IRB serving ONCO-423 + ONCO-423 IDMC; same IRB committee playing different roles on IIT-ONCO-001 (per-Role-per-Study pattern); Advarra Central IRB serving Elevate Network's three sites.</li>
-  <li><strong>Spec doc</strong>: <a href="reference-graphs/clinical-trials/docs/oversightbody-spec.html">oversightbody-spec.html</a>.</li>
+  <li><strong>Spec doc</strong>: <a href="legacy/reference-graphs/clinical-trials/docs/oversightbody-spec.html">oversightbody-spec.html</a>.</li>
 </ul>
 
 <p><strong>InvestigationalProduct (IP)</strong> is fully sealed at v0.6.0-strawman as the eighth top-level — the substance, biologic, device, or combination product under investigation. Per FIRST-PRINCIPLES universal-foundation posture, IP is one TOP entity covering all product types (DRUG / BIOLOGIC / DEVICE / DIAGNOSTIC / COMBINATION_PRODUCT / OTHER) with <code class="inline">investigationalProductType</code> as the operator-grounded discriminator — not a shape discriminator. The foundation doesn't carry type-specific specifics; external systems (Drug Master Files, device databases, IRT systems) hold implementation details. Outcomes:</p>
@@ -254,10 +258,10 @@
   <li><strong>No separate Dispensation entity</strong> — per universal-foundation posture, dispensation events live in the Visit > Activity > Task foundation (activityType=IP_ADMINISTRATION + STRUCTURED taskValue carrying dose/route/lot/kit references).</li>
   <li><strong>4 new SHACL invariants</strong> added (40 total: 6 soft + 34 hard). Blinded IP requires kits; assigned/dispensed kit needs participant; past-expiry lot soft warning + EXPIRED status hard requirement.</li>
   <li><strong>1 worked example extended</strong> (site-mskcc-onco423.ttl) — Drug X (BIOLOGIC, anti-PD-L1 mAb, blinded) supplied by Pfizer for ONCO-423; one Lot (DRX-2026-0117); one Kit (KIT-00042, DISPENSED to Maria).</li>
-  <li><strong>Spec doc</strong>: <a href="reference-graphs/clinical-trials/docs/investigationalproduct-spec.html">investigationalproduct-spec.html</a>.</li>
+  <li><strong>Spec doc</strong>: <a href="legacy/reference-graphs/clinical-trials/docs/investigationalproduct-spec.html">investigationalproduct-spec.html</a>.</li>
 </ul>
 
-<p><strong>Site</strong> has lifted to v0.2.0-strawman as a combined Site + StudySite spec (<a href="reference-graphs/clinical-trials/docs/site-spec.html">site-spec.html</a>, 977 lines), with 14 verification questions pending Bo's review. The Site lift forced an architectural correction (Bo's "Site is the most important object, that's where trials operate" framing and the corrected operational hierarchy <code class="inline">Site → StudySite → Study → Protocol → SOA → Visit → Activity</code>). Outcomes:</p>
+<p><strong>Site</strong> has lifted to v0.2.0-strawman as a combined Site + StudySite spec (<a href="legacy/reference-graphs/clinical-trials/docs/site-spec.html">site-spec.html</a>, 977 lines), with 14 verification questions pending Bo's review. The Site lift forced an architectural correction (Bo's "Site is the most important object, that's where trials operate" framing and the corrected operational hierarchy <code class="inline">Site → StudySite → Study → Protocol → SOA → Visit → Activity</code>). Outcomes:</p>
 
 <ul class="bullets">
   <li><strong>Site</strong> (top-level) lifted from 3 attrs / 5 rels to 49 attrs / 10 rels with full SFQ feasibility coverage (therapeutic area experience, past trial experience, infrastructure, regulatory defaults, insurance, staff capacity).</li>
@@ -322,10 +326,10 @@
 
 <ul class="bullets">
   <li><a href="MANIFESTO.html">MANIFESTO.html</a>, v0.2 manifesto, signatories pending.</li>
-  <li><a href="reference-graphs/clinical-trials/docs/ooux-hierarchy.html">reference-graphs/clinical-trials/docs/ooux-hierarchy.html</a>, eight top-levels, all seven boundary decisions resolved.</li>
-  <li><a href="reference-graphs/clinical-trials/docs/sponsor-spec.html">reference-graphs/clinical-trials/docs/sponsor-spec.html</a>, first complete top-level spec, template for the remaining seven.</li>
-  <li><a href="reference-graphs/clinical-trials/docs/site-spec.html">reference-graphs/clinical-trials/docs/site-spec.html</a>, second top-level spec at v0.2.0-strawman, combined Site + StudySite.</li>
-  <li><a href="reference-graphs/clinical-trials/docs/study-spec.html">reference-graphs/clinical-trials/docs/study-spec.html</a>, third top-level spec at v0.3.0-strawman, Study with Protocol / Arm / SOA / Endpoint / InclusionCriterion / ExclusionCriterion sub-objects.</li>
+  <li><a href="legacy/reference-graphs/clinical-trials/docs/ooux-hierarchy.html">reference-graphs/clinical-trials/docs/ooux-hierarchy.html</a>, eight top-levels, all seven boundary decisions resolved.</li>
+  <li><a href="legacy/reference-graphs/clinical-trials/docs/sponsor-spec.html">reference-graphs/clinical-trials/docs/sponsor-spec.html</a>, first complete top-level spec, template for the remaining seven.</li>
+  <li><a href="legacy/reference-graphs/clinical-trials/docs/site-spec.html">reference-graphs/clinical-trials/docs/site-spec.html</a>, second top-level spec at v0.2.0-strawman, combined Site + StudySite.</li>
+  <li><a href="legacy/reference-graphs/clinical-trials/docs/study-spec.html">reference-graphs/clinical-trials/docs/study-spec.html</a>, third top-level spec at v0.3.0-strawman, Study with Protocol / Arm / SOA / Endpoint / InclusionCriterion / ExclusionCriterion sub-objects.</li>
   <li><a href="https://github.com/scientixai/the-ontology-project/tree/main/tools">tools/</a>, translator scaffold (build_context.py, build_shacl.py).</li>
   <li><a href="https://github.com/scientixai/the-ontology-project/blob/main/reference-graphs/clinical-trials/source/top-strawman.json">reference-graphs/clinical-trials/source/top-strawman.json</a>, source intermediate.</li>
   <li><a href="https://github.com/scientixai/the-ontology-project/blob/main/reference-graphs/clinical-trials/examples/sponsor-pfizer-iqvia.ttl">reference-graphs/clinical-trials/examples/sponsor-pfizer-iqvia.ttl</a>, worked example.</li>
@@ -346,7 +350,7 @@
     <a href="index.html">Home</a> ·
     <a href="MANIFESTO.html">Manifesto</a> ·
     <a href="ROADMAP.html">Roadmap</a> ·
-    <a href="onto/">Namespaces</a> ·
+    <a href="legacy/onto/">Namespaces</a> ·
     <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
   </div>
   <div class="site-footer-sponsor">

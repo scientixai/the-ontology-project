@@ -139,7 +139,7 @@ This is what compliance vendors, workflow vendors, and most ontologies *don't* h
 
 Per FIRST-PRINCIPLES, the operator vocabulary remains primary (`InformedConsent`, `Participant`, `screeningNumber`). The PROV typing layers structurally — the same instance answers `?ic a top:InformedConsent` (operator query) and `?ic a prov:Activity` (compliance query). Both views, one TOP.
 
-The consuming-view exemplar: a per-Activity provenance card showing the complete chain of custody (consent → collection → processing → packaging → transit) for a single blood-draw, with every evidentiary checkmark traceable to a TOP facts. Compliance vendors render that card from hand-curated audit logs. TOP renders it from TOP facts, in real time, against any Activity. See [`reference-graphs/clinical-trials/docs/temporal-prov-native.md`](reference-graphs/clinical-trials/docs/temporal-prov-native.md) for the full audit, conventions, and consuming-view example.
+The consuming-view exemplar: a per-Activity provenance card showing the complete chain of custody (consent → collection → processing → packaging → transit) for a single blood-draw, with every evidentiary checkmark traceable to a TOP facts. Compliance vendors render that card from hand-curated audit logs. TOP renders it from TOP facts, in real time, against any Activity. See [`legacy/reference-graphs/clinical-trials/docs/temporal-prov-native.md`](legacy/reference-graphs/clinical-trials/docs/temporal-prov-native.md) for the original audit, conventions, and consuming-view example (pre-Core; treat as historical reference).
 
 ## Universal pattern — specialization is content, not shape
 
@@ -240,4 +240,4 @@ Cite as: **`FIRST-PRINCIPLES.md`** or, in prose, as **"TOP first principles"**. 
 
 - [`MANIFESTO.html`](MANIFESTO.html) — the philosophical foundation; this document operationalizes it.
 - [`ROADMAP.md`](ROADMAP.md) — what we're building, in what order.
-- [`reference-graphs/clinical-trials/docs/`](reference-graphs/clinical-trials/docs/) — where this principle lands, repeatedly.
+- [`legacy/reference-graphs/clinical-trials/docs/`](legacy/reference-graphs/clinical-trials/docs/) — pre-Core spec docs that surfaced this principle through specific operational scenarios; archived but instructive.
