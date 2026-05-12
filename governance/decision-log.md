@@ -23,6 +23,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) | 2026-05-09 | Practitioner-first — TOP's primary customer | Accepted |
 | [ADR-0014](#adr-0014-rename-primitives-to-core-and-cleanups) | 2026-05-10 | Rename Primitives → Core, and cleanups | Accepted (supersedes naming in ADR-0008, ADR-0012, ADR-0013) |
 | [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags) | 2026-05-11 | Promote facts to entities — no bespoke flags | Accepted |
+| [ADR-0016](#adr-0016-schemaorg-alignment-where-the-peer-is-honest) | 2026-05-11 | schema.org alignment — where the peer is honest | Accepted |
 
 ---
 
@@ -596,6 +597,59 @@ The rule:
 ### Status
 
 Accepted. FIRST-PRINCIPLES.md (and its .html mirror) carry the canonical rule as a fourth structural commitment alongside operator-grounded vocabulary, native temporal+provenance, and universal pattern. The clinical-research rebuild applies this discipline from its first commit.
+
+---
+
+## ADR-0016: schema.org alignment — where the peer is honest
+
+**Date:** 2026-05-11 · **Status:** Accepted · **Refs:** [`taxonomy/taxonomy.ttl`](../taxonomy/taxonomy.ttl), [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer)
+
+### Context
+
+TOP Core ships with two existing standards alignments:
+
+- **PROV-O** — `skos:exactMatch` / `closeMatch` in `taxonomy/taxonomy.ttl` and `rdfs:subClassOf prov:*` in `core/v1/shapes.ttl`. Per ADR-0001.
+- **BFO** — `rdfs:subClassOf bfo:*` on the four BFO-clean L1 categories (Agent / Location / Temporal / Evidence) in `core/v1/shapes.ttl`. Per ADR-0013.
+
+Reviewing the 8 categories and 28 leaves against schema.org surfaced the question of whether TOP is reinventing concepts schema.org already covers cleanly. The convener flagged the NIH-syndrome risk directly:
+
+> "If we create our own spec without leveraging what's already out there, then I think we're off with our skis crossing over. […] We don't want to suffer from that awful disease that I call NIH syndrome, or not invented here syndrome."
+
+The audit found:
+
+- **Exact matches (7 of 28 leaves)** — `Person`, `Organization`, `Physical`, `Virtual`, `Project`, `Schedule`, `Observation` map cleanly to `schema:Person`, `schema:Organization`, `schema:Place`, `schema:VirtualLocation`, `schema:Project`, `schema:Schedule`, `schema:Observation`.
+- **Close matches (10 of 28 leaves)** — `Group`, `System`, `Equipment`, `Material`, `Activity`, `Milestone`, `Document`, `Log`, `Credential`, `RegulatoryLaw` have schema.org peers with partial overlap (different shape but recognizably the same concept).
+- **No peer (11 of 28 leaves)** — `AutonomousAgent`, `Storage`, `Portfolio`, `Program`, `Window`, `Attestation`, `StatusChange`, `Artifact`, `Conclusion`, `PhysicalLimit`, `SafetyGuardrail` have no schema.org equivalent. schema.org's web-markup origins do not model regulated-industry concepts (constraints, attestations, state transitions, conclusions, safety guardrails). Inventing them here is justified.
+- **The 8 categories themselves** — Agent / Location / Resource / Scope / Temporal / Evidence / Outcome / Constraint — are a TOP-original abstraction layer. schema.org is a flat-ish type system rooted at `schema:Thing` with no comparable categorical layer. The 8 categories are a TOP contribution, not a reinvention.
+
+### Decision
+
+Declare schema.org alignment in `taxonomy/taxonomy.ttl` using the same `skos:exactMatch` / `skos:closeMatch` pattern already in place for PROV-O. Document the absences (the 11 leaves without a schema.org peer) inline so the gap is intentional and not an oversight.
+
+The alignment is taxonomy-level only — `taxonomy/taxonomy.ttl` carries the `skos:*Match` triples. No `rdfs:subClassOf schema:*` triples are added to `core/v1/shapes.ttl`. schema.org's class semantics differ from PROV-O's in ways that don't always map cleanly to OWL inheritance; SKOS mappings give schema.org-aware tools the alignment they need without forcing structural commitments TOP shouldn't take on.
+
+### Consequences
+
+- **schema.org-aware tools interpret TOP without bridge adapters.** Web crawlers, search engines, LLMs trained on schema.org, JSON-LD adopters all get a recognizable entity surface where the peer exists.
+- **The NIH-syndrome risk is closed off transparently.** Future contributors auditing TOP against schema.org find the alignment declared explicitly. Where TOP invents (Attestation, Constraint leaves, Portfolio, Program), the absence is documented with the reason: schema.org doesn't model regulated-industry concerns.
+- **The pattern generalizes.** Future alignments against FHIR, FOAF, Dublin Core (for record-level metadata), or domain-specific standards follow the same approach: SKOS mappings in `taxonomy/taxonomy.ttl`, absences documented inline, ADR recording the audit.
+- **TOP stays the operator-vocabulary anchor.** Per ADR-0013, the practitioner is the primary customer. schema.org alignment is edge-only — it serves consumers (search engines, AI tools) without shaping TOP itself. The same posture as BFO and PROV-O alignment.
+
+### What this does NOT do
+
+- It does not add schema.org as an `rdfs:subClassOf` parent to any TOP class. Inheritance commitments stay with PROV-O (class-level) and BFO (light, edge-only on four categories). schema.org's semantics aren't suited to structural inheritance.
+- It does not commit TOP to schema.org's evolution cadence. schema.org versions; the mapping is reviewed when the peer concept changes, not on every schema.org release.
+- It does not reduce the 8-category or 28-leaf set. The categorical layer and the leaves stay; alignment is overlay, not replacement.
+
+### Future alignments to consider (not part of this ADR)
+
+- **FHIR R5** — clinical-research workflow extensions will need this. FHIR resources (`Patient`, `Encounter`, `MedicationKnowledge`, `Observation`, `AdverseEvent`) map to clinical-research-specific subclasses of Core leaves, not to Core leaves directly. Handled at the workflow-extension level.
+- **FOAF** — overlaps with schema.org's Person/Organization but adds social-network semantics TOP doesn't need.
+- **Dublin Core** — already used in `core/v1/shapes.ttl` (`dct:title`, `dct:created`, `dct:license`) for record-level metadata. Per ADR-0013, Dublin Core handles record metadata; PROV-O handles domain provenance.
+
+### Status
+
+Accepted. `taxonomy/taxonomy.ttl` carries 7 exactMatch + 10 closeMatch triples plus inline comments documenting the 11 absences.
 
 ---
 
