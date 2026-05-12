@@ -1,0 +1,75 @@
+# TOP — directory-scoped ownership
+#
+# Per ADR-0017. Every directory in the repository has an owner.
+# Pull requests modifying files in a directory require approval from at
+# least one of that directory's owners. Cross-cutting changes (touching
+# Core + one or more workflow extensions) require approval from each
+# affected owner.
+#
+# Today the convener (@bo-lora) is the only steward; every owner entry
+# resolves to that GitHub user. As working groups form, the relevant
+# directory's owner is reassigned to the GitHub team representing that
+# working group (e.g., `@scientixai/clinical-research-wg`). The history
+# of who owned what is queryable through git blame on this file.
+
+# === Default owner (catch-all) ===
+
+*                                       @bo-lora
+
+
+# === Project-level documents ===
+
+/README.md                              @bo-lora
+/CONTRIBUTING.md                        @bo-lora
+/LICENSE                                @bo-lora
+/CNAME                                  @bo-lora
+
+/first-principles.md                    @bo-lora
+/first-principles.html                  @bo-lora
+/manifesto.html                         @bo-lora
+/roadmap.md                             @bo-lora
+/roadmap.html                           @bo-lora
+/taxonomy.md                            @bo-lora
+
+/index.html                             @bo-lora
+/images/                                @bo-lora
+
+
+# === Core — load-bearing universal layer ===
+# Changes to Core require Core-steward approval. Cross-WG impact —
+# every workflow extension imports Core, so Core changes ripple.
+
+/core/                                  @bo-lora
+/taxonomy/                              @bo-lora
+
+
+# === Governance — process and decisions ===
+# Changes to governance affect every WG. Owned by the conveners.
+
+/governance/                            @bo-lora
+/.github/                               @bo-lora
+
+
+# === Workflow extensions ===
+# Each workflow's directory is owned by its working group. The WG owns
+# the spec, the SKOS/OWL/SHACL artifacts, the worked examples, and the
+# documentation under its directory. Cross-references INTO the workflow
+# from other workflows are not WG-owned (those edges are negotiated).
+
+/clinical-research/                     @bo-lora
+# When the Clinical Research WG forms, replace @bo-lora with
+# @scientixai/clinical-research-wg. The directory will be created
+# when the rebuild starts.
+
+# Future workflow extensions (placeholders — uncomment when the WG forms):
+# /care-delivery/                       @scientixai/care-delivery-wg
+# /manufacturing/                       @scientixai/manufacturing-wg
+# /supply-chain/                        @scientixai/supply-chain-wg
+
+
+# === Pre-Core legacy archive ===
+# legacy/ holds the pre-Core artifacts (clinical-trials work,
+# onto/ mirrors, JSON-intermediate tooling). Read-only historical
+# reference; changes are unusual and require convener approval.
+
+/legacy/                                @bo-lora
