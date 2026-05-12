@@ -31,7 +31,7 @@ The shape of these artifacts is wrong; the reasoning isn't. Specifically:
 
 ## Cross-references repaired
 
-Cross-references from `index.html`, `README.md`, `ROADMAP.md`, `ROADMAP.html`, and `FIRST-PRINCIPLES.md` that pointed at these artifacts have been updated to either point here under `legacy/`, drop the link entirely, or replace with a current-state reference. Anchor links inside the archived HTMLs still work within this directory.
+Cross-references from `index.html`, `README.md`, `roadmap.md`, `roadmap.html`, and `first-principles.md` that pointed at these artifacts have been updated to either point here under `legacy/`, drop the link entirely, or replace with a current-state reference. Anchor links inside the archived HTMLs still work within this directory.
 
 ## Provenance
 

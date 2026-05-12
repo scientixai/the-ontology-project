@@ -391,6 +391,6 @@ Single PR. Follows the patterns established by Sponsor / Site / Study / Particip
 - [`top-strawman.json`](../source/top-strawman.json) — source intermediate.
 - [`study-spec.html`](study-spec.html) — Study spec; SOA + future VisitDefinition reach into Study sub-objects.
 - [`site-spec.html`](site-spec.html) — Site/StudySite spec; StudySite.hostsVisit is the un-flag-missed edge after this lift.
-- [`FIRST-PRINCIPLES.md`](../../../FIRST-PRINCIPLES.md) — operator-grounded foundation; cross-walks below the line.
+- [`first-principles.md`](../../../first-principles.md) — operator-grounded foundation; cross-walks below the line.
 - [USDM v4 Encounter](https://github.com/cdisc-org/usdm/blob/main/src/usdm_model/encounter.py) — verified reference for VisitDefinition cross-walk.
 - ICH E6(R3) Annex 2 — DCT framing for visitMode enum.

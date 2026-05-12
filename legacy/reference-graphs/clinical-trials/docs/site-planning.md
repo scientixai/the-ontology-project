@@ -17,7 +17,7 @@ The remainder of this document preserves the planning-phase reasoning (lens fram
 
 ## Purpose
 
-Site is the second top-level to lift to full spec discipline (per ROADMAP.md). This note captures the scope, the open architectural questions, and the recommendations to resolve before drafting `site-spec.html` and expanding the source intermediate. Deliberately short — a working artifact, not a sealed spec.
+Site is the second top-level to lift to full spec discipline (per roadmap.md). This note captures the scope, the open architectural questions, and the recommendations to resolve before drafting `site-spec.html` and expanding the source intermediate. Deliberately short — a working artifact, not a sealed spec.
 
 ## Architectural anchor: the operational hierarchy
 
@@ -315,7 +315,7 @@ In an IIT (sometimes IIS, investigator-initiated study), the Investigator is the
 
 The ISF section taxonomy is the **legacy operational view** that maps onto R3 Appendix C. Maintaining the alignment is still valuable: many sponsors, CROs, and sites operate against the ISF as the day-to-day artifact organization, and any Site spec ignoring the ISF would be operationally awkward. But the canonical anchor is R3 Appendix C; ISF mappings are secondary.
 
-ROADMAP.md and Bo's request call for alignment with the **CDISC Investigator Site File (ISF) v1 (Provisional)**. The CDISC PDF could not be fetched in the current sandbox (network egress restricted), so this alignment is grounded in the ISF Table of Contents Bo pasted (23 sections, sourced from a Singapore HSA-flavored ISF that mirrors the international ICH E6 essential-documents structure). The ISF section structure is internationally consistent; section 10 (HSA) is country-specific and demonstrates exactly the multi-jurisdiction regulator pattern TOP's `RegulatoryAuthority` flagged-missing horizontal needs to support. **Re-validate against the actual CDISC Provisional document when accessible** — section names and counts may differ; the alignment table will need a refresh pass.
+roadmap.md and Bo's request call for alignment with the **CDISC Investigator Site File (ISF) v1 (Provisional)**. The CDISC PDF could not be fetched in the current sandbox (network egress restricted), so this alignment is grounded in the ISF Table of Contents Bo pasted (23 sections, sourced from a Singapore HSA-flavored ISF that mirrors the international ICH E6 essential-documents structure). The ISF section structure is internationally consistent; section 10 (HSA) is country-specific and demonstrates exactly the multi-jurisdiction regulator pattern TOP's `RegulatoryAuthority` flagged-missing horizontal needs to support. **Re-validate against the actual CDISC Provisional document when accessible** — section names and counts may differ; the alignment table will need a refresh pass.
 
 The ISF is the canonical inventory of artifacts that live at the investigator site under GCP. Its inversion onto an ontology is exactly what Site relationships should align with on the Document side and what Person relationships should align with on the Site Staff / delegation-of-authority side.
 
@@ -408,7 +408,7 @@ The alignment table has an explicit gap that is **out of scope for the Site spec
 
 ## The System question (the central architectural concern)
 
-ROADMAP.md says Site lifting "forces a confrontation with the parked System work (the three-layer ownership-versus-use pattern from the eTMF insight)." The Sponsor v0.1.3 closure log parked it differently — for the Study spec, with `Sponsor.operatesSystem` carrying the per-Study operational ownership view as a simplification. The two notes disagree on where the work lands.
+roadmap.md says Site lifting "forces a confrontation with the parked System work (the three-layer ownership-versus-use pattern from the eTMF insight)." The Sponsor v0.1.3 closure log parked it differently — for the Study spec, with `Sponsor.operatesSystem` carrying the per-Study operational ownership view as a simplification. The two notes disagree on where the work lands.
 
 Bo's framing sharpened the problem to **three axes**: ownership / use / visibility. R3 Section 3 (above) sharpens it further: the third axis is *oversight*, not visibility. Visibility *follows from* oversight under GCP — Sponsor sees what Sponsor has agreement-grounded oversight over (R3 3.6, 3.9); Site sees what Site is GCP-responsible for (R3 2.12, 2.13). This is a **schema-level fact**, not a presentation filter.
 
@@ -494,4 +494,4 @@ The scenarios that need to validate cleanly:
 - [`ooux-hierarchy.html`](ooux-hierarchy.html) — Site OOUX entry at lines 214–224.
 - [`top-strawman.json`](../source/top-strawman.json) — Site entry at line 134, partial scaffold.
 - [`sponsor-spec.html`](sponsor-spec.html) — template the Site spec follows.
-- [`ROADMAP.md`](../../../ROADMAP.md) — Site listed as the next top-level to lift.
+- [`roadmap.md`](../../../roadmap.md) — Site listed as the next top-level to lift.

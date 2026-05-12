@@ -125,6 +125,6 @@ These rules are enforced by inspection on every change. They are not load-bearin
 ## Pointers
 
 - [`governance/decision-log.md`](governance/decision-log.md) — architectural decision log; ADR-0012, ADR-0013, ADR-0014 record this layer's commitments
-- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules; the practitioner-first posture grounded here
-- [`MANIFESTO.html`](MANIFESTO.html) — philosophical foundation; "we owe it to humans"
-- [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued
+- [`first-principles.md`](first-principles.md) — design rules; the practitioner-first posture grounded here
+- [`manifesto.html`](manifesto.html) — philosophical foundation; "we owe it to humans"
+- [`roadmap.md`](roadmap.md) — what ships next, what is queued
