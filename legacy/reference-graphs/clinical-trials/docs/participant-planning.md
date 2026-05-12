@@ -68,7 +68,7 @@ USDM v3 / M11 protocol (JSON)  ──[ingester]──▶  TOP NGSI-LD entities (
 
 ## Multi-realm projection — Mary in five rooms
 
-Per [`FIRST-PRINCIPLES.md`](../../../../FIRST-PRINCIPLES.md): a participant is a participant, full stop. Operators say "Mary." That's the anchor. *Realms* and *states* are the lenses different operators look at Mary through:
+Per [`first-principles.md`](../../../../first-principles.md): a participant is a participant, full stop. Operators say "Mary." That's the anchor. *Realms* and *states* are the lenses different operators look at Mary through:
 
 | Realm | Operator role | Mary appears as | Standards projection |
 | --- | --- | --- | --- |

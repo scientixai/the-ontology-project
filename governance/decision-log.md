@@ -29,7 +29,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 
 ## ADR-0001: Temporal and PROV native at the foundation
 
-**Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#8](https://github.com/scientixai/the-ontology-project/pull/8) · **Refs:** [FIRST-PRINCIPLES.md § Temporal and provenance, native](../FIRST-PRINCIPLES.md)
+**Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#8](https://github.com/scientixai/the-ontology-project/pull/8) · **Refs:** [first-principles.md § Temporal and provenance, native](../first-principles.md)
 
 ### Context
 
@@ -49,7 +49,7 @@ The foundation adopts NGSI-LD temporal semantics and W3C PROV native typing as f
 
 ## ADR-0002: Universal foundation posture — no specialized entity types for cross-cutting shapes
 
-**Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#9](https://github.com/scientixai/the-ontology-project/pull/9) · **Refs:** [FIRST-PRINCIPLES.md § Universal foundation](../FIRST-PRINCIPLES.md)
+**Date:** 2026-05-08 · **Status:** Accepted · **PR:** [#9](https://github.com/scientixai/the-ontology-project/pull/9) · **Refs:** [first-principles.md § Universal foundation](../first-principles.md)
 
 ### Context
 
@@ -68,7 +68,7 @@ Cross-cutting shapes (Activity, Task, observation) are expressed as universal co
 
 ## ADR-0003: Correct the namespace mislabeling — `top:` is the project
 
-**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [TAXONOMY.md § Three layers](../TAXONOMY.md)
+**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [taxonomy.md § Three layers](../taxonomy.md)
 
 ### Context
 
@@ -98,7 +98,7 @@ The mechanical refactor is mechanically large but conceptually clean: rename `to
 
 ## ADR-0004: Composable workflow extensions, not sibling reference graphs
 
-**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [TAXONOMY.md § Workflow extensions](../TAXONOMY.md)
+**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [taxonomy.md § Workflow extensions](../taxonomy.md)
 
 ### Context
 
@@ -122,7 +122,7 @@ Workflows are **composable extensions** layered on a single commons foundation, 
 
 ## ADR-0005: Drop `/onto/` from URI paths
 
-**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [TAXONOMY.md § URI conventions](../TAXONOMY.md)
+**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [taxonomy.md § URI conventions](../taxonomy.md)
 
 ### Context
 
@@ -151,7 +151,7 @@ Prefixes: `topc:` → `https://top.scientix.ai/commons/v1#`, `topcr:` → `https
 
 ## ADR-0006: SKOS as the canonical taxonomy format
 
-**Date:** 2026-05-09 · **Status:** Accepted · **PR:** [#13](https://github.com/scientixai/the-ontology-project/pull/13) · **Refs:** [`taxonomy/taxonomy.ttl`](../taxonomy/taxonomy.ttl), [`taxonomy/taxonomy.csv`](../taxonomy/taxonomy.csv), [TAXONOMY.md](../TAXONOMY.md)
+**Date:** 2026-05-09 · **Status:** Accepted · **PR:** [#13](https://github.com/scientixai/the-ontology-project/pull/13) · **Refs:** [`taxonomy/taxonomy.ttl`](../taxonomy/taxonomy.ttl), [`taxonomy/taxonomy.csv`](../taxonomy/taxonomy.csv), [taxonomy.md](../taxonomy.md)
 
 ### Context
 
@@ -159,7 +159,7 @@ The taxonomy needs to be importable into the tools ontologists actually use (Ter
 
 ### Decision
 
-Author the taxonomy in SKOS Turtle as the source of truth (`taxonomy/taxonomy.ttl`). Ship a CSV companion (`taxonomy/taxonomy.csv`) for spreadsheet review and a Markdown narrative (`TAXONOMY.md`) for human readers. Each concept declares `skos:Concept` + `skos:inScheme top:TaxonomyV1` + `skos:broader` + `skos:prefLabel` + `skos:definition` + `skos:notation`, plus `rdfs:subClassOf` and PROV typing where applicable.
+Author the taxonomy in SKOS Turtle as the source of truth (`taxonomy/taxonomy.ttl`). Ship a CSV companion (`taxonomy/taxonomy.csv`) for spreadsheet review and a Markdown narrative (`taxonomy.md`) for human readers. Each concept declares `skos:Concept` + `skos:inScheme top:TaxonomyV1` + `skos:broader` + `skos:prefLabel` + `skos:definition` + `skos:notation`, plus `rdfs:subClassOf` and PROV typing where applicable.
 
 ### Consequences
 
@@ -171,7 +171,7 @@ Author the taxonomy in SKOS Turtle as the source of truth (`taxonomy/taxonomy.tt
 
 ## ADR-0007: Option B — commons as vocabulary, workflows as shape
 
-**Date:** 2026-05-09 · **Status:** Accepted (refined by ADR-0008) · **Refs:** [TAXONOMY.md](../TAXONOMY.md)
+**Date:** 2026-05-09 · **Status:** Accepted (refined by ADR-0008) · **Refs:** [taxonomy.md](../taxonomy.md)
 
 ### Context
 
@@ -206,7 +206,7 @@ Commons is the **vocabulary layer**. It declares that a Visit exists as a concep
 
 ## ADR-0008: Option B properly scoped — commons carries universal primitive shapes
 
-**Date:** 2026-05-09 · **Status:** Accepted · **Supersedes part of ADR-0007** · **Refs:** [TAXONOMY.md § Three layers](../TAXONOMY.md), [`taxonomy/taxonomy.ttl`](../taxonomy/taxonomy.ttl)
+**Date:** 2026-05-09 · **Status:** Accepted · **Supersedes part of ADR-0007** · **Refs:** [taxonomy.md § Three layers](../taxonomy.md), [`taxonomy/taxonomy.ttl`](../taxonomy/taxonomy.ttl)
 
 ### Context
 
@@ -273,7 +273,7 @@ topcr:Form1572 a skos:Concept, owl:Class ;
 
 ## ADR-0010: Four-layer enforcement against drift
 
-**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [TAXONOMY.md § Drift prevention](../TAXONOMY.md)
+**Date:** 2026-05-09 · **Status:** Accepted · **Refs:** [taxonomy.md § Drift prevention](../taxonomy.md)
 
 ### Context
 
@@ -291,7 +291,7 @@ Drift prevention runs on four layers, each catching what the layer above it migh
 
 3. **Working group curation (human).** The TaxonomyWG reviews every RFC for layer assignment before approving. The WG owns the call on whether a proposed concept belongs in commons or in a workflow extension.
 
-4. **Documentation discipline (cultural).** TAXONOMY.md, this decision log, and FIRST-PRINCIPLES.md are the references contributors are expected to read before opening an RFC. New contributors who try to add a duplicate primitive get pointed at the relevant ADR rather than into a long discussion.
+4. **Documentation discipline (cultural).** taxonomy.md, this decision log, and first-principles.md are the references contributors are expected to read before opening an RFC. New contributors who try to add a duplicate primitive get pointed at the relevant ADR rather than into a long discussion.
 
 ### Consequences
 
@@ -429,7 +429,7 @@ Accepted. Status moved from Proposed to Accepted on 2026-05-09 after Bo locked t
 
 ## ADR-0013: Practitioner-first — TOP's primary customer
 
-**Date:** 2026-05-09 · **Status:** Accepted · **Refines:** [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) · **Refs:** [`commons/source/core.ttl`](../commons/source/core.ttl), [FIRST-PRINCIPLES.md](../FIRST-PRINCIPLES.md), [MANIFESTO.html](../MANIFESTO.html)
+**Date:** 2026-05-09 · **Status:** Accepted · **Refines:** [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves) · **Refs:** [`commons/source/core.ttl`](../commons/source/core.ttl), [first-principles.md](../first-principles.md), [manifesto.html](../manifesto.html)
 
 ### Context
 
@@ -535,7 +535,7 @@ Three coupled changes, shipped in one branch:
 - **Single-prefix URIs.** Anyone reading the taxonomy or extending Core in a workflow sees one prefix (`top:`) instead of two (`top:`, `topp:`). The mental model of "domain X extends Core via topdomain:X subClassOf top:Y" stays clean.
 - **Termboard re-import required.** The 37 concept URIs all change (subdomain of namespace shifts from `/v1/primitives/` to `/v1#`). The 23 PROV-O alignments preserve their semantics across the move. All five Termboard quality rules (circular definition, includes anti-pattern, TOP acronym, parent-in-description, em-dashes) remain at zero violations after the rename.
 - **Legacy clinical-research namespace still uses `top:`.** The legacy `top:Sponsor`, `top:Study`, `top:Site` URIs in `reference-graphs/clinical-trials/` are now technically colliding with the new Core URIs. The clinical files are unchanged in this PR; the rebase to `topcr:` is the next priority precisely because it removes this last inconsistency. The homepage and namespaces page already flag this with a "Namespace rebase queued" badge so readers see the planned end state.
-- **Several stale documents (TAXONOMY.md, core/v1/shapes.ttl) carry pending-rewrite banners.** They predate the current architecture and will be rewritten in a follow-up pass. Banners point readers to the authoritative sources (taxonomy/taxonomy.ttl and core/v1/index.html) so confusion is bounded.
+- **Several stale documents (taxonomy.md, core/v1/shapes.ttl) carry pending-rewrite banners.** They predate the current architecture and will be rewritten in a follow-up pass. Banners point readers to the authoritative sources (taxonomy/taxonomy.ttl and core/v1/index.html) so confusion is bounded.
 
 ### What this does NOT change
 
@@ -546,13 +546,13 @@ Three coupled changes, shipped in one branch:
 
 ### Status
 
-Accepted. The artifacts on this branch implement the rename, the namespace collapse, the path move, and the file rename. Deferred: clinical-research namespace rebase to `topcr:`, rebuild of `core/v1/shapes.ttl` content (currently carries stale legacy content under a deprecation banner), JSON-LD context.jsonld for NGSI-LD wire compatibility, and rewrite of TAXONOMY.md to match current architecture.
+Accepted. The artifacts on this branch implement the rename, the namespace collapse, the path move, and the file rename. Deferred: clinical-research namespace rebase to `topcr:`, rebuild of `core/v1/shapes.ttl` content (currently carries stale legacy content under a deprecation banner), JSON-LD context.jsonld for NGSI-LD wire compatibility, and rewrite of taxonomy.md to match current architecture.
 
 ---
 
 ## ADR-0015: Promote facts to entities — no bespoke flags
 
-**Date:** 2026-05-11 · **Status:** Accepted · **Refs:** [FIRST-PRINCIPLES.md § Promote facts to entities](../FIRST-PRINCIPLES.md)
+**Date:** 2026-05-11 · **Status:** Accepted · **Refs:** [first-principles.md § Promote facts to entities](../first-principles.md)
 
 ### Context
 
@@ -596,7 +596,7 @@ The rule:
 
 ### Status
 
-Accepted. FIRST-PRINCIPLES.md (and its .html mirror) carry the canonical rule as a fourth structural commitment alongside operator-grounded vocabulary, native temporal+provenance, and universal pattern. The clinical-research rebuild applies this discipline from its first commit.
+Accepted. first-principles.md (and its .html mirror) carry the canonical rule as a fourth structural commitment alongside operator-grounded vocabulary, native temporal+provenance, and universal pattern. The clinical-research rebuild applies this discipline from its first commit.
 
 ---
 

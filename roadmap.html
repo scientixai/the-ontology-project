@@ -196,7 +196,7 @@
 <div class="tagline">A working document. Edited frequently. The single place where future TOP work is tracked.</div>
 
 <div style="background: #fff8e1; border-left: 3px solid #d4a017; padding: 12px 14px; margin: 12px 0; font-size: 12px;">
-  <strong>Status note (2026-05-12):</strong> The narrative below pre-dates TOP Core landing and reflects the old OOUX-9 framing. Cross-references to the archived pre-Core artifacts have been updated to point under <a href="legacy/"><code class="inline">legacy/</code></a>, but the prose itself describes the historical lift sequence (Sponsor → Site → Study → … → Event) and not the current architecture. For current state see <a href="ROADMAP.md">ROADMAP.md</a>. This HTML mirror will be regenerated once the clinical-research workflow rebuild is underway.
+  <strong>Status note (2026-05-12):</strong> The narrative below pre-dates TOP Core landing and reflects the old OOUX-9 framing. Cross-references to the archived pre-Core artifacts have been updated to point under <a href="legacy/"><code class="inline">legacy/</code></a>, but the prose itself describes the historical lift sequence (Sponsor → Site → Study → … → Event) and not the current architecture. For current state see <a href="roadmap.md">roadmap.md</a>. This HTML mirror will be regenerated once the clinical-research workflow rebuild is underway.
 </div>
 
 <p>This roadmap captures the work queued behind the core ontology effort, the decisions about how that work is staged, and the items that need to land before TOP moves out of <code class="inline">CLAUDE OUTPUTS/</code> into <a href="https://github.com/scientixai/the-ontology-project">github.com/scientixai/the-ontology-project</a> under Apache 2.0. It supplements the per-spec open-issues tables and becomes the single place where future work is tracked once we have more than one finished top-level.</p>
@@ -216,12 +216,12 @@
   <li><strong>Recruit</strong> (new top-level) lifted with 18 attrs / 4 rels covering the recruitment funnel (RESPONDED → CONTACTED → PRE_SCREENED → QUALIFIED_PENDING_CONSENT → CONVERTED_TO_PARTICIPANT, plus attrition states). Recruit→Participant transition via <code class="inline">convertedFromRecruit</code> with InformedConsent existence as the canonical conversion event.</li>
   <li><strong>9 new SHACL invariants</strong> added (25 total: 4 soft warnings + 21 hard violations). Includes cross-entity consistency for Participant.assignedToArm and Participant.forStudySite.</li>
   <li><strong>1 worked example extended</strong> (site-mskcc-onco423.ttl) with one Participant (ON_TREATMENT) and three Recruits demonstrating different funnel states. Conforms under pyshacl --advanced.</li>
-  <li><strong>Operator-grounded vocabulary</strong> per <a href="FIRST-PRINCIPLES.html">FIRST-PRINCIPLES</a>: <code class="inline">screeningNumber</code>, <code class="inline">randomizationNumber</code>, <code class="inline">participantStatus</code> values like <code class="inline">ON_TREATMENT</code> / <code class="inline">WITHDRAWN</code>. Standards cross-walks (FHIR R5 <code class="inline">ResearchSubject</code>, SDTM <code class="inline">DM</code> + <code class="inline">DS</code> + <code class="inline">IE</code>, CDASH <code class="inline">DM</code>) live below the line as projection-adapter rules. USDM v4 has no per-subject runtime entity.</li>
+  <li><strong>Operator-grounded vocabulary</strong> per <a href="first-principles.html">FIRST-PRINCIPLES</a>: <code class="inline">screeningNumber</code>, <code class="inline">randomizationNumber</code>, <code class="inline">participantStatus</code> values like <code class="inline">ON_TREATMENT</code> / <code class="inline">WITHDRAWN</code>. Standards cross-walks (FHIR R5 <code class="inline">ResearchSubject</code>, SDTM <code class="inline">DM</code> + <code class="inline">DS</code> + <code class="inline">IE</code>, CDASH <code class="inline">DM</code>) live below the line as projection-adapter rules. USDM v4 has no per-subject runtime entity.</li>
   <li><strong>Twin-queryability discipline</strong>: every lifecycle transition produces a queryable record (sub-objects for canonical events; NGSI-LD temporal property for mid-trial states). Foundation carries the contract; downstream twin synthesizers fulfill it. Foundation decisions made now are the load-bearing pre-conditions for twin-for-enrollment in v0.5+ — the highest-value digital-twin use case (synthetic control arms, predicted-response cohort selection, drop-out risk prediction, trial feasibility simulation).</li>
   <li><strong>Spec docs</strong>: <a href="legacy/reference-graphs/clinical-trials/docs/participant-spec.html">participant-spec.html</a> and <a href="legacy/reference-graphs/clinical-trials/docs/recruit-spec.html">recruit-spec.html</a>.</li>
 </ul>
 
-<p><strong>Visit</strong> is fully sealed at v0.5.0-strawman as the sixth top-level — the operational visit-occurrence (a Participant attended a real visit at a StudySite on a real date). Per the universal-foundation posture in <a href="FIRST-PRINCIPLES.html">FIRST-PRINCIPLES</a>, the Visit lift introduces three universal sub-objects that accommodate any assessment without modeling its specifics: a DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape, distinguished only by content (<code class="inline">biomedicalConceptCode</code>, <code class="inline">taskValueType</code>, <code class="inline">taskValue</code>, linked Equipment, governing Document). Outcomes:</p>
+<p><strong>Visit</strong> is fully sealed at v0.5.0-strawman as the sixth top-level — the operational visit-occurrence (a Participant attended a real visit at a StudySite on a real date). Per the universal-foundation posture in <a href="first-principles.html">FIRST-PRINCIPLES</a>, the Visit lift introduces three universal sub-objects that accommodate any assessment without modeling its specifics: a DICOM imaging Activity and a blood-draw Activity are the same TOP entity shape, distinguished only by content (<code class="inline">biomedicalConceptCode</code>, <code class="inline">taskValueType</code>, <code class="inline">taskValue</code>, linked Equipment, governing Document). Outcomes:</p>
 
 <ul>
   <li><strong>Visit</strong> (top-level) lifted with 17 attrs / 8 rels covering occurrence-side facts (<code class="inline">visitMode</code> 6-state DCT enum per ICH E6(R3) Annex 2; <code class="inline">visitStatus</code> 9-state lifecycle as NGSI-LD temporal property; planned-vs-actual datetime separation; OUT_OF_WINDOW + UNSCHEDULED deviation handling).</li>
@@ -325,7 +325,7 @@
 <h2 class="section">Pointers</h2>
 
 <ul class="bullets">
-  <li><a href="MANIFESTO.html">MANIFESTO.html</a>, v0.2 manifesto, signatories pending.</li>
+  <li><a href="manifesto.html">manifesto.html</a>, v0.2 manifesto, signatories pending.</li>
   <li><a href="legacy/reference-graphs/clinical-trials/docs/ooux-hierarchy.html">reference-graphs/clinical-trials/docs/ooux-hierarchy.html</a>, eight top-levels, all seven boundary decisions resolved.</li>
   <li><a href="legacy/reference-graphs/clinical-trials/docs/sponsor-spec.html">reference-graphs/clinical-trials/docs/sponsor-spec.html</a>, first complete top-level spec, template for the remaining seven.</li>
   <li><a href="legacy/reference-graphs/clinical-trials/docs/site-spec.html">reference-graphs/clinical-trials/docs/site-spec.html</a>, second top-level spec at v0.2.0-strawman, combined Site + StudySite.</li>
@@ -348,8 +348,8 @@
 <footer class="site-footer">
   <div class="site-footer-links">
     <a href="index.html">Home</a> ·
-    <a href="MANIFESTO.html">Manifesto</a> ·
-    <a href="ROADMAP.html">Roadmap</a> ·
+    <a href="manifesto.html">Manifesto</a> ·
+    <a href="roadmap.html">Roadmap</a> ·
     <a href="legacy/onto/">Namespaces</a> ·
     <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
   </div>

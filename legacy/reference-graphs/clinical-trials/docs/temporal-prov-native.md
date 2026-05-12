@@ -486,8 +486,8 @@ Single PR, this branch:
 1. **Source intermediate** — annotate temporal properties + PROV types/semantics on all v0.4 entities and sub-objects (Sponsor / Site / StudySite / Study + sub-objects / Participant + sub-objects / Recruit + horizontals). Bump version to v0.4.1-strawman.
 2. **build_context.py** — add `prov:` namespace prefix; emit PROV typing in JSON-LD context.
 3. **build_shacl.py** — add `prov:` prefix prelude; emit `rdfs:subClassOf prov:*` and `rdfs:subPropertyOf prov:*` declarations from annotations.
-4. **FIRST-PRINCIPLES.md/.html** — add "Native temporal and provenance" section; update the manifest of conventions.
-5. **ROADMAP.md/.html** — add v0.4.1 line summarizing the cleanup; surface the temporal+provenance differentiation framing.
+4. **first-principles.md/.html** — add "Native temporal and provenance" section; update the manifest of conventions.
+5. **roadmap.md/.html** — add v0.4.1 line summarizing the cleanup; surface the temporal+provenance differentiation framing.
 6. **Worked example** — extend the MSKCC example (or add commentary) showing PROV traversal queries answering compliance-grade questions natively.
 7. **Validate**: all five conforming examples still conform; PROV typing emerges in shapes.ttl and context.jsonld.
 
@@ -495,7 +495,7 @@ This PR is purely annotative + emitter-aware — no entity-shape changes. Safe t
 
 ## Pointers
 
-- [`FIRST-PRINCIPLES.md`](../../../FIRST-PRINCIPLES.md) — to be updated with this audit's conventions.
+- [`first-principles.md`](../../../first-principles.md) — to be updated with this audit's conventions.
 - [`participant-planning.md`](participant-planning.md) — Decision 10 (twin-queryability) explicitly invokes NGSI-LD temporal properties; this audit makes that machine-readable.
 - [`visit-planning.md`](visit-planning.md) — Visit lift will apply both conventions at lift time (Task uses `observedAt`; Visit/Activity declare prov:Activity).
 - [`cdisc-dependency-pipeline.md`](cdisc-dependency-pipeline.md) — the dependency pipeline's assessment-PR record IS a PROV chain natively; this audit makes that explicit.

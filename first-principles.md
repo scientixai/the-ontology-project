@@ -104,7 +104,7 @@ The principle has been at work, sometimes implicitly:
 
 Each new entity, attribute, enum, sub-object, or relationship asks itself: **did an operator's workday cause this, or did a standards body cause this?** If the answer is "standards body," it doesn't go in TOP. It goes in a projection adapter.
 
-Each spec doc, planning note, and PR description can cite this document by reference: *"per `FIRST-PRINCIPLES.md`, the operator-facing layer is the prize."*
+Each spec doc, planning note, and PR description can cite this document by reference: *"per `first-principles.md`, the operator-facing layer is the prize."*
 
 ## Why this matters beyond the architecture
 
@@ -234,10 +234,10 @@ This is the architectural reset for the clinical-research rebuild and every work
 
 ## Naming and citation
 
-Cite as: **`FIRST-PRINCIPLES.md`** or, in prose, as **"TOP first principles"**. The principle in one line — *a participant is a participant, full stop* — is the quotable form.
+Cite as: **`first-principles.md`** or, in prose, as **"TOP first principles"**. The principle in one line — *a participant is a participant, full stop* — is the quotable form.
 
 ## Pointers
 
-- [`MANIFESTO.html`](MANIFESTO.html) — the philosophical foundation; this document operationalizes it.
-- [`ROADMAP.md`](ROADMAP.md) — what we're building, in what order.
+- [`manifesto.html`](manifesto.html) — the philosophical foundation; this document operationalizes it.
+- [`roadmap.md`](roadmap.md) — what we're building, in what order.
 - [`legacy/reference-graphs/clinical-trials/docs/`](legacy/reference-graphs/clinical-trials/docs/) — pre-Core spec docs that surfaced this principle through specific operational scenarios; archived but instructive.

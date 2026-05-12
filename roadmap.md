@@ -67,12 +67,12 @@ Reference patterns live next to TOP in the same repository (a future `reference-
 ## Pointers
 
 - [`README.md`](README.md) — project landing page.
-- [`TAXONOMY.md`](TAXONOMY.md) — prose narrative of the three-layer taxonomy.
+- [`taxonomy.md`](taxonomy.md) — prose narrative of the three-layer taxonomy.
 - [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) — SKOS view (system of record for vocabulary).
 - [`core/v1/shapes.ttl`](core/v1/shapes.ttl) — OWL classes + SHACL contract.
 - [`core/v1/index.html`](core/v1/index.html) — public spec page.
 - [`core/v1/walkthroughs/person.ttl`](core/v1/walkthroughs/person.ttl) — concrete walkthrough.
-- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules.
-- [`MANIFESTO.html`](MANIFESTO.html) — manifesto, signatories pending.
+- [`first-principles.md`](first-principles.md) — design rules.
+- [`manifesto.html`](manifesto.html) — manifesto, signatories pending.
 - [`governance/decision-log.md`](governance/decision-log.md) — architectural decision log (ADRs 1–16).
 - [`legacy/`](legacy/) — pre-Core artifacts (clinical-trials work, `onto/` mirrors, JSON-intermediate tooling). Historical reference only; do not load against current Core.

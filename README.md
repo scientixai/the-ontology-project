@@ -22,11 +22,11 @@ If you are reading this in 2026 you are early. TOP Core landed at v1; workflow e
 - [`core/v1/shapes.ttl`](core/v1/shapes.ttl) — the OWL/SHACL view: same URIs as the SKOS, expressed as `owl:Class` with `rdfs:subClassOf` chains, the three Universal DNA properties, the category relational extensions, and the SHACL `top:UniversalDNAShape` that enforces `identifier` + `observedAt` + `status` on every TOP entity.
 - [`core/v1/index.html`](core/v1/index.html) — the spec page (web view) for sharing with reviewers and conveners.
 - [`core/v1/walkthroughs/person.ttl`](core/v1/walkthroughs/person.ttl) — a single concrete instance demonstrating the L0 → L1 → L2 pattern end-to-end. Useful for verifying the structure resolves in any tool.
-- [`TAXONOMY.md`](TAXONOMY.md) — prose narrative of the taxonomy: three layers, eight categories, twenty-eight leaves, authoring rules.
-- [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules every spec doc, planning note, and PR can cite by name.
+- [`taxonomy.md`](taxonomy.md) — prose narrative of the taxonomy: three layers, eight categories, twenty-eight leaves, authoring rules.
+- [`first-principles.md`](first-principles.md) — design rules every spec doc, planning note, and PR can cite by name.
 - [`governance/`](governance/) — working group structure, RFC process, release process, and the [architectural decision log](governance/decision-log.md). Where new contributors learn the rules.
-- [`MANIFESTO.html`](MANIFESTO.html) — manifesto with founding signatories.
-- [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued behind it, how community contributions enter the project.
+- [`manifesto.html`](manifesto.html) — manifesto with founding signatories.
+- [`roadmap.md`](roadmap.md) — what ships next, what is queued behind it, how community contributions enter the project.
 
 Workflow extensions will live in their own directories at the repository root. The first one — `clinical-research/` — is forming around the 12 operational functional areas (Study Design, Regulatory Affairs, Finance, Setup, Site Management, Clinical Supply, Recruitment, Intervention, Pharmacovigilance, Data Management, Monitoring, Quality Management). Pre-Core clinical-research work is archived under [`legacy/`](legacy/) — operator-vocabulary insights remain useful as reference; the artifact shapes conflict with Core and should not be loaded against it.
 
@@ -74,8 +74,8 @@ Apache License 2.0. See [LICENSE](LICENSE).
 The Ontology Project is convened by Bo Lora at Scientix.ai Inc.
 
 - Project: [top.scientix.ai](https://top.scientix.ai)
-- Manifesto: [MANIFESTO.html](MANIFESTO.html)
-- Roadmap: [ROADMAP.md](ROADMAP.md)
+- Manifesto: [manifesto.html](manifesto.html)
+- Roadmap: [roadmap.md](roadmap.md)
 - Convener: [bolora.me](https://bolora.me)
 
 ---
