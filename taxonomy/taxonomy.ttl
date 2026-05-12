@@ -63,11 +63,12 @@
 #   meaning. The collision with the previously named commons/source/core.ttl
 #   is resolved by renaming that SHACL file to core/v1/shapes.ttl.
 
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
-@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix schema: <https://schema.org/> .
 
 @prefix top:   <https://top.scientix.ai/v1#> .
 
@@ -533,6 +534,57 @@ top:Project           skos:closeMatch  prov:Plan .
 top:Physical          skos:closeMatch  prov:Location .
 top:Virtual           skos:closeMatch  prov:Location .
 top:Storage           skos:closeMatch  prov:Location .
+
+
+# ====================================================================
+# schema.org alignment
+# ====================================================================
+# Per ADR-0016: schema.org alignment is declared where the peer is
+# honest. Where no peer exists, the absence is documented as
+# intentional, not oversight. Same alignment pattern as PROV-O above
+# and BFO in core/v1/shapes.ttl.
+#
+# schema.org is widely indexed by web crawlers, search engines, and
+# LLMs. Declaring alignment lets schema.org-aware tools interpret TOP
+# without bridge adapters. The audit covers all 28 L2 leaves; ~16 have
+# a useful schema.org peer (6 exact, 10 close); 12 have none.
+
+# Exact matches — same concept, same shape
+top:Person            skos:exactMatch  schema:Person .
+top:Organization      skos:exactMatch  schema:Organization .
+top:Physical          skos:exactMatch  schema:Place .
+top:Virtual           skos:exactMatch  schema:VirtualLocation .
+top:Project           skos:exactMatch  schema:Project .
+top:Schedule          skos:exactMatch  schema:Schedule .
+top:Observation       skos:exactMatch  schema:Observation .
+
+# Close matches — same concept, partial overlap in shape
+top:Group             skos:closeMatch  schema:Audience .
+top:System            skos:closeMatch  schema:SoftwareApplication .
+top:Equipment         skos:closeMatch  schema:Product .
+top:Material          skos:closeMatch  schema:Substance .
+top:Activity          skos:closeMatch  schema:Action .
+top:Milestone         skos:closeMatch  schema:Event .
+top:Document          skos:closeMatch  schema:DigitalDocument .
+top:Log               skos:closeMatch  schema:Dataset .
+top:Credential        skos:closeMatch  schema:EducationalOccupationalCredential .
+top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
+
+# Intentionally without a schema.org peer (declared so the absence is
+# documented, not oversight). schema.org's web-markup origins do not
+# model regulated-industry concepts cleanly; reinventing them here is
+# justified per ADR-0016:
+#   top:AutonomousAgent  (schema.org has no agency concept; prov:SoftwareAgent fits)
+#   top:Storage          (schema:Place + type=storage; not a first-class concept)
+#   top:Portfolio        (schema.org has no portfolio concept)
+#   top:Program          (schema.org has no program concept)
+#   top:Window           (schema:Schedule covers some; not a clean peer)
+#   top:Attestation      (schema.org has no attestation concept)
+#   top:StatusChange     (schema.org has no state-transition concept)
+#   top:Artifact         (overlaps Product/CreativeWork; context-dependent)
+#   top:Conclusion       (schema.org has no decision/conclusion concept)
+#   top:PhysicalLimit    (schema.org has no constraint concept)
+#   top:SafetyGuardrail  (schema.org has no safety-rule concept)
 
 
 # ====================================================================
