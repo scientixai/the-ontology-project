@@ -24,7 +24,7 @@ The architectural decisions are documented in [`governance/decision-log.md`](gov
 
 ## What ships next, in order
 
-**Clinical-research workflow extension rebuilt against Core.** The legacy `reference-graphs/clinical-trials/` work (Sponsor, Study, Site, Participant, Recruit, Visit, OversightBody, InvestigationalProduct, Event lifted across PRs #1–#14) was authored before Core landed. The rebuild migrates those concepts into `clinical-research/` as workflow specializations: each clinical-research class declares `rdfs:subClassOf` against the appropriate Core leaf (e.g., a clinical-research Investigator is `rdfs:subClassOf top:Person`; a clinical-research Protocol is `rdfs:subClassOf top:Document`; a clinical-research Visit is `rdfs:subClassOf top:Activity`). Universal DNA, the category's relational extensions, and the PROV-O / BFO alignment all flow through automatically. The translator scaffold under `tools/` either follows the migration or is retired in favor of direct OWL/SHACL authoring; that decision rides with the rebuild.
+**Clinical-research workflow extension built against Core.** Pre-Core clinical-research work (Sponsor / Study / Site / Participant / Recruit / Visit / OversightBody / InvestigationalProduct / Event lifted across PRs #1–#14) is archived under [`legacy/`](legacy/). The new clinical-research workflow is organized around the 12 operational functional areas (Study Design, Regulatory Affairs, Finance, Setup, Site Management, Clinical Supply, Recruitment, Intervention, Pharmacovigilance, Data Management, Monitoring, Quality Management) — the operator-facing reframe Bo surfaced on 2026-05-11. Each clinical-research class declares `rdfs:subClassOf` against the appropriate Core leaf (Investigator → `top:Person`; Protocol → `top:Document`; Visit → `top:Activity`; etc.). Universal DNA, category relational extensions, and PROV-O / BFO alignment flow through automatically. ADR-0015 (no bespoke flags) gates the modeling discipline: sponsorships, regulatory designations, financial responsibilities all reify to `top:Attestation` rather than boolean flags. The OWL/SHACL is authored directly in `clinical-research/v1/shapes.ttl` — no JSON intermediate, no separate translator scaffold (the legacy `tools/` scaffold is archived).
 
 **TermBoard curation pass.** The SKOS file imports clean now; the curation pass refines definitions, alt-labels, scope notes, and concept relationships against the live tooling. No code changes; the curation produces a v1.x SKOS file that the workflow rebuilds consume.
 
@@ -74,6 +74,5 @@ Reference patterns live next to TOP in the same repository (a future `reference-
 - [`core/v1/walkthroughs/person.ttl`](core/v1/walkthroughs/person.ttl) — concrete walkthrough.
 - [`FIRST-PRINCIPLES.md`](FIRST-PRINCIPLES.md) — design rules.
 - [`MANIFESTO.html`](MANIFESTO.html) — manifesto, signatories pending.
-- [`governance/decision-log.md`](governance/decision-log.md) — architectural decision log (ADRs 1–14).
-- [`reference-graphs/clinical-trials/`](reference-graphs/clinical-trials/) — pre-Core groundwork; being migrated into `clinical-research/`.
-- [`clinical-research/`](clinical-research/) — clinical-research workflow extension; rebuild in flight.
+- [`governance/decision-log.md`](governance/decision-log.md) — architectural decision log (ADRs 1–16).
+- [`legacy/`](legacy/) — pre-Core artifacts (clinical-trials work, `onto/` mirrors, JSON-intermediate tooling). Historical reference only; do not load against current Core.

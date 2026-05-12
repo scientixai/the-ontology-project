@@ -393,41 +393,37 @@
 <h2 class="block" id="explore">Explore TOP <span style="color: #888; font-weight: 400; text-transform: none; letter-spacing: 0; font-style: italic;">— what's shipped, what's next</span></h2>
 
 <div class="status-line">
-  <strong>Current state:</strong> Sponsor sealed at v0.1.4-strawman · Site + StudySite sealed at v0.2.0-strawman · Study sealed at v0.3.0-strawman · Visit queued next · Participant, Investigational Product, Oversight Body, Event queued behind. Translator scaffold is stdlib-only Python, no pip installs needed for the basic pipeline.
+  <strong>Current state:</strong> TOP Core shipped at v1 — 8 categories, 28 leaves, PROV-O aligned with 24 skos:*Match annotations and the schema.org alignment audit complete (ADR-0016). The clinical-research workflow extension rebuild is forming next, organized around the 12 operational functional areas. Pre-Core artifacts are archived under <a href="legacy/"><span class="inline">legacy/</span></a> for reference.
 </div>
 
 <ul class="doc-list">
   <li>
     <a href="core/v1/">TOP Core spec &amp; namespace</a><span class="status status-shipped-new">Shipped v1</span>
-    <div class="desc">The universal layer of TOP. Eight Category-Level Objects (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) and twenty-eight leaves that operators across every domain recognize as first-class concepts. PROV-O aligned with twenty-three skos:exactMatch / skos:closeMatch annotations; the provenance contract (identifier, observedAt, status) is enforced underneath as SHACL. Domain reference graphs extend Core and inherit PROV alignment, NGSI-LD wire format, and contract enforcement at zero cost. Resolves at <span class="inline">https://top.scientix.ai/v1#</span>.</div>
+    <div class="desc">The universal layer of TOP. Eight Category-Level Objects (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) and twenty-eight leaves that operators across every domain recognize as first-class concepts. PROV-O aligned with twenty-four skos:exactMatch / skos:closeMatch annotations plus seventeen schema.org alignments; the provenance contract (identifier, observedAt, status) is enforced underneath as SHACL. Domain reference graphs extend Core and inherit PROV alignment, NGSI-LD wire format, and contract enforcement at zero cost. Resolves at <span class="inline">https://top.scientix.ai/v1#</span>.</div>
   </li>
   <li>
-    <a href="reference-graphs/clinical-trials/docs/sponsor-spec.html">Sponsor spec</a><span class="status status-shipped">Shipped v1</span>
-    <div class="desc">The first complete top-level. Per-Org-per-Study architecture, five boolean responsibility flags, multi-jurisdictional sponsor of record. Template for the remaining seven top-levels.</div>
+    <a href="TAXONOMY.md">Taxonomy</a><span class="status status-shipped-new">Shipped v1</span>
+    <div class="desc">The three-layer architecture in prose. Root → 8 categories → 28 leaves. Authoring rules, what's ruled out, how workflow extensions compose on top.</div>
   </li>
   <li>
-    <a href="reference-graphs/clinical-trials/docs/site-spec.html">Site + StudySite spec</a><span class="status status-shipped">Shipped v0.2.0</span>
-    <div class="desc">Site (operational + feasibility, study-independent) and StudySite (per-Study pivot). ICH E6(R3)-aligned. Combined spec with R3/ISF alignment, lifecycle state machines, ten-persona view matrix, SFQ projection, delegation matrix.</div>
+    <a href="FIRST-PRINCIPLES.md">First Principles</a><span class="status status-shipped-new">Living</span>
+    <div class="desc">The design rules every spec, PR, and decision can cite by name. Operator-grounded vocabulary, native temporal+provenance, universal pattern, promote-facts-to-entities.</div>
   </li>
   <li>
-    <a href="reference-graphs/clinical-trials/docs/study-spec.html">Study spec</a><span class="status status-shipped-new">Shipped v0.3.0</span>
-    <div class="desc">Study as the central organizing entity, with sub-objects for Protocol, Arms, Schedule of Assessments, Endpoints, and Inclusion/Exclusion Criteria. USDM v3 alignment (with the StudyVersion + StudyDesign three-level nesting flattened for operator UX), ICH E8(R1) + E6(R3) alignment, multi-registry support (NCT / EudraCT / EU CTIS / ISRCTN / NCI), lifecycle state machine, six lifecycle SHACL invariants.</div>
+    <a href="governance/decision-log.md">Architectural Decision Log</a><span class="status status-shipped">16 ADRs</span>
+    <div class="desc">The chain of architectural decisions that shape The Ontology Project. Append-only by policy.</div>
   </li>
   <li>
-    <a href="reference-graphs/clinical-trials/docs/ooux-hierarchy.html">OOUX hierarchy</a>
-    <div class="desc">The eight top-levels of the clinical-trials reference graph with all seven boundary decisions resolved.</div>
-  </li>
-  <li>
-    <a href="onto/clinical/v1/">Clinical-trials reference graph</a><span class="status status-queued">Namespace rebase queued</span>
-    <div class="desc">The first reference graph built on TOP Core. Currently published under the <span class="inline">top:</span> prefix from before Core claimed that namespace; rebase to <span class="inline">topcr:</span> is queued so <span class="inline">top:</span> cleanly means the Core layer everywhere. JSON-LD <span class="inline">@context</span> and SHACL shapes available for download.</div>
-  </li>
-  <li>
-    <a href="ROADMAP.html">Roadmap</a>
+    <a href="ROADMAP.md">Roadmap</a>
     <div class="desc">What ships next, what is queued behind it, and how community contributions enter the project.</div>
   </li>
   <li>
+    <a href="legacy/">Pre-Core archive</a><span class="status status-queued">Historical</span>
+    <div class="desc">Pre-Core clinical-research work (Sponsor / Site / Study / Participant / Recruit / Visit / OversightBody / IP / Event lifts), the legacy <span class="inline">onto/</span> namespace mirrors, the JSON-intermediate translator scaffold. Operator-vocabulary insights are durable; the artifact shapes conflict with Core and should not be loaded against it.</div>
+  </li>
+  <li>
     <a href="https://github.com/scientixai/the-ontology-project">GitHub repository</a>
-    <div class="desc">Source intermediate, translator scaffold, worked examples. Apache 2.0 licensed.</div>
+    <div class="desc">Source, decision log, ADRs. Apache 2.0 licensed.</div>
   </li>
 </ul>
 
@@ -442,8 +438,8 @@
 </div>
 
 <div class="contribute-step">
-  <div class="step-title">2. Read a reference graph spec and find a gap</div>
-  The Sponsor spec carries eight closed verification questions and a tracked open-issues list. The Site + StudySite spec carries fourteen verification questions still pending review. Practitioners who have lived with these objects in production are the right reviewers for both. File an issue against any specific decision; the per-spec open-issues table records every concern, named.
+  <div class="step-title">2. Argue with Core</div>
+  TOP Core landed at v1 with 8 categories and 28 leaves. The decision log carries the reasoning behind every commitment. Practitioners in any high-consequence regulated domain are the right reviewers — the categories aim to be universal, and gaps surface where a real operator workflow can't find its home. File an issue against any specific category or leaf; absences are documented intentionally (see <a href="governance/decision-log.md">ADR-0016</a>).
 </div>
 
 <div class="contribute-step">

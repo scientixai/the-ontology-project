@@ -28,7 +28,7 @@ If you are reading this in 2026 you are early. TOP Core landed at v1; workflow e
 - [`MANIFESTO.html`](MANIFESTO.html) — manifesto with founding signatories.
 - [`ROADMAP.md`](ROADMAP.md) — what ships next, what is queued behind it, how community contributions enter the project.
 
-Workflow extensions live in their own directories at the repository root. The first one — `clinical-research/` — is being rebuilt against Core; treat its contents as in-flight until announced. The earlier `reference-graphs/clinical-trials/` directory holds groundwork that pre-dates Core and is being migrated into the new structure.
+Workflow extensions will live in their own directories at the repository root. The first one — `clinical-research/` — is forming around the 12 operational functional areas (Study Design, Regulatory Affairs, Finance, Setup, Site Management, Clinical Supply, Recruitment, Intervention, Pharmacovigilance, Data Management, Monitoring, Quality Management). Pre-Core clinical-research work is archived under [`legacy/`](legacy/) — operator-vocabulary insights remain useful as reference; the artifact shapes conflict with Core and should not be loaded against it.
 
 ## Quickstart
 
