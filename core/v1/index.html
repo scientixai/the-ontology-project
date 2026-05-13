@@ -1,243 +1,210 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TOP / Core / v1</title>
-<meta name="description" content="TOP Core — the universal layer of The Ontology Project. Eight Category-Level Objects and twenty-nine leaves that operators across every domain recognize as first-class concepts. PROV-O aligned, NGSI-LD wire-compatible.">
-<link rel="alternate" type="text/turtle" href="../../taxonomy/taxonomy.ttl" title="SKOS taxonomy (Turtle)">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    color: #1a1a1a;
-    background: #f4f4f1;
-    padding: 24px 28px 36px;
-    line-height: 1.55;
-    font-size: 14px;
-  }
-  .page { max-width: 980px; margin: 0 auto; }
+---
+layout: default
+title: Core / v1
+description: "TOP Core — the universal layer of The Ontology Project. Eight Category-Level Objects and twenty-nine leaves that operators across every domain recognize as first-class concepts. PROV-O aligned, NGSI-LD wire-compatible."
+meta_primary: Core · v1
+meta_secondary: top: namespace · the universal layer
+nav: core
+extra_head: |
+  <link rel="alternate" type="text/turtle" href="../../taxonomy/taxonomy.ttl" title="SKOS taxonomy (Turtle)">
+  <style>
+    /* Core / v1 page-specific styles — denser spec layout, sans-serif body */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      padding: 24px 28px 36px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .page {
+      max-width: 980px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+    }
 
-  /* Site-wide header */
-  .site-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid #c8c8c0; }
-  .site-header .site-logo { display: block; flex-shrink: 0; }
-  .site-header .site-logo img { display: block; height: auto; max-width: 210px; }
-  .site-header .site-meta { text-align: right; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
-  .site-header .site-meta-primary { font-size: 13px; font-weight: 700; color: #111; }
-  .site-header .site-meta-secondary { font-size: 10.5px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+    .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #0e7490; margin-bottom: 18px; }
 
-  .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #0e7490; margin-bottom: 18px; }
+    h2.section {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #111;
+      margin: 32px 0 12px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #c8c8c0;
+    }
+    h3.category {
+      font-size: 17px;
+      font-weight: 700;
+      color: #111;
+      margin: 26px 0 6px;
+      letter-spacing: -0.01em;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    h3.category .cat-id {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 12px;
+      color: #888;
+      font-weight: 400;
+      margin-left: 8px;
+    }
+    p { margin-bottom: 12px; }
+    p.lead {
+      background: #fff;
+      border-left: 3px solid #0e7490;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
 
-  h2.section {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #111;
-    margin: 32px 0 12px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #c8c8c0;
-  }
-  h3.category {
-    font-size: 17px;
-    font-weight: 700;
-    color: #111;
-    margin: 26px 0 6px;
-    letter-spacing: -0.01em;
-  }
-  h3.category .cat-id {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    color: #888;
-    font-weight: 400;
-    margin-left: 8px;
-  }
-  p { margin-bottom: 12px; }
-  p.lead {
-    background: #fff;
-    border-left: 3px solid #0e7490;
-    padding: 14px 18px;
-    margin-bottom: 14px;
-    font-size: 14px;
-    line-height: 1.6;
-  }
+    .inline { font-size: 12px; background: #eef0ed; }
 
-  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; background: #eef0ed; padding: 1px 5px; border-radius: 2px; color: #0e7490; }
+    pre.code-block {
+      background: #fafaf6;
+      border: 1px solid #d6d6cf;
+      border-left: 3px solid #0e7490;
+      border-radius: 0 3px 3px 0;
+      padding: 14px 18px;
+      margin: 10px 0 16px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #2a2a2a;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    pre.code-block .ns-domain { color: #c08410; font-weight: 600; }
+    pre.code-block .ns-prim { color: #0e7490; font-weight: 600; }
+    pre.code-block .kw { color: #777; }
+    pre.code-block .cmt { color: #888; font-style: italic; }
+    .ex-caption {
+      font-size: 12.5px;
+      color: #555;
+      font-style: italic;
+      margin: -6px 0 14px;
+    }
 
-  pre.code-block {
-    background: #fafaf6;
-    border: 1px solid #d6d6cf;
-    border-left: 3px solid #0e7490;
-    border-radius: 0 3px 3px 0;
-    padding: 14px 18px;
-    margin: 10px 0 16px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    line-height: 1.7;
-    color: #2a2a2a;
-    overflow-x: auto;
-    white-space: pre;
-  }
-  pre.code-block .ns-domain { color: #c08410; font-weight: 600; }
-  pre.code-block .ns-prim { color: #0e7490; font-weight: 600; }
-  pre.code-block .kw { color: #777; }
-  pre.code-block .cmt { color: #888; font-style: italic; }
-  .ex-caption {
-    font-size: 12.5px;
-    color: #555;
-    font-style: italic;
-    margin: -6px 0 14px;
-  }
+    /* Architecture diagram */
+    .arch {
+      background: #fff;
+      border: 1px solid #d6d6cf;
+      border-radius: 3px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+    }
+    .arch .level {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #e0e0d8;
+    }
+    .arch .level:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .arch .level-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #0e7490;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .arch .level-name { font-size: 14px; font-weight: 700; color: #111; }
+    .arch .level-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.55; }
 
-  /* Architecture diagram */
-  .arch {
-    background: #fff;
-    border: 1px solid #d6d6cf;
-    border-radius: 3px;
-    padding: 18px 22px;
-    margin-bottom: 18px;
-  }
-  .arch .level {
-    margin-bottom: 14px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed #e0e0d8;
-  }
-  .arch .level:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-  .arch .level-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0e7490;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .arch .level-name { font-size: 14px; font-weight: 700; color: #111; }
-  .arch .level-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.55; }
+    .downloads {
+      background: #fff;
+      border: 1px solid #d6d6cf;
+      border-radius: 3px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .downloads h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; }
+    .downloads a { color: #0e7490; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+    .downloads a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+    .downloads .row { padding: 4px 0; }
 
-  .downloads {
-    background: #fff;
-    border: 1px solid #d6d6cf;
-    border-radius: 3px;
-    padding: 14px 18px;
-    margin-bottom: 16px;
-    font-size: 13px;
-  }
-  .downloads h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; }
-  .downloads a { color: #0e7490; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
-  .downloads a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-  .downloads .row { padding: 4px 0; }
+    /* Category card (L1) */
+    .category-card {
+      background: #fafaf6;
+      border: 1px solid #d6d6cf;
+      border-left: 3px solid #0e7490;
+      border-radius: 3px;
+      padding: 14px 18px;
+      margin-bottom: 8px;
+      scroll-margin-top: 16px;
+    }
+    .category-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
+    .category-card .name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .category-card .name a { color: #888; text-decoration: none; font-weight: 400; font-size: 12px; margin-left: 8px; }
+    .category-card .name a:hover { color: #0e7490; }
+    .category-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 6px; }
+    .category-card .meta { font-size: 11.5px; color: #555; margin-top: 4px; }
+    .category-card .meta strong { color: #111; }
 
-  /* Category card (L2) */
-  .category-card {
-    background: #fafaf6;
-    border: 1px solid #d6d6cf;
-    border-left: 3px solid #0e7490;
-    border-radius: 3px;
-    padding: 14px 18px;
-    margin-bottom: 8px;
-    scroll-margin-top: 16px;
-  }
-  .category-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
-  .category-card .name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; }
-  .category-card .name a { color: #888; text-decoration: none; font-weight: 400; font-size: 12px; margin-left: 8px; }
-  .category-card .name a:hover { color: #0e7490; }
-  .category-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 6px; }
-  .category-card .meta { font-size: 11.5px; color: #555; margin-top: 4px; }
-  .category-card .meta strong { color: #111; }
+    /* Leaf grid (L2 children of an L1 category) */
+    .leaves {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 10px;
+      margin: 10px 0 18px 16px;
+    }
+    .leaf {
+      background: #fff;
+      border: 1px solid #d6d6cf;
+      border-radius: 3px;
+      padding: 12px 14px;
+      scroll-margin-top: 16px;
+    }
+    .leaf .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; color: #888; margin-bottom: 2px; }
+    .leaf .name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .leaf .name a { color: #ccc; text-decoration: none; font-weight: 400; font-size: 11px; margin-left: 6px; }
+    .leaf .name a:hover { color: #0e7490; }
+    .leaf .desc { color: #2a2a2a; font-size: 12.5px; line-height: 1.55; margin-bottom: 4px; }
+    .leaf .alt { font-size: 11px; color: #777; font-style: italic; }
 
-  /* Leaf grid (L3 children of an L2 category) */
-  .leaves {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 10px;
-    margin: 10px 0 18px 16px;
-  }
-  .leaf {
-    background: #fff;
-    border: 1px solid #d6d6cf;
-    border-radius: 3px;
-    padding: 12px 14px;
-    scroll-margin-top: 16px;
-  }
-  .leaf .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; color: #888; margin-bottom: 2px; }
-  .leaf .name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
-  .leaf .name a { color: #ccc; text-decoration: none; font-weight: 400; font-size: 11px; margin-left: 6px; }
-  .leaf .name a:hover { color: #0e7490; }
-  .leaf .desc { color: #2a2a2a; font-size: 12.5px; line-height: 1.55; margin-bottom: 4px; }
-  .leaf .alt { font-size: 11px; color: #777; font-style: italic; }
+    /* Universal DNA card */
+    .dna-card {
+      background: #f4faf7;
+      border: 1px solid #cde4d8;
+      border-left: 3px solid #1e8e6f;
+      border-radius: 3px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+    .dna-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
+    .dna-card .name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .dna-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+    .dna-card .props {
+      background: #fff;
+      border: 1px solid #cde4d8;
+      border-radius: 3px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+    }
+    .dna-card .props .prop { padding: 4px 0; }
+    .dna-card .props .prop-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #1e8e6f; font-weight: 600; }
+    .dna-card .props .prop-desc { color: #2a2a2a; }
 
-  /* Universal DNA card (L1) */
-  .dna-card {
-    background: #f4faf7;
-    border: 1px solid #cde4d8;
-    border-left: 3px solid #1e8e6f;
-    border-radius: 3px;
-    padding: 16px 20px;
-    margin-bottom: 16px;
-  }
-  .dna-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
-  .dna-card .name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
-  .dna-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
-  .dna-card .props {
-    background: #fff;
-    border: 1px solid #cde4d8;
-    border-radius: 3px;
-    padding: 10px 14px;
-    font-size: 12.5px;
-  }
-  .dna-card .props .prop { padding: 4px 0; }
-  .dna-card .props .prop-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #1e8e6f; font-weight: 600; }
-  .dna-card .props .prop-desc { color: #2a2a2a; }
+    /* Status / counts strip */
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 18px;
+      padding: 12px 18px;
+      background: #fff;
+      border: 1px solid #d6d6cf;
+      border-radius: 3px;
+      font-size: 12.5px;
+    }
+    .stats .stat-num { font-size: 22px; font-weight: 700; color: #0e7490; line-height: 1; }
+    .stats .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
 
-  /* Status / counts strip */
-  .stats {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 18px;
-    padding: 12px 18px;
-    background: #fff;
-    border: 1px solid #d6d6cf;
-    border-radius: 3px;
-    font-size: 12.5px;
-  }
-  .stats .stat-num { font-size: 22px; font-weight: 700; color: #0e7490; line-height: 1; }
-  .stats .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
-
-  .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
-  .footer a { color: #888; text-decoration: underline; }
-
-  a { color: #0e7490; }
-  a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
-  }
-
-  /* Site-wide footer */
-  .site-footer { margin-top: 40px; padding-top: 22px; border-top: 1px solid #e0e0d8; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
-  .site-footer .site-footer-links { font-size: 12px; margin-bottom: 14px; }
-  .site-footer .site-footer-links a { color: #0e7490; text-decoration: none; font-weight: 600; margin: 0 6px; }
-  .site-footer .site-footer-links a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-  .site-footer .site-footer-sponsor { margin: 18px 0 14px; }
-  .site-footer .site-footer-sponsor a { display: inline-block; transition: opacity 0.15s ease; }
-  .site-footer .site-footer-sponsor a:hover { opacity: 0.75; }
-  .site-footer .site-footer-sponsor img { max-width: 200px; height: auto; }
-  .site-footer .site-footer-license { font-size: 10.5px; color: #888; font-style: italic; }
-</style>
-</head>
-<body>
-
-<div class="page">
-
-<header class="site-header">
-  <a href="../../index.html" class="site-logo" aria-label="The Ontology Project — home">
-    <img src="top-logo.svg" alt="The Ontology Project" width="210">
-  </a>
-  <div class="site-meta">
-    <div class="site-meta-primary">Core · v1</div>
-    <div class="site-meta-secondary">top: namespace · the universal layer</div>
-  </div>
-</header>
+    .spec-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
+    .spec-footer a { color: #888; text-decoration: underline; }
+  </style>
+---
 
 <div class="uri">https://top.scientix.ai/v1#</div>
 
@@ -245,7 +212,7 @@
 
 <div class="stats">
   <div><div class="stat-num">8</div><div class="stat-label">Category-Level Objects</div></div>
-  <div><div class="stat-num">28</div><div class="stat-label">Universal leaves</div></div>
+  <div><div class="stat-num">29</div><div class="stat-label">Universal leaves</div></div>
   <div><div class="stat-num">23</div><div class="stat-label">PROV-O alignments</div></div>
   <div><div class="stat-num">3</div><div class="stat-label">SHACL invariants underneath</div></div>
 </div>
@@ -260,13 +227,13 @@
   </div>
   <div class="level">
     <div class="level-label">L2 — Operator vocabulary, leaves</div>
-    <div class="level-name">Twenty-eight universal entities</div>
+    <div class="level-name">Twenty-nine universal entities</div>
     <div class="level-desc">The concrete first-class concepts operators reach for: Person, Organization, Schedule, Document, Observation, Safety Guardrail, and so on. Each leaf belongs to exactly one category. Workflow extensions specialize a leaf rather than introducing a new universal one.</div>
   </div>
   <div class="level">
     <div class="level-label">Infrastructure floor — Provenance contract (SHACL, not SKOS)</div>
     <div class="level-name">Three properties enforced underneath every entity</div>
-    <div class="level-desc">Beneath the operator vocabulary, three SHACL invariants apply to every entity in any TOP graph: <span class="inline">identifier</span> (what is this thing), <span class="inline">observedAt</span> (when it was captured or recorded), <span class="inline">status</span> (whether it is current). Together they are the provenance contract that lets a graph be traceable and version-able. The operator never names this layer, which is why it lives in <span class="inline">commons/source/core.ttl</span> as SHACL rather than as a concept in the taxonomy.</div>
+    <div class="level-desc">Beneath the operator vocabulary, three SHACL invariants apply to every entity in any TOP graph: <span class="inline">identifier</span> (what is this thing), <span class="inline">observedAt</span> (when it was captured or recorded), <span class="inline">status</span> (whether it is current). Together they are the provenance contract that lets a graph be traceable and version-able. The operator never names this layer, which is why it lives in <span class="inline">core/v1/shapes.ttl</span> as SHACL rather than as a concept in the taxonomy.</div>
   </div>
 </div>
 
@@ -274,12 +241,14 @@
 
 <div class="downloads">
   <h3>Source of truth</h3>
-  <div class="row"><a href="../../taxonomy/taxonomy.ttl">taxonomy.ttl</a> &nbsp;·&nbsp; SKOS canonical taxonomy in Turtle (357 triples, 38 concepts, Termboard-clean)</div>
+  <div class="row"><a href="../../taxonomy/taxonomy.ttl">taxonomy.ttl</a> &nbsp;·&nbsp; SKOS canonical taxonomy in Turtle (398 triples, 38 concepts, Termboard-clean)</div>
+  <div class="row"><a href="shapes.ttl">core/v1/shapes.ttl</a> &nbsp;·&nbsp; OWL classes + SHACL Universal DNA contract</div>
+  <div class="row"><a href="walkthroughs/person.ttl">core/v1/walkthroughs/person.ttl</a> &nbsp;·&nbsp; Concrete instance demonstrating L0 → L1 → L2 end-to-end</div>
 
-  <h3 style="margin-top: 14px;">Companion (rebuild pending)</h3>
-  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">commons/source/core.ttl — OWL/SHACL foundation, currently on prior namespace, rebuild scheduled to follow this taxonomy locking in Termboard</span></div>
-  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/context.jsonld — JSON-LD context, queued</span></div>
-  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/shapes.ttl — SHACL shapes, queued</span></div>
+  <h3 style="margin-top: 14px;">Companion (queued)</h3>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/context.jsonld — JSON-LD context for NGSI-LD wire format, queued</span></div>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/vocabulary/&lt;category&gt;/&lt;leaf&gt;.yaml — CV back-fill per ADR-0018, queued</span></div>
+  <div class="row"><span style="color: #888; font-size: 11.5px; font-style: italic;">core/v1/crosswalks/&lt;category&gt;/&lt;leaf&gt;.sssom.tsv — peer-ontology crosswalks (FHIR, USDM, SDTM, MedDRA, NCIt, LOINC, SNOMED, …), queued</span></div>
 </div>
 
 <h2 class="section">PROV-O and NGSI-LD adherence · three layers</h2>
@@ -293,9 +262,9 @@
     <div class="level-desc">Every Core concept that has an honest PROV-O peer carries a mapping. <span class="inline">top:Person skos:exactMatch prov:Person</span>. <span class="inline">top:Activity skos:exactMatch prov:Activity</span>. Every Evidence and Outcome leaf <span class="inline">skos:closeMatch prov:Entity</span>. Every Scope leaf <span class="inline">skos:closeMatch prov:Plan</span>. Every Location leaf <span class="inline">skos:closeMatch prov:Location</span>. Constraint leaves have no PROV-O peer; they align to ODRL/SHACL conceptually, which is a separate alignment pass. The mappings make the alignment visible in any SKOS browse tool without requiring OWL inference.</div>
   </div>
   <div class="level">
-    <div class="level-label">Layer 2 — SHACL enforcement (commons/source/core.ttl, rebuild pending)</div>
-    <div class="level-name">PROV-O properties required per category</div>
-    <div class="level-desc">The SHACL foundation carries the strict adherence. Every Evidence instance is required to carry <span class="inline">prov:wasGeneratedBy</span> (where it came from) and <span class="inline">prov:wasAttributedTo</span> (who is responsible). Every Activity is required to carry <span class="inline">prov:used</span> and <span class="inline">prov:wasAssociatedWith</span>. Every Artifact carries <span class="inline">prov:wasGeneratedBy</span> linking it to the producing Activity. This is what makes a TOP graph a provenance-grade graph rather than a vocabulary list. The strawman shapes ship as part of the shapes.ttl rebuild scheduled to follow this taxonomy locking in Termboard.</div>
+    <div class="level-label">Layer 2 — SHACL enforcement (core/v1/shapes.ttl, shipped)</div>
+    <div class="level-name">Universal DNA contract enforced on every entity</div>
+    <div class="level-desc">The SHACL foundation carries the strict adherence. Every <span class="inline">top:CommonEntity</span> instance is required to carry the three Universal DNA properties (<span class="inline">top:identifier</span>, <span class="inline">top:observedAt</span>, <span class="inline">top:status</span>). Because every L1 category and every L2 leaf inherits from <span class="inline">top:CommonEntity</span>, the contract applies through the entire subClassOf chain — no per-leaf re-declaration, no risk of a workflow extension forgetting to enforce it.</div>
   </div>
   <div class="level">
     <div class="level-label">Layer 3 — NGSI-LD wire format (core/v1/context.jsonld, queued)</div>
@@ -308,7 +277,7 @@
 
 <div class="dna-card" id="ProvenanceContract">
   <div class="name">Three properties every entity must carry</div>
-  <div class="desc">The operator never sees a concept called "Provenance Contract" because there isn't one in the taxonomy. What the operator sees is a Phlebotomist with cert# 2024-088, a Centrifuge with calibration current through 2026-09-15, an eConsent v3.2 signed at Day -7 · 14:22 CET. The metadata that makes those references trustworthy and version-able is the contract underneath: every entity carries an identifier, an observedAt, and a status. Enforced as SHACL in <span class="inline">commons/source/core.ttl</span>, applied to every leaf in every workflow extension, asked of every entity by every query. This is the floor that makes the rest of TOP a provenance-grade ontology rather than a vocabulary list.</div>
+  <div class="desc">The operator never sees a concept called "Provenance Contract" because there isn't one in the taxonomy. What the operator sees is a Phlebotomist with cert# 2024-088, a Centrifuge with calibration current through 2026-09-15, an eConsent v3.2 signed at Day -7 · 14:22 CET. The metadata that makes those references trustworthy and version-able is the contract underneath: every entity carries an identifier, an observedAt, and a status. Enforced as SHACL in <span class="inline">core/v1/shapes.ttl</span>, applied to every leaf in every workflow extension, asked of every entity by every query. This is the floor that makes the rest of TOP a provenance-grade ontology rather than a vocabulary list.</div>
   <div class="props">
     <div class="prop"><span class="prop-name">identifier</span> &nbsp;·&nbsp; <span class="prop-desc">what is this thing, uniquely addressable</span></div>
     <div class="prop"><span class="prop-name">observedAt</span> &nbsp;·&nbsp; <span class="prop-desc">when it was captured or recorded, temporally anchored</span></div>
@@ -352,6 +321,12 @@
     <div class="name">Autonomous Agent <a href="#AutonomousAgent">¶</a></div>
     <div class="desc">An Agent that takes action, makes decisions, or executes operations without direct human control on each step: AI models that produce outputs, software services that act on schedules or events, robotic systems. Responsible party is recorded separately so accountability is preserved.</div>
     <div class="alt">Alt: AI Agent, Software Agent, Bot</div>
+  </div>
+  <div class="leaf" id="Organism">
+    <div class="id">top:Organism</div>
+    <div class="name">Organism <a href="#Organism">¶</a></div>
+    <div class="desc">An Agent that is a living biological non-human entity acting or being acted upon in an operational context: laboratory animals in research, livestock under veterinary care, plants in agricultural trials, microbial cultures in fermentation, model organisms in biology studies. Distinct from Person (the human actor) and from Material (a substance consumed or transformed).</div>
+    <div class="alt">Alt: Living Subject, Specimen, Subject (life-sciences)</div>
   </div>
 </div>
 
@@ -685,29 +660,8 @@
 
 <h2 class="section">Status</h2>
 
-<p>This namespace is at <strong>v1.0.0-strawman</strong> as of May 2026. The SKOS taxonomy is locked and Termboard-clean (zero circular-definition flags, zero anti-pattern words, zero standalone-acronym flags, every L3 leaf names its L2 parent). The OWL/SHACL companion (<span class="inline">commons/source/core.ttl</span>) and the JSON-LD context are scheduled to follow this taxonomy locking in Termboard.</p>
+<p>This namespace is at <strong>v1.0.0-strawman</strong> as of May 2026. The SKOS taxonomy is locked and Termboard-clean (zero circular-definition flags, zero anti-pattern words, zero standalone-acronym flags, every L2 leaf names its L1 parent). The OWL/SHACL companion (<span class="inline">core/v1/shapes.ttl</span>) ships with the Universal DNA SHACL contract; the JSON-LD context, the per-leaf CV YAMLs, and the SSSOM crosswalks (per ADR-0018) are queued.</p>
 
-<div class="footer">
+<div class="spec-footer">
   Resolution target for the top: namespace · v1 of TOP Core · governed by The Ontology Project under Apache 2.0
 </div>
-
-<footer class="site-footer">
-  <div class="site-footer-links">
-    <a href="../../index.html">Home</a> ·
-    <a href="../../manifesto.html">Manifesto</a> ·
-    <a href="../../first-principles.html">First Principles</a> ·
-    <a href="../../roadmap.html">Roadmap</a> ·
-    <a href="../../legacy/onto/">Namespaces (legacy)</a> ·
-    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
-  </div>
-  <div class="site-footer-sponsor">
-    <a href="https://scientix.ai">
-      <img src="sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
-    </a>
-  </div>
-  <div class="site-footer-license">Apache License 2.0</div>
-</footer>
-
-</div>
-</body>
-</html>
