@@ -1,3 +1,11 @@
+---
+layout: default
+title: Extension Contract
+meta_primary: Extension Contract
+meta_secondary: Per-layer rules · ADR-0019 · Updated 2026-05-13
+markdown_content: true
+---
+
 # TOP Extension Contract
 
 > Per [ADR-0019](decision-log.md#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), TOP commits to **open Core, constrained extension** — every Core property and concept is a stable point of attachment, not a ceiling. Extension is permitted; redefinition is not. This document is the per-layer rulebook that makes the principle machine-checkable.

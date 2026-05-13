@@ -1,3 +1,11 @@
+---
+layout: default
+title: RFC Process
+meta_primary: RFC Process
+meta_secondary: Structural decisions · markdown PRs
+markdown_content: true
+---
+
 # TOP RFC Process
 
 > RFCs (Requests for Comment) are how TOP makes structural decisions that affect more than one working group, change Core, alter governance, or commit the project to a direction that will be hard to unravel. The process is deliberately lightweight: a markdown document, a PR, a review, a merge. The artifact stays in the repository as the durable record of the decision.

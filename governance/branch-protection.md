@@ -1,3 +1,11 @@
+---
+layout: default
+title: Branch Protection
+meta_primary: Branch Protection
+meta_secondary: Intended rules · CODEOWNERS + protected branches
+markdown_content: true
+---
+
 # Branch Protection — intended rules
 
 > Branch protection is configured in GitHub Settings, not in the repository itself. This document records the intended rules so they are transparent to contributors and so the configuration can be reconstructed if it ever drifts.

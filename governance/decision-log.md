@@ -1,3 +1,11 @@
+---
+layout: default
+title: Decision Log
+meta_primary: Decision Log
+meta_secondary: ADR-0001 through ADR-0020 · Updated 2026-05-13
+markdown_content: true
+---
+
 # Architectural Decision Log
 
 > The chain of architectural decisions that shape The Ontology Project, in the order they were made. Each entry captures the question, the pivotal moment that forced an answer, the decision, and what it commits us to. Decisions are append-only: a later decision can supersede an earlier one, but the earlier one is never edited away — the reasoning is the artifact.
