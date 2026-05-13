@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+{% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
+<link rel="stylesheet" href="{{ '/styles.css' | relative_url }}">
+{% if page.extra_head %}{{ page.extra_head }}{% endif %}
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <div class="site-header">
+      <a href="{{ '/' | relative_url }}" class="site-logo" aria-label="The Ontology Project — home">
+        <img src="{{ '/images/top-logo.svg' | relative_url }}" alt="The Ontology Project" width="210">
+      </a>
+      <div class="site-meta">
+        <div class="site-meta-primary">{{ page.meta_primary | default: page.title | default: site.title }}</div>
+        {% if page.meta_secondary %}<div class="site-meta-secondary">{{ page.meta_secondary }}</div>{% endif %}
+      </div>
+    </div>
+    <nav class="site-nav-links">
+      {% if page.nav == "home" %}<strong>Home</strong>{% else %}<a href="{{ '/' | relative_url }}">Home</a>{% endif %} ·
+      {% if page.nav == "manifesto" %}<strong>Manifesto</strong>{% else %}<a href="{{ '/manifesto.html' | relative_url }}">Manifesto</a>{% endif %} ·
+      {% if page.nav == "first-principles" %}<strong>First Principles</strong>{% else %}<a href="{{ '/first-principles.html' | relative_url }}">First Principles</a>{% endif %} ·
+      {% if page.nav == "roadmap" %}<strong>Roadmap</strong>{% else %}<a href="{{ '/roadmap.html' | relative_url }}">Roadmap</a>{% endif %} ·
+      <a href="{{ '/core/v1/' | relative_url }}">Core</a> ·
+      <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
+    </nav>
+  </header>
+
+  {% if page.markdown_content %}<div class="markdown-content">{{ content }}</div>{% else %}{{ content }}{% endif %}
+
+  <footer class="site-footer">
+    <div class="site-footer-sponsor">
+      <a href="https://scientix.ai">
+        <img src="{{ '/images/sponsored-by-scientixai.svg' | relative_url }}" alt="Sponsored by Scientix.ai">
+      </a>
+    </div>
+    <div class="site-footer-license">Apache License 2.0</div>
+  </footer>
+
+</div>
+</body>
+</html>
