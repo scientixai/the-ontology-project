@@ -1,6 +1,6 @@
 # TOP Taxonomy
 
-> The classification scheme for The Ontology Project. One root, eight categories, twenty-eight leaves. Authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Practitioner-first: AI agents and ontologist tooling are honored at the edge, never as primary customers of TOP.
+> The classification scheme for The Ontology Project. One root, eight categories, twenty-nine leaves. Authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Practitioner-first: AI agents and ontologist tooling are honored at the edge, never as primary customers of TOP.
 
 ## Three layers
 
@@ -50,11 +50,11 @@ Each category is `rdfs:subClassOf top:CommonEntity` and `rdfs:subClassOf prov:Ag
 
 The four mixed-membership categories (Resource, Scope, Outcome, Constraint) carry BFO scope notes documenting their alignment rationale, but no forced subClassOf at the category level. Leaves under those categories declare their BFO type if and when OBO interop demands it. This buys the clean OBO interop where it lands cleanly without paying the BFO maintenance tax across all of TOP.
 
-## L2 — The twenty-eight leaves
+## L2 — The twenty-nine leaves
 
 Each leaf is `rdfs:subClassOf` its category (and transitively `top:CommonEntity`) and carries its own class-level PROV-O alignment.
 
-**Agent (4)** — `Person`, `Organization`, `Group`, `AutonomousAgent`. Person → `prov:Person`; Organization → `prov:Organization`; Group → `prov:Agent`; AutonomousAgent → `prov:SoftwareAgent`.
+**Agent (5)** — `Person`, `Organization`, `Group`, `AutonomousAgent`, `Organism`. Person → `prov:Person`; Organization → `prov:Organization`; Group → `prov:Agent`; AutonomousAgent → `prov:SoftwareAgent`; Organism → `prov:Agent` (close match; non-human living agents — laboratory animals, plants, microbial cultures, model organisms).
 
 **Location (3)** — `Physical`, `Virtual`, `Storage`. All → `prov:Location`.
 

@@ -47,7 +47,7 @@
 #        on per ADR-0012. Domain pinned to the category; range pinned
 #        where the target category is determinable.
 #
-#   L3 — Leaf classes (28).
+#   L3 — Leaf classes (29).
 #        The leaves under each category. Each rdfs:subClassOf its L2
 #        category (which transitively pulls in top:CommonEntity and
 #        the PROV-O alignment) plus its own PROV-O leaf alignment from
@@ -103,7 +103,7 @@
 
 <https://top.scientix.ai/core/v1> a owl:Ontology ;
     dct:title "TOP Core — OWL classes and SHACL contract"@en ;
-    dct:description "OWL/SHACL view of the SKOS taxonomy at taxonomy/taxonomy.ttl. Defines the root top:CommonEntity, the eight L2 categories, the 28 L3 leaves, the Universal DNA properties, the category relational extensions, and the SHACL UniversalDNAShape that enforces the three required practitioner-grounded properties on every TOP entity."@en ;
+    dct:description "OWL/SHACL view of the SKOS taxonomy at taxonomy/taxonomy.ttl. Defines the root top:CommonEntity, the eight L2 categories, the 29 L3 leaves, the Universal DNA properties, the category relational extensions, and the SHACL UniversalDNAShape that enforces the three required practitioner-grounded properties on every TOP entity."@en ;
     dct:created "2026-05-10"^^xsd:date ;
     dct:license "Apache-2.0" ;
     rdfs:seeAlso <https://top.scientix.ai/v1#TaxonomyV1>,
@@ -466,7 +466,7 @@ top:appliesTo a owl:ObjectProperty ;
 
 
 # ====================================================================
-# L3 — Leaf classes (28)
+# L3 — Leaf classes (29)
 # ====================================================================
 # Each rdfs:subClassOf its L2 category (transitively pulling in
 # top:CommonEntity + Universal DNA + the category's PROV-O alignment)
@@ -493,6 +493,11 @@ top:AutonomousAgent a owl:Class ;
     rdfs:label "Autonomous Agent"@en ;
     rdfs:subClassOf top:Agent, prov:SoftwareAgent ;
     rdfs:comment "A software entity acting on delegated authority — robotic process, AI agent, automated decision system, scheduler, monitor."@en .
+
+top:Organism a owl:Class ;
+    rdfs:label "Organism"@en ;
+    rdfs:subClassOf top:Agent, prov:Agent ;
+    rdfs:comment "A living biological non-human entity acting or being acted upon in an operational context — laboratory animal, livestock under veterinary care, plant in an agricultural trial, microbial culture, model organism in a biology study. Distinct from Person (the human actor) and from Material (a substance consumed or transformed)."@en .
 
 
 # --- Location leaves (3) ---

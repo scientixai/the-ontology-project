@@ -27,6 +27,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0017](#adr-0017-monorepo-with-directory-scoped-ownership) | 2026-05-12 | Monorepo with directory-scoped ownership | Accepted |
 | [ADR-0018](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline) | 2026-05-13 | Adopt the six-stage ontology pipeline as TOP's build discipline | Accepted |
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
+| [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Accepted (resolves ADR-0018 forward-looking note) |
 
 ---
 
@@ -742,7 +743,7 @@ TOP adopts the six-stage ontology pipeline as its build discipline, structurally
 **Each layer is the precondition for the next.** A concept may be lifted with the CV and taxonomy authored first and the metadata schema, thesaurus, and ontology added in subsequent PRs. The reverse is forbidden — no concept ships only its ontology layer; no taxonomy entry exists without a corresponding CV record.
 
 **The discipline applies to:**
-- TOP Core itself (the eight categories + twenty-eight leaves currently at L1/L2 of the taxonomy)
+- TOP Core itself (the eight categories + twenty-nine leaves currently at L1/L2 of the taxonomy)
 - Every workflow extension (clinical-research first, then care-delivery / manufacturing / supply-chain / others)
 - Every customer-built knowledge graph on TOP
 
@@ -755,7 +756,7 @@ TOP adopts the six-stage ontology pipeline as its build discipline, structurally
 ### Consequences
 
 - **Every future concept-introduction PR is audited against the pipeline.** A reviewer can ask: *does this concept have a CV record? a taxonomy entry? a SHACL shape? a thesaurus entry? a crosswalk file?* The reviewer expects all six (or a declared roadmap for the missing ones).
-- **The CV layer is now load-bearing.** A back-fill pass is required for the current twenty-eight Core leaves — one YAML per leaf under `core/v1/vocabulary/`, with synonyms, anti-synonyms, context routing where applicable, and per-property enum CVs.
+- **The CV layer is now load-bearing.** A back-fill pass is required for the current twenty-nine Core leaves — one YAML per leaf under `core/v1/vocabulary/`, with synonyms, anti-synonyms, context routing where applicable, and per-property enum CVs.
 - **SKOS-XL upgrade follows the CV pass.** The current `taxonomy/taxonomy.ttl` carries plain SKOS labels; SKOS-XL promotes labels to first-class objects with provenance. The upgrade is mostly mechanical once the CV YAMLs exist.
 - **SSSOM crosswalk files per leaf land alongside the SHACL property shapes.** Both generated from the same structured intermediate.
 - **Workflow extensions adopt the pipeline from their first PR.** The clinical-research rebuild does not lift an entity without authoring its CV first, then its taxonomy entry, then its SHACL shape, then its thesaurus entry, then its OWL class.
@@ -769,7 +770,7 @@ TOP adopts the six-stage ontology pipeline as its build discipline, structurally
 
 ### Forward-looking notes (not part of this ADR)
 
-- **The CV back-fill may surface a `top:Organism` (or `top:LivingSubject`) Core leaf** — the *Subject* homonym suggests that when the second life-sciences workflow extension lifts (animal research, comparative medicine, plant research, microbial research), the Agent category may need an Organism leaf with Person as a specialization. Documented as a trigger, not a decision.
+- **The CV back-fill may surface a `top:Organism` (or `top:LivingSubject`) Core leaf** — the *Subject* homonym suggests that when the second life-sciences workflow extension lifts (animal research, comparative medicine, plant research, microbial research), the Agent category may need an Organism leaf with Person as a specialization. Documented as a trigger, not a decision. *Resolved 2026-05-13 by [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf): added as a sibling leaf alongside Person rather than as a parent of Person, because Person carries practitioner-specific Universal DNA and PROV-O alignment (`prov:Person`) that should not be diluted through an intermediate Organism class.*
 - **The CV back-fill may surface a need to clarify `top:Material` scope** to include biological substances (proteins, antibodies, cell-line aliquots) explicitly — the *agent (pharmacological)* anti-synonym routes here.
 
 ### Status
@@ -838,6 +839,64 @@ The two Invariant Universal DNA properties (`top:identifier`, `top:observedAt`) 
 ### Status
 
 Accepted. The flavor annotations land in `core/v1/shapes.ttl` alongside this ADR. The full per-layer extension contract is in `governance/extension-contract.md`. The linter is a follow-on PR.
+
+---
+
+## ADR-0020: Add `top:Organism` as the fifth Agent leaf
+
+**Date:** 2026-05-13 · **Status:** Accepted · **Refs:** [taxonomy.md § L2 — The twenty-nine leaves](../taxonomy.md), [taxonomy/taxonomy.ttl](../taxonomy/taxonomy.ttl), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [ADR-0018 forward-looking note](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline)
+
+### Context
+
+ADR-0018's forward-looking notes flagged that the CV back-fill — particularly the *Subject* homonym (Person in human research; living non-human in animal / plant / microbial research) — would likely surface a `top:Organism` Core leaf. The trigger arrived earlier than expected: while building out the practitioner walkthrough and reviewing the Agent category's coverage, it became clear that TOP today has no honest home for laboratory animals, livestock under veterinary care, plants in agricultural trials, microbial cultures in fermentation, or model organisms in biology studies. These are operational subjects across multiple regulated industries (clinical-research adjuncts, veterinary medicine, agriculture, food production, biopharma manufacturing), they are not `top:Person` (the human actor), and they are not `top:Material` (a substance consumed or transformed).
+
+Two structural options surfaced:
+
+- **Option A:** Add `top:Organism` as a fifth sibling leaf under `top:Agent` alongside Person, Organization, Group, and AutonomousAgent.
+- **Option B:** Add `top:Organism` as an intermediate Agent and make `top:Person rdfs:subClassOf top:Organism`. Honors the biological hierarchy (humans are living organisms) and aligns Person under a more general Agent class.
+
+> "i think option a is the best"
+
+### Decision
+
+Adopt **Option A**: `top:Organism` is the fifth sibling leaf under `top:Agent`, alongside `top:Person`, `top:Organization`, `top:Group`, and `top:AutonomousAgent`. `top:Person` retains its direct subclass relationship to `top:Agent` and its `prov:Person` alignment without an intermediate Organism layer.
+
+The definition: an Agent that is a living biological entity acting or being acted upon in an operational context — laboratory animals in research, livestock under veterinary care, plants in agricultural trials, microbial cultures in fermentation, model organisms in biology studies. Distinct from Person (the human actor) and from Material (a substance consumed or transformed).
+
+PROV-O alignment: `top:Organism skos:closeMatch prov:Agent` (close match, not exact — PROV-O's Agent admits any actor that can be attributed an action; Organism is the non-human-living subset, which is operationally meaningful in TOP but has no exact peer in PROV-O).
+
+Schema.org alignment: none (schema.org has no honest peer for non-human living agents; Organism joins the absence list).
+
+BFO alignment: deferred. `bfo:Organism` is a candidate alignment at the leaf level if and when OBO Foundry interop demands it; not forced at this ADR.
+
+CV-layer context routing for the *Subject* homonym: in human research, *Subject* routes to `top:Person`; in animal / plant / microbial research, *Subject* routes to `top:Organism`. The CV YAML for each leaf (forthcoming per ADR-0018) declares the `contextRouting` and `antiSynonym` blocks that disambiguate by source vocabulary.
+
+### Rationale — why Option A over Option B
+
+- **Practitioner clarity (per ADR-0013).** Operators in animal research, agriculture, and fermentation do not say "the Person we are dosing"; operators in human research do not say "the Organism we are enrolling." Making Person a subclass of Organism conflates two operationally distinct concepts behind a shared parent that nobody asks for at the practitioner layer.
+- **PROV-O alignment is cleaner.** `top:Person rdfs:subClassOf prov:Person` is the direct, defensible alignment. Routing Person through an intermediate Organism class that itself maps only to `prov:Agent` (close match) would dilute the alignment for the most-used Agent leaf.
+- **Workflow extensions stay clean.** A clinical-research `Investigator subClassOf top:Person` carries the right semantics; a veterinary-research `AnimalSubject subClassOf top:Organism` carries the right semantics. Neither workflow needs to traverse an Organism intermediate to reach Person.
+- **The biological hierarchy is honored where it matters — in the BFO / OBO alignment at the leaf level, not in the practitioner-facing Core taxonomy.** When (or if) the OBO Foundry alignment lands, `top:Organism rdfs:subClassOf bfo:Organism` and `top:Person rdfs:subClassOf bfo:Organism` (transitively, via Person's leaf-level BFO alignment) both hold without forcing the Core taxonomy itself to express the biological subclass relationship.
+
+### Consequences
+
+- **Core grows from 28 to 29 leaves.** The eight-category structure is unchanged; only the Agent category's leaf count moves from 4 to 5.
+- **The "Subject" homonym now has two honest landing points in Core.** Workflow extensions disambiguate via the CV-layer context routing per ADR-0018.
+- **Animal-research / veterinary / agricultural workflow extensions are now expressible against Core without abuse of `top:Person` or `top:Material`.** A future workflow extension declares `vetcare:AnimalSubject subClassOf top:Organism`; an agriculture workflow declares `agtrial:PlantSubject subClassOf top:Organism`; a biopharma manufacturing workflow declares `biomfg:MicrobialCulture subClassOf top:Organism`.
+- **ADR-0018's forward-looking note is resolved.** The "may surface a `top:Organism` Core leaf" trigger is now a landed decision.
+- **CV back-fill scope grows by one leaf.** The forthcoming `core/v1/vocabulary/agent/organism.yaml` carries the synonyms (Living Subject, Specimen, Subject (life-sciences), animal subject, lab animal, study organism, model organism, plant subject, culture), the anti-synonyms (Person, Material, Specimen-when-substance), and the context routing rules for the *Subject* homonym.
+- **No counts-only churn in workflow extensions.** Workflow extensions that referenced Agent's leaf count by number rather than by name update once; those that referenced Agent by named leaves (Person / Organization / Group / AutonomousAgent) need no edit.
+
+### What this ADR does NOT do
+
+- It does not commit to a BFO alignment for `top:Organism` at this time. The OBO interop is the natural place for one; the alignment lands when OBO Foundry consumption demands it.
+- It does not author the CV YAML for `top:Organism`. The CV back-fill is per-leaf work tracked under ADR-0018.
+- It does not introduce a `top:LivingSubject` synonym leaf. The CV layer carries the synonym; the Core taxonomy carries one canonical concept.
+- It does not change `top:Person`'s alignment, parentage, or Universal DNA obligations. Person remains a direct subclass of `top:Agent` with `prov:Person` exact-match alignment.
+
+### Status
+
+Accepted. The Organism leaf lands in `taxonomy/taxonomy.ttl` and `core/v1/shapes.ttl` alongside this ADR; the count references in README.md, taxonomy.md, governance/extension-contract.md, and core/v1/index.html update from 28 to 29.
 
 ---
 
