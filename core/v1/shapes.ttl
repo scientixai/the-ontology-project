@@ -121,6 +121,22 @@ top:CommonEntity a owl:Class ;
 
 
 # ====================================================================
+# Extensibility flavor annotation property (per ADR-0019)
+# ====================================================================
+# Every Core property declares one of three flavors:
+#   "Invariant"   — semantics cannot drift; tightening allowed; redefinition forbidden
+#   "Tightenable" — shape stays; downstream consumers may add SHACL constraints
+#                   (require what's optional, narrow enums, bind value sets)
+#   "Additive"    — designed for downstream addition (extends Core values, no replace)
+# The full per-layer extension contract: governance/extension-contract.md
+# Linter (forthcoming) enforces the contract at PR time.
+
+top:flavor a owl:AnnotationProperty ;
+    rdfs:label "flavor"@en ;
+    rdfs:comment "Extensibility flavor per ADR-0019. Permitted values: 'Invariant', 'Tightenable', 'Additive'."@en .
+
+
+# ====================================================================
 # L1 — Universal DNA properties
 # ====================================================================
 # Three properties every TOP entity carries. Per ADR-0013 (practitioner-
@@ -129,18 +145,21 @@ top:CommonEntity a owl:Class ;
 
 top:identifier a owl:DatatypeProperty , owl:FunctionalProperty ;
     rdfs:label "identifier"@en ;
+    top:flavor "Invariant" ;
     rdfs:domain top:CommonEntity ;
     rdfs:range xsd:anyURI ;
     rdfs:comment "Globally unique URI / URN. The opaque, durable, system-of-record handle for the entity. Functional: every TOP entity has exactly one."@en .
 
 top:observedAt a owl:DatatypeProperty ;
     rdfs:label "observed at"@en ;
+    top:flavor "Invariant" ;
     rdfs:domain top:CommonEntity ;
     rdfs:range xsd:dateTime ;
     rdfs:comment "When this entity-state was observed or recorded. NGSI-LD-style timestamp anchor; distinct from intrinsic temporal attributes (Temporal.startTime / endTime), which are domain-level."@en .
 
 top:status a owl:DatatypeProperty ;
     rdfs:label "status"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:CommonEntity ;
     rdfs:range xsd:string ;
     rdfs:comment "Current lifecycle / health state. Each Category narrows the enum at its layer; leaves narrow further. Universal at this layer because every entity has SOME state and the project-wide status query is operationally meaningful."@en .
@@ -196,12 +215,14 @@ top:Agent a owl:Class ;
 
 top:hasCredential a owl:ObjectProperty ;
     rdfs:label "has credential"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Agent ;
     rdfs:range top:Credential ;
     rdfs:comment "Links the Agent to their proof of qualification or identity (license, certificate, training record, role assignment). Range pinned to top:Credential (an Evidence leaf) so audit queries follow uniform paths."@en .
 
 top:memberOf a owl:ObjectProperty ;
     rdfs:label "member of"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Agent ;
     rdfs:range top:Agent ;
     rdfs:subPropertyOf prov:actedOnBehalfOf ;
@@ -209,6 +230,7 @@ top:memberOf a owl:ObjectProperty ;
 
 top:authorizedBy a owl:ObjectProperty ;
     rdfs:label "authorized by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Agent ;
     rdfs:range top:Agent ;
     rdfs:comment "The authority that granted the Agent permission to act in a specific scope. Investigator authorizedBy IRB; contractor authorizedBy Sponsor; device operator authorizedBy QA Lead."@en .
@@ -223,18 +245,21 @@ top:Location a owl:Class ;
 
 top:withinLocation a owl:ObjectProperty , owl:TransitiveProperty ;
     rdfs:label "within location"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Location ;
     rdfs:range top:Location ;
     rdfs:comment "Recursive parent location. Transitive: Room within Building within Campus is queryable as Room within Campus."@en .
 
 top:geoSpatialData a owl:DatatypeProperty ;
     rdfs:label "geo-spatial data"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Location ;
     rdfs:range xsd:string ;
     rdfs:comment "Physical coordinates or digital path. WKT / GeoJSON for physical spaces; structured locator (URI, file path, network address) for logical spaces."@en .
 
 top:accessRequirement a owl:ObjectProperty ;
     rdfs:label "access requirement"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Location ;
     rdfs:range top:Constraint ;
     rdfs:comment "Constraints required to enter this Location (clearance, training prerequisite, escort policy, biosafety level). Modeled via Constraint so authorization-failure events produce uniform Evidence."@en .
@@ -252,18 +277,21 @@ top:Resource a owl:Class ;
 
 top:ownedBy a owl:ObjectProperty ;
     rdfs:label "owned by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Resource ;
     rdfs:range top:Agent ;
     rdfs:comment "The Agent (Person or Organization) that owns / has custody of the Resource. Chain-of-custody anchor."@en .
 
 top:hasMaintenanceLog a owl:ObjectProperty ;
     rdfs:label "has maintenance log"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Resource ;
     rdfs:range top:Log ;
     rdfs:comment "Links the Resource to its history of maintenance / calibration / validation Log. Range pinned to top:Log (an Evidence leaf)."@en .
 
 top:operationalState a owl:DatatypeProperty ;
     rdfs:label "operational state"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Resource ;
     rdfs:range xsd:string ;
     rdfs:comment "Hardware/software-specific readiness beyond top:status. CALIBRATED / DUE_FOR_CALIBRATION / OUT_OF_SERVICE for Equipment; RUNNING / DEGRADED / OFFLINE for System."@en .
@@ -281,18 +309,21 @@ top:Scope a owl:Class ;
 
 top:governedBy a owl:ObjectProperty ;
     rdfs:label "governed by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Scope ;
     rdfs:range top:Constraint ;
     rdfs:comment "Links the Scope to specific Constraints — regulatory, contractual, safety. The legal frame the Scope operates within."@en .
 
 top:containsActivity a owl:ObjectProperty ;
     rdfs:label "contains activity"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Scope ;
     rdfs:range top:Temporal ;
     rdfs:comment "Links the Scope to the Temporal entities (planned or executed activities) happening within it. Backbone for 'what's in flight under this Scope right now'."@en .
 
 top:objectiveStatement a owl:DatatypeProperty ;
     rdfs:label "objective statement"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Scope ;
     rdfs:range xsd:string ;
     rdfs:comment "High-level description of the strategic 'why'. Operator-grounded — what an investigator, sponsor, or regulator would say this Scope is for."@en .
@@ -307,6 +338,7 @@ top:Temporal a owl:Class ;
 
 top:startTime a owl:DatatypeProperty ;
     rdfs:label "start time"@en ;
+    top:flavor "Invariant" ;
     rdfs:domain top:Temporal ;
     rdfs:range xsd:dateTime ;
     rdfs:subPropertyOf prov:startedAtTime ;
@@ -314,6 +346,7 @@ top:startTime a owl:DatatypeProperty ;
 
 top:endTime a owl:DatatypeProperty ;
     rdfs:label "end time"@en ;
+    top:flavor "Invariant" ;
     rdfs:domain top:Temporal ;
     rdfs:range xsd:dateTime ;
     rdfs:subPropertyOf prov:endedAtTime ;
@@ -321,6 +354,7 @@ top:endTime a owl:DatatypeProperty ;
 
 top:precededBy a owl:ObjectProperty ;
     rdfs:label "preceded by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Temporal ;
     rdfs:range top:Temporal ;
     rdfs:subPropertyOf prov:wasInformedBy ;
@@ -328,6 +362,7 @@ top:precededBy a owl:ObjectProperty ;
 
 top:occursAt a owl:ObjectProperty ;
     rdfs:label "occurs at"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Temporal ;
     rdfs:range top:Location ;
     rdfs:subPropertyOf prov:atLocation ;
@@ -343,18 +378,21 @@ top:Evidence a owl:Class ;
 
 top:verifiesOutcome a owl:ObjectProperty ;
     rdfs:label "verifies outcome"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Evidence ;
     rdfs:range top:Outcome ;
     rdfs:comment "Direct link to the Outcome this Evidence supports. The signed lab report verifies the lab-value Outcome; the calibration certificate verifies the equipment-readiness Outcome."@en .
 
 top:integrityHash a owl:DatatypeProperty ;
     rdfs:label "integrity hash"@en ;
+    top:flavor "Invariant" ;
     rdfs:domain top:Evidence ;
     rdfs:range xsd:string ;
     rdfs:comment "Digital fingerprint (SHA-256 or stronger) ensuring non-repudiation. Anchors GxP / 21 CFR Part 11 audit-trail discipline at the Core layer."@en .
 
 top:signedBy a owl:ObjectProperty ;
     rdfs:label "signed by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Evidence ;
     rdfs:range top:Agent ;
     rdfs:subPropertyOf prov:wasAttributedTo ;
@@ -373,6 +411,7 @@ top:Outcome a owl:Class ;
 
 top:measuredBy a owl:ObjectProperty ;
     rdfs:label "measured by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Outcome ;
     rdfs:range top:Resource ;
     rdfs:subPropertyOf prov:wasGeneratedBy ;
@@ -380,12 +419,14 @@ top:measuredBy a owl:ObjectProperty ;
 
 top:satisfiesConstraint a owl:ObjectProperty ;
     rdfs:label "satisfies constraint"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Outcome ;
     rdfs:range top:Constraint ;
     rdfs:comment "Links the Outcome to the Constraint(s) it has been validated against. Out-of-range Outcomes surface as the absence of this link to a relevant Constraint."@en .
 
 top:variance a owl:DatatypeProperty ;
     rdfs:label "variance"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Outcome ;
     rdfs:range xsd:string ;
     rdfs:comment "Delta between expected and actual. Format depends on leaf specialization — numeric for measured values, structured for multi-dimensional. Universal at this layer for cross-leaf trend queries."@en .
@@ -403,6 +444,7 @@ top:Constraint a owl:Class ;
 
 top:enforcedBy a owl:ObjectProperty ;
     rdfs:label "enforced by"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Constraint ;
     rdfs:range top:Agent ;
     rdfs:subPropertyOf prov:wasAssociatedWith ;
@@ -410,12 +452,14 @@ top:enforcedBy a owl:ObjectProperty ;
 
 top:severityLevel a owl:DatatypeProperty ;
     rdfs:label "severity level"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Constraint ;
     rdfs:range xsd:string ;
     rdfs:comment "Operational impact of violation. Universal enum — INFORMATIONAL / MINOR / MAJOR / CRITICAL. Workflow extensions can refine."@en .
 
 top:appliesTo a owl:ObjectProperty ;
     rdfs:label "applies to"@en ;
+    top:flavor "Tightenable" ;
     rdfs:domain top:Constraint ;
     rdfs:range top:CommonEntity ;
     rdfs:comment "Targets of the Constraint. Constraints can scope to Agents, Resources, Scopes, or Temporals; range is top:CommonEntity so the targeting is uniform across Categories. Leaf layer narrows by domain."@en .

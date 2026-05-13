@@ -25,6 +25,8 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags) | 2026-05-11 | Promote facts to entities — no bespoke flags | Accepted |
 | [ADR-0016](#adr-0016-schemaorg-alignment-where-the-peer-is-honest) | 2026-05-11 | schema.org alignment — where the peer is honest | Accepted |
 | [ADR-0017](#adr-0017-monorepo-with-directory-scoped-ownership) | 2026-05-12 | Monorepo with directory-scoped ownership | Accepted |
+| [ADR-0018](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline) | 2026-05-13 | Adopt the six-stage ontology pipeline as TOP's build discipline | Accepted |
+| [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
 
 ---
 
@@ -711,6 +713,131 @@ It also supersedes the PR #20 draft (closed unmerged 2026-05-11) — the substan
 Accepted. Artifacts shipping with this ADR: `.github/CODEOWNERS`, `governance/working-groups.md`, `governance/rfcs/README.md`, `governance/rfcs/0000-template.md`, `governance/branch-protection.md`, `CONTRIBUTING.md`.
 
 After merge, the convener applies the branch-protection rules per `governance/branch-protection.md` in GitHub → Settings → Branches.
+
+---
+
+## ADR-0018: Adopt the six-stage ontology pipeline as TOP's build discipline
+
+**Date:** 2026-05-13 · **Status:** Accepted · **Refs:** [first-principles.md § 7. Build the Pipeline in Order](../first-principles.md), [Ontology Pipeline (Talisman)](https://www.ontologypipeline.com/)
+
+### Context
+
+TOP's architectural history has surfaced a recurring pattern: each layer of the ontology build-out turns out to need a more foundational layer beneath it. The first lift was clinical-research entities (Sponsor, Site, Study, …); the namespace mislabeling forced the taxonomy work (ADR-0003); the Core architecture forced the universal-DNA + categorical structure (ADR-0012, ADR-0013); the schema.org audit forced the cross-vocabulary alignment discipline (ADR-0016). Each correction pushed the build one layer deeper into the stack.
+
+A review of TOP Core against Talisman's [Ontology Pipeline](https://www.ontologypipeline.com/) (six stages: Controlled Vocabulary → Taxonomy → Metadata Schema → Thesaurus → Ontology → Knowledge Graph) made the gap explicit: **TOP did the taxonomy first and skipped the controlled vocabulary layer entirely.** The taxonomy held because the eight categories and twenty-eight leaves are operator-grounded, but the layer above (metadata schema, with per-leaf SHACL property shapes) and the layer two-above (thesaurus, with SKOS-XL labels and cross-vocabulary mappings) never had a CV foundation to build on. The result was a strong taxonomy supporting partial layers above it.
+
+The same gap will surface in every workflow extension that lifts on TOP, and in every customer-built knowledge graph, unless the build discipline is named structurally.
+
+### Decision
+
+TOP adopts the six-stage ontology pipeline as its build discipline, structurally and permanently:
+
+1. **Controlled Vocabulary** — per concept, deduplicated and disambiguated synonyms (with provenance), anti-synonyms (with rationale), per-property enum vocabularies, context-routing for homonyms.
+2. **Taxonomy** — hierarchical organization (already in place at Core v1; ADR-0012).
+3. **Metadata Schema** — per-concept SHACL property shapes, NGSI-LD JSON-LD contexts, SSSOM crosswalk manifests.
+4. **Thesaurus** — SKOS-XL labels as first-class objects with provenance; cross-concept `skos:related` relations; mapping properties across vocabularies.
+5. **Ontology** — OWL classes and properties with axioms; PROV-O class-level alignment; BFO alignment on clean categories.
+6. **Knowledge Graph** — instances at scale (workflow extensions, customer deployments).
+
+**Each layer is the precondition for the next.** A concept may be lifted with the CV and taxonomy authored first and the metadata schema, thesaurus, and ontology added in subsequent PRs. The reverse is forbidden — no concept ships only its ontology layer; no taxonomy entry exists without a corresponding CV record.
+
+**The discipline applies to:**
+- TOP Core itself (the eight categories + twenty-eight leaves currently at L1/L2 of the taxonomy)
+- Every workflow extension (clinical-research first, then care-delivery / manufacturing / supply-chain / others)
+- Every customer-built knowledge graph on TOP
+
+**Three CV-layer obligations carry forward:**
+
+1. **Context routing** for homonyms. *Subject* (Person in human research; LabAnimal in animal research), *agent* (an Agent in TOP; a Material in pharmacology) — every concept with homonym risk declares its `contextRouting` and `antiSynonym` blocks at CV authoring time.
+2. **Per-property enums as CVs in their own right.** A status enum, a severity enum, a category enum each gets a CV record with operator-meaningful value definitions, inbound synonyms, anti-synonyms.
+3. **Crosswalks as first-class SSSOM artifacts.** Per Core concept (and per workflow concept, mapping to its parent Core concept), an SSSOM TSV declaring mappings to PROV-O, BFO, schema.org, FHIR, USDM, SDTM, MedDRA, NCIt, LOINC, SNOMED, and any other peer vocabulary where the alignment is honest. Not buried in `@context` files; not buried in inline `owl:equivalentClass` declarations. SSSOM is the format the OBO Foundry community already consumes.
+
+### Consequences
+
+- **Every future concept-introduction PR is audited against the pipeline.** A reviewer can ask: *does this concept have a CV record? a taxonomy entry? a SHACL shape? a thesaurus entry? a crosswalk file?* The reviewer expects all six (or a declared roadmap for the missing ones).
+- **The CV layer is now load-bearing.** A back-fill pass is required for the current twenty-eight Core leaves — one YAML per leaf under `core/v1/vocabulary/`, with synonyms, anti-synonyms, context routing where applicable, and per-property enum CVs.
+- **SKOS-XL upgrade follows the CV pass.** The current `taxonomy/taxonomy.ttl` carries plain SKOS labels; SKOS-XL promotes labels to first-class objects with provenance. The upgrade is mostly mechanical once the CV YAMLs exist.
+- **SSSOM crosswalk files per leaf land alongside the SHACL property shapes.** Both generated from the same structured intermediate.
+- **Workflow extensions adopt the pipeline from their first PR.** The clinical-research rebuild does not lift an entity without authoring its CV first, then its taxonomy entry, then its SHACL shape, then its thesaurus entry, then its OWL class.
+- **The OBO Foundry / Mondo / Bioregistry community gains an obvious read.** TOP's crosswalks in SSSOM are the format they already consume.
+
+### What this ADR does NOT commit to
+
+- A timeline. The discipline is permanent; the execution is per-leaf and per-workflow as work progresses.
+- A specific authoring format. YAML for the CV layer (round-tripped to SKOS-XL via a small emitter) is a reasonable default; the format is a working-group decision.
+- A specific crosswalk target list. The audit list per concept is curated, not mandated.
+
+### Forward-looking notes (not part of this ADR)
+
+- **The CV back-fill may surface a `top:Organism` (or `top:LivingSubject`) Core leaf** — the *Subject* homonym suggests that when the second life-sciences workflow extension lifts (animal research, comparative medicine, plant research, microbial research), the Agent category may need an Organism leaf with Person as a specialization. Documented as a trigger, not a decision.
+- **The CV back-fill may surface a need to clarify `top:Material` scope** to include biological substances (proteins, antibodies, cell-line aliquots) explicitly — the *agent (pharmacological)* anti-synonym routes here.
+
+### Status
+
+Accepted. The first-principles.md § 7 carries the canonical statement; this ADR records the decision.
+
+---
+
+## ADR-0019: Open Core, constrained extension — three flavors per Core property
+
+**Date:** 2026-05-13 · **Status:** Accepted · **Refs:** [first-principles.md § 8. Open Core, Constrained Extension](../first-principles.md), [governance/extension-contract.md](extension-contract.md), [core/v1/shapes.ttl](../core/v1/shapes.ttl)
+
+### Context
+
+TOP's central architectural bet is that one universal Core can serve every regulated industry. Workflow extensions (clinical research, care delivery, manufacturing, supply chain, …) and customer-built knowledge graphs all compose on top of the same Core, declare their own classes via `subClassOf`, and inherit Core's PROV-O / BFO / schema.org alignments automatically.
+
+The risk this creates is the classical extensibility tradeoff: a Core open enough for every consumer to specialize without forking can also be open enough for two consumers to model the same logical concept in mutually unintelligible ways. The pattern surfaces in any ontology project that takes the one-Core-many-extensions bet without naming the per-property limits: extensions proliferate without discoverability; the same concept gets modeled multiple ways across consumers; profiles diverge over time. The structural failure isn't anyone's fault — it's what an unspecified extension surface produces over a decade of independent specialization.
+
+TOP integrates with peer ontologies (FHIR, USDM, SDTM, MedDRA, NCIt, LOINC, SNOMED, …) at the projection edge — the Broker and equivalent adapters ingest peer-ontology data and normalize it into NGSI-LD entities against Core. The Core itself, where TOP commits to a stable shape, needs a per-property discipline that names what consumers may and may not change. That discipline is this ADR.
+
+### Decision
+
+Every Core property declares one of three extensibility flavors, machine-annotated in the OWL/SHACL artifact and machine-enforced at PR time:
+
+| Flavor | What it means | Extension permitted? |
+| --- | --- | --- |
+| **Invariant** | Stable across every workflow and every customer. Type, range, cardinality, semantics cannot drift. | No. Tightening allowed (a workflow may require what Core makes optional); redefinition forbidden. |
+| **Tightenable** | Stable shape; downstream consumers may add SHACL constraints (require what Core makes optional, narrow an enum, bind a value set, tighten cardinality). | Tightening only. |
+| **Additive** | A surface specifically designed for downstream addition (custom synonyms in CV, custom subclasses via `subClassOf`, additive enum values that extend rather than replace Core values). | Yes. Additions live in the consumer's namespace; Core terms remain valid. |
+
+The flavor is declared via a `top:flavor` annotation property on each Core SHACL property shape (and each Core OWL class where the principle applies).
+
+**Per-layer extension contract.** The flavor discipline extends through every pipeline layer (per ADR-0018). The full per-layer rules — what a consumer MAY do, what a consumer MUST NOT do, how the rules are enforced at each layer — are documented in [`governance/extension-contract.md`](extension-contract.md). Summary:
+
+- **Controlled Vocabulary.** Consumers add synonyms in their namespace; add per-property enum values where Core marked the enum additive; add disambiguation notes scoped to their context. Cannot redefine canonical labels, remove or reassign Core synonyms, or conflict with Core enum values.
+- **Metadata Schema.** Consumers add properties via `subClassOf`, tighten Core SHACL constraints, add their own SSSOM crosswalks. Cannot redefine Core property types, loosen Core constraints, or use the Core namespace for custom additions.
+- **Thesaurus.** Consumers declare their own SKOS concept schemes that map to Core via the `skos:*Match` properties. Cannot modify the Core scheme or add `skos:broader` / `skos:narrower` edges between Core concepts.
+- **Ontology.** Consumers subclass Core OWL classes, declare consumer properties as `subPropertyOf` Core properties. Cannot redeclare Core domains/ranges or add `owl:disjointWith` axioms involving Core classes.
+
+**Enforcement.** A linter (`tools/lint_extension.py` — to be authored as a separate PR) reads any consumer's CV / SHACL / SKOS / OWL files and refuses changes that violate the contract. The linter runs in CI on every PR. Branch protection makes the linter required for merge.
+
+### Initial flavor assignment
+
+The current Core SHACL artifact (`core/v1/shapes.ttl`) carries 28 properties (3 Universal DNA + 25 category-level relational extensions). The initial flavor assignment, landed alongside this ADR:
+
+- **Invariant (5 properties):** `top:identifier`, `top:observedAt`, `top:integrityHash`, `top:startTime`, `top:endTime`. These five carry semantics that cannot drift — globally unique identity, observation timestamp, cryptographic non-repudiation, temporal interval bounds. Any consumer redefining them breaks the audit-trail and federation guarantees Core exists to provide.
+- **Tightenable (23 properties):** everything else, including `top:status` (Core leaves the enum open; workflows bind their own status sets), `top:hasCredential`, `top:memberOf`, `top:authorizedBy`, `top:withinLocation`, `top:geoSpatialData`, `top:accessRequirement`, `top:ownedBy`, `top:hasMaintenanceLog`, `top:operationalState`, `top:governedBy`, `top:containsActivity`, `top:objectiveStatement`, `top:precededBy`, `top:occursAt`, `top:verifiesOutcome`, `top:signedBy`, `top:measuredBy`, `top:satisfiesConstraint`, `top:variance`, `top:enforcedBy`, `top:severityLevel`, `top:appliesTo`.
+- **Additive (0 properties currently):** no Core property today is designed for additive extension at the property level. Additive flavors land when Core properties bind value sets (e.g., a future `documentType` or `eventCategory`) where workflow extensions are expected to add domain-specific values.
+
+The two Invariant Universal DNA properties (`top:identifier`, `top:observedAt`) are the strongest commitment in the artifact — no workflow extension and no customer can loosen, retype, or redefine them. `top:status` is the third Universal DNA property; it is Tightenable rather than Invariant because Core deliberately leaves its value set open for workflow specialization.
+
+### Consequences
+
+- **Downstream extensions become safe by construction.** A customer adding `acme:Document subClassOf top:Document` knows precisely what they may and may not change. The linter refuses violations at PR time.
+- **The FHIR failure mode is structurally prevented.** Two extensions of the same Core concept cannot diverge into mutually unintelligible parallel implementations.
+- **AI agents trained on Core read consumer extensions correctly.** An agent encountering `acme:LEAVE_OF_ABSENCE` walks the SKOS-XL chain to `top:Person.status` and knows it is a Person status value, even though the agent was trained on Core only.
+- **The Core stays small.** Every property earns its place. The pressure to add new Core properties is balanced by the cost of pinning their flavor declaration.
+- **Reviewers can audit any consumer extension in under five minutes.** The flavor metadata is visible; the linter output is precise; the per-layer contract is one document.
+
+### What this ADR does NOT do
+
+- It does not declare additional Core properties beyond the current 28. New properties land via their own PRs; each carries its flavor declaration at introduction.
+- It does not author the linter. The linter is a separate PR; this ADR commits to its existence in CI before workflow extensions begin to lift consumer entities.
+- It does not preclude future flavor introductions. If the per-layer contract surfaces a need for additional flavors (e.g., "Deprecating"), a new ADR adds them; this ADR does not foreclose.
+
+### Status
+
+Accepted. The flavor annotations land in `core/v1/shapes.ttl` alongside this ADR. The full per-layer extension contract is in `governance/extension-contract.md`. The linter is a follow-on PR.
 
 ---
 

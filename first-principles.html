@@ -449,6 +449,37 @@
   <p>Because these are first-class entities, a query for "Who authorized this trade on Tuesday?" isn't a search through a text log. It is a simple graph traversal to the <strong>Attestation</strong> that was <strong>validFrom</strong> that date. The boolean approach makes history opaque; the entity approach makes history a map.</p>
 
 
+<h2 class="section">Build the Pipeline in Order</h2>
+
+<p>Every concept in TOP — Core, workflow, customer — eventually carries all six layers of the <a href="https://www.ontologypipeline.com/">ontology pipeline</a>. Each layer is the precondition for the next. Skip one, the next inherits the weakness.</p>
+
+<ol>
+  <li><strong>Controlled Vocabulary</strong> — synonyms, anti-synonyms, definitions, per-property enums. With provenance.</li>
+  <li><strong>Taxonomy</strong> — hierarchical organization (8 categories, 28 leaves).</li>
+  <li><strong>Metadata Schema</strong> — SHACL property shapes, NGSI-LD contexts, SSSOM crosswalks.</li>
+  <li><strong>Thesaurus</strong> — SKOS-XL labels with provenance, cross-concept relations.</li>
+  <li><strong>Ontology</strong> — OWL classes with PROV-O and BFO alignment.</li>
+  <li><strong>Knowledge Graph</strong> — instances at scale.</li>
+</ol>
+
+<p><strong>Three CV-layer obligations.</strong> Context routing for homonyms (<em>Subject</em> in human research vs animal research). Anti-synonyms for false friends (<em>agent</em> in pharmacology ≠ TOP <code class="inline">Agent</code>). SSSOM crosswalks as first-class artifacts, not buried in <code class="inline">@context</code> files.</p>
+
+
+<h2 class="section">Open Core, Constrained Extension</h2>
+
+<p>The Core is open to extension but closed to redefinition. The discipline that prevents FHIR-style drift: per-property flavors, machine-checked at PR time.</p>
+
+<ul>
+  <li><strong>Invariant</strong> — semantics fixed; consumers cannot loosen or redefine. (5 properties: <code class="inline">identifier</code>, <code class="inline">observedAt</code>, <code class="inline">integrityHash</code>, <code class="inline">startTime</code>, <code class="inline">endTime</code>)</li>
+  <li><strong>Tightenable</strong> — shape stays; consumers may require what Core makes optional, narrow enums, tighten cardinality. (23 properties, including <code class="inline">status</code>)</li>
+  <li><strong>Additive</strong> — surfaces designed for downstream addition (enum values, subclasses).</li>
+</ul>
+
+<p>Consumer extensions live in the consumer's namespace and chain to Core via <code class="inline">subClassOf</code> / <code class="inline">subPropertyOf</code> / <code class="inline">skos:*Match</code>. Full per-layer rules: <a href="governance/extension-contract.md"><code class="inline">governance/extension-contract.md</code></a>.</p>
+
+<p><strong>Why it matters:</strong> Extensibility without a discipline produces drift over time — the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. TOP integrates with peer ontologies — FHIR, USDM, SDTM, MedDRA — at the projection edge via the Broker and equivalent adapters; the Core stays small and stable while standards alignment lives where it belongs.</p>
+
+
 <h2 class="section">The Competitive Advantage: Why Human-Centered Wins</h2>
 
 <p>The "Always" in our success is structural, not motivational. In any industry—from Pharma to Fintech—three vectors compete for the operator's desktop:</p>
