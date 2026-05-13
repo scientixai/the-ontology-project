@@ -12,6 +12,7 @@ Read these in order. They take an hour combined and save you a week of misaligne
 4. [`governance/decision-log.md`](governance/decision-log.md) — the architectural decisions and the reasoning behind them. New contributors who try to undo an ADR get pointed at the relevant entry, not into a long discussion.
 5. [`governance/working-groups.md`](governance/working-groups.md) — how working groups operate.
 6. [`governance/rfcs/README.md`](governance/rfcs/README.md) — the RFC process for structural changes.
+7. [`governance/extension-contract.md`](governance/extension-contract.md) — per-layer rules for extending Core. Mandatory reading if you are building a workflow extension or a customer knowledge graph on TOP.
 
 ## What contribution looks like
 

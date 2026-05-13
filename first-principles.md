@@ -88,7 +88,36 @@ Every "is X" flag is a claim in disguise. A boolean strips away the authority, t
 
 ---
 
-## 7. The Competitive Advantage: Why Human-Centered Wins
+## 7. Build the Pipeline in Order
+
+Every concept in TOP — Core, workflow, customer — eventually carries all six layers of the [ontology pipeline](https://www.ontologypipeline.com/). Each layer is the precondition for the next. Skip one, the next inherits the weakness.
+
+1. **Controlled Vocabulary** — synonyms, anti-synonyms, definitions, per-property enums. With provenance.
+2. **Taxonomy** — hierarchical organization (8 categories, 28 leaves).
+3. **Metadata Schema** — SHACL property shapes, NGSI-LD contexts, SSSOM crosswalks.
+4. **Thesaurus** — SKOS-XL labels with provenance, cross-concept relations.
+5. **Ontology** — OWL classes with PROV-O and BFO alignment.
+6. **Knowledge Graph** — instances at scale.
+
+**Three CV-layer obligations.** Context routing for homonyms (*Subject* in human research vs animal research). Anti-synonyms for false friends (*agent* in pharmacology ≠ TOP `Agent`). SSSOM crosswalks as first-class artifacts, not buried in `@context` files.
+
+---
+
+## 8. Open Core, Constrained Extension
+
+The Core is open to extension but closed to redefinition. The discipline that prevents FHIR-style drift: per-property flavors, machine-checked at PR time.
+
+* **Invariant** — semantics fixed; consumers cannot loosen or redefine. (5 properties: `identifier`, `observedAt`, `integrityHash`, `startTime`, `endTime`)
+* **Tightenable** — shape stays; consumers may require what Core makes optional, narrow enums, tighten cardinality. (23 properties, including `status`)
+* **Additive** — surfaces designed for downstream addition (enum values, subclasses).
+
+Consumer extensions live in the consumer's namespace and chain to Core via `subClassOf` / `subPropertyOf` / `skos:*Match`. Full per-layer rules: [`governance/extension-contract.md`](governance/extension-contract.md).
+
+**Why it matters:** Extensibility without a discipline produces drift over time — the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. TOP integrates with peer ontologies — FHIR, USDM, SDTM, MedDRA — at the projection edge via the Broker and equivalent adapters; the Core stays small and stable while standards alignment lives where it belongs.
+
+---
+
+## 9. The Competitive Advantage: Why Human-Centered Wins
 
 Sponsors burn millions on standards-compliance headcount because standards are built for regulators, not for work. **TOP eats the complexity so operators don't have to.**
 
