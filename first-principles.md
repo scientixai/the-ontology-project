@@ -93,7 +93,7 @@ Every "is X" flag is a claim in disguise. A boolean strips away the authority, t
 Every concept in TOP — Core, workflow, customer — eventually carries all six layers of the [ontology pipeline](https://www.ontologypipeline.com/). Each layer is the precondition for the next. Skip one, the next inherits the weakness.
 
 1. **Controlled Vocabulary** — synonyms, anti-synonyms, definitions, per-property enums. With provenance.
-2. **Taxonomy** — hierarchical organization (8 categories, 28 leaves).
+2. **Taxonomy** — hierarchical organization of the vocabulary.
 3. **Metadata Schema** — SHACL property shapes, NGSI-LD contexts, SSSOM crosswalks.
 4. **Thesaurus** — SKOS-XL labels with provenance, cross-concept relations.
 5. **Ontology** — OWL classes with PROV-O and BFO alignment.
