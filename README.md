@@ -9,7 +9,7 @@
 
 > An open ontology for high-consequence regulated industries, governed by domain working groups, hosted under Apache 2.0.
 
-The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. The foundation is **TOP Core** — one root, eight categories, twenty-eight leaves — authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Workflow extensions (clinical research, care delivery, manufacturing, supply chain, …) compose on top of Core; they never sibling.
+The Ontology Project (TOP) is industry-agnostic infrastructure for building reference ontologies that downstream consumers actually use. The foundation is **TOP Core** — one root, eight categories, twenty-nine leaves — authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Workflow extensions (clinical research, care delivery, manufacturing, supply chain, …) compose on top of Core; they never sibling.
 
 Practitioner-first by design. AI agents and ontologist tooling are honored at the edge — via the PROV-O / BFO alignment — but they never shape Core. The manifesto's "we owe it to humans" stance is structural, not aspirational.
 
@@ -17,12 +17,12 @@ If you are reading this in 2026 you are early. TOP Core landed at v1; workflow e
 
 ## What you will find here
 
-- [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) — the SKOS view: 1 top concept (`top:Core`) + 8 categories + 28 leaves. TermBoard-importable. Pure SKOS; loads cleanly into PoolParty, Synaptica, Protégé.
+- [`taxonomy/taxonomy.ttl`](taxonomy/taxonomy.ttl) — the SKOS view: 1 top concept (`top:Core`) + 8 categories + 29 leaves. TermBoard-importable. Pure SKOS; loads cleanly into PoolParty, Synaptica, Protégé.
 - [`taxonomy/taxonomy.csv`](taxonomy/taxonomy.csv) — flat companion for spreadsheet review of the SKOS.
 - [`core/v1/shapes.ttl`](core/v1/shapes.ttl) — the OWL/SHACL view: same URIs as the SKOS, expressed as `owl:Class` with `rdfs:subClassOf` chains, the three Universal DNA properties, the category relational extensions, and the SHACL `top:UniversalDNAShape` that enforces `identifier` + `observedAt` + `status` on every TOP entity.
 - [`core/v1/index.html`](core/v1/index.html) — the spec page (web view) for sharing with reviewers and conveners.
 - [`core/v1/walkthroughs/person.ttl`](core/v1/walkthroughs/person.ttl) — a single concrete instance demonstrating the L0 → L1 → L2 pattern end-to-end. Useful for verifying the structure resolves in any tool.
-- [`taxonomy.md`](taxonomy.md) — prose narrative of the taxonomy: three layers, eight categories, twenty-eight leaves, authoring rules.
+- [`taxonomy.md`](taxonomy.md) — prose narrative of the taxonomy: three layers, eight categories, twenty-nine leaves, authoring rules.
 - [`first-principles.md`](first-principles.md) — design rules every spec doc, planning note, and PR can cite by name.
 - [`governance/`](governance/) — working group structure, RFC process, release process, and the [architectural decision log](governance/decision-log.md). Where new contributors learn the rules.
 - [`manifesto.html`](manifesto.html) — manifesto with founding signatories.
@@ -32,7 +32,7 @@ Workflow extensions will live in their own directories at the repository root. T
 
 ## Quickstart
 
-Load the SKOS taxonomy into any SKOS-aware tool ([TermBoard](https://termboard.com), PoolParty, Synaptica, Protégé). The full tree — `top:Core` → 8 categories → 28 leaves — appears with PROV-O alignment via `skos:exactMatch` / `skos:closeMatch`.
+Load the SKOS taxonomy into any SKOS-aware tool ([TermBoard](https://termboard.com), PoolParty, Synaptica, Protégé). The full tree — `top:Core` → 8 categories → 29 leaves — appears with PROV-O alignment via `skos:exactMatch` / `skos:closeMatch`.
 
 ```bash
 # Direct fetch (no auth)

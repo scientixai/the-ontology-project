@@ -1,176 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Ontology Project · First Principles</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
-    color: #1a1a1a;
-    background: #f4f4f1;
-    padding: 32px 32px 40px;
-    line-height: 1.6;
-    font-size: 15px;
-  }
-  .page {
-    max-width: 740px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 44px 56px 48px;
-    border: 1px solid #d6d6cf;
-    border-radius: 3px;
-  }
-
-
-  h1.title {
-    font-size: 34px; font-weight: 700; line-height: 1.1;
-    letter-spacing: -0.018em; color: #111; margin-bottom: 4px;
-  }
-  .subtitle {
-    font-size: 18px; color: #555; font-style: italic;
-    font-weight: 400; margin-bottom: 12px;
-  }
-  .doc-meta {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 11px; color: #777; text-transform: uppercase;
-    letter-spacing: 0.06em; margin-bottom: 18px;
-  }
-  .tagline {
-    font-size: 17px; color: #1a1a1a; font-style: italic;
-    border-left: 3px solid #0e7490; padding: 8px 0 8px 16px;
-    margin-bottom: 28px; line-height: 1.45; font-weight: 600;
-  }
-  h2.section {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; color: #0e7490; margin: 32px 0 12px;
-  }
-  p { margin-bottom: 14px; }
-  ul, ol { margin: 4px 0 14px 0; padding: 0 0 0 22px; }
-  li { padding: 3px 0; line-height: 1.55; }
-  strong { color: #111; }
-  .inline {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 13px; background: #f0f0e9; padding: 1px 5px;
-    border-radius: 2px; color: #0e7490;
-  }
-  table {
-    width: 100%; border-collapse: collapse;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px; margin: 6px 0 18px;
-    border: 1px solid #d6d6cf; border-radius: 3px;
-  }
-  th, td {
-    text-align: left; padding: 8px 12px;
-    border-bottom: 1px solid #ececea; vertical-align: top;
-  }
-  th {
-    background: #f4faf9; font-weight: 700; font-size: 11.5px;
-    text-transform: uppercase; letter-spacing: 0.04em; color: #0e7490;
-    border-bottom: 1px solid #d6d6cf;
-  }
-  tr:last-child td { border-bottom: none; }
-  blockquote.pull-quote {
-    margin: 18px 0 22px; padding: 14px 18px 12px;
-    background: #fafaf6; border-left: 3px solid #0e7490;
-    border-radius: 0 3px 3px 0;
-  }
-  blockquote.pull-quote p {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 14px; color: #2a2a2a; font-style: italic; margin: 0;
-  }
-  .footer {
-    margin-top: 32px; padding-top: 18px;
-    border-top: 1px solid #c8c8c0;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 11.5px; color: #666; line-height: 1.55;
-  }
-  .footer a { color: #0e7490; text-decoration: none; }
-  .footer a:hover { text-decoration: underline; }
-  .yes-no {
-    background: #fafaf6; border: 1px solid #e0e0d8;
-    border-radius: 3px; padding: 12px 14px; margin: 8px 0 16px;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px;
-  }
-  .yes-no .label { font-weight: 700; color: #0e7490; }
-  .yes-no .no-label { color: #b53b3b; }
-
-
-  /* Site-wide header (secondary pages) */
-
-  .site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 18px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #e0e0d8;
-  }
-  .site-header .site-logo { display: block; flex-shrink: 0; }
-  .site-header .site-logo img { display: block; height: auto; max-width: 210px; }
-  .site-header .site-meta { text-align: right; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
-  .site-header .site-meta-primary { font-size: 13px; font-weight: 700; color: #111; }
-  .site-header .site-meta-secondary { font-size: 10.5px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
-
-  /* Site-wide footer */
-  .site-footer { border-top: 1px solid #e0e0d8; }
-
-  .site-footer, .site-nav-links {
-    text-align: center;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  }
-  .site-nav-links {
-    margin: 8px 0 20px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #e0e0d8;
-  }
-  .site-nav-links a { 
-    color: #0e7490; 
-    text-decoration: none; 
-    font-weight: 600; 
-    margin: 0 6px 8px; 
-    font-size: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  }
-  .site-nav-links strong { font-weight: 700; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
-  .site-nav-links a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-
-
-  .site-footer .site-footer-sponsor { margin: 18px 0 14px; }
-  .site-footer .site-footer-sponsor a { display: inline-block; transition: opacity 0.15s ease; }
-  .site-footer .site-footer-sponsor a:hover { opacity: 0.75; }
-  .site-footer .site-footer-sponsor img { max-width: 200px; height: auto; }
-  .site-footer .site-footer-license { font-size: 10.5px; color: #888; font-style: italic; }
-</style>
-</head>
-<body>
-
-<div class="page">
-
-  <header>
-    <div class="site-header">
-    <a href="index.html" class="site-logo" aria-label="The Ontology Project — home">
-      <img src="images/top-logo.svg" alt="The Ontology Project" width="210">
-    </a>
-    <div class="site-meta">
-      <div class="site-meta-primary">First Principles · v1</div>
-      <div class="site-meta-secondary">Working document · Updated 2026-05-13</div>
-    </div>
-  </div>
-    <nav class="site-nav-links">
-      <a href="index.html">Home</a> ·
-      <a href="manifesto.html">Manifesto</a> ·
-      <strong>First Principles</strong> ·
-      <a href="roadmap.html">Roadmap</a> ·
-      <a href="legacy/onto/">Namespaces (legacy)</a> ·
-      <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
-    </nav>
-  </header>
-
-
+---
+layout: default
+title: First Principles
+meta_primary: First Principles · v1
+meta_secondary: Working document · Updated 2026-05-13
+nav: first-principles
+---
 
 <h1 class="title">First Principles</h1>
 <div class="subtitle">A human-centered foundation for universal interoperability.</div>
@@ -455,7 +289,7 @@
 
 <ol>
   <li><strong>Controlled Vocabulary</strong> — synonyms, anti-synonyms, definitions, per-property enums. With provenance.</li>
-  <li><strong>Taxonomy</strong> — hierarchical organization (8 categories, 28 leaves).</li>
+  <li><strong>Taxonomy</strong> — hierarchical organization of the vocabulary.</li>
   <li><strong>Metadata Schema</strong> — SHACL property shapes, NGSI-LD contexts, SSSOM crosswalks.</li>
   <li><strong>Thesaurus</strong> — SKOS-XL labels with provenance, cross-concept relations.</li>
   <li><strong>Ontology</strong> — OWL classes with PROV-O and BFO alignment.</li>
@@ -499,24 +333,3 @@
 </blockquote>
 
 <p>By letting humans work in their own vocabulary while the foundation handles the temporal, provenance, and standards logic, TOP becomes the "Force Multiplier" for regulated industries.</p>
-
-
-<footer class="site-footer">
-  <div class="site-nav-links">
-    <a href="index.html">Home</a> ·
-    <a href="manifesto.html">Manifesto</a> ·
-    <strong>First Principles</strong> ·
-    <a href="roadmap.html">Roadmap</a> ·
-    <a href="legacy/onto/">Namespaces (legacy)</a> ·
-    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
-  </div>
-  <div class="site-footer-sponsor">
-    <a href="https://scientix.ai">
-      <img src="images/sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
-    </a>
-  </div>
-  <div class="site-footer-license">Apache License 2.0</div>
-</footer>
-</div>
-</body>
-</html>

@@ -1,0 +1,42 @@
+# TOP — Jekyll configuration for GitHub Pages
+#
+# Drives the static-site rendering at top.scientix.ai.
+# Every .md and .html page that declares `layout: default` in its
+# front matter renders through _layouts/default.html, picking up the
+# shared site-header / nav / footer and the site-wide styles.css.
+
+title: The Ontology Project
+description: An open ontology for high-consequence regulated industries.
+url: https://top.scientix.ai
+
+# Use the kramdown markdown engine (GitHub Pages default) and the
+# `rouge` syntax highlighter for code blocks in markdown files.
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+# Don't try to ship Jekyll's default theme; we author our own styles.
+theme: null
+
+# Files / directories Jekyll should NOT process. The legacy/ tree is
+# archival (pre-Core HTMLs render themselves with their own embedded
+# styles; we don't want Jekyll wrapping them). Core artifacts and
+# vendored content stay as-is too.
+exclude:
+  - legacy/
+  - taxonomy/taxonomy.csv
+  - tools/
+  - core/v1/walkthroughs/
+  - "*.ttl"
+  - "*.jsonld"
+
+# Pages get permalinks that match the source file path (default
+# behavior; documented here for clarity).
+permalink: /:path/
+
+# Plugin allowlist (GitHub Pages whitelists these).
+plugins:
+  - jekyll-redirect-from

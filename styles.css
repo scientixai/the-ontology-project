@@ -1,0 +1,479 @@
+/* TOP — site-wide stylesheet
+ *
+ * Shared CSS for every TOP page. Linked from _layouts/default.html.
+ * Page-specific styles (per-page component cards, status badges, etc.)
+ * live in inline <style> blocks on the relevant page.
+ *
+ * Sections:
+ *   1. Reset + base body / page container
+ *   2. Site chrome (header, nav, footer)
+ *   3. Typography baseline (titles, sections, paragraphs, lists)
+ *   4. Reusable components (.inline, tables, pull-quotes, .yes-no)
+ *   5. Link colors + hover
+ */
+
+
+/* ====================================================================
+ * 1. Reset + base body / page container
+ * ==================================================================== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+  color: #1a1a1a;
+  background: #f4f4f1;
+  padding: 32px 32px 40px;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.page {
+  max-width: 740px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 44px 56px 48px;
+  border: 1px solid #d6d6cf;
+  border-radius: 3px;
+}
+
+
+/* ====================================================================
+ * 2. Site chrome (header, nav, footer)
+ * ==================================================================== */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e0e0d8;
+}
+.site-header .site-logo { display: block; flex-shrink: 0; }
+.site-header .site-logo img { display: block; height: auto; max-width: 210px; }
+.site-header .site-meta {
+  text-align: right;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+.site-header .site-meta-primary { font-size: 13px; font-weight: 700; color: #111; }
+.site-header .site-meta-secondary {
+  font-size: 10.5px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+.site-nav-links {
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  margin: 8px 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0d8;
+}
+.site-nav-links a {
+  color: #0e7490;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 6px 8px;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+.site-nav-links strong {
+  font-weight: 700;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+.site-nav-links a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.site-footer {
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  border-top: 1px solid #e0e0d8;
+  margin-top: 32px;
+}
+.site-footer .site-footer-sponsor { margin: 18px 0 14px; }
+.site-footer .site-footer-sponsor a {
+  display: inline-block;
+  transition: opacity 0.15s ease;
+}
+.site-footer .site-footer-sponsor a:hover { opacity: 0.75; }
+.site-footer .site-footer-sponsor img { max-width: 200px; height: auto; }
+.site-footer .site-footer-license {
+  font-size: 10.5px;
+  color: #888;
+  font-style: italic;
+}
+
+
+/* ====================================================================
+ * 3. Typography baseline
+ * ==================================================================== */
+
+h1.title {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #555;
+  font-style: italic;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+.doc-meta {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 11px;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 18px;
+}
+
+.tagline {
+  font-size: 17px;
+  color: #1a1a1a;
+  font-style: italic;
+  border-left: 3px solid #0e7490;
+  padding: 8px 0 8px 16px;
+  margin-bottom: 28px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+h2.section {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0e7490;
+  margin: 32px 0 12px;
+}
+
+h2.block {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0e7490;
+  margin: 38px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e0e0d8;
+}
+
+p { margin-bottom: 14px; }
+ul, ol { margin: 4px 0 14px 0; padding: 0 0 0 22px; }
+li { padding: 3px 0; line-height: 1.55; }
+strong { color: #111; }
+
+
+/* ====================================================================
+ * 4. Reusable components
+ * ==================================================================== */
+
+.inline {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  background: #f0f0e9;
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: #0e7490;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  margin: 6px 0 18px;
+  border: 1px solid #d6d6cf;
+  border-radius: 3px;
+}
+th, td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ececea;
+  vertical-align: top;
+}
+th {
+  background: #f4faf9;
+  font-weight: 700;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #0e7490;
+  border-bottom: 1px solid #d6d6cf;
+}
+tr:last-child td { border-bottom: none; }
+
+
+/* ====================================================================
+ * Home page (used by _layouts/home.html via index.html)
+ * ==================================================================== */
+
+.top-logo {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.top-logo img {
+  display: inline-block;
+  max-width: 420px;
+  height: auto;
+}
+
+.meta-strip {
+  display: flex;
+  justify-content: space-between;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid #e0e0d8;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+
+.lead {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.doc-list {
+  margin: 6px 0 24px 0;
+  padding: 0;
+  list-style: none;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13.5px;
+}
+.doc-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid #ececea;
+}
+.doc-list li:last-child { border-bottom: none; }
+.doc-list a {
+  color: #0e7490;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+.doc-list a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.doc-list .desc {
+  color: #555;
+  font-size: 12.5px;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.status-line {
+  background: #fafaf6;
+  border: 1px solid #e0e0d8;
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 12px;
+  color: #555;
+  margin: 8px 0 12px;
+  line-height: 1.55;
+}
+.status-line strong { color: #111; }
+
+.contribute-step {
+  margin: 0;
+  padding: 14px 16px;
+  background: #fafaf6;
+  border-left: 3px solid #0e7490;
+  border-radius: 0 3px 3px 0;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+.contribute-step .step-title {
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.sponsored-by {
+  text-align: center;
+  margin: 36px 0 18px;
+}
+.sponsored-by a {
+  display: inline-block;
+  transition: opacity 0.15s ease;
+}
+.sponsored-by a:hover { opacity: 0.75; }
+.sponsored-by img {
+  max-width: 200px;
+  height: auto;
+}
+
+.footer {
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+  border-top: 1px solid #e0e0d8;
+  padding-top: 16px;
+}
+.footer a { color: #888; text-decoration: underline; }
+.footer a:hover { color: #0e7490; }
+
+blockquote.pull-quote {
+  margin: 18px 0 22px;
+  padding: 14px 18px 12px;
+  background: #fafaf6;
+  border-left: 3px solid #0e7490;
+  border-radius: 0 3px 3px 0;
+}
+blockquote.pull-quote p {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 14px;
+  color: #2a2a2a;
+  font-style: italic;
+  margin: 0;
+}
+blockquote.pull-quote cite {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 11.5px;
+  color: #666;
+  font-style: normal;
+}
+
+.yes-no {
+  background: #fafaf6;
+  border: 1px solid #e0e0d8;
+  border-radius: 3px;
+  padding: 12px 14px;
+  margin: 8px 0 16px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+}
+.yes-no .label { font-weight: 700; color: #0e7490; }
+.yes-no .no-label { color: #b53b3b; }
+
+
+/* ====================================================================
+ * 5. Link colors + hover
+ * ==================================================================== */
+
+a { color: #0e7490; }
+a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+
+/* ====================================================================
+ * 6. Markdown content rendering
+ * ==================================================================== */
+/* When Jekyll renders a markdown page, it doesn't emit our custom
+ * h1.title / .subtitle / .doc-meta classes. These selectors make
+ * plain markdown render acceptably with the site identity:
+ * a bare <h1> looks like h1.title; a bare <h2> looks like h2.section;
+ * code spans look like .inline. */
+
+.markdown-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.markdown-content h2 {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0e7490;
+  margin: 32px 0 12px;
+}
+
+.markdown-content h3 {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 22px 0 8px;
+}
+
+.markdown-content blockquote {
+  margin: 18px 0 22px;
+  padding: 12px 18px;
+  background: #fafaf6;
+  border-left: 3px solid #0e7490;
+  border-radius: 0 3px 3px 0;
+  color: #2a2a2a;
+}
+.markdown-content blockquote p:last-child { margin-bottom: 0; }
+
+.markdown-content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  background: #f0f0e9;
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: #0e7490;
+}
+
+.markdown-content pre {
+  background: #fafaf6;
+  border: 1px solid #d6d6cf;
+  border-left: 3px solid #0e7490;
+  border-radius: 0 3px 3px 0;
+  padding: 14px 18px;
+  margin: 12px 0 18px;
+  overflow-x: auto;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.markdown-content pre code {
+  background: none;
+  padding: 0;
+  color: #2a2a2a;
+  font-size: 12.5px;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid #e0e0d8;
+  margin: 28px 0;
+}

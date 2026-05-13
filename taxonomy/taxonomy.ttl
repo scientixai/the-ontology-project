@@ -49,7 +49,7 @@
 # Concept URIs:
 #   top.scientix.ai/v1#   — single namespace for everything in The Ontology
 #                           Project: the TaxonomyV1 scheme, the top concept
-#                           Core, the eight L1 categories, the twenty-eight
+#                           Core, the eight L1 categories, the twenty-nine
 #                           L2 leaves, and the SHACL invariant properties
 #                           (top:identifier, top:observedAt, top:status).
 #                           Hash-form URIs in PROV-O / SKOS idiom;
@@ -79,7 +79,7 @@
 
 top:TaxonomyV1 a skos:ConceptScheme ;
     dct:title "TOP Taxonomy v1"@en ;
-    dct:description "Classification scheme for The Ontology Project. The Core layer is organized in a two-level structure: eight Category-Level Objects (L1) and twenty-eight universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
+    dct:description "Classification scheme for The Ontology Project. The Core layer is organized in a two-level structure: eight Category-Level Objects (L1) and twenty-nine universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
     dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
     dct:created "2026-05-09"^^xsd:date ;
     dct:license "Apache-2.0" ;
@@ -98,7 +98,7 @@ top:Core a skos:Concept ;
     skos:topConceptOf top:TaxonomyV1 ;
     skos:prefLabel "TOP Core"@en ;
     skos:altLabel "Core"@en, "Universal Core"@en ;
-    skos:definition "The eight categories and twenty-eight leaves of universal first-class entities that operators across every domain and industry recognize as foundational concepts in The Ontology Project. The eight categories are Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, and Constraint. Workflow extensions for clinical research, care delivery, manufacturing, and supply chain compose on top of this layer rather than living inside it, keeping the universal layer free of domain-specific concerns and reusable across every industry."@en ;
+    skos:definition "The eight categories and twenty-nine leaves of universal first-class entities that operators across every domain and industry recognize as foundational concepts in The Ontology Project. The eight categories are Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, and Constraint. Workflow extensions for clinical research, care delivery, manufacturing, and supply chain compose on top of this layer rather than living inside it, keeping the universal layer free of domain-specific concerns and reusable across every industry."@en ;
     skos:scopeNote "Membership test: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and does not pollute the universal layer."@en ;
     skos:notation "top:" ;
     rdfs:seeAlso <https://top.scientix.ai/first-principles.md> .
@@ -220,6 +220,15 @@ top:AutonomousAgent a skos:Concept ;
     skos:definition "An Agent that takes action, makes decisions, or executes operations without direct human control on each step. Members of this leaf are non-human performers: AI models that produce outputs, software services that act on schedules or events, robotic systems that perform physical tasks, and other actors that hold an identity, expose an interface, and bear traceable accountability. The defining feature is autonomy of action; the responsible party (the deployer or operator, itself an Agent) is recorded separately so the chain of accountability is preserved."@en ;
     skos:scopeNote "Property hints: softwareVersion, modelReference, apiEndpoint. Distinct from System: a member of this leaf acts; a System is operated. The same software may appear as either, depending on whether it is the entity acting in a given transaction or the tool another entity uses."@en ;
     skos:notation "top:AutonomousAgent" .
+
+top:Organism a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:broader top:Agent ;
+    skos:prefLabel "Organism"@en ;
+    skos:altLabel "Living Subject"@en, "Specimen"@en, "Subject (life-sciences)"@en ;
+    skos:definition "An Agent that is a living biological entity acting or being acted upon in an operational context — laboratory animals in research, livestock under veterinary care, plants in agricultural trials, microbial cultures in fermentation, model organisms in biology studies. Members of this leaf hold an identity, can have observations recorded against them over time, and participate in operations as the subject of work or as the source of biological material. Distinct from Person: members of this leaf are non-human biological entities; Person is reserved for the individual human actor. Distinct from Material: an Organism has agency-like presence and a lifecycle of its own; Material is a substance consumed or transformed in operations."@en ;
+    skos:scopeNote "Inclusion test: is the entity a living biological non-human that operations track as a subject or actor (not as a consumed substance)? Common operator vocabulary: 'animal subject,' 'lab animal,' 'study organism,' 'specimen' (when alive), 'model organism,' 'plant subject,' 'culture.' Property hints: species, taxonomicId (NCBI Taxonomy, GBIF), lifecycleStage, identifier (RFID, ear-tag, etc.). The 'Subject' homonym in life-sciences vocabularies routes to top:Person in human research and to top:Organism in animal/plant/microbial research; the CV-layer context-routing block disambiguates by source vocabulary."@en ;
+    skos:notation "top:Organism" .
 
 
 # ====================================================================
@@ -504,6 +513,7 @@ top:Person            skos:exactMatch  prov:Person .
 top:Organization      skos:exactMatch  prov:Organization .
 top:Group             skos:closeMatch  prov:Agent .
 top:AutonomousAgent   skos:closeMatch  prov:SoftwareAgent .
+top:Organism          skos:closeMatch  prov:Agent .
 
 # Activity (the Temporal performance leaf, not the Temporal category)
 top:Activity          skos:exactMatch  prov:Activity .
@@ -575,6 +585,7 @@ top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
 # model regulated-industry concepts cleanly; reinventing them here is
 # justified per ADR-0016:
 #   top:AutonomousAgent  (schema.org has no agency concept; prov:SoftwareAgent fits)
+#   top:Organism         (schema.org has no top-level Organism class; bioschemas.org has one but it's an extension)
 #   top:Storage          (schema:Place + type=storage; not a first-class concept)
 #   top:Portfolio        (schema.org has no portfolio concept)
 #   top:Program          (schema.org has no program concept)
@@ -593,8 +604,8 @@ top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
 # Top concept: 1 (top:Core)
 # L1 — Category-Level Objects: 8
 #       Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint
-# L2 — TOP Core leaves: 28
-#       Agent: Person, Organization, Group, AutonomousAgent (4)
+# L2 — TOP Core leaves: 29
+#       Agent: Person, Organization, Group, AutonomousAgent, Organism (5)
 #       Location: Physical, Virtual, Storage (3)
 #       Resource: System, Equipment, Material (3)
 #       Scope: Portfolio, Program, Project (3)
@@ -602,7 +613,7 @@ top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
 #       Evidence: Document, Log, Attestation, Credential (4)
 #       Outcome: Observation, StatusChange, Artifact, Conclusion (4)
 #       Constraint: PhysicalLimit, RegulatoryLaw, SafetyGuardrail (3)
-# Total SKOS concepts: 1 + 8 + 28 = 37
+# Total SKOS concepts: 1 + 8 + 29 = 38
 #
 # The provenance contract (top:identifier, top:observedAt, top:status)
 # is SHACL in core/v1/shapes.ttl, not a SKOS concept here.

@@ -1,3 +1,11 @@
+---
+layout: default
+title: Extension Contract
+meta_primary: Extension Contract
+meta_secondary: Per-layer rules · ADR-0019 · Updated 2026-05-13
+markdown_content: true
+---
+
 # TOP Extension Contract
 
 > Per [ADR-0019](decision-log.md#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), TOP commits to **open Core, constrained extension** — every Core property and concept is a stable point of attachment, not a ceiling. Extension is permitted; redefinition is not. This document is the per-layer rulebook that makes the principle machine-checkable.
@@ -161,7 +169,7 @@ The pattern isn't anyone's fault — it's what an unspecified extension surface 
 A workflow extension or customer building on TOP reads, in order:
 
 1. **`first-principles.md`** — the design rules (especially § 7 "Build the Pipeline in Order" and § 8 "Open Core, Constrained Extension").
-2. **`taxonomy.md`** — the three-layer architecture (1 root, 8 categories, 28 leaves).
+2. **`taxonomy.md`** — the three-layer architecture (1 root, 8 categories, 29 leaves).
 3. **`core/v1/shapes.ttl`** — the SHACL property shapes with `top:flavor` annotations.
 4. **This document** — the per-layer extension rules.
 5. **`governance/decision-log.md` ADR-0018, ADR-0019** — the decisions this document operationalizes.
