@@ -1,341 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Ontology Project</title>
-<meta name="description" content="The Ontology Project — reference knowledge graphs as a commons. Sovereign meaning as a public good.">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
-    color: #1a1a1a;
-    background: #f4f4f1;
-    padding: 32px 32px 40px;
-    line-height: 1.6;
-    font-size: 15px;
-  }
-  .page {
-    max-width: 740px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 44px 56px 48px;
-    border: 1px solid #d6d6cf;
-    border-radius: 3px;
-  }
-
-  .meta-strip {
-    display: flex;
-    justify-content: space-between;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    font-size: 10.5px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-bottom: 1px solid #e0e0d8;
-    padding-bottom: 12px;
-    margin-bottom: 0;
-  }
-
-  h1.title {
-    font-size: 34px;
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.018em;
-    color: #111;
-    margin-bottom: 4px;
-  }
-  .subtitle {
-    font-size: 16px;
-    color: #555;
-    font-style: italic;
-    font-weight: 400;
-    margin-bottom: 18px;
-  }
-  .tagline {
-    font-size: 16px;
-    color: #1a1a1a;
-    font-style: italic;
-    border-left: 3px solid #0e7490;
-    padding: 8px 0 8px 16px;
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-
-  .lead {
-    font-size: 15px;
-    color: #1a1a1a;
-    margin-bottom: 28px;
-    line-height: 1.6;
-  }
-
-  h2.block {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0e7490;
-    margin: 38px 0 14px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #e0e0d8;
-  }
-
-  p { margin-bottom: 12px; }
-
-  .commitments-snippet {
-    list-style: none;
-    margin: 8px 0 16px 0;
-    padding: 0;
-    font-size: 14.5px;
-  }
-  .commitments-snippet li {
-    padding: 3px 0 3px 22px;
-    position: relative;
-    line-height: 1.5;
-  }
-  .commitments-snippet li::before {
-    content: "▸";
-    color: #0e7490;
-    position: absolute;
-    left: 4px;
-    top: 3px;
-    font-size: 12px;
-  }
-
-  .cta-row {
-    margin-top: 14px;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px;
-  }
-  .cta-row a {
-    color: #0e7490;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  .cta-row a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-  .cta-row .arrow { color: #0e7490; margin-left: 4px; }
-
-  .doc-list {
-    margin: 6px 0 0 0;
-    padding: 0;
-    list-style: none;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13.5px;
-  }
-  .doc-list li {
-    padding: 8px 0;
-    border-bottom: 1px solid #ececea;
-  }
-  .doc-list li:last-child { border-bottom: none; }
-  .doc-list a {
-    color: #0e7490;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  .doc-list a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-  .doc-list .desc {
-    color: #555;
-    font-size: 12.5px;
-    margin-top: 2px;
-    line-height: 1.5;
-  }
-  .doc-list .status {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 1px 7px;
-    border-radius: 2px;
-    font-size: 9.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    vertical-align: middle;
-  }
-  .status-shipped { background: #e8f5ec; color: #1e8e6f; }
-  .status-shipped-new { background: #e8f0fc; color: #0e7490; }
-  .status-queued { background: #f0f0e9; color: #777; }
-
-  .status-line {
-    background: #fafaf6;
-    border: 1px solid #e0e0d8;
-    border-radius: 3px;
-    padding: 10px 14px;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 12px;
-    color: #555;
-    margin-bottom: 14px;
-    line-height: 1.55;
-  }
-  .status-line strong { color: #111; }
-
-  .contribute-step {
-    margin: 14px 0;
-    padding: 12px 16px;
-    background: #fafaf6;
-    border-left: 3px solid #0e7490;
-    border-radius: 0 3px 3px 0;
-    font-size: 14px;
-  }
-  .contribute-step .step-title {
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 4px;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px;
-  }
-
-  .convener {
-    margin-top: 28px;
-    padding: 14px 18px 12px;
-    background: #f4faf7;
-    border: 1px solid #cde4d8;
-    border-left: 3px solid #1e8e6f;
-    border-radius: 3px;
-  }
-  .convener .name {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 1px;
-  }
-  .convener .role {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 11.5px;
-    color: #1e8e6f;
-    font-style: italic;
-    margin-bottom: 8px;
-  }
-  .convener .ctx {
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 12.5px;
-    color: #2a2a2a;
-    line-height: 1.55;
-  }
-  .convener .contact {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    margin-top: 8px;
-  }
-  .convener .contact a {
-    color: #0e7490;
-    text-decoration: none;
-  }
-
-  .inline { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; background: #eef0ed; padding: 1px 5px; border-radius: 2px; color: #0e7490; }
-
-  /* Brand link color (sitewide default), keep color on hover, 2px underline appears */
-  a { color: #0e7490; }
-  a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
-  }
-  .footer a { color: #888; text-decoration: underline; }
-
-  /* Sticky in-page nav */
-  html { scroll-padding-top: 72px; }
-  .sticky-nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: #fff;
-    padding: 14px 0;
-    margin: 0 0 22px;
-    border-bottom: 1px solid #e0e0d8;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-  .sticky-nav a {
-    color: #0e7490;
-    text-decoration: none;
-    padding: 4px 6px;
-  }
-  .sticky-nav a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
-  }
-  .sticky-nav .sep { color: #ccc; margin: 0 4px; }
-
-  blockquote.pull-quote {
-    margin: 18px 0 22px;
-    padding: 14px 18px 12px;
-    background: #fafaf6;
-    border-left: 3px solid #0e7490;
-    border-radius: 0 3px 3px 0;
-  }
-  blockquote.pull-quote p {
-    font-size: 14.5px;
-    line-height: 1.55;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-    font-style: italic;
-  }
-  blockquote.pull-quote cite {
-    display: block;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    font-size: 11.5px;
-    color: #666;
-    font-style: normal;
-  }
-
-  .top-logo {
-    text-align: center;
-    margin-bottom: 18px;
-  }
-  .top-logo img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* Screen-reader-only utility: kept for accessibility and SEO without visual repetition */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .sponsored-by {
-    margin-top: 32px;
-    padding: 18px 0 8px;
-    border-top: 1px solid #e0e0d8;
-    text-align: center;
-  }
-  .sponsored-by a {
-    display: inline-block;
-    transition: opacity 0.15s ease;
-  }
-  .sponsored-by a:hover {
-    opacity: 0.75;
-  }
-  .sponsored-by img {
-    max-width: 240px;
-    height: auto;
-  }
-
-  .footer {
-    margin-top: 6px;
-    padding-top: 10px;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-size: 10.5px;
-    color: #888;
-    line-height: 1.55;
-    font-style: italic;
-    text-align: center;
-  }
-  .footer a { color: #888; text-decoration: underline; }
-</style>
-</head>
-<body>
+---
+layout: home
+---
 
 <div class="page">
 
@@ -348,117 +13,54 @@
   <span>v0.2 · May 2026</span>
 </div>
 
-<nav class="sticky-nav" aria-label="In-page navigation">
-  <a href="#">Home</a><span class="sep">|</span>
-  <a href="#manifesto">The TOP Manifesto</a><span class="sep">|</span>
-  <a href="#explore">Explore TOP</a><span class="sep">|</span>
-  <a href="#contribute">How to contribute</a>
-</nav>
-
 <h1 class="sr-only">The Ontology Project</h1>
-<div class="subtitle">Operator-grounded reference knowledge graphs as a commons.</div>
+<div class="subtitle" style="text-align: center; margin-bottom: 30px;">Operator-grounded reference knowledge graphs as a commons.</div>
 
-<div class="tagline">AI as a force multiplier for the people who run regulated industries — not a force reduction agent that replaces them.</div>
+<p class="lead" style="text-align: center; font-size: 18px; color: #111;">
+  <strong>TOP is the missing layer:</strong> Industry-agnostic infrastructure for reference ontologies grounded in how humans actually work, <br>not how databases are normalized.
+</p>
 
-<p class="lead">There are plenty of ontologies for biomarkers, proteins, gene products, disease taxonomies, and clinical terminologies. They were built for research and reporting. None of them encode what a clinical research coordinator carries in her head when she walks into a site, or what a Sponsor PM clicks on through the day, or what a pharmacist needs to verify before dispensing investigational product. <strong>Operators don't benefit from ontologies that don't understand their workflows.</strong> TOP is the missing layer: industry-agnostic infrastructure for reference ontologies grounded in the operator's mental model, the foundation that lets AI surface the next thing the operator needs to do, with provenance, instead of replacing the operator entirely. The first reference graph being built on TOP is for clinical research; CMC, drug discovery, regulatory, claims, healthcare delivery, energy and process industries, manufacturing, cell therapy, and rare disease are queued.</p>
-
-<!-- ============================================================== -->
-<h2 class="block" id="manifesto">The TOP Manifesto</h2>
-
-<p>Two market failures interlock today. The first is older: the knowledge structures beneath an organization's data belong to someone else. Data can be exported. Ontologies cannot. The second is newer and acute. In May 2026, <a href="https://www.anthropic.com/news/enterprise-ai-services-company">Anthropic announced a $1.5B joint venture with Blackstone, Hellman &amp; Friedman, and Goldman Sachs</a> to deliver enterprise AI transformation services. <a href="https://finance.yahoo.com/sectors/technology/articles/openai-secures-4-billion-joint-134629932.html">OpenAI matched it the same week with TPG and Bain Capital</a>. Vertical integration of model provider with implementer with deployment relationship now compresses what were previously four dimensions of governance sovereignty (named by Frédéric Verhelst, PhD: semantic, enforcement, access, container) into one counterparty. We name a fifth that the joint-venture pattern makes unavoidable: provenance independence.</p>
-
-<blockquote class="pull-quote">
-  <p>"When the firm implementing your agents also provides the model, who owns the meaning your agents act on? If the answer is the vendor, the procurement contract is not what it appears to be. It is a transfer of the operational graph at enterprise scale, executed across private equity portfolios at speed."</p>
-  <cite>Frédéric Verhelst, PhD · public analysis on the joint-venture pattern, May 2026</cite>
-</blockquote>
-
-<p>The compounding gap is that even where ontologies exist for healthcare, they were built by domain scientists for research and reporting (biomarkers, proteins, disease taxonomies, clinical terminologies). They serve their original purpose well. They do not serve the operator. A clinical research coordinator running five active studies, a pharmacist preparing investigational product for tomorrow's visits, a study monitor covering twelve sites: none of them have the foundation they need to deploy AI as augmentation. Without operator-shaped ontology, the AI offered to them is force-reduction (replace the coordinator) rather than force-multiplication (let one coordinator run ten studies instead of two). TOP is the foundation that makes the second choice possible.</p>
-
-<p>We are starting in healthcare and life sciences because the cost there is measured in patients. The architecture transfers.</p>
-
-<p style="margin-top: 14px; font-size: 13.5px; color: #555;">A short selection of what we commit to:</p>
-
-<ul class="commitments-snippet">
-  <li><strong>Open licensing.</strong> Every reference graph we publish is licensed for reuse, redistribution, and commercial application without permission.</li>
-  <li><strong>Versioned releases.</strong> Reference graphs ship with semantic versions, changelogs, and migration notes.</li>
-  <li><strong>Governance with rotation.</strong> Stewardship is a role, not a tenure. Domain working groups elect and rotate editors on a published cadence.</li>
-  <li><strong>A door out.</strong> Everything we host can be taken and run elsewhere. If we ever become a chokepoint, we have already failed our own test.</li>
-</ul>
-
-<div class="cta-row">
-  <a href="manifesto.html">Read the full manifesto</a><span class="arrow">→</span>
+<h2 class="block">The Foundation</h2><ul class="doc-list">
+  <li>
+    <a href="manifesto.html">The TOP Manifesto</a>
+    <div class="desc">The "Why." Why sovereign meaning is a public good and how we are addressing the market failures of "borrowed meaning" in the age of Agentic AI.</div>
+  </li>
+  <li>
+    <a href="first-principles.html">First Principles</a>
+    <div class="desc">The "How." The design rules that settle debates: Human-Down modeling, Native Temporal + Provenance logic, and the "Decision Rule" for naming.</div>
+  </li>
+  <li>
+    <a href="core/v1/">TOP Core v1: The Universal Pattern</a><div class="status-line" style="margin-bottom: 22px;">
+  Every industry—Clinical, Fintech, Manufacturing—inherits the same 8 categories. We don't model unique entity shapes for every specialty; we model the <strong>Human Work</strong> that is common to all of them.
+</div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 8px;">
+  <div class="inline" style="text-align: center; padding: 10px;">Agent</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Location</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Resource</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Scope</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Temporal</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Evidence</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Outcome</div>
+  <div class="inline" style="text-align: center; padding: 10px;">Constraint</div>
 </div>
 
-<!-- ============================================================== -->
-<h2 class="block" id="explore">Explore TOP <span style="color: #888; font-weight: 400; text-transform: none; letter-spacing: 0; font-style: italic;">— what's shipped, what's next</span></h2>
-
-<div class="status-line">
-  <strong>Current state:</strong> TOP Core shipped at v1 — 8 categories, 28 leaves, PROV-O aligned with 24 skos:*Match annotations and the schema.org alignment audit complete (ADR-0016). The clinical-research workflow extension rebuild is forming next, organized around the 12 operational functional areas. Pre-Core artifacts are archived under <a href="legacy/"><span class="inline">legacy/</span></a> for reference.
-</div>
-
-<ul class="doc-list">
-  <li>
-    <a href="core/v1/">TOP Core spec &amp; namespace</a><span class="status status-shipped-new">Shipped v1</span>
-    <div class="desc">The universal layer of TOP. Eight Category-Level Objects (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) and twenty-eight leaves that operators across every domain recognize as first-class concepts. PROV-O aligned with twenty-four skos:exactMatch / skos:closeMatch annotations plus seventeen schema.org alignments; the provenance contract (identifier, observedAt, status) is enforced underneath as SHACL. Domain reference graphs extend Core and inherit PROV alignment, NGSI-LD wire format, and contract enforcement at zero cost. Resolves at <span class="inline">https://top.scientix.ai/v1#</span>.</div>
   </li>
   <li>
-    <a href="taxonomy.md">Taxonomy</a><span class="status status-shipped-new">Shipped v1</span>
-    <div class="desc">The three-layer architecture in prose. Root → 8 categories → 28 leaves. Authoring rules, what's ruled out, how workflow extensions compose on top.</div>
-  </li>
-  <li>
-    <a href="first-principles.md">First Principles</a><span class="status status-shipped-new">Living</span>
-    <div class="desc">The design rules every spec, PR, and decision can cite by name. Operator-grounded vocabulary, native temporal+provenance, universal pattern, promote-facts-to-entities.</div>
-  </li>
-  <li>
-    <a href="governance/decision-log.md">Architectural Decision Log</a><span class="status status-shipped">16 ADRs</span>
-    <div class="desc">The chain of architectural decisions that shape The Ontology Project. Append-only by policy.</div>
-  </li>
-  <li>
-    <a href="roadmap.md">Roadmap</a>
-    <div class="desc">What ships next, what is queued behind it, and how community contributions enter the project.</div>
-  </li>
-  <li>
-    <a href="legacy/">Pre-Core archive</a><span class="status status-queued">Historical</span>
-    <div class="desc">Pre-Core clinical-research work (Sponsor / Site / Study / Participant / Recruit / Visit / OversightBody / IP / Event lifts), the legacy <span class="inline">onto/</span> namespace mirrors, the JSON-intermediate translator scaffold. Operator-vocabulary insights are durable; the artifact shapes conflict with Core and should not be loaded against it.</div>
-  </li>
-  <li>
-    <a href="https://github.com/scientixai/the-ontology-project">GitHub repository</a>
-    <div class="desc">Source, decision log, ADRs. Apache 2.0 licensed.</div>
+    <a href="https://github.com/scientixai/the-ontology-project">GitHub Repository</a>
+    <div class="desc">Source code, RDF schemas, and the Architectural Decision Log (16 ADRs).</div>
   </li>
 </ul>
 
-<!-- ============================================================== -->
-<h2 class="block" id="contribute">How to contribute</h2>
 
-<p>TOP is being shaped now, in the open. While working groups form, the contribution surface is small but real. The earliest edits carry the most weight.</p>
-
-<div class="contribute-step">
-  <div class="step-title">1. Argue with the manifesto</div>
-  v0.2 stands open for endorsement and refinement. If you believe knowledge is the work and data is only what the work enables, read the manifesto and mark it up. Where it is wrong, say so. Where it is vague, push. Founding signatories retain the right to refine the manifesto's language as a condition of signing.
-</div>
-
-<div class="contribute-step">
-  <div class="step-title">2. Argue with Core</div>
-  TOP Core landed at v1 with 8 categories and 28 leaves. The decision log carries the reasoning behind every commitment. Practitioners in any high-consequence regulated domain are the right reviewers — the categories aim to be universal, and gaps surface where a real operator workflow can't find its home. File an issue against any specific category or leaf; absences are documented intentionally (see <a href="governance/decision-log.md">ADR-0016</a>).
-</div>
-
-<div class="contribute-step">
-  <div class="step-title">3. Propose a working group for an adjacent domain</div>
-  CMC, drug discovery, regulatory, commercial, claims, healthcare delivery, energy and process industries, manufacturing, cell therapy, rare disease: the architecture transfers. If you carry a reference-graph need in any of these, the right move is to convene the practitioners who would steward it. TOP Core (<span class="inline">top:</span>) is governed centrally as the universal layer that every domain inherits; each domain owns its own reference graph (<span class="inline">topcr:</span>, <span class="inline">topcmc:</span>, etc.) under its own working group, extending Core rather than redeclaring it.
-</div>
-
-<div class="contribute-step">
-  <div class="step-title">4. Submit an RFC</div>
-  Amendments arrive as RFCs (markdown documents in <span class="inline">governance/rfcs/</span>), get reviewed by the working group, and merge through pull request with at least one approving review from a working-group member. The full process and the RFC template land before the public publish.
-</div>
-
-<p style="margin-top: 16px;">For now, while working groups are forming, Bo Lora as convener is the review pool of one. As working groups spin up, governance rotates to those groups, and founding signatories on the manifesto step into advisory roles.</p>
-
-<div class="convener">
-  <div class="name">Bo Lora</div>
-  <div class="role">Convener · Healthcare and Life Sciences</div>
-  <div class="ctx">Founder, Scientix.ai Inc. Thirty years across regulated finance, travel, e-commerce, and healthcare and life sciences AI strategy. Sponsor of the founding reference graph and the universal Core layer that supports it.</div>
-  <div class="contact"><a href="https://bolora.me">bolora.me</a></div>
+<h2 class="block" id="contribute">How to Contribute</h2>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+  <div class="contribute-step">
+    <div class="step-title">Review the Foundation</div>
+    Argue with the <strong>Manifesto</strong> or the <strong>Core</strong> categories. We prioritize the "Verbal Test": if an operator doesn't say it, it doesn't belong in the foundation.
+  </div>
+  <div class="contribute-step">
+    <div class="step-title">Extend the Domain</div>
+    Propose a working group for <strong>Fintech, CMC, Manufacturing, or Energy</strong>. Inherit TOP Core and build your industry's reference graph on a solid floor.
+  </div>
 </div>
 
 <div class="sponsored-by">
@@ -468,10 +70,7 @@
 </div>
 
 <div class="footer">
-  Apache 2.0 · Manifesto under CC BY 4.0 once final · <a href="https://github.com/scientixai/the-ontology-project">github.com/scientixai/the-ontology-project</a> · stewardship will rotate to domain working groups on a published cadence
+  Apache 2.0 · Manifesto under CC BY 4.0 once final · <a href="https://github.com/scientixai/the-ontology-project">github.com/scientixai/the-ontology-project</a>
 </div>
 
 </div>
-
-</body>
-</html>
