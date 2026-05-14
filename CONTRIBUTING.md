@@ -1,11 +1,3 @@
----
-layout: default
-title: Contributing
-meta_primary: Contributing
-meta_secondary: Working groups · RFC process · Apache 2.0
-markdown_content: true
----
-
 # Contributing to The Ontology Project
 
 Welcome. TOP is open community-governed infrastructure for high-consequence regulated industries, hosted under Apache 2.0. Contributions land through GitHub pull requests against `main`.

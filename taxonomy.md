@@ -1,11 +1,3 @@
----
-layout: default
-title: Taxonomy
-meta_primary: Taxonomy · v1
-meta_secondary: Three-layer architecture · Updated 2026-05-13
-markdown_content: true
----
-
 # TOP Taxonomy
 
 > The classification scheme for The Ontology Project. One root, eight categories, twenty-nine leaves. Authored as SKOS for taxonomy tooling, mirrored as OWL/SHACL for reasoners and validators, aligned to PROV-O at the class level and to BFO on the four edges where it is clean. Practitioner-first: AI agents and ontologist tooling are honored at the edge, never as primary customers of TOP.

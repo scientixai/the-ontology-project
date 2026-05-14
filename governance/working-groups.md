@@ -1,11 +1,3 @@
----
-layout: default
-title: Working Groups
-meta_primary: Working Groups
-meta_secondary: Per-domain stewardship · Directory-scoped ownership
-markdown_content: true
----
-
 # TOP Working Groups
 
 > A working group (WG) is the steward of a workflow extension or a cross-cutting governance area. It owns a directory in the monorepo, owns the technical decisions inside that directory, and operates under the broader project conventions in [`decision-log.md`](decision-log.md) and [`rfcs/README.md`](rfcs/README.md).

@@ -1,210 +1,233 @@
----
-layout: default
-title: Core / v1
-description: "TOP Core — the universal layer of The Ontology Project. Eight Category-Level Objects and twenty-nine leaves that operators across every domain recognize as first-class concepts. PROV-O aligned, NGSI-LD wire-compatible."
-meta_primary: Core · v1
-meta_secondary: top: namespace · the universal layer
-nav: core
-extra_head: |
-  <link rel="alternate" type="text/turtle" href="../../taxonomy/taxonomy.ttl" title="SKOS taxonomy (Turtle)">
-  <style>
-    /* Core / v1 page-specific styles — denser spec layout, sans-serif body */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      padding: 24px 28px 36px;
-      font-size: 14px;
-      line-height: 1.55;
-    }
-    .page {
-      max-width: 980px;
-      padding: 0;
-      background: transparent;
-      border: none;
-      border-radius: 0;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOP / Core / v1</title>
+<meta name="description" content="TOP Core — the universal layer of The Ontology Project. Eight Category-Level Objects and twenty-nine leaves that operators across every domain recognize as first-class concepts. PROV-O aligned, NGSI-LD wire-compatible.">
+<link rel="alternate" type="text/turtle" href="../../taxonomy/taxonomy.ttl" title="SKOS taxonomy (Turtle)">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  /* Core / v1 page-specific styles — denser spec layout, sans-serif body */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    padding: 24px 28px 36px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .page {
+    max-width: 980px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
 
-    .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #0e7490; margin-bottom: 18px; }
+  .uri { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #0e7490; margin-bottom: 18px; }
 
-    h2.section {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #111;
-      margin: 32px 0 12px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid #c8c8c0;
-    }
-    h3.category {
-      font-size: 17px;
-      font-weight: 700;
-      color: #111;
-      margin: 26px 0 6px;
-      letter-spacing: -0.01em;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    }
-    h3.category .cat-id {
-      font-family: ui-monospace, "SF Mono", Menlo, monospace;
-      font-size: 12px;
-      color: #888;
-      font-weight: 400;
-      margin-left: 8px;
-    }
-    p { margin-bottom: 12px; }
-    p.lead {
-      background: #fff;
-      border-left: 3px solid #0e7490;
-      padding: 14px 18px;
-      margin-bottom: 14px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+  h2.section {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #111;
+    margin: 32px 0 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #c8c8c0;
+  }
+  h3.category {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111;
+    margin: 26px 0 6px;
+    letter-spacing: -0.01em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  h3.category .cat-id {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: #888;
+    font-weight: 400;
+    margin-left: 8px;
+  }
+  p { margin-bottom: 12px; }
+  p.lead {
+    background: #fff;
+    border-left: 3px solid #0e7490;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
 
-    .inline { font-size: 12px; background: #eef0ed; }
+  .inline { font-size: 12px; background: #eef0ed; }
 
-    pre.code-block {
-      background: #fafaf6;
-      border: 1px solid #d6d6cf;
-      border-left: 3px solid #0e7490;
-      border-radius: 0 3px 3px 0;
-      padding: 14px 18px;
-      margin: 10px 0 16px;
-      font-family: ui-monospace, "SF Mono", Menlo, monospace;
-      font-size: 12px;
-      line-height: 1.7;
-      color: #2a2a2a;
-      overflow-x: auto;
-      white-space: pre;
-    }
-    pre.code-block .ns-domain { color: #c08410; font-weight: 600; }
-    pre.code-block .ns-prim { color: #0e7490; font-weight: 600; }
-    pre.code-block .kw { color: #777; }
-    pre.code-block .cmt { color: #888; font-style: italic; }
-    .ex-caption {
-      font-size: 12.5px;
-      color: #555;
-      font-style: italic;
-      margin: -6px 0 14px;
-    }
+  pre.code-block {
+    background: #fafaf6;
+    border: 1px solid #d6d6cf;
+    border-left: 3px solid #0e7490;
+    border-radius: 0 3px 3px 0;
+    padding: 14px 18px;
+    margin: 10px 0 16px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #2a2a2a;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  pre.code-block .ns-domain { color: #c08410; font-weight: 600; }
+  pre.code-block .ns-prim { color: #0e7490; font-weight: 600; }
+  pre.code-block .kw { color: #777; }
+  pre.code-block .cmt { color: #888; font-style: italic; }
+  .ex-caption {
+    font-size: 12.5px;
+    color: #555;
+    font-style: italic;
+    margin: -6px 0 14px;
+  }
 
-    /* Architecture diagram */
-    .arch {
-      background: #fff;
-      border: 1px solid #d6d6cf;
-      border-radius: 3px;
-      padding: 18px 22px;
-      margin-bottom: 18px;
-    }
-    .arch .level {
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 1px dashed #e0e0d8;
-    }
-    .arch .level:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-    .arch .level-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #0e7490;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .arch .level-name { font-size: 14px; font-weight: 700; color: #111; }
-    .arch .level-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.55; }
+  /* Architecture diagram */
+  .arch {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+  }
+  .arch .level {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #e0e0d8;
+  }
+  .arch .level:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .arch .level-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0e7490;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .arch .level-name { font-size: 14px; font-weight: 700; color: #111; }
+  .arch .level-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.55; }
 
-    .downloads {
-      background: #fff;
-      border: 1px solid #d6d6cf;
-      border-radius: 3px;
-      padding: 14px 18px;
-      margin-bottom: 16px;
-      font-size: 13px;
-    }
-    .downloads h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; }
-    .downloads a { color: #0e7490; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
-    .downloads a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-    .downloads .row { padding: 4px 0; }
+  .downloads {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .downloads h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; }
+  .downloads a { color: #0e7490; text-decoration: none; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+  .downloads a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .downloads .row { padding: 4px 0; }
 
-    /* Category card (L1) */
-    .category-card {
-      background: #fafaf6;
-      border: 1px solid #d6d6cf;
-      border-left: 3px solid #0e7490;
-      border-radius: 3px;
-      padding: 14px 18px;
-      margin-bottom: 8px;
-      scroll-margin-top: 16px;
-    }
-    .category-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
-    .category-card .name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; }
-    .category-card .name a { color: #888; text-decoration: none; font-weight: 400; font-size: 12px; margin-left: 8px; }
-    .category-card .name a:hover { color: #0e7490; }
-    .category-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 6px; }
-    .category-card .meta { font-size: 11.5px; color: #555; margin-top: 4px; }
-    .category-card .meta strong { color: #111; }
+  /* Category card (L1) */
+  .category-card {
+    background: #fafaf6;
+    border: 1px solid #d6d6cf;
+    border-left: 3px solid #0e7490;
+    border-radius: 3px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    scroll-margin-top: 16px;
+  }
+  .category-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
+  .category-card .name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .category-card .name a { color: #888; text-decoration: none; font-weight: 400; font-size: 12px; margin-left: 8px; }
+  .category-card .name a:hover { color: #0e7490; }
+  .category-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 6px; }
+  .category-card .meta { font-size: 11.5px; color: #555; margin-top: 4px; }
+  .category-card .meta strong { color: #111; }
 
-    /* Leaf grid (L2 children of an L1 category) */
-    .leaves {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 10px;
-      margin: 10px 0 18px 16px;
-    }
-    .leaf {
-      background: #fff;
-      border: 1px solid #d6d6cf;
-      border-radius: 3px;
-      padding: 12px 14px;
-      scroll-margin-top: 16px;
-    }
-    .leaf .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; color: #888; margin-bottom: 2px; }
-    .leaf .name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
-    .leaf .name a { color: #ccc; text-decoration: none; font-weight: 400; font-size: 11px; margin-left: 6px; }
-    .leaf .name a:hover { color: #0e7490; }
-    .leaf .desc { color: #2a2a2a; font-size: 12.5px; line-height: 1.55; margin-bottom: 4px; }
-    .leaf .alt { font-size: 11px; color: #777; font-style: italic; }
+  /* Leaf grid (L2 children of an L1 category) */
+  .leaves {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+    margin: 10px 0 18px 16px;
+  }
+  .leaf {
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    padding: 12px 14px;
+    scroll-margin-top: 16px;
+  }
+  .leaf .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; color: #888; margin-bottom: 2px; }
+  .leaf .name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .leaf .name a { color: #ccc; text-decoration: none; font-weight: 400; font-size: 11px; margin-left: 6px; }
+  .leaf .name a:hover { color: #0e7490; }
+  .leaf .desc { color: #2a2a2a; font-size: 12.5px; line-height: 1.55; margin-bottom: 4px; }
+  .leaf .alt { font-size: 11px; color: #777; font-style: italic; }
 
-    /* Universal DNA card */
-    .dna-card {
-      background: #f4faf7;
-      border: 1px solid #cde4d8;
-      border-left: 3px solid #1e8e6f;
-      border-radius: 3px;
-      padding: 16px 20px;
-      margin-bottom: 16px;
-    }
-    .dna-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
-    .dna-card .name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
-    .dna-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
-    .dna-card .props {
-      background: #fff;
-      border: 1px solid #cde4d8;
-      border-radius: 3px;
-      padding: 10px 14px;
-      font-size: 12.5px;
-    }
-    .dna-card .props .prop { padding: 4px 0; }
-    .dna-card .props .prop-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #1e8e6f; font-weight: 600; }
-    .dna-card .props .prop-desc { color: #2a2a2a; }
+  /* Universal DNA card */
+  .dna-card {
+    background: #f4faf7;
+    border: 1px solid #cde4d8;
+    border-left: 3px solid #1e8e6f;
+    border-radius: 3px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .dna-card .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #888; margin-bottom: 2px; }
+  .dna-card .name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .dna-card .desc { color: #2a2a2a; font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+  .dna-card .props {
+    background: #fff;
+    border: 1px solid #cde4d8;
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+  }
+  .dna-card .props .prop { padding: 4px 0; }
+  .dna-card .props .prop-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #1e8e6f; font-weight: 600; }
+  .dna-card .props .prop-desc { color: #2a2a2a; }
 
-    /* Status / counts strip */
-    .stats {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 18px;
-      padding: 12px 18px;
-      background: #fff;
-      border: 1px solid #d6d6cf;
-      border-radius: 3px;
-      font-size: 12.5px;
-    }
-    .stats .stat-num { font-size: 22px; font-weight: 700; color: #0e7490; line-height: 1; }
-    .stats .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+  /* Status / counts strip */
+  .stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 18px;
+    padding: 12px 18px;
+    background: #fff;
+    border: 1px solid #d6d6cf;
+    border-radius: 3px;
+    font-size: 12.5px;
+  }
+  .stats .stat-num { font-size: 22px; font-weight: 700; color: #0e7490; line-height: 1; }
+  .stats .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
 
-    .spec-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
-    .spec-footer a { color: #888; text-decoration: underline; }
-  </style>
----
+  .spec-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0d8; font-size: 11px; color: #888; line-height: 1.55; font-style: italic; }
+  .spec-footer a { color: #888; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="site-header">
+    <a href="../../index.html" class="site-logo" aria-label="The Ontology Project — home">
+      <img src="top-logo.svg" alt="The Ontology Project" width="210">
+    </a>
+    <div class="site-meta">
+      <div class="site-meta-primary">Core · v1</div>
+      <div class="site-meta-secondary">top: namespace · the universal layer</div>
+    </div>
+  </div>
+  <nav class="site-nav-links">
+    <a href="../../index.html">Home</a> ·
+    <a href="../../manifesto.html">Manifesto</a> ·
+    <a href="../../first-principles.html">First Principles</a> ·
+    <a href="../../roadmap.html">Roadmap</a> ·
+    <strong>Core</strong> ·
+    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
+  </nav>
+</header>
 
 <div class="uri">https://top.scientix.ai/v1#</div>
 
@@ -665,3 +688,16 @@ extra_head: |
 <div class="spec-footer">
   Resolution target for the top: namespace · v1 of TOP Core · governed by The Ontology Project under Apache 2.0
 </div>
+
+<footer class="site-footer">
+  <div class="site-footer-sponsor">
+    <a href="https://scientix.ai">
+      <img src="sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
+    </a>
+  </div>
+  <div class="site-footer-license">Apache License 2.0</div>
+</footer>
+
+</div>
+</body>
+</html>
