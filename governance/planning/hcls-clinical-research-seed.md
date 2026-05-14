@@ -1,14 +1,14 @@
 # Seed: HCLS Clinical-Research Reference Graph for TOP Launch
 
-*Status: seed for a future RFC. Author: Bo Lora (Clinical Research BDLS, sole signatory to The Ontology Project as of 2026-05-14). Audience: Bo for near-term build planning; the Clinical Research Working Group when it forms; future HCLS domain leads (care-delivery, public-health, registries) who will follow the clinical-research pattern.*
+*Status: seed for a future RFC. Author: Bo Lora (Clinical Research BDFL, sole signatory to The Ontology Project as of 2026-05-14). Audience: Bo for near-term build planning; the Clinical Research Working Group when it forms; future HCLS domain leads (care-delivery, public-health, registries) who will follow the clinical-research pattern.*
 
-*Companion to TOP Core (one root, eight categories, twenty-eight leaves) and to ADRs 0001–0017. Pre-RFC; the formal RFC process starts when the working group does.*
+*Companion to TOP Core (one root, eight categories, twenty-nine leaves) and to ADRs 0001–0020. Pre-RFC; the formal RFC process starts when the working group does.*
 
 ---
 
 ## Why this document exists
 
-TOP Core is intentionally small. One root, eight categories, twenty-eight leaves, with class-level PROV-O alignment and light-edge BFO where it lands cleanly. The smallness is deliberate. Practitioner-first (ADR-0013) means Core stays in vocabulary a clinical coordinator, a manufacturing operator, or a supply-chain logistician all recognize without needing translation.
+TOP Core is intentionally small. One root, eight categories, twenty-nine leaves, with class-level PROV-O alignment and light-edge BFO where it lands cleanly. The smallness is deliberate. Practitioner-first (ADR-0013) means Core stays in vocabulary a clinical coordinator, a manufacturing operator, or a supply-chain logistician all recognize without needing translation.
 
 The smallness has a consequence. The first workflow extension TOP ships is a load-bearing artifact. It has to demonstrate that Core composes into a real, regulated-industry reference graph without distorting Core itself. The clinical-research workflow is that demonstrator. TOP does not launch with Core alone. TOP launches with Core plus a fully-built clinical-research reference graph, anchored in the operator workflow of a sponsor, a site, an investigator, and a participant, with the regulator-facing standards (CDISC, FDA, ICH, MedDRA) projecting cleanly from the same underlying source.
 
@@ -25,7 +25,7 @@ Three audiences read TOP at launch.
 
 **Regulators and standards bodies** read TOP to ask whether it harmonizes with CDISC SDTM, ICH-GCP E6 R3, FDA 21 CFR Part 11, and the evolving USDM / DDF / Vulcan / SOA ecosystem. The clinical-research reference graph has to project cleanly into these standards without claiming to replace them. Standards-as-projection is the posture (per first-principles.md § 1, the human-down inversion). The clinical-research graph operationalizes that posture.
 
-**HCLS practitioners** read TOP to ask whether the names match the workday. A study coordinator, a CRA, a regulatory affairs lead, a pharmacovigilance scientist, a PI, a research nurse, a research pharmacist. Each has a vocabulary. The reference graph either matches it or fails the practitioner-first commitment from ADR-0013. The 431-concept site-level SOP controlled vocabulary built 2026-05-13 (`research/SOPs/raw-sop-research/CLAUDE OUTPUTS/site-sop-controlled-vocabulary_yaml_v1.yaml`) is one operator-vocabulary input. There will be others as the reference graph deepens.
+**HCLS practitioners** read TOP to ask whether the names match the workday. A study coordinator, a CRA, a regulatory affairs lead, a pharmacovigilance scientist, a PI, a research nurse, a research pharmacist. Each has a vocabulary. The reference graph either matches it or fails the practitioner-first commitment from ADR-0013. A 431-concept site-level SOP controlled vocabulary built 2026-05-13 (held externally pending migration into the clinical-research workflow directory when the WG forms) is one operator-vocabulary input. There will be others as the reference graph deepens.
 
 **Frontier-AI consumers** read TOP to ask whether agents can reason against it. Audit-trail provenance through PROV-O (ADR-0001). Subset-grounded alignment through NCIt (this document, Part 3). Operator-vocabulary preservation through Core's smallness (ADR-0013). A model grounded in the clinical-research reference graph can answer "what is this entity, when was it captured, who attested to it, what does it mean in CDISC SDTM terms, what does it mean in MedDRA, what's the source document this CRF entry derives from" without hallucination, because every step is a graph traversal rather than a learned association.
 
@@ -61,7 +61,7 @@ ADR-0004 commits TOP to composable workflow extensions over a shared Core, not s
 
 | Pattern | What it does | What it preserves | Where it fails |
 | --- | --- | --- | --- |
-| **A. Flat sibling, instance composition only.** | Both workflows under Core. A Person can hold both classifications at the instance level; no class-level relationship. | Maximum simplicity. ADR-0004 unchanged. | Concepts that genuinely cross (Treatment, Visit, Procedure, AdverseEvent) get awkwardly homed in one workflow with the other importing. The AE-boundary test bends but does not break — the import works mechanically — but the operator has to know which workflow owns the term. |
+| **A. Flat sibling, instance composition only.** | Both workflows under Core. A Person can hold both classifications at the instance level; no class-level relationship. | Maximum simplicity. ADR-0004 unchanged. | Concepts that genuinely cross (Treatment, Visit, Procedure, AdverseEvent) get awkwardly homed in one workflow with the other importing. The AE-boundary test bends but does not break (the import works mechanically), but the operator has to know which workflow owns the term. |
 | **B. Cross-workflow `subClassOf` allowed.** | A clinical-research class can declare `rdfs:subClassOf` against a care-delivery class (or vice versa) when the concept genuinely crosses. `topcr:OncologyTreatment rdfs:subClassOf topcd:Treatment, top:Activity`. | Flat-sibling workflow directories. Operator vocabulary preserved on both sides. ADR-0004 still holds (workflows compose, not sibling). | Care-delivery becomes a class-level dependency of clinical-research. Version skew between workflows becomes a real concern. Governance has to control which cross-workflow declarations are valid. |
 | **C. Intermediate shared HCLS tier.** | A `shared-clinical/` layer (namespace `topcs:`) between Core and the individual HCLS workflows holds concepts both clinical-research and care-delivery need: Patient, Visit, Treatment, Procedure, MedicalCondition. Each workflow specializes from both Core and the shared tier. | Concepts that genuinely cross have a clear home. | Requires defending the line between "Core-universal" and "shared-clinical-only" on every new concept. Risks recreating the "Healthcare-TOP sub-federation" failure mode ADR-0004 rejected, at a smaller scale. Increases the namespace surface area; future contributors have one more namespace decision to make on every class. |
 | **D. Promote shared concepts back to Core.** | Treatment, Procedure, Encounter, MedicalCondition become Core leaves alongside Person, Organization, Site, Visit. | One structural anchor. | Breaks the manufacturing test. Manufacturing has Batches and Materials, not Treatments. Promoting workflow-specific concepts to Core dilutes ADR-0013 (practitioner-first) by absorbing things that aren't truly universal across every TOP workflow. Core stops being small. |
@@ -100,7 +100,7 @@ This is the failure-mode-aware fallback. It keeps Core small while admitting tha
 ### What this commits the project to
 
 - ADR-0004 stands. Workflows compose, not sibling, at the directory level.
-- A new ADR (ADR-0018 when this seed ratifies) authorizes cross-workflow `rdfs:subClassOf` declarations subject to the operator-grounded crossing test.
+- A new ADR (ADR-0021 when this seed ratifies) authorizes cross-workflow `rdfs:subClassOf` declarations subject to the operator-grounded crossing test.
 - Each cross-workflow declaration appears in the dependent workflow's spec page with a one-line justification, and PR review enforces that.
 - Pattern C in scoped form remains available as a future RFC for dense sub-domain overlaps (oncology first; others as warranted).
 - Care-delivery is queued behind clinical-research on the roadmap precisely because the dependency graph then is real rather than theoretical. Care-delivery ships next; oncology-shared decisions happen after that.
@@ -148,7 +148,7 @@ One anchor. Everything downstream composes through it.
 
 | Subset | NCIt code | Why |
 |---|---|---|
-| CDISC | C61410 | SDTM, SEND, ADaM, CDASH, Glossary, Protocol — all in one subtree |
+| CDISC | C61410 | SDTM, SEND, ADaM, CDASH, Glossary, Protocol, all in one subtree |
 | FDA Terminology | C131123 | FDA-specific controlled terms |
 | ICH | C217022 | ICH-GCP, ICH E2A, ICH E6, ICH E9 |
 | FDA-NIH Modernizing Research and Evidence Glossary | C220787 | Cross-agency harmonization |
@@ -211,7 +211,7 @@ Worth calling out because USDM and DDF are where regulatory expectations are mov
 
 ### What this tier-stack does NOT do
 
-- It does not bring NCIt vocabulary into Core. NCIt is an external dependency, accessed through SKOS alignment triples and SSSOM mapping files. Core's eight categories and twenty-eight leaves are unchanged.
+- It does not bring NCIt vocabulary into Core. NCIt is an external dependency, accessed through SKOS alignment triples and SSSOM mapping files. Core's eight categories and twenty-nine leaves are unchanged.
 - It does not commit TOP to publishing crosswalks from TOP back to NCIt. The direction is TOP → NCIt → everything else, not bidirectional.
 - It does not change ADR-0013 (practitioner-first). External vocabularies live at the edge. Clinical-research class names, property names, and operator-vocabulary stay practitioner-shaped. The alignment is annotation, not naming.
 
@@ -232,8 +232,8 @@ The clinical-research workflow extension organizes around twelve operational fun
 | 5 | **Site Management** | DOA Log, Signature Log, Training Log, GCP Training records, Source Document maintenance, ISF / Regulatory Binder. |
 | 6 | **Clinical Supply** | IMP receipt, storage, dispensing, accountability, return, destruction. Lot / batch / kit / UNII identifiers. Tier 4 FDA attachments. |
 | 7 | **Recruitment** | Pre-screening, screening, eligibility checklist, enrollment, randomization, screen-failure tracking. |
-| 8 | **Intervention** | Study medication administration, treatment cycles, dose modifications, premature discontinuation. **Densest cross-workflow zone — worked example below.** |
-| 9 | **Pharmacovigilance** | AE, SAE, SUSAR, UADE, UP, concomitant medications, causality, expectedness, outcome, IND Safety Reports, ICSR. **Densest external-vocabulary zone — worked example below.** |
+| 8 | **Intervention** | Study medication administration, treatment cycles, dose modifications, premature discontinuation. **Densest cross-workflow zone. Worked example below.** |
+| 9 | **Pharmacovigilance** | AE, SAE, SUSAR, UADE, UP, concomitant medications, causality, expectedness, outcome, IND Safety Reports, ICSR. **Densest external-vocabulary zone. Worked example below.** |
 | 10 | **Data Management** | CRF / eCRF, source data verification, queries, data clarification forms, audit trail, database lock. DDF-aligned. |
 | 11 | **Monitoring** | SIV, IMV, COV, FCV, monitoring plan (comprehensive and concise), monitoring report, follow-up letter, confirmation letter. |
 | 12 | **Quality Management** | QM Studywide Review, QM Subject Data Review, CAPA, Note to File, Audit, Inspection. |
@@ -358,7 +358,7 @@ The seed surfaces these so the working group inherits a clean question list. Eac
 
 1. **Workflow-overlap pattern choice.** Seed recommends Pattern B narrowly scoped with oncology Pattern-C-promotion path. WG may ratify, soften (Pattern A), or escalate (immediate Pattern C).
 
-2. **Site SOP vocabulary import path.** Seed recommends Path (b) — separate aligned file preserving SOP provenance. WG may consolidate to Path (a) if friction outweighs the preserved provenance.
+2. **Site SOP vocabulary import path.** Seed recommends Path (b), a separate aligned file preserving SOP provenance. WG may consolidate to Path (a) if friction outweighs the preserved provenance.
 
 3. **NCIt subset whitelist governance.** Seed names a 10-subset initial whitelist. WG decides whether additions / removals are RFC-governed centrally or WG-governed per workflow.
 
@@ -435,7 +435,7 @@ The spec page for `clinical-research/v1/` follows the shape of `core/v1/index.ht
 
 - It does not author the class catalog. Each functional area's classes ship in a subsequent PR by the WG (or by Bo as solo signatory until the WG forms).
 - It does not commit the project to CDISC USDM as a structural parent. USDM alignment is via NCIt subset inheritance at the SKOS level, not via `rdfs:subClassOf usdm:*`. Same posture as BFO and PROV-O alignment.
-- It does not change Core. Core's eight categories and twenty-eight leaves are unchanged. Cross-workflow `subClassOf` is a new pattern, not a new layer; the ADR that ratifies it is additive.
+- It does not change Core. Core's eight categories and twenty-nine leaves are unchanged. Cross-workflow `subClassOf` is a new pattern, not a new layer; the ADR that ratifies it is additive.
 - It does not bundle care-delivery's vocabulary. Care-delivery ships second; v1 of clinical-research uses placeholder stubs for the small set of care-delivery classes it crosses into.
 - It does not specify the JSON-LD context for NGSI-LD wire compatibility. That is a follow-on (named in ADR-0014 as deferred).
 
@@ -446,9 +446,8 @@ The spec page for `clinical-research/v1/` follows the shape of `core/v1/index.ht
 - TOP Core taxonomy: `/taxonomy/taxonomy.ttl`, `/taxonomy.md`, `/core/v1/shapes.ttl`, `/core/v1/index.html`.
 - First-principles: `/first-principles.md`. Practitioner-first, standards-as-projection, no bespoke flags.
 - Roadmap: `/roadmap.md`. 12 functional areas, SSSOM commitment, Bioregistry commitment.
-- Decision log: `/governance/decision-log.md`. ADRs 0001–0017. The ratification of this seed appends ADR-0018 (workflow-overlap Pattern B with oncology caveat) and ADR-0019 (NCIt-anchored alignment).
-- Unwound RFC draft: `CLAUDE OUTPUTS/_drafts/draft-ncit-anchored-vocabulary-alignment.md`. Substance is incorporated into Part 2 of this seed; the RFC was retracted because the formal RFC process had not started.
-- Site SOP controlled vocabulary v1: `research/SOPs/raw-sop-research/CLAUDE OUTPUTS/site-sop-controlled-vocabulary_yaml_v1.yaml`. 431 reconciled concepts with anti-synonyms; carried into clinical-research v1 via Tier 3 (Path b) per Part 2.
+- Decision log: `/governance/decision-log.md`. ADRs 0001–0020. The ratification of this seed appends ADR-0021 (workflow-overlap Pattern B with oncology caveat) and ADR-0022 (NCIt-anchored alignment).
+- Site SOP controlled vocabulary v1: 431 reconciled concepts with anti-synonyms, built 2026-05-13. Held externally pending migration into `clinical-research/v1/site-sop-vocabulary.ttl` when the WG forms; carried into clinical-research v1 via Tier 3 (Path b) per Part 2.
 - NCI EVS:
   - Subsets: `https://evsexplore.semantics.cancer.gov/evsexplore/subsets/ncit`
   - Mappings: `https://evsexplore.semantics.cancer.gov/evsexplore/mappings`
@@ -460,4 +459,4 @@ The spec page for `clinical-research/v1/` follows the shape of `core/v1/index.ht
 
 ---
 
-*Seed v1. Iterative document. Edit any part; the substance is what we'll work from. When the working group forms and the RFC process formally starts, the substance of this seed becomes the basis for ADR-0018 (workflow-overlap pattern) and ADR-0019 (NCIt-anchored alignment), with the seed itself retained as the source artifact in `governance/rfcs/accepted/` once ratified.*
+*Seed v1. Iterative document. Edit any part; the substance is what we'll work from. When the working group forms and the RFC process formally starts, the substance of this seed becomes the basis for ADR-0021 (workflow-overlap pattern) and ADR-0022 (NCIt-anchored alignment), with the seed itself retained as the source artifact in `governance/rfcs/accepted/` once ratified.*
