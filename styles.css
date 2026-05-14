@@ -309,6 +309,23 @@ tr:last-child td { border-bottom: none; }
 }
 .status-line strong { color: #111; }
 
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.category-grid .inline {
+  text-align: center;
+  padding: 10px;
+}
+
+.contribute-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
 .contribute-step {
   margin: 0;
   padding: 14px 16px;
@@ -476,4 +493,85 @@ a:hover {
   border: none;
   border-top: 1px solid #e0e0d8;
   margin: 28px 0;
+}
+
+
+/* ====================================================================
+ * 7. Responsive — mobile / narrow viewports
+ * ==================================================================== */
+@media (max-width: 640px) {
+  body {
+    padding: 12px 12px 24px;
+    font-size: 14px;
+  }
+  .page {
+    padding: 20px 18px 24px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Stack site header vertically: logo on top, meta below. */
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 14px;
+  }
+  .site-header .site-logo img { max-width: 180px; }
+  .site-header .site-meta { text-align: left; }
+
+  /* Nav links: smaller font, allow natural wrapping with comfortable spacing. */
+  .site-nav-links {
+    font-size: 11.5px;
+    line-height: 1.9;
+    margin: 6px 0 18px;
+  }
+  .site-nav-links a,
+  .site-nav-links strong {
+    margin: 0 2px;
+    font-size: 11.5px;
+  }
+
+  /* Typography reflow */
+  h1.title { font-size: 26px; }
+  .subtitle { font-size: 16px; }
+  .tagline { font-size: 15px; padding-left: 12px; }
+  h2.section, h2.block { font-size: 12px; margin-top: 24px; }
+
+  /* Tables can't fit narrow screens — let them scroll horizontally. */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  /* Home page: logo and grids reflow */
+  .top-logo img { max-width: 100%; }
+  .meta-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .lead { font-size: 15px; }
+
+  /* Manifesto signature grid: single column */
+  .sig-grid { grid-template-columns: 1fr !important; }
+
+  /* Core spec: stats wrap, leaves stack */
+  .stats { flex-wrap: wrap; gap: 14px; }
+  .leaves { grid-template-columns: 1fr !important; margin-left: 0 !important; }
+  .arch { padding: 14px 16px; }
+
+  /* Home page grids reflow */
+  .category-grid { grid-template-columns: repeat(2, 1fr); }
+  .contribute-grid { grid-template-columns: 1fr; }
+
+  /* Code blocks: smaller text, allow horizontal scroll */
+  pre.code-block { font-size: 11px; padding: 12px 14px; }
+
+  /* Sponsor footer image cap */
+  .site-footer .site-footer-sponsor img,
+  .sponsored-by img { max-width: 160px; }
 }
