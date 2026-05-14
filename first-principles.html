@@ -12,7 +12,7 @@
 
 <header>
   <div class="site-header">
-    <a href="index.html" class="site-logo" aria-label="The Ontology Project — home">
+    <a href="index.html" class="site-logo" aria-label="The Ontology Project, home">
       <img src="images/top-logo.svg" alt="The Ontology Project" width="210">
     </a>
     <div class="site-meta">
@@ -81,12 +81,7 @@
 <h2 class="section">What this means concretely</h2>
 
 <ol>
-  <li><strong>Entity names come from operator vocabulary.</strong> We name things based on what the person doing the work calls them, not the technical standard that governs them.
-    <div class="yes-no">
-      <span class="label">Yes:</span> <span class="inline">Participant</span> (Clinical), <span class="inline">Part</span> (Manufacturing), <span class="inline">Client</span> (Fintech), <span class="inline">Shipment</span> (Logistics). <br />
-      <span class="no-label">No:</span> <span class="inline">ResearchSubject</span>, <span class="inline">MRO_Item_v2</span>, <span class="inline">LegalEntity_ISO20022</span>, <span class="inline">ASN_Record</span> (these are projection targets).
-    </div>
-  </li>
+  <li><strong>Operator vocabulary names the operational entity.</strong> At the operational graph layer (the NGSI-LD surface that operators and applications interact with), entities carry the names operators use during their workday: <span class="inline">Participant</span> in clinical, <span class="inline">Part</span> in manufacturing, <span class="inline">Client</span> in fintech, <span class="inline">Shipment</span> in logistics. These are operational entity types, not the only valid formal expression of what they represent. The conceptual ontology layer underneath the pipeline (layer 5 of the six layers below) formalizes <span class="inline">Person</span> as a class, with <span class="inline">Participant</span>, <span class="inline">Client</span>, <span class="inline">Driver</span> as role projections, and SKOS-XL labels with provenance carry the cross-context vocabulary so <span class="inline">Participant</span>, <span class="inline">Subject</span>, <span class="inline">Patient</span>, and <span class="inline">Claimant</span> all map to the same underlying concept. The operator sees their vocabulary. The reasoner sees the formal model. Both are legitimate. Both are required.</li>
 
   <li><strong>Attribute names match what operators say or type.</strong> If an operator enters a "Batch ID" or a "Tracking Number," that is the attribute name.
     <div class="yes-no">
@@ -106,6 +101,7 @@
     <div class="yes-no">
       <span class="label">The Principle:</span> A "Patient" has a <span class="inline">birthDate</span>. A FHIR adapter maps this to <span class="inline">Patient.birthDate</span>; an SDTM adapter maps it to <span class="inline">BRTHDTC</span>. The foundation remains human-readable.
     </div>
+    <p style="margin-top: 12px;">We are not deviating from SNOMED, FHIR, ICD, LOINC, MedDRA, RxNorm, gene ontology, or any other domain standard. These are projection targets, not competitors. SSSOM crosswalks are first-class artifacts in T.O.P., versioned alongside the reference graph and traceable across releases. An operator-facing "Participant" maps to FHIR's <span class="inline">Patient</span> resource through one adapter, to CDISC's <span class="inline">USUBJID</span> through another, and to SNOMED CT concept codes through the SKOS-XL thesaurus. The projections multiply. The core stays small.</p>
   </li>
 </ol>
 
@@ -129,8 +125,8 @@
   <li>
     <strong>The Boundary Test:</strong> Does this entity match a real-world workflow boundary?
     <div class="yes-no">
-      <span class="label">Yes:</span> <span class="inline">SafetyInspection</span>, <span class="inline">InformedConsent</span>, <span class="inline">LoadingManifest</span> — these are moments in a human's day. <br />
-      <span class="no-label">No:</span> <span class="inline">EntryProgressLink</span>, <span class="inline">ResearchSubjectProgressEntry</span> — these are serialization details.
+      <span class="label">Yes:</span> <span class="inline">SafetyInspection</span>, <span class="inline">InformedConsent</span>, <span class="inline">LoadingManifest</span>. These are moments in a human's day. <br />
+      <span class="no-label">No:</span> <span class="inline">EntryProgressLink</span>, <span class="inline">ResearchSubjectProgressEntry</span>. These are serialization details.
     </div>
   </li>
 
@@ -176,6 +172,27 @@
   </tbody>
 </table>
 
+<div class="yes-no">
+  <span class="label">A note for ontologists reading this.</span> The Foundation column names operational entity types, not OWL classes. In the conceptual ontology layer below, <span class="inline">Person</span> is the class. <span class="inline">Participant</span>, <span class="inline">Client</span>, <span class="inline">Driver</span>, <span class="inline">Operator</span> are role projections. The operational graph carries the operator-facing name because that is what the operator says out loud during work. The conceptual graph carries the logically rigorous structure because that is what the reasoner needs. SKOS-XL maps between them with provenance. NGSI-LD and OWL DL are peer formalisms, not competitors. We use both.
+</div>
+
+<p>The operator-vocabulary surface only works when the full ontology pipeline sits underneath it. We do not skip layers. Every concept in T.O.P. eventually carries all six.</p>
+
+<h2 class="section">Build the Pipeline in Order</h2>
+
+<p>Every concept in TOP, Core, workflow, customer, eventually carries all six layers of the <a href="https://www.ontologypipeline.com/">ontology pipeline</a>. Each layer is the precondition for the next. Skip one, the next inherits the weakness.</p>
+
+<ol>
+  <li><strong>Controlled Vocabulary:</strong> synonyms, anti-synonyms, definitions, per-property enums. With provenance.</li>
+  <li><strong>Taxonomy:</strong> hierarchical organization of the vocabulary.</li>
+  <li><strong>Metadata Schema:</strong> SHACL property shapes, NGSI-LD contexts, SSSOM crosswalks.</li>
+  <li><strong>Thesaurus:</strong> SKOS-XL labels with provenance, cross-concept relations.</li>
+  <li><strong>Ontology:</strong> OWL classes with PROV-O and BFO alignment.</li>
+  <li><strong>Knowledge Graph:</strong> instances at scale.</li>
+</ol>
+
+<p><strong>Three CV-layer obligations.</strong> Context routing for homonyms (<em>Subject</em> in human research vs animal research). Anti-synonyms for false friends (<em>agent</em> in pharmacology ≠ TOP <code class="inline">Agent</code>). SSSOM crosswalks as first-class artifacts, not buried in <code class="inline">@context</code> files.</p>
+
 <blockquote class="pull-quote">
   <p><strong>The Win:</strong> By keeping the foundation human-readable, we ensure the AI and the Operator are looking at the same truth. Standards change; the way humans work rarely does.</p>
 </blockquote>
@@ -201,6 +218,18 @@
   <p><strong>The Goal:</strong> To create a foundation that is "human-anchored" enough to be intuitive, yet "standards-ready" enough to be universally interoperable.</p>
 </blockquote>
 
+<h2 class="section">Discipline scales through tooling, not credentials</h2>
+
+<p>Ontology construction is logical programming. It requires real expertise in description logic, constraint modeling, SHACL, OWL, and the reasoner. We do not pretend otherwise. We also do not pretend the field has succeeded by insisting only credentialed ontologists can touch a model. Thirty years of that posture produced over seventy public HCLS ontologies that almost no one at the point of care knows exist.</p>
+
+<p>Every other knowledge-intensive technical field has scaled the same way: the discipline moves into the tooling. Software engineering scaled through frameworks, linters, type systems, code review, and now AI-assisted development. Data analysis scaled through BI tools and notebooks. UI design scaled through design systems and component libraries. The expert practitioners did not disappear. They became more valuable because they now spend their time on the twenty percent that matters, not the eighty percent that was always boilerplate.</p>
+
+<p>T.O.P.'s position is that ontology follows the same arc. Tooling and pipeline discipline absorb the patterns that produce broken models: validators catch what previously required senior eyeballs, templates enforce the shapes, SHACL rules block illogical relations at contribution time, projection adapters handle the standards alignment. Trained ontologists remain essential. They architect the tools. They lead the domains as BDFLs (a governance term from open source meaning Benevolent Dictators For Life: per-domain architectural leads with final authority on the model, accountable to their contributor communities). They handle the novel modeling work at the joints between standards. Their expertise compounds across many deployments instead of resetting at each one.</p>
+
+<p>Contribution is open. Operators contribute vocabulary. Subject matter experts contribute competency questions. Process owners contribute workflow descriptions. All of it enters the pipeline at the controlled vocabulary layer with provenance. The pipeline holds the line on rigor. The BDFL holds the line on architectural coherence. Neither role is a gate against contribution. Both are stewardship of the commons.</p>
+
+<p>This is the answer to the question "if anyone can contribute, how does it not become bloat?" The answer is that contribution flows through a pipeline that enforces discipline by construction, not through a credential check at the door.</p>
+
 <h2 class="section">The Human Stakes: Complexity as a Tax</h2>
 
 <p>In clinical research alone, an operator is expected to navigate a labyrinth of 11+ competing standards (SDTM, CDASH, USDM, FHIR, etc.) alongside evolving regulatory guidelines. <strong>No human can hold all of this in working memory.</strong></p>
@@ -216,7 +245,7 @@
   <p>TOP's bet: <strong>The foundation absorbs the complexity so the human doesn't have to.</strong></p>
 </blockquote>
 
-<p>By anchoring the foundation on the human workflow, the complexity moves to the <strong>projection layer</strong>. A coordinator sees a "Participant"—full stop. The translation to SDTM or FHIR happens at the edges, handled by ephemeral adapters that evolve as the standards shift.</p>
+<p>By anchoring the foundation on the human workflow, the complexity moves to the <strong>projection layer</strong>. A coordinator sees a "Participant." Full stop. The translation to SDTM or FHIR happens at the edges, handled by ephemeral adapters that evolve as the standards shift.</p>
 
 <div class="yes-no">
   <span class="label">The Inversion:</span> In other systems, the human is the "bridge" between data and standards. In TOP, the human does the work, and the foundation provides the bridge.
@@ -259,10 +288,10 @@
   <p>Traditional ontologies grow linearly with every new industry or modality, creating a unique entity for every variation. TOP carries <strong>one universal pattern</strong> that absorbs all specialization as content, never as shape.</p>
 
   <blockquote class="pull-quote">
-    <p>Standards-up vendors model N entity types per specialty. TOP carries a single pattern that handles them all—staying small enough for an operator to hold in their head.</p>
+    <p>Standards-up vendors model N entity types per specialty. TOP carries a single pattern that handles them all, staying small enough for an operator to hold in their head.</p>
   </blockquote>
 
-  <p>Every activity—from a <strong>DICOM MRI scan</strong> to a <strong>Currency Trade</strong> or a <strong>Warehouse Audit</strong>—shares the same foundation shape:</p>
+  <p>Every activity, from a <strong>DICOM MRI scan</strong> to a <strong>Currency Trade</strong> or a <strong>Warehouse Audit</strong>, shares the same foundation shape:</p>
 
   <ul>
     <li><strong>The Activity + Task:</strong> The structural container for the work.</li>
@@ -285,7 +314,7 @@
   <p>Every "is_active" or "has_authorized" flag is an evidentiary claim in disguise. A boolean strips away the authority, the time, and the reason. In TOP, we model the fact, not the flag.</p>
 
   <blockquote class="pull-quote">
-    <p>A boolean is evidence in disguise—model the evidence. If you can't say which TOP primitive a property inherits from, you haven't named the thing yet.</p>
+    <p>A boolean is evidence in disguise. Model the evidence. If you can't say which TOP primitive a property inherits from, you haven't named the thing yet.</p>
   </blockquote>
 
   <p>The TOP Core categories are designed to absorb these claims natively:</p>
@@ -307,40 +336,24 @@
   <p>Because these are first-class entities, a query for "Who authorized this trade on Tuesday?" isn't a search through a text log. It is a simple graph traversal to the <strong>Attestation</strong> that was <strong>validFrom</strong> that date. The boolean approach makes history opaque; the entity approach makes history a map.</p>
 
 
-<h2 class="section">Build the Pipeline in Order</h2>
-
-<p>Every concept in TOP — Core, workflow, customer — eventually carries all six layers of the <a href="https://www.ontologypipeline.com/">ontology pipeline</a>. Each layer is the precondition for the next. Skip one, the next inherits the weakness.</p>
-
-<ol>
-  <li><strong>Controlled Vocabulary</strong> — synonyms, anti-synonyms, definitions, per-property enums. With provenance.</li>
-  <li><strong>Taxonomy</strong> — hierarchical organization of the vocabulary.</li>
-  <li><strong>Metadata Schema</strong> — SHACL property shapes, NGSI-LD contexts, SSSOM crosswalks.</li>
-  <li><strong>Thesaurus</strong> — SKOS-XL labels with provenance, cross-concept relations.</li>
-  <li><strong>Ontology</strong> — OWL classes with PROV-O and BFO alignment.</li>
-  <li><strong>Knowledge Graph</strong> — instances at scale.</li>
-</ol>
-
-<p><strong>Three CV-layer obligations.</strong> Context routing for homonyms (<em>Subject</em> in human research vs animal research). Anti-synonyms for false friends (<em>agent</em> in pharmacology ≠ TOP <code class="inline">Agent</code>). SSSOM crosswalks as first-class artifacts, not buried in <code class="inline">@context</code> files.</p>
-
-
 <h2 class="section">Open Core, Constrained Extension</h2>
 
 <p>The Core is open to extension but closed to redefinition. The discipline that prevents FHIR-style drift: per-property flavors, machine-checked at PR time.</p>
 
 <ul>
-  <li><strong>Invariant</strong> — semantics fixed; consumers cannot loosen or redefine. (5 properties: <code class="inline">identifier</code>, <code class="inline">observedAt</code>, <code class="inline">integrityHash</code>, <code class="inline">startTime</code>, <code class="inline">endTime</code>)</li>
-  <li><strong>Tightenable</strong> — shape stays; consumers may require what Core makes optional, narrow enums, tighten cardinality. (23 properties, including <code class="inline">status</code>)</li>
-  <li><strong>Additive</strong> — surfaces designed for downstream addition (enum values, subclasses).</li>
+  <li><strong>Invariant:</strong> semantics fixed; consumers cannot loosen or redefine. (5 properties: <code class="inline">identifier</code>, <code class="inline">observedAt</code>, <code class="inline">integrityHash</code>, <code class="inline">startTime</code>, <code class="inline">endTime</code>)</li>
+  <li><strong>Tightenable:</strong> shape stays; consumers may require what Core makes optional, narrow enums, tighten cardinality. (23 properties, including <code class="inline">status</code>)</li>
+  <li><strong>Additive:</strong> surfaces designed for downstream addition (enum values, subclasses).</li>
 </ul>
 
 <p>Consumer extensions live in the consumer's namespace and chain to Core via <code class="inline">subClassOf</code> / <code class="inline">subPropertyOf</code> / <code class="inline">skos:*Match</code>. Full per-layer rules: <a href="governance/extension-contract.md"><code class="inline">governance/extension-contract.md</code></a>.</p>
 
-<p><strong>Why it matters:</strong> Extensibility without a discipline produces drift over time — the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. TOP integrates with peer ontologies — FHIR, USDM, SDTM, MedDRA — at the projection edge via the Broker and equivalent adapters; the Core stays small and stable while standards alignment lives where it belongs.</p>
+<p><strong>Why it matters:</strong> Extensibility without a discipline produces drift over time: the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. TOP integrates with peer ontologies (FHIR, USDM, SDTM, MedDRA) at the projection edge via the Broker and equivalent adapters; the Core stays small and stable while standards alignment lives where it belongs.</p>
 
 
 <h2 class="section">The Competitive Advantage: Why Human-Centered Wins</h2>
 
-<p>The "Always" in our success is structural, not motivational. In any industry—from Pharma to Fintech—three vectors compete for the operator's desktop:</p>
+<p>The "Always" in our success is structural, not motivational. In any industry, from Pharma to Fintech, three vectors compete for the operator's desktop:</p>
 
 <ul>
   <li><strong>The Standards-Up Vendors:</strong> These are consultancies and SaaS tools built around regulatory schemas (e.g., CDISC, ISO, HL7). They compete on "compliance coverage." They never win operator love because they are tools <em>for the regulator</em>, not tools <em>for the work</em>.</li>
