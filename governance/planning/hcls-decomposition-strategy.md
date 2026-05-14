@@ -1,6 +1,6 @@
 # Workflow Decomposition Strategy: HCLS and Adjacent Buckets
 
-*Status: pre-RFC strategic planning. Author: Bo Lora (BDFL, sole signatory to The Ontology Project as of 2026-05-14). Audience: Bo for near-term build planning; the future Clinical Research Working Group and other HCLS working groups; future leads of non-HCLS buckets (smart foundations, manufacturing, supply chain, energy, financial services).*
+*Status: pre-RFC strategic planning. Author: Bo Lora (BDFL, sole signatory to The Ontology Project as of 2026-05-14). Audience: Bo for near-term build planning; the future Clinical Research Working Group and other HCLS working groups; future leads of non-HCLS buckets (foundations, manufacturing, supply chain, energy, financial services) and of the compositions namespace.*
 
 *Companion to TOP Core (one root, eight categories, twenty-nine leaves), to ADRs 0001 through 0020, and to the clinical-research seed (`governance/planning/hcls-clinical-research-seed.md`). Pre-RFC; the formal RFC process starts when the relevant working groups do.*
 
@@ -48,17 +48,19 @@ The clearest illustration of the layer-within-setting axis is the "smart hospita
 
 | Layer | Workflow extension | Cross-industry reach |
 | --- | --- | --- |
-| Physical | physical-AI (working name) | Smart office, smart factory, smart warehouse, smart campus, smart lab, smart retail. Cross-industry, not HCLS-specific. |
-| Operational | operational management (working name) | Any sufficiently large operation. Hospital, university, manufacturer, retailer, financial institution. Cross-industry, not HCLS-specific. |
+| Physical | physical-AI | Smart office, smart factory, smart warehouse, smart campus, smart lab, smart retail. Cross-industry, not HCLS-specific. |
+| Operational | operational management | Any sufficiently large operation. Hospital, university, manufacturer, retailer, financial institution. Cross-industry, not HCLS-specific. |
 | Work | clinical-care, and at AMCs also clinical-research | HCLS-specific. |
 
 A smart hospital = physical-AI + operational + clinical-care + (at AMCs) clinical-research. A smart clinic = physical-AI + operational + clinical-care, smaller scope, no clinical-research. A smart lab = physical-AI + operational + lab-ops (which may be its own workflow extension, or a functional area within clinical-research, depending on what the WG decides). A pharma manufacturing plant = physical-AI + operational + CMC-manufacturing. A bank branch = physical-AI + operational + retail-banking.
 
 The replication that the work-category axis avoids in the workflow-extension space is the same replication this composition avoids at the deployment-context space. Building a "smart hospital" reference graph that re-declares HVAC, sensors, security, access control, HR, finance, procurement, and clinical care all in one place is the same defect as putting HL7 under Healthcare. Pick the right primitive layer, ship each layer as its own reference graph, compose at deployment time.
 
+Smart-X compositions get an architectural home in their own namespace (the compositions layer, named below). The compositions namespace also accommodates non-smart deployment patterns (decentralized clinical trials, value-based care programs, registry-based studies) that compose underlying workflow extensions in operationally significant ways without being smart-X.
+
 The composition is real and operationally important. A coordinator running a clinical trial at an AMC interacts with all four layers daily: she badges into the building (physical-AI), books a room and orders supplies (operational), documents a participant's vitals (clinical-care), and updates the eCRF (clinical-research). The graph she queries spans all four. But the architecture stores each layer once, in its own workflow extension, and the composition is in the instance data, not in the class hierarchy.
 
-## Three layers of organization above TOP Core
+## Four layers of organization above TOP Core
 
 With the axis question settled, the architectural layers become legible:
 
@@ -67,8 +69,22 @@ With the axis question settled, the architectural layers become legible:
 | **1. TOP Core** | One root, eight categories, twenty-nine leaves. Universal across every TOP workflow. | The eight Category-Level Objects (Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint) and their twenty-nine leaves. Class-level PROV-O alignment; light-edge BFO where it lands cleanly. The SHACL Universal DNA contract. |
 | **2. Domain buckets** | Governance umbrellas and directory groupings that coordinate stewardship across related workflow extensions. **Not class layers.** | Working-group cohorts, CODEOWNERS structure, repository directory roots, URI path prefixes. No classes. |
 | **3. Workflow extensions** | Reference graphs for specific operational work categories. Each composes against TOP Core directly; some declare cross-workflow `subClassOf` to sibling workflow extensions per the seed's Pattern B. | The actual class definitions, SHACL shapes, CV YAMLs, SSSOM crosswalks, walkthroughs, spec pages. |
+| **4. Compositions** | Packaged bundles that reference multiple workflow extensions (and the foundations underneath them) to express a named deployment pattern. Each composition adds only the concepts that **genuinely emerge** from the composition, never redeclares anything from the underlying layers. | Composition-specific classes (the small set that only makes sense at the composition level), cross-layer SHACL invariants, deployment reference patterns, spec pages. One WG per composition; smart-hospital, smart-clinic, DCT, VBC each get their own. |
 
 Domain buckets are governance, not architecture. They exist because working-group cohesion benefits from coordinated stewardship across related workflows (the HCLS WGs share regulatory context, standards-body alignment, and operator-vocabulary overlap; an HCLS WG umbrella coordinates their PR review cadence and their RFC discussions). But buckets contain no classes of their own. A clinical-research class composes against TOP Core directly, not against a non-existent `hcls:` namespace.
+
+Compositions are architecture. They sit above the workflow-extension layer because they carry classes (the small set that emerges only at the composition) and SHACL constraints (cross-layer invariants that validate the composition holds together). They are not a replacement for the workflow extensions they compose; they are a thin layer on top, identified by deployment pattern rather than work category.
+
+### The composition discipline
+
+For the compositions layer to add value without recreating the FHIR mistake, the discipline is tight. A class belongs in a composition only when it passes the **emergent-from-composition test**:
+
+- A class belongs in a workflow extension if it can be authored without reference to any other workflow extension.
+- A class belongs in a composition only if it requires reference to two or more workflow extensions (or to one workflow plus one or more foundations) to have operator-vocabulary meaning.
+
+A `BedManagement` concept at a smart hospital qualifies: it requires reference to physical-AI (the bed sensor), operational (the bed-as-inventory-item), and clinical-care (the patient assigned to the bed) simultaneously. None of those layers alone captures what an operator means by "BedManagement". A `Bed` itself does not qualify; it belongs in physical-AI or operational (or both via Pattern B). The composition references `Bed`, never redeclares it.
+
+The discipline keeps compositions small. A typical composition probably carries ten to thirty emergent classes plus its cross-layer SHACL invariants. Most of what a composition's spec page describes is references to underlying workflow extensions, not new class declarations.
 
 This is the third treatment of "HCLS as a layer" question, and it's worth stating each treatment explicitly:
 
@@ -83,13 +99,28 @@ Buckets known or anticipated at TOP launch and shortly after. This list is open;
 | Bucket | Workflow extensions (anticipated) | Status |
 | --- | --- | --- |
 | **HCLS** | clinical-research, clinical-care, pharmacovigilance, public-health, registries | Active. Clinical-research is the launch demonstrator. |
-| **Smart foundations** (working name) | physical-AI, operational management | Anticipated. Cross-industry; HCLS depends on it for smart-hospital deployments. Bucket-vs-sibling question open. |
+| **Foundations** | physical-AI, operational management | Anticipated. Cross-industry; HCLS depends on it for smart-hospital deployments. Physical-AI candidate WG lead: Ali (per Bo's 2026-05-14 signal). Operational management WG lead TBD. Bucket-vs-sibling question open. |
 | **Manufacturing** | CMC-manufacturing (pharma), discrete manufacturing, process manufacturing | Anticipated. Bucket because manufacturing is a coherent operator audience with shared standards (ISA-88, ISA-95, ISO 9001) even when products differ. |
 | **Supply chain** | logistics, distribution, cold-chain, customs | Anticipated. |
 | **Energy** | grid operations, generation, distribution, retail | Anticipated. ISO 15926 / CFIHOS adjacencies. |
 | **Financial services** | clearing, custody, trading, retail banking | Future. |
 
-Cross-bucket relationships matter. A pharma manufacturing plant uses smart-foundations (physical-AI + operational) plus manufacturing (CMC) plus possibly HCLS (when GMP-relevant clinical interactions occur). A clinical trial uses HCLS (clinical-research, clinical-care) plus possibly smart-foundations (if running at an AMC with smart-hospital deployment). The Pattern B cross-workflow `subClassOf` discipline from the seed applies across buckets as well as within them.
+Cross-bucket relationships matter. A pharma manufacturing plant uses foundations (physical-AI + operational) plus manufacturing (CMC) plus possibly HCLS (when GMP-relevant clinical interactions occur). A clinical trial uses HCLS (clinical-research, clinical-care) plus possibly foundations (if running at an AMC with smart-hospital deployment). The Pattern B cross-workflow `subClassOf` discipline from the seed applies across buckets as well as within them.
+
+The compositions namespace sits parallel to the buckets, not inside any of them. Compositions reference workflow extensions across buckets (a smart-hospital composition references HCLS and foundations; a DCT composition references HCLS plus other patterns) without being owned by any one bucket. A compositions/ directory at the repo root, with one subdirectory per composition.
+
+### Composition inventory (anticipated)
+
+| Composition | Composes | Status |
+| --- | --- | --- |
+| `compositions/smart-hospital/` | foundations/physical-AI + foundations/operational + hcls/clinical-care + (at AMCs) hcls/clinical-research | Smart-X. The reference smart-X composition; informs smart-clinic, smart-AMC, smart-cancer-center variants if/when they justify separate compositions. |
+| `compositions/smart-clinic/` | foundations/physical-AI + foundations/operational + hcls/clinical-care | Smart-X. Smaller-scope sibling of smart-hospital; lifts when the operator-vocabulary differs meaningfully from smart-hospital. |
+| `compositions/smart-lab/` | foundations/physical-AI + foundations/operational + lab-ops (workflow extension TBD, possibly in HCLS or its own bucket) | Smart-X. Lifts when lab-ops as a workflow extension is scoped. |
+| `compositions/dct/` | hcls/clinical-research + hcls/clinical-care + (typically) telehealth + patient-portal | Decentralized clinical trial. Non-smart. Composes HCLS workflow extensions in a pattern that crosses traditional site boundaries. |
+| `compositions/vbc/` | hcls/clinical-care + foundations/operational + financial-services + analytics | Value-based-care program. Non-smart. Composes care delivery with operational, financial, and analytics layers. |
+| `compositions/registry-based-study/` | hcls/registries + hcls/clinical-research + (sometimes) hcls/clinical-care | Non-smart. Composes registries with clinical-research for real-world evidence studies. |
+
+The list is open. A composition lifts when adopters need a packaged bundle, the emergent-from-composition test surfaces real classes, and a steward steps forward to run the composition WG. Compositions without adopter demand do not lift speculatively.
 
 ## The functional-areas calibration
 
@@ -119,7 +150,7 @@ The reasoning:
 - Clinical-research crosses into clinical-care at well-defined boundaries (AE, MedicationAdministration, Visit, Procedure). Per the seed's Pattern B, these crosses are explicit `rdfs:subClassOf` declarations against clinical-care classes.
 - For v1, clinical-care exists as **stub workflow extension**: the directory exists, the spec page exists with placeholder language, and the few classes clinical-research crosses into (`topcd:AdverseEvent`, `topcd:MedicationAdministration`, `topcd:Encounter`) exist as stub declarations. The stubs carry enough structure for clinical-research's Pattern B declarations to resolve and for SHACL validation to pass, but they do not pretend to be a complete clinical-care reference graph.
 - Clinical-care v1 (full reference graph) lifts after clinical-research v1 ships. When clinical-care's WG forms, the stubs graduate to real classes; clinical-research's Pattern B declarations point to the same URIs and continue to resolve cleanly.
-- Physical-AI, operational, the full smart-foundations bucket follow at their own pace, driven by need rather than launch sequencing.
+- Physical-AI, operational, the full foundations bucket follow at their own pace, driven by need rather than launch sequencing. Ali is the current candidate WG lead for physical-AI; operational management WG lead TBD.
 
 What this commits to:
 
@@ -131,14 +162,16 @@ What this defers:
 
 - Full clinical-care v1. Lifts when the clinical-care WG forms.
 - Pharmacovigilance v1 as a standalone workflow extension. The pharmacovigilance functional area of clinical-research v1 ships first; pharmacovigilance as its own workflow extension (potentially with its own functional areas for signal management, risk management plans, post-market surveillance) lifts when there's WG capacity and clear scope separation from clinical-research.
-- Smart-foundations bucket (physical-AI and operational management). Lifts on its own timeline, driven by smart-hospital deployment demand from adopters, not by HCLS launch sequencing.
+- Foundations bucket (physical-AI and operational management). Lifts on its own timeline, driven by smart-hospital deployment demand from adopters, not by HCLS launch sequencing.
+- Compositions namespace (smart-hospital, smart-clinic, DCT, VBC, etc.). Each composition lifts when adopters need it and a WG steward steps forward. None lifts before the underlying foundations and workflow extensions it composes.
 - Any non-HCLS bucket. Manufacturing, supply chain, energy, financial services all lift on their own RFC paths.
 
 ## What this strategy commits the project to
 
 - **Workflow extensions decompose along the work-category axis only.** Setting, layer within setting, and therapeutic area are instance-level properties, not workflow-extension axes.
-- **Smart-X compositions are deployment-time.** No "smart hospital" workflow extension exists. Smart hospitals are deployed instances composing physical-AI, operational, clinical-care, and clinical-research.
-- **Domain buckets are governance and directory groupings, not class layers.** HCLS is a bucket; it has no namespace, no classes, no SHACL shapes of its own.
+- **Smart-X is composition, not workflow.** No "smart hospital" workflow extension exists. Smart hospital is a packaged composition in the `compositions/` namespace that references physical-AI, operational, clinical-care, and clinical-research, plus the small set of classes that emerge only at the composition level.
+- **Compositions are a fourth organizational layer**, not a substitute for workflow extensions. They reference, never redeclare. The emergent-from-composition test gates which classes belong in a composition; everything else stays in the underlying workflow extension.
+- **Domain buckets are governance and directory groupings, not class layers.** HCLS is a bucket; it has no namespace, no classes, no SHACL shapes of its own. Foundations is a bucket on the same model.
 - **The four-axis discipline precludes the FHIR / HL7 mistake.** Standards bodies and their specs live at the alignment edge, never as nodes in the work hierarchy.
 - **The functional-areas calibration (8 to 15 areas per workflow extension, 5 to 30 classes per area) is the project-wide pattern.** Working groups inherit the calibration; new workflow extensions decompose into it from day one.
 - **Clinical-research ships first with Pattern B stubs to clinical-care.** Launch sequence committed.
@@ -146,23 +179,26 @@ What this defers:
 
 ## What this strategy does NOT do
 
-- It does not finalize the smart-foundations bucket name. "Smart foundations" is the current working name and the strawman the WG ratifies or overrides at bucket activation time. The double meaning (the physical foundations of a building, the operational foundations of an enterprise) is deliberate and pairs cleanly with smart-X deployments built on top.
-- It does not commit physical-AI and operational management to one bucket vs two. They might be siblings inside one smart-foundations bucket, or two separate top-level buckets. The decision waits until at least one of them activates and the WG candidates surface.
+- It does not finalize the foundations bucket name. "Foundations" is the current strawman; the parallel structure with "compositions" makes the name read cleanly (foundations are the substrate, compositions are the assemblies built on top). The WG ratifies or overrides at bucket activation time.
+- It does not commit physical-AI and operational management to one bucket vs two. They might be siblings inside one foundations bucket (`foundations/physical-ai/`, `foundations/operational/`), or two separate top-level buckets. Bo's 2026-05-14 signal that Ali leads physical-AI suggests separate WG stewardship even if they share a bucket. The decision waits until at least one of them activates.
 - It does not author any class catalog. Each workflow extension's class catalog ships in its own seed and its own RFCs, following this strategy as the architectural anchor.
 - It does not change TOP Core. Core's eight categories and twenty-nine leaves are unchanged. This strategy operates entirely in the layers above Core.
-- It does not preclude future axes. If a future workflow surfaces a fifth genuine decomposition axis that resists treatment as an instance-level property, a new RFC addresses it. The current four are what real-world HCLS, manufacturing, and smart-foundations deployments expose; that may not be exhaustive.
+- It does not preclude future axes. If a future workflow surfaces a fifth genuine decomposition axis that resists treatment as an instance-level property, a new RFC addresses it. The current four are what real-world HCLS, manufacturing, and foundations deployments expose; that may not be exhaustive.
 
 ## Open questions for working-group resolution
 
 The strategy surfaces these as questions the relevant working groups settle, with strawman positions taken in this document for each.
 
-1. **Smart-foundations bucket name.** Working name: `smart-foundations/`. The name captures both the physical foundations of a building and the operational foundations of an enterprise; it pairs cleanly with smart-X deployments built on top (smart hospital, smart clinic, smart lab, smart factory built on smart foundations). WG ratifies or overrides at bucket activation time.
-2. **Physical-AI and operational management: one bucket or two?** Strawman: one (`smart-foundations/physical-ai/`, `smart-foundations/operational/`). WG may split into two top-level buckets if stewardship cohorts genuinely diverge.
+1. **Foundations bucket name.** Strawman: `foundations/`. Pairs cleanly with `compositions/` (foundations are the substrate; compositions are the assemblies built on top). Operational management is foundational without being "smart"; the unqualified name reads more honestly. WG ratifies or overrides at bucket activation time.
+2. **Physical-AI and operational management: one bucket or two?** Strawman: one bucket, separate WG stewardship within it (`foundations/physical-ai/` led by Ali per Bo's 2026-05-14 signal, `foundations/operational/` lead TBD). WG may split into two top-level buckets if stewardship cohorts diverge enough to warrant separate governance.
 3. **Therapeutic-area treatment.** Strawman: instance-level property with a SKOS hierarchy anchored to NCIt's Disease subset. HCLS WGs may sharpen this if oncology-specific (or rare-disease-specific) operational needs require classes rather than just properties; in that case Pattern C scoped to oncology (per the seed's escalation path) is the route, not a therapeutic-area workflow-extension axis.
 4. **Setting / place-type treatment.** Strawman: instance-level property on `top:Physical` (and on its workflow specializations like `topcr:Site` and `topcd:Site`) with a SKOS hierarchy of facility types. HCLS WGs may push back if a `top:Healthcare-Facility` leaf is justified; that's a Core-promotion RFC, not a workflow-extension RFC.
 5. **Stub-class governance for clinical-care during clinical-research v1.** The clinical-care stub classes that clinical-research v1's Pattern B declarations point to live in `hcls/clinical-care/v1/` as a minimal-stub spec page. WG decides who reviews stub additions (clinical-research WG, future clinical-care WG, both, or the HCLS umbrella) until clinical-care's WG activates.
 6. **Pharmacovigilance graduation timing.** Pharmacovigilance is a functional area of clinical-research v1. It may graduate to its own workflow extension when its scope (signal detection, RMP, post-market surveillance, REMS) outgrows the functional-area calibration. WG decides the threshold.
 7. **Cross-bucket Pattern B.** The seed names Pattern B for cross-workflow declarations within HCLS. The strategy implies the same pattern across buckets (e.g., a pharma manufacturing class declaring `rdfs:subClassOf` against a clinical-supply class). WG ratifies that explicitly when the first cross-bucket case arises.
+8. **Compositions namespace scope.** Strawman: `compositions/` as a general namespace that holds both smart-X compositions (smart-hospital, smart-clinic, smart-lab) and non-smart-X composition patterns (DCT, VBC, registry-based-study). Sub-namespaces (`compositions/smart-X/`, `compositions/programs/`) emerge only if the flat list grows unwieldy. WG ratifies or restructures when the first composition activates.
+9. **Emergent-from-composition test enforcement.** Strawman: PR review enforces the discipline (a class belongs in a composition only when it requires reference to two or more underlying workflow extensions to have operator-vocabulary meaning). A future linter rule operationalizes the test when the contribution volume warrants it. WG decides the human-review vs lint balance.
+10. **Composition WG structure.** Strawman: one WG per composition (smart-hospital WG, DCT WG, VBC WG). Composition WGs coordinate across the underlying workflow-extension WGs whose work they compose. WG decides whether to add an umbrella "compositions stewards" group for cross-composition RFC review.
 
 ## Relationship to existing ADRs
 
