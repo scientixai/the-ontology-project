@@ -365,6 +365,26 @@
 <p><strong>Why it matters:</strong> Extensibility without a discipline produces drift over time: the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. TOP integrates with peer ontologies (FHIR, USDM, SDTM, MedDRA) at the projection edge via the Broker and equivalent adapters; the Core stays small and stable while standards alignment lives where it belongs.</p>
 
 
+<h2 class="section">How meaning evolves</h2>
+
+<p>Open Core handles structural extension. It does not handle the harder problem: the concepts themselves change. A "Customer" in 2022 was a billing entity. By 2024 the same record was a legal account holder. By 2026 it was an identity cluster spanning subsidiaries. The IRI never moved. The data engineers never got a ticket. The reasoner kept returning answers. The answers were no longer about the same thing.</p>
+
+<p>A reference graph that has no position on concept evolution becomes the last place the pipeline agreed with itself. T.O.P.'s position is that concept evolution is a first-class event in the commons, expressed in the artifacts, not in adjacent meeting notes. Four primitives carry this discipline. None of them is novel. The discipline is in naming them as the answer rather than discovering them at the moment of failure.</p>
+
+<ul>
+<li><strong>SHACL shapes as contract layer.</strong> Already present in the pipeline at layer 3. When a contributing system silently changes the meaning of a field, the shape fails. Validation is loud, machine-readable, and traceable to the specific contributor.</li>
+<li><strong>Named graphs with PROV-O as temporal anchor.</strong> Already present in "Temporal and Provenance: Native, not Sidecars." Validity intervals (<code class="inline">prov:startedAtTime</code> and <code class="inline">prov:endedAtTime</code>) let consumers query what the commons asserted on any specific date, not just what it asserts now.</li>
+<li><strong>Versioned ontologies as drift signal.</strong> <code class="inline">owl:versionIRI</code> lets consumers pin to a specific version. <code class="inline">owl:priorVersion</code> and <code class="inline">owl:incompatibleWith</code> express compatibility. <code class="inline">owl:deprecated</code> marks terms that should not be used in new work, with <code class="inline">rdfs:seeAlso</code> pointing to the replacement. Migration becomes a traceable action rather than a diff.</li>
+<li><strong>SKOS as meaning layer.</strong> When the meaning of a category shifts, we do not redefine the category in place. We introduce the new concept and mark the old one with <code class="inline">skos:changeNote</code>, and let the change carry forward through the graph. The vocabulary is curated by people who know what the concepts mean, in a form machines can also read.</li>
+</ul>
+
+<p>Together these primitives convert the durability question from "did the pipeline agree with itself" to "which version of meaning did the consumer pin to, and what changed since." That is a different question, and it has answers.</p>
+
+<blockquote class="pull-quote">
+<p><strong>The frame:</strong> A reference graph is not a deliverable. It is a commons whose curation is the work. The artifacts are versioned, the changes are signed, and the consumers choose what to depend on.</p>
+</blockquote>
+
+
 <h2 class="section">The Competitive Advantage: Why Human-Centered Wins</h2>
 
 <p>The "Always" in our success is structural, not motivational. In any industry, from Pharma to Fintech, three vectors compete for the operator's desktop:</p>
