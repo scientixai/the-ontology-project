@@ -101,7 +101,7 @@
     <div class="yes-no">
       <span class="label">The Principle:</span> A "Patient" has a <span class="inline">birthDate</span>. A FHIR adapter maps this to <span class="inline">Patient.birthDate</span>; an SDTM adapter maps it to <span class="inline">BRTHDTC</span>. The foundation remains human-readable.
     </div>
-    <p style="margin-top: 12px;">We are not deviating from SNOMED, FHIR, ICD, LOINC, MedDRA, RxNorm, gene ontology, or any other domain standard. These are projection targets, not competitors. SSSOM crosswalks are first-class artifacts in T.O.P., versioned alongside the reference graph and traceable across releases. An operator-facing "Participant" maps to FHIR's <span class="inline">Patient</span> resource through one adapter, to CDISC's <span class="inline">USUBJID</span> through another, and to SNOMED CT concept codes through the SKOS-XL thesaurus. The projections multiply. The core stays small.</p>
+    <p style="margin-top: 12px;">We are not deviating from SNOMED, FHIR, ICD, LOINC, MedDRA, RxNorm, gene ontology, or any other domain standard. These are projection targets, not competitors. T.O.P. treats SSSOM crosswalks as first-class artifacts, versioned alongside each reference graph and traceable across releases. An operator-facing "Participant" will map to FHIR's <span class="inline">Patient</span> resource through one adapter, to CDISC's <span class="inline">USUBJID</span> through another, and to SNOMED CT concept codes through the SKOS-XL thesaurus. The projections multiply. The core stays small.</p>
   </li>
 </ol>
 
@@ -364,7 +364,7 @@
 
 <p>Consumer extensions live in the consumer's namespace and chain to Core via <code class="inline">subClassOf</code> / <code class="inline">subPropertyOf</code> / <code class="inline">skos:*Match</code>. Full per-layer rules: <a href="governance/extension-contract.md"><code class="inline">governance/extension-contract.md</code></a>.</p>
 
-<p><strong>Why it matters:</strong> Extensibility without a discipline produces drift over time: the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. TOP integrates with peer ontologies (FHIR, USDM, SDTM, MedDRA) at the projection edge via the Broker and equivalent adapters; the Core stays small and stable while standards alignment lives where it belongs.</p>
+<p><strong>Why it matters:</strong> Extensibility without a discipline produces drift over time: the same logical concept gets modeled multiple ways across consumers, extensions proliferate without discoverability, profiles diverge. The flavor discipline keeps Core extensions safe by construction. T.O.P. is designed to meet peer ontologies (FHIR, USDM, SDTM, MedDRA) at the projection edge via the Broker and equivalent adapters once they ship; the Core stays small and stable so that standards alignment lives where it belongs.</p>
 
 
 <h2 class="section">How meaning evolves</h2>
