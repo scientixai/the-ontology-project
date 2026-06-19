@@ -28,6 +28,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0018](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline) | 2026-05-13 | Adopt the six-stage ontology pipeline as TOP's build discipline | Accepted |
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
 | [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Accepted (resolves ADR-0018 forward-looking note) |
+| [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | **Proposed** (awaiting maintainer sign-off) |
 
 ---
 
@@ -897,6 +898,130 @@ CV-layer context routing for the *Subject* homonym: in human research, *Subject*
 ### Status
 
 Accepted. The Organism leaf lands in `taxonomy/taxonomy.ttl` and `core/v1/shapes.ttl` alongside this ADR; the count references in README.md, taxonomy.md, governance/extension-contract.md, and core/v1/index.html update from 28 to 29.
+
+## ADR-0021: Bitemporal model — valid time and transaction time on Core
+
+**Date:** 2026-06-19 · **Status:** Proposed (awaiting maintainer sign-off) · **Extends:** [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) · **Refs:** [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [first-principles.md § Temporal and provenance, native](../first-principles.md)
+
+> This ADR is **Proposed**. It lays out the options, recommends one, and shows the SHACL and queries each implies — so the maintainer can decide. **No bitemporal classes, properties, or shapes land in `core/v1/shapes.ttl` until this ADR is Accepted.** The three sign-off questions at the end are the decision; the recommendation is a starting position, not a fait accompli.
+
+### Context
+
+ADR-0001 made temporal and PROV-O semantics native to the foundation. What the foundation actually carries today is one timestamp axis, not two:
+
+- **`top:observedAt`** (Universal DNA, required exactly once on every entity, `xsd:dateTime`, Invariant flavor per ADR-0019). Its comment reads "when this entity-state was observed *or recorded*." That conflation is the problem this ADR exists to resolve: "observed" leans toward *valid time* (when the fact became true in the world), "recorded" leans toward *transaction time* (when the system learned it). One property cannot honestly be both axes.
+- **`top:startTime` / `top:endTime`** on `top:Temporal` only (Invariant, aligned to `prov:startedAtTime` / `prov:endedAtTime`). These give activities a valid-time *interval*, but only activities, and only for the activity's own occurrence — not a general "when was this entity-state true" axis.
+
+So the foundation is **mono-temporal in practice**: it can answer "what does the record say now" but not, independently, "what did we *know* at time T" versus "what was *true* at time T." Regulated audit disciplines need both. A 21 CFR Part 11 audit trail must reconstruct *what the system held at the moment a decision was made* (transaction time), even if the underlying fact was later corrected. A clinical or pharmacovigilance review must reconstruct *what was true of the world over an interval* (valid time), independent of when each correction was entered. Bitemporality is the separation of those two clocks, each independently queryable — the canonical "as we knew it at T₁, as it was valid at T₂" query.
+
+Three terms, fixed for this ADR:
+- **Valid time** — when a fact is true in the modeled world. Also called application time.
+- **Transaction time** — when the system recorded the fact (and, on correction, when that record was superseded). Append-only by nature.
+- **Bitemporal** — both axes present and independently queryable.
+
+Prior art: SQL:2011 system-versioned + application-time tables; the NGSI-LD temporal interface (which TOP already echoes — `observedAt` is NGSI-LD-shaped, and the JSON-LD/NGSI-LD profile is queued per the alignment notes in `taxonomy/taxonomy.ttl`); and W3C PROV's revision/invalidation vocabulary (`prov:generatedAtTime`, `prov:invalidatedAtTime`, `prov:wasRevisionOf`, `prov:specializationOf`).
+
+### Options
+
+**Option A — Immutable versioned records (event-sourcing).** Each state change mints a new immutable entity version with its own transaction-time stamp and a stable identity shared across versions (`prov:specializationOf` → a constant identity node; `prov:wasRevisionOf` → the prior version). Corrections never mutate; they append. Valid time is carried on each version.
+- **For:** native fit with the append-only audit posture (Part 11, GxP) and with `top:integrityHash` (each version is independently hashable/non-repudiable); maps directly onto PROV revision vocabulary; "as we knew it at T" is a transaction-time slice over the version chain.
+- **Against:** the graph grows one node per change; identity-vs-version must be modeled explicitly; "as it was valid at T" still requires valid-time fields *on* each version (i.e. it needs a slice of Option B to be complete).
+
+**Option B — Dual intervals on the entity.** Add a valid-time interval (`validFrom` / `validTo`) and a transaction-time interval (`recordedFrom` / `recordedTo`) directly on entities, SQL:2011-style. As-of queries become range filters over the two interval pairs.
+- **For:** textbook-clean bitemporal semantics; compact; both axes explicit on one resource; as-of queries are simple range predicates.
+- **Against:** transaction time is closed by *mutating* the prior row's `recordedTo` — in RDF that means retracting/replacing triples, which is exactly the mutate-in-place pattern an append-only audit trail forbids. To stay Part-11-honest you end up versioning anyway, at which point pure B collapses toward A.
+
+**Option C — NGSI-LD per-attribute temporal representation.** Track temporal data per *attribute instance*: each attribute value carries its own `observedAt` (valid time of that value), and the platform tracks `createdAt` / `modifiedAt` (transaction time) per attribute. Temporal queries via `timerel` / `timeproperty`.
+- **For:** wire-compatible with the NGSI-LD profile TOP is already heading toward; fine-grained (per-attribute partial history); off-the-shelf brokers (Orion-LD, Scorpio, Stellio) implement the temporal queries already.
+- **Against:** in pure RDF/SHACL each attribute must be reified into its own node — heavy shapes, heavy graphs; PROV operates at *entity* granularity, so the PROV-revision alignment is less direct than under A.
+
+### Recommended decision (for sign-off, not yet binding)
+
+**Adopt Option A as the semantic/storage model, take the valid-time interval from Option B as immutable per-version fields, and keep Option C as the wire-projection story — not the native shape.**
+
+Concretely, the recommendation is:
+
+1. **Transaction time stays the universal anchor, and `top:observedAt` is disambiguated to mean it.** Sharpen `observedAt`'s definition to "when this entity-version was recorded by the system" (transaction time). It remains required, Invariant, and unchanged in shape — so the `UniversalDNAShape` minimum does not move and no existing data breaks.
+2. **Valid time is a Core concern but an *optional, opt-in* one — not a fourth Universal DNA property.** Introduce a valid-time interval (working names `top:validFrom` / `top:validTo`, `xsd:dateTime`, Invariant flavor, mirroring `startTime`/`endTime`) on `top:CommonEntity`, governed by a *separate* opt-in shape (`top:BitemporalShape`) that targets only entities a workflow marks as versioned — **not** the always-on `UniversalDNAShape`. This answers Sign-off Question 2 in the direction of "Core-level but optional," avoiding both a burdensome change to Universal DNA and the dead end of leaving valid time domain-only on `top:Temporal`.
+3. **Versioning uses PROV revision vocabulary, append-only.** A correction mints a new version: `newVersion prov:wasRevisionOf priorVersion`; both `prov:specializationOf` a stable identity node; each version carries its own `observedAt` (transaction time) and `validFrom`/`validTo` (valid time). Superseded versions are closed with `prov:invalidatedAtTime` rather than by mutating a `recordedTo` field — this is what keeps the trail append-only and dodges Option B's mutate-in-place defect.
+
+This synthesis gives genuine bitemporality (both clocks, independently sliceable), preserves the append-only audit guarantee, reuses PROV at entity granularity, and still projects cleanly to NGSI-LD on the wire (a version's `observedAt` → NGSI-LD `observedAt`; the broker's `createdAt`/`modifiedAt` carry transaction time at the edge).
+
+### Implied SHACL (illustrative — lands only on acceptance)
+
+```turtle
+# Opt-in, NOT folded into UniversalDNAShape. Targets only versioned entities
+# (e.g. via a top:Versioned marker class a workflow applies).
+top:BitemporalShape a sh:NodeShape ;
+    sh:targetClass top:Versioned ;
+    sh:property [ sh:path top:validFrom ; sh:datatype xsd:dateTime ;
+                  sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:message "A versioned entity must state when its state became valid (top:validFrom)." ] ;
+    sh:property [ sh:path top:validTo ;   sh:datatype xsd:dateTime ; sh:maxCount 1 ;
+                  sh:message "top:validTo is open (absent) for the currently-valid version." ] ;
+    sh:property [ sh:path prov:specializationOf ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:message "Every version must point at its stable identity (prov:specializationOf)." ] .
+```
+
+`top:observedAt` (transaction time) continues to come from the always-on `UniversalDNAShape`; `validFrom`/`validTo` and the revision links come from this opt-in shape. New properties carry ADR-0019 flavors (interval bounds Invariant, like `startTime`/`endTime`).
+
+### Example as-of queries (the contract to ratify — Sign-off Question 3)
+
+```sparql
+# (i) Transaction-time slice — "as we knew it at 2026-03-01" (latest version recorded by then)
+SELECT ?id ?value WHERE {
+  ?v prov:specializationOf ?id ; top:observedAt ?tx ; top:someValue ?value .
+  FILTER (?tx <= "2026-03-01T00:00:00Z"^^xsd:dateTime)
+  FILTER NOT EXISTS { ?v2 prov:specializationOf ?id ; top:observedAt ?tx2 .
+                      FILTER (?tx2 > ?tx && ?tx2 <= "2026-03-01T00:00:00Z"^^xsd:dateTime) }
+}
+
+# (ii) Valid-time slice — "as it was true on 2026-02-15" (regardless of when recorded)
+SELECT ?id ?value WHERE {
+  ?v prov:specializationOf ?id ; top:validFrom ?vf ; top:someValue ?value .
+  OPTIONAL { ?v top:validTo ?vt }
+  FILTER (?vf <= "2026-02-15T00:00:00Z"^^xsd:dateTime && (!BOUND(?vt) || ?vt > "2026-02-15T00:00:00Z"^^xsd:dateTime))
+}
+
+# (iii) Bitemporal point — "as we knew it on 2026-03-01, about what was valid on 2026-02-15"
+#       = (i) and (ii) combined: filter the version chain on both clocks.
+```
+
+### PROV mapping (Sign-off Question 4 — confirm clean)
+
+| Bitemporal concept | PROV-O term |
+| --- | --- |
+| record minted (transaction-time start) | `prov:generatedAtTime` (≈ `top:observedAt`) |
+| record superseded (transaction-time end) | `prov:invalidatedAtTime` |
+| this version revises the prior | `prov:wasRevisionOf` |
+| stable cross-version identity | `prov:specializationOf` |
+| valid-time interval | no native PROV peer — TOP-local (`top:validFrom`/`validTo`), analogous to `startTime`/`endTime` having `prov:startedAtTime`/`endedAtTime` peers but valid-of-a-state having none |
+
+The one honest gap: PROV has no first-class valid-time-of-a-fact term, so `validFrom`/`validTo` are TOP-local with no `subPropertyOf prov:*`. That is consistent with how Constraint leaves have no PROV peer — declared absence, not oversight.
+
+### Consequences (if Accepted as recommended)
+
+- **Bitemporality without disturbing Universal DNA.** The always-on minimum (`identifier` + `observedAt` + `status`) is unchanged; mono-temporal entities stay valid; only entities that opt into versioning carry the second axis.
+- **The audit trail stays append-only.** Corrections append versions and close them with `prov:invalidatedAtTime`; nothing is mutated in place.
+- **`observedAt` gains a single honest meaning** (transaction time), ending the "observed or recorded" conflation.
+- **NGSI-LD projection is preserved**, so the queued JSON-LD profile is unaffected.
+
+### What this ADR does NOT do
+
+- It does **not** land any class, property, or shape. Nothing changes in `core/v1/shapes.ttl` until this ADR is Accepted.
+- It does **not** make valid time mandatory or add a fourth Universal DNA property (the recommendation explicitly keeps it opt-in; the maintainer may overrule via Sign-off Question 2).
+- It does **not** author the temporal query layer or the NGSI-LD broker mapping — those are follow-on PRs once the representation is ratified.
+- It does **not** pre-judge the marker mechanism for "versioned" entities (`top:Versioned` class vs. a flavor vs. a workflow-level opt-in); that is a design detail for the implementing PR.
+
+### Sign-off questions (the actual decision)
+
+1. **Representation.** Accept the recommended synthesis (A + immutable valid-time interval, PROV-revision, append-only), or choose pure A / pure B / pure C?
+2. **Valid-time scope.** Core-level but **opt-in** via `top:BitemporalShape` (recommended), or promote valid time into Universal DNA on `top:CommonEntity` (universal, more powerful, changes the always-on contract), or keep it domain-only on `top:Temporal` (status quo, not truly bitemporal)?
+3. **As-of contract.** Are query patterns (i)/(ii)/(iii) the right and complete set to support, or are there additional as-of patterns the model must serve?
+
+### Status
+
+Proposed. Awaiting maintainer sign-off on the three questions above. On acceptance, this ADR's recommendation (as amended by the answers) becomes binding, the index status flips to Accepted, and implementation lands as a separate PR.
 
 ---
 
