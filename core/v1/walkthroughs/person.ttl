@@ -76,15 +76,26 @@ example:steward-mariana a top:Person ;
     dcterms:creator example:steward-mariana ;
     dcterms:created "2026-04-01T09:00:00Z"^^xsd:dateTime .
 
-example:credential-jin-gcp-2026 a top:Credential ;
+# This credential carries top:integrityHash + top:signedBy, so per ADR-0021
+# Tier-1 it MUST be an immutable version: top:Versioned + top:validFrom +
+# prov:specializationOf (a stable credential identity). It is.
+example:credential-jin-gcp-2026 a top:Credential, top:Versioned ;
     top:identifier "urn:top:credential:gcp:jin-park:2026"^^xsd:anyURI ;
     top:observedAt "2026-04-12T14:25:00Z"^^xsd:dateTime ;
     top:status "VALID" ;
     rdfs:label "GCP Training — Dr. Jin Park, 2026 cycle" ;
     top:integrityHash "sha256:f4a8c2e9d7b1a6f3e2c8b5d9a1f7e4c8b2d6a9f3e7c1b5d8a2f6e9c3b7d1a5f8" ;
     top:signedBy example:dr-jin-park ;
+    prov:specializationOf example:credential-jin-gcp ;
+    top:validFrom "2026-04-12T00:00:00Z"^^xsd:dateTime ;
     dcterms:creator example:steward-mariana ;
     dcterms:created "2026-04-12T14:25:00Z"^^xsd:dateTime .
+
+# Stable identity for the credential (across any future re-issue/version).
+example:credential-jin-gcp a prov:Entity ;
+    top:identifier "urn:top:credential:gcp:jin-park"^^xsd:anyURI ;
+    top:observedAt "2026-04-12T14:25:00Z"^^xsd:dateTime ;
+    top:status "VALID" .
 
 
 # ====================================================================

@@ -175,7 +175,7 @@ top:observedAt a owl:DatatypeProperty ;
     top:flavor "Invariant" ;
     rdfs:domain top:CommonEntity ;
     rdfs:range xsd:dateTime ;
-    rdfs:comment "When this entity-state was observed or recorded. NGSI-LD-style timestamp anchor; distinct from intrinsic temporal attributes (Temporal.startTime / endTime), which are domain-level."@en .
+    rdfs:comment "When the system recorded this entity-version — the transaction-time anchor (per ADR-0021), NGSI-LD-style. Distinct from valid time (top:validFrom / top:validUntil, the second clock, opt-in) and from intrinsic activity times (Temporal.startTime / endTime, domain-level)."@en .
 
 top:status a owl:DatatypeProperty ;
     rdfs:label "status"@en ;
@@ -667,6 +667,133 @@ top:SafetyGuardrail a owl:Class ;
     rdfs:label "Safety Guardrail"@en ;
     rdfs:subClassOf top:Constraint, prov:Entity, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A boundary rooted in safety discipline — biosafety floor, blinding rule, contamination boundary, escalation threshold, stop-rule."@en .
+
+
+# ====================================================================
+# Bitemporal model (per ADR-0021)
+# ====================================================================
+# Core carries two clocks. TRANSACTION TIME — top:observedAt (above),
+# Universal DNA, always required — is when the system recorded an
+# entity-version. VALID TIME — top:validFrom / top:validUntil (here) —
+# is when that recorded state was true in the world. The two are
+# independently queryable ("as we knew it at T1" vs. "as it was true at
+# T2").
+#
+# Valid time is OPT-IN: it attaches to versioned nodes (top:Versioned)
+# via top:BitemporalShape and is NOT folded into the always-on
+# UniversalDNAShape, so mono-temporal entities stay valid and the
+# minimum contract does not move.
+#
+# Versioning is append-only and PROV-native: a correction mints a new
+# immutable top:Versioned node, prov:wasRevisionOf the prior, both
+# prov:specializationOf a stable identity, the prior closed with
+# prov:invalidatedAtTime. The grain is the attribute-value-at-a-time;
+# the composed entity is a prov:Collection assembled at query time.
+#
+# WHICH values get versioned (ADR-0021 triggering):
+#   Tier 1 (here, always-on, enforced): a value carrying top:integrityHash
+#     or top:signedBy, or a top:Attestation / top:StatusChange, MUST be a
+#     version — you cannot hash or sign a value and then mutate it.
+#   Tiers 2-3 (follow-on PRs): propagation along regulated edges, and
+#     workflow opt-in per ADR-0019. Default-off otherwise.
+
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned"@en ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
+
+top:validFrom a owl:DatatypeProperty ;
+    rdfs:label "valid from"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Versioned ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en .
+
+top:validUntil a owl:DatatypeProperty ;
+    rdfs:label "valid until"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Versioned ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
+
+
+# --- The opt-in bitemporal contract ---
+# Requires a valid-time start and a stable identity on a versioned node.
+# Invoked directly on top:Versioned instances, and via sh:node from the
+# Tier-1 enforcement shapes below.
+
+top:BitemporalShape a sh:NodeShape ;
+    rdfs:label "Bitemporal Shape"@en ;
+    rdfs:comment "The contract a versioned value satisfies: a valid-time start, an optional (open) valid-time end, and a stable identity via prov:specializationOf. Opt-in — NOT targeted at top:CommonEntity, so it never burdens mono-temporal entities."@en ;
+    sh:targetClass top:Versioned ;
+    sh:property [
+        sh:path top:validFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A versioned value must state when its state became valid (top:validFrom, exactly one)." ;
+    ] ;
+    sh:property [
+        sh:path top:validUntil ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+        sh:message "top:validUntil is open (absent) for the current version, or exactly one xsd:dateTime when closed." ;
+    ] ;
+    sh:property [
+        sh:path prov:specializationOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A versioned value must point at its stable identity (prov:specializationOf, exactly one)." ;
+    ] .
+
+
+# --- Tier-1 entailment: committed markers force versioning (hard) ---
+# Always-on in Core, at sh:Violation. Mechanism is sh:targetSubjectsOf /
+# sh:targetClass -> sh:node top:BitemporalShape; SHACL Core, no SPARQL.
+
+top:HashedMustVersionShape a sh:NodeShape ;
+    rdfs:label "Hashed values must be versioned"@en ;
+    sh:targetSubjectsOf top:integrityHash ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A value carrying top:integrityHash must be an immutable version (top:Versioned: top:validFrom + prov:specializationOf). You cannot hash a value and leave it mutable." .
+
+top:SignedMustVersionShape a sh:NodeShape ;
+    rdfs:label "Signed values must be versioned"@en ;
+    sh:targetSubjectsOf top:signedBy ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A value carrying top:signedBy must be an immutable version. You cannot sign a value and leave it mutable." .
+
+top:AttestationMustVersionShape a sh:NodeShape ;
+    rdfs:label "Attestations must be versioned"@en ;
+    sh:targetClass top:Attestation ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A top:Attestation is a committed, signed declaration and must be an immutable version." .
+
+top:StatusChangeMustVersionShape a sh:NodeShape ;
+    rdfs:label "Status changes must be versioned"@en ;
+    sh:targetClass top:StatusChange ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A top:StatusChange is the audit event of a transition and must be an immutable version." .
+
+
+# --- Tier-1 lifecycle calibration: in-progress evidence warns (soft) ---
+# A draft Document/Log/Credential is legitimately mutable until it is
+# committed; warn (not fail) until it carries a valid-time start. Once
+# hashed or signed, the hard shapes above take over at sh:Violation.
+# Direct property check (not sh:node) so the result stays at Warning.
+
+top:EvidenceShouldVersionShape a sh:NodeShape ;
+    rdfs:label "Evidence should be versioned once committed"@en ;
+    sh:targetClass top:Document, top:Log, top:Credential ;
+    sh:property [
+        sh:path top:validFrom ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "This evidentiary value is not yet a version. Drafts may stay mutable; once finalized (and certainly once hashed or signed) it must be versioned (top:Versioned with top:validFrom)." ;
+    ] .
 
 
 # === End of TOP Core OWL/SHACL ===

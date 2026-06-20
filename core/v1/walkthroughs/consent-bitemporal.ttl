@@ -1,0 +1,61 @@
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <https://example.org/blooddraw#> .
+
+#####################################################################
+# ADR-0021 walkthrough — a bitemporally versioned signed consent.
+#
+# Demonstrates the two clocks and append-only correction:
+#   - transaction time = top:observedAt (when the system recorded it)
+#   - valid time       = top:validFrom / top:validUntil (when true)
+#
+# Tier-1 entailment: each version carries top:signedBy and is a
+# top:Attestation, so each MUST be top:Versioned (top:validFrom +
+# prov:specializationOf) — enforced at sh:Violation.
+#
+# The first record had the wrong valid date. The correction APPENDS a
+# new version (prov:wasRevisionOf the prior); the prior is closed with
+# top:validUntil + prov:invalidatedAtTime. Nothing is mutated.
+#
+# Validate (ontology graph supplied so subclass targets resolve):
+#   python3 -m pyshacl --advanced --inference rdfs \
+#       -e core/v1/shapes.ttl -s core/v1/shapes.ttl \
+#       -d core/v1/walkthroughs/consent-bitemporal.ttl
+# Expected: Conforms: True.
+#####################################################################
+
+# Stable identity — the logical consent, shared across versions.
+# Typed prov:Entity (not a top: class), so it is the identity anchor the
+# versions specialize, not itself a Universal-DNA entity or a version.
+ex:consent-0042 a prov:Entity ;
+    top:identifier "urn:top:consent:0042"^^xsd:anyURI ;
+    top:observedAt "2026-04-12T14:25:00Z"^^xsd:dateTime ;   # first recorded
+    top:status     "ACTIVE" .                                # currently in force (points at v2)
+
+# The signer.
+ex:dr-jin-park a top:Person ;
+    top:identifier "urn:top:person:0000-0002-9999-0001"^^xsd:anyURI ;
+    top:observedAt "2026-04-12T14:23:00Z"^^xsd:dateTime ;
+    top:status     "ACTIVE" .
+
+# Version 1 — recorded 2026-04-12; later found to carry the wrong valid date.
+ex:consent-0042-v1 a top:Attestation, top:Versioned ;
+    top:identifier         "urn:top:consent:0042#v1"^^xsd:anyURI ;
+    top:observedAt         "2026-04-12T14:25:00Z"^^xsd:dateTime ;   # transaction time
+    top:status             "SUPERSEDED" ;
+    top:signedBy           ex:dr-jin-park ;
+    prov:specializationOf  ex:consent-0042 ;
+    top:validFrom          "2026-04-11T00:00:00Z"^^xsd:dateTime ;   # wrong valid date
+    top:validUntil         "2026-04-12T14:40:00Z"^^xsd:dateTime ;   # closed at correction
+    prov:invalidatedAtTime "2026-04-12T14:40:00Z"^^xsd:dateTime .
+
+# Version 2 — the correction (right valid date); currently valid (validUntil open).
+ex:consent-0042-v2 a top:Attestation, top:Versioned ;
+    top:identifier        "urn:top:consent:0042#v2"^^xsd:anyURI ;
+    top:observedAt        "2026-04-12T14:40:00Z"^^xsd:dateTime ;    # transaction time
+    top:status            "ACTIVE" ;
+    top:signedBy          ex:dr-jin-park ;
+    prov:specializationOf ex:consent-0042 ;
+    prov:wasRevisionOf    ex:consent-0042-v1 ;
+    top:validFrom         "2026-04-12T00:00:00Z"^^xsd:dateTime .    # corrected; validUntil open
