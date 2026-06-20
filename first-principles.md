@@ -10,6 +10,8 @@ The Ontology Project
 
 Most systems are built to satisfy databases; **TOP is built to satisfy the human experience.** We ground our entities in how humans actually work, then project that reality outward into the standards the world requires.
 
+> Want each principle shown against a real operator problem — the challenge in plain English, why the status quo hurts, and how TOP differs? See the companion: [**First Principles, Illustrated**](first-principles-illustrated.md).
+
 ---
 
 ## 1. The Inversion: Human-Down, not Standards-Up
