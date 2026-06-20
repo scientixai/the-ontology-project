@@ -62,8 +62,10 @@ Use this sequence to settle architectural debates. We prioritize operator realit
 
 In TOP, time and origin are baked into the property itself. We don't "audit" the data; the data **is** the audit.
 
-* **NGSI-LD Temporal Properties:** Attributes that operators see change (Status, Phase) are temporal streams. They use `validFrom` / `validUntil` for real-world intervals and `observedAt` for system snapshots.
-* **W3C PROV Native Typing:** Every entity is a native PROV-O object (`prov:Agent`, `prov:Activity`, or `prov:Entity`).
+* **Bitemporal by construction.** TOP carries two independent clocks, not one: *valid time* (when a fact was true in the world) and *transaction time* (when the system recorded it). Both are first-class and independently queryable — TOP answers "as we knew it at T₁" and "as it was true at T₂" as separate questions. This is the line between an audit system of record and a value-over-time catalog: single-clock temporal streams and JSON-Schema model catalogs record how values changed, but cannot separate the two clocks or guarantee non-repudiation. The model is specified in ADR-0021 (Proposed; enforcement lands on acceptance).
+* **NGSI-LD temporal properties:** attributes operators watch change (Status, Phase) are temporal streams — `validFrom` / `validUntil` carry the valid-time interval, `observedAt` carries the transaction-time snapshot.
+* **W3C PROV native typing:** every entity is a native PROV-O object (`prov:Agent`, `prov:Activity`, `prov:Entity`); corrections are PROV revisions (`prov:wasRevisionOf` / `prov:specializationOf`), append-only, never edited in place.
+* **Audit is entailed, not optional:** a value carrying a cryptographic anchor (`integrityHash`, `signedBy`) must be an immutable version, and SHACL enforces it — you cannot sign or hash a value and then mutate it.
 
 **Structural Integrity:** Compliance vendors *reconstruct* history from fragmented logs. TOP *renders* history by traversing the graph.
 
