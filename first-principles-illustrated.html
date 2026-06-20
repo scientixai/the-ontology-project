@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First Principles, Illustrated · The Ontology Project</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <div class="site-header">
+    <a href="index.html" class="site-logo" aria-label="The Ontology Project, home">
+      <img src="images/top-logo.svg" alt="The Ontology Project" width="210">
+    </a>
+    <div class="site-meta">
+      <div class="site-meta-primary">First Principles, Illustrated</div>
+      <div class="site-meta-secondary">Working document · Updated 2026-06-20</div>
+    </div>
+  </div>
+  <nav class="site-nav-links">
+    <a href="index.html">Home</a> ·
+    <a href="manifesto.html">Manifesto</a> ·
+    <a href="first-principles.html">First Principles</a> ·
+    <strong>Illustrated</strong> ·
+    <a href="roadmap.html">Roadmap</a> ·
+    <a href="core/v1/index.html">Core</a> ·
+    <a href="https://github.com/scientixai/the-ontology-project">GitHub</a>
+  </nav>
+</header>
+
+<h1 class="title">First Principles, Illustrated</h1>
+<div class="subtitle">The nine principles, shown working against real operator problems.</div>
+<div class="doc-meta">Companion to First Principles · 2026-06-20</div>
+
+<p class="tagline">If <a href="first-principles.html">First Principles</a> is the law, this is the case law: the same rules, shown working against real operator problems.</p>
+
+<p>Each principle below is shown four ways — <strong>the challenge</strong> in plain English, <strong>how it's done today</strong> and why that hurts, <strong>TOP's approach</strong>, and a <strong>See&nbsp;it</strong> pointer to an artifact you can open and run.</p>
+
+<h2 class="section">1. The Inversion: Human-Down, not Standards-Up</h2>
+
+<p><strong>The challenge.</strong> A clinical research coordinator finishing a patient visit knows exactly what happened: she enrolled a <em>participant</em>, ran a <em>visit</em>, collected <em>consent</em>. But the screen in front of her is shaped like the regulatory submission — it wants <span class="inline">USUBJID</span>, <span class="inline">ARMCD</span>, an <span class="inline">Encounter</span>. She spends her day translating her work into a database's language, and every translation is a chance to get it wrong.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Most ontologies are built <em>standards-up</em>: the regulatory schema (SDTM, USDM, ISO&nbsp;20022) dictates the data shape, and humans act as translators between their work and the database. The cost is permanent — training burden, transcription error, and a UX that fights the operator forever because the foundation itself is shaped like the standard, not the work.</p>
+
+<p><strong>TOP's approach.</strong> Invert the gravity. The foundation is shaped like the <em>work</em>; the standard becomes a <em>projection layer</em> emitted at the edge. Operators read and write <span class="inline">Participant</span>, <span class="inline">Visit</span>, <span class="inline">Site</span>; the Broker projects to SDTM/USDM/FHIR for the regulator. When the standard moves from v4 to v5, the projection changes and the foundation doesn't.</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> <a href="taxonomy/taxonomy.ttl">taxonomy/taxonomy.ttl</a> — the Core concepts are named for what entities <em>are</em> to a practitioner, not for any submission format; standards alignment lives in the crosswalks, not the foundation.
+</div>
+
+<h2 class="section">2. Naming from the Workday</h2>
+
+<p><strong>The challenge.</strong> A field labeled <span class="inline">USUBJID</span> means nothing to the nurse who filled it. A join-table entity called <span class="inline">ResearchSubjectProgressEntry</span> matches no moment in anyone's day. The people who <em>generate</em> the data can't read the model of it.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Names are inherited from the database schema or the standard: <span class="inline">LOT_QTY_HEX</span>, <span class="inline">ARMCD</span>, <span class="inline">RelationalAuditMapping</span>. Sub-objects are modeled as database join tables rather than human milestones. The result is a model only a data engineer can navigate — and a permanent interpreter tax between the work and the system.</p>
+
+<p><strong>TOP's approach.</strong> Three naming rules, all from operator vocabulary: entities are what the person calls them (<span class="inline">Participant</span>, <span class="inline">Part</span>, <span class="inline">Trade</span>); attributes match what they say or type (<span class="inline">firstName</span>, <span class="inline">batchNumber</span>, <span class="inline">randomizationNumber</span>); sub-objects are workflow <em>milestones</em> (<span class="inline">InformedConsent</span>, <span class="inline">SafetyInspection</span>, <span class="inline">TradeConfirmation</span>), not relational plumbing. Standards are ephemeral — systems <em>project</em>, they don't <em>transform</em>.</p>
+
+<div class="yes-no">
+  <span class="label">Yes:</span> <span class="inline">Participant</span>, <span class="inline">firstName</span>, <span class="inline">InformedConsent</span>. <br />
+  <span class="no-label">No:</span> <span class="inline">ResearchSubject</span>, <span class="inline">USUBJID</span>, <span class="inline">RelationalAuditMapping</span>.
+</div>
+
+<h2 class="section">3. The Decision Rule: settling debates by operator reality</h2>
+
+<p><strong>The challenge.</strong> A modeling debate stalls: the database "needs" a join entity, so someone proposes adding <span class="inline">RelationalAuditMapping</span> to Core. It's convenient for the store and invisible to every operator. Do you add it?</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Without an explicit tie-breaker, database convenience wins by default, and the model slowly fills with entities no human recognizes. Each one is a small betrayal of the inversion, and they compound.</p>
+
+<p><strong>TOP's approach.</strong> A three-test sequence anyone can run in a review: the <strong>Verbal Test</strong> (does an operator say this term out loud during their workday?), the <strong>Boundary Test</strong> (does it match a real workflow boundary?), and the <strong>Origin Test</strong> (am I shaping the foundation, or shaping a projection?). <span class="inline">RelationalAuditMapping</span> fails all three — so it's a projection-layer detail, not a Core entity.</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> <a href="first-principles.html">first-principles.html § Decision Rule</a> — the rule is cited by name in spec PRs to keep Core honest.
+</div>
+
+<h2 class="section">4. Temporal &amp; Provenance: native, not sidecars (bitemporal)</h2>
+
+<p><strong>The challenge.</strong> A coordinator records a participant's weight as 80&nbsp;kg. Five days later a monitor catches a transcription error — it was 85&nbsp;kg — and corrects it. Months later an auditor asks two questions that <em>sound</em> identical but aren't: "What weight did the system show the day the dose was calculated?" and "What was the participant's <em>actual</em> weight that day?" The honest answers differ — 80&nbsp;kg (what we knew) and 85&nbsp;kg (what was true). Confuse them and you've either hidden an error or rewritten history.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Most systems keep one current value and overwrite on correction; history lives in a separate audit-log table, reconstructed afterward by joining logs — if they captured it at all. The two timelines collapse into one timestamp or vanish, and every boundary crossing (EDC → warehouse → submission) drops the trail. Provenance becomes forensics.</p>
+
+<p><strong>TOP's approach.</strong> Two clocks, native: <span class="inline">observedAt</span> (when the system recorded it — transaction time) and <span class="inline">validFrom</span>/<span class="inline">validUntil</span> (when it was true — valid time). A correction never overwrites; it appends an immutable version (<span class="inline">prov:wasRevisionOf</span>) and closes the old one. Both auditor questions become a one-line query, not a reconstruction. And a signed or hashed value <em>cannot</em> be left mutable — SHACL refuses it — so the trail can't be silently broken.</p>
+
+<div class="yes-no">
+  <span class="label">See it run:</span> <a href="core/v1/walkthroughs/consent-bitemporal.ttl">core/v1/walkthroughs/consent-bitemporal.ttl</a> — a signed consent corrected through an append-only version chain. Validate it; try to mutate it; watch it fail closed. (ADR-0021.)
+</div>
+
+<h2 class="section">5. Specialization is Content, not Shape</h2>
+
+<p><strong>The challenge.</strong> A platform supports oncology imaging studies, then cardiology studies, then a registry, then an animal study. Each "type" arrives as a request for a new entity class — <span class="inline">OncologyImagingStudy</span>, <span class="inline">ForexTradeRecord</span> — and within a year there are hundreds of bespoke shapes, no two systems agree, and a cross-study query has to know all of them to ask one question.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Every operational variant becomes a new subtype <em>class</em>. The class hierarchy explodes, analytics fragment, and integration becomes an exercise in enumerating special cases. The shape of the data carries information that should have been content.</p>
+
+<p><strong>TOP's approach.</strong> One universal operational pattern — a universal <span class="inline">Activity</span> carrying a concept code that identifies the specialization. "Oncology imaging study" is an <span class="inline">Activity</span> with a code, not a new shape. The <em>content</em> varies; the <em>shape</em> stays uniform, so a query spans every variant without knowing any of them in advance. (Workflow extensions still specialize structurally via <span class="inline">subClassOf</span> where a real new category exists — but operational variety rides as coded content, not class sprawl.)</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> <span class="inline">top:Activity</span> in <a href="core/v1/shapes.ttl">core/v1/shapes.ttl</a>, and the specialization discipline in ADR-0009.
+</div>
+
+<h2 class="section">6. Promote Facts to Entities: no bespoke flags</h2>
+
+<p><strong>The challenge.</strong> A record carries <span class="inline">isConsented = true</span>. An auditor asks the only questions that matter: <em>who</em> said so, <em>when</em>, and <em>on what basis</em>? The boolean has no answer — it threw all three away the moment it was set. A true/false can't be trusted, signed, or corrected.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Status and authority live as boolean flags scattered across records (<span class="inline">isSponsor</span>, <span class="inline">isClosed</span>, <span class="inline">isRestricted</span>). Each flag is a claim stripped of its authority, time, and reason — exactly the things a regulated audit needs. Reconstructing them later is guesswork.</p>
+
+<p><strong>TOP's approach.</strong> Every "is X" flag is a claim in disguise — so model the evidence, not the flag. An authority claim becomes an <span class="inline">Attestation</span> (signed, time-stamped, versioned); a state transition becomes a <span class="inline">StatusChange</span> (previous → new, with trigger); a rule becomes a <span class="inline">Constraint</span> (with severity and who enforces it). The fact now carries its own provenance and can be signed, queried as-of, and audited.</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> the signed consent <span class="inline">Attestation</span> in <a href="core/v1/walkthroughs/consent-bitemporal.ttl">consent-bitemporal.ttl</a>; the <span class="inline">top:StatusChange</span> and <span class="inline">top:Constraint</span> leaves in <a href="core/v1/shapes.ttl">shapes.ttl</a>. (ADR-0015.)
+</div>
+
+<h2 class="section">7. Build the Pipeline in Order</h2>
+
+<p><strong>The challenge.</strong> Two data feeds both send a "Subject." In one it's a human patient; in the other it's a laboratory animal. A team that jumped straight to building the knowledge graph merges them silently — and now the graph asserts things about people that are only true of animals. The error is invisible until it isn't.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Teams skip the unglamorous early layers — controlled vocabulary, taxonomy — and model the ontology or graph first. Homonyms (<em>Subject</em>), false friends (<em>agent</em> in pharmacology vs. an acting <span class="inline">Agent</span>), and missing crosswalks surface in production, where they're expensive and dangerous to fix.</p>
+
+<p><strong>TOP's approach.</strong> Six layers, in order, each the precondition for the next: Controlled Vocabulary → Taxonomy → Metadata Schema → Thesaurus → Ontology → Knowledge Graph. The CV layer carries three obligations that prevent exactly the disaster above: context routing for homonyms (<em>Subject</em> → <span class="inline">Person</span> in human research, <span class="inline">Organism</span> in animal research), anti-synonyms for false friends, and SSSOM crosswalks as first-class artifacts.</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> ADR-0018 (the six-stage pipeline) and ADR-0020 (the <em>Subject</em> homonym resolved with <span class="inline">top:Organism</span>), in <a href="governance/decision-log.md">governance/decision-log.md</a>.
+</div>
+
+<h2 class="section">8. Open Core, Constrained Extension</h2>
+
+<p><strong>The challenge.</strong> Two CROs both extend <span class="inline">Document</span> for their needs. One adds a <span class="inline">signatories</span> list; the other redefines what <span class="inline">Document</span> requires entirely. Now the "same" concept means two incompatible things, an AI agent trained on one can't read the other, and nobody can safely reuse either extension. This is the FHIR drift story, lived again.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Standards are extensible but un-contracted: anyone can extend any concept any way. Over a decade the same logical concept gets modeled multiple incompatible ways, extensions proliferate without discoverability, and profiles diverge. It's nobody's fault — it's what an unspecified extension surface produces.</p>
+
+<p><strong>TOP's approach.</strong> The Core is open to <em>extension</em> but closed to <em>redefinition</em>, enforced per-property by a flavor declared in the artifact and machine-checked at PR time: <strong>Invariant</strong> (cannot drift — e.g., <span class="inline">identifier</span>, <span class="inline">observedAt</span>), <strong>Tightenable</strong> (consumers may require/narrow but not loosen — e.g., <span class="inline">status</span>), <strong>Additive</strong> (designed for downstream addition). Extensions live in the consumer's namespace and chain to Core via <span class="inline">subClassOf</span> / <span class="inline">subPropertyOf</span>. Two extensions of <span class="inline">Document</span> stay mutually intelligible by construction.</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> the <span class="inline">top:flavor</span> annotations in <a href="core/v1/shapes.ttl">core/v1/shapes.ttl</a>, ADR-0019, and <a href="governance/extension-contract.md">governance/extension-contract.md</a>.
+</div>
+
+<h2 class="section">9. Why Human-Centered Wins</h2>
+
+<p><strong>The challenge.</strong> A sponsor employs a small army of data managers whose entire job is reshaping operator-generated data into submission formats. The work is expensive, slow, error-prone, and adds no clinical value — it exists only because the foundation was built for the regulator instead of the work.</p>
+
+<p><strong>How it's done today, and why it hurts.</strong> Standards-up systems push the complexity onto people. Compliance headcount scales with data volume, and the translation layer is a permanent tax. Worse, it's structural: an incumbent who built standards-up cannot rebuild around the human without discarding their entire data model.</p>
+
+<p><strong>TOP's approach.</strong> TOP eats the complexity so operators don't have to: humans work in their own vocabulary, and the foundation handles the logic and the projection to standards at the edge. The advantage compounds — anyone anchored standards-up starts from behind, because they'd have to throw away their model to catch up. TOP starts at the finish line.</p>
+
+<div class="yes-no">
+  <span class="label">See it:</span> this is the cumulative payoff of principles 1–8; the <a href="README.md">README</a> frames the problem and the <a href="manifesto.html">manifesto</a> the stance.
+</div>
+
+<blockquote class="pull-quote">
+  <p><strong>The point:</strong> every principle here trades a hidden, reconstructed-later cost for an explicit, rendered-by-construction one. The audit is the data; the standard is a projection; the human is the anchor.</p>
+</blockquote>
+
+<footer class="site-footer">
+  <div class="site-footer-sponsor">
+    <a href="https://scientix.ai">
+      <img src="images/sponsored-by-scientixai.svg" alt="Sponsored by Scientix.ai">
+    </a>
+  </div>
+  <div class="site-footer-license">Apache License 2.0</div>
+</footer>
+
+</div>
+</body>
+</html>
