@@ -28,7 +28,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0018](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline) | 2026-05-13 | Adopt the six-stage ontology pipeline as TOP's build discipline | Accepted |
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
 | [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Accepted (resolves ADR-0018 forward-looking note) |
-| [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | **Proposed** (awaiting maintainer sign-off) |
+| [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
 
 ---
 
@@ -901,9 +901,9 @@ Accepted. The Organism leaf lands in `taxonomy/taxonomy.ttl` and `core/v1/shapes
 
 ## ADR-0021: Bitemporal model — valid time and transaction time on Core
 
-**Date:** 2026-06-19 · **Status:** Proposed (awaiting maintainer sign-off) · **Extends:** [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) · **Refs:** [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof), [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [first-principles.md § 4](../first-principles.md), [FIWARE lessons](planning/fiware-smart-models-lessons.md)
+**Date:** 2026-06-19 · **Status:** Accepted (2026-06-20) · **Extends:** [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) · **Refs:** [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof), [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [first-principles.md § 4](../first-principles.md), [FIWARE lessons](planning/fiware-smart-models-lessons.md)
 
-> This ADR is **Proposed**. It states the model, recommends a representation, and shows the SHACL and queries it implies — so the maintainer can decide. **No bitemporal classes, properties, or shapes land in `core/v1/shapes.ttl` until this ADR is Accepted.** The four sign-off questions at the end are the decision; the recommendation is a starting position.
+> **Accepted 2026-06-20.** The maintainer ratified all four sign-off questions as recommended (see *Ratified decision*, below). The bitemporal vocabulary and Tier-1 enforcement land in `core/v1/shapes.ttl` alongside this acceptance. The proposal text below is retained as the reasoning of record.
 
 ### Context
 
@@ -1059,9 +1059,18 @@ The one honest gap: PROV has no valid-time-of-a-fact term, so `validFrom`/`valid
 3. **As-of contract.** Are query patterns (i)/(ii)/(iii) the complete set to support?
 4. **Tier-1 enforcement.** Enforce structural entailment at **`sh:Violation`** (recommended — fail-closed) or **`sh:Warning`** (advisory)? And confirm the lifecycle calibration (hard on cryptographic/event markers, soft on in-progress evidentiary types).
 
+### Ratified decision (2026-06-20)
+
+All four questions accepted as recommended:
+
+1. **Representation & grain.** The attribute-grain synthesis — Option C's per-attribute granularity + Option A's immutable append-only PROV-revision discipline + Option B's `validFrom` / `validUntil` interval.
+2. **Valid-time scope.** Core-level but **opt-in** via `top:BitemporalShape`; Universal DNA is unchanged (`observedAt` stays the always-on transaction-time anchor).
+3. **As-of contract.** Patterns (i) transaction-time slice, (ii) valid-time slice, (iii) bitemporal point are the complete set for now.
+4. **Tier-1 enforcement.** `sh:Violation` (fail-closed), with the lifecycle calibration: hard on the committed markers (`integrityHash`, `signedBy`, `top:Attestation`, `top:StatusChange`); soft (`sh:Warning`) on in-progress evidentiary types (`top:Document`, `top:Log`, `top:Credential`) until they acquire an anchor.
+
 ### Status
 
-Proposed. Awaiting maintainer sign-off on the four questions. On acceptance, the recommendation (as amended by the answers) becomes binding, the index status flips to Accepted, the first-principles § 4 "(Proposed)" marker is removed, and implementation lands as a separate PR.
+Accepted 2026-06-20. The bitemporal vocabulary (`top:validFrom`, `top:validUntil`, `top:Versioned`), `top:BitemporalShape`, and the Tier-1 enforcement shapes land in `core/v1/shapes.ttl` alongside this acceptance, with a versioned walkthrough under `core/v1/walkthroughs/`. The first-principles § 4 "(Proposed)" marker is removed. Out of scope here (follow-on work): Tier-2 propagation and the Tier-3 linter rule, the temporal query layer, and the Broker ingestion lift.
 
 ---
 
