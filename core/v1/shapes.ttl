@@ -37,8 +37,9 @@
 #        prov:Plan | prov:Location per the PROV-O alignment. Four
 #        categories carry a light-edge BFO subClassOf for OBO interop
 #        (Agent, Location, Temporal, Evidence); the other four
-#        (Resource, Scope, Outcome, Constraint) document BFO scope in
-#        comments and defer to leaf-level alignment.
+#        (Resource, Scope, Outcome, Constraint) are mixed-membership,
+#        carry no category-level BFO peer, and declare the edge on
+#        their leaves instead.
 #
 #   L2 — Category relational extensions (~24 properties).
 #        The verbs each category brings to TOP. Agent gets
@@ -78,12 +79,31 @@
 #   Dublin Core; domain-level provenance uses PROV-O directly.
 #
 # BFO ALIGNMENT (per ADR-0013):
-#   Light, edge-only. Four L2 categories have clean BFO peers:
+#   Light, edge-only — a single rdfs:subClassOf bfo:* for OBO Foundry
+#   interop, never a heavy axiom set. Four L2 categories have clean BFO
+#   peers and declare them at the category level:
 #   Agent → IndependentContinuant, Location → Site, Temporal → Process,
-#   Evidence → GenericallyDependentContinuant. These declare a single
-#   rdfs:subClassOf bfo:* for OBO Foundry interop. The other four
-#   categories are mixed-membership and defer BFO declarations to the
-#   leaf level if and when OBO interop demands it.
+#   Evidence → GenericallyDependentContinuant. Their 16 leaves inherit
+#   that peer transitively and add no BFO triple of their own (a more
+#   specific tag would be a modeling decision the category does not
+#   license; an identical one would be redundant).
+#   The other four categories (Resource, Scope, Outcome, Constraint)
+#   are mixed-membership: no honest single peer exists at the category,
+#   so the edge is declared on each of their 13 leaves:
+#     Resource:   System → GenericallyDependentContinuant,
+#                 Equipment → MaterialEntity, Material → MaterialEntity
+#     Scope:      Portfolio / Program / Project → GenericallyDependentContinuant
+#     Outcome:    Observation → GenericallyDependentContinuant,
+#                 StatusChange → ProcessBoundary, Artifact → MaterialEntity,
+#                 Conclusion → GenericallyDependentContinuant
+#     Constraint: PhysicalLimit → Quality, RegulatoryLaw → GDC,
+#                 SafetyGuardrail → GDC
+#   Net: every one of the 29 leaves resolves to exactly one BFO
+#   superclass (16 by inheritance, 13 declared). BFO classes use the
+#   readable bfo: local-name convention already established above
+#   (bfo:IndependentContinuant, bfo:Site, …); the SKOS view in
+#   taxonomy/taxonomy.ttl intentionally carries no BFO crosswalk —
+#   BFO lives here, parallel to PROV-O/schema.org living there.
 
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
@@ -155,7 +175,7 @@ top:observedAt a owl:DatatypeProperty ;
     top:flavor "Invariant" ;
     rdfs:domain top:CommonEntity ;
     rdfs:range xsd:dateTime ;
-    rdfs:comment "When this entity-state was observed or recorded. NGSI-LD-style timestamp anchor; distinct from intrinsic temporal attributes (Temporal.startTime / endTime), which are domain-level."@en .
+    rdfs:comment "When the system recorded this entity-version — the transaction-time anchor (per ADR-0021), NGSI-LD-style. Distinct from valid time (top:validFrom / top:validUntil, the second clock, opt-in) and from intrinsic activity times (Temporal.startTime / endTime, domain-level)."@en .
 
 top:status a owl:DatatypeProperty ;
     rdfs:label "status"@en ;
@@ -266,9 +286,12 @@ top:accessRequirement a owl:ObjectProperty ;
 
 
 # --- Resource — tools ---
-# BFO note: Resource is mixed-membership. Equipment is BFO MaterialEntity;
-# System (software) is BFO GenericallyDependentContinuant; Material can
-# be either depending on form. Defer BFO subClassOf to the leaf level.
+# BFO note: Resource is mixed-membership, so the category carries no BFO
+# peer; the edge is declared per leaf instead. Equipment is a BFO
+# MaterialEntity; System (software) is a GenericallyDependentContinuant;
+# Material is a MaterialEntity (the leaf's substances/batches/stocks are
+# physical — cf. its schema:Substance peer; a purely digital material
+# would be the rare exception, not the rule).
 
 top:Resource a owl:Class ;
     rdfs:label "Resource"@en ;
@@ -298,9 +321,9 @@ top:operationalState a owl:DatatypeProperty ;
 
 
 # --- Scope — intent ---
-# BFO note: Scope is mixed-membership. Portfolio / Program / Project are
-# generically dependent continuants in BFO terms; declared at leaf level
-# if OBO interop demands it.
+# BFO note: Scope is mixed-membership, so the category carries no BFO
+# peer; the edge is declared per leaf instead. Portfolio / Program /
+# Project are all generically dependent continuants in BFO terms.
 
 top:Scope a owl:Class ;
     rdfs:label "Scope"@en ;
@@ -400,9 +423,10 @@ top:signedBy a owl:ObjectProperty ;
 
 
 # --- Outcome — results ---
-# BFO note: Outcome is mixed-membership. Observation is GDC; StatusChange
-# is a Process Boundary; Artifact is MaterialEntity; Conclusion is GDC.
-# Defer BFO subClassOf to leaf level.
+# BFO note: Outcome is mixed-membership, so the category carries no BFO
+# peer; the edge is declared per leaf instead. Observation is a GDC;
+# StatusChange is a ProcessBoundary; Artifact is a MaterialEntity;
+# Conclusion is a GDC.
 
 top:Outcome a owl:Class ;
     rdfs:label "Outcome"@en ;
@@ -433,9 +457,9 @@ top:variance a owl:DatatypeProperty ;
 
 
 # --- Constraint — validity ---
-# BFO note: Constraint is mixed-membership. PhysicalLimit is a Quality
-# (BFO MaterialEntity-dependent); RegulatoryLaw is a GDC; SafetyGuardrail
-# is a GDC. Defer BFO subClassOf to leaf level.
+# BFO note: Constraint is mixed-membership, so the category carries no
+# BFO peer; the edge is declared per leaf instead. PhysicalLimit is a
+# Quality; RegulatoryLaw is a GDC; SafetyGuardrail is a GDC.
 
 top:Constraint a owl:Class ;
     rdfs:label "Constraint"@en ;
@@ -471,6 +495,10 @@ top:appliesTo a owl:ObjectProperty ;
 # Each rdfs:subClassOf its L2 category (transitively pulling in
 # top:CommonEntity + Universal DNA + the category's PROV-O alignment)
 # plus its own PROV-O leaf alignment from taxonomy/taxonomy.ttl.
+# Leaves under the four mixed-membership categories (Resource, Scope,
+# Outcome, Constraint) also carry a light-edge BFO peer here, since
+# their category declares none; see the BFO ALIGNMENT note in the
+# header for the full leaf → bfo:* map.
 
 # --- Agent leaves (4) ---
 
@@ -522,17 +550,17 @@ top:Storage a owl:Class ;
 
 top:System a owl:Class ;
     rdfs:label "System"@en ;
-    rdfs:subClassOf top:Resource, prov:Entity ;
+    rdfs:subClassOf top:Resource, prov:Entity, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A software or operational system used to execute work — EDC, CTMS, IRT, LIMS, MES, ERP."@en .
 
 top:Equipment a owl:Class ;
     rdfs:label "Equipment"@en ;
-    rdfs:subClassOf top:Resource, prov:Entity ;
+    rdfs:subClassOf top:Resource, prov:Entity, bfo:MaterialEntity ;
     rdfs:comment "A physical device used in operations — analyzer, scale, freezer, infusion pump, imaging modality, sequencer, sensor."@en .
 
 top:Material a owl:Class ;
     rdfs:label "Material"@en ;
-    rdfs:subClassOf top:Resource, prov:Entity ;
+    rdfs:subClassOf top:Resource, prov:Entity, bfo:MaterialEntity ;
     rdfs:comment "A consumable or substance used or transformed — sample, kit, reagent, raw material, drug substance, dosage unit."@en .
 
 
@@ -540,17 +568,17 @@ top:Material a owl:Class ;
 
 top:Portfolio a owl:Class ;
     rdfs:label "Portfolio"@en ;
-    rdfs:subClassOf top:Scope, prov:Plan ;
+    rdfs:subClassOf top:Scope, prov:Plan, bfo:GenericallyDependentContinuant ;
     rdfs:comment "The widest organizational container — a collection of Programs sharing strategic direction, oversight, or funding."@en .
 
 top:Program a owl:Class ;
     rdfs:label "Program"@en ;
-    rdfs:subClassOf top:Scope, prov:Plan ;
+    rdfs:subClassOf top:Scope, prov:Plan, bfo:GenericallyDependentContinuant ;
     rdfs:comment "An intermediate container — a coordinated set of Projects sharing therapeutic area, product family, or regulatory pathway."@en .
 
 top:Project a owl:Class ;
     rdfs:label "Project"@en ;
-    rdfs:subClassOf top:Scope, prov:Plan ;
+    rdfs:subClassOf top:Scope, prov:Plan, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A bounded body of work with a defined start, end, and objective — a study, a campaign, a batch, a submission, a commissioning effort."@en .
 
 
@@ -604,22 +632,22 @@ top:Credential a owl:Class ;
 
 top:Observation a owl:Class ;
     rdfs:label "Observation"@en ;
-    rdfs:subClassOf top:Outcome, prov:Entity ;
+    rdfs:subClassOf top:Outcome, prov:Entity, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A captured data point — vital sign, lab value, sensor reading, qualitative assessment, computed metric."@en .
 
 top:StatusChange a owl:Class ;
     rdfs:label "Status Change"@en ;
-    rdfs:subClassOf top:Outcome, prov:Entity ;
+    rdfs:subClassOf top:Outcome, prov:Entity, bfo:ProcessBoundary ;
     rdfs:comment "A discrete transition in lifecycle state — enrollment, withdrawal, batch release, IRB approval, record finalization."@en .
 
 top:Artifact a owl:Class ;
     rdfs:label "Artifact"@en ;
-    rdfs:subClassOf top:Outcome, prov:Entity ;
+    rdfs:subClassOf top:Outcome, prov:Entity, bfo:MaterialEntity ;
     rdfs:comment "A produced object — a manufactured batch unit, a generated dataset, a derived report, a synthesized substance."@en .
 
 top:Conclusion a owl:Class ;
     rdfs:label "Conclusion"@en ;
-    rdfs:subClassOf top:Outcome, prov:Entity ;
+    rdfs:subClassOf top:Outcome, prov:Entity, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A reasoned determination — adjudication outcome, root-cause finding, regulatory decision, eligibility determination."@en .
 
 
@@ -627,18 +655,145 @@ top:Conclusion a owl:Class ;
 
 top:PhysicalLimit a owl:Class ;
     rdfs:label "Physical Limit"@en ;
-    rdfs:subClassOf top:Constraint, prov:Entity ;
+    rdfs:subClassOf top:Constraint, prov:Entity, bfo:Quality ;
     rdfs:comment "A bound rooted in physical reality — temperature range, dose ceiling, pressure limit, mass tolerance, biological viability window."@en .
 
 top:RegulatoryLaw a owl:Class ;
     rdfs:label "Regulatory Law"@en ;
-    rdfs:subClassOf top:Constraint, prov:Entity ;
+    rdfs:subClassOf top:Constraint, prov:Entity, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A rule rooted in legal or regulatory authority — 21 CFR clause, ICH guideline, EU CTR provision, contractual SLA, jurisdictional reporting requirement."@en .
 
 top:SafetyGuardrail a owl:Class ;
     rdfs:label "Safety Guardrail"@en ;
-    rdfs:subClassOf top:Constraint, prov:Entity ;
+    rdfs:subClassOf top:Constraint, prov:Entity, bfo:GenericallyDependentContinuant ;
     rdfs:comment "A boundary rooted in safety discipline — biosafety floor, blinding rule, contamination boundary, escalation threshold, stop-rule."@en .
+
+
+# ====================================================================
+# Bitemporal model (per ADR-0021)
+# ====================================================================
+# Core carries two clocks. TRANSACTION TIME — top:observedAt (above),
+# Universal DNA, always required — is when the system recorded an
+# entity-version. VALID TIME — top:validFrom / top:validUntil (here) —
+# is when that recorded state was true in the world. The two are
+# independently queryable ("as we knew it at T1" vs. "as it was true at
+# T2").
+#
+# Valid time is OPT-IN: it attaches to versioned nodes (top:Versioned)
+# via top:BitemporalShape and is NOT folded into the always-on
+# UniversalDNAShape, so mono-temporal entities stay valid and the
+# minimum contract does not move.
+#
+# Versioning is append-only and PROV-native: a correction mints a new
+# immutable top:Versioned node, prov:wasRevisionOf the prior, both
+# prov:specializationOf a stable identity, the prior closed with
+# prov:invalidatedAtTime. The grain is the attribute-value-at-a-time;
+# the composed entity is a prov:Collection assembled at query time.
+#
+# WHICH values get versioned (ADR-0021 triggering):
+#   Tier 1 (here, always-on, enforced): a value carrying top:integrityHash
+#     or top:signedBy, or a top:Attestation / top:StatusChange, MUST be a
+#     version — you cannot hash or sign a value and then mutate it.
+#   Tiers 2-3 (follow-on PRs): propagation along regulated edges, and
+#     workflow opt-in per ADR-0019. Default-off otherwise.
+
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned"@en ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
+
+top:validFrom a owl:DatatypeProperty ;
+    rdfs:label "valid from"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Versioned ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en .
+
+top:validUntil a owl:DatatypeProperty ;
+    rdfs:label "valid until"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Versioned ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
+
+
+# --- The opt-in bitemporal contract ---
+# Requires a valid-time start and a stable identity on a versioned node.
+# Invoked directly on top:Versioned instances, and via sh:node from the
+# Tier-1 enforcement shapes below.
+
+top:BitemporalShape a sh:NodeShape ;
+    rdfs:label "Bitemporal Shape"@en ;
+    rdfs:comment "The contract a versioned value satisfies: a valid-time start, an optional (open) valid-time end, and a stable identity via prov:specializationOf. Opt-in — NOT targeted at top:CommonEntity, so it never burdens mono-temporal entities."@en ;
+    sh:targetClass top:Versioned ;
+    sh:property [
+        sh:path top:validFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A versioned value must state when its state became valid (top:validFrom, exactly one)." ;
+    ] ;
+    sh:property [
+        sh:path top:validUntil ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+        sh:message "top:validUntil is open (absent) for the current version, or exactly one xsd:dateTime when closed." ;
+    ] ;
+    sh:property [
+        sh:path prov:specializationOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A versioned value must point at its stable identity (prov:specializationOf, exactly one)." ;
+    ] .
+
+
+# --- Tier-1 entailment: committed markers force versioning (hard) ---
+# Always-on in Core, at sh:Violation. Mechanism is sh:targetSubjectsOf /
+# sh:targetClass -> sh:node top:BitemporalShape; SHACL Core, no SPARQL.
+
+top:HashedMustVersionShape a sh:NodeShape ;
+    rdfs:label "Hashed values must be versioned"@en ;
+    sh:targetSubjectsOf top:integrityHash ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A value carrying top:integrityHash must be an immutable version (top:Versioned: top:validFrom + prov:specializationOf). You cannot hash a value and leave it mutable." .
+
+top:SignedMustVersionShape a sh:NodeShape ;
+    rdfs:label "Signed values must be versioned"@en ;
+    sh:targetSubjectsOf top:signedBy ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A value carrying top:signedBy must be an immutable version. You cannot sign a value and leave it mutable." .
+
+top:AttestationMustVersionShape a sh:NodeShape ;
+    rdfs:label "Attestations must be versioned"@en ;
+    sh:targetClass top:Attestation ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A top:Attestation is a committed, signed declaration and must be an immutable version." .
+
+top:StatusChangeMustVersionShape a sh:NodeShape ;
+    rdfs:label "Status changes must be versioned"@en ;
+    sh:targetClass top:StatusChange ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A top:StatusChange is the audit event of a transition and must be an immutable version." .
+
+
+# --- Tier-1 lifecycle calibration: in-progress evidence warns (soft) ---
+# A draft Document/Log/Credential is legitimately mutable until it is
+# committed; warn (not fail) until it carries a valid-time start. Once
+# hashed or signed, the hard shapes above take over at sh:Violation.
+# Direct property check (not sh:node) so the result stays at Warning.
+
+top:EvidenceShouldVersionShape a sh:NodeShape ;
+    rdfs:label "Evidence should be versioned once committed"@en ;
+    sh:targetClass top:Document, top:Log, top:Credential ;
+    sh:property [
+        sh:path top:validFrom ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "This evidentiary value is not yet a version. Drafts may stay mutable; once finalized (and certainly once hashed or signed) it must be versioned (top:Versioned with top:validFrom)." ;
+    ] .
 
 
 # === End of TOP Core OWL/SHACL ===

@@ -28,6 +28,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0018](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline) | 2026-05-13 | Adopt the six-stage ontology pipeline as TOP's build discipline | Accepted |
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
 | [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Accepted (resolves ADR-0018 forward-looking note) |
+| [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
 
 ---
 
@@ -897,6 +898,179 @@ CV-layer context routing for the *Subject* homonym: in human research, *Subject*
 ### Status
 
 Accepted. The Organism leaf lands in `taxonomy/taxonomy.ttl` and `core/v1/shapes.ttl` alongside this ADR; the count references in README.md, taxonomy.md, governance/extension-contract.md, and core/v1/index.html update from 28 to 29.
+
+## ADR-0021: Bitemporal model — valid time and transaction time on Core
+
+**Date:** 2026-06-19 · **Status:** Accepted (2026-06-20) · **Extends:** [ADR-0001](#adr-0001-temporal-and-prov-native-at-the-foundation), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer) · **Refs:** [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof), [ADR-0015](#adr-0015-promote-facts-to-entities-no-bespoke-flags), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [first-principles.md § 4](../first-principles.md), [FIWARE lessons](planning/fiware-smart-models-lessons.md)
+
+> **Accepted 2026-06-20.** The maintainer ratified all four sign-off questions as recommended (see *Ratified decision*, below). The bitemporal vocabulary and Tier-1 enforcement land in `core/v1/shapes.ttl` alongside this acceptance. The proposal text below is retained as the reasoning of record.
+
+### Context
+
+ADR-0001 made temporal and PROV-O semantics native. What Core carries today is one timestamp axis, not two:
+
+- **`top:observedAt`** (Universal DNA, required exactly once, `xsd:dateTime`, Invariant). Its comment reads "observed *or recorded*" — and that conflation is the bug: "observed" leans to *valid time* (when a fact became true in the world), "recorded" leans to *transaction time* (when the system learned it). One property cannot honestly be both.
+- **`top:startTime` / `top:endTime`** on `top:Temporal` only — valid-time intervals, but only for activities, and only for the activity's own occurrence.
+
+So Core is **mono-temporal in practice**: it answers "what does the record say now," but not, independently, "what did we *know* at T" versus "what was *true* at T." Regulated audit needs both — the canonical "as we knew it at T₁, as it was valid at T₂" query. This is the differentiator over single-clock value-over-time catalogs (NGSI-LD streams, JSON-Schema model libraries such as FIWARE Smart Data Models); see the [FIWARE lessons note](planning/fiware-smart-models-lessons.md).
+
+Terms, fixed for this ADR: **valid time** — when a fact is true in the world; **transaction time** — when the system recorded it (append-only by nature); **bitemporal** — both axes, independently queryable.
+
+Prior art: SQL:2011 system-versioned + application-time tables; the NGSI-LD temporal interface (TOP already echoes it — `observedAt` is NGSI-LD-shaped); W3C PROV revision/invalidation (`prov:generatedAtTime`, `prov:invalidatedAtTime`, `prov:wasRevisionOf`, `prov:specializationOf`).
+
+### The pivot: entities are composed, so versioning is per-attribute
+
+The decisive design fact is a granularity mismatch:
+
+- **PROV-O entities are immutable, whole-thing snapshots.** A `prov:Entity` is a fixed aspect of a thing; any change mints a *new* entity linked by `prov:wasRevisionOf`. PROV's natural grain is the whole entity.
+- **NGSI-LD entities are the opposite** — dynamically composed bags of attributes, each updating independently, each carrying its own `observedAt` / `createdAt` / `modifiedAt`, queried per-attribute.
+
+If TOP versioned the *whole entity* on every field change (naive Option A, below), a patient whose weight, status, and address move on independent schedules would clone the entire entity each time — snapshot explosion — and discard the per-attribute history NGSI-LD gives for free.
+
+Resolution: **PROV-O is granularity-agnostic.** Apply the immutable-snapshot + revision semantics at the **attribute-instance** grain (which is *naturally* immutable — "weight = 80 kg, recorded March 5" never changes), and treat the NGSI-LD entity as a `prov:Collection` **composed at query time** from the currently-selected attribute instances. This *deepens* the PROV-O commitment (PROV now works at both the attribute-revision grain and the entity-composition grain) rather than walking it back.
+
+### Options
+
+**Option A — immutable versioned records (event-sourcing), whole-entity grain.** New immutable version per change; `prov:wasRevisionOf` chains; corrections append.
+- For: append-only audit fit (Part 11, GxP), one-to-one with PROV revision, per-version `integrityHash`.
+- Against: at *whole-entity* grain it snapshot-explodes against composed/streaming entities and discards per-attribute history.
+
+**Option B — dual intervals on the entity (SQL:2011).** `validFrom`/`validUntil` + `recordedFrom`/`recordedTo` on the entity.
+- For: textbook-clean, compact, both axes explicit.
+- Against: closing a transaction-time interval means *mutating* the prior row — the edit-in-place pattern append-only audit forbids; to stay honest you version anyway, collapsing toward A.
+
+**Option C — NGSI-LD per-attribute temporal.** Each attribute instance carries its own valid + system time; temporal queries per-attribute.
+- For: wire-compatible with the queued NGSI-LD profile; fine-grained; off-the-shelf brokers (Orion-LD, Scorpio, Stellio) implement the queries.
+- Against: each attribute reifies into its own node — heavier shapes; and *if used alone* it lacks A's append-only revision discipline and B's explicit valid-time interval.
+
+The real choice is **grain**, and no single option is complete on its own.
+
+### Recommended decision (for sign-off, not yet binding)
+
+**Adopt the attribute-grain synthesis: Option C's granularity + Option A's immutable append-only discipline + Option B's valid-time interval — with PROV revision as the semantics.**
+
+1. **Transaction time stays the universal anchor; `top:observedAt` is disambiguated to mean it.** Sharpen its definition to "when this attribute-version was recorded by the system." It stays required, Invariant, unchanged in shape — the `UniversalDNAShape` minimum does not move and no existing data breaks.
+2. **Valid time is Core-level but opt-in — not a fourth Universal DNA property.** Introduce `top:validFrom` / `top:validUntil` (`xsd:dateTime`, Invariant, mirroring `startTime`/`endTime`), governed by a *separate* opt-in `top:BitemporalShape` that targets only versioned attribute instances — **not** the always-on `UniversalDNAShape`.
+3. **Each tracked attribute-value-at-a-time is an immutable `prov:Entity` instance**, carrying: `observedAt` (transaction time), `validFrom`/`validUntil` (valid time), `prov:wasRevisionOf` → the prior instance *of that same attribute*, and `prov:specializationOf` → a stable attribute-slot identity. A correction appends a new instance and closes the prior with `prov:invalidatedAtTime`; nothing is mutated.
+4. **The entity is a `prov:Collection`**, reconstructed at query time by selecting, per attribute, the instance that satisfies the requested clock(s).
+
+This gives genuine bitemporality, preserves append-only audit, reuses PROV at the grain NGSI-LD actually works in, and still projects to NGSI-LD on the wire.
+
+### Triggering: which attributes get the treatment (semantic, not a manual switch)
+
+Per-attribute reification is the cost; it must land only where it earns its place. The trigger is **entailed by what an attribute declares about itself**, in three tiers, off by default otherwise:
+
+- **Tier 1 — structural entailment (automatic, Core-level, always-on).** An attribute carrying `top:integrityHash` or `top:signedBy`, or an entity that is a `top:Attestation` or `top:StatusChange`, **must** be an immutable version — you cannot hash or sign a value and then mutate it. No human tag required.
+- **Tier 2 — propagation along regulated edges.** Audit-criticality flows across Core verbs: an `top:Outcome` that `top:satisfiesConstraint` a `top:RegulatoryLaw` / `top:SafetyGuardrail`, or a `top:Constraint` with `severityLevel` MAJOR/CRITICAL or `enforcedBy` a regulator, pulls its targets into the audited set.
+- **Tier 3 — workflow-declared opt-in.** Domain attributes only the workflow knows are critical are marked by *tightening* Core per ADR-0019 (a Tightenable requirement of `BitemporalShape`). This is where "is patient weight a GxP field" is answered — in the clinical-research layer, not Core.
+- **Default-off** for everything else (high-frequency telemetry, derived/recomputable metrics): the current single `observedAt`, no version chain.
+
+Payoff of the attribute grain: one entity can carry a `signedBy` consent attribute on the full immutable chain *and* a lightweight streaming `heartRate` attribute at once — mixed sensitivity within one composed entity, each attribute getting exactly the treatment its semantics earn.
+
+### Tier-1 SHACL enforcement (recommended: hard)
+
+Tier 1 is the one part that is **always-on in Core** (the entailment "hash/signature ⇒ immutable" holds in every domain) and **enforced at `sh:Violation`** — a soft warning would let exactly the violation it guards against pass CI. Mechanism is SHACL Core, no SPARQL:
+
+```turtle
+# Presence of a cryptographic anchor SELECTS the node and REQUIRES the version contract.
+top:SignedOrHashedMustVersion a sh:NodeShape ;
+    sh:targetSubjectsOf top:integrityHash ;   # (a sibling shape targets top:signedBy)
+    sh:node top:BitemporalShape ;
+    sh:severity sh:Violation ;
+    sh:message "A value carrying top:integrityHash must be an immutable version (top:validFrom + prov:specializationOf). You cannot hash a value and leave it mutable." .
+```
+
+**Lifecycle calibration:** hard (`sh:Violation`) on the *committed* markers — `integrityHash`, `signedBy`, `top:Attestation`, `top:StatusChange`; soft (`sh:Warning`) on *in-progress* evidentiary types — a `top:Document` / `top:Evidence` not yet hashed or signed (a draft protocol is legitimately mutable), which auto-hardens the instant an anchor is attached. Keying off cryptographic markers, not `status` enum strings, keeps this robust (the `status` value set is open/Tightenable).
+
+**Named cost:** hard enforcement is **fail-closed at ingestion** — peer/legacy data (FHIR, USDM) carrying signatures/hashes but lacking the version apparatus is rejected at the boundary. That is correct (audit-bearing data should fail closed, not slip in half-modeled) but it relocates work to the Broker/projection layer, which must materialize `prov:specializationOf` + `validFrom` during the lift.
+
+### Implied SHACL (illustrative — lands only on acceptance)
+
+```turtle
+# Opt-in, NOT folded into UniversalDNAShape. Targets versioned attribute instances.
+top:BitemporalShape a sh:NodeShape ;
+    sh:property [ sh:path top:validFrom ; sh:datatype xsd:dateTime ;
+                  sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:message "A versioned value must state when its state became valid (top:validFrom)." ] ;
+    sh:property [ sh:path top:validUntil ; sh:datatype xsd:dateTime ; sh:maxCount 1 ;
+                  sh:message "top:validUntil is open (absent) for the currently-valid version." ] ;
+    sh:property [ sh:path prov:specializationOf ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:message "Every version must point at its stable attribute-slot identity (prov:specializationOf)." ] .
+```
+
+`top:observedAt` (transaction time) continues to come from the always-on `UniversalDNAShape`; `validFrom`/`validUntil` and the revision links come from this opt-in shape. New properties carry ADR-0019 flavors (interval bounds Invariant, like `startTime`/`endTime`).
+
+### Example as-of queries (the contract to ratify — Sign-off Question 3)
+
+Each query selects, per attribute, the right instance, then composes the entity view.
+
+```sparql
+# (i) Transaction-time slice — "as we knew it on 2026-03-01" (latest instance recorded by then)
+SELECT ?slot ?value WHERE {
+  ?v prov:specializationOf ?slot ; top:observedAt ?tx ; top:value ?value .
+  FILTER (?tx <= "2026-03-01T00:00:00Z"^^xsd:dateTime)
+  FILTER NOT EXISTS { ?v2 prov:specializationOf ?slot ; top:observedAt ?tx2 .
+                      FILTER (?tx2 > ?tx && ?tx2 <= "2026-03-01T00:00:00Z"^^xsd:dateTime) }
+}
+
+# (ii) Valid-time slice — "as it was true on 2026-02-15" (regardless of when recorded)
+SELECT ?slot ?value WHERE {
+  ?v prov:specializationOf ?slot ; top:validFrom ?vf ; top:value ?value .
+  OPTIONAL { ?v top:validUntil ?vu }
+  FILTER (?vf <= "2026-02-15T00:00:00Z"^^xsd:dateTime && (!BOUND(?vu) || ?vu > "2026-02-15T00:00:00Z"^^xsd:dateTime))
+}
+
+# (iii) Bitemporal point — "as we knew it on 2026-03-01, about what was valid on 2026-02-15"
+#       = (i) and (ii) combined: filter the per-attribute instances on both clocks, then compose.
+```
+
+### PROV mapping (attribute grain — Sign-off Question 4 context)
+
+| Bitemporal concept | PROV-O term |
+| --- | --- |
+| instance minted (transaction-time start) | `prov:generatedAtTime` (≈ `top:observedAt`) |
+| instance superseded (transaction-time end) | `prov:invalidatedAtTime` |
+| this instance revises the prior | `prov:wasRevisionOf` |
+| stable cross-version attribute-slot | `prov:specializationOf` |
+| entity as a composition of current instances | `prov:Collection` / `prov:hadMember` |
+| valid-time interval | no native PROV peer — TOP-local (`top:validFrom`/`validUntil`) |
+
+The one honest gap: PROV has no valid-time-of-a-fact term, so `validFrom`/`validUntil` are TOP-local with no `subPropertyOf prov:*` — a declared absence, consistent with how Constraint leaves have no PROV peer.
+
+### Consequences (if Accepted as recommended)
+
+- **Bitemporality without disturbing Universal DNA.** The always-on minimum is unchanged; mono-temporal data stays valid; only opted-in attributes carry the second axis.
+- **Audit stays append-only**, and **`observedAt` gains one honest meaning** (transaction time).
+- **PROV-O deepens** — it now governs both attribute revisions and entity composition.
+- **NGSI-LD projection preserved**; mixed sensitivity within one entity becomes expressible.
+- **Cost is real and bounded:** reification per tracked attribute, paid only where Tiers 1–3 fire; ingestion fail-closed pushes the lift to the Broker.
+
+### What this ADR does NOT do
+
+- It does **not** land any class, property, or shape. Nothing changes in `core/v1/shapes.ttl` until Accepted.
+- It does **not** make valid time mandatory or add a fourth Universal DNA property.
+- It does **not** author the temporal query layer, the Broker lift, or the linter rule for the triggering tiers — each is a follow-on PR.
+- It does **not** fix the marker mechanism for "versioned" / "tracked" (a `top:Versioned` class vs. a flavor vs. workflow opt-in) — a design detail for the implementing PR.
+
+### Sign-off questions (the actual decision)
+
+1. **Representation & grain.** Accept the attribute-grain synthesis (Option C grain + A discipline + B valid-time interval, PROV revision, append-only)? Or pure A (whole-entity), B, or C?
+2. **Valid-time scope.** Core-level but **opt-in** via `top:BitemporalShape` (recommended), promote valid time into Universal DNA on `top:CommonEntity` (universal, but changes the always-on contract), or keep it domain-only on `top:Temporal` (status quo, not truly bitemporal)?
+3. **As-of contract.** Are query patterns (i)/(ii)/(iii) the complete set to support?
+4. **Tier-1 enforcement.** Enforce structural entailment at **`sh:Violation`** (recommended — fail-closed) or **`sh:Warning`** (advisory)? And confirm the lifecycle calibration (hard on cryptographic/event markers, soft on in-progress evidentiary types).
+
+### Ratified decision (2026-06-20)
+
+All four questions accepted as recommended:
+
+1. **Representation & grain.** The attribute-grain synthesis — Option C's per-attribute granularity + Option A's immutable append-only PROV-revision discipline + Option B's `validFrom` / `validUntil` interval.
+2. **Valid-time scope.** Core-level but **opt-in** via `top:BitemporalShape`; Universal DNA is unchanged (`observedAt` stays the always-on transaction-time anchor).
+3. **As-of contract.** Patterns (i) transaction-time slice, (ii) valid-time slice, (iii) bitemporal point are the complete set for now.
+4. **Tier-1 enforcement.** `sh:Violation` (fail-closed), with the lifecycle calibration: hard on the committed markers (`integrityHash`, `signedBy`, `top:Attestation`, `top:StatusChange`); soft (`sh:Warning`) on in-progress evidentiary types (`top:Document`, `top:Log`, `top:Credential`) until they acquire an anchor.
+
+### Status
+
+Accepted 2026-06-20. The bitemporal vocabulary (`top:validFrom`, `top:validUntil`, `top:Versioned`), `top:BitemporalShape`, and the Tier-1 enforcement shapes land in `core/v1/shapes.ttl` alongside this acceptance, with a versioned walkthrough under `core/v1/walkthroughs/`. The first-principles § 4 "(Proposed)" marker is removed. Out of scope here (follow-on work): Tier-2 propagation and the Tier-3 linter rule, the temporal query layer, and the Broker ingestion lift.
 
 ---
 

@@ -206,7 +206,7 @@
   <li><strong>Workflow-bound entity boundaries.</strong> We model entities that represent real-world events or "moments in time," ensuring the digital twin mirrors the physical process.</li>
   <li><strong>Aggressive simplification of the foundation.</strong> We follow the rule that <strong>"Less is the win."</strong> A smaller, more general foundation is easier for humans to navigate and easier for AI to ground.</li>
   <li><strong>Standards alignment as a Projection.</strong> We treat regulatory standards (CDISC, FHIR, ISO, GS1) as "outputs" or "views" rather than constraints on the data's internal shape.</li>
-  <li><strong>Native Temporal and Provenance logic.</strong> We bake time (<span class="inline">validFrom</span>/<span class="inline">validUntil</span>) and origin (W3C PROV) into the property itself, making history a first-class citizen.</li>
+  <li><strong>Bitemporal, provenance-native by construction.</strong> We bake two clocks &mdash; valid time (<span class="inline">validFrom</span>/<span class="inline">validUntil</span>) and transaction time (<span class="inline">observedAt</span>) &mdash; and origin (W3C PROV) into the property itself, making history a first-class, non-repudiable citizen.</li>
   <li><strong>Specialization as Content, not Shape.</strong> We use universal patterns (e.g., <span class="inline">Activity</span> + <span class="inline">Task</span>) to handle industry-specific data, rather than creating hundreds of custom entity types.</li>
 </ul>
 
@@ -272,6 +272,8 @@
 <p>Most systems treat history as a "log" and ownership as a "flag." In TOP, time and origin are baked into the property itself. We don't "audit" the data; the data <em>is</em> the audit.</p>
 
 <ol>
+  <li><strong>Bitemporal by construction.</strong> TOP carries two independent clocks, not one &mdash; <em>valid time</em> (when a fact was true in the world) and <em>transaction time</em> (when the system recorded it) &mdash; and both are independently queryable. TOP answers "as we knew it at T<sub>1</sub>" and "as it was true at T<sub>2</sub>" as <em>separate</em> questions. That is the line between an audit system of record and a value-over-time catalog: single-clock temporal streams and JSON-Schema model catalogs record how values changed, but cannot separate the two clocks or guarantee non-repudiation. Specified in ADR-0021.</li>
+
   <li><strong>NGSI-LD Temporal Properties.</strong> Every attribute that an operator sees change (Status, Phase, Location) is a temporal stream, not a flat value.
     <ul>
       <li><span class="inline">validFrom</span> / <span class="inline">validUntil</span>: The "Real World" clock. When was this participant <em>actually</em> on treatment?</li>
@@ -294,6 +296,8 @@
       </tbody>
     </table>
   </li>
+
+  <li><strong>Audit is entailed, not optional.</strong> A value carrying a cryptographic anchor (<span class="inline">integrityHash</span>, <span class="inline">signedBy</span>) must be an immutable version, and SHACL enforces it: you cannot sign or hash a value and then mutate it. Corrections are PROV revisions (<span class="inline">prov:wasRevisionOf</span> / <span class="inline">prov:specializationOf</span>) &mdash; append-only, never edited in place.</li>
 </ol>
 
 <blockquote class="pull-quote">
