@@ -17,12 +17,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "ddf-ra-v4.0.0", "USDM_CT.xlsx")
 OUT = os.path.join(HERE, "ddf-ra-v4.0.0", "usdm_ct.json")
 SHEET = "DDF Entities&Attributes"
+VSHEET = "DDF valid value sets"
 # 0-based column indices in that sheet
 C_ENTITY, C_ROLE, C_LDM, C_CODE, C_PREF, C_DEFN = 1, 2, 4, 5, 6, 8
+# 0-based column indices in the value-sets sheet (data after the row-6 header)
+V_ENT, V_ATTR, V_CL, V_CONCEPT, V_PREF, V_DEFN = 1, 2, 3, 5, 6, 8
 
 
 def clean(v):
     return " ".join(str(v).split()) if v is not None else ""
+
+
+def value_sets(wb):
+    """codelist C-code -> {entity, attr, values:[{ccode, pref, defn}]}."""
+    codelists = {}
+    for row in wb[VSHEET].iter_rows(min_row=7, values_only=True):
+        cl, concept = clean(row[V_CL]), clean(row[V_CONCEPT])
+        if not cl or not concept:
+            continue
+        cer = codelists.setdefault(cl, {"entity": clean(row[V_ENT]),
+                                        "attr": clean(row[V_ATTR]), "values": []})
+        cer["values"].append({"ccode": concept, "pref": clean(row[V_PREF]),
+                              "defn": clean(row[V_DEFN])})
+    return codelists
 
 
 def main():
@@ -40,11 +57,12 @@ def main():
             entities[ent] = rec
         elif role == "Attribute" and ldm:
             attributes[f"{ent}.{ldm}"] = rec
-    data = {"entities": entities, "attributes": attributes}
+    data = {"entities": entities, "attributes": attributes, "codelists": value_sets(wb)}
     with open(OUT, "w") as f:
         json.dump(data, f, indent=1, sort_keys=True, ensure_ascii=False)
         f.write("\n")
-    print(f"wrote {OUT}: {len(entities)} entities, {len(attributes)} attributes")
+    print(f"wrote {OUT}: {len(entities)} entities, {len(attributes)} attributes, "
+          f"{len(data['codelists'])} codelists")
 
 
 if __name__ == "__main__":
