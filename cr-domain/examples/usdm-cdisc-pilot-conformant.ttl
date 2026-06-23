@@ -1,0 +1,99 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ============================================================================
+# WORKED EXAMPLE — a USDM protocol landing in cr-core (the "protocol -> KG" story).
+#
+# Content mirrors the public CDISC Pilot study (LZZT: xanomeline in mild-to-moderate
+# Alzheimer's) — representative values, not a verbatim copy. Each entity is annotated
+# with the USDM v4.0 source class it derives from, per crosswalks/usdm-to-cr.ttl. This
+# is the TOP-grounded *project knowledge graph* a constructor would build from the
+# protocol's USDM/M11 representation.
+#
+# *** This is a STATIC, hand-authored reference ILLUSTRATION — a stand-in, not a
+#     machine-ingested graph. The live, deployable proof-of-concept that ingests a
+#     real USDM/M11 protocol and serves it as a running NGSI-LD knowledge graph on the
+#     AWS Garnet Framework is built in a SEPARATE repository (out of scope for this
+#     reference). This file exists to prove the model + crosswalk are coherent and
+#     validate green end-to-end. ***
+# ============================================================================
+
+ex:cp-curator a hcls:Person, prov:Agent ; rdfs:label "Protocol constructor (illustrative)" .
+
+# --- Study identification (USDM Study / Organization / StudySite) ---
+ex:cp-sponsor a cr:Sponsor   ; rdfs:label "Sponsor (illustrative)" .          # <- usdm:Organization
+ex:cp-site    a cr:StudySite ; rdfs:label "Investigative site 701" .          # <- usdm:StudySite
+ex:cp-study a cr:Study ; rdfs:label "CDISC Pilot (LZZT) — xanomeline in Alzheimer's" ;  # <- usdm:Study
+    cr:sponsoredBy ex:cp-sponsor ; cr:conductedAt ex:cp-site ;
+    cr:hasArm ex:cp-arm-pbo, ex:cp-arm-low, ex:cp-arm-high ;
+    cr:hasProtocolVersion ex:cp-pv .
+
+# --- Protocol version (USDM StudyVersion) — bitemporal evidence ---
+ex:cp-pv a cr:ProtocolVersion ; rdfs:label "CDISCPILOT01 protocol v1.0" ;     # <- usdm:StudyVersion
+    cr:hasEligibilityCriterion ex:cp-elig-dx, ex:cp-elig-age ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cp-curator .
+
+# --- Arms (USDM StudyArm) ---
+ex:cp-arm-pbo  a cr:Arm ; rdfs:label "Placebo" .                              # <- usdm:StudyArm
+ex:cp-arm-low  a cr:Arm ; rdfs:label "Xanomeline low dose" .
+ex:cp-arm-high a cr:Arm ; rdfs:label "Xanomeline high dose" .
+
+# --- Eligibility (USDM EligibilityCriterion) ---
+ex:cp-elig-dx  a cr:EligibilityCriterion ; rdfs:label "Mild-to-moderate Alzheimer's (MMSE 10–23)" . # <- usdm:EligibilityCriterion
+ex:cp-elig-age a cr:EligibilityCriterion ; rdfs:label "Age >= 50 years" .
+
+# --- Objective / analysis (USDM Endpoint / Estimand) ---
+ex:cp-endpoint a cr:Endpoint ; rdfs:label "ADAS-Cog change from baseline at Week 24" .  # <- usdm:Endpoint
+ex:cp-estimand a cr:Estimand ; rdfs:label "Difference vs placebo in mean ADAS-Cog change (treatment-policy)" . # <- usdm:Estimand
+
+# --- Schedule of Activities (USDM ScheduleTimeline / Encounter / ScheduledActivityInstance / Timing) ---
+ex:cp-tl a cr:ScheduleTimeline ; rdfs:label "CDISCPILOT01 SoA (v1)" ;         # <- usdm:ScheduleTimeline
+    cr:ofProtocolVersion ex:cp-pv ;
+    cr:hasPlannedEncounter ex:cp-enc-scrn, ex:cp-enc-base, ex:cp-enc-w24 ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cp-curator .
+
+ex:cp-enc-scrn a cr:PlannedEncounter ; rdfs:label "Screening" ; cr:timing ex:cp-t-scrn .   # <- usdm:Encounter
+ex:cp-enc-base a cr:PlannedEncounter ; rdfs:label "Baseline (Week 0)" ; cr:timing ex:cp-t-base .
+ex:cp-enc-w24  a cr:PlannedEncounter ; rdfs:label "Week 24 (primary)" ; cr:timing ex:cp-t-w24 ;
+    cr:hasPlannedActivity ex:cp-pa-adas .
+
+ex:cp-pa-adas a cr:PlannedActivity ; rdfs:label "ADAS-Cog assessment" ; cr:timing ex:cp-t-adas . # <- usdm:ScheduledActivityInstance
+
+ex:cp-t-scrn a cr:Timing ; cr:timingType "before" ; cr:offsetDays 14 ; cr:relativeTo ex:cp-enc-base ; cr:window ex:cp-w3 . # <- usdm:Timing
+ex:cp-t-base a cr:Timing ; cr:timingType "fixed"  ; cr:offsetDays 0   ; cr:relativeTo ex:cp-enc-base ; cr:window ex:cp-w0 .
+ex:cp-t-w24  a cr:Timing ; cr:timingType "after"  ; cr:offsetDays 168 ; cr:relativeTo ex:cp-enc-base ; cr:window ex:cp-w7 .
+ex:cp-t-adas a cr:Timing ; cr:timingType "fixed"  ; cr:offsetDays 0   ; cr:relativeTo ex:cp-enc-w24 .
+ex:cp-w0 a cr:Window ; cr:windowLowerDays 0  ; cr:windowUpperDays 0 .
+ex:cp-w3 a cr:Window ; cr:windowLowerDays -3 ; cr:windowUpperDays 3 .
+ex:cp-w7 a cr:Window ; cr:windowLowerDays -7 ; cr:windowUpperDays 7 .
+
+# --- Participant projection (one subject; windows resolved off the baseline anchor) ---
+ex:cp-subj a cr:StudySubject ; rdfs:label "CDISCPILOT01-701-0001" .
+ex:cp-sched a cr:ParticipantSchedule ; rdfs:label "Subject 0001 schedule" ;
+    cr:fromTimeline ex:cp-tl ; cr:scheduleForSubject ex:cp-subj ;
+    cr:anchorDate "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    cr:hasPlannedVisit ex:cp-pvis-base, ex:cp-pvis-w24 ;
+    top:observedAt "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cp-curator .
+
+ex:cp-pvis-base a cr:PlannedVisit ; cr:projectsEncounter ex:cp-enc-base ;
+    cr:targetDate "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2025-10-06T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2025-10-06T23:59:59Z"^^xsd:dateTime .
+ex:cp-pvis-w24 a cr:PlannedVisit ; cr:projectsEncounter ex:cp-enc-w24 ;
+    cr:targetDate "2026-03-23T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-03-16T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2026-03-30T23:59:59Z"^^xsd:dateTime .
+
+# --- Universal DNA (TOP Core): identifier + status for the bitemporal entities ---
+ex:cp-pv    top:identifier "urn:cdiscpilot01:pv1"   ; top:status "active" .
+ex:cp-tl    top:identifier "urn:cdiscpilot01:soa1"  ; top:status "active" .
+ex:cp-sched top:identifier "urn:cdiscpilot01:sched-0001" ; top:status "active" .

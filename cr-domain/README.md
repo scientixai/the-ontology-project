@@ -108,6 +108,11 @@ This repo builds a **reference knowledge graph (an asset)**, not a runtime or ag
   attestation fabric.
 - **`demo/` is a projection demonstration only** — it runs the in-scope projection queries
   over a native example graph; it constructs nothing.
+- **Worked examples are static reference illustrations, not a running deployment.** A live,
+  deployable proof-of-concept that ingests a USDM/M11 protocol and serves it as a running
+  NGSI-LD knowledge graph (e.g. on the AWS Garnet Framework) is built in a **separate
+  repository** — out of scope here. `examples/usdm-cdisc-pilot-conformant.ttl` shows the
+  TOP-grounded project graph such a constructor would produce, validated against the model.
 
 The reference serves agents by being excellent **grounding** (complete model, constraints,
 projections, crosswalks, examples) — not by containing the agents or any runtime.
