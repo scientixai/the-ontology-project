@@ -107,25 +107,36 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Biospecimen &amp; LIMS custody</h1><p class='lead'>Track a specimen&#8217;s chain of custody as a bitemporal state machine, its aliquot lineage, and assays &mdash; so any result traces back to the blood draw.</p><h2>Operator screen &mdash; Blood draw</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Specimen &mdash; admissibility at the bench<span class="badge">LIMS</span><div class="scr-sub">Subject BD-S-001 &middot; one entity, fully expanded</div></div><div class="chk-intro">Every check reads a field of the <b>single object</b> on the right (its <code>reads</code> path) &mdash; the UI issues one query, never a recursive lookup.</div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Participant verified &amp; consent current</b><span class="who">Tom Nguyen, RN</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Subject</td><td>BD-S-001 (pseudonymous)</td></tr><tr><td>Consent for</td><td><code>consent.forSubject == urn:bd-subj</code></td></tr><tr><td>Consent current</td><td><code>consent.status == &quot;active&quot;</code></td></tr><tr><td>reads (from the one object)</td><td><code>consent.entity</code></td></tr><tr><td>gated by</td><td><code>cr:InformedConsentShape (bitemporal)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Phlebotomist authorized for venipuncture</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Delegate</td><td><code>authority.delegate == urn:bd-phleb</code></td></tr><tr><td>Capability</td><td><code>authority.capability == urn:bd-cap-venip</code></td></tr><tr><td>Credential</td><td><code>authority.credential == urn:bd-cred-phleb</code></td></tr><tr><td>reads (from the one object)</td><td><code>authority.entity</code></td></tr><tr><td>gated by</td><td><code>cr:CapabilityDelegationShape (hard)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Drawn after the ECG (ordering held)</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>ECG act</td><td><code>afterAct.observedAt == 2026-03-02T09:00</code></td></tr><tr><td>Draw</td><td><code>observedAt == 2026-03-02T11:00</code></td></tr><tr><td>Order</td><td>&#10003; 09:00 &lt; 11:00</td></tr><tr><td>reads (from the one object)</td><td><code>afterAct.entity + (root).observedAt</code></td></tr><tr><td>gated by</td><td><code>cr:ActivityOrderingShape</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Specimen collected &amp; custody opened</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Primary specimen</td><td><code>specimen.id == urn:bd-spec</code></td></tr><tr><td>Collected (valid)</td><td><code>(root).observedAt</code></td></tr><tr><td>Recorded (txn)</td><td><code>(root).createdAt</code></td></tr><tr><td>reads (from the one object)</td><td><code>specimen.entity + (root)</code></td></tr><tr><td>gated by</td><td><code>cr:SpecimenOriginShape + cr:CustodyEventShape</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Custody current-state = Published</b><span class="who">Raj Patel, Lab Technician</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Chain</td><td>Received &rarr; Verified &rarr; Published</td></tr><tr><td>Current</td><td><code>specimen.custodyChain[*].custodyState</code> &#8715; <span class='pill ok'>Published</span></td></tr><tr><td>reads (from the one object)</td><td><code>specimen.custodyChain</code></td></tr><tr><td>gated by</td><td><code>bitemporal custody current-state derivation</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Aliquot &amp; result trace to the draw</b><span class="who">Raj Patel, Lab Technician</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Aliquot</td><td><code>specimen.aliquot == urn:bd-aliquot</code></td></tr><tr><td>Result</td><td><code>result.value == &quot;1:320&quot;</code></td></tr><tr><td>Lineage</td><td>result &rarr; derivedFromCollection &rarr; this draw</td></tr><tr><td>reads (from the one object)</td><td><code>specimen.aliquot + result.entity</code></td></tr><tr><td>gated by</td><td><code>prov:wasDerivedFrom* (cr:derivedFromCollection)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Audit trail present (ALCOA++)</b><span class="who">System of record</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Every inlined entity carries</td><td><code>observedAt + createdAt + status</code></td></tr><tr><td>Reconstructable</td><td>&#10003; as-of any date, from this one object</td></tr><tr><td>reads (from the one object)</td><td><code>(every entity in the object)</code></td></tr><tr><td>gated by</td><td><code>top:BitemporalProvShape</code></td></tr></table></details></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:bd-coll?options=sysAttrs&amp;join=inline&amp;joinLevel=3
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Biospecimen &amp; LIMS custody</h1><p class='lead'>Track a specimen&#8217;s chain of custody as a bitemporal state machine, its aliquot lineage, and assays &mdash; so any result traces back to the blood draw.</p><h2>Operator screen &mdash; Blood draw</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Specimen &mdash; admissibility at the bench<span class="badge">LIMS</span><div class="scr-sub">Subject BD-S-001 &middot; one entity, fully expanded</div></div><div class="chk-intro">Every check reads a field of the <b>single object</b> on the right (its <code>reads</code> path) &mdash; the UI issues one query, never a recursive lookup.</div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Participant verified &amp; consent current</b><span class="who">Tom Nguyen, RN</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Subject</td><td>BD-S-001 (pseudonymous)</td></tr><tr><td>Consent for</td><td><code>consent.forSubject == urn:bd-subj</code></td></tr><tr><td>Consent current</td><td><code>consent.status == &quot;active&quot;</code></td></tr><tr><td>reads (from the one object)</td><td><code>consent.entity</code></td></tr><tr><td>gated by</td><td><code>cr:InformedConsentShape (bitemporal)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Phlebotomist authorized for venipuncture</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Delegate</td><td><code>authority.delegate == urn:bd-phleb</code></td></tr><tr><td>Capability</td><td><code>authority.capability == urn:bd-cap-venip</code></td></tr><tr><td>Credential</td><td><code>authority.credential == urn:bd-cred-phleb</code></td></tr><tr><td>reads (from the one object)</td><td><code>authority.entity</code></td></tr><tr><td>gated by</td><td><code>cr:CapabilityDelegationShape (hard)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Drawn after the ECG (ordering held)</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>ECG act</td><td><code>afterAct.observedAt == 2026-03-02T09:00</code></td></tr><tr><td>Draw</td><td><code>observedAt == 2026-03-02T11:00</code></td></tr><tr><td>Order</td><td>&#10003; 09:00 &lt; 11:00</td></tr><tr><td>reads (from the one object)</td><td><code>afterAct.entity + (root).observedAt</code></td></tr><tr><td>gated by</td><td><code>cr:ActivityOrderingShape</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Specimen collected &amp; custody opened</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Primary specimen</td><td><code>specimen.id == urn:bd-spec</code></td></tr><tr><td>Collected (valid)</td><td><code>(root).observedAt</code></td></tr><tr><td>Recorded (txn)</td><td><code>(root).recordedAt</code></td></tr><tr><td>reads (from the one object)</td><td><code>specimen.entity + (root)</code></td></tr><tr><td>gated by</td><td><code>cr:SpecimenOriginShape + cr:CustodyEventShape</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Custody current-state = Published</b><span class="who">Raj Patel, Lab Technician</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Chain</td><td>Received &rarr; Verified &rarr; Published</td></tr><tr><td>Current</td><td><code>specimen.custodyChain[*].custodyState</code> &#8715; <span class='pill ok'>Published</span></td></tr><tr><td>reads (from the one object)</td><td><code>specimen.custodyChain</code></td></tr><tr><td>gated by</td><td><code>bitemporal custody current-state derivation</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Aliquot &amp; result trace to the draw</b><span class="who">Raj Patel, Lab Technician</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Aliquot</td><td><code>specimen.aliquot == urn:bd-aliquot</code></td></tr><tr><td>Result</td><td><code>result.value == &quot;1:320&quot;</code></td></tr><tr><td>Lineage</td><td>result &rarr; derivedFromCollection &rarr; this draw</td></tr><tr><td>reads (from the one object)</td><td><code>specimen.aliquot + result.entity</code></td></tr><tr><td>gated by</td><td><code>prov:wasDerivedFrom* (cr:derivedFromCollection)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Audit trail present (ALCOA++)</b><span class="who">System of record</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Every inlined entity carries</td><td><code>observedAt + createdAt + status</code></td></tr><tr><td>Reconstructable</td><td>&#10003; as-of any date, from this one object</td></tr><tr><td>reads (from the one object)</td><td><code>(every entity in the object)</code></td></tr><tr><td>gated by</td><td><code>top:BitemporalProvShape</code></td></tr></table></details></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:bd-coll?join=inline&amp;joinLevel=3
 Accept: application/ld+json
 Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
 
-# The projection is bounded by the registered view cr:BloodDrawAdmissibilityView:
-# forward edges (subject, consent, delegation, ordering, specimen) are served by
-# the broker&#x27;s native linked-entity `join`; the inverse edges (custody chain,
-# aliquot, result — they point AT the collection) are served by that view as a
-# materialized projection. Either way: ONE call, one self-contained object.</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape, <b>zero recursive lookups</b></div><pre class="json">{
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked Entity
+# as the `entity` sub-attribute of its Relationship (clause 4.5.23.2, Table
+# 5.2.6-2); joinLevel=3 follows relationships forward to depth 3 (clause 4.5.23.1
+# — forward, via each Relationship&#x27;s `object`). Every fact is forward-reachable
+# from the collection act, so this is ONE stock-broker call, no recursive lookups.
+# cr:BloodDrawAdmissibilityView is the attribute projection (the `pick`/`attrs`
+# the screen consumes) over that forward neighbourhood.</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape, <b>zero recursive lookups</b></div><pre class="json">{
   &quot;id&quot;: &quot;urn:bd-coll&quot;,
   &quot;type&quot;: &quot;StudyEvent&quot;,
   &quot;name&quot;: {
     &quot;type&quot;: &quot;Property&quot;,
     &quot;value&quot;: &quot;Blood draw \u2014 Cycle 1 Day 1, BD-S-001&quot;
   },
-  &quot;identifier&quot;: &quot;urn:bd-coll&quot;,
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:bd-coll&quot;
+  },
   &quot;observedAt&quot;: &quot;2026-03-02T11:00:00+00:00&quot;,
-  &quot;createdAt&quot;: &quot;2026-03-02T11:05:00+00:00&quot;,
-  &quot;status&quot;: &quot;active&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-03-02T11:05:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
   &quot;forSubject&quot;: {
     &quot;type&quot;: &quot;Relationship&quot;,
     &quot;object&quot;: &quot;urn:bd-subj&quot;,
@@ -160,10 +171,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
         &quot;type&quot;: &quot;Property&quot;,
         &quot;value&quot;: &quot;Informed consent \u2014 BD-S-001&quot;
       },
-      &quot;identifier&quot;: &quot;urn:bd-consent&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:bd-consent&quot;
+      },
       &quot;observedAt&quot;: &quot;2026-02-05T09:45:00+00:00&quot;,
-      &quot;createdAt&quot;: &quot;2026-02-05T09:50:00+00:00&quot;,
-      &quot;status&quot;: &quot;active&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-02-05T09:50:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
       &quot;forSubject&quot;: {
         &quot;type&quot;: &quot;Relationship&quot;,
         &quot;object&quot;: &quot;urn:bd-subj&quot;,
@@ -198,10 +218,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
             &quot;type&quot;: &quot;Property&quot;,
             &quot;value&quot;: &quot;Delegation: consent -&gt; Nguyen&quot;
           },
-          &quot;identifier&quot;: &quot;urn:bd-deleg-consent&quot;,
+          &quot;identifier&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;urn:bd-deleg-consent&quot;
+          },
           &quot;observedAt&quot;: &quot;2026-02-03T08:30:00+00:00&quot;,
-          &quot;createdAt&quot;: &quot;2026-02-03T08:31:00+00:00&quot;,
-          &quot;status&quot;: &quot;active&quot;
+          &quot;recordedAt&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;2026-02-03T08:31:00+00:00&quot;
+          },
+          &quot;status&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;active&quot;
+          }
         }
       }
     }
@@ -216,10 +245,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
         &quot;type&quot;: &quot;Property&quot;,
         &quot;value&quot;: &quot;Delegation: venipuncture -&gt; Smith&quot;
       },
-      &quot;identifier&quot;: &quot;urn:bd-deleg-venip&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:bd-deleg-venip&quot;
+      },
       &quot;observedAt&quot;: &quot;2026-01-28T00:00:00+00:00&quot;,
-      &quot;createdAt&quot;: &quot;2026-01-28T09:00:00+00:00&quot;,
-      &quot;status&quot;: &quot;active&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-28T09:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
       &quot;delegate&quot;: {
         &quot;type&quot;: &quot;Relationship&quot;,
         &quot;object&quot;: &quot;urn:bd-phleb&quot;,
@@ -313,10 +351,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
           &quot;entity&quot;: {
             &quot;id&quot;: &quot;urn:bd-ce-pub&quot;,
             &quot;type&quot;: &quot;CustodyEvent&quot;,
-            &quot;identifier&quot;: &quot;urn:bd-ce-pub&quot;,
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:bd-ce-pub&quot;
+            },
             &quot;observedAt&quot;: &quot;2026-03-04T09:00:00+00:00&quot;,
-            &quot;createdAt&quot;: &quot;2026-03-04T09:01:00+00:00&quot;,
-            &quot;status&quot;: &quot;active&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-03-04T09:01:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;active&quot;
+            },
             &quot;fromState&quot;: {
               &quot;type&quot;: &quot;Property&quot;,
               &quot;value&quot;: &quot;Verified&quot;
@@ -333,10 +380,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
           &quot;entity&quot;: {
             &quot;id&quot;: &quot;urn:bd-ce-recv&quot;,
             &quot;type&quot;: &quot;CustodyEvent&quot;,
-            &quot;identifier&quot;: &quot;urn:bd-ce-recv&quot;,
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:bd-ce-recv&quot;
+            },
             &quot;observedAt&quot;: &quot;2026-03-02T11:30:00+00:00&quot;,
-            &quot;createdAt&quot;: &quot;2026-03-02T11:31:00+00:00&quot;,
-            &quot;status&quot;: &quot;superseded&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-03-02T11:31:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;superseded&quot;
+            },
             &quot;fromState&quot;: {
               &quot;type&quot;: &quot;Property&quot;,
               &quot;value&quot;: &quot;SampleDue&quot;
@@ -353,10 +409,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
           &quot;entity&quot;: {
             &quot;id&quot;: &quot;urn:bd-ce-verif&quot;,
             &quot;type&quot;: &quot;CustodyEvent&quot;,
-            &quot;identifier&quot;: &quot;urn:bd-ce-verif&quot;,
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:bd-ce-verif&quot;
+            },
             &quot;observedAt&quot;: &quot;2026-03-03T10:00:00+00:00&quot;,
-            &quot;createdAt&quot;: &quot;2026-03-03T10:01:00+00:00&quot;,
-            &quot;status&quot;: &quot;superseded&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-03-03T10:01:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;superseded&quot;
+            },
             &quot;fromState&quot;: {
               &quot;type&quot;: &quot;Property&quot;,
               &quot;value&quot;: &quot;ToBeVerified&quot;
@@ -396,10 +461,19 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
         &quot;type&quot;: &quot;Property&quot;,
         &quot;value&quot;: &quot;NAb titer = 1:320&quot;
       },
-      &quot;identifier&quot;: &quot;urn:bd-result&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:bd-result&quot;
+      },
       &quot;observedAt&quot;: &quot;2026-03-04T12:00:00+00:00&quot;,
-      &quot;createdAt&quot;: &quot;2026-03-04T14:00:00+00:00&quot;,
-      &quot;status&quot;: &quot;active&quot;
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-03-04T14:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
     }
   }
 }</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:AnalysisRequest</code></td><td>Analysis Request</td><td class='clo'>Temporal</td><td>Binds an AnalysisService to a Specimen (the order).</td></tr><tr><td><code>cr:AnalysisService</code></td><td>Analysis Service</td><td class='clo'>Evidence</td><td>Catalog definition of a test/assay (e.g. a biomarker assay).</td></tr><tr><td><code>cr:AssayResult</code></td><td>Assay Result</td><td class='clo'>Evidence</td><td>A measured laboratory result on a Specimen, joined to the StudySubject.</td></tr><tr><td><code>cr:CustodyEvent</code></td><td>Custody Event</td><td class='clo'>Temporal</td><td>A specimen state transition (SampleDue-&gt;Received-&gt;ToBeVerified-&gt;Verified-&gt;Published) — chain of custody.</td></tr><tr><td><code>hcls:Specimen</code></td><td>Specimen</td><td class='clo'>Resource</td><td>A biospecimen collected from a Person.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:SpecimenOriginShape</code></td><td><code>hcls:Specimen</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Specimen must have an origin: a collection event (cr:collectedAt) or a parent (prov:wasDerivedFrom).</li></ul></td></tr><tr><td><code>cr:CustodyEventShape</code></td><td><code>cr:CustodyEvent</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Custody event must reference its specimen.</li><li>Custody event toState must be a valid lifecycle state.</li></ul></td></tr><tr><td><code>cr:AssayResultShape</code></td><td><code>cr:AssayResult</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Assay result must join to the (pseudonymous) StudySubject.</li><li>Assay result must reference the analysis service that produced it.</li><li>Assay result must reference the sample analyzed.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>specimen_lineage.rq</code></td><td>Blood-draw traceback — an assay result -&gt; sample -&gt; (aliquot/derivation)* -&gt; primary specimen -&gt; the collection event. &quot;Trace this result to the draw&quot; is a query.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

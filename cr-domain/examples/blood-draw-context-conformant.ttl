@@ -98,11 +98,16 @@ ex:bd-coll a cr:StudyEvent ; rdfs:label "Blood draw — Cycle 1 Day 1, BD-S-001"
     cr:hasConsent ex:bd-consent ;
     cr:precededByAct ex:bd-ecg-act ;
     cr:producesSpecimen ex:bd-spec ;
+    cr:yieldsResult ex:bd-result ;
     top:identifier "urn:bd-coll" ; top:status "active" .
 
 # --- Specimen -> custody -> aliquot -> result --------------------------------
+# Forward nav edges (cr:hasCustodyEvent / cr:hasAliquot) sit alongside the
+# back-edges (cr:specimen / cr:aliquotOf) so a forward `join` reaches the chain.
 ex:bd-spec a hcls:Specimen ; rdfs:label "Whole blood (primary)" ;
-    cr:forSubject ex:bd-subj ; cr:collectedAt ex:bd-coll .
+    cr:forSubject ex:bd-subj ; cr:collectedAt ex:bd-coll ;
+    cr:hasCustodyEvent ex:bd-ce-recv, ex:bd-ce-verif, ex:bd-ce-pub ;
+    cr:hasAliquot ex:bd-aliquot .
 
 ex:bd-ce-recv a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "SampleDue" ; cr:toState "Received" ;
     top:observedAt "2026-03-02T11:30:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T11:31:00Z"^^xsd:dateTime ;

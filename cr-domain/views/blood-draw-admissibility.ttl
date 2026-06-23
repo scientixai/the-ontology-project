@@ -12,10 +12,13 @@
 # entities the shape says belong with it. tools/ngsild_view.py walks this shape
 # over examples/blood-draw-context-conformant.ttl and emits the NGSI-LD object.
 #
-# A NodeShape is the right carrier: sh:path (forward AND sh:inversePath) names the
-# relationship to follow; sh:node names the nested view to expand at the far end;
-# a property with no sh:node is inlined as a leaf attribute. Depth is bounded by
-# the nesting, not by an arbitrary joinLevel.
+# A NodeShape is the right carrier: sh:path names the relationship to follow
+# (all FORWARD here, matching ETSI GS CIM 009 clause 4.5.23 — `join` follows a
+# Relationship's `object` forward only); sh:name is the NGSI-LD attribute key;
+# sh:node names the nested view to expand at the far end; a property with no
+# sh:node is inlined as a leaf. The shape is a *projection* over the forward
+# neighbourhood a broker `join=inline&joinLevel=3` returns — it declares which of
+# those attributes the screen actually consumes (a `pick`/`attrs` selection).
 ###############################################################################
 
 cr:BloodDrawAdmissibilityView a sh:NodeShape ;
@@ -32,8 +35,8 @@ cr:BloodDrawAdmissibilityView a sh:NodeShape ;
     sh:property [ sh:path cr:atVisit ;           sh:name "atVisit" ;      sh:node cr:VisitLeaf ] ;
     # the specimen + everything downstream of it
     sh:property [ sh:path cr:producesSpecimen ;  sh:name "specimen" ;     sh:node cr:SpecimenView ] ;
-    # the result that cites this collection (inverse — it points back at us)
-    sh:property [ sh:path [ sh:inversePath cr:derivedFromCollection ] ; sh:name "result" ; sh:node cr:ResultLeaf ] .
+    # the result this collection yields (forward edge — reachable by stock `join`)
+    sh:property [ sh:path cr:yieldsResult ;      sh:name "result" ;       sh:node cr:ResultLeaf ] .
 
 cr:ConsentView a sh:NodeShape ;
     sh:property [ sh:path cr:forSubject ;   sh:name "forSubject" ;     sh:node cr:SubjectLeaf ] ;
@@ -47,10 +50,9 @@ cr:DelegationView a sh:NodeShape ;
     sh:property [ sh:path cr:requiresCredential ;  sh:name "credential" ; sh:node cr:CredLeaf ] .
 
 cr:SpecimenView a sh:NodeShape ;
-    # custody events point AT the specimen (cr:specimen) — pull them by inverse
-    sh:property [ sh:path [ sh:inversePath cr:specimen ] ; sh:name "custodyChain" ; sh:node cr:CustodyLeaf ] ;
-    # the aliquot points AT the specimen (cr:aliquotOf) — pull it by inverse
-    sh:property [ sh:path [ sh:inversePath cr:aliquotOf ] ; sh:name "aliquot" ;     sh:node cr:SpecimenLeaf ] .
+    # forward edges off the specimen — reachable by a stock broker `join`
+    sh:property [ sh:path cr:hasCustodyEvent ; sh:name "custodyChain" ; sh:node cr:CustodyLeaf ] ;
+    sh:property [ sh:path cr:hasAliquot ;      sh:name "aliquot" ;      sh:node cr:SpecimenLeaf ] .
 
 # Leaf views: inline the node's own scalar facts (label/status/time/state), no
 # further relationship-following. The generator renders these as NGSI-LD

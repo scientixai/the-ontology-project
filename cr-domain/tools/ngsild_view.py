@@ -34,12 +34,17 @@ VIEW_SHAPE = CR + "BloodDrawAdmissibilityView"
 
 # Predicates rendered as scalar NGSI-LD attributes (everything else that is a
 # literal becomes a generic Property; relationships are followed only via the view).
+# observedAt is the NGSI-LD core Temporal Property (valid time) and renders bare;
+# recordedAt/status/identifier are DOMAIN properties and render as NGSI-LD
+# Properties. (NGSI-LD `createdAt`/`modifiedAt` are broker-assigned system attrs
+# surfaced by ?options=sysAttrs — they are NOT our transaction time, so we do not
+# masquerade recordedAt as createdAt.)
 SCALAR_LABEL = {
     str(RDFS.label): "name",
     TOP + "status": "status",
     TOP + "identifier": "identifier",
     TOP + "observedAt": "observedAt",
-    TOP + "recordedAt": "createdAt",
+    TOP + "recordedAt": "recordedAt",
     RDFVAL: "value",
     CR + "toState": "custodyState",
     CR + "fromState": "fromState",
@@ -72,8 +77,8 @@ def _scalars(g, node):
         if not isinstance(o, Literal):
             continue
         key = SCALAR_LABEL.get(str(p))
-        if key in ("observedAt", "createdAt", "status", "identifier"):
-            d[key] = str(o)            # NGSI-LD system attrs render bare
+        if key == "observedAt":
+            d[key] = str(o)            # NGSI-LD core Temporal Property — renders bare
         elif key:
             d[key] = {"type": "Property", "value": str(o)}
         # unmapped literals are intentionally dropped to keep the object tight
@@ -118,15 +123,17 @@ def build():
 
 
 QUERY = """\
-GET /ngsi-ld/v1/entities/urn:bd-coll?options=sysAttrs&join=inline&joinLevel=3
+GET /ngsi-ld/v1/entities/urn:bd-coll?join=inline&joinLevel=3
 Accept: application/ld+json
 Link: <https://top.scientix.ai/cr/v1/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"
 
-# The projection is bounded by the registered view cr:BloodDrawAdmissibilityView:
-# forward edges (subject, consent, delegation, ordering, specimen) are served by
-# the broker's native linked-entity `join`; the inverse edges (custody chain,
-# aliquot, result — they point AT the collection) are served by that view as a
-# materialized projection. Either way: ONE call, one self-contained object."""
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked Entity
+# as the `entity` sub-attribute of its Relationship (clause 4.5.23.2, Table
+# 5.2.6-2); joinLevel=3 follows relationships forward to depth 3 (clause 4.5.23.1
+# — forward, via each Relationship's `object`). Every fact is forward-reachable
+# from the collection act, so this is ONE stock-broker call, no recursive lookups.
+# cr:BloodDrawAdmissibilityView is the attribute projection (the `pick`/`attrs`
+# the screen consumes) over that forward neighbourhood."""
 
 
 def main():

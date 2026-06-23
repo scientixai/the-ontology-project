@@ -37,15 +37,28 @@ cr:aliquotOf      a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom 
     rdfs:domain hcls:Specimen ; rdfs:range hcls:Specimen ;
     rdfs:label "aliquot of" ; rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." .
 
-# --- Retrieval edges: direct relationships off the collection act so a single
-#     entity pull (the NGSI-LD shape-defined view) reaches the evidentiary context
-#     in one hop, rather than forcing the consuming UI into recursive lookups. ---
+# --- Retrieval edges: FORWARD relationships off the collection act + specimen so a
+#     single NGSI-LD `?join=inline` retrieval (which per ETSI GS CIM 009 clause
+#     4.5.23 follows a Relationship's `object` forward only) reaches the entire
+#     evidentiary context, rather than forcing the consuming UI into recursive
+#     lookups. Each has a natural back-edge too (cr:collectedAt, cr:specimen,
+#     cr:aliquotOf, cr:derivedFromCollection) so the graph stays navigable both
+#     ways; the forward edges are what a stock broker `join` traverses. ---
 cr:producesSpecimen a owl:ObjectProperty ; owl:inverseOf cr:collectedAt ;
     rdfs:domain cr:StudyEvent ; rdfs:range hcls:Specimen ;
     rdfs:label "produces specimen" ; rdfs:comment "The primary specimen a collection act produced (forward of cr:collectedAt)." .
+cr:hasCustodyEvent a owl:ObjectProperty ; owl:inverseOf cr:specimen ;
+    rdfs:domain hcls:Specimen ; rdfs:range cr:CustodyEvent ;
+    rdfs:label "has custody event" ; rdfs:comment "A custody transition on this specimen (forward of cr:specimen, for single-pull retrieval)." .
+cr:hasAliquot a owl:ObjectProperty ; owl:inverseOf cr:aliquotOf ;
+    rdfs:domain hcls:Specimen ; rdfs:range hcls:Specimen ;
+    rdfs:label "has aliquot" ; rdfs:comment "An aliquot partitioned from this specimen (forward of cr:aliquotOf)." .
+cr:yieldsResult a owl:ObjectProperty ; owl:inverseOf cr:derivedFromCollection ;
+    rdfs:domain cr:StudyEvent ; rdfs:range cr:AssayResult ;
+    rdfs:label "yields result" ; rdfs:comment "An assay result that traces to this collection act (forward of cr:derivedFromCollection)." .
 cr:derivedFromCollection a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ;
     rdfs:domain cr:AssayResult ; rdfs:range cr:StudyEvent ;
-    rdfs:label "derived from collection" ; rdfs:comment "The collection act a result ultimately traces to (denormalized lineage cite)." .
+    rdfs:label "derived from collection" ; rdfs:comment "The collection act a result ultimately traces to (lineage back-edge)." .
 cr:hasConsent a owl:ObjectProperty ;
     rdfs:domain cr:StudyEvent ; rdfs:range cr:InformedConsent ;
     rdfs:label "has consent" ; rdfs:comment "The informed consent under which a participant-facing act was performed." .

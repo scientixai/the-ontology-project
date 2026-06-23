@@ -294,7 +294,7 @@ def view_checks(failures):
         custody = [c["entity"]["custodyState"]["value"] for c in spec_e["custodyChain"]]
         check("single pull is the collection hub (urn:bd-coll)", obj["id"] == "urn:bd-coll")
         check("consent inlined, current, for this subject",
-              consent["status"] == "active" and consent["forSubject"]["object"] == "urn:bd-subj")
+              consent["status"]["value"] == "active" and consent["forSubject"]["object"] == "urn:bd-subj")
         check("venipuncture authority inlined (delegate+capability+credential)",
               auth["delegate"]["object"] == "urn:bd-phleb"
               and auth["capability"]["object"] == "urn:bd-cap-venip"

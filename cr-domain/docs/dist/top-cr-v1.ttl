@@ -136,13 +136,6 @@ cr:addressesFinding a owl:ObjectProperty ;
     rdfs:domain cr:SafetyAssessment ;
     rdfs:range cr:NonclinicalFinding .
 
-cr:aliquotOf a owl:ObjectProperty ;
-    rdfs:label "aliquot of" ;
-    rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." ;
-    rdfs:domain hcls:Specimen ;
-    rdfs:range hcls:Specimen ;
-    rdfs:subPropertyOf prov:wasDerivedFrom .
-
 cr:analyzedUnder a owl:ObjectProperty ;
     rdfs:domain cr:EndpointResult ;
     rdfs:range cr:StatisticalAnalysisPlan .
@@ -242,13 +235,6 @@ cr:delegator a owl:ObjectProperty ;
     rdfs:domain cr:Delegation ;
     rdfs:range hcls:Person .
 
-cr:derivedFromCollection a owl:ObjectProperty ;
-    rdfs:label "derived from collection" ;
-    rdfs:comment "The collection act a result ultimately traces to (denormalized lineage cite)." ;
-    rdfs:domain cr:AssayResult ;
-    rdfs:range cr:StudyEvent ;
-    rdfs:subPropertyOf prov:wasDerivedFrom .
-
 cr:deviationCategory a owl:DatatypeProperty ;
     rdfs:label "deviation category" ;
     rdfs:comment "Materiality: critical | major | minor. Critical/major are significant deviations requiring a CAPA." ;
@@ -296,6 +282,13 @@ cr:fromTimeline a owl:ObjectProperty ;
     rdfs:domain cr:ParticipantSchedule ;
     rdfs:range cr:ScheduleTimeline .
 
+cr:hasAliquot a owl:ObjectProperty ;
+    rdfs:label "has aliquot" ;
+    rdfs:comment "An aliquot partitioned from this specimen (forward of cr:aliquotOf)." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range hcls:Specimen ;
+    owl:inverseOf cr:aliquotOf .
+
 cr:hasArm a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
     rdfs:range cr:Arm .
@@ -315,6 +308,13 @@ cr:hasConsent a owl:ObjectProperty ;
     rdfs:comment "The informed consent under which a participant-facing act was performed." ;
     rdfs:domain cr:StudyEvent ;
     rdfs:range cr:InformedConsent .
+
+cr:hasCustodyEvent a owl:ObjectProperty ;
+    rdfs:label "has custody event" ;
+    rdfs:comment "A custody transition on this specimen (forward of cr:specimen, for single-pull retrieval)." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range cr:CustodyEvent ;
+    owl:inverseOf cr:specimen .
 
 cr:hasEligibilityCriterion a owl:ObjectProperty ;
     rdfs:domain cr:ProtocolVersion ;
@@ -603,10 +603,6 @@ cr:siv a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:SiteInitiationVisit .
 
-cr:specimen a owl:ObjectProperty ;
-    rdfs:domain cr:CustodyEvent ;
-    rdfs:range hcls:Specimen .
-
 cr:sponsorAwareAt a owl:DatatypeProperty ;
     rdfs:label "sponsor aware at" ;
     rdfs:domain cr:SeriousAdverseEvent ;
@@ -740,6 +736,13 @@ cr:windowUpperDays a owl:DatatypeProperty ;
     rdfs:label "window upper (days)" ;
     rdfs:domain cr:Window ;
     rdfs:range xsd:decimal .
+
+cr:yieldsResult a owl:ObjectProperty ;
+    rdfs:label "yields result" ;
+    rdfs:comment "An assay result that traces to this collection act (forward of cr:derivedFromCollection)." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range cr:AssayResult ;
+    owl:inverseOf cr:derivedFromCollection .
 
 <https://top.scientix.ai/cr/v1/gcp> a owl:Ontology ;
     rdfs:label "TOP CR — ICH E6(R3) GCP definitional layer" ;
@@ -1070,6 +1073,13 @@ cr:Visit a owl:Class ;
     rdfs:subClassOf top:Temporal,
         cr:StudyEvent .
 
+cr:aliquotOf a owl:ObjectProperty ;
+    rdfs:label "aliquot of" ;
+    rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range hcls:Specimen ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
+
 cr:audits a owl:ObjectProperty ;
     rdfs:label "audits" ;
     rdfs:comment "Independent audit of trial conduct/records (the auditor function as a relationship)." .
@@ -1078,6 +1088,13 @@ cr:collectedAt a owl:ObjectProperty ;
     rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." ;
     rdfs:domain hcls:Specimen ;
     rdfs:range cr:StudyEvent .
+
+cr:derivedFromCollection a owl:ObjectProperty ;
+    rdfs:label "derived from collection" ;
+    rdfs:comment "The collection act a result ultimately traces to (lineage back-edge)." ;
+    rdfs:domain cr:AssayResult ;
+    rdfs:range cr:StudyEvent ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
 
 cr:monitors a owl:ObjectProperty ;
     rdfs:label "monitors" ;
@@ -1089,6 +1106,10 @@ cr:principalInvestigator a owl:ObjectProperty ;
     rdfs:comment "Role-as-relationship; bitemporal at instance level." ;
     rdfs:domain cr:StudySite ;
     rdfs:range hcls:Person .
+
+cr:specimen a owl:ObjectProperty ;
+    rdfs:domain cr:CustodyEvent ;
+    rdfs:range hcls:Specimen .
 
 hcls:HealthcareFacility a owl:Class ;
     rdfs:label "Healthcare Facility" ;
@@ -1114,12 +1135,6 @@ cr:AnalysisService a owl:Class ;
     rdfs:label "Analysis Service" ;
     rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." ;
     rdfs:subClassOf top:Evidence .
-
-cr:AssayResult a owl:Class ;
-    rdfs:label "Assay Result" ;
-    rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        hcls:Observation .
 
 cr:Assessment a owl:Class ;
     rdfs:label "Assessment" ;
@@ -1227,6 +1242,12 @@ top:Agent a owl:Class ;
     rdfs:comment "Something that acts or bears responsibility (person, organization, system)." ;
     rdfs:subClassOf top:Core .
 
+cr:AssayResult a owl:Class ;
+    rdfs:label "Assay Result" ;
+    rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
+    rdfs:subClassOf top:ProvenancedEntity,
+        hcls:Observation .
+
 cr:CaseReportForm a owl:Class ;
     rdfs:label "Case Report Form" ;
     rdfs:comment "A case report form — a collection of item groups capturing a visit's data." ;
@@ -1236,12 +1257,6 @@ cr:Credential a owl:Class ;
     rdfs:label "Credential" ;
     rdfs:comment "An attested qualification/training record that gates a delegated capability." ;
     rdfs:subClassOf top:Evidence .
-
-cr:CustodyEvent a owl:Class ;
-    rdfs:label "Custody Event" ;
-    rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
 
 cr:Endpoint a owl:Class ;
     rdfs:label "Endpoint" ;
@@ -1312,6 +1327,12 @@ cr:CriticalToQualityFactor a owl:Class ;
     rdfs:comment "A quality-critical aspect of the trial (e.g. primary endpoint integrity, consent validity, SAE reporting)." ;
     rdfs:subClassOf top:Constraint ;
     skos:altLabel "CtQ factor" .
+
+cr:CustodyEvent a owl:Class ;
+    rdfs:label "Custody Event" ;
+    rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." ;
+    rdfs:subClassOf top:ProvenancedEntity,
+        top:Temporal .
 
 cr:DataElementDef a owl:Class ;
     rdfs:label "Data Element Definition" ;
@@ -1431,20 +1452,10 @@ top:Scope a owl:Class ;
     rdfs:comment "A bounded context of work (study, arm, population, indication)." ;
     rdfs:subClassOf top:Core .
 
-cr:StudyEvent a owl:Class ;
-    rdfs:label "Study Event" ;
-    rdfs:comment "A scheduled or unscheduled timepoint (StudyEventOID) when data is captured." ;
-    rdfs:subClassOf top:Temporal .
-
 hcls:Organization a owl:Class ;
     rdfs:label "Organization" ;
     rdfs:comment "An organization — sponsor, CRO, site, central lab, or regulator." ;
     rdfs:subClassOf top:Agent .
-
-hcls:Specimen a owl:Class ;
-    rdfs:label "Specimen" ;
-    rdfs:comment "A biospecimen collected from a Person." ;
-    rdfs:subClassOf top:Resource .
 
 ns1:Zone_SiteManagement a skos:Concept ;
     skos:prefLabel "Site Management" ;
@@ -1459,10 +1470,20 @@ cr:Study a owl:Class ;
     rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
     rdfs:subClassOf top:Scope .
 
+cr:StudyEvent a owl:Class ;
+    rdfs:label "Study Event" ;
+    rdfs:comment "A scheduled or unscheduled timepoint (StudyEventOID) when data is captured." ;
+    rdfs:subClassOf top:Temporal .
+
 cr:WorkStream a owl:Class ;
     rdfs:label "Activation Work Stream" ;
     rdfs:comment "A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below." ;
     rdfs:subClassOf top:Temporal .
+
+hcls:Specimen a owl:Class ;
+    rdfs:label "Specimen" ;
+    rdfs:comment "A biospecimen collected from a Person." ;
+    rdfs:subClassOf top:Resource .
 
 cr:StudySite a owl:Class ;
     rdfs:label "Study Site" ;

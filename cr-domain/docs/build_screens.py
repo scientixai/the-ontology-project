@@ -143,7 +143,7 @@ BLOOD_DRAW_CHAIN = [
     {"check": "Specimen collected &amp; custody opened", "who": "Mary Smith, Phlebotomist",
      "params": [("Primary specimen", "<code>specimen.id == urn:bd-spec</code>"),
                 ("Collected (valid)", "<code>(root).observedAt</code>"),
-                ("Recorded (txn)", "<code>(root).createdAt</code>")],
+                ("Recorded (txn)", "<code>(root).recordedAt</code>")],
      "reads": "specimen.entity + (root)",
      "shape": "cr:SpecimenOriginShape + cr:CustodyEventShape"},
     {"check": "Custody current-state = Published", "who": "Raj Patel, Lab Technician",
