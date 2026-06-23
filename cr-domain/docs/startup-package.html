@@ -107,45 +107,303 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Study start-up package</h1><p class='lead'>A site is awarded a study and receives a start-up package &mdash; not one file, but a set of typed documents (often downloaded one-by-one from a portal). The site's response splits into three work streams &mdash; regulatory, budget &amp; contracting, clinical operations &mdash; each consuming package documents and producing site-specific outputs (customized ICF, the DoA log, a signed CTA). Regulatory + budget completion gates the SIV and activation.</p><h2>Operator screen &mdash; Study start-up</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Study start-up &mdash; package &amp; work streams<span class="badge">eReg</span><div class="scr-sub">Site 701 — Denver</div></div><div class="scr-row"><span>Start-up package</span><b>6 documents, all typed</b></div><div class="scr-row"><span>Regulatory</span><b><span class='pill ok'>complete</span> &mdash; ICF, DoA, 1572, IRB</b></div><div class="scr-row"><span>Budget &amp; contracting</span><b><span class='pill ok'>complete</span> &mdash; signed CTA</b></div><div class="scr-row"><span>Clinical operations</span><b><span class='pill warn'>active</span></b></div><div class="scr-row"><span>Activation gate</span><b><span class='pill ok'>Reg + Budget complete &rarr; SIV</span></b></div><div class="scr-row"><span>Activated</span><b>2026-02-05 &middot; Start-up manager</b></div></div></div><div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div><pre class="json">[
-  {
-    "id": "urn:sp-pkg",
-    "type": "StudyStartupPackage",
-    "name": {
-      "type": "Property",
-      "value": "OPP-101 start-up package (Site 701)"
-    },
-    "packageForSite": {
-      "type": "Relationship",
-      "object": "urn:sp-site"
-    },
-    "includesArtifact": {
-      "type": "Relationship",
-      "object": "urn:a-soa"
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Study start-up package</h1><p class='lead'>A site is awarded a study and receives a start-up package &mdash; not one file, but a set of typed documents (often downloaded one-by-one from a portal). The site's response splits into three work streams &mdash; regulatory, budget &amp; contracting, clinical operations &mdash; each consuming package documents and producing site-specific outputs (customized ICF, the DoA log, a signed CTA). Regulatory + budget completion gates the SIV and activation.</p><h2>Operator screen &mdash; Study start-up</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Study start-up &mdash; package &amp; work streams<span class="badge">eReg</span><div class="scr-sub">Site 701 — Denver</div></div><div class="scr-row"><span>Start-up package</span><b>6 documents, all typed</b></div><div class="scr-row"><span>Regulatory</span><b><span class='pill ok'>complete</span> &mdash; ICF, DoA, 1572, IRB</b></div><div class="scr-row"><span>Budget &amp; contracting</span><b><span class='pill ok'>complete</span> &mdash; signed CTA</b></div><div class="scr-row"><span>Clinical operations</span><b><span class='pill warn'>active</span></b></div><div class="scr-row"><span>Activation gate</span><b><span class='pill ok'>Reg + Budget complete &rarr; SIV</span></b></div><div class="scr-row"><span>Activated</span><b>2026-02-05 &middot; Start-up manager</b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:sp-act?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:StartupActivationView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:sp-act&quot;,
+  &quot;type&quot;: &quot;SiteActivation&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;Site 701 activated&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:sp-act&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-02-05T00:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-02-05T09:00:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;site&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:sp-site&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:sp-site&quot;,
+      &quot;type&quot;: &quot;StudySite&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Site 701 \u2014 Denver&quot;
+      }
     }
   },
-  {
-    "id": "urn:ws-reg",
-    "type": "RegulatoryWorkStream",
-    "name": {
-      "type": "Property",
-      "value": "Regulatory"
+  &quot;package&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:sp-pkg&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:sp-pkg&quot;,
+      &quot;type&quot;: &quot;StudyStartupPackage&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;OPP-101 start-up package (Site 701)&quot;
+      },
+      &quot;artifacts&quot;: [
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:a-cta-doc&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:a-cta-doc&quot;,
+            &quot;type&quot;: &quot;StartupArtifact&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;CTA (unsigned)&quot;
+            },
+            &quot;artifactType&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:ClinicalTrialAgreementDoc&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:ClinicalTrialAgreementDoc&quot;,
+                &quot;type&quot;: &quot;Entity&quot;
+              }
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:a-ib&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:a-ib&quot;,
+            &quot;type&quot;: &quot;StartupArtifact&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Investigator Brochure&quot;
+            },
+            &quot;artifactType&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:InvestigatorBrochure&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:InvestigatorBrochure&quot;,
+                &quot;type&quot;: &quot;Entity&quot;
+              }
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:a-icf-tmpl&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:a-icf-tmpl&quot;,
+            &quot;type&quot;: &quot;StartupArtifact&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;ICF template&quot;
+            },
+            &quot;artifactType&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:InformedConsentForm&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:InformedConsentForm&quot;,
+                &quot;type&quot;: &quot;Entity&quot;
+              }
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:a-monplan&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:a-monplan&quot;,
+            &quot;type&quot;: &quot;StartupArtifact&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Monitoring Plan&quot;
+            },
+            &quot;artifactType&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:MonitoringPlan&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:MonitoringPlan&quot;,
+                &quot;type&quot;: &quot;Entity&quot;
+              }
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:a-protocol&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:a-protocol&quot;,
+            &quot;type&quot;: &quot;StartupArtifact&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol v1.0&quot;
+            },
+            &quot;artifactType&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:Protocol&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:Protocol&quot;,
+                &quot;type&quot;: &quot;Entity&quot;
+              }
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:a-soa&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:a-soa&quot;,
+            &quot;type&quot;: &quot;StartupArtifact&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Schedule of Activities&quot;
+            },
+            &quot;artifactType&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:ScheduleOfActivities&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:ScheduleOfActivities&quot;,
+                &quot;type&quot;: &quot;Entity&quot;
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  &quot;workStreams&quot;: [
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:ws-bud&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:ws-bud&quot;,
+        &quot;type&quot;: &quot;BudgetContractingWorkStream&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Budget &amp; contracting&quot;
+        },
+        &quot;streamStatus&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;complete&quot;
+        }
+      }
     },
-    "streamForSite": {
-      "type": "Relationship",
-      "object": "urn:sp-site"
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:ws-clin&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:ws-clin&quot;,
+        &quot;type&quot;: &quot;ClinOpsWorkStream&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Clinical operations&quot;
+        },
+        &quot;streamStatus&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;active&quot;
+        }
+      }
     },
-    "consumes": {
-      "type": "Relationship",
-      "object": "urn:a-icf-tmpl"
-    },
-    "produces": {
-      "type": "Relationship",
-      "object": "urn:o-irb-ltr"
-    },
-    "streamStatus": {
-      "type": "Property",
-      "value": "complete"
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:ws-reg&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:ws-reg&quot;,
+        &quot;type&quot;: &quot;RegulatoryWorkStream&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Regulatory&quot;
+        },
+        &quot;streamStatus&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;complete&quot;
+        }
+      }
+    }
+  ],
+  &quot;irb&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:sp-irb&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:sp-irb&quot;,
+      &quot;type&quot;: &quot;IRBApproval&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:sp-irb&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-01-15T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-15T12:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;cta&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:sp-cta&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:sp-cta&quot;,
+      &quot;type&quot;: &quot;ClinicalTrialAgreement&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:sp-cta&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-01-20T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-20T12:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;siv&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:sp-siv&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:sp-siv&quot;,
+      &quot;type&quot;: &quot;SiteInitiationVisit&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:sp-siv&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-02-01T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-02-01T16:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;activatedBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:sp-mgr&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:sp-mgr&quot;,
+      &quot;type&quot;: &quot;Person&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Start-up manager&quot;
+      }
     }
   }
-]</pre></div></div></div><p class='note'>Documents are typed via the existing TMF artifact-type scheme; every produced output traces (<code>prov:wasDerivedFrom</code>) to the document it was built from &mdash; the data trail from package to site-specific output. The site-operations companion to the sponsor-side protocol model.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:WorkStream</code></td><td>Activation Work Stream</td><td class='clo'>Temporal</td><td>A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below.</td></tr><tr><td><code>cr:BudgetContractingWorkStream</code></td><td>Budget &amp; Contracting Work Stream</td><td class='clo'>Temporal</td><td>Budget negotiation and contract (CTA) review and execution.</td></tr><tr><td><code>cr:ClinOpsWorkStream</code></td><td>Clinical Operations Work Stream</td><td class='clo'>Temporal</td><td>Enrollment and data-collection readiness from the protocol, SOPs, vendor manuals, monitoring plan, and schedule of activities.</td></tr><tr><td><code>cr:RegulatoryWorkStream</code></td><td>Regulatory Work Stream</td><td class='clo'>Temporal</td><td>IRB submission, ICF customization, and Investigator Site File preparation (CVs/licenses, Form 1572, Delegation-of-Authority log, IRB approval).</td></tr><tr><td><code>cr:StartupArtifact</code></td><td>Start-up Artifact</td><td class='clo'>Evidence</td><td>A document instance in (or produced from) the start-up package, classified to a TMF artifact type. Carries the data that the work streams consume and transform.</td></tr><tr><td><code>cr:StudyStartupPackage</code></td><td>Study Start-up Package</td><td class='clo'>Evidence</td><td>The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:StartupArtifactTypeShape</code></td><td><code>cr:StartupArtifact</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A start-up artifact must be classified to a TMF artifact type (cr:ofArtifactType).</li></ul></td></tr><tr><td><code>cr:WorkStreamShape</code></td><td><code>cr:WorkStream</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A work stream must consume &gt;=1 start-up artifact (the data it works from).</li><li>A work stream must name the site it runs at.</li></ul></td></tr><tr><td><code>cr:ActivationReadinessShape</code></td><td><code>cr:SiteActivation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Site activated without a complete Regulatory and Budget &amp; Contracting work stream.</li></ul></td></tr><tr><td><code>cr:OutputLineageShape</code></td><td><code>cr:produces</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>A work stream produces an output that does not trace (prov:wasDerivedFrom) to any input.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>startup_package_status.rq</code></td><td>Start-up package readiness — the activation gate per site: are the Regulatory and Budget &amp; Contracting work streams complete? (SIV/activation is admissible only when both are.)</td></tr><tr><td><code>doa_log.rq</code></td><td>Delegation of Authority (DOA) log — PROJECTED from delegation acts. The site-side flagship: the &quot;log&quot; is a query over the graph, never hand-maintained.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>
+}</pre></div></div></div><p class='note'>Documents are typed via the existing TMF artifact-type scheme; every produced output traces (<code>prov:wasDerivedFrom</code>) to the document it was built from &mdash; the data trail from package to site-specific output. The site-operations companion to the sponsor-side protocol model.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:WorkStream</code></td><td>Activation Work Stream</td><td class='clo'>Temporal</td><td>A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below.</td></tr><tr><td><code>cr:BudgetContractingWorkStream</code></td><td>Budget &amp; Contracting Work Stream</td><td class='clo'>Temporal</td><td>Budget negotiation and contract (CTA) review and execution.</td></tr><tr><td><code>cr:ClinOpsWorkStream</code></td><td>Clinical Operations Work Stream</td><td class='clo'>Temporal</td><td>Enrollment and data-collection readiness from the protocol, SOPs, vendor manuals, monitoring plan, and schedule of activities.</td></tr><tr><td><code>cr:RegulatoryWorkStream</code></td><td>Regulatory Work Stream</td><td class='clo'>Temporal</td><td>IRB submission, ICF customization, and Investigator Site File preparation (CVs/licenses, Form 1572, Delegation-of-Authority log, IRB approval).</td></tr><tr><td><code>cr:StartupArtifact</code></td><td>Start-up Artifact</td><td class='clo'>Evidence</td><td>A document instance in (or produced from) the start-up package, classified to a TMF artifact type. Carries the data that the work streams consume and transform.</td></tr><tr><td><code>cr:StudyStartupPackage</code></td><td>Study Start-up Package</td><td class='clo'>Evidence</td><td>The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:StartupArtifactTypeShape</code></td><td><code>cr:StartupArtifact</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A start-up artifact must be classified to a TMF artifact type (cr:ofArtifactType).</li></ul></td></tr><tr><td><code>cr:WorkStreamShape</code></td><td><code>cr:WorkStream</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A work stream must consume &gt;=1 start-up artifact (the data it works from).</li><li>A work stream must name the site it runs at.</li></ul></td></tr><tr><td><code>cr:ActivationReadinessShape</code></td><td><code>cr:SiteActivation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Site activated without a complete Regulatory and Budget &amp; Contracting work stream.</li></ul></td></tr><tr><td><code>cr:OutputLineageShape</code></td><td><code>cr:produces</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>A work stream produces an output that does not trace (prov:wasDerivedFrom) to any input.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>startup_package_status.rq</code></td><td>Start-up package readiness — the activation gate per site: are the Regulatory and Budget &amp; Contracting work streams complete? (SIV/activation is admissible only when both are.)</td></tr><tr><td><code>doa_log.rq</code></td><td>Delegation of Authority (DOA) log — PROJECTED from delegation acts. The site-side flagship: the &quot;log&quot; is a query over the graph, never hand-maintained.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

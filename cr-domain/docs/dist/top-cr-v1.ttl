@@ -132,6 +132,12 @@ cr:activates a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:StudySite .
 
+cr:activationPackage a owl:ObjectProperty ;
+    rdfs:label "activation package" ;
+    rdfs:comment "The start-up package this activation drew from (forward edge, for single-pull retrieval)." ;
+    rdfs:domain cr:SiteActivation ;
+    rdfs:range cr:StudyStartupPackage .
+
 cr:addressesFinding a owl:ObjectProperty ;
     rdfs:domain cr:SafetyAssessment ;
     rdfs:range cr:NonclinicalFinding .
@@ -193,6 +199,12 @@ cr:certifiedCopyOf a owl:ObjectProperty ;
     rdfs:comment "The source document this certified copy reproduces." ;
     rdfs:domain cr:CertifiedCopy ;
     rdfs:range cr:SourceDocument .
+
+cr:concernsStudy a owl:ObjectProperty ;
+    rdfs:label "concerns study" ;
+    rdfs:comment "The study the regulatory interaction concerns." ;
+    rdfs:domain cr:RegulatoryInteraction ;
+    rdfs:range cr:Study .
 
 cr:conductedAt a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
@@ -350,6 +362,13 @@ cr:hasPlannedVisit a owl:ObjectProperty ;
 cr:hasProtocolVersion a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
     rdfs:range cr:ProtocolVersion .
+
+cr:hasQuery a owl:ObjectProperty ;
+    rdfs:label "has query" ;
+    rdfs:comment "A data query raised on this value (forward of cr:queryOn, for single-pull retrieval)." ;
+    rdfs:domain cr:ClinicalObservation ;
+    rdfs:range cr:Query ;
+    owl:inverseOf cr:queryOn .
 
 cr:hasQuestion a owl:ObjectProperty ;
     rdfs:domain cr:RegulatoryInteraction ;
@@ -523,11 +542,6 @@ cr:proposesDesign a owl:ObjectProperty ;
     rdfs:domain cr:RegulatoryInteraction ;
     rdfs:range cr:Phase3Design .
 
-cr:queryOn a owl:ObjectProperty ;
-    rdfs:label "query on" ;
-    rdfs:comment "The entity the query is anchored to (observation, event, form, subject...)." ;
-    rdfs:domain cr:Query .
-
 cr:realizes a owl:ObjectProperty ;
     rdfs:label "realizes" ;
     rdfs:comment "Links an actual execution event (cr:Visit, cr:Assessment) to the planned node it fulfils — the join for planned-vs-actual reconciliation." .
@@ -572,6 +586,12 @@ cr:requiresCredential a owl:ObjectProperty ;
 cr:resolutionStatus a owl:DatatypeProperty ;
     rdfs:label "resolution status" ;
     rdfs:domain cr:Query .
+
+cr:reviewsResult a owl:ObjectProperty ;
+    rdfs:label "reviews result" ;
+    rdfs:comment "The endpoint result the regulatory interaction reviewed (forward edge, for single-pull retrieval)." ;
+    rdfs:domain cr:RegulatoryInteraction ;
+    rdfs:range cr:EndpointResult .
 
 cr:riskLevel a owl:DatatypeProperty ;
     rdfs:label "risk level" ;
@@ -1107,6 +1127,11 @@ cr:principalInvestigator a owl:ObjectProperty ;
     rdfs:domain cr:StudySite ;
     rdfs:range hcls:Person .
 
+cr:queryOn a owl:ObjectProperty ;
+    rdfs:label "query on" ;
+    rdfs:comment "The entity the query is anchored to (observation, event, form, subject...)." ;
+    rdfs:domain cr:Query .
+
 cr:specimen a owl:ObjectProperty ;
     rdfs:domain cr:CustodyEvent ;
     rdfs:range hcls:Specimen .
@@ -1263,12 +1288,6 @@ cr:Endpoint a owl:Class ;
     rdfs:comment "A defined outcome measure the study evaluates." ;
     rdfs:subClassOf top:Scope .
 
-cr:EndpointResult a owl:Class ;
-    rdfs:label "Endpoint Result" ;
-    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
-    rdfs:subClassOf top:Outcome,
-        top:ProvenancedEntity .
-
 cr:PlannedEncounter a owl:Class ;
     rdfs:label "Planned Encounter" ;
     rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." ;
@@ -1285,11 +1304,6 @@ cr:SafetyReport a owl:Class ;
     rdfs:comment "Expedited report of an SAE to the regulator." ;
     rdfs:subClassOf top:Evidence,
         top:ProvenancedEntity .
-
-cr:StudyStartupPackage a owl:Class ;
-    rdfs:label "Study Start-up Package" ;
-    rdfs:comment "The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals." ;
-    rdfs:subClassOf top:Evidence .
 
 cr:StudySubject a owl:Class ;
     rdfs:label "Study Subject" ;
@@ -1351,6 +1365,12 @@ cr:DeviationEvent a owl:Class ;
     rdfs:subClassOf top:ProvenancedEntity,
         top:Temporal .
 
+cr:EndpointResult a owl:Class ;
+    rdfs:label "Endpoint Result" ;
+    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
+    rdfs:subClassOf top:Outcome,
+        top:ProvenancedEntity .
+
 cr:Enrollment a owl:Class ;
     rdfs:label "Enrollment" ;
     rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." ;
@@ -1389,16 +1409,15 @@ cr:StartupArtifact a owl:Class ;
     rdfs:comment "A document instance in (or produced from) the start-up package, classified to a TMF artifact type. Carries the data that the work streams consume and transform." ;
     rdfs:subClassOf top:Evidence .
 
+cr:StudyStartupPackage a owl:Class ;
+    rdfs:label "Study Start-up Package" ;
+    rdfs:comment "The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals." ;
+    rdfs:subClassOf top:Evidence .
+
 top:Outcome a owl:Class ;
     rdfs:label "Outcome" ;
     rdfs:comment "A result, finding, or state produced by a process." ;
     rdfs:subClassOf top:Core .
-
-cr:ClinicalObservation a owl:Class ;
-    rdfs:label "Clinical Observation" ;
-    rdfs:comment "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        hcls:Observation .
 
 cr:E6R3Glossary a skos:ConceptScheme ;
     rdfs:label "ICH E6(R3) glossary (selected terms)" ;
@@ -1409,15 +1428,15 @@ cr:PlannedVisit a owl:Class ;
     rdfs:comment "A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled." ;
     rdfs:subClassOf top:Constraint .
 
-cr:Query a owl:Class ;
-    rdfs:label "Query" ;
-    rdfs:comment "A discrepancy note / data query anchored to a data point or other entity; threaded." ;
-    rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
-
 ns1:Zone_TrialManagement a skos:Concept ;
     skos:prefLabel "Trial Management" ;
     skos:topConceptOf ns1:TMFReferenceModel .
+
+cr:ClinicalObservation a owl:Class ;
+    rdfs:label "Clinical Observation" ;
+    rdfs:comment "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef." ;
+    rdfs:subClassOf top:ProvenancedEntity,
+        hcls:Observation .
 
 cr:Delegation a owl:Class ;
     rdfs:label "Delegation" ;
@@ -1425,22 +1444,17 @@ cr:Delegation a owl:Class ;
     rdfs:subClassOf top:ProvenancedEntity,
         top:Temporal .
 
-cr:RegulatoryInteraction a owl:Class ;
-    rdfs:label "Regulatory Interaction" ;
-    rdfs:comment "Pre-IND / EOP2 meeting." ;
-    rdfs:subClassOf top:Temporal .
+cr:Query a owl:Class ;
+    rdfs:label "Query" ;
+    rdfs:comment "A discrepancy note / data query anchored to a data point or other entity; threaded." ;
+    rdfs:subClassOf top:Evidence,
+        top:ProvenancedEntity .
 
 cr:RiskAssessment a owl:Class ;
     rdfs:label "Risk Assessment" ;
     rdfs:comment "An assessment of risk to a CtQ factor (likelihood/impact/detectability -> level); bitemporal." ;
     rdfs:subClassOf top:Evidence,
         top:ProvenancedEntity .
-
-cr:SiteActivation a owl:Class ;
-    rdfs:label "Site Activation" ;
-    rdfs:comment "The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
 
 cr:Timing a owl:Class ;
     rdfs:label "Timing" ;
@@ -1451,6 +1465,12 @@ top:Scope a owl:Class ;
     rdfs:label "Scope" ;
     rdfs:comment "A bounded context of work (study, arm, population, indication)." ;
     rdfs:subClassOf top:Core .
+
+cr:SiteActivation a owl:Class ;
+    rdfs:label "Site Activation" ;
+    rdfs:comment "The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV." ;
+    rdfs:subClassOf top:ProvenancedEntity,
+        top:Temporal .
 
 hcls:Organization a owl:Class ;
     rdfs:label "Organization" ;
@@ -1465,10 +1485,10 @@ top:Core a owl:Class ;
     rdfs:label "Core" ;
     rdfs:comment "The single root of TOP. Everything modeled is, ultimately, a kind of top:Core, and so carries the Universal DNA (identifier + observedAt + status)." .
 
-cr:Study a owl:Class ;
-    rdfs:label "Study" ;
-    rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
-    rdfs:subClassOf top:Scope .
+cr:RegulatoryInteraction a owl:Class ;
+    rdfs:label "Regulatory Interaction" ;
+    rdfs:comment "Pre-IND / EOP2 meeting." ;
+    rdfs:subClassOf top:Temporal .
 
 cr:StudyEvent a owl:Class ;
     rdfs:label "Study Event" ;
@@ -1479,6 +1499,11 @@ cr:WorkStream a owl:Class ;
     rdfs:label "Activation Work Stream" ;
     rdfs:comment "A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below." ;
     rdfs:subClassOf top:Temporal .
+
+cr:Study a owl:Class ;
+    rdfs:label "Study" ;
+    rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
+    rdfs:subClassOf top:Scope .
 
 hcls:Specimen a owl:Class ;
     rdfs:label "Specimen" ;

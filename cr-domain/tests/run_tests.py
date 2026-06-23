@@ -268,47 +268,109 @@ def schedule_checks(ont_graph, failures):
 
 
 def view_checks(failures):
-    """Single-pull retrieval view: prove the blood-draw collection resolves into ONE
-    self-contained NGSI-LD object that carries every green-check fact — so the
-    consuming UI never needs a recursive lookup. Guards 'modeled correctly'."""
+    """Single-pull retrieval views: prove EVERY applicable operator screen resolves
+    into ONE self-contained NGSI-LD object that carries its green-check facts — so
+    the consuming UI never needs a recursive lookup. Guards 'modeled correctly'
+    across the whole workflow line."""
     import importlib.util
     p = os.path.join(ROOT, "tools", "ngsild_view.py")
     spec = importlib.util.spec_from_file_location("ngsild_view", p)
     mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
-    obj = mod.build()
     total = passed = 0
 
-    def check(desc, cond):
+    def check(desc, fn):
         nonlocal total, passed
         total += 1
-        if cond:
-            passed += 1; print(f"[PASS] {desc}")
+        try:
+            ok = fn()
+        except (KeyError, TypeError, IndexError) as e:
+            ok = False; desc = f"{desc} [{type(e).__name__}: {e}]"
+        if ok:
+            passed += 1; print(f"[PASS] single-pull: {desc}")
         else:
             failures.append(("VIEW", desc, "single-pull object missing required fact"))
-            print(f"[FAIL] {desc}")
+            print(f"[FAIL] single-pull: {desc}")
 
-    try:
-        consent = obj["consent"]["entity"]
-        auth = obj["authority"]["entity"]
-        spec_e = obj["specimen"]["entity"]
-        custody = [c["entity"]["custodyState"]["value"] for c in spec_e["custodyChain"]]
-        check("single pull is the collection hub (urn:bd-coll)", obj["id"] == "urn:bd-coll")
-        check("consent inlined, current, for this subject",
-              consent["status"]["value"] == "active" and consent["forSubject"]["object"] == "urn:bd-subj")
-        check("venipuncture authority inlined (delegate+capability+credential)",
-              auth["delegate"]["object"] == "urn:bd-phleb"
-              and auth["capability"]["object"] == "urn:bd-cap-venip"
-              and auth["credential"]["object"] == "urn:bd-cred-phleb")
-        check("SoA ordering inlined: ECG act precedes the draw",
-              obj["afterAct"]["entity"]["observedAt"] < obj["observedAt"])
-        check("custody current-state reachable = Published", "Published" in custody)
-        check("aliquot + result inlined (lineage to the draw)",
-              spec_e["aliquot"]["object"] == "urn:bd-aliquot"
-              and obj["result"]["entity"]["value"]["value"] == "1:320")
-    except (KeyError, TypeError) as e:
-        failures.append(("VIEW", "structure", str(e)))
-        print(f"[FAIL] single-pull view structure: {e}")
-        total += 1
+    def val(node, attr):
+        return node[attr]["value"]
+
+    # Blood draw — the deep showcase (every green check is one field of one object)
+    bd = mod.build_view("blood-draw")
+    check("blood-draw: hub + current consent + venipuncture authority",
+          lambda: bd["id"] == "urn:bd-coll"
+          and val(bd["consent"]["entity"], "status") == "active"
+          and bd["authority"]["entity"]["capability"]["object"] == "urn:bd-cap-venip")
+    check("blood-draw: ordering held + custody Published + result",
+          lambda: bd["afterAct"]["entity"]["observedAt"] < bd["observedAt"]
+          and "Published" in [c["entity"]["toState"]["value"] for c in bd["specimen"]["entity"]["custodyChain"]]
+          and val(bd["result"]["entity"], "value") == "1:320")
+
+    # Site activation — site + three dated milestones + activator
+    sa = mod.build_view("site-activation")
+    check("site-activation: IRB + CTA + SIV milestones and site all inlined",
+          lambda: sa["irb"]["entity"]["observedAt"][:10] == "2026-01-15"
+          and sa["cta"]["entity"]["observedAt"][:10] == "2026-01-20"
+          and sa["siv"]["entity"]["observedAt"][:10] == "2026-02-01"
+          and sa["site"]["object"] == "urn:site-act")
+
+    # Delegation — parties, capability, credential, attestation
+    dg = mod.build_view("delegation")
+    check("delegation: delegate+capability+credential+attestation inlined",
+          lambda: dg["delegate"]["object"] == "urn:person-nguyen"
+          and dg["capability"]["object"] == "urn:cap-consent"
+          and dg["credential"]["object"] == "urn:cred-nguyen-gcp"
+          and dg["attestation"]["entity"]["attestedBy"]["object"] == "urn:person-rivera")
+
+    # Enrollment — PII person, pseudonymous subject, study
+    en = mod.build_view("enrollment")
+    check("enrollment: person + subject + study + enroller inlined",
+          lambda: en["person"]["object"] == "urn:person-doe"
+          and en["subject"]["object"] == "urn:subj-001"
+          and en["study"]["object"] == "urn:study-opp101"
+          and en["enrolledBy"]["entity"]["name"]["value"].startswith("Nurse"))
+
+    # Consent — subject, performer, authorizing delegation
+    co = mod.build_view("consent")
+    check("consent: subject + obtainedBy + authorizing delegation inlined",
+          lambda: co["forSubject"]["object"] == "urn:subj-001"
+          and co["obtainedBy"]["object"] == "urn:person-nguyen"
+          and co["authority"]["object"] == "urn:deleg-consent-001")
+
+    # EDC capture — value, PHI class, SDV, the open query
+    ed = mod.build_view("edc")
+    check("edc: value + PHI class + SDV + open query inlined",
+          lambda: val(ed, "value") == "128"
+          and val(ed["item"]["entity"], "phiClassification") == "NotPHI"
+          and val(ed, "sdvStatus") == "verified"
+          and val(ed["query"]["entity"], "resolutionStatus") == "open")
+
+    # Adverse event — subject, type (DLT), onset, reporter
+    ae = mod.build_view("adverse-event")
+    check("adverse-event: subject + DLT type + onset + reporter inlined",
+          lambda: ae["subject"]["object"] == "urn:subj-001"
+          and ae["type"] == "DoseLimitingToxicity"
+          and ae["observedAt"][:10] == "2026-02-09"
+          and ae["reportedBy"]["entity"]["name"]["value"].startswith("Dr."))
+
+    # EOP2 gate — result(+estimand+SAP), agreement, Phase 3 design->dose-opt
+    eo = mod.build_view("eop2")
+    check("eop2: result+estimand+SAP, agreement, design->dose-opt inlined",
+          lambda: val(eo["result"]["entity"], "value") == "0.42"
+          and eo["result"]["entity"]["estimand"]["object"] == "urn:est-orr"
+          and eo["result"]["entity"]["sap"]["object"] == "urn:sap201"
+          and "OS" in eo["agreement"]["entity"]["name"]["value"]
+          and "doseOptimization" in eo["phase3Design"]["entity"])
+
+    # Study start-up — 6 typed docs + the three work-stream statuses
+    su = mod.build_view("startup-package")
+    arts = su["package"]["entity"]["artifacts"]
+    ws = {w["entity"]["type"]: w["entity"]["streamStatus"]["value"] for w in su["workStreams"]}
+    check("startup: 6 typed package docs + reg/budget complete, clinops active",
+          lambda: len(arts) == 6 and all("artifactType" in a["entity"] for a in arts)
+          and ws["RegulatoryWorkStream"] == "complete"
+          and ws["BudgetContractingWorkStream"] == "complete"
+          and ws["ClinOpsWorkStream"] == "active")
+
     return passed, total
 
 

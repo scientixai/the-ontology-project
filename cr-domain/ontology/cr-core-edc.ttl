@@ -50,5 +50,8 @@ cr:verifiedBy     a owl:ObjectProperty ; rdfs:domain cr:ClinicalObservation ; rd
     rdfs:comment "The monitor who source-verified the value (SDV)." .
 cr:queryOn        a owl:ObjectProperty ; rdfs:domain cr:Query ; rdfs:label "query on" ;
     rdfs:comment "The entity the query is anchored to (observation, event, form, subject...)." .
+cr:hasQuery       a owl:ObjectProperty ; owl:inverseOf cr:queryOn ;
+    rdfs:domain cr:ClinicalObservation ; rdfs:range cr:Query ; rdfs:label "has query" ;
+    rdfs:comment "A data query raised on this value (forward of cr:queryOn, for single-pull retrieval)." .
 cr:replyTo        a owl:ObjectProperty ; rdfs:domain cr:Query ; rdfs:range cr:Query ;
     rdfs:comment "Threaded discrepancy conversation (parent-child)." .

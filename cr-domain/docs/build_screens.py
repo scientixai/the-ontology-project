@@ -19,35 +19,10 @@ def _ln(uri):
     return str(uri).split("#")[-1].split("/")[-1]
 
 
-def ngsild(g, iri):
-    """Render one graph entity as NGSI-LD-style JSON (truthful: straight from the TTL)."""
-    iri = URIRef(iri)
-    types = [_ln(t) for t in g.objects(iri, RDF.type)]
-    pref = [t for t in types if t not in ("ProvenancedEntity", "Observation", "Agent", "Person")]
-    d = {"id": "urn:" + _ln(iri), "type": (pref or types or ["Thing"])[0]}
-    for p, o in g.predicate_objects(iri):
-        ps = str(p)
-        if p == RDF.type:
-            continue
-        if ps == str(RDFS.label):
-            d["name"] = {"type": "Property", "value": str(o)}
-        elif ps == TOP + "observedAt":
-            d["observedAt"] = str(o)
-        elif ps == TOP + "recordedAt":
-            d["recordedAt (createdAt)"] = str(o)
-        elif ps == TOP + "supersededAt":
-            d["supersededAt"] = str(o)
-        elif ps == RDFVAL:
-            d["value"] = {"type": "Property", "value": str(o)}
-        elif ps == PROV + "wasAttributedTo":
-            d["attributedTo"] = {"type": "Relationship", "object": "urn:" + _ln(o)}
-        elif ps == PROV + "wasDerivedFrom":
-            d["derivedFrom"] = {"type": "Relationship", "object": "urn:" + _ln(o)}
-        elif isinstance(o, URIRef):
-            d[_ln(p)] = {"type": "Relationship", "object": "urn:" + _ln(o)}
-        elif isinstance(o, Literal):
-            d[_ln(p)] = {"type": "Property", "value": str(o)}
-    return d
+# The flat single-entity renderer that used bare Relationship->URN refs (and so
+# implied recursive lookups) has been retired: every stop now renders the actual
+# shape-bounded `?join=inline` object produced by tools/ngsild_view.py, where the
+# linked entities are inlined. See render_stop().
 
 
 # Each stop: (name, example file, screen title, subtitle, badge, [(label, valueHTML)...], [entity localnames])
@@ -148,7 +123,7 @@ BLOOD_DRAW_CHAIN = [
      "shape": "cr:SpecimenOriginShape + cr:CustodyEventShape"},
     {"check": "Custody current-state = Published", "who": "Raj Patel, Lab Technician",
      "params": [("Chain", "Received &rarr; Verified &rarr; Published"),
-                ("Current", "<code>specimen.custodyChain[*].custodyState</code> &#8715; "
+                ("Current", "<code>specimen.custodyChain[*].toState</code> &#8715; "
                             "<span class='pill ok'>Published</span>")],
      "reads": "specimen.custodyChain",
      "shape": "bitemporal custody current-state derivation"},
@@ -192,43 +167,60 @@ def _screen(title, subtitle, rows, badge):
 SPEC_BY_NAME = {s[0]: s for s in SPECS}
 
 
-def _blood_draw_view(root):
-    """Load the shape-bounded retrieval view + its worked example and return the
-    actual NGSI-LD object (built by the same traversal as tools/ngsild_view.py)."""
-    import importlib.util
-    p = os.path.join(root, "tools", "ngsild_view.py")
-    spec = importlib.util.spec_from_file_location("ngsild_view", p)
-    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
-    return mod.build(), mod.QUERY
+# Each operator screen maps to a retrieval view in tools/ngsild_view.py — so
+# every stop shows the ONE query + the single self-contained object it returns.
+SCREEN_VIEW = {
+    "Site activation": "site-activation",
+    "Delegation": "delegation",
+    "Enrollment": "enrollment",
+    "Informed consent": "consent",
+    "Blood draw": "blood-draw",
+    "EDC capture": "edc",
+    "Adverse event": "adverse-event",
+    "EOP2 gate": "eop2",
+    "Study start-up": "startup-package",
+}
+
+_VIEW_MOD = None
+
+
+def _view_mod(root):
+    """Load tools/ngsild_view.py once (the real traversal that emits the objects)."""
+    global _VIEW_MOD
+    if _VIEW_MOD is None:
+        import importlib.util
+        p = os.path.join(root, "tools", "ngsild_view.py")
+        spec = importlib.util.spec_from_file_location("ngsild_view", p)
+        _VIEW_MOD = importlib.util.module_from_spec(spec); spec.loader.exec_module(_VIEW_MOD)
+    return _VIEW_MOD
 
 
 def render_stop(root, name):
-    """Render one stop's split view (operator screen + NGSI-LD from its example)."""
+    """Render one stop's split view: operator screen + the one NGSI-LD query and
+    the single self-contained object that drives it (no recursive lookups)."""
+    import html as _html
     spec = SPEC_BY_NAME.get(name)
     if not spec:
         return ""
     _name, fname, title, sub, badge, rows, ids = spec
     if name == "Blood draw":
-        import html as _html
-        obj, query = _blood_draw_view(root)
         left = _provenance_screen("Specimen &mdash; admissibility at the bench",
                                   "Subject BD-S-001 &middot; one entity, fully expanded", "LIMS",
                                   BLOOD_DRAW_CHAIN)
-        objbody = _html.escape(json.dumps(obj, indent=2))
-        right = (f'<div class="jsoncap">the <b>one</b> query the screen issues</div>'
-                 f'<pre class="json q">{_html.escape(query)}</pre>'
-                 f'<div class="jsoncap">the <b>single object</b> it returns &mdash; related entities '
-                 f'inlined per the shape, <b>zero recursive lookups</b></div>'
-                 f'<pre class="json">{objbody}</pre>')
-        return (f'<div class="splitstop"><div class="split"><div>{left}</div>'
-                f'<div>{right}</div></div></div>')
-    g = Graph(); g.parse(os.path.join(root, "examples", fname), format="turtle")
-    objs = [ngsild(g, E + i) for i in ids]
-    body = json.dumps(objs if len(objs) > 1 else objs[0], indent=2)
-    left = _screen(title, sub, rows, badge)
+    else:
+        left = _screen(title, sub, rows, badge)
+    vkey = SCREEN_VIEW[name]
+    mod = _view_mod(root)
+    query = mod.query_for(vkey)
+    objbody = _html.escape(json.dumps(mod.build_view(vkey), indent=2))
+    right = (f'<div class="jsoncap">the <b>one</b> query the screen issues</div>'
+             f'<pre class="json q">{_html.escape(query)}</pre>'
+             f'<div class="jsoncap">the <b>single object</b> it returns &mdash; related entities '
+             f'inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), '
+             f'<b>zero recursive lookups</b></div>'
+             f'<pre class="json">{objbody}</pre>')
     return (f'<div class="splitstop"><div class="split"><div>{left}</div>'
-            f'<div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div>'
-            f'<pre class="json">{body}</pre></div></div></div>')
+            f'<div>{right}</div></div></div>')
 
 
 def render_stops(root):
@@ -243,11 +235,12 @@ def render_stops(root):
              'screen, and the panel beside it is the <b>real data behind it</b> &mdash; generated from the '
              'worked examples, in the NGSI-LD runtime shape, carrying its own time and provenance.</p>'
              '<p class="principle">The test of the model: an operator should pull <b>one</b> entity and get '
-             'every fact behind the green check &mdash; no recursive lookups. The <b>Blood draw</b> stop is '
-             'the worked proof: one query, and a single self-contained object whose related entities are '
-             'inlined <b>per a SHACL retrieval view</b> '
-             '(<code>views/blood-draw-admissibility.ttl</code>). Each check on the left cites the '
-             '<code>reads</code> path it pulls from that one object.</p>')
+             'every fact behind the green check &mdash; no recursive lookups. <b>Every stop below</b> proves it: '
+             'beside each screen is the single NGSI-LD <code>?join=inline</code> query it issues and the one '
+             'self-contained object it returns, whose related entities are inlined <b>per a SHACL retrieval '
+             'view</b> (<code>views/</code>), faithfully to ETSI GS CIM 009 (forward traversal only). The '
+             '<b>Blood draw</b> stop is the deep dive: each check there cites the <code>reads</code> path it '
+             'pulls from that one object.</p>')
     out = [intro, f'<div class="trainline">{chips}</div>']
     for name in names:
         out.append(f'<div class="splitstop"><h4 class="stopname">&#128205; {name}</h4>' + render_stop(root, name)[len('<div class="splitstop">'):])

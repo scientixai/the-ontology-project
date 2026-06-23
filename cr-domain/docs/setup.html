@@ -107,41 +107,127 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Study &amp; site set-up</h1><p class='lead'>Define the study and bring a site from feasibility to first-patient-in &mdash; with activation gated on its essential documents, and enrollment that can&#8217;t precede activation.</p><h2>Operator screen &mdash; Site activation</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Site activation &mdash; green light<span class="badge">CTMS</span><div class="scr-sub">Denver Cancer Center</div></div><div class="scr-row"><span>Site</span><b>Denver Cancer Center</b></div><div class="scr-row"><span>IRB/IEC approval</span><b>&#10003; 2026-01-15</b></div><div class="scr-row"><span>CTA</span><b>&#10003; executed 2026-01-20</b></div><div class="scr-row"><span>Site initiation visit</span><b>&#10003; 2026-02-01</b></div><div class="scr-row"><span>Activated</span><b><span class='pill ok'>2026-02-05</span></b></div><div class="scr-row"><span>Target accrual</span><b>20 subjects</b></div></div></div><div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div><pre class="json">{
-  "id": "urn:act1",
-  "type": "SiteActivation",
-  "name": {
-    "type": "Property",
-    "value": "Denver site activated"
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Study &amp; site set-up</h1><p class='lead'>Define the study and bring a site from feasibility to first-patient-in &mdash; with activation gated on its essential documents, and enrollment that can&#8217;t precede activation.</p><h2>Operator screen &mdash; Site activation</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Site activation &mdash; green light<span class="badge">CTMS</span><div class="scr-sub">Denver Cancer Center</div></div><div class="scr-row"><span>Site</span><b>Denver Cancer Center</b></div><div class="scr-row"><span>IRB/IEC approval</span><b>&#10003; 2026-01-15</b></div><div class="scr-row"><span>CTA</span><b>&#10003; executed 2026-01-20</b></div><div class="scr-row"><span>Site initiation visit</span><b>&#10003; 2026-02-01</b></div><div class="scr-row"><span>Activated</span><b><span class='pill ok'>2026-02-05</span></b></div><div class="scr-row"><span>Target accrual</span><b>20 subjects</b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:act1?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:SiteActivationView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:act1&quot;,
+  &quot;type&quot;: &quot;SiteActivation&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;Denver site activated&quot;
   },
-  "activates": {
-    "type": "Relationship",
-    "object": "urn:site-act"
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:act1&quot;
   },
-  "irbApproval": {
-    "type": "Relationship",
-    "object": "urn:irb1"
+  &quot;observedAt&quot;: &quot;2026-02-05T00:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-02-05T09:00:00+00:00&quot;
   },
-  "cta": {
-    "type": "Relationship",
-    "object": "urn:cta1"
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
   },
-  "siv": {
-    "type": "Relationship",
-    "object": "urn:siv1"
+  &quot;site&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:site-act&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:site-act&quot;,
+      &quot;type&quot;: &quot;StudySite&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Denver Cancer Center&quot;
+      },
+      &quot;targetAccrual&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;20&quot;
+      }
+    }
   },
-  "observedAt": "2026-02-05T00:00:00+00:00",
-  "recordedAt (createdAt)": "2026-02-05T09:00:00+00:00",
-  "attributedTo": {
-    "type": "Relationship",
-    "object": "urn:su-mgr"
+  &quot;irb&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:irb1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:irb1&quot;,
+      &quot;type&quot;: &quot;IRBApproval&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:irb1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-01-15T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-15T12:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
   },
-  "identifier": {
-    "type": "Property",
-    "value": "urn:act1"
+  &quot;cta&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:cta1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:cta1&quot;,
+      &quot;type&quot;: &quot;ClinicalTrialAgreement&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Executed CTA&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:cta1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-01-20T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-20T12:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
   },
-  "status": {
-    "type": "Property",
-    "value": "active"
+  &quot;siv&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:siv1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:siv1&quot;,
+      &quot;type&quot;: &quot;SiteInitiationVisit&quot;,
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:siv1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-02-01T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-02-01T16:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;activatedBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:su-mgr&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:su-mgr&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Start-up manager&quot;
+      }
+    }
   }
 }</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:Arm</code></td><td>Arm</td><td class='clo'>Scope</td><td>A treatment arm of the study.</td></tr><tr><td><code>cr:CRO</code></td><td>CRO</td><td class='clo'>Agent</td><td>A contract research organization the sponsor delegates trial conduct to.</td></tr><tr><td><code>cr:ClinicalTrialAgreement</code></td><td>Clinical Trial Agreement (CTA)</td><td class='clo'>Evidence</td><td>Executed site contract (observedAt = execution date).</td></tr><tr><td><code>cr:Cohort</code></td><td>Cohort</td><td class='clo'>Scope</td><td>A group of subjects sharing a dosing or treatment assignment.</td></tr><tr><td><code>cr:CoverageAnalysis</code></td><td>Coverage Analysis (MCA)</td><td class='clo'>Evidence</td><td>A Medicare/insurance coverage analysis for study procedures.</td></tr><tr><td><code>cr:DoseLevel</code></td><td>Dose Level</td><td class='clo'>Scope</td><td>A dose level in a dose-escalation design.</td></tr><tr><td><code>cr:EligibilityCriterion</code></td><td>Eligibility Criterion</td><td class='clo'>Constraint</td><td>An inclusion/exclusion rule defining who may enroll.</td></tr><tr><td><code>cr:Endpoint</code></td><td>Endpoint</td><td class='clo'>Scope</td><td>A defined outcome measure the study evaluates.</td></tr><tr><td><code>cr:IRBApproval</code></td><td>IRB/IEC Approval</td><td class='clo'>Temporal</td><td>Local IRB/IEC approval (observedAt = approval date).</td></tr><tr><td><code>cr:InvestigationalProduct</code></td><td>Investigational Product</td><td class='clo'>Resource</td><td>The investigational drug or biologic being studied.</td></tr><tr><td><code>cr:ProtocolVersion</code></td><td>Protocol Version</td><td class='clo'>Evidence</td><td>An effective-dated protocol version (bitemporal): which version was valid for a given visit.</td></tr><tr><td><code>cr:RegulatoryInteraction</code></td><td>Regulatory Interaction</td><td class='clo'>Temporal</td><td>Pre-IND / EOP2 meeting.</td></tr><tr><td><code>cr:SiteActivation</code></td><td>Site Activation</td><td class='clo'>Temporal</td><td>The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV.</td></tr><tr><td><code>cr:SiteInitiationVisit</code></td><td>Site Initiation Visit (SIV)</td><td class='clo'>Temporal</td><td>The visit that prepares and activates a site for enrollment.</td></tr><tr><td><code>cr:Sponsor</code></td><td>Sponsor</td><td class='clo'>Agent</td><td>The organization that initiates and is accountable for the trial.</td></tr><tr><td><code>cr:StoppingRule</code></td><td>Stopping Rule</td><td class='clo'>Constraint</td><td>A safety rule that halts dosing or enrollment when triggered.</td></tr><tr><td><code>cr:Study</code></td><td>Study</td><td class='clo'>Scope</td><td>A clinical study — the unit of investigation the protocol defines.</td></tr><tr><td><code>cr:StudySite</code></td><td>Study Site</td><td class='clo'>Agent</td><td>An investigative site conducting the study (an organization at a facility).</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:StudyShape</code></td><td><code>cr:Study</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A Study must be conducted at &gt;=1 StudySite.</li><li>A Study must have &gt;=1 ProtocolVersion.</li><li>A Study must have a Sponsor.</li></ul></td></tr><tr><td><code>cr:ProtocolEligibilityShape</code></td><td><code>cr:ProtocolVersion</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>ProtocolVersion declares no eligibility criteria (design-quality warning).</li></ul></td></tr><tr><td><code>cr:SiteActivationShape</code></td><td><code>cr:SiteActivation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Activation must name the site it activates.</li><li>Activation requires a completed Site Initiation Visit.</li><li>Activation requires an executed Clinical Trial Agreement.</li><li>Activation requires local IRB/IEC approval.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>usdm_study.rq</code></td><td>USDM-style study definition, projected from the native graph (the keystone view).</td></tr><tr><td><code>site_activation_tracker.rq</code></td><td>Start-up tracker — the activation timeline per site (IRB -&gt; CTA -&gt; SIV -&gt; activated), projected from the milestone graph.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

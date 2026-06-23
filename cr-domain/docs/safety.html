@@ -107,29 +107,56 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Safety &amp; pharmacovigilance</h1><p class='lead'>Adverse events and serious adverse events, with the expedited 15-day reporting clock measured bitemporally (awareness &rarr; submission).</p><h2>Operator screen &mdash; Adverse event</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Adverse event<span class="badge">Safety</span><div class="scr-sub">Subject OPP-101 S-001</div></div><div class="scr-row"><span>Subject</span><b>OPP-101 S-001</b></div><div class="scr-row"><span>Event</span><b>Grade 3 neutropenia</b></div><div class="scr-row"><span>Type</span><b><span class='pill warn'>Dose-limiting toxicity</span></b></div><div class="scr-row"><span>Onset</span><b>2026-02-09</b></div><div class="scr-row"><span>Reported by</span><b>Dr. Ana Rivera, PI</b></div></div></div><div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div><pre class="json">{
-  "id": "urn:ae-001",
-  "type": "DoseLimitingToxicity",
-  "name": {
-    "type": "Property",
-    "value": "Grade 3 neutropenia (DLT)"
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Safety &amp; pharmacovigilance</h1><p class='lead'>Adverse events and serious adverse events, with the expedited 15-day reporting clock measured bitemporally (awareness &rarr; submission).</p><h2>Operator screen &mdash; Adverse event</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Adverse event<span class="badge">Safety</span><div class="scr-sub">Subject OPP-101 S-001</div></div><div class="scr-row"><span>Subject</span><b>OPP-101 S-001</b></div><div class="scr-row"><span>Event</span><b>Grade 3 neutropenia</b></div><div class="scr-row"><span>Type</span><b><span class='pill warn'>Dose-limiting toxicity</span></b></div><div class="scr-row"><span>Onset</span><b>2026-02-09</b></div><div class="scr-row"><span>Reported by</span><b>Dr. Ana Rivera, PI</b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:ae-001?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:AdverseEventView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:ae-001&quot;,
+  &quot;type&quot;: &quot;DoseLimitingToxicity&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;Grade 3 neutropenia (DLT)&quot;
   },
-  "observedAt": "2026-02-09T00:00:00+00:00",
-  "recordedAt (createdAt)": "2026-02-09T16:20:00+00:00",
-  "attributedTo": {
-    "type": "Relationship",
-    "object": "urn:person-rivera"
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:ae-001&quot;
   },
-  "forSubject": {
-    "type": "Relationship",
-    "object": "urn:subj-001"
+  &quot;observedAt&quot;: &quot;2026-02-09T00:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-02-09T16:20:00+00:00&quot;
   },
-  "identifier": {
-    "type": "Property",
-    "value": "urn:ae-001"
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
   },
-  "status": {
-    "type": "Property",
-    "value": "active"
+  &quot;subject&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:subj-001&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:subj-001&quot;,
+      &quot;type&quot;: &quot;StudySubject&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;OPP-101 S-001 (pseudonymous)&quot;
+      }
+    }
+  },
+  &quot;reportedBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:person-rivera&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:person-rivera&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Dr. A. Rivera (PI)&quot;
+      }
+    }
   }
 }</pre></div></div></div><p class='note'>The 15-day SAE reporting clock is a bitemporal compliance check (a detective query over awareness vs submission), not a structural shape &mdash; the structure stays valid; the timeline is the signal.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:AdverseEvent</code></td><td>Adverse Event</td><td class='clo'>Outcome</td><td>An untoward medical occurrence in a trial subject.</td></tr><tr><td><code>cr:DoseLimitingToxicity</code></td><td>Dose-Limiting Toxicity</td><td class='clo'>Outcome</td><td>Oncology dose-escalation: a DLT informs the next dose decision.</td></tr><tr><td><code>cr:SafetyReport</code></td><td>Safety Report</td><td class='clo'>Evidence</td><td>Expedited report of an SAE to the regulator.</td></tr><tr><td><code>cr:SeriousAdverseEvent</code></td><td>Serious Adverse Event</td><td class='clo'>Outcome</td><td>An adverse event meeting seriousness criteria (expedited reporting).</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

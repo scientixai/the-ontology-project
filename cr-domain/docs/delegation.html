@@ -107,73 +107,117 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Delegation &amp; attestation</h1><p class='lead'>The PI delegates each task to credentialed staff by attestation &mdash; and the delegation-of-authority log is a <i>projection</i> of those acts, not a maintained spreadsheet.</p><h2>Operator screen &mdash; Delegation</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Delegation of authority<span class="badge">eReg</span><div class="scr-sub">Study OPP-101</div></div><div class="scr-row"><span>Principal investigator</span><b>Dr. Ana Rivera, PI</b></div><div class="scr-row"><span>Delegate</span><b>Tom Nguyen, RN &mdash; Study Nurse</b></div><div class="scr-row"><span>Capability</span><b>Obtain informed consent</b></div><div class="scr-row"><span>Credential</span><b>&#10003; GCP + consent training</b></div><div class="scr-row"><span>Effective</span><b>2026-02-03</b></div><div class="scr-row"><span>Attested</span><b><span class='pill ok'>via SMS, by PI</span></b></div></div></div><div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div><pre class="json">[
-  {
-    "id": "urn:deleg-consent-001",
-    "type": "Delegation",
-    "name": {
-      "type": "Property",
-      "value": "Delegation: consent -> Nguyen"
-    },
-    "observedAt": "2026-02-03T08:30:00+00:00",
-    "recordedAt (createdAt)": "2026-02-03T08:31:00+00:00",
-    "attributedTo": {
-      "type": "Relationship",
-      "object": "urn:person-rivera"
-    },
-    "wasGeneratedBy": {
-      "type": "Relationship",
-      "object": "urn:attest-deleg-001"
-    },
-    "delegator": {
-      "type": "Relationship",
-      "object": "urn:person-rivera"
-    },
-    "delegate": {
-      "type": "Relationship",
-      "object": "urn:person-nguyen"
-    },
-    "delegatedCapability": {
-      "type": "Relationship",
-      "object": "urn:cap-consent"
-    },
-    "requiresCredential": {
-      "type": "Relationship",
-      "object": "urn:cred-nguyen-gcp"
-    },
-    "identifier": {
-      "type": "Property",
-      "value": "urn:deleg-consent-001"
-    },
-    "status": {
-      "type": "Property",
-      "value": "active"
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Delegation &amp; attestation</h1><p class='lead'>The PI delegates each task to credentialed staff by attestation &mdash; and the delegation-of-authority log is a <i>projection</i> of those acts, not a maintained spreadsheet.</p><h2>Operator screen &mdash; Delegation</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Delegation of authority<span class="badge">eReg</span><div class="scr-sub">Study OPP-101</div></div><div class="scr-row"><span>Principal investigator</span><b>Dr. Ana Rivera, PI</b></div><div class="scr-row"><span>Delegate</span><b>Tom Nguyen, RN &mdash; Study Nurse</b></div><div class="scr-row"><span>Capability</span><b>Obtain informed consent</b></div><div class="scr-row"><span>Credential</span><b>&#10003; GCP + consent training</b></div><div class="scr-row"><span>Effective</span><b>2026-02-03</b></div><div class="scr-row"><span>Attested</span><b><span class='pill ok'>via SMS, by PI</span></b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:deleg-consent-001?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:DelegationFullView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:deleg-consent-001&quot;,
+  &quot;type&quot;: &quot;Delegation&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;Delegation: consent -&gt; Nguyen&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:deleg-consent-001&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-02-03T08:30:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-02-03T08:31:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;delegator&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:person-rivera&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:person-rivera&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Dr. A. Rivera (PI)&quot;
+      }
     }
   },
-  {
-    "id": "urn:attest-deleg-001",
-    "type": "Attestation",
-    "name": {
-      "type": "Property",
-      "value": "PI attestation of delegation (via SMS round-trip)"
-    },
-    "observedAt": "2026-02-03T08:30:00+00:00",
-    "recordedAt (createdAt)": "2026-02-03T08:31:00+00:00",
-    "attributedTo": {
-      "type": "Relationship",
-      "object": "urn:person-rivera"
-    },
-    "attestedBy": {
-      "type": "Relationship",
-      "object": "urn:person-rivera"
-    },
-    "identifier": {
-      "type": "Property",
-      "value": "urn:attest-deleg-001"
-    },
-    "status": {
-      "type": "Property",
-      "value": "active"
+  &quot;delegate&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:person-nguyen&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:person-nguyen&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Nurse T. Nguyen (study nurse)&quot;
+      }
+    }
+  },
+  &quot;capability&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:cap-consent&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:cap-consent&quot;,
+      &quot;type&quot;: &quot;Capability&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Obtain informed consent&quot;
+      }
+    }
+  },
+  &quot;credential&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:cred-nguyen-gcp&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:cred-nguyen-gcp&quot;,
+      &quot;type&quot;: &quot;Credential&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;GCP + consent training \u2014 Nguyen&quot;
+      }
+    }
+  },
+  &quot;attestation&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:attest-deleg-001&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:attest-deleg-001&quot;,
+      &quot;type&quot;: &quot;Attestation&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;PI attestation of delegation (via SMS round-trip)&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:attest-deleg-001&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-02-03T08:30:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-02-03T08:31:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;attestedBy&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:person-rivera&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:person-rivera&quot;,
+          &quot;type&quot;: &quot;Practitioner&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Dr. A. Rivera (PI)&quot;
+          }
+        }
+      }
     }
   }
-]</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:Attestation</code></td><td>Attestation</td><td class='clo'>Evidence</td><td>A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions.</td></tr><tr><td><code>cr:Capability</code></td><td>Capability</td><td class='clo'>Constraint</td><td>A delegable permission to perform a trial task (e.g. obtain informed consent).</td></tr><tr><td><code>cr:Credential</code></td><td>Credential</td><td class='clo'>Evidence</td><td>An attested qualification/training record that gates a delegated capability.</td></tr><tr><td><code>cr:Delegation</code></td><td>Delegation</td><td class='clo'>Temporal</td><td>PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:DelegationShape</code></td><td><code>cr:Delegation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Delegation must be gated by a Credential.</li><li>Delegation must grant a Capability.</li><li>Delegation must name the delegate.</li><li>Delegation must name the responsible delegator (PI).</li></ul></td></tr><tr><td><code>cr:CapabilityDelegationShape</code></td><td><code>cr:exercisesCapability</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Act exercises a capability with no delegation of that capability to its performer (undelegated work).</li></ul></td></tr><tr><td><code>cr:DelegationTimingShape</code></td><td><code>cr:exercisesCapability</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Act performed outside the effective window of its delegation (timing gap) — review materiality.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>doa_log.rq</code></td><td>Delegation of Authority (DOA) log — PROJECTED from delegation acts. The site-side flagship: the &quot;log&quot; is a query over the graph, never hand-maintained.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>
+}</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:Attestation</code></td><td>Attestation</td><td class='clo'>Evidence</td><td>A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions.</td></tr><tr><td><code>cr:Capability</code></td><td>Capability</td><td class='clo'>Constraint</td><td>A delegable permission to perform a trial task (e.g. obtain informed consent).</td></tr><tr><td><code>cr:Credential</code></td><td>Credential</td><td class='clo'>Evidence</td><td>An attested qualification/training record that gates a delegated capability.</td></tr><tr><td><code>cr:Delegation</code></td><td>Delegation</td><td class='clo'>Temporal</td><td>PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:DelegationShape</code></td><td><code>cr:Delegation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Delegation must be gated by a Credential.</li><li>Delegation must grant a Capability.</li><li>Delegation must name the delegate.</li><li>Delegation must name the responsible delegator (PI).</li></ul></td></tr><tr><td><code>cr:CapabilityDelegationShape</code></td><td><code>cr:exercisesCapability</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Act exercises a capability with no delegation of that capability to its performer (undelegated work).</li></ul></td></tr><tr><td><code>cr:DelegationTimingShape</code></td><td><code>cr:exercisesCapability</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Act performed outside the effective window of its delegation (timing gap) — review materiality.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>doa_log.rq</code></td><td>Delegation of Authority (DOA) log — PROJECTED from delegation acts. The site-side flagship: the &quot;log&quot; is a query over the graph, never hand-maintained.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

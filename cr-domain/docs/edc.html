@@ -107,85 +107,157 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Data capture (EDC) &amp; fidelity</h1><p class='lead'>Capture values against variable definitions (CDISC ODM EAV), verify by risk (SDV), and manage queries &mdash; with PHI classified at the source.</p><h2>Operator screen &mdash; EDC capture</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">EDC &mdash; Vitals CRF<span class="badge">EDC</span><div class="scr-sub">Visit: Cycle 1 Day 1</div></div><div class="scr-row"><span>Subject</span><b>EDC-S-001 <span class='muted'>(pseudonymous)</span></b></div><div class="scr-row"><span>Item</span><b>Systolic Blood Pressure</b></div><div class="scr-row"><span>Value</span><b><b>128</b> mmHg</b></div><div class="scr-row"><span>PHI class</span><b>NotPHI</b></div><div class="scr-row"><span>SDV</span><b><span class='pill ok'>Verified</span> by Silvia Rodriguez, CRA</b></div><div class="scr-row"><span>Open query</span><b><span class='pill warn'>Confirm SBP units</span></b></div><div class="scr-row"><span>Entered by</span><b>Jo Santos, CRC</b></div></div></div><div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div><pre class="json">[
-  {
-    "id": "urn:obs1",
-    "type": "ClinicalObservation",
-    "value": {
-      "type": "Property",
-      "value": "128"
-    },
-    "definedBy": {
-      "type": "Relationship",
-      "object": "urn:item-sbp"
-    },
-    "inItemGroup": {
-      "type": "Relationship",
-      "object": "urn:ig1"
-    },
-    "capturedDuring": {
-      "type": "Relationship",
-      "object": "urn:se1"
-    },
-    "forSubject": {
-      "type": "Relationship",
-      "object": "urn:edc-subj"
-    },
-    "sdvStatus": {
-      "type": "Property",
-      "value": "verified"
-    },
-    "verifiedBy": {
-      "type": "Relationship",
-      "object": "urn:cra1"
-    },
-    "observedAt": "2026-03-10T09:00:00+00:00",
-    "recordedAt (createdAt)": "2026-03-10T09:05:00+00:00",
-    "attributedTo": {
-      "type": "Relationship",
-      "object": "urn:crc1"
-    },
-    "identifier": {
-      "type": "Property",
-      "value": "urn:obs1"
-    },
-    "status": {
-      "type": "Property",
-      "value": "active"
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Data capture (EDC) &amp; fidelity</h1><p class='lead'>Capture values against variable definitions (CDISC ODM EAV), verify by risk (SDV), and manage queries &mdash; with PHI classified at the source.</p><h2>Operator screen &mdash; EDC capture</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">EDC &mdash; Vitals CRF<span class="badge">EDC</span><div class="scr-sub">Visit: Cycle 1 Day 1</div></div><div class="scr-row"><span>Subject</span><b>EDC-S-001 <span class='muted'>(pseudonymous)</span></b></div><div class="scr-row"><span>Item</span><b>Systolic Blood Pressure</b></div><div class="scr-row"><span>Value</span><b><b>128</b> mmHg</b></div><div class="scr-row"><span>PHI class</span><b>NotPHI</b></div><div class="scr-row"><span>SDV</span><b><span class='pill ok'>Verified</span> by Silvia Rodriguez, CRA</b></div><div class="scr-row"><span>Open query</span><b><span class='pill warn'>Confirm SBP units</span></b></div><div class="scr-row"><span>Entered by</span><b>Jo Santos, CRC</b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:obs1?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:EDCObservationView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:obs1&quot;,
+  &quot;type&quot;: &quot;ClinicalObservation&quot;,
+  &quot;value&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;128&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:obs1&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-03-10T09:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-03-10T09:05:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;sdvStatus&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;verified&quot;
+  },
+  &quot;item&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:item-sbp&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:item-sbp&quot;,
+      &quot;type&quot;: &quot;DataElementDef&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Systolic Blood Pressure&quot;
+      },
+      &quot;odmOID&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;I.SBP&quot;
+      },
+      &quot;phiClassification&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;NotPHI&quot;
+      }
     }
   },
-  {
-    "id": "urn:q1",
-    "type": "Query",
-    "name": {
-      "type": "Property",
-      "value": "Confirm SBP units (mmHg)"
-    },
-    "queryOn": {
-      "type": "Relationship",
-      "object": "urn:obs1"
-    },
-    "severity": {
-      "type": "Property",
-      "value": "minor"
-    },
-    "resolutionStatus": {
-      "type": "Property",
-      "value": "open"
-    },
-    "observedAt": "2026-03-12T00:00:00+00:00",
-    "recordedAt (createdAt)": "2026-03-12T08:00:00+00:00",
-    "attributedTo": {
-      "type": "Relationship",
-      "object": "urn:cra1"
-    },
-    "identifier": {
-      "type": "Property",
-      "value": "urn:q1"
-    },
-    "status": {
-      "type": "Property",
-      "value": "active"
+  &quot;itemGroup&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:ig1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:ig1&quot;,
+      &quot;type&quot;: &quot;ItemGroup&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Vital signs&quot;
+      },
+      &quot;odmOID&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;IG.VS&quot;
+      }
+    }
+  },
+  &quot;event&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:se1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:se1&quot;,
+      &quot;type&quot;: &quot;StudyEvent&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Cycle 1 Day 1 visit&quot;
+      },
+      &quot;odmOID&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;SE.C1D1&quot;
+      }
+    }
+  },
+  &quot;subject&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:edc-subj&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:edc-subj&quot;,
+      &quot;type&quot;: &quot;StudySubject&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;EDC-S-001&quot;
+      }
+    }
+  },
+  &quot;verifiedBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:cra1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:cra1&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Monitor (CRA)&quot;
+      }
+    }
+  },
+  &quot;query&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:q1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:q1&quot;,
+      &quot;type&quot;: &quot;Query&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Confirm SBP units (mmHg)&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:q1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-03-12T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-03-12T08:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;resolutionStatus&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;open&quot;
+      },
+      &quot;severity&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;minor&quot;
+      }
+    }
+  },
+  &quot;enteredBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:crc1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:crc1&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Study Coordinator&quot;
+      }
     }
   }
-]</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:CaseReportForm</code></td><td>Case Report Form</td><td class='clo'>Evidence</td><td>A case report form — a collection of item groups capturing a visit&#x27;s data.</td></tr><tr><td><code>cr:ClinicalObservation</code></td><td>Clinical Observation</td><td class='clo'>Evidence</td><td>A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef.</td></tr><tr><td><code>cr:DataElementDef</code></td><td>Data Element Definition</td><td class='clo'>Evidence</td><td>A variable DEFINITION (ItemOID), independent of any form version; carries a PHI classification.</td></tr><tr><td><code>cr:ItemGroup</code></td><td>Item Group</td><td class='clo'>Evidence</td><td>A logical clustering of items (ItemGroupOID).</td></tr><tr><td><code>cr:Query</code></td><td>Query</td><td class='clo'>Evidence</td><td>A discrepancy note / data query anchored to a data point or other entity; threaded.</td></tr><tr><td><code>cr:StudyEvent</code></td><td>Study Event</td><td class='clo'>Temporal</td><td>A scheduled or unscheduled timepoint (StudyEventOID) when data is captured.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:ClinicalObservationShape</code></td><td><code>cr:ClinicalObservation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Observation must reference its variable definition (DataElementDef).</li><li>Observation must reference the (pseudonymous) StudySubject.</li><li>Observation must reference the StudyEvent it was captured at.</li></ul></td></tr><tr><td><code>cr:DataElementPHIShape</code></td><td><code>cr:DataElementDef</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>DataElementDef should carry a PHI classification (NotPHI/LimitedPHI/FullPHI/Restricted).</li></ul></td></tr><tr><td><code>cr:QueryShape</code></td><td><code>cr:Query</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Query must be anchored to a target entity (cr:queryOn).</li><li>Query must carry a resolution status (open/answered/closed).</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>datamart_itemdata.rq</code></td><td>Data mart (ExtractionSchema) — flatten the EAV ItemData graph into a tabular view. Demonstrates &quot;the data mart is a projection of the native graph,&quot; not a separate store.</td></tr><tr><td><code>sdtm_ae.rq</code></td><td>CDISC SDTM — AE (Adverse Events) domain, projected from the native graph. Covers AdverseEvent and its subclasses (e.g. DoseLimitingToxicity) via subclass path.</td></tr><tr><td><code>sdtm_ex.rq</code></td><td>CDISC SDTM — EX (Exposure) domain, projected from dosing acts (cr:Administration).</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>
+}</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:CaseReportForm</code></td><td>Case Report Form</td><td class='clo'>Evidence</td><td>A case report form — a collection of item groups capturing a visit&#x27;s data.</td></tr><tr><td><code>cr:ClinicalObservation</code></td><td>Clinical Observation</td><td class='clo'>Evidence</td><td>A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef.</td></tr><tr><td><code>cr:DataElementDef</code></td><td>Data Element Definition</td><td class='clo'>Evidence</td><td>A variable DEFINITION (ItemOID), independent of any form version; carries a PHI classification.</td></tr><tr><td><code>cr:ItemGroup</code></td><td>Item Group</td><td class='clo'>Evidence</td><td>A logical clustering of items (ItemGroupOID).</td></tr><tr><td><code>cr:Query</code></td><td>Query</td><td class='clo'>Evidence</td><td>A discrepancy note / data query anchored to a data point or other entity; threaded.</td></tr><tr><td><code>cr:StudyEvent</code></td><td>Study Event</td><td class='clo'>Temporal</td><td>A scheduled or unscheduled timepoint (StudyEventOID) when data is captured.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:ClinicalObservationShape</code></td><td><code>cr:ClinicalObservation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Observation must reference its variable definition (DataElementDef).</li><li>Observation must reference the (pseudonymous) StudySubject.</li><li>Observation must reference the StudyEvent it was captured at.</li></ul></td></tr><tr><td><code>cr:DataElementPHIShape</code></td><td><code>cr:DataElementDef</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>DataElementDef should carry a PHI classification (NotPHI/LimitedPHI/FullPHI/Restricted).</li></ul></td></tr><tr><td><code>cr:QueryShape</code></td><td><code>cr:Query</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Query must be anchored to a target entity (cr:queryOn).</li><li>Query must carry a resolution status (open/answered/closed).</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>datamart_itemdata.rq</code></td><td>Data mart (ExtractionSchema) — flatten the EAV ItemData graph into a tabular view. Demonstrates &quot;the data mart is a projection of the native graph,&quot; not a separate store.</td></tr><tr><td><code>sdtm_ae.rq</code></td><td>CDISC SDTM — AE (Adverse Events) domain, projected from the native graph. Covers AdverseEvent and its subclasses (e.g. DoseLimitingToxicity) via subclass path.</td></tr><tr><td><code>sdtm_ex.rq</code></td><td>CDISC SDTM — EX (Exposure) domain, projected from dosing acts (cr:Administration).</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

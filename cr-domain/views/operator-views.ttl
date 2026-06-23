@@ -1,0 +1,115 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+###############################################################################
+# RETRIEVAL VIEWS (not constraints) for every applicable operator screen.
+#
+# Each declares the FORWARD linked entities a single pull of the screen's root
+# entity inlines — so the UI issues ONE NGSI-LD `?join=inline` call and gets a
+# self-contained object carrying every green-check fact, no recursive lookups.
+# All paths are forward (ETSI GS CIM 009 clause 4.5.23.1). Leaf shapes that are
+# empty NodeShapes inline the node's own scalar facts only (label/status/time
+# and any domain literals like streamStatus, phiClassification, sdvStatus).
+#
+# Generic leaves PersonLeaf/SubjectLeaf/CapLeaf/CredLeaf/DelegationLeaf and the
+# ConsentView are defined in blood-draw-admissibility.ttl and reused here (the
+# generator merges all views/*.ttl into one graph). tools/ngsild_view.py walks
+# these; the VIEWS registry there maps each screen to its root + view.
+###############################################################################
+
+# --- Site activation: activation act -> site + the three dated milestones ----
+cr:SiteActivationView a sh:NodeShape ;
+    sh:targetClass cr:SiteActivation ;
+    sh:property [ sh:path cr:activates ;            sh:name "site" ;        sh:node cr:SiteLeaf ] ;
+    sh:property [ sh:path cr:irbApproval ;          sh:name "irb" ;         sh:node cr:MilestoneLeaf ] ;
+    sh:property [ sh:path cr:cta ;                  sh:name "cta" ;         sh:node cr:MilestoneLeaf ] ;
+    sh:property [ sh:path cr:siv ;                  sh:name "siv" ;         sh:node cr:MilestoneLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;    sh:name "activatedBy" ; sh:node cr:PersonLeaf ] .
+
+# --- Delegation: the act -> parties, capability, credential, attestation -----
+cr:DelegationFullView a sh:NodeShape ;
+    sh:targetClass cr:Delegation ;
+    sh:property [ sh:path cr:delegator ;            sh:name "delegator" ;   sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:delegate ;             sh:name "delegate" ;    sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:delegatedCapability ;  sh:name "capability" ;  sh:node cr:CapLeaf ] ;
+    sh:property [ sh:path cr:requiresCredential ;   sh:name "credential" ;  sh:node cr:CredLeaf ] ;
+    sh:property [ sh:path prov:wasGeneratedBy ;     sh:name "attestation" ; sh:node cr:AttestationView ] .
+
+cr:AttestationView a sh:NodeShape ;
+    sh:property [ sh:path cr:attestedBy ;           sh:name "attestedBy" ;  sh:node cr:PersonLeaf ] .
+
+# --- Enrollment: the PII bridge -> person, pseudonymous subject, study --------
+cr:EnrollmentView a sh:NodeShape ;
+    sh:targetClass cr:Enrollment ;
+    sh:property [ sh:path cr:enrolledPerson ;       sh:name "person" ;      sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:asSubject ;            sh:name "subject" ;     sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:intoStudy ;            sh:name "study" ;       sh:node cr:StudyLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;    sh:name "enrolledBy" ;  sh:node cr:PersonLeaf ] .
+
+# --- EDC value: the ItemData -> definition, group, event, SDV, query ---------
+cr:EDCObservationView a sh:NodeShape ;
+    sh:targetClass cr:ClinicalObservation ;
+    sh:property [ sh:path cr:definedBy ;            sh:name "item" ;        sh:node cr:DataElemLeaf ] ;
+    sh:property [ sh:path cr:inItemGroup ;          sh:name "itemGroup" ;   sh:node cr:ItemGroupLeaf ] ;
+    sh:property [ sh:path cr:capturedDuring ;       sh:name "event" ;       sh:node cr:EventLeaf ] ;
+    sh:property [ sh:path cr:forSubject ;           sh:name "subject" ;     sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:verifiedBy ;           sh:name "verifiedBy" ;  sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:hasQuery ;             sh:name "query" ;       sh:node cr:QueryLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;    sh:name "enteredBy" ;   sh:node cr:PersonLeaf ] .
+
+# --- Adverse event: the AE -> subject + reporter -----------------------------
+cr:AdverseEventView a sh:NodeShape ;
+    sh:targetClass cr:AdverseEvent ;
+    sh:property [ sh:path cr:forSubject ;           sh:name "subject" ;     sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;    sh:name "reportedBy" ;  sh:node cr:PersonLeaf ] .
+
+# --- EOP2 gate: the meeting -> study, result(+estimand+SAP), agreement, design
+cr:EOP2GateView a sh:NodeShape ;
+    sh:targetClass cr:RegulatoryInteraction ;
+    sh:property [ sh:path cr:concernsStudy ;        sh:name "study" ;        sh:node cr:StudyLeaf ] ;
+    sh:property [ sh:path cr:reviewsResult ;        sh:name "result" ;       sh:node cr:ResultView ] ;
+    sh:property [ sh:path cr:producedAgreement ;    sh:name "agreement" ;    sh:node cr:AgreementLeaf ] ;
+    sh:property [ sh:path cr:proposesDesign ;       sh:name "phase3Design" ; sh:node cr:DesignView ] .
+
+cr:ResultView a sh:NodeShape ;
+    sh:property [ sh:path cr:measuresEndpoint ;     sh:name "endpoint" ;     sh:node cr:EndpointLeaf ] ;
+    sh:property [ sh:path cr:perEstimand ;          sh:name "estimand" ;     sh:node cr:EstimandLeaf ] ;
+    sh:property [ sh:path cr:analyzedUnder ;        sh:name "sap" ;          sh:node cr:SAPLeaf ] .
+
+cr:DesignView a sh:NodeShape ;
+    sh:property [ sh:path cr:basedOnDoseOptimization ; sh:name "doseOptimization" ; sh:node cr:DoseOptLeaf ] .
+
+# --- Study start-up: the activation -> package(+typed docs), work streams -----
+cr:StartupActivationView a sh:NodeShape ;
+    sh:targetClass cr:SiteActivation ;
+    sh:property [ sh:path cr:activates ;            sh:name "site" ;         sh:node cr:SiteLeaf ] ;
+    sh:property [ sh:path cr:activationPackage ;    sh:name "package" ;      sh:node cr:PackageView ] ;
+    sh:property [ sh:path cr:hasWorkStream ;        sh:name "workStreams" ;  sh:node cr:WorkStreamLeaf ] ;
+    sh:property [ sh:path cr:irbApproval ;          sh:name "irb" ;          sh:node cr:MilestoneLeaf ] ;
+    sh:property [ sh:path cr:cta ;                  sh:name "cta" ;          sh:node cr:MilestoneLeaf ] ;
+    sh:property [ sh:path cr:siv ;                  sh:name "siv" ;          sh:node cr:MilestoneLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;    sh:name "activatedBy" ;  sh:node cr:PersonLeaf ] .
+
+cr:PackageView a sh:NodeShape ;
+    sh:property [ sh:path cr:includesArtifact ;     sh:name "artifacts" ;    sh:node cr:ArtifactView ] .
+
+cr:ArtifactView a sh:NodeShape ;
+    sh:property [ sh:path cr:ofArtifactType ;       sh:name "artifactType" ; sh:node cr:TypeLeaf ] .
+
+# --- Leaf shapes (inline scalar facts only; no further relationship-following)-
+cr:SiteLeaf       a sh:NodeShape .
+cr:MilestoneLeaf  a sh:NodeShape .
+cr:StudyLeaf      a sh:NodeShape .
+cr:DataElemLeaf   a sh:NodeShape .
+cr:ItemGroupLeaf  a sh:NodeShape .
+cr:EventLeaf      a sh:NodeShape .
+cr:QueryLeaf      a sh:NodeShape .
+cr:AgreementLeaf  a sh:NodeShape .
+cr:EndpointLeaf   a sh:NodeShape .
+cr:EstimandLeaf   a sh:NodeShape .
+cr:SAPLeaf        a sh:NodeShape .
+cr:DoseOptLeaf    a sh:NodeShape .
+cr:WorkStreamLeaf a sh:NodeShape .
+cr:TypeLeaf       a sh:NodeShape .

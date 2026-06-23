@@ -107,67 +107,136 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <a class="" href="tmf.html">TMF document binding</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>EOP2 &amp; analysis</h1><p class='lead'>The back bracket: efficacy results that trace to their estimand and SAP (overstatement guard), the EOP2 readiness gate, and ADaM analysis traceable to native source.</p><h2>Operator screen &mdash; EOP2 gate</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">End-of-Phase-2 gate<span class="badge">Regulatory</span><div class="scr-sub">Study OPP-201</div></div><div class="scr-row"><span>Study</span><b>OPP-201 (Phase 2)</b></div><div class="scr-row"><span>Primary result</span><b>ORR = 0.42</b></div><div class="scr-row"><span>Estimand</span><b><span class='pill ok'>&#10003; pre-specified</span></b></div><div class="scr-row"><span>Analyzed under</span><b>&#10003; SAP v1.0</b></div><div class="scr-row"><span>FDA agreement</span><b>primary endpoint = OS</b></div><div class="scr-row"><span>Phase 3 design</span><b>RP2D (Project Optimus)</b></div></div></div><div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div><pre class="json">[
-  {
-    "id": "urn:res-orr",
-    "type": "EndpointResult",
-    "name": {
-      "type": "Property",
-      "value": "ORR = 0.42"
-    },
-    "value": {
-      "type": "Property",
-      "value": "0.42"
-    },
-    "measuresEndpoint": {
-      "type": "Relationship",
-      "object": "urn:ep-orr"
-    },
-    "perEstimand": {
-      "type": "Relationship",
-      "object": "urn:est-orr"
-    },
-    "analyzedUnder": {
-      "type": "Relationship",
-      "object": "urn:sap201"
-    },
-    "observedAt": "2026-08-01T00:00:00+00:00",
-    "recordedAt (createdAt)": "2026-08-03T00:00:00+00:00",
-    "attributedTo": {
-      "type": "Relationship",
-      "object": "urn:biostat"
-    },
-    "identifier": {
-      "type": "Property",
-      "value": "urn:res-orr"
-    },
-    "status": {
-      "type": "Property",
-      "value": "active"
+<a class="" href="reference.html">Full reference</a></nav><main><h1>EOP2 &amp; analysis</h1><p class='lead'>The back bracket: efficacy results that trace to their estimand and SAP (overstatement guard), the EOP2 readiness gate, and ADaM analysis traceable to native source.</p><h2>Operator screen &mdash; EOP2 gate</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">End-of-Phase-2 gate<span class="badge">Regulatory</span><div class="scr-sub">Study OPP-201</div></div><div class="scr-row"><span>Study</span><b>OPP-201 (Phase 2)</b></div><div class="scr-row"><span>Primary result</span><b>ORR = 0.42</b></div><div class="scr-row"><span>Estimand</span><b><span class='pill ok'>&#10003; pre-specified</span></b></div><div class="scr-row"><span>Analyzed under</span><b>&#10003; SAP v1.0</b></div><div class="scr-row"><span>FDA agreement</span><b>primary endpoint = OS</b></div><div class="scr-row"><span>Phase 3 design</span><b>RP2D (Project Optimus)</b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:eop2?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:EOP2GateView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:eop2&quot;,
+  &quot;type&quot;: &quot;RegulatoryInteraction&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;End-of-Phase-2 meeting&quot;
+  },
+  &quot;meetingType&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;EOP2&quot;
+  },
+  &quot;study&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:study-opp201&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:study-opp201&quot;,
+      &quot;type&quot;: &quot;Study&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;OPP-201 (Phase 2 oncology)&quot;
+      }
     }
   },
-  {
-    "id": "urn:eop2",
-    "type": "RegulatoryInteraction",
-    "name": {
-      "type": "Property",
-      "value": "End-of-Phase-2 meeting"
-    },
-    "meetingType": {
-      "type": "Property",
-      "value": "EOP2"
-    },
-    "producedAgreement": {
-      "type": "Relationship",
-      "object": "urn:agree1"
-    },
-    "hasRiskRegister": {
-      "type": "Relationship",
-      "object": "urn:rr1"
-    },
-    "proposesDesign": {
-      "type": "Relationship",
-      "object": "urn:p3design"
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:res-orr&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:res-orr&quot;,
+      &quot;type&quot;: &quot;EndpointResult&quot;,
+      &quot;value&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;0.42&quot;
+      },
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;ORR = 0.42&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:res-orr&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-08-01T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-08-03T00:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;endpoint&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:ep-orr&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:ep-orr&quot;,
+          &quot;type&quot;: &quot;Endpoint&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Objective Response Rate (ORR)&quot;
+          }
+        }
+      },
+      &quot;estimand&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:est-orr&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:est-orr&quot;,
+          &quot;type&quot;: &quot;Estimand&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;ORR estimand (ITT, confirmed responses, RECIST 1.1)&quot;
+          }
+        }
+      },
+      &quot;sap&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:sap201&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:sap201&quot;,
+          &quot;type&quot;: &quot;StatisticalAnalysisPlan&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;OPP-201 SAP v1.0&quot;
+          }
+        }
+      }
+    }
+  },
+  &quot;agreement&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:agree1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:agree1&quot;,
+      &quot;type&quot;: &quot;RegulatoryAgreement&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;FDA agreement: primary endpoint = OS&quot;
+      }
+    }
+  },
+  &quot;phase3Design&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:p3design&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:p3design&quot;,
+      &quot;type&quot;: &quot;Phase3Design&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Proposed Phase 3 design (RP2D)&quot;
+      },
+      &quot;doseOptimization&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:doseopt&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:doseopt&quot;,
+          &quot;type&quot;: &quot;Assessment&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Dose optimization analysis (Project Optimus)&quot;
+          }
+        }
+      }
     }
   }
-]</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:AnalysisDataset</code></td><td>Analysis Dataset (ADaM)</td><td class='clo'>Evidence</td><td>An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source.</td></tr><tr><td><code>cr:EndpointResult</code></td><td>Endpoint Result</td><td class='clo'>Outcome</td><td>A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP.</td></tr><tr><td><code>cr:Estimand</code></td><td>Estimand</td><td class='clo'>Scope</td><td>The precise treatment-effect definition a result must trace to (overstatement guard).</td></tr><tr><td><code>cr:Phase3Design</code></td><td>Proposed Phase 3 Design</td><td class='clo'>Scope</td><td>A proposed Phase 3 trial design taken to the EOP2 meeting.</td></tr><tr><td><code>cr:RegulatoryAgreement</code></td><td>Regulatory Agreement</td><td class='clo'>Constraint</td><td>A binding FDA agreement (a commitment the program is held to).</td></tr><tr><td><code>cr:RiskRegister</code></td><td>Risk Register</td><td class='clo'>Evidence</td><td>A record of risks and decisions captured at a regulatory gate.</td></tr><tr><td><code>cr:StatisticalAnalysisPlan</code></td><td>Statistical Analysis Plan</td><td class='clo'>Evidence</td><td>The pre-specified plan for analyzing the study&#x27;s data.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:EndpointResultTraceShape</code></td><td><code>cr:EndpointResult</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>EndpointResult must reference the endpoint it measures.</li><li>EndpointResult must trace to a pre-specified estimand.</li><li>EndpointResult must trace to the SAP it was analyzed under.</li></ul></td></tr><tr><td><code>cr:EOP2ReadinessShape</code></td><td><code>cr:RegulatoryInteraction</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>EOP2 meeting lacks a binding agreement and/or a risk register (readiness warning).</li></ul></td></tr><tr><td><code>cr:ADaMTraceabilityShape</code></td><td><code>cr:AnalysisDataset</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Analysis dataset (ADaM) must declare prov:wasDerivedFrom its source (traceability).</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>adam_traceability.rq</code></td><td>ADaM traceability — walk an analysis result to its NATIVE source fact (the lineage leaf). &quot;Reproduce this number&quot; = a prov:wasDerivedFrom+ walk to the fact that has no further source.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>
+}</pre></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:AnalysisDataset</code></td><td>Analysis Dataset (ADaM)</td><td class='clo'>Evidence</td><td>An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source.</td></tr><tr><td><code>cr:EndpointResult</code></td><td>Endpoint Result</td><td class='clo'>Outcome</td><td>A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP.</td></tr><tr><td><code>cr:Estimand</code></td><td>Estimand</td><td class='clo'>Scope</td><td>The precise treatment-effect definition a result must trace to (overstatement guard).</td></tr><tr><td><code>cr:Phase3Design</code></td><td>Proposed Phase 3 Design</td><td class='clo'>Scope</td><td>A proposed Phase 3 trial design taken to the EOP2 meeting.</td></tr><tr><td><code>cr:RegulatoryAgreement</code></td><td>Regulatory Agreement</td><td class='clo'>Constraint</td><td>A binding FDA agreement (a commitment the program is held to).</td></tr><tr><td><code>cr:RiskRegister</code></td><td>Risk Register</td><td class='clo'>Evidence</td><td>A record of risks and decisions captured at a regulatory gate.</td></tr><tr><td><code>cr:StatisticalAnalysisPlan</code></td><td>Statistical Analysis Plan</td><td class='clo'>Evidence</td><td>The pre-specified plan for analyzing the study&#x27;s data.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:EndpointResultTraceShape</code></td><td><code>cr:EndpointResult</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>EndpointResult must reference the endpoint it measures.</li><li>EndpointResult must trace to a pre-specified estimand.</li><li>EndpointResult must trace to the SAP it was analyzed under.</li></ul></td></tr><tr><td><code>cr:EOP2ReadinessShape</code></td><td><code>cr:RegulatoryInteraction</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>EOP2 meeting lacks a binding agreement and/or a risk register (readiness warning).</li></ul></td></tr><tr><td><code>cr:ADaMTraceabilityShape</code></td><td><code>cr:AnalysisDataset</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Analysis dataset (ADaM) must declare prov:wasDerivedFrom its source (traceability).</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>adam_traceability.rq</code></td><td>ADaM traceability — walk an analysis result to its NATIVE source fact (the lineage leaf). &quot;Reproduce this number&quot; = a prov:wasDerivedFrom+ walk to the fact that has no further source.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>
