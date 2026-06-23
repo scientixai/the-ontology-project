@@ -1,0 +1,183 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix hcls:   <https://top.scientix.ai/hcls/v1#> .
+@prefix usdm:   <https://w3id.org/cdisc/usdm/v4/> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/core/v1#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# OWNED crosswalk: TOP cr-core  <->  CDISC USDM v4.0 (the generated, vendored layer).
+# Target IRIs VERIFIED against the pinned primary source
+# (github.com/cdisc-org/DDF-RA USDM_API.json @ tag v4.0.0, sha dc4303bc). Each mapping
+# carries full SSSOM metadata and passes the hardened curation gate (cx:MappingShape).
+#
+# The curation respects the plan<->execution boundary: USDM is a design-time study
+# DEFINITION model; cr-core is operator/execution + provenance + bitemporal. Where a
+# USDM design construct names the same clinical act that cr-core records as an executed,
+# bitemporal event, the mapping is relatedMatch (a boundary crossing), NOT exactMatch.
+# This deliberately corrects the over-strong exactMatch assertions in the early analysis
+# (see crosswalks/registry.md).
+
+ex:curator-wg a prov:Agent ; rdfs:label "TOP CR curation WG" .
+
+# Source pin reused by every mapping below.
+#   retrievedFrom: github.com/cdisc-org/DDF-RA USDM_API.json @ tag v4.0.0 (sha dc4303bc)
+
+####################################################################
+# 1) Aligned design constructs — cr-core has a faithful counterpart
+####################################################################
+ex:ux-study a cx:Mapping ;
+    cx:subjectId cr:Study ; cx:predicateId skos:closeMatch ; cx:objectId usdm:Study ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.90"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-protocolversion a cx:Mapping ;
+    cx:subjectId cr:ProtocolVersion ; cx:predicateId skos:closeMatch ; cx:objectId usdm:StudyVersion ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.85"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-arm a cx:Mapping ;
+    cx:subjectId cr:Arm ; cx:predicateId skos:closeMatch ; cx:objectId usdm:StudyArm ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.90"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-cohort a cx:Mapping ;
+    cx:subjectId cr:Cohort ; cx:predicateId skos:closeMatch ; cx:objectId usdm:StudyCohort ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.85"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-eligibility a cx:Mapping ;
+    cx:subjectId cr:EligibilityCriterion ; cx:predicateId skos:exactMatch ; cx:objectId usdm:EligibilityCriterion ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.95"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-endpoint a cx:Mapping ;
+    cx:subjectId cr:Endpoint ; cx:predicateId skos:closeMatch ; cx:objectId usdm:Endpoint ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.90"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-estimand a cx:Mapping ;
+    cx:subjectId cr:Estimand ; cx:predicateId skos:closeMatch ; cx:objectId usdm:Estimand ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.90"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-dataelement a cx:Mapping ;
+    cx:subjectId cr:DataElementDef ; cx:predicateId skos:closeMatch ; cx:objectId usdm:BiomedicalConcept ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.80"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-site a cx:Mapping ;
+    cx:subjectId cr:StudySite ; cx:predicateId skos:exactMatch ; cx:objectId usdm:StudySite ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.95"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-organization a cx:Mapping ;
+    cx:subjectId hcls:Organization ; cx:predicateId skos:closeMatch ; cx:objectId usdm:Organization ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.90"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# 2) Schedule-of-Activities bridge — USDM's static timeline maps INTO
+#    cr-core's bitemporal SoA (template/projection/execution). cr adds
+#    the as-of + planned-vs-actual layer USDM does not express.
+####################################################################
+ex:ux-scheduletimeline a cx:Mapping ;
+    cx:subjectId cr:ScheduleTimeline ; cx:predicateId skos:closeMatch ; cx:objectId usdm:ScheduleTimeline ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.85"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    rdfs:comment "USDM ScheduleTimeline is static design; cr:ScheduleTimeline is bitemporal (amendment as-of) and reconciled against execution. The design content corresponds; the temporal capability is a TOP extension." ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-encounter a cx:Mapping ;
+    cx:subjectId cr:PlannedEncounter ; cx:predicateId skos:closeMatch ; cx:objectId usdm:Encounter ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.90"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-scheduledactivity a cx:Mapping ;
+    cx:subjectId cr:PlannedActivity ; cx:predicateId skos:closeMatch ; cx:objectId usdm:ScheduledActivityInstance ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.85"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-timing a cx:Mapping ;
+    cx:subjectId cr:Timing ; cx:predicateId skos:closeMatch ; cx:objectId usdm:Timing ;
+    cx:justification semapv:ManualMappingCuration ; cx:confidence "0.85"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# 3) Cross-kind / abstraction — relatedMatch, by logical reasoning
+####################################################################
+ex:ux-activity a cx:Mapping ;
+    cx:subjectId cr:Capability ; cx:predicateId skos:relatedMatch ; cx:objectId usdm:Activity ;
+    cx:justification semapv:LogicalReasoning ; cx:confidence "0.60"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    rdfs:comment "USDM Activity is a reusable planned-activity definition; cr:Capability is the delegable action-type a performer must be authorized for. Related, not equivalent." ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# 4) Plan <-> execution boundary — relatedMatch (deliberately NOT exact).
+#    These correct the over-strong exactMatch claims in the early analysis.
+####################################################################
+ex:ux-administration a cx:Mapping ;
+    cx:subjectId cr:Administration ; cx:predicateId skos:relatedMatch ; cx:objectId usdm:Administration ;
+    cx:justification semapv:LogicalReasoning ; cx:confidence "0.50"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    rdfs:comment "USDM Administration is a PLANNED regimen (dose/route/frequency, design-time); cr:Administration is the EXECUTED, bitemporal dosing event. Same clinical act across the plan/execution boundary — relatedMatch, NOT the exactMatch(0.95) of the early analysis." ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:ux-enrollment a cx:Mapping ;
+    cx:subjectId cr:Enrollment ; cx:predicateId skos:relatedMatch ; cx:objectId usdm:SubjectEnrollment ;
+    cx:justification semapv:LogicalReasoning ; cx:confidence "0.40"^^xsd:decimal ;
+    cx:author ex:curator-wg ; cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    rdfs:comment "USDM SubjectEnrollment is a PLANNED enrollment QUANTITY by cohort/site (carries 'quantity', design-time); cr:Enrollment is the EXECUTED bitemporal Person<->Subject act. relatedMatch, NOT the exactMatch(1.0) of the early analysis." ;
+    top:recordedAt "2026-06-23T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
