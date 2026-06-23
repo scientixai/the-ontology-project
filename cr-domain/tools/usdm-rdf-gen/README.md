@@ -11,8 +11,13 @@ ddf-ra-v4.0.0/USDM_CT.xlsx     # pinned CDISC controlled terminology (NCIt codes
 ddf-ra-v4.0.0/usdm_ct.json     # CT extracted to JSON (so generate.py stays stdlib-only)
 extract_ct.py                  # one-time CT extractor (requires openpyxl)
 verify_ncit.py                 # verify the NCIt anchors against a current NCIt FLAT file
-generate.py                   # the generator (Apache-2.0, stdlib-only)
+generate.py                    # the class-model generator (Apache-2.0, stdlib-only)
+generate_ct.py                 # the controlled-terminology -> SKOS generator (stdlib-only)
 ```
+
+`generate_ct.py` emits `ontology/vendor/usdm/usdm-ct-v4.ttl`: the DDF valid value sets as
+SKOS concept schemes (one per codelist, bound to its `usdm:` property, NCIt-anchored), one
+`skos:Concept` per permissible value.
 
 The NCIt anchors are verified against a current NCI Thesaurus release (the FLAT file from
 evs.nci.nih.gov/evs-download/thesaurus-downloads — large, not vendored). The durable result

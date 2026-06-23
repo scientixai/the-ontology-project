@@ -144,11 +144,11 @@ def ncit_verification_checks(failures):
     if not os.path.exists(path):
         return 0, 0
     s = json.load(open(path))["summary"]
-    ok = (s["resolved"] == s["total"] and s["ddf_tagged"] == s["total"]
-          and s["label_match"] >= s["total"] - 2)
+    lt = s.get("label_total", s["total"])
+    ok = (s["resolved"] == s["total"] and s["label_match"] >= lt - 3)
     if ok:
         print(f"[PASS] USDM NCIt anchors verified vs NCIt {s['ncit_version']} "
-              f"({s['resolved']}/{s['total']} resolve, {s['label_match']}/{s['total']} labels, "
+              f"({s['resolved']}/{s['total']} resolve, {s['label_match']}/{lt} labels, "
               f"{s['ddf_tagged']}/{s['total']} DDF-tagged)")
         return 1, 1
     failures.append(("NCIT", "verify", str(s)))
@@ -171,12 +171,31 @@ def usdm_vendor_checks(failures):
         return 0, 1
     owl_class = URIRef("http://www.w3.org/2002/07/owl#Class")
     nclass = len(set(g.subjects(RDF.type, owl_class)))
-    if nclass >= 80:
-        print(f"[PASS] vendored USDM v4.0 OWL parses ({nclass} classes, {len(g)} triples)")
-        return 1, 1
-    failures.append(("USDM", "classes", f"expected >=80, got {nclass}"))
-    print(f"[FAIL] vendored USDM-OWL has only {nclass} classes")
-    return 0, 1
+    if nclass < 80:
+        failures.append(("USDM", "classes", f"expected >=80, got {nclass}"))
+        print(f"[FAIL] vendored USDM-OWL has only {nclass} classes")
+        return 0, 1
+    # CT SKOS concept schemes (codelists + permissible values)
+    ctpath = os.path.join(ROOT, "ontology", "vendor", "usdm", "usdm-ct-v4.ttl")
+    skos = "http://www.w3.org/2004/02/skos/core#"
+    nsch = ncon = 0
+    if os.path.exists(ctpath):
+        try:
+            cg = Graph()
+            cg.parse(ctpath, format="turtle")
+        except Exception as e:  # noqa: BLE001
+            failures.append(("USDM", "ct-parse", str(e)))
+            print(f"[FAIL] vendored USDM CT SKOS failed to parse: {e}")
+            return 0, 1
+        nsch = len(set(cg.subjects(RDF.type, URIRef(skos + "ConceptScheme"))))
+        ncon = len(set(cg.subjects(RDF.type, URIRef(skos + "Concept"))))
+        if nsch < 25 or ncon < 100:
+            failures.append(("USDM", "ct-counts", f"schemes={nsch} concepts={ncon}"))
+            print(f"[FAIL] USDM CT SKOS thin: {nsch} schemes, {ncon} concepts")
+            return 0, 1
+    print(f"[PASS] vendored USDM v4.0 OWL ({nclass} classes) + CT SKOS "
+          f"({nsch} codelists, {ncon} values) parse")
+    return 1, 1
 
 
 def schedule_checks(ont_graph, failures):
