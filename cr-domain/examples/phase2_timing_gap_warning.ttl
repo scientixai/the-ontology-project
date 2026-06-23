@@ -1,0 +1,33 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# RISK-PROPORTIONATE (Warning, not Violation): consent obtained 2026-02-02, but the
+# nurse's delegation only became effective 2026-02-05. The capability and credential
+# DO exist — this is the user's "consented before delegated" case: reviewable, not fatal.
+ex:tg-pi    a hcls:Person .
+ex:tg-nurse a hcls:Person .
+ex:tg-subj  a cr:StudySubject .
+ex:tg-cap   a cr:Capability .
+ex:tg-cred  a cr:Credential ; cr:credentialOf ex:tg-nurse .
+
+ex:tg-deleg a cr:Delegation ;
+    top:observedAt  "2026-02-05T08:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T08:01:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tg-pi ;
+    cr:delegator ex:tg-pi ; cr:delegate ex:tg-nurse ;
+    cr:delegatedCapability ex:tg-cap ; cr:requiresCredential ex:tg-cred .
+
+ex:tg-consent a cr:InformedConsent ;
+    top:observedAt  "2026-02-02T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-02T09:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tg-nurse ;
+    cr:forSubject ex:tg-subj ; cr:performedBy ex:tg-nurse ;
+    cr:exercisesCapability ex:tg-cap ; cr:underDelegation ex:tg-deleg .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/tg-consent> top:identifier "urn:tg-consent" ; top:status "active" .
+<https://top.scientix.ai/examples/tg-deleg> top:identifier "urn:tg-deleg" ; top:status "active" .

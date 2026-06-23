@@ -1,0 +1,14 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# ADaM analysis layer + traceability.
+# ADaM's value is reproducibility: every analysis result traces to its source. In this
+# reference the chain is result -> analysis dataset -> NATIVE source facts (via W3C PROV
+# wasDerivedFrom), i.e. traceability to the one source of truth, not the fragile
+# SDTM-document -> ADaM-document chain. SDTM and ADaM are both views of the native graph.
+
+cr:AnalysisDataset a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Analysis Dataset (ADaM)" ;
+    rdfs:comment "An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source." .

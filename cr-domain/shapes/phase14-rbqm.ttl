@@ -1,0 +1,42 @@
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix cr:  <https://top.scientix.ai/cr/v1#> .
+
+# WELL-FORMEDNESS (Violation): a risk assessment names a factor and a level.
+cr:RiskAssessmentShape a sh:NodeShape ;
+    sh:targetClass cr:RiskAssessment ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:assessesFactor ; sh:minCount 1 ; sh:class cr:CriticalToQualityFactor ;
+        sh:message "Risk assessment must reference the critical-to-quality factor it assesses." ] ;
+    sh:property [ sh:path cr:riskLevel ; sh:minCount 1 ; sh:in ( "low" "medium" "high" ) ;
+        sh:message "Risk assessment must carry a risk level (low/medium/high)." ] .
+
+# FLAGSHIP (Violation): a HIGH risk must be mitigated. Unmitigated high risk is inadmissible.
+cr:HighRiskMitigationShape a sh:NodeShape ;
+    sh:targetClass cr:RiskAssessment ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "High-risk critical-to-quality factor has no mitigation plan." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#riskLevel> "high" .
+              FILTER NOT EXISTS { ?mp <https://top.scientix.ai/cr/v1#mitigates> $this . }
+            }
+        """ ;
+    ] .
+
+# RISK-PROPORTIONATE (Warning): 100% SDV on a LOW-risk factor is wasteful (the Doc 1
+# inefficiency RBQM exists to remove). Reviewable, not fatal.
+cr:OverMonitoringShape a sh:NodeShape ;
+    sh:targetClass cr:MitigationPlan ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "100% SDV applied to a low-risk factor (over-monitoring; consider risk-based reduction)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#sdvIntensity> ?i ;
+                    <https://top.scientix.ai/cr/v1#mitigates> ?ra .
+              ?ra <https://top.scientix.ai/cr/v1#riskLevel> "low" .
+              FILTER ( ?i = 1.0 )
+            }
+        """ ;
+    ] .

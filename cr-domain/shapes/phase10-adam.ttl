@@ -1,0 +1,13 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# TRACEABILITY (Violation): an ADaM analysis dataset must declare what it was derived
+# from. An orphan analysis dataset breaks reproducibility-to-source — inadmissible.
+cr:ADaMTraceabilityShape a sh:NodeShape ;
+    sh:targetClass cr:AnalysisDataset ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Analysis dataset (ADaM) must declare prov:wasDerivedFrom its source (traceability)." ;
+    ] .

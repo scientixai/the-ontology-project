@@ -1,0 +1,42 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — E6(R3) essential records. A source document holds source data and
+# carries an audit trail; a certified copy reproduces the source document; everything is
+# recorded in the trial master file. Bitemporal + PROV throughout (the audit trail by
+# construction). Nothing warns, nothing violates.
+
+ex:coordinator a hcls:Practitioner ; rdfs:label "Study coordinator" .
+ex:tmf-001 a cr:TrialMasterFile ; rdfs:label "OPP-101 Trial Master File" .
+
+# The audit trail node (the auditor-facing assertion; the envelope realizes it by construction).
+ex:at-001 a cr:AuditTrail ; rdfs:label "Audit trail for source document SD-001" ;
+    top:identifier "urn:at-001" ; top:status "active" ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coordinator .
+
+# Source data, with its audit trail.
+ex:sd-001 a cr:SourceData ; rdfs:label "Vitals worksheet values, Cycle 1 Day 1" ;
+    cr:hasAuditTrail ex:at-001 ;
+    top:identifier "urn:sd-001" ; top:status "active" ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coordinator .
+
+# The original source document, recorded in the TMF, containing the source data.
+ex:doc-001 a cr:SourceDocument ; rdfs:label "Signed vitals worksheet SD-001" ;
+    cr:containsSourceData ex:sd-001 ; cr:recordedInTMF ex:tmf-001 ; cr:hasAuditTrail ex:at-001 ;
+    top:identifier "urn:doc-001" ; top:status "active" ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coordinator .
+
+# A certified copy of the source document.
+ex:cc-001 a cr:CertifiedCopy ; rdfs:label "Scanned certified copy of SD-001" ;
+    cr:certifiedCopyOf ex:doc-001 ;
+    top:identifier "urn:cc-001" ; top:status "active" ;
+    top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coordinator .

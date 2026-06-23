@@ -1,0 +1,11 @@
+# ADaM traceability — walk an analysis result to its NATIVE source fact (the lineage leaf).
+# "Reproduce this number" = a prov:wasDerivedFrom+ walk to the fact that has no further source.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?result ?source WHERE {
+  ?r a cr:EndpointResult ; rdfs:label ?result ;
+     prov:wasDerivedFrom+ ?src .
+  ?src rdfs:label ?source .
+  FILTER NOT EXISTS { ?src prov:wasDerivedFrom ?deeper }
+}

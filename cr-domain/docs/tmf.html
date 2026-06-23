@@ -1,0 +1,91 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>TMF document binding</title><style>
+:root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{display:flex;max-width:1200px;margin:0 auto}
+nav{position:sticky;top:0;align-self:flex-start;width:240px;padding:24px 18px;height:100vh;overflow:auto;font-size:13px;border-right:1px solid var(--line)}
+nav b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 5px}
+nav a{display:block;color:var(--sec);padding:3px 0}
+nav a.on{color:var(--acc);font-weight:700}
+.brandmark{padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.toplogo{width:172px;height:auto;display:block}
+.brandsub{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:var(--mut);margin-top:8px;letter-spacing:.02em}
+main{flex:1;padding:26px 40px;max-width:900px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);margin:34px 0 12px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
+h4{margin:0 0 6px;font-size:15px}
+.lead{background:#fff;border-left:3px solid var(--acc);padding:14px 18px;margin:0 0 14px;font-size:15px;line-height:1.6}
+.tag{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--acc);font-size:12px;margin:0 0 16px}
+.muted{color:var(--mut)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:3px;padding:15px}.card h4{color:var(--acc)}
+.step{display:flex;gap:14px;margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:3px;padding:15px}
+.step .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+pre{background:#fafaf6;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:0 3px 3px 0;color:var(--sec);padding:13px 16px;overflow:auto;font:12px/1.7 ui-monospace,"SF Mono",Menlo,monospace}
+pre .c{color:#888;font-style:italic}
+code{background:var(--pale);border-radius:3px;padding:1px 5px;font:12px ui-monospace,"SF Mono",Menlo,monospace}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{text-align:left;padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+th{background:var(--pale);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+table.map td:first-child{color:var(--mut)}.ref td.clo{color:var(--acc);font-size:12px;white-space:nowrap;font-family:ui-monospace,Menlo,monospace}
+.ref ul,td ul{margin:0;padding-left:16px}
+.sev{font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px}
+.sev.violation{background:#f4e3e4;color:var(--danger)}.sev.warning{background:#f4ebd9;color:var(--warn)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 0}.stats div{background:#fff;border:1px solid var(--line);border-radius:3px;padding:8px 14px;font-size:12px;color:var(--mut)}.stats b{display:block;font-size:20px;color:var(--acc)}
+.note{background:#f4faf7;border:1px solid #cde4d8;border-left:3px solid var(--ok);border-radius:0 3px 3px 0;padding:12px 15px}
+.flowgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.flowgrid a{display:block;background:#fff;border:1px solid var(--line);border-radius:3px;padding:13px 15px;color:var(--sec)}
+.flowgrid a:hover{border-color:var(--acc);text-decoration:none}.flowgrid b{color:var(--acc)}
+footer{color:var(--mut);font-size:12px;margin:44px 0 20px;border-top:1px solid var(--line);padding-top:14px}
+.masthead{background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 18px;margin:0 0 18px}
+dl.mast{display:grid;grid-template-columns:130px 1fr;gap:4px 14px;margin:0 0 12px;font-size:13px}
+dl.mast dt{color:var(--mut);text-transform:uppercase;font-size:11px;letter-spacing:.04em;padding-top:2px}
+dl.mast dd{margin:0}
+.downloads{border-top:1px solid var(--line);padding-top:12px}
+.dlhead{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:5px 0}
+.dllabel{font-size:12px;color:var(--sec);width:96px;flex:none}
+a.fmt{display:inline-block;font:11px ui-monospace,Menlo,monospace;background:var(--pale);border:1px solid var(--line);border-radius:3px;padding:2px 9px;color:var(--acc)}
+a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:var(--acc)}
+.citeas{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;font-size:13px;color:var(--sec)}
+.citeas.attribution{font-size:12px;color:var(--mut)}
+
+.trainline{display:flex;align-items:center;flex-wrap:wrap;gap:4px 0;margin:14px 0 26px}
+.tstop{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--mut);white-space:nowrap}
+.tstop.live{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.trail{width:14px;height:2px;background:var(--accent);opacity:.55}
+.splitstop{margin:22px 0}
+.stopname{margin:0 0 8px;color:var(--ink)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06)}
+.scr-head{background:linear-gradient(180deg,#0e7490,#0b5563);color:#fff;padding:12px 14px;font-weight:600;position:relative}
+.scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
+.badge{position:absolute;right:12px;top:12px;background:rgba(255,255,255,.2);font-size:11px;padding:2px 8px;border-radius:10px}
+.scr-row{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;border-top:1px solid var(--line);font-size:14px}
+.scr-row span{color:var(--mut)}
+.muted{color:var(--mut);font-weight:400;font-size:12px}
+.pill{font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px}
+.pill.ok{background:#e7f6ee;color:var(--ok)}.pill.warn{background:#fdf4e3;color:var(--warn)}
+.jsoncap{font-size:12px;color:var(--mut);margin-bottom:4px}
+pre.json{margin:0;max-height:420px}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+</style></head><body><div class='wrap'><nav><div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div><b>Start</b>
+<a class="" href="index.html">Overview</a>
+<a class="" href="foundation.html">Foundation</a>
+<b>Flows / sub-domains</b>
+<a class="" href="setup.html">Study &amp; site set-up</a>
+<a class="" href="delegation.html">Delegation &amp; attestation</a>
+<a class="" href="enrollment.html">Enrollment &amp; consent</a>
+<a class="" href="edc.html">Data capture (EDC) &amp; fidelity</a>
+<a class="" href="lims.html">Biospecimen &amp; LIMS custody</a>
+<a class="" href="safety.html">Safety &amp; pharmacovigilance</a>
+<a class="" href="rbqm.html">Risk-based monitoring (RBQM)</a>
+<a class="" href="deviation.html">Deviations &amp; CAPA</a>
+<a class="" href="preind.html">Pre-IND gate</a>
+<a class="" href="eop2.html">EOP2 &amp; analysis</a>
+<a class="" href="gcp.html">GCP &amp; essential records</a>
+<a class="on" href="tmf.html">TMF document binding</a>
+<a class="" href="interop.html">Interoperability</a>
+<b>Detail</b>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>TMF document binding</h1><p class='lead'>Classify a document to its artifact type (a SKOS scheme aligned to the DIA TMF Reference Model), then bind what its facts <i>mean</i> to the domain class &mdash; the comprehension layer the eTMF world omits.</p><p class='note'>Two bindings, kept distinct: document-type (&#8220;this is a Protocol Deviation Log&#8221;) and content (&#8220;its facts mean <code>cr:DeviationEvent</code>&#8221;). The commons owns the map (align + build); the consuming system classifies, extracts, and asserts <code>prov:wasDerivedFrom</code> at runtime &mdash; that seam is deliberate, and the runtime is out of scope.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>tmf:TMFArtifactType</code></td><td>TMF Artifact Type</td><td class='clo'>—</td><td>A kind of trial-master-file document (the document-type binding target).</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>tmf:ContentBindingShape</code></td><td><code>tmf:TMFArtifactType</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>TMF artifact type has no content binding (no tmf:concerns) — a filing label, not comprehension.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>tmf_binding_map.rq</code></td><td>TMF binding map — for each TMF artifact type, the domain class its facts are bound to. Once a system has classified a document to its artifact type, this tells it which ontology entities to expect inside. The comprehension layer the eTMF world omits, as a query.</td></tr></table><footer>Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

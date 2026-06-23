@@ -1,0 +1,45 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Two SAEs + expedited reports. Both are STRUCTURALLY valid; the 15-day breach is
+# detected by the bitemporal compliance query (like back-dating — structure is fine,
+# the timeline is the signal). Awareness vs submission is exactly a bitemporal gap.
+
+ex:subj-sae a cr:StudySubject .
+ex:pi-sae a hcls:Practitioner .
+
+# Compliant: aware 09-01, submitted 09-05 (4 days).
+ex:sae-1 a cr:SeriousAdverseEvent ;
+    cr:forSubject ex:subj-sae ;
+    cr:sponsorAwareAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt  "2026-08-30T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pi-sae .
+ex:rep-1 a cr:SafetyReport ; cr:reportsEvent ex:sae-1 ;
+    cr:submittedAt "2026-09-05T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt  "2026-09-05T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-05T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pi-sae .
+
+# Late: aware 09-01, submitted 09-25 (24 days) -> expedited-clock breach.
+ex:sae-2 a cr:SeriousAdverseEvent ;
+    cr:forSubject ex:subj-sae ;
+    cr:sponsorAwareAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt  "2026-08-29T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pi-sae .
+ex:rep-2 a cr:SafetyReport ; cr:reportsEvent ex:sae-2 ;
+    cr:submittedAt "2026-09-25T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt  "2026-09-25T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-25T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pi-sae .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/rep-1> top:identifier "urn:rep-1" ; top:status "active" .
+<https://top.scientix.ai/examples/rep-2> top:identifier "urn:rep-2" ; top:status "active" .
+<https://top.scientix.ai/examples/sae-1> top:identifier "urn:sae-1" ; top:status "active" .
+<https://top.scientix.ai/examples/sae-2> top:identifier "urn:sae-2" ; top:status "active" .

@@ -1,0 +1,11 @@
+# CDISC SDTM — DM (Demographics) domain, projected from the native operator graph.
+# One row per enrolled subject. Standards are views, not the stored model.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?USUBJID ?STUDYID WHERE {
+  ?enr a cr:Enrollment ;
+       cr:asSubject ?subj ;
+       cr:intoStudy ?study .
+  ?subj  rdfs:label ?USUBJID .
+  ?study rdfs:label ?STUDYID .
+}

@@ -1,0 +1,11 @@
+# FHIR ResearchSubject view, projected from HCLS-core/CR-core — the SAME native
+# graph yielding a FHIR-shaped view (vs the CDISC views), proving one model many edges.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?subject ?study WHERE {
+  ?enr a cr:Enrollment ;
+       cr:asSubject ?s ;
+       cr:intoStudy ?st .
+  ?s  rdfs:label ?subject .
+  ?st rdfs:label ?study .
+}

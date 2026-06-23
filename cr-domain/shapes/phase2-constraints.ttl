@@ -1,0 +1,61 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Phase 2 — graded, risk-proportionate constraints (severity carries materiality).
+
+# FLAGSHIP (Violation): no trial activity that exercises a capability is admissible
+# unless a delegation of that capability to its performer exists. Genuinely
+# undelegated work is a hard failure.
+cr:CapabilityDelegationShape a sh:NodeShape ;
+    rdfs:label "Capability requires delegation (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetSubjectsOf cr:exercisesCapability ;
+    sh:sparql [
+        sh:message "Act exercises a capability with no delegation of that capability to its performer (undelegated work)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap .
+              $this <https://top.scientix.ai/cr/v1#performedBy> ?p .
+              FILTER NOT EXISTS {
+                ?d a <https://top.scientix.ai/cr/v1#Delegation> ;
+                   <https://top.scientix.ai/cr/v1#delegate> ?p ;
+                   <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap .
+              }
+            }
+        """ ;
+    ] .
+
+# RISK-PROPORTIONATE (Warning): a delegation for performer+capability DOES exist,
+# but the act's valid time falls outside its effective window (e.g. performed
+# before the delegation became effective). The capability/credential exist, so
+# this is a materiality judgment for review — NOT an automatic fatal finding.
+cr:DelegationTimingShape a sh:NodeShape ;
+    rdfs:label "Delegation timing gap (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetSubjectsOf cr:exercisesCapability ;
+    sh:sparql [
+        sh:message "Act performed outside the effective window of its delegation (timing gap) — review materiality." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap ;
+                    <https://top.scientix.ai/cr/v1#performedBy> ?p ;
+                    <https://top.scientix.ai/core/v1#observedAt> ?t .
+              ?d a <https://top.scientix.ai/cr/v1#Delegation> ;
+                 <https://top.scientix.ai/cr/v1#delegate> ?p ;
+                 <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap ;
+                 <https://top.scientix.ai/core/v1#observedAt> ?df .
+              OPTIONAL { ?d <https://top.scientix.ai/core/v1#validTo> ?dt . }
+              FILTER ( ?t < ?df || ( BOUND(?dt) && ?t > ?dt ) )
+            }
+        """ ;
+    ] .
+
+# DESIGN QUALITY (Warning): a protocol version with no eligibility criteria.
+cr:ProtocolEligibilityShape a sh:NodeShape ;
+    rdfs:label "Protocol should declare eligibility (warning)" ;
+    sh:targetClass cr:ProtocolVersion ;
+    sh:property [
+        sh:path cr:hasEligibilityCriterion ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "ProtocolVersion declares no eligibility criteria (design-quality warning)." ;
+    ] .

@@ -1,0 +1,19 @@
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix cr:  <https://top.scientix.ai/cr/v1#> .
+
+# WELL-FORMEDNESS (Violation): a certified copy must reference the source document it copies.
+# A "certified copy" of nothing is not a certified copy. (E6(R3) certified-copy definition.)
+cr:CertifiedCopyShape a sh:NodeShape ;
+    sh:targetClass cr:CertifiedCopy ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:certifiedCopyOf ; sh:minCount 1 ; sh:class cr:SourceDocument ;
+        sh:message "A certified copy must reference the source document it copies." ] .
+
+# DEONTIC RESIDUE (Warning): source data should be reconstructable via an audit trail
+# (ALCOA++). Encoded as a shape, not a class. Reviewable, not fatal — the bitemporal + PROV
+# envelope already provides reconstructability; an explicit cr:AuditTrail node is the
+# stronger, auditor-facing assertion.
+cr:SourceDataAuditTrailShape a sh:NodeShape ;
+    sh:targetClass cr:SourceData ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "Source data has no audit trail (ALCOA++ reconstructability not explicitly asserted)." ] .

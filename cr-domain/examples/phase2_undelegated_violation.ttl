@@ -1,0 +1,18 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): an AE assessment exercises a capability, but the performer
+# has NO delegation for it — genuinely undelegated work. Hard failure.
+ex:assess-noauth a cr:Assessment ;
+    cr:exercisesCapability ex:cap-ae-assessment ;
+    cr:performedBy ex:rogue ;
+    top:observedAt "2026-02-10T10:00:00Z"^^xsd:dateTime .
+
+ex:cap-ae-assessment a cr:Capability .
+ex:rogue a hcls:Person .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/assess-noauth> top:identifier "urn:assess-noauth" ; top:status "active" .

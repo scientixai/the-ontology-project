@@ -1,0 +1,15 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+
+# PII CONTAINMENT (Violation): subject attachment must reference a pseudonymous
+# StudySubject, never an identifiable Person. The ONLY legal Person<->Subject link is
+# the attested Enrollment bridge (cr:enrolledPerson). Catches structural PII leaks
+# (a dataset/result/act pointing at a real Person). It cannot catch PII smuggled in
+# free-text values — that is an upstream redaction responsibility (out of scope here).
+cr:PIIContainmentShape a sh:NodeShape ;
+    sh:targetObjectsOf cr:forSubject ;
+    sh:severity sh:Violation ;
+    sh:class cr:StudySubject ;
+    sh:not [ sh:class hcls:Person ] ;
+    sh:message "cr:forSubject must reference a pseudonymous StudySubject, never an identifiable Person (PII containment); the only legal Person<->Subject link is the attested Enrollment bridge." .

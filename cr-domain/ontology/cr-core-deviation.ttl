@@ -1,0 +1,44 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Deviation-antecedent chain (ICH E8(R1) CtQ factors; ICH E6(R3) deviations & CAPA).
+# The relationship most CR models skip: a critical-to-quality factor is threatened by a
+# latent operational condition (the ANTECEDENT — the "missing middle"), which under load
+# MANIFESTS AS a deviation event, which TRIGGERS a corrective/preventive action (CAPA).
+# Builds on the RBQM module (CriticalToQualityFactor, RiskAssessment).
+
+cr:DeviationAntecedent a owl:Class ; rdfs:subClassOf top:Constraint, top:ProvenancedEntity ;
+    rdfs:label "Deviation Antecedent" ;
+    rdfs:comment "A latent operational condition that predisposes a deviation (e.g. a visit window too tight for the site's staffing). The missing middle between a critical-to-quality factor and the deviation event it manifests as; bitemporal (it exists, and is detected, over time)." .
+cr:DeviationEvent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Deviation Event" ;
+    rdfs:comment "A protocol deviation occurrence (departure from the protocol or GCP). Classified by materiality; significant deviations require a CAPA. Bitemporal + attested." .
+cr:CAPA a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "CAPA" ;
+    rdfs:comment "Corrective And Preventive Action — the formal response to a deviation or finding (corrective: fix this occurrence; preventive: stop recurrence). Bitemporal + attested." .
+cr:RiskSignal a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Risk Signal" ;
+    rdfs:comment "A leading indicator (a trend or metric) that flags a deviation antecedent before it manifests — the signal a provenance-native graph can hold as low-trust, provenance-tagged evidence." .
+
+# The chain.
+cr:threatens a owl:ObjectProperty ; rdfs:domain cr:DeviationAntecedent ; rdfs:range cr:CriticalToQualityFactor ;
+    rdfs:label "threatens" ; rdfs:comment "The critical-to-quality factor this latent condition endangers." .
+cr:manifestsAs a owl:ObjectProperty ; rdfs:domain cr:DeviationAntecedent ; rdfs:range cr:DeviationEvent ;
+    rdfs:label "manifests as" ; rdfs:comment "The deviation event this antecedent produced under load." .
+cr:triggers a owl:ObjectProperty ; rdfs:domain cr:DeviationEvent ; rdfs:range cr:CAPA ;
+    rdfs:label "triggers" ; rdfs:comment "The corrective/preventive action this deviation triggered." .
+cr:flags a owl:ObjectProperty ; rdfs:domain cr:RiskSignal ; rdfs:range cr:DeviationAntecedent ;
+    rdfs:label "flags" ; rdfs:comment "The antecedent this leading indicator points at." .
+cr:identifiesAntecedent a owl:ObjectProperty ; rdfs:domain cr:RiskAssessment ; rdfs:range cr:DeviationAntecedent ;
+    rdfs:label "identifies antecedent" ; rdfs:comment "Links an RBQM risk assessment to the latent condition it identifies (integration with the RBQM module)." .
+
+# Classification.
+cr:deviationCategory a owl:DatatypeProperty ; rdfs:domain cr:DeviationEvent ;
+    rdfs:label "deviation category" ; rdfs:comment "Materiality: critical | major | minor. Critical/major are significant deviations requiring a CAPA." .
+cr:capaType a owl:DatatypeProperty ; rdfs:domain cr:CAPA ;
+    rdfs:label "CAPA type" ; rdfs:comment "corrective | preventive | corrective-and-preventive." .
+cr:capaStatus a owl:DatatypeProperty ; rdfs:domain cr:CAPA ;
+    rdfs:label "CAPA status" ; rdfs:comment "open | in-progress | closed." .

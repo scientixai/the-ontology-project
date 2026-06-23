@@ -1,0 +1,40 @@
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix cr:  <https://top.scientix.ai/cr/v1#> .
+
+# WELL-FORMEDNESS (Violation): a deviation event is classified by materiality.
+cr:DeviationEventShape a sh:NodeShape ;
+    sh:targetClass cr:DeviationEvent ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:deviationCategory ; sh:minCount 1 ; sh:in ( "critical" "major" "minor" ) ;
+        sh:message "Deviation event must carry a category (critical/major/minor)." ] .
+
+# FLAGSHIP (Violation): a SIGNIFICANT deviation (critical or major) must have a CAPA.
+# Encodes the ICH E6(R3) obligation as a shape (deontic residue, not a class).
+cr:SignificantDeviationCAPAShape a sh:NodeShape ;
+    sh:targetClass cr:DeviationEvent ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "Significant deviation (critical/major) has no CAPA." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#deviationCategory> ?c .
+              FILTER ( ?c IN ( "critical", "major" ) )
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#triggers> ?capa . }
+            }
+        """ ;
+    ] .
+
+# THESIS / RISK-PROPORTIONATE (Warning): a deviation with no recorded antecedent.
+# Most CR models capture the event and the CAPA and skip the latent cause; flagging the
+# gap is the point of this sub-domain. Reviewable, not fatal.
+cr:UncapturedAntecedentShape a sh:NodeShape ;
+    sh:targetClass cr:DeviationEvent ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Deviation event has no recorded antecedent (latent cause not captured)." ;
+        sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS { ?a <https://top.scientix.ai/cr/v1#manifestsAs> $this . }
+            }
+        """ ;
+    ] .

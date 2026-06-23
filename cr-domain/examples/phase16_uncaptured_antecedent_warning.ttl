@@ -1,0 +1,26 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED (Warning) — a minor deviation, properly CAPA'd, but with NO antecedent recorded.
+# It is admissible (a minor deviation needs no CAPA, and this one has one anyway), but the
+# latent cause was never captured. cr:UncapturedAntecedentShape raises a reviewable Warning,
+# not a Violation: the graph nudges the operator to model the missing middle.
+
+ex:dm a hcls:Practitioner ; rdfs:label "Data manager" .
+
+ex:dev-min a cr:DeviationEvent ; rdfs:label "Source document filed 2 days late" ;
+    cr:deviationCategory "minor" ; cr:triggers ex:capa-min ;
+    top:identifier "urn:dev-min" ; top:status "active" ;
+    top:observedAt "2026-03-12T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dm .
+
+ex:capa-min a cr:CAPA ; rdfs:label "Filing reminder added to site checklist" ;
+    cr:capaType "preventive" ; cr:capaStatus "closed" ;
+    top:identifier "urn:capa-min" ; top:status "active" ;
+    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-13T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dm .

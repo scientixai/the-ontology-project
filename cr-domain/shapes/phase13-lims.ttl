@@ -1,0 +1,36 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# ROOTED CUSTODY (Violation): every specimen must have an origin — either a collection
+# event (primary) or derivation from a parent (aliquot/partition). No orphan specimens.
+cr:SpecimenOriginShape a sh:NodeShape ;
+    sh:targetClass hcls:Specimen ;
+    sh:severity sh:Violation ;
+    sh:or (
+        [ sh:path cr:collectedAt ; sh:minCount 1 ]
+        [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ]
+    ) ;
+    sh:message "Specimen must have an origin: a collection event (cr:collectedAt) or a parent (prov:wasDerivedFrom)." .
+
+# CUSTODY TRANSITION (Violation): a custody event references its specimen and a valid state.
+cr:CustodyEventShape a sh:NodeShape ;
+    sh:targetClass cr:CustodyEvent ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:specimen ; sh:minCount 1 ; sh:class hcls:Specimen ;
+        sh:message "Custody event must reference its specimen." ] ;
+    sh:property [ sh:path cr:toState ; sh:minCount 1 ;
+        sh:in ( "SampleDue" "Received" "ToBeVerified" "Verified" "Published" ) ;
+        sh:message "Custody event toState must be a valid lifecycle state." ] .
+
+# ASSAY RESULT (Violation): a result joins a sample, the (pseudonymous) subject, and the service.
+cr:AssayResultShape a sh:NodeShape ;
+    sh:targetClass cr:AssayResult ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:onSample ; sh:minCount 1 ; sh:class hcls:Specimen ;
+        sh:message "Assay result must reference the sample analyzed." ] ;
+    sh:property [ sh:path cr:forSubject ; sh:minCount 1 ; sh:class cr:StudySubject ;
+        sh:message "Assay result must join to the (pseudonymous) StudySubject." ] ;
+    sh:property [ sh:path cr:fromService ; sh:minCount 1 ; sh:class cr:AnalysisService ;
+        sh:message "Assay result must reference the analysis service that produced it." ] .

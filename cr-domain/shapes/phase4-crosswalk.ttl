@@ -1,0 +1,38 @@
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/core/v1#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# Hardened curation gate: a crosswalk is admissible only as a fully provenanced SSSOM
+# mapping with a controlled predicate, a controlled justification, confidence, a mapping
+# date, an author, a verification status, and PROV.
+cx:MappingShape a sh:NodeShape ;
+    sh:targetClass cx:Mapping ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cx:subjectId ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Mapping must reference a TOP/CR-core subject term (IRI)." ] ;
+    sh:property [ sh:path cx:predicateId ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:in ( skos:exactMatch skos:closeMatch skos:relatedMatch skos:broadMatch skos:narrowMatch ) ;
+        sh:message "Mapping predicate must be a SKOS match predicate." ] ;
+    sh:property [ sh:path cx:objectId ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Mapping must reference the external target term (IRI)." ] ;
+    sh:property [ sh:path cx:justification ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:in ( semapv:ManualMappingCuration semapv:LexicalMatching semapv:LogicalReasoning ) ;
+        sh:message "Mapping justification must be a semapv justification IRI." ] ;
+    sh:property [ sh:path cx:confidence ; sh:minCount 1 ; sh:datatype xsd:decimal ;
+        sh:minInclusive 0.0 ; sh:maxInclusive 1.0 ;
+        sh:message "Mapping must carry a confidence in [0,1]." ] ;
+    sh:property [ sh:path cx:mappingDate ; sh:minCount 1 ; sh:datatype xsd:date ;
+        sh:message "Mapping must carry a mapping date." ] ;
+    sh:property [ sh:path cx:author ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Mapping must name an author/curator (IRI)." ] ;
+    sh:property [ sh:path cx:verificationStatus ; sh:minCount 1 ;
+        sh:in ( "verified" "unverified" "deprecated" ) ;
+        sh:message "Mapping must carry a verification status." ] ;
+    sh:property [ sh:path top:recordedAt ; sh:minCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "Mapping must carry transaction time (top:recordedAt)." ] ;
+    sh:property [ sh:path prov:wasAttributedTo ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Mapping must be attributed to an agent (PROV)." ] .

@@ -1,0 +1,11 @@
+# Certified-copy register — each certified copy and the source document it reproduces, with
+# who certified it. The E6(R3) certified-copy chain as a query (an inspector's "show me the
+# original behind this scan" is a lookup, not a hunt).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?copy ?source ?certifiedBy WHERE {
+  ?c a cr:CertifiedCopy ; rdfs:label ?copy ; cr:certifiedCopyOf ?doc ; prov:wasAttributedTo ?by .
+  ?doc rdfs:label ?source .
+  ?by rdfs:label ?certifiedBy .
+}

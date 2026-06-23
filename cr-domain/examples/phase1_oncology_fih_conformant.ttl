@@ -1,0 +1,120 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+###############################################################################
+# WORKED EXAMPLE (operator perspective) — Phase 1 first-in-human oncology study
+# "OPP-101": a dose-escalation FIH trial of investigational product OPP-1234,
+# sponsored by Oppentix Bio, run via a CRO, at Austin Oncology Research.
+# Demonstrates: study design, effective-dated protocol + eligibility constraint,
+# orgs/site/PI (role-as-relationship), PI->nurse delegation of consent
+# (credential-gated, attested), Person->Subject bitemporal enrollment bridge,
+# consent performed under the delegation, dosing, and a DLT adverse-event outcome.
+###############################################################################
+
+# --- Organizations & people ---
+ex:oppentix     a cr:Sponsor ;   rdfs:label "Oppentix Bio" .
+ex:cro-clinova  a cr:CRO ;       rdfs:label "Clinova CRO" .
+ex:facility-aor a hcls:HealthcareFacility ; rdfs:label "Austin Oncology Research — Bldg A" .
+ex:site-aor     a cr:StudySite ; rdfs:label "Austin Oncology Research" ;
+    hcls:locatedAt ex:facility-aor ;
+    cr:principalInvestigator ex:person-rivera .
+
+ex:person-rivera a hcls:Practitioner ; rdfs:label "Dr. A. Rivera (PI)" ;
+    hcls:affiliatedWith ex:site-aor .
+ex:person-nguyen a hcls:Practitioner ; rdfs:label "Nurse T. Nguyen (study nurse)" ;
+    hcls:affiliatedWith ex:site-aor .
+
+# --- Study design (Scope) ---
+ex:study-opp101 a cr:Study ; rdfs:label "OPP-101 (Phase 1 FIH, oncology)" ;
+    cr:sponsoredBy ex:oppentix ;
+    cr:conductedAt ex:site-aor ;
+    cr:hasArm ex:arm-escalation ;
+    cr:hasProtocolVersion ex:protocol-opp101-v1 .
+
+ex:arm-escalation a cr:Arm ; rdfs:label "Dose-escalation arm" .
+ex:dl1 a cr:DoseLevel ; rdfs:label "Dose level 1 (10 mg)" .
+ex:ip-opp1234 a cr:InvestigationalProduct ; rdfs:label "OPP-1234" .
+
+# --- Effective-dated protocol (bitemporal Evidence) + an eligibility constraint ---
+ex:protocol-opp101-v1 a cr:ProtocolVersion ; rdfs:label "OPP-101 protocol v1.0" ;
+    top:observedAt  "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-20T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:oppentix ;
+    cr:hasEligibilityCriterion ex:elig-ecog .
+ex:elig-ecog a cr:EligibilityCriterion ; rdfs:label "ECOG performance status 0-1" .
+
+# --- Delegation: PI delegates 'obtain informed consent' to the nurse ---------
+# Credential gate (the nurse's GCP/consent training), then the delegation act,
+# created by the PI's attestation. The DOA log is a projection of this.
+ex:cap-consent a cr:Capability ; rdfs:label "Obtain informed consent" .
+
+ex:cred-nguyen-gcp a cr:Credential ; rdfs:label "GCP + consent training — Nguyen" ;
+    cr:credentialOf ex:person-nguyen .
+
+ex:attest-deleg-001 a cr:Attestation ; rdfs:label "PI attestation of delegation (via SMS round-trip)" ;
+    top:observedAt  "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-03T08:31:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-rivera ;
+    cr:attestedBy ex:person-rivera .
+
+ex:deleg-consent-001 a cr:Delegation ; rdfs:label "Delegation: consent -> Nguyen" ;
+    top:observedAt  "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-03T08:31:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-rivera ;
+    prov:wasGeneratedBy ex:attest-deleg-001 ;
+    cr:delegator ex:person-rivera ;
+    cr:delegate ex:person-nguyen ;
+    cr:delegatedCapability ex:cap-consent ;
+    cr:requiresCredential ex:cred-nguyen-gcp .
+
+# Native PROV delegation edge: the delegate acted on behalf of the responsible PI.
+ex:person-nguyen prov:actedOnBehalfOf ex:person-rivera .
+
+# --- Enrollment: the Person -> Subject bitemporal bridge --------------------
+ex:person-doe a hcls:Person ; rdfs:label "Jane Doe (real person; PII layer)" .
+ex:subj-001   a cr:StudySubject ; rdfs:label "OPP-101 S-001 (pseudonymous)" .
+
+ex:enroll-001 a cr:Enrollment ; rdfs:label "Enrollment of S-001" ;
+    top:observedAt  "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T10:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-nguyen ;
+    cr:enrolledPerson ex:person-doe ;
+    cr:asSubject ex:subj-001 ;
+    cr:intoStudy ex:study-opp101 .
+
+# --- Consent performed BY the nurse, UNDER the delegation, valid-time after it
+ex:consent-001 a cr:InformedConsent ; rdfs:label "Informed consent — S-001" ;
+    top:observedAt  "2026-02-05T09:45:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T09:50:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-nguyen ;
+    cr:forSubject ex:subj-001 ;
+    cr:performedBy ex:person-nguyen ;
+    cr:exercisesCapability ex:cap-consent ;
+    cr:underDelegation ex:deleg-consent-001 .
+
+# --- Dosing at dose level 1, then a dose-limiting toxicity (oncology) --------
+ex:admin-001 a cr:Administration ; rdfs:label "Dose 1 administration — S-001" ;
+    top:observedAt  "2026-02-06T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-06T11:10:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-nguyen ;
+    cr:forSubject ex:subj-001 .
+
+ex:ae-001 a cr:DoseLimitingToxicity ; rdfs:label "Grade 3 neutropenia (DLT)" ;
+    top:observedAt  "2026-02-09T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-09T16:20:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-rivera ;
+    cr:forSubject ex:subj-001 .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/admin-001> top:identifier "urn:admin-001" ; top:status "active" .
+<https://top.scientix.ai/examples/ae-001> top:identifier "urn:ae-001" ; top:status "active" .
+<https://top.scientix.ai/examples/attest-deleg-001> top:identifier "urn:attest-deleg-001" ; top:status "active" .
+<https://top.scientix.ai/examples/consent-001> top:identifier "urn:consent-001" ; top:status "active" .
+<https://top.scientix.ai/examples/deleg-consent-001> top:identifier "urn:deleg-consent-001" ; top:status "active" .
+<https://top.scientix.ai/examples/enroll-001> top:identifier "urn:enroll-001" ; top:status "active" .
+<https://top.scientix.ai/examples/protocol-opp101-v1> top:identifier "urn:protocol-opp101-v1" ; top:status "active" .

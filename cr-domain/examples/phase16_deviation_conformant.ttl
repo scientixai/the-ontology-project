@@ -1,0 +1,52 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — the deviation-antecedent chain, end to end, from an operator's view.
+# A leading signal flags a latent condition; the RBQM risk assessment identifies it; it
+# manifests as a major deviation; the deviation triggers a CAPA. The "missing middle"
+# (the antecedent) is captured, so nothing warns and nothing violates.
+
+ex:dev-mgr a hcls:Practitioner ; rdfs:label "Quality lead" .
+
+# The critical-to-quality factor at stake (RBQM module; not bitemporal).
+ex:ctq-sched a cr:CriticalToQualityFactor ; rdfs:label "Visit-schedule adherence" .
+
+# The leading indicator — a late-visit trend across sites (low-trust, but provenance-tagged).
+ex:sig-late a cr:RiskSignal ; rdfs:label "Late-visit trend (3 sites, 4 weeks)" ;
+    cr:flags ex:ante-window ;
+    top:identifier "urn:sig-late" ; top:status "active" ;
+    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T08:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dev-mgr .
+
+# The latent condition — the missing middle.
+ex:ante-window a cr:DeviationAntecedent ; rdfs:label "Visit window too tight for site staffing" ;
+    cr:threatens ex:ctq-sched ; cr:manifestsAs ex:dev-1 ;
+    top:identifier "urn:ante-window" ; top:status "active" ;
+    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dev-mgr .
+
+# RBQM risk assessment identifies the antecedent (integration with the RBQM module).
+ex:ra-sched a cr:RiskAssessment ; cr:assessesFactor ex:ctq-sched ; cr:riskLevel "medium" ;
+    cr:riskScore "0.45"^^xsd:decimal ; cr:identifiesAntecedent ex:ante-window ;
+    top:identifier "urn:ra-sched" ; top:status "active" ;
+    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dev-mgr .
+
+# The deviation it manifested as — a major deviation requiring a CAPA.
+ex:dev-1 a cr:DeviationEvent ; rdfs:label "Subject seen at Day 31 (window Day 28 +/- 3)" ;
+    cr:deviationCategory "major" ; cr:triggers ex:capa-1 ;
+    top:identifier "urn:dev-1" ; top:status "active" ;
+    top:observedAt "2026-03-19T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-19T16:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dev-mgr .
+
+# The CAPA — corrective (this occurrence) and preventive (recurrence).
+ex:capa-1 a cr:CAPA ; rdfs:label "Widen window via amendment + add visit coordinator" ;
+    cr:capaType "corrective-and-preventive" ; cr:capaStatus "open" ;
+    top:identifier "urn:capa-1" ; top:status "active" ;
+    top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-20T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dev-mgr .

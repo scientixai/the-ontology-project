@@ -1,0 +1,17 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): a query with no anchor and no resolution status (orphan discrepancy).
+# Envelope present so the failure isolates to QueryShape.
+ex:q-bad a cr:Query ;
+    top:observedAt  "2026-03-12T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-12T08:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cra-bad .
+ex:cra-bad a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/q-bad> top:identifier "urn:q-bad" ; top:status "active" .

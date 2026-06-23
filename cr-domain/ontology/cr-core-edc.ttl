@@ -1,0 +1,54 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Site EDC data-capture layer (CDISC ODM EAV) + data-fidelity (query/SDV/PHI).
+# Source: "Architectural Foundations of the Clinical Trial Site Operator Domain"
+# (open-source schema synthesis: OpenClinica/VOXCE/LabKey/SENAITE/ClinicEDC/CommCare).
+# The EAV chain decouples a variable's DEFINITION from its VALUE, so SDTM/ADaM are
+# projections of ItemData and protocol amendments don't change variable meaning.
+
+# --- ODM event / form / item-group / item-definition / value (EAV) ---
+cr:StudyEvent a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Study Event" ;
+    rdfs:comment "A scheduled or unscheduled timepoint (StudyEventOID) when data is captured." .
+cr:Visit rdfs:subClassOf cr:StudyEvent .                       # a Visit is a kind of StudyEvent
+
+cr:CaseReportForm a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Case Report Form" ; rdfs:comment "A case report form — a collection of item groups capturing a visit's data." .
+cr:eCRF rdfs:subClassOf cr:CaseReportForm .                    # electronic CRF instance
+
+cr:ItemGroup a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Item Group" ;
+    rdfs:comment "A logical clustering of items (ItemGroupOID)." .
+cr:DataElementDef a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Data Element Definition" ;
+    rdfs:comment "A variable DEFINITION (ItemOID), independent of any form version; carries a PHI classification." .
+cr:ClinicalObservation a owl:Class ; rdfs:subClassOf hcls:Observation, top:ProvenancedEntity ;
+    rdfs:label "Clinical Observation" ;
+    rdfs:comment "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef." .
+
+# --- Data-fidelity: discrepancy/query ---
+cr:Query a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ; rdfs:label "Query" ;
+    rdfs:comment "A discrepancy note / data query anchored to a data point or other entity; threaded." .
+
+# --- Datatype properties ---
+cr:odmOID a owl:DatatypeProperty ; rdfs:label "ODM OID" ; rdfs:comment "CDISC ODM OID for interoperability." .
+cr:phiClassification a owl:DatatypeProperty ; rdfs:domain cr:DataElementDef ; rdfs:label "PHI classification" ;
+    rdfs:comment "NotPHI | LimitedPHI | FullPHI | Restricted (drives ETL masking)." .
+cr:sdvStatus a owl:DatatypeProperty ; rdfs:domain cr:ClinicalObservation ; rdfs:label "SDV status" .
+cr:severity a owl:DatatypeProperty ; rdfs:domain cr:Query ; rdfs:label "severity" .
+cr:resolutionStatus a owl:DatatypeProperty ; rdfs:domain cr:Query ; rdfs:label "resolution status" .
+
+# --- Object properties ---
+cr:capturedDuring a owl:ObjectProperty ; rdfs:domain cr:ClinicalObservation ; rdfs:range cr:StudyEvent .
+cr:definedBy      a owl:ObjectProperty ; rdfs:domain cr:ClinicalObservation ; rdfs:range cr:DataElementDef ;
+    rdfs:comment "The value's variable definition (aboutness); decouples value from definition." .
+cr:inItemGroup    a owl:ObjectProperty ; rdfs:domain cr:ClinicalObservation ; rdfs:range cr:ItemGroup .
+cr:onForm         a owl:ObjectProperty ; rdfs:domain cr:ItemGroup ; rdfs:range cr:CaseReportForm .
+cr:hasItemGroup   a owl:ObjectProperty ; rdfs:domain cr:CaseReportForm ; rdfs:range cr:ItemGroup .
+cr:hasItem        a owl:ObjectProperty ; rdfs:domain cr:ItemGroup ; rdfs:range cr:DataElementDef .
+cr:verifiedBy     a owl:ObjectProperty ; rdfs:domain cr:ClinicalObservation ; rdfs:range hcls:Person ;
+    rdfs:comment "The monitor who source-verified the value (SDV)." .
+cr:queryOn        a owl:ObjectProperty ; rdfs:domain cr:Query ; rdfs:label "query on" ;
+    rdfs:comment "The entity the query is anchored to (observation, event, form, subject...)." .
+cr:replyTo        a owl:ObjectProperty ; rdfs:domain cr:Query ; rdfs:range cr:Query ;
+    rdfs:comment "Threaded discrepancy conversation (parent-child)." .

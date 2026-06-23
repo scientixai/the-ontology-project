@@ -1,0 +1,17 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Smoke test (conformant): an Evidence artifact carrying the full bitemporal + PROV envelope.
+# Operator reading: a briefing-book section, valid (effective) 2026-01-15 09:00,
+# recorded into the system 3 minutes later, attributed to the PI who authored it.
+ex:smoke-evidence-001 a top:Evidence, top:ProvenancedEntity ;
+    top:observedAt  "2026-01-15T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-15T09:03:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:agent-pi-001 .
+
+ex:agent-pi-001 a top:Agent, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/smoke-evidence-001> top:identifier "urn:smoke-evidence-001" ; top:status "active" .

@@ -1,0 +1,13 @@
+# CDISC SDTM — AE (Adverse Events) domain, projected from the native graph.
+# Covers AdverseEvent and its subclasses (e.g. DoseLimitingToxicity) via subclass path.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?USUBJID ?AETERM ?AESTDTC WHERE {
+  ?ae rdf:type/rdfs:subClassOf* cr:AdverseEvent ;
+      cr:forSubject ?subj ;
+      rdfs:label ?AETERM ;
+      top:observedAt ?AESTDTC .
+  ?subj rdfs:label ?USUBJID .
+}

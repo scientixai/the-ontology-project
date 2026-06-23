@@ -1,0 +1,19 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# RISK-PROPORTIONATE (Warning): 100% SDV applied to a LOW-risk factor (wasteful).
+ex:ctq-cm a cr:CriticalToQualityFactor ; rdfs:label "Concomitant medications" .
+ex:ra-cm a cr:RiskAssessment ; cr:assessesFactor ex:ctq-cm ; cr:riskLevel "low" ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rbqm-mgr3 .
+ex:rbqm-mgr3 a hcls:Person, prov:Agent .
+ex:mp-cm a cr:MitigationPlan ; rdfs:label "100% SDV (over-monitoring)" ;
+    cr:mitigates ex:ra-cm ; cr:monitoringStrategy "full-SDV" ; cr:sdvIntensity "1.0"^^xsd:decimal .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/ra-cm> top:identifier "urn:ra-cm" ; top:status "active" .

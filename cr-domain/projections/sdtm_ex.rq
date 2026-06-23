@@ -1,0 +1,10 @@
+# CDISC SDTM — EX (Exposure) domain, projected from dosing acts (cr:Administration).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?USUBJID ?EXSTDTC WHERE {
+  ?a a cr:Administration ;
+     cr:forSubject ?s ;
+     top:observedAt ?EXSTDTC .
+  ?s rdfs:label ?USUBJID .
+}

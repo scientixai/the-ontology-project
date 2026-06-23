@@ -1,0 +1,18 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# CONFORMANT: an act attached to a pseudonymous StudySubject — the normal, contained case.
+ex:pii-ok-ae a cr:AdverseEvent ;
+    cr:forSubject ex:pii-subj ;
+    top:observedAt  "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-01T06:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pii-inv .
+ex:pii-subj a cr:StudySubject .
+ex:pii-inv a hcls:Practitioner .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/pii-ok-ae> top:identifier "urn:pii-ok-ae" ; top:status "active" .

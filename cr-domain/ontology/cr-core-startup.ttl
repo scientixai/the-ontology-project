@@ -1,0 +1,31 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Site activation / study start-up (the 9.4-month-activation domain).
+# Start-up milestones are bitemporal acts; activation requires its essential prerequisites,
+# and enrollment cannot precede activation (preventive, graph-bound).
+
+cr:IRBApproval a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "IRB/IEC Approval" ; rdfs:comment "Local IRB/IEC approval (observedAt = approval date)." .
+cr:ClinicalTrialAgreement a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Clinical Trial Agreement (CTA)" ; rdfs:comment "Executed site contract (observedAt = execution date)." .
+cr:CoverageAnalysis a owl:Class ; rdfs:subClassOf top:Evidence ;
+    rdfs:label "Coverage Analysis (MCA)" ; rdfs:comment "A Medicare/insurance coverage analysis for study procedures." .
+cr:SiteInitiationVisit a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Site Initiation Visit (SIV)" ; rdfs:comment "The visit that prepares and activates a site for enrollment." .
+cr:SiteActivation a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Site Activation" ;
+    rdfs:comment "The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV." .
+
+cr:forStudySite a owl:ObjectProperty ; rdfs:range cr:StudySite ; rdfs:label "for study site" .
+cr:activates    a owl:ObjectProperty ; rdfs:domain cr:SiteActivation ; rdfs:range cr:StudySite .
+cr:irbApproval  a owl:ObjectProperty ; rdfs:domain cr:SiteActivation ; rdfs:range cr:IRBApproval .
+cr:cta          a owl:ObjectProperty ; rdfs:domain cr:SiteActivation ; rdfs:range cr:ClinicalTrialAgreement .
+cr:siv          a owl:ObjectProperty ; rdfs:domain cr:SiteActivation ; rdfs:range cr:SiteInitiationVisit .
+cr:atSite       a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range cr:StudySite ;
+    rdfs:comment "The site a subject was enrolled at (enables the enroll-after-activation check)." .
+cr:targetAccrual a owl:DatatypeProperty ; rdfs:domain cr:StudySite ; rdfs:range xsd:integer ;
+    rdfs:label "target accrual" .

@@ -1,0 +1,16 @@
+@prefix sh:  <http://www.w3.org/ns/shacl#> .
+@prefix cr:  <https://top.scientix.ai/cr/v1#> .
+
+# ACTIVATION PREREQUISITES (Violation): a site cannot be activated without its essential
+# start-up documents — local IRB approval, an executed CTA, and a completed SIV.
+cr:SiteActivationShape a sh:NodeShape ;
+    sh:targetClass cr:SiteActivation ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:activates ; sh:minCount 1 ; sh:class cr:StudySite ;
+        sh:message "Activation must name the site it activates." ] ;
+    sh:property [ sh:path cr:irbApproval ; sh:minCount 1 ; sh:class cr:IRBApproval ;
+        sh:message "Activation requires local IRB/IEC approval." ] ;
+    sh:property [ sh:path cr:cta ; sh:minCount 1 ; sh:class cr:ClinicalTrialAgreement ;
+        sh:message "Activation requires an executed Clinical Trial Agreement." ] ;
+    sh:property [ sh:path cr:siv ; sh:minCount 1 ; sh:class cr:SiteInitiationVisit ;
+        sh:message "Activation requires a completed Site Initiation Visit." ] .

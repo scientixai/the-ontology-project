@@ -1,0 +1,42 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Bitemporal integrity fixtures (exercised by the harness's SPARQL detective tests).
+
+ex:subj-bt   a cr:StudySubject .
+ex:agent-lab a top:Agent, prov:Agent .
+
+# A lab value for valid-date 2026-02-14, first recorded 02-16 as 4.2 ...
+ex:obs-100 a hcls:Observation ;
+    cr:forSubject ex:subj-bt ;
+    rdf:value "4.2" ;
+    top:observedAt    "2026-02-14T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt   "2026-02-16T00:00:00Z"^^xsd:dateTime ;
+    top:supersededAt "2026-02-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:agent-lab .
+
+# ... then corrected on 02-20 to 5.1 (same valid-date; the world didn't change, our knowledge did).
+ex:obs-100-corr a hcls:Observation ;
+    cr:forSubject ex:subj-bt ;
+    rdf:value "5.1" ;
+    top:observedAt  "2026-02-14T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:agent-lab .
+
+# A suspicious attestation: claims effective 2026-01-01 but was only entered 2026-03-15
+# (~73-day valid/transaction gap). Structurally valid, but the back-dating is detectable.
+ex:attest-suspicious a cr:Attestation ;
+    top:observedAt  "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:person-late .
+ex:person-late a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/attest-suspicious> top:identifier "urn:attest-suspicious" ; top:status "active" .
+<https://top.scientix.ai/examples/obs-100> top:identifier "urn:obs-100" ; top:status "superseded" .
+<https://top.scientix.ai/examples/obs-100-corr> top:identifier "urn:obs-100-corr" ; top:status "active" .

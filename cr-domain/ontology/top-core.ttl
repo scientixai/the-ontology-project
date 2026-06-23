@@ -1,0 +1,63 @@
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+top: a owl:Ontology ;
+    rdfs:label "TOP Core (local working stub)" ;
+    rdfs:comment "Local working stub of TOP Core: one root (top:Core) + eight Category-Level Objects (CLOs), aligned to the canonical Apache-2.0 TOP Core at github.com/scientixai/the-ontology-project. NOT authoritative; serves as the specialization anchor and carries TOP's Universal DNA (identifier + observedAt + status) plus the bitemporal + PROV convention vocabulary for the CR-domain build." .
+
+#################################################################
+# The root and the eight Category-Level Objects (CLOs)
+#################################################################
+
+top:Core a owl:Class ; rdfs:label "Core" ;
+    rdfs:comment "The single root of TOP. Everything modeled is, ultimately, a kind of top:Core, and so carries the Universal DNA (identifier + observedAt + status)." .
+
+top:Agent a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Agent" ;
+    rdfs:comment "Something that acts or bears responsibility (person, organization, system)." .
+top:Location a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Location" ;
+    rdfs:comment "A place or spatial/jurisdictional region." .
+top:Resource a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Resource" ;
+    rdfs:comment "A persistent material or informational thing that is used or produced." .
+top:Scope a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Scope" ;
+    rdfs:comment "A bounded context of work (study, arm, population, indication)." .
+top:Temporal a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Temporal" ;
+    rdfs:comment "Processes, events, acts, and intervals that unfold in time." .
+top:Evidence a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Evidence" ;
+    rdfs:comment "An information artifact that asserts or records something." .
+top:Outcome a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Outcome" ;
+    rdfs:comment "A result, finding, or state produced by a process." .
+top:Constraint a owl:Class ; rdfs:subClassOf top:Core ; rdfs:label "Constraint" ;
+    rdfs:comment "A rule, criterion, bound, or commitment that admissibility is judged against." .
+
+#################################################################
+# Universal DNA — every top:Core entity carries these three
+# (canonical TOP Core; enforced by top:UniversalDNAShape in shapes/)
+#################################################################
+
+top:identifier a owl:DatatypeProperty ; rdfs:label "identifier" ;
+    rdfs:comment "A stable, dereferenceable identifier for the entity (the 'who/what is this' of the Universal DNA)." .
+top:status a owl:DatatypeProperty ; rdfs:label "status" ;
+    rdfs:comment "The lifecycle state of the entity (e.g. active, retired, superseded) — the 'where in its life' of the Universal DNA." .
+
+#################################################################
+# Bitemporal + provenance convention (see conventions.md)
+#################################################################
+
+top:ProvenancedEntity a owl:Class ; rdfs:label "Provenanced Entity" ;
+    rdfs:comment "Marker for any assertion/entity carrying the bitemporal + PROV envelope." .
+
+# Valid time (true in the world). top:observedAt is the canonical NGSI-LD
+# valid-time term and the third strand of the Universal DNA (the 'when').
+top:observedAt a owl:DatatypeProperty ; rdfs:label "observed at" ; rdfs:range xsd:dateTime ;
+    rdfs:comment "Valid-time instant — when the fact became true in the world (NGSI-LD observedAt)." .
+top:validTo   a owl:DatatypeProperty ; rdfs:label "valid to"   ; rdfs:range xsd:dateTime ;
+    rdfs:comment "Valid-time close — when the fact stopped being true in the world." .
+# Transaction time (system knowledge; append-only)
+top:recordedAt   a owl:DatatypeProperty ; rdfs:label "recorded at"   ; rdfs:range xsd:dateTime ;
+    rdfs:comment "Transaction-time instant — when the system first recorded the assertion (append-only)." .
+top:supersededAt a owl:DatatypeProperty ; rdfs:label "superseded at" ; rdfs:range xsd:dateTime ;
+    rdfs:comment "Transaction-time close — when a later assertion superseded this one." .

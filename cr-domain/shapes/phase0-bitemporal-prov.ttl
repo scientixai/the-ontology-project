@@ -1,0 +1,21 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# The bitemporal + PROV envelope: the spine every provenanced assertion must carry.
+top:BitemporalProvShape a sh:NodeShape ;
+    sh:targetClass top:ProvenancedEntity ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path top:observedAt ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "Must have exactly one valid-time start (top:observedAt)." ;
+    ] ;
+    sh:property [
+        sh:path top:recordedAt ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "Must have exactly one transaction-time record (top:recordedAt)." ;
+    ] ;
+    sh:property [
+        sh:path prov:wasAttributedTo ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Must be attributed to at least one agent (prov:wasAttributedTo)." ;
+    ] .

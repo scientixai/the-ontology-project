@@ -1,0 +1,11 @@
+# USDM-style study definition, projected from the native graph (the keystone view).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?STUDYNAME ?SPONSOR ?PROTOCOL WHERE {
+  ?study a cr:Study ;
+         rdfs:label ?STUDYNAME ;
+         cr:sponsoredBy ?sp ;
+         cr:hasProtocolVersion ?pv .
+  ?sp rdfs:label ?SPONSOR .
+  ?pv rdfs:label ?PROTOCOL .
+}

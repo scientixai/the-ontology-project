@@ -1,0 +1,21 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): an efficacy result presented with no estimand and no SAP
+# linkage — the "overstatement / untraceable subgroup" failure. Envelope present so
+# the failure isolates to the overstatement guard.
+ex:res-bad a cr:EndpointResult ; rdf:value "0.61" ;
+    cr:measuresEndpoint ex:ep-sub ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:someone .
+ex:ep-sub a cr:Endpoint .
+ex:someone a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/res-bad> top:identifier "urn:res-bad" ; top:status "active" .

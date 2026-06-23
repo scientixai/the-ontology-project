@@ -1,0 +1,26 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Pre-IND gate — front bracket of the Pre-IND -> EOP2 scope (mirrors the EOP2 gate).
+
+cr:INDApplication a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "IND Application" ;
+    rdfs:comment "The submission authorizing human dosing; starts a 30-day review clock (top:observedAt = submission) after which trials may proceed unless a clinical hold is placed." .
+cr:RegulatoryQuestion a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Regulatory Question" ;
+    rdfs:comment "A briefing-book question; should carry a proposed position (FDA punishes vague questions)." .
+cr:GLPToxReport a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "GLP Toxicology Report" ; rdfs:comment "A GLP toxicology study report supporting safe human dosing." .
+cr:NonclinicalFinding a owl:Class ; rdfs:subClassOf top:Outcome ; rdfs:label "Nonclinical Finding" ;
+    rdfs:comment "An observed animal toxicity/finding that the clinical protocol must address." .
+cr:SafetyAssessment a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Safety Assessment" ;
+    rdfs:comment "A clinical-protocol safety monitoring provision (e.g. CBC monitoring + dose-hold)." .
+cr:ClinicalHold a owl:Class ; rdfs:subClassOf top:Outcome ; rdfs:label "Clinical Hold" ; rdfs:comment "An FDA order that halts or prevents a trial from proceeding." .
+
+cr:hasQuestion        a owl:ObjectProperty ; rdfs:domain cr:RegulatoryInteraction ; rdfs:range cr:RegulatoryQuestion .
+cr:hasBriefingBook    a owl:ObjectProperty ; rdfs:domain cr:RegulatoryInteraction ; rdfs:range cr:BriefingBook .
+cr:proposedPosition   a owl:DatatypeProperty ; rdfs:domain cr:RegulatoryQuestion ; rdfs:label "proposed position" .
+cr:addressesFinding   a owl:ObjectProperty ; rdfs:domain cr:SafetyAssessment ; rdfs:range cr:NonclinicalFinding .
+cr:identifiedIn       a owl:ObjectProperty ; rdfs:domain cr:NonclinicalFinding ; rdfs:range cr:GLPToxReport .
+cr:tracesToNonclinical a owl:ObjectProperty ; rdfs:domain cr:INDApplication ; rdfs:range cr:GLPToxReport .
+cr:placedOn           a owl:ObjectProperty ; rdfs:domain cr:ClinicalHold ; rdfs:range cr:INDApplication .

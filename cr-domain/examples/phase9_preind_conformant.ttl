@@ -1,0 +1,35 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# WORKED EXAMPLE — Pre-IND gate (front bracket). Briefing book + a specific question
+# WITH a proposed position; an animal toxicity that IS addressed by a clinical safety
+# assessment (unbroken narrative); the IND traces to its nonclinical evidence.
+
+ex:preind a cr:RegulatoryInteraction ; rdfs:label "Pre-IND meeting" ;
+    cr:meetingType "Pre-IND" ;
+    cr:hasBriefingBook ex:bb ;
+    cr:hasQuestion ex:q1 .
+ex:bb a cr:BriefingBook ; rdfs:label "Pre-IND briefing book" .
+ex:q1 a cr:RegulatoryQuestion ;
+    rdfs:label "Is the proposed FIH starting dose acceptable?" ;
+    cr:proposedPosition "Propose 10 mg based on MABEL; request FDA concurrence." .
+
+ex:tox a cr:GLPToxReport ; rdfs:label "13-week GLP toxicology (rat)" .
+ex:finding-neutropenia a cr:NonclinicalFinding ; rdfs:label "Reversible neutropenia in rat" ;
+    cr:identifiedIn ex:tox .
+ex:sa-cbc a cr:SafetyAssessment ; rdfs:label "Weekly CBC monitoring + dose-hold rule" ;
+    cr:addressesFinding ex:finding-neutropenia .
+
+ex:ind a cr:INDApplication ; rdfs:label "IND 123456" ;
+    cr:tracesToNonclinical ex:tox ;
+    top:observedAt  "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sponsor-pre .
+ex:sponsor-pre a cr:Sponsor ; rdfs:label "Oppentix Bio" .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/ind> top:identifier "urn:ind" ; top:status "active" .

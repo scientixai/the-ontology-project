@@ -1,0 +1,52 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — Phase 2 readout -> EOP2 gate for the OPP program.
+# ORR result traces to endpoint + estimand + SAP; EOP2 meeting produces a binding
+# agreement + risk register; proposed Phase 3 design rests on dose-optimization (Optimus).
+
+ex:study-opp201 a cr:Study ; rdfs:label "OPP-201 (Phase 2 oncology)" ;
+    cr:sponsoredBy ex:oppentix2 ; cr:conductedAt ex:site2 ;
+    cr:hasProtocolVersion ex:proto201 ; cr:hasEndpoint ex:ep-orr .
+ex:oppentix2 a cr:Sponsor ; rdfs:label "Oppentix Bio" .
+ex:site2 a cr:StudySite ; rdfs:label "Austin Oncology Research" .
+ex:proto201 a cr:ProtocolVersion ; rdfs:label "OPP-201 protocol v1.0" ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:oppentix2 ;
+    cr:hasEligibilityCriterion ex:elig201 .
+ex:elig201 a cr:EligibilityCriterion ; rdfs:label "Measurable disease per RECIST 1.1" .
+
+ex:ep-orr a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
+ex:est-orr a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed responses, RECIST 1.1)" .
+ex:sap201 a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+
+ex:res-orr a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
+    cr:measuresEndpoint ex:ep-orr ; cr:perEstimand ex:est-orr ; cr:analyzedUnder ex:sap201 ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat .
+ex:biostat a hcls:Practitioner ; rdfs:label "Lead Biostatistician" .
+
+# Project Optimus: the proposed Phase 3 dose rests on dose-optimization work.
+ex:doseopt a cr:Assessment ; rdfs:label "Dose optimization analysis (Project Optimus)" .
+ex:p3design a cr:Phase3Design ; rdfs:label "Proposed Phase 3 design (RP2D)" ;
+    cr:basedOnDoseOptimization ex:doseopt .
+
+ex:eop2 a cr:RegulatoryInteraction ; rdfs:label "End-of-Phase-2 meeting" ;
+    cr:meetingType "EOP2" ;
+    cr:producedAgreement ex:agree1 ;
+    cr:hasRiskRegister ex:rr1 ;
+    cr:proposesDesign ex:p3design .
+ex:agree1 a cr:RegulatoryAgreement ; rdfs:label "FDA agreement: primary endpoint = OS" .
+ex:rr1 a cr:RiskRegister ; rdfs:label "EOP2 risk register" .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/proto201> top:identifier "urn:proto201" ; top:status "active" .
+<https://top.scientix.ai/examples/res-orr> top:identifier "urn:res-orr" ; top:status "active" .

@@ -1,0 +1,11 @@
+# Deviation lineage — trace a CAPA back through the deviation it answers to the latent
+# antecedent and the critical-to-quality factor that antecedent threatened. "Why does this
+# CAPA exist, and what quality factor was ultimately at stake" is a query, not an audit dig.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?capa ?deviation ?antecedent ?factor WHERE {
+  ?cp a cr:CAPA ; rdfs:label ?capa .
+  ?ev cr:triggers ?cp ; rdfs:label ?deviation .
+  ?a cr:manifestsAs ?ev ; rdfs:label ?antecedent ; cr:threatens ?f .
+  ?f rdfs:label ?factor .
+}

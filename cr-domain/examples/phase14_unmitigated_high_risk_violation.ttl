@@ -1,0 +1,17 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): a HIGH-risk factor with no mitigation plan.
+ex:ctq-sae a cr:CriticalToQualityFactor ; rdfs:label "SAE reporting timeliness" .
+ex:ra-sae a cr:RiskAssessment ; cr:assessesFactor ex:ctq-sae ; cr:riskLevel "high" ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rbqm-mgr2 .
+ex:rbqm-mgr2 a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/ra-sae> top:identifier "urn:ra-sae" ; top:status "active" .

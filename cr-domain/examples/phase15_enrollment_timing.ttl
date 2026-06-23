@@ -1,0 +1,32 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Detective fixtures — enrollment must not precede site activation (preventive rule).
+# Site activated 2026-02-05. enroll-ok = 2026-02-10 (fine); enroll-early = 2026-02-01 (before).
+ex:tsite a cr:StudySite ; rdfs:label "Timing test site" .
+ex:tact a cr:SiteActivation ; cr:activates ex:tsite ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmgr .
+ex:tmgr a hcls:Person, prov:Agent .
+ex:tstudy a cr:Study .
+ex:tp1 a hcls:Person . ex:tp2 a hcls:Person .
+ex:tsu1 a cr:StudySubject . ex:tsu2 a cr:StudySubject .
+
+ex:enroll-ok a cr:Enrollment ; cr:enrolledPerson ex:tp1 ; cr:asSubject ex:tsu1 ;
+    cr:intoStudy ex:tstudy ; cr:atSite ex:tsite ;
+    top:observedAt "2026-02-10T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-10T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmgr .
+ex:enroll-early a cr:Enrollment ; cr:enrolledPerson ex:tp2 ; cr:asSubject ex:tsu2 ;
+    cr:intoStudy ex:tstudy ; cr:atSite ex:tsite ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmgr .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/enroll-early> top:identifier "urn:enroll-early" ; top:status "active" .
+<https://top.scientix.ai/examples/enroll-ok> top:identifier "urn:enroll-ok" ; top:status "active" .
+<https://top.scientix.ai/examples/tact> top:identifier "urn:tact" ; top:status "active" .

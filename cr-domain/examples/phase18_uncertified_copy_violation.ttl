@@ -1,0 +1,17 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE — a certified copy that references no source document. A copy "certified" of
+# nothing is not a certified copy. cr:CertifiedCopyShape must bite.
+
+ex:coordinator a hcls:Practitioner ; rdfs:label "Study coordinator" .
+
+ex:cc-orphan a cr:CertifiedCopy ; rdfs:label "Scan with no source document linked" ;
+    top:identifier "urn:cc-orphan" ; top:status "active" ;
+    top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coordinator .

@@ -1,0 +1,38 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Biospecimen / LIMS lineage (SENAITE + LabKey patterns).
+# Custody is a bitemporal state machine; aliquot/partition lineage reuses
+# prov:wasDerivedFrom, so an assay result traces aliquot -> primary -> blood draw.
+
+# Specimen lifecycle: a custody transition is a bitemporal, attested act.
+cr:CustodyEvent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Custody Event" ;
+    rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." .
+
+# Analysis catalog vs request vs result (LabKey Batch-Run-Results / SENAITE service).
+cr:AnalysisService a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Analysis Service" ;
+    rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." .
+cr:AnalysisRequest a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Analysis Request" ; rdfs:comment "Binds an AnalysisService to a Specimen (the order)." .
+cr:AssayResult a owl:Class ; rdfs:subClassOf hcls:Observation, top:ProvenancedEntity ;
+    rdfs:label "Assay Result" ; rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." .
+
+# --- datatype props ---
+cr:toState   a owl:DatatypeProperty ; rdfs:domain cr:CustodyEvent ; rdfs:label "to state" .
+cr:fromState a owl:DatatypeProperty ; rdfs:domain cr:CustodyEvent ; rdfs:label "from state" .
+
+# --- object props ---
+cr:collectedAt    a owl:ObjectProperty ; rdfs:domain hcls:Specimen ; rdfs:range cr:StudyEvent ;
+    rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." .
+cr:specimen       a owl:ObjectProperty ; rdfs:domain cr:CustodyEvent ; rdfs:range hcls:Specimen .
+cr:onSample       a owl:ObjectProperty ; rdfs:range hcls:Specimen ; rdfs:label "on sample" .
+cr:requestsService a owl:ObjectProperty ; rdfs:domain cr:AnalysisRequest ; rdfs:range cr:AnalysisService .
+cr:fromService    a owl:ObjectProperty ; rdfs:domain cr:AssayResult ; rdfs:range cr:AnalysisService .
+cr:aliquotOf      a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ;
+    rdfs:domain hcls:Specimen ; rdfs:range hcls:Specimen ;
+    rdfs:label "aliquot of" ; rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." .

@@ -1,0 +1,32 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Iteration 2 — EOP2 gate + efficacy (Phase 2 -> End-of-Phase-2). Extends cr-core.
+
+# --- Efficacy / analysis ---
+cr:StatisticalAnalysisPlan a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Statistical Analysis Plan" ; rdfs:comment "The pre-specified plan for analyzing the study's data." .
+cr:Estimand     a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Estimand" ;
+    rdfs:comment "The precise treatment-effect definition a result must trace to (overstatement guard)." .
+cr:EndpointResult a owl:Class ; rdfs:subClassOf top:Outcome, top:ProvenancedEntity ;
+    rdfs:label "Endpoint Result" ;
+    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." .
+
+# --- EOP2 gate ---
+cr:RegulatoryAgreement a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Regulatory Agreement" ;
+    rdfs:comment "A binding FDA agreement (a commitment the program is held to)." .
+cr:RiskRegister a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Risk Register" ; rdfs:comment "A record of risks and decisions captured at a regulatory gate." .
+cr:Phase3Design a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Proposed Phase 3 Design" ; rdfs:comment "A proposed Phase 3 trial design taken to the EOP2 meeting." .
+
+# --- Object/datatype properties ---
+cr:hasEndpoint     a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:Endpoint .
+cr:measuresEndpoint a owl:ObjectProperty ; rdfs:domain cr:EndpointResult ; rdfs:range cr:Endpoint .
+cr:perEstimand     a owl:ObjectProperty ; rdfs:domain cr:EndpointResult ; rdfs:range cr:Estimand .
+cr:analyzedUnder   a owl:ObjectProperty ; rdfs:domain cr:EndpointResult ; rdfs:range cr:StatisticalAnalysisPlan .
+cr:producedAgreement a owl:ObjectProperty ; rdfs:domain cr:RegulatoryInteraction ; rdfs:range cr:RegulatoryAgreement .
+cr:hasRiskRegister a owl:ObjectProperty ; rdfs:domain cr:RegulatoryInteraction ; rdfs:range cr:RiskRegister .
+cr:proposesDesign  a owl:ObjectProperty ; rdfs:domain cr:RegulatoryInteraction ; rdfs:range cr:Phase3Design .
+cr:basedOnDoseOptimization a owl:ObjectProperty ; rdfs:domain cr:Phase3Design ; rdfs:range top:Temporal ;
+    rdfs:comment "Project Optimus: the proposed Phase 3 dose should rest on dose-optimization work." .
+cr:meetingType     a owl:DatatypeProperty ; rdfs:domain cr:RegulatoryInteraction ; rdfs:label "meeting type" .

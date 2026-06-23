@@ -1,0 +1,34 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — RBQM. High-risk factor gets intensive SDV; low-risk factor gets
+# reduced, risk-based monitoring. Risk targeted, not blanket 100% SDV.
+
+ex:rbqm-mgr a hcls:Practitioner ; rdfs:label "RBQM lead" .
+
+# High risk -> mitigated with intensive (100%) SDV (appropriate).
+ex:ctq-pe a cr:CriticalToQualityFactor ; rdfs:label "Primary endpoint integrity" .
+ex:ra-pe a cr:RiskAssessment ; cr:assessesFactor ex:ctq-pe ; cr:riskLevel "high" ;
+    cr:riskScore "0.80"^^xsd:decimal ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rbqm-mgr .
+ex:mp-pe a cr:MitigationPlan ; rdfs:label "Targeted 100% SDV on primary endpoint" ;
+    cr:mitigates ex:ra-pe ; cr:monitoringStrategy "targeted-SDV" ; cr:sdvIntensity "1.0"^^xsd:decimal .
+
+# Low risk -> reduced SDV + central monitoring (the RBQM efficiency).
+ex:ctq-demo a cr:CriticalToQualityFactor ; rdfs:label "Demographics accuracy" .
+ex:ra-demo a cr:RiskAssessment ; cr:assessesFactor ex:ctq-demo ; cr:riskLevel "low" ;
+    cr:riskScore "0.15"^^xsd:decimal ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rbqm-mgr .
+ex:mp-demo a cr:MitigationPlan ; rdfs:label "Central monitoring + 10% SDV" ;
+    cr:mitigates ex:ra-demo ; cr:monitoringStrategy "central-monitoring" ; cr:sdvIntensity "0.1"^^xsd:decimal .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/ra-demo> top:identifier "urn:ra-demo" ; top:status "active" .
+<https://top.scientix.ai/examples/ra-pe> top:identifier "urn:ra-pe" ; top:status "active" .

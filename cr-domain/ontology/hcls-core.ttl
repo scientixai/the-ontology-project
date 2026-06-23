@@ -1,0 +1,40 @@
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+hcls: a owl:Ontology ;
+    rdfs:label "HCLS-core" ;
+    rdfs:comment "Mid-layer specializing TOP Core for entities that recur across >=2 HCLS domains (clinical research, hospital, manufacturing, pharmacovigilance, RWE, commercialization). Seeded minimally; grows by promotion (rule of three). Standards projection target: FHIR, OMOP." .
+
+# --- Agents ---
+hcls:Person a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Person" ;
+    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." .
+hcls:Practitioner a owl:Class ; rdfs:subClassOf hcls:Person ; rdfs:label "Practitioner" ;
+    rdfs:comment "A healthcare professional." .
+hcls:Organization a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Organization" ; rdfs:comment "An organization — sponsor, CRO, site, central lab, or regulator." .
+
+# --- Locations ---
+hcls:HealthcareFacility a owl:Class ; rdfs:subClassOf top:Location ; rdfs:label "Healthcare Facility" ; rdfs:comment "A physical place where care or research is conducted." .
+
+# --- Resources ---
+hcls:Specimen a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Specimen" ;
+    rdfs:comment "A biospecimen collected from a Person." .
+hcls:Substance a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Substance" ; rdfs:comment "A chemical or biological substance." .
+hcls:MedicinalProduct a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Medicinal Product" ; rdfs:comment "A medicinal product (drug or biologic)." .
+hcls:Lot a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Lot" ;
+    rdfs:comment "A manufactured batch/lot; the primary join to the manufacturing domain." .
+
+# --- Findings / information ---
+hcls:Condition a owl:Class ; rdfs:subClassOf top:Outcome ; rdfs:label "Condition" ;
+    rdfs:comment "A diagnosed state of a Person." .
+hcls:Observation a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Observation" ;
+    rdfs:comment "An information artifact recording a measured value; refersTo the Person/Specimen it is about." .
+
+# --- Relations (clearly cross-domain) ---
+hcls:affiliatedWith a owl:ObjectProperty ; rdfs:domain hcls:Person ; rdfs:range hcls:Organization ;
+    rdfs:label "affiliated with" .
+hcls:collectedFrom a owl:ObjectProperty ; rdfs:domain hcls:Specimen ; rdfs:range hcls:Person ;
+    rdfs:label "collected from" .
+hcls:locatedAt a owl:ObjectProperty ; rdfs:domain hcls:Organization ; rdfs:range hcls:HealthcareFacility ;
+    rdfs:label "located at" .

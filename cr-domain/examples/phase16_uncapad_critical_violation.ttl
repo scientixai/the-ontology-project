@@ -1,0 +1,28 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE — a CRITICAL deviation with no CAPA. The antecedent is captured (so this is
+# not the antecedent warning); the violation is the missing corrective/preventive action.
+# cr:SignificantDeviationCAPAShape must bite.
+
+ex:cra a hcls:Practitioner ; rdfs:label "CRA" .
+
+ex:ctq-cons a cr:CriticalToQualityFactor ; rdfs:label "Informed-consent validity" .
+
+ex:ante-consent a cr:DeviationAntecedent ; rdfs:label "Consent step not gated in site workflow" ;
+    cr:threatens ex:ctq-cons ; cr:manifestsAs ex:dev-crit ;
+    top:identifier "urn:ante-consent" ; top:status "active" ;
+    top:observedAt "2026-03-04T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-04T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cra .
+
+# Critical deviation, NO cr:triggers -> no CAPA.
+ex:dev-crit a cr:DeviationEvent ; rdfs:label "First dose administered before consent signed" ;
+    cr:deviationCategory "critical" ;
+    top:identifier "urn:dev-crit" ; top:status "active" ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T11:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cra .

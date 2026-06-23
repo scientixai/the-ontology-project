@@ -1,0 +1,14 @@
+# Start-up tracker — the activation timeline per site (IRB -> CTA -> SIV -> activated),
+# projected from the milestone graph.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?site ?irbDate ?ctaDate ?sivDate ?activatedOn WHERE {
+  ?a a cr:SiteActivation ; cr:activates ?s ;
+     cr:irbApproval ?irb ; cr:cta ?cta ; cr:siv ?siv ;
+     top:observedAt ?activatedOn .
+  ?s rdfs:label ?site .
+  ?irb top:observedAt ?irbDate .
+  ?cta top:observedAt ?ctaDate .
+  ?siv top:observedAt ?sivDate .
+}

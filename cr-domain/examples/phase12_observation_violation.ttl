@@ -1,0 +1,22 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): an observation with no variable definition (orphan EAV value).
+# Envelope + subject + event present so the failure isolates to the missing definition.
+ex:obs-bad a cr:ClinicalObservation ; rdf:value "99" ;
+    cr:forSubject ex:s-bad ;
+    cr:capturedDuring ex:se-bad ;
+    top:observedAt  "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:crc-bad .
+ex:s-bad a cr:StudySubject .
+ex:se-bad a cr:StudyEvent .
+ex:crc-bad a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/obs-bad> top:identifier "urn:obs-bad" ; top:status "active" .

@@ -1,0 +1,13 @@
+# SSSOM TSV export — projected from the owned crosswalk mappings.
+# The SSSOM table is a VIEW of the curated mappings, not a separate source of truth.
+PREFIX cx: <https://top.scientix.ai/crosswalk/v1#>
+SELECT ?subject_id ?predicate_id ?object_id ?mapping_justification ?confidence ?author_id ?mapping_date WHERE {
+  ?m a cx:Mapping ;
+     cx:subjectId   ?subject_id ;
+     cx:predicateId ?predicate_id ;
+     cx:objectId    ?object_id ;
+     cx:justification ?mapping_justification ;
+     cx:confidence  ?confidence ;
+     cx:author      ?author_id ;
+     cx:mappingDate ?mapping_date .
+}

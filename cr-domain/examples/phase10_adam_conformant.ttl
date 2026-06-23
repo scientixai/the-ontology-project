@@ -1,0 +1,45 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — ADaM traceability. Full lineage:
+#   analysis result -> ADAE (analysis dataset) -> native AdverseEvent fact.
+# "Reproduce this number" is a wasDerivedFrom walk to the native source.
+
+# Native source fact (the leaf of the lineage).
+ex:src-ae a cr:AdverseEvent ; rdfs:label "Grade 2 rash (source)" ;
+    cr:forSubject ex:s-adam ;
+    top:observedAt  "2026-05-15T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-05-15T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inv-adam .
+ex:s-adam a cr:StudySubject .
+ex:inv-adam a hcls:Practitioner ; rdfs:label "Investigator" .
+
+# ADaM analysis dataset, derived from the native source.
+ex:adae a cr:AnalysisDataset ; rdfs:label "ADAE" ;
+    prov:wasDerivedFrom ex:src-ae ;
+    top:observedAt  "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-adam .
+ex:biostat-adam a hcls:Practitioner ; rdfs:label "Biostatistician" .
+
+# Analysis result, derived from the ADaM dataset, and traceable to estimand + SAP.
+ex:res-adam a cr:EndpointResult ; rdfs:label "AE incidence = 1" ; rdf:value "1" ;
+    cr:measuresEndpoint ex:ep-adam ; cr:perEstimand ex:est-adam ; cr:analyzedUnder ex:sap-adam ;
+    prov:wasDerivedFrom ex:adae ;
+    top:observedAt  "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-adam .
+ex:ep-adam a cr:Endpoint ; rdfs:label "AE incidence" .
+ex:est-adam a cr:Estimand ; rdfs:label "AE incidence estimand (safety population)" .
+ex:sap-adam a cr:StatisticalAnalysisPlan ; rdfs:label "Safety SAP v1.0" .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/adae> top:identifier "urn:adae" ; top:status "active" .
+<https://top.scientix.ai/examples/res-adam> top:identifier "urn:res-adam" ; top:status "active" .
+<https://top.scientix.ai/examples/src-ae> top:identifier "urn:src-ae" ; top:status "active" .

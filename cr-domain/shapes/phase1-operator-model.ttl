@@ -1,0 +1,45 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Phase 1 well-formedness: every key entity carries its defining relationships.
+# (Bitemporal+PROV envelope is enforced separately by top:BitemporalProvShape.)
+
+cr:StudyShape a sh:NodeShape ;
+    sh:targetClass cr:Study ;
+    sh:property [ sh:path cr:sponsoredBy ; sh:minCount 1 ; sh:class cr:Sponsor ;
+        sh:message "A Study must have a Sponsor." ] ;
+    sh:property [ sh:path cr:conductedAt ; sh:minCount 1 ; sh:class cr:StudySite ;
+        sh:message "A Study must be conducted at >=1 StudySite." ] ;
+    sh:property [ sh:path cr:hasProtocolVersion ; sh:minCount 1 ; sh:class cr:ProtocolVersion ;
+        sh:message "A Study must have >=1 ProtocolVersion." ] .
+
+cr:EnrollmentShape a sh:NodeShape ;
+    sh:targetClass cr:Enrollment ;
+    sh:property [ sh:path cr:enrolledPerson ; sh:minCount 1 ; sh:class hcls:Person ;
+        sh:message "Enrollment must reference the real Person (PII bridge)." ] ;
+    sh:property [ sh:path cr:asSubject ; sh:minCount 1 ; sh:class cr:StudySubject ;
+        sh:message "Enrollment must reference the pseudonymous StudySubject." ] ;
+    sh:property [ sh:path cr:intoStudy ; sh:minCount 1 ; sh:class cr:Study ;
+        sh:message "Enrollment must reference the Study." ] .
+
+cr:DelegationShape a sh:NodeShape ;
+    sh:targetClass cr:Delegation ;
+    sh:property [ sh:path cr:delegator ; sh:minCount 1 ; sh:class hcls:Person ;
+        sh:message "Delegation must name the responsible delegator (PI)." ] ;
+    sh:property [ sh:path cr:delegate ; sh:minCount 1 ; sh:class hcls:Person ;
+        sh:message "Delegation must name the delegate." ] ;
+    sh:property [ sh:path cr:delegatedCapability ; sh:minCount 1 ; sh:class cr:Capability ;
+        sh:message "Delegation must grant a Capability." ] ;
+    sh:property [ sh:path cr:requiresCredential ; sh:minCount 1 ; sh:class cr:Credential ;
+        sh:message "Delegation must be gated by a Credential." ] .
+
+cr:InformedConsentShape a sh:NodeShape ;
+    sh:targetClass cr:InformedConsent ;
+    sh:property [ sh:path cr:forSubject ; sh:minCount 1 ; sh:class cr:StudySubject ;
+        sh:message "Consent must reference the StudySubject." ] ;
+    sh:property [ sh:path cr:performedBy ; sh:minCount 1 ; sh:class hcls:Person ;
+        sh:message "Consent must record who performed it." ] ;
+    sh:property [ sh:path cr:underDelegation ; sh:minCount 1 ; sh:class cr:Delegation ;
+        sh:message "Consent must reference the authorizing Delegation." ] .

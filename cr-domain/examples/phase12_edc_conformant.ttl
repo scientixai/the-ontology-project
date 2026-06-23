@@ -1,0 +1,50 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — CDISC ODM EAV data capture at the site.
+# Event -> CRF -> ItemGroup -> DataElementDef (definition) -> ClinicalObservation (value),
+# with ODM OIDs, PHI classification, SDV status, and an open data query on the value.
+
+ex:edc-subj a cr:StudySubject ; rdfs:label "EDC-S-001" .
+
+ex:se1 a cr:StudyEvent ; rdfs:label "Cycle 1 Day 1 visit" ; cr:odmOID "SE.C1D1" ;
+    cr:forSubject ex:edc-subj .
+
+ex:crf1 a cr:eCRF ; rdfs:label "Vitals CRF" ; cr:odmOID "F.VITALS" ;
+    cr:hasItemGroup ex:ig1 .
+ex:ig1 a cr:ItemGroup ; rdfs:label "Vital signs" ; cr:odmOID "IG.VS" ;
+    cr:onForm ex:crf1 ; cr:hasItem ex:item-sbp .
+
+# Variable DEFINITION — independent of the form version; carries a PHI classification.
+ex:item-sbp a cr:DataElementDef ; rdfs:label "Systolic Blood Pressure" ; cr:odmOID "I.SBP" ;
+    cr:phiClassification "NotPHI" .
+
+# The recorded VALUE (ItemData) — bitemporal + PROV, attached to the pseudonymous subject.
+ex:obs1 a cr:ClinicalObservation ; rdf:value "128" ;
+    cr:definedBy ex:item-sbp ;
+    cr:inItemGroup ex:ig1 ;
+    cr:capturedDuring ex:se1 ;
+    cr:forSubject ex:edc-subj ;
+    cr:sdvStatus "verified" ; cr:verifiedBy ex:cra1 ;
+    top:observedAt  "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:crc1 .
+ex:crc1 a hcls:Practitioner ; rdfs:label "Study Coordinator" .
+ex:cra1 a hcls:Practitioner ; rdfs:label "Monitor (CRA)" .
+
+# A data query (discrepancy note) anchored to the value.
+ex:q1 a cr:Query ; rdfs:label "Confirm SBP units (mmHg)" ;
+    cr:queryOn ex:obs1 ; cr:severity "minor" ; cr:resolutionStatus "open" ;
+    top:observedAt  "2026-03-12T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-12T08:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cra1 .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/obs1> top:identifier "urn:obs1" ; top:status "active" .
+<https://top.scientix.ai/examples/q1> top:identifier "urn:q1" ; top:status "active" .

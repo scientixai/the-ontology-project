@@ -1,0 +1,54 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — biospecimen chain of custody + aliquot lineage + assay result.
+# Primary blood draw -> custody states (Received->Verified->Published, bitemporal) ->
+# serum aliquot (derived) -> NAb assay result. The result traces back to the blood draw.
+
+ex:spec-subj a cr:StudySubject ; rdfs:label "LIMS-S-001" .
+ex:draw-event a cr:StudyEvent ; rdfs:label "Cycle 1 Day 1 visit (blood draw)" ;
+    cr:forSubject ex:spec-subj .
+
+# Primary specimen, collected at the blood-draw event.
+ex:spec-1 a hcls:Specimen ; rdfs:label "Whole blood (primary)" ;
+    cr:forSubject ex:spec-subj ; cr:collectedAt ex:draw-event .
+
+ex:labtech a hcls:Practitioner ; rdfs:label "Lab technician" .
+
+# Chain of custody — each transition bitemporal + attested.
+ex:ce-recv a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "SampleDue" ; cr:toState "Received" ;
+    top:observedAt "2026-03-10T13:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T13:02:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:labtech .
+ex:ce-verif a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "ToBeVerified" ; cr:toState "Verified" ;
+    top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-11T10:01:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:labtech .
+ex:ce-pub a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "Verified" ; cr:toState "Published" ;
+    top:observedAt "2026-03-12T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T09:01:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:labtech .
+
+# Aliquot derived from the primary (partition lineage).
+ex:spec-aliquot a hcls:Specimen ; rdfs:label "Serum aliquot -P01" ;
+    cr:forSubject ex:spec-subj ; cr:aliquotOf ex:spec-1 ; prov:wasDerivedFrom ex:spec-1 .
+
+# Analysis: catalog service, request on the aliquot, result joined to the subject.
+ex:svc-nab a cr:AnalysisService ; rdfs:label "TZM-bl Neutralization (NAb) assay" .
+ex:ar-1 a cr:AnalysisRequest ; cr:onSample ex:spec-aliquot ; cr:requestsService ex:svc-nab ;
+    top:observedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:labtech .
+ex:res-nab a cr:AssayResult ; rdfs:label "NAb titer = 1:320" ; rdf:value "1:320" ;
+    cr:onSample ex:spec-aliquot ; cr:forSubject ex:spec-subj ; cr:fromService ex:svc-nab ;
+    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-13T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:labtech .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/ar-1> top:identifier "urn:ar-1" ; top:status "active" .
+<https://top.scientix.ai/examples/ce-pub> top:identifier "urn:ce-pub" ; top:status "active" .
+<https://top.scientix.ai/examples/ce-recv> top:identifier "urn:ce-recv" ; top:status "active" .
+<https://top.scientix.ai/examples/ce-verif> top:identifier "urn:ce-verif" ; top:status "active" .
+<https://top.scientix.ai/examples/res-nab> top:identifier "urn:res-nab" ; top:status "active" .

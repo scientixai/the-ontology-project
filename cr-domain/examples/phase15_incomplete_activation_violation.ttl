@@ -1,0 +1,24 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): an activation with IRB + CTA but no SIV (premature green-light).
+ex:site-bad a cr:StudySite .
+ex:irb-b a cr:IRBApproval ; cr:forStudySite ex:site-bad ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-15T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:su-b .
+ex:cta-b a cr:ClinicalTrialAgreement ; cr:forStudySite ex:site-bad ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-20T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:su-b .
+ex:act-bad a cr:SiteActivation ; cr:activates ex:site-bad ; cr:irbApproval ex:irb-b ; cr:cta ex:cta-b ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-05T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:su-b .
+ex:su-b a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/act-bad> top:identifier "urn:act-bad" ; top:status "active" .
+<https://top.scientix.ai/examples/cta-b> top:identifier "urn:cta-b" ; top:status "active" .
+<https://top.scientix.ai/examples/irb-b> top:identifier "urn:irb-b" ; top:status "active" .

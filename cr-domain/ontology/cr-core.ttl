@@ -1,0 +1,116 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+cr: a owl:Ontology ;
+    rdfs:label "CR-core" ;
+    rdfs:comment "Clinical-research domain core: entities recurring across >=2 CR workflows. Specializes TOP Core / HCLS-core. Scope: oncology Pre-IND -> EOP2. Standards projection target: CDISC (SDTM/CDASH/Define-XML), USDM, MedDRA." .
+
+#################################################################
+# Agents / organizations (roles are relationships, NOT classes)
+#################################################################
+cr:Sponsor   a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "Sponsor" ; rdfs:comment "The organization that initiates and is accountable for the trial." .
+cr:CRO       a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "CRO" ; rdfs:comment "A contract research organization the sponsor delegates trial conduct to." .
+cr:StudySite a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "Study Site" ; rdfs:comment "An investigative site conducting the study (an organization at a facility)." .
+cr:StudySubject a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Study Subject" ;
+    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." .
+
+#################################################################
+# Scope (study design)
+#################################################################
+cr:Study     a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Study" ; rdfs:comment "A clinical study — the unit of investigation the protocol defines." .
+cr:Arm       a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Arm" ; rdfs:comment "A treatment arm of the study." .
+cr:Cohort    a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Cohort" ; rdfs:comment "A group of subjects sharing a dosing or treatment assignment." .
+cr:DoseLevel a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Dose Level" ; rdfs:comment "A dose level in a dose-escalation design." .
+cr:Endpoint  a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Endpoint" ; rdfs:comment "A defined outcome measure the study evaluates." .
+
+#################################################################
+# Resources
+#################################################################
+cr:InvestigationalProduct a owl:Class ; rdfs:subClassOf hcls:MedicinalProduct ;
+    rdfs:label "Investigational Product" ; rdfs:comment "The investigational drug or biologic being studied." .
+
+#################################################################
+# Evidence (artifacts) — several are bitemporal (ProvenancedEntity)
+#################################################################
+cr:ProtocolVersion a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Protocol Version" ;
+    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." .
+cr:BriefingBook a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Briefing Book" ; rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." .
+cr:CSR          a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Clinical Study Report" ; rdfs:comment "The definitive summary of a study's results (CSR)." .
+cr:eCRF         a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "eCRF" ; rdfs:comment "Electronic case report form — the data-collection instrument used at the site." .
+cr:Credential   a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Credential" ;
+    rdfs:comment "An attested qualification/training record that gates a delegated capability." .
+cr:Attestation  a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Attestation" ;
+    rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." .
+
+#################################################################
+# Constraints (rules / criteria / capabilities)
+#################################################################
+cr:EligibilityCriterion a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Eligibility Criterion" ; rdfs:comment "An inclusion/exclusion rule defining who may enroll." .
+cr:StoppingRule a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Stopping Rule" ; rdfs:comment "A safety rule that halts dosing or enrollment when triggered." .
+cr:Capability   a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Capability" ;
+    rdfs:comment "A delegable permission to perform a trial task (e.g. obtain informed consent)." .
+
+#################################################################
+# Temporal acts — bitemporal + PROV (ProvenancedEntity)
+#################################################################
+cr:Enrollment a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Enrollment" ;
+    rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." .
+cr:Delegation a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Delegation" ;
+    rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." .
+cr:InformedConsent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Informed Consent" ; rdfs:comment "The act of obtaining a subject's informed consent." .
+cr:Visit a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Trial Visit" ; rdfs:comment "A protocol visit — a kind of study event." .
+cr:Administration a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+    rdfs:label "Administration" ; rdfs:comment "A dosing event." .
+cr:Assessment a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Assessment" ; rdfs:comment "A clinical assessment performed during the trial." .
+cr:RegulatoryInteraction a owl:Class ; rdfs:subClassOf top:Temporal ;
+    rdfs:label "Regulatory Interaction" ; rdfs:comment "Pre-IND / EOP2 meeting." .
+
+#################################################################
+# Outcomes
+#################################################################
+cr:AdverseEvent a owl:Class ; rdfs:subClassOf top:Outcome, top:ProvenancedEntity ;
+    rdfs:label "Adverse Event" ; rdfs:comment "An untoward medical occurrence in a trial subject." .
+cr:DoseLimitingToxicity a owl:Class ; rdfs:subClassOf cr:AdverseEvent ;
+    rdfs:label "Dose-Limiting Toxicity" ; rdfs:comment "Oncology dose-escalation: a DLT informs the next dose decision." .
+
+#################################################################
+# Object properties (roles modeled as relationships)
+#################################################################
+cr:sponsoredBy        a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:Sponsor .
+cr:conductedAt        a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:StudySite .
+cr:hasArm             a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:Arm .
+cr:hasProtocolVersion a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:ProtocolVersion .
+cr:hasEligibilityCriterion a owl:ObjectProperty ; rdfs:domain cr:ProtocolVersion ; rdfs:range cr:EligibilityCriterion .
+cr:principalInvestigator a owl:ObjectProperty ; rdfs:domain cr:StudySite ; rdfs:range hcls:Person ;
+    rdfs:label "principal investigator" ; rdfs:comment "Role-as-relationship; bitemporal at instance level." .
+
+# Enrollment relations
+cr:enrolledPerson a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range hcls:Person .
+cr:asSubject      a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range cr:StudySubject .
+cr:intoStudy      a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range cr:Study .
+
+# Delegation relations (+ PROV actedOnBehalfOf at instance level)
+cr:delegator           a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range hcls:Person ;
+    rdfs:comment "The responsible agent (PI)." .
+cr:delegate            a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range hcls:Person .
+cr:delegatedCapability a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range cr:Capability .
+cr:requiresCredential  a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range cr:Credential .
+
+# Act participation
+cr:forSubject     a owl:ObjectProperty ; rdfs:range cr:StudySubject ; rdfs:label "for subject" .
+cr:performedBy    a owl:ObjectProperty ; rdfs:range hcls:Person ; rdfs:label "performed by" .
+cr:underDelegation a owl:ObjectProperty ; rdfs:range cr:Delegation ;
+    rdfs:label "under delegation" ; rdfs:comment "Links a performed act to the delegation authorizing it (Phase-2 invariant)." .
+cr:exercisesCapability a owl:ObjectProperty ; rdfs:range cr:Capability ;
+    rdfs:label "exercises capability" ; rdfs:comment "The capability a performed act requires." .
+cr:credentialOf   a owl:ObjectProperty ; rdfs:domain cr:Credential ; rdfs:range hcls:Person .
+cr:attestedBy     a owl:ObjectProperty ; rdfs:range hcls:Person ; rdfs:label "attested by" .

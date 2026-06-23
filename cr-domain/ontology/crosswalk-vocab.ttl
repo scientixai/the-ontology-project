@@ -1,0 +1,20 @@
+@prefix cx:   <https://top.scientix.ai/crosswalk/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+cx: a owl:Ontology ; rdfs:label "TOP crosswalk vocabulary (SSSOM-aligned)" ;
+    rdfs:comment "OWNED, provenance-tagged crosswalks from TOP/CR-core to external ontologies. Aligns to SSSOM slots (subject_id/predicate_id/object_id/mapping_justification/confidence/author_id/mapping_date); an SSSOM TSV is an edge projection of these. Crosswalks are assertions WE own and curate, never imports of the external ontology." .
+
+cx:Mapping       a owl:Class ; rdfs:subClassOf <https://top.scientix.ai/core/v1#Evidence> ; rdfs:label "Crosswalk Mapping" ; rdfs:comment "A curated, provenanced correspondence from a TOP term to an external ontology term." .
+cx:subjectId     a owl:ObjectProperty   ; rdfs:label "subject id"   ; rdfs:comment "The TOP/CR-core term (left side)." .
+cx:predicateId   a owl:ObjectProperty   ; rdfs:label "predicate id" ; rdfs:comment "SKOS mapping predicate." .
+cx:objectId      a owl:ObjectProperty   ; rdfs:label "object id"    ; rdfs:comment "The external ontology term (right side)." .
+cx:justification a owl:ObjectProperty   ; rdfs:label "mapping justification" ; rdfs:comment "A semapv justification IRI (e.g. ManualMappingCuration)." .
+cx:author        a owl:ObjectProperty   ; rdfs:label "author id"    ; rdfs:comment "The curator/agent IRI (SSSOM author_id)." .
+cx:confidence    a owl:DatatypeProperty ; rdfs:label "confidence"   ; rdfs:range xsd:decimal .
+cx:mappingDate   a owl:DatatypeProperty ; rdfs:label "mapping date" ; rdfs:range xsd:date .
+cx:verificationStatus a owl:DatatypeProperty ; rdfs:label "verification status" ;
+    rdfs:comment "verified | unverified | deprecated — whether the target IRI was confirmed against a primary source." .
+cx:retrievedFrom a owl:DatatypeProperty ; rdfs:label "retrieved from" ;
+    rdfs:comment "The primary source the target IRI was verified against (URL + retrieval date)." .

@@ -1,0 +1,11 @@
+# Data mart (ExtractionSchema) — flatten the EAV ItemData graph into a tabular view.
+# Demonstrates "the data mart is a projection of the native graph," not a separate store.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?variable ?value WHERE {
+  ?o a cr:ClinicalObservation ;
+     cr:definedBy ?d ;
+     rdf:value ?value .
+  ?d rdfs:label ?variable .
+}

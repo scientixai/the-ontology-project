@@ -1,0 +1,10 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+
+# CONTENT BINDING (Warning): a TMF artifact type with no content binding is a filing label,
+# not comprehension. The document-type binding alone gives a smarter filing cabinet; the
+# value is the bridge to the domain class. A classified-but-unbound artifact type warns.
+tmf:ContentBindingShape a sh:NodeShape ;
+    sh:targetClass tmf:TMFArtifactType ;
+    sh:property [ sh:path tmf:concerns ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "TMF artifact type has no content binding (no tmf:concerns) — a filing label, not comprehension." ] .

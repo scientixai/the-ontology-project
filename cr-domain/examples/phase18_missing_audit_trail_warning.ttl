@@ -1,0 +1,18 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED (Warning) — source data with no explicit audit-trail node. It is well-formed and
+# carries the bitemporal + PROV envelope (so it IS reconstructable), but the auditor-facing
+# cr:AuditTrail assertion is absent. cr:SourceDataAuditTrailShape raises a reviewable Warning.
+
+ex:coordinator a hcls:Practitioner ; rdfs:label "Study coordinator" .
+
+ex:sd-noat a cr:SourceData ; rdfs:label "Lab values, no audit-trail node asserted" ;
+    top:identifier "urn:sd-noat" ; top:status "active" ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coordinator .

@@ -1,0 +1,32 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+
+# EAV INTEGRITY (Violation): a clinical observation must decouple-but-connect — it must
+# reference its variable definition, its subject, and the event it was captured at.
+cr:ClinicalObservationShape a sh:NodeShape ;
+    sh:targetClass cr:ClinicalObservation ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:definedBy ; sh:minCount 1 ; sh:class cr:DataElementDef ;
+        sh:message "Observation must reference its variable definition (DataElementDef)." ] ;
+    sh:property [ sh:path cr:forSubject ; sh:minCount 1 ; sh:class cr:StudySubject ;
+        sh:message "Observation must reference the (pseudonymous) StudySubject." ] ;
+    sh:property [ sh:path cr:capturedDuring ; sh:minCount 1 ; sh:class cr:StudyEvent ;
+        sh:message "Observation must reference the StudyEvent it was captured at." ] .
+
+# PHI CLASSIFICATION (Warning): every variable definition must carry a PHI classification
+# (drives downstream ETL masking; an unclassified variable is a governance gap).
+cr:DataElementPHIShape a sh:NodeShape ;
+    sh:targetClass cr:DataElementDef ;
+    sh:property [ sh:path cr:phiClassification ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:in ( "NotPHI" "LimitedPHI" "FullPHI" "Restricted" ) ;
+        sh:message "DataElementDef should carry a PHI classification (NotPHI/LimitedPHI/FullPHI/Restricted)." ] .
+
+# QUERY WELL-FORMEDNESS (Violation): a discrepancy must be anchored and have a status.
+cr:QueryShape a sh:NodeShape ;
+    sh:targetClass cr:Query ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:queryOn ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Query must be anchored to a target entity (cr:queryOn)." ] ;
+    sh:property [ sh:path cr:resolutionStatus ; sh:minCount 1 ;
+        sh:in ( "open" "answered" "closed" ) ;
+        sh:message "Query must carry a resolution status (open/answered/closed)." ] .

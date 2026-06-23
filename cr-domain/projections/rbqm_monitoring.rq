@@ -1,0 +1,9 @@
+# RBQM monitoring allocation — for each critical-to-quality factor, its risk level and
+# the resulting SDV intensity. The risk-targeted monitoring table, projected from the graph.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?factor ?riskLevel ?sdvIntensity WHERE {
+  ?ra a cr:RiskAssessment ; cr:assessesFactor ?f ; cr:riskLevel ?riskLevel .
+  ?f rdfs:label ?factor .
+  OPTIONAL { ?mp cr:mitigates ?ra ; cr:sdvIntensity ?sdvIntensity . }
+}

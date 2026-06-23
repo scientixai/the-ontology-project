@@ -1,0 +1,19 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# NEGATIVE (Violation): an assay result with no sample and no service (unjoined result).
+# Subject + envelope present so the failure isolates to the missing sample/service.
+ex:res-bad a cr:AssayResult ; rdf:value "x" ;
+    cr:forSubject ex:rb-subj ;
+    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-13T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rb-tech .
+ex:rb-subj a cr:StudySubject .
+ex:rb-tech a hcls:Person, prov:Agent .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/res-bad> top:identifier "urn:res-bad" ; top:status "active" .

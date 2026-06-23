@@ -1,0 +1,67 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/core/v1#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# OWNED, provenance-tagged crosswalks — target IRIs VERIFIED against primary sources
+# (OAE-ontology/OAE and obi-ontology/obi on GitHub, parsed 2026-06-20). Each carries
+# full SSSOM metadata + verification status. SSSOM TSV is an edge projection of these.
+
+ex:curator-wg a prov:Agent ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "TOP CR curation WG" .
+
+ex:map-ae-oae a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:exactMatch ;
+    cx:objectId    <http://purl.obolibrary.org/obo/OAE_0000001> ;     # "adverse event"
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.95"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "raw.githubusercontent.com/OAE-ontology/OAE/master/oae.owl @2026-06-20" ;
+    top:recordedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-consent-obi a cx:Mapping ;
+    cx:subjectId   cr:InformedConsent ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    <http://purl.obolibrary.org/obo/OBI_0000810> ;     # "informed consent process"
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "raw.githubusercontent.com/obi-ontology/obi/master/obi.owl @2026-06-20" ;
+    top:recordedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-study-obi a cx:Mapping ;
+    cx:subjectId   cr:Study ;
+    cx:predicateId skos:broadMatch ;                                  # investigation is broader
+    cx:objectId    <http://purl.obolibrary.org/obo/OBI_0000066> ;     # "investigation"
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.80"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "raw.githubusercontent.com/obi-ontology/obi/master/obi.owl @2026-06-20" ;
+    top:recordedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-protocol-obi a cx:Mapping ;
+    cx:subjectId   cr:ProtocolVersion ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    <http://purl.obolibrary.org/obo/OBI_0000272> ;     # "protocol"
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.80"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "raw.githubusercontent.com/obi-ontology/obi/master/obi.owl @2026-06-20" ;
+    top:recordedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .

@@ -1,0 +1,11 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Smoke test (NEGATIVE): missing transaction time (top:recordedAt) and missing attribution.
+# The harness expects this to VIOLATE — proving the envelope shape actually bites.
+ex:smoke-bad-001 a top:Evidence, top:ProvenancedEntity ;
+    top:observedAt "2026-01-15T09:00:00Z"^^xsd:dateTime .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/smoke-bad-001> top:identifier "urn:smoke-bad-001" ; top:status "active" .

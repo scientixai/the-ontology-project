@@ -1,0 +1,11 @@
+# TMF binding map — for each TMF artifact type, the domain class its facts are bound to.
+# Once a system has classified a document to its artifact type, this tells it which ontology
+# entities to expect inside. The comprehension layer the eTMF world omits, as a query.
+PREFIX tmf:  <https://top.scientix.ai/tmf/v1#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?artifact ?concept WHERE {
+  ?a a tmf:TMFArtifactType ; skos:prefLabel ?artifact ;
+     (tmf:records|tmf:documents|tmf:defines) ?c .
+  ?c rdfs:label ?concept .
+}

@@ -1,0 +1,27 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# IND 30-day review clock fixtures (exercised by the harness detective test).
+ex:sp-clock a cr:Sponsor .
+
+# Submitted 02-01, no hold -> may proceed after 30 days.
+ex:ind-ok a cr:INDApplication ;
+    top:observedAt  "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-clock .
+
+# Submitted 02-01, clinical hold placed 02-20 (within the 30-day window) -> on hold.
+ex:ind-hold a cr:INDApplication ;
+    top:observedAt  "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-clock .
+ex:hold-1 a cr:ClinicalHold ; cr:placedOn ex:ind-hold ;
+    top:observedAt "2026-02-20T00:00:00Z"^^xsd:dateTime .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+<https://top.scientix.ai/examples/hold-1> top:identifier "urn:hold-1" ; top:status "active" .
+<https://top.scientix.ai/examples/ind-hold> top:identifier "urn:ind-hold" ; top:status "active" .
+<https://top.scientix.ai/examples/ind-ok> top:identifier "urn:ind-ok" ; top:status "active" .

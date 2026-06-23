@@ -1,0 +1,43 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+
+# FLAGSHIP (Violation): IND-enabling narrative coherence. Every nonclinical finding
+# (animal toxicity) must be addressed by a clinical-protocol safety assessment.
+# (Doc 1: unaddressed animal tox -> immediate clinical hold.)
+cr:INDNarrativeShape a sh:NodeShape ;
+    sh:targetClass cr:NonclinicalFinding ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "Nonclinical finding is not addressed by any clinical-protocol safety assessment (broken IND narrative -> clinical-hold risk)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this a <https://top.scientix.ai/cr/v1#NonclinicalFinding> .
+              FILTER NOT EXISTS {
+                ?sa a <https://top.scientix.ai/cr/v1#SafetyAssessment> ;
+                    <https://top.scientix.ai/cr/v1#addressesFinding> $this .
+              }
+            }
+        """ ;
+    ] .
+
+# VAGUE QUESTION (Warning): a Pre-IND question with no proposed position.
+# (Doc 1: "the FDA meeting framework heavily punishes vagueness".)
+cr:VagueQuestionShape a sh:NodeShape ;
+    sh:targetClass cr:RegulatoryQuestion ;
+    sh:property [ sh:path cr:proposedPosition ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "Pre-IND question lacks a proposed position (vague question)." ] .
+
+# PRE-IND READINESS (Warning): a Pre-IND meeting should have a briefing book and questions.
+cr:PreINDReadinessShape a sh:NodeShape ;
+    sh:targetClass cr:RegulatoryInteraction ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Pre-IND meeting lacks a briefing book and/or specific questions (readiness warning)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#meetingType> "Pre-IND" .
+              FILTER ( NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasBriefingBook> ?b }
+                       || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasQuestion> ?q } )
+            }
+        """ ;
+    ] .

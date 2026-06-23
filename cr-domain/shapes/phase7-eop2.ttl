@@ -1,0 +1,32 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# OVERSTATEMENT GUARD (Violation): an efficacy result presented anywhere must trace
+# to its endpoint, its pre-specified estimand, and the SAP it was analyzed under.
+# (Doc 1 EOP2 failure: "overstating data / selective subgroups".)
+cr:EndpointResultTraceShape a sh:NodeShape ;
+    sh:targetClass cr:EndpointResult ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:measuresEndpoint ; sh:minCount 1 ; sh:class cr:Endpoint ;
+        sh:message "EndpointResult must reference the endpoint it measures." ] ;
+    sh:property [ sh:path cr:perEstimand ; sh:minCount 1 ; sh:class cr:Estimand ;
+        sh:message "EndpointResult must trace to a pre-specified estimand." ] ;
+    sh:property [ sh:path cr:analyzedUnder ; sh:minCount 1 ; sh:class cr:StatisticalAnalysisPlan ;
+        sh:message "EndpointResult must trace to the SAP it was analyzed under." ] .
+
+# EOP2 READINESS (Warning): an EOP2 meeting should produce a binding agreement and a
+# risk register before Phase 3. (Doc 1: "make-or-break" gate; misalignment is fatal later.)
+cr:EOP2ReadinessShape a sh:NodeShape ;
+    sh:targetClass cr:RegulatoryInteraction ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "EOP2 meeting lacks a binding agreement and/or a risk register (readiness warning)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#meetingType> "EOP2" .
+              FILTER ( NOT EXISTS { $this <https://top.scientix.ai/cr/v1#producedAgreement> ?a }
+                       || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasRiskRegister> ?r } )
+            }
+        """ ;
+    ] .
