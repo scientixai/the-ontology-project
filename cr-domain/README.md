@@ -1,9 +1,9 @@
-# TOP CR Domain — build workspace
+# TOP CR Domain
 
 Operator-led, provenance-native, **bitemporal** reference knowledge graph for the
 clinical-research lifecycle. Founding domain for TOP (The Ontology Project).
 
-This workspace is built **incrementally, sub-domain by sub-domain**. Every increment ships
+This reference knowledge graph is built **incrementally, sub-domain by sub-domain**. Every increment ships
 operator-perspective worked examples and a regression-gated test suite:
 **the full suite must stay green before new work lands.**
 
@@ -59,7 +59,7 @@ The harness (a) structurally parses every `ontology/` and `shapes/` file, and
 **conforms** or **violates** as declared (negative tests prove the shapes bite).
 
 ## Coverage (all green — `python3 cr-domain/tests/run_tests.py`)
-- **Foundations & governance** ✅ workspace, conventions, TOP-Core stub, harness, smoke test.
+- **Foundations & governance** ✅ project scaffolding, conventions, TOP-Core stub, harness, smoke test.
 - **Operator model** ✅ hcls-core + cr-core; oncology FIH worked example end-to-end.
 - **Graded constraints & bitemporal integrity** ✅ delegation/credential invariant (Violation vs risk-proportionate Warning); as-of reconstruction; back-dating detection.
 - **Edge projections** ✅ CDISC SDTM (DM/AE), USDM, FHIR ResearchSubject, DOA log — all as views.

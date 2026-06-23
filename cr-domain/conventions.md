@@ -25,7 +25,7 @@ a correction is a *new* assertion with a later `recordedAt`, and the prior one g
 
 > Runtime mapping (NGSI-LD): `top:observedAt/validTo` ≈ `observedAt`;
 > `top:recordedAt/supersededAt` ≈ `createdAt`/`modifiedAt`; queried via the Temporal API.
-> In this TTL workspace we model the convention explicitly so SHACL can test it.
+> In this reference model we encode the convention explicitly so SHACL can test it.
 
 ## Provenance (W3C PROV)
 - `prov:wasAttributedTo` — the responsible/attesting agent (≥1, IRI).
