@@ -1,139 +1,178 @@
 [
   {
-    "phase": 16,
     "query": "projections/deviation_lineage.rq",
     "desc": "deviation lineage traces CAPA -> deviation -> antecedent -> CtQ factor",
-    "source": "examples/phase16_deviation_conformant.ttl",
+    "source": "examples/deviation-conformant.ttl",
     "expect_rows": [
-      {"factor": "Visit-schedule adherence", "antecedent": "Visit window too tight for site staffing"}
+      {
+        "factor": "Visit-schedule adherence",
+        "antecedent": "Visit window too tight for site staffing"
+      }
     ]
   },
   {
-    "phase": 18,
     "query": "projections/certified_copy_register.rq",
     "desc": "certified-copy register projects copy -> source document -> certifier",
-    "source": "examples/phase18_essential_records_conformant.ttl",
+    "source": "examples/gcp-essential-records-conformant.ttl",
     "expect_rows": [
-      {"copy": "Scanned certified copy of SD-001", "source": "Signed vitals worksheet SD-001", "certifiedBy": "Study coordinator"}
+      {
+        "copy": "Scanned certified copy of SD-001",
+        "source": "Signed vitals worksheet SD-001",
+        "certifiedBy": "Study coordinator"
+      }
     ]
   },
   {
-    "phase": 17,
     "query": "projections/tmf_binding_map.rq",
     "desc": "TMF binding map projects artifact type -> domain class it concerns",
-    "source": "examples/phase16_deviation_conformant.ttl",
+    "source": "examples/deviation-conformant.ttl",
     "expect_rows": [
-      {"artifact": "Protocol Deviation Log", "concept": "Deviation Event"},
-      {"artifact": "Delegation of Authority Log", "concept": "Delegation"}
+      {
+        "artifact": "Protocol Deviation Log",
+        "concept": "Deviation Event"
+      },
+      {
+        "artifact": "Delegation of Authority Log",
+        "concept": "Delegation"
+      }
     ]
   },
   {
-    "phase": 3,
     "query": "projections/sdtm_dm.rq",
     "desc": "SDTM DM row projects from native enrollment",
-    "source": "examples/phase1_oncology_fih_conformant.ttl",
+    "source": "examples/oncology-fih-conformant.ttl",
     "expect_rows": [
-      {"USUBJID": "OPP-101 S-001 (pseudonymous)", "STUDYID": "OPP-101 (Phase 1 FIH, oncology)"}
+      {
+        "USUBJID": "OPP-101 S-001 (pseudonymous)",
+        "STUDYID": "OPP-101 (Phase 1 FIH, oncology)"
+      }
     ]
   },
   {
-    "phase": 3,
     "query": "projections/sdtm_ae.rq",
     "desc": "SDTM AE row projects the DLT via subclass path",
-    "source": "examples/phase1_oncology_fih_conformant.ttl",
+    "source": "examples/oncology-fih-conformant.ttl",
     "expect_rows": [
-      {"USUBJID": "OPP-101 S-001 (pseudonymous)", "AETERM": "Grade 3 neutropenia (DLT)"}
+      {
+        "USUBJID": "OPP-101 S-001 (pseudonymous)",
+        "AETERM": "Grade 3 neutropenia (DLT)"
+      }
     ]
   },
   {
-    "phase": 3,
     "query": "projections/usdm_study.rq",
     "desc": "USDM study definition projects name/sponsor/protocol",
-    "source": "examples/phase1_oncology_fih_conformant.ttl",
+    "source": "examples/oncology-fih-conformant.ttl",
     "expect_rows": [
-      {"STUDYNAME": "OPP-101 (Phase 1 FIH, oncology)", "SPONSOR": "Oppentix Bio", "PROTOCOL": "OPP-101 protocol v1.0"}
+      {
+        "STUDYNAME": "OPP-101 (Phase 1 FIH, oncology)",
+        "SPONSOR": "Oppentix Bio",
+        "PROTOCOL": "OPP-101 protocol v1.0"
+      }
     ]
   },
   {
-    "phase": 3,
     "query": "projections/fhir_research_subject.rq",
     "desc": "FHIR ResearchSubject view from the same native graph",
-    "source": "examples/phase1_oncology_fih_conformant.ttl",
+    "source": "examples/oncology-fih-conformant.ttl",
     "expect_rows": [
-      {"subject": "OPP-101 S-001 (pseudonymous)", "study": "OPP-101 (Phase 1 FIH, oncology)"}
+      {
+        "subject": "OPP-101 S-001 (pseudonymous)",
+        "study": "OPP-101 (Phase 1 FIH, oncology)"
+      }
     ]
   },
   {
-    "phase": 3,
     "query": "projections/doa_log.rq",
     "desc": "DOA log is a projection of delegation acts",
-    "source": "examples/phase1_oncology_fih_conformant.ttl",
+    "source": "examples/oncology-fih-conformant.ttl",
     "expect_rows": [
-      {"delegator": "Dr. A. Rivera (PI)", "delegate": "Nurse T. Nguyen (study nurse)", "capability": "Obtain informed consent"}
+      {
+        "delegator": "Dr. A. Rivera (PI)",
+        "delegate": "Nurse T. Nguyen (study nurse)",
+        "capability": "Obtain informed consent"
+      }
     ]
   },
   {
-    "phase": 7,
     "query": "projections/sdtm_ex.rq",
     "desc": "SDTM EX (exposure) row projects from a dosing act",
-    "source": "examples/phase1_oncology_fih_conformant.ttl",
+    "source": "examples/oncology-fih-conformant.ttl",
     "expect_rows": [
-      {"USUBJID": "OPP-101 S-001 (pseudonymous)"}
+      {
+        "USUBJID": "OPP-101 S-001 (pseudonymous)"
+      }
     ]
   },
   {
-    "phase": 10,
     "query": "projections/adam_traceability.rq",
     "desc": "ADaM result traces (wasDerivedFrom+) to its native source fact",
-    "source": "examples/phase10_adam_conformant.ttl",
+    "source": "examples/adam-conformant.ttl",
     "expect_rows": [
-      {"result": "AE incidence = 1", "source": "Grade 2 rash (source)"}
+      {
+        "result": "AE incidence = 1",
+        "source": "Grade 2 rash (source)"
+      }
     ]
   },
   {
-    "phase": 4,
     "query": "projections/sssom_export.rq",
     "desc": "SSSOM TSV export projects the verified AdverseEvent->OAE mapping",
     "source": "crosswalks/cr-to-external.ttl",
     "expect_rows": [
-      {"subject_id": "https://top.scientix.ai/cr/v1#AdverseEvent", "object_id": "http://purl.obolibrary.org/obo/OAE_0000001"}
+      {
+        "subject_id": "https://top.scientix.ai/cr/v1#AdverseEvent",
+        "object_id": "http://purl.obolibrary.org/obo/OAE_0000001"
+      }
     ]
   },
   {
-    "phase": 12,
     "query": "projections/datamart_itemdata.rq",
     "desc": "data mart flattens the EAV ItemData graph (projection, not a separate store)",
-    "source": "examples/phase12_edc_conformant.ttl",
+    "source": "examples/edc-conformant.ttl",
     "expect_rows": [
-      {"variable": "Systolic Blood Pressure", "value": "128"}
+      {
+        "variable": "Systolic Blood Pressure",
+        "value": "128"
+      }
     ]
   },
   {
-    "phase": 13,
     "query": "projections/specimen_lineage.rq",
     "desc": "assay result traces back through the aliquot to the blood-draw event",
-    "source": "examples/phase13_specimen_conformant.ttl",
+    "source": "examples/lims-specimen-conformant.ttl",
     "expect_rows": [
-      {"result": "NAb titer = 1:320", "event": "Cycle 1 Day 1 visit (blood draw)"}
+      {
+        "result": "NAb titer = 1:320",
+        "event": "Cycle 1 Day 1 visit (blood draw)"
+      }
     ]
   },
   {
-    "phase": 14,
     "query": "projections/rbqm_monitoring.rq",
     "desc": "RBQM monitoring allocation projects risk level -> SDV intensity per factor",
-    "source": "examples/phase14_rbqm_conformant.ttl",
+    "source": "examples/rbqm-conformant.ttl",
     "expect_rows": [
-      {"factor": "Primary endpoint integrity", "riskLevel": "high", "sdvIntensity": "1.0"},
-      {"factor": "Demographics accuracy", "riskLevel": "low", "sdvIntensity": "0.1"}
+      {
+        "factor": "Primary endpoint integrity",
+        "riskLevel": "high",
+        "sdvIntensity": "1.0"
+      },
+      {
+        "factor": "Demographics accuracy",
+        "riskLevel": "low",
+        "sdvIntensity": "0.1"
+      }
     ]
   },
   {
-    "phase": 15,
     "query": "projections/site_activation_tracker.rq",
     "desc": "start-up tracker projects the activation timeline per site",
-    "source": "examples/phase15_activation_conformant.ttl",
+    "source": "examples/site-activation-conformant.ttl",
     "expect_rows": [
-      {"site": "Denver Cancer Center"}
+      {
+        "site": "Denver Cancer Center"
+      }
     ]
   }
 ]

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Phase 6 — integration demo. Two flagship views from one native graph, plus a
+"""Integration demo. Two flagship views from one native graph, plus a
 regulator question answered as a query. Run: python3 cr-domain/demo/demo.py
 """
 import os
 from rdflib import Graph
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXAMPLE = os.path.join(ROOT, "examples", "phase1_oncology_fih_conformant.ttl")
+EXAMPLE = os.path.join(ROOT, "examples", "oncology-fih-conformant.ttl")
 
 
 def _graph():

@@ -1,277 +1,231 @@
 [
   {
-    "phase": 16,
-    "file": "examples/phase16_deviation_conformant.ttl",
+    "file": "examples/deviation-conformant.ttl",
     "expect": "conform",
     "desc": "deviation chain end-to-end: CtQ <- antecedent -> deviation -> CAPA (missing middle captured)"
   },
   {
-    "phase": 16,
-    "file": "examples/phase16_uncapad_critical_violation.ttl",
+    "file": "examples/deviation-missing-capa-violation.ttl",
     "expect": "violate",
     "desc": "critical deviation with no CAPA is caught (ICH E6 obligation as a shape)"
   },
   {
-    "phase": 16,
-    "file": "examples/phase16_uncaptured_antecedent_warning.ttl",
+    "file": "examples/deviation-uncaptured-antecedent-warning.ttl",
     "expect": "warn",
     "desc": "deviation with no recorded antecedent = governance Warning (the missing middle)"
   },
   {
-    "phase": 18,
-    "file": "examples/phase18_essential_records_conformant.ttl",
+    "file": "examples/gcp-essential-records-conformant.ttl",
     "expect": "conform",
     "desc": "E6(R3) essential records: source document + data + audit trail + certified copy in the TMF"
   },
   {
-    "phase": 18,
-    "file": "examples/phase18_uncertified_copy_violation.ttl",
+    "file": "examples/gcp-uncertified-copy-violation.ttl",
     "expect": "violate",
     "desc": "certified copy referencing no source document is caught (E6(R3) certified-copy)"
   },
   {
-    "phase": 18,
-    "file": "examples/phase18_missing_audit_trail_warning.ttl",
+    "file": "examples/gcp-missing-audit-trail-warning.ttl",
     "expect": "warn",
     "desc": "source data with no explicit audit-trail node = ALCOA++ Warning"
   },
   {
-    "phase": 17,
-    "file": "examples/phase17_tmf_binding_conformant.ttl",
+    "file": "examples/tmf-binding-conformant.ttl",
     "expect": "conform",
     "desc": "TMF artifact type with a content binding (document-type + content binding)"
   },
   {
-    "phase": 17,
-    "file": "examples/phase17_tmf_unbound_warning.ttl",
+    "file": "examples/tmf-unbound-warning.ttl",
     "expect": "warn",
     "desc": "TMF artifact type with no content binding = Warning (filing label, not comprehension)"
   },
   {
-    "phase": 0,
-    "file": "examples/phase0_dna_conformant.ttl",
+    "file": "examples/dna-conformant.ttl",
     "expect": "conform",
     "desc": "Universal DNA: entity carries identifier + observedAt + status"
   },
   {
-    "phase": 0,
-    "file": "examples/phase0_dna_missing_status_violation.ttl",
+    "file": "examples/dna-missing-status-violation.ttl",
     "expect": "violate",
     "desc": "Universal DNA: entity missing its status strand is caught (negative)"
   },
   {
-    "phase": 0,
-    "file": "examples/phase0_smoke_conformant.ttl",
+    "file": "examples/smoke-conformant.ttl",
     "expect": "conform",
     "desc": "Evidence carrying full bitemporal+PROV envelope"
   },
   {
-    "phase": 0,
-    "file": "examples/phase0_smoke_violation.ttl",
+    "file": "examples/smoke-violation.ttl",
     "expect": "violate",
     "desc": "missing recordedAt + attribution is caught (negative)"
   },
   {
-    "phase": 1,
-    "file": "examples/phase1_oncology_fih_conformant.ttl",
+    "file": "examples/oncology-fih-conformant.ttl",
     "expect": "conform",
     "desc": "oncology FIH study end-to-end (design, delegation, enrollment, consent, dosing, DLT)"
   },
   {
-    "phase": 1,
-    "file": "examples/phase1_enrollment_violation.ttl",
+    "file": "examples/enrollment-violation.ttl",
     "expect": "violate",
     "desc": "Enrollment missing the pseudonymous StudySubject bridge is caught"
   },
   {
-    "phase": 1,
-    "file": "examples/phase1_delegation_violation.ttl",
+    "file": "examples/delegation-violation.ttl",
     "expect": "violate",
     "desc": "ungated Delegation (missing required Credential) is caught"
   },
   {
-    "phase": 2,
-    "file": "examples/phase2_undelegated_violation.ttl",
+    "file": "examples/undelegated-violation.ttl",
     "expect": "violate",
     "desc": "undelegated capability use is a hard Violation (flagship invariant)"
   },
   {
-    "phase": 2,
-    "file": "examples/phase2_timing_gap_warning.ttl",
+    "file": "examples/timing-gap-warning.ttl",
     "expect": "warn",
     "desc": "consent before delegation effective = Warning, not fatal (risk-proportionate)"
   },
   {
-    "phase": 2,
-    "file": "examples/phase2_bitemporal.ttl",
+    "file": "examples/bitemporal-asof.ttl",
     "expect": "conform",
     "desc": "bitemporal fixtures are structurally valid (back-dating is detective, not structural)"
   },
   {
-    "phase": 4,
     "file": "crosswalks/cr-to-external.ttl",
     "expect": "conform",
     "desc": "owned, provenance-tagged crosswalks pass the curation gate"
   },
   {
-    "phase": 4,
-    "file": "examples/phase4_mapping_violation.ttl",
+    "file": "examples/crosswalk-mapping-violation.ttl",
     "expect": "violate",
     "desc": "uncurated mapping (no confidence/justification/provenance) is rejected"
   },
   {
-    "phase": 7,
-    "file": "examples/phase7_eop2_conformant.ttl",
+    "file": "examples/eop2-conformant.ttl",
     "expect": "conform",
     "desc": "Phase 2 -> EOP2: traceable ORR result + agreement + risk register + Optimus-based design"
   },
   {
-    "phase": 7,
-    "file": "examples/phase7_overstatement_violation.ttl",
+    "file": "examples/eop2-overstatement-violation.ttl",
     "expect": "violate",
     "desc": "efficacy result untraceable to estimand/SAP is caught (overstatement guard)"
   },
   {
-    "phase": 7,
-    "file": "examples/phase7_eop2_incomplete_warning.ttl",
+    "file": "examples/eop2-incomplete-warning.ttl",
     "expect": "warn",
     "desc": "EOP2 without a binding agreement = readiness Warning, not fatal"
   },
   {
-    "phase": 8,
-    "file": "examples/phase8_sae.ttl",
+    "file": "examples/safety-sae.ttl",
     "expect": "conform",
     "desc": "SAEs + safety reports are structurally valid (15-day breach is detective)"
   },
   {
-    "phase": 9,
-    "file": "examples/phase9_preind_conformant.ttl",
+    "file": "examples/preind-conformant.ttl",
     "expect": "conform",
     "desc": "Pre-IND gate: briefing book + proposed-position question + addressed nonclinical finding"
   },
   {
-    "phase": 9,
-    "file": "examples/phase9_ind_unaddressed_violation.ttl",
+    "file": "examples/ind-unaddressed-violation.ttl",
     "expect": "violate",
     "desc": "animal toxicity not addressed by a clinical safety assessment (broken IND narrative)"
   },
   {
-    "phase": 9,
-    "file": "examples/phase9_vague_question_warning.ttl",
+    "file": "examples/preind-vague-question-warning.ttl",
     "expect": "warn",
     "desc": "Pre-IND question without a proposed position = vague-question Warning"
   },
   {
-    "phase": 9,
-    "file": "examples/phase9_ind_clock.ttl",
+    "file": "examples/ind-clock.ttl",
     "expect": "conform",
     "desc": "IND clock fixtures are structurally valid (30-day clock is detective)"
   },
   {
-    "phase": 10,
-    "file": "examples/phase10_adam_conformant.ttl",
+    "file": "examples/adam-conformant.ttl",
     "expect": "conform",
     "desc": "ADaM lineage: result -> ADAE -> native source, traceable to estimand/SAP"
   },
   {
-    "phase": 10,
-    "file": "examples/phase10_orphan_adam_violation.ttl",
+    "file": "examples/adam-orphan-violation.ttl",
     "expect": "violate",
     "desc": "orphan ADaM dataset (no declared source) breaks traceability"
   },
   {
-    "phase": 11,
-    "file": "examples/phase11_pii_containment_conformant.ttl",
+    "file": "examples/pii-containment-conformant.ttl",
     "expect": "conform",
     "desc": "act attached to a pseudonymous StudySubject (PII contained)"
   },
   {
-    "phase": 11,
-    "file": "examples/phase11_pii_leak_violation.ttl",
+    "file": "examples/pii-leak-violation.ttl",
     "expect": "violate",
     "desc": "act attached directly to an identifiable Person is caught (PII leak)"
   },
   {
-    "phase": 12,
-    "file": "examples/phase12_edc_conformant.ttl",
+    "file": "examples/edc-conformant.ttl",
     "expect": "conform",
     "desc": "CDISC ODM EAV capture: event->CRF->itemgroup->item->observation + query + SDV + PHI tag"
   },
   {
-    "phase": 12,
-    "file": "examples/phase12_observation_violation.ttl",
+    "file": "examples/edc-observation-violation.ttl",
     "expect": "violate",
     "desc": "clinical observation with no variable definition (orphan EAV value)"
   },
   {
-    "phase": 12,
-    "file": "examples/phase12_query_violation.ttl",
+    "file": "examples/edc-query-violation.ttl",
     "expect": "violate",
     "desc": "query with no anchor / resolution status (orphan discrepancy)"
   },
   {
-    "phase": 12,
-    "file": "examples/phase12_phi_warning.ttl",
+    "file": "examples/edc-phi-warning.ttl",
     "expect": "warn",
     "desc": "data element with no PHI classification = governance Warning"
   },
   {
-    "phase": 13,
-    "file": "examples/phase13_specimen_conformant.ttl",
+    "file": "examples/lims-specimen-conformant.ttl",
     "expect": "conform",
     "desc": "specimen custody chain + aliquot lineage + assay result (SENAITE/LabKey patterns)"
   },
   {
-    "phase": 13,
-    "file": "examples/phase13_orphan_specimen_violation.ttl",
+    "file": "examples/lims-orphan-specimen-violation.ttl",
     "expect": "violate",
     "desc": "unrooted specimen (no collection event, no parent) breaks chain of custody"
   },
   {
-    "phase": 13,
-    "file": "examples/phase13_custody_violation.ttl",
+    "file": "examples/lims-custody-violation.ttl",
     "expect": "violate",
     "desc": "custody event with an invalid lifecycle state is caught"
   },
   {
-    "phase": 13,
-    "file": "examples/phase13_assayresult_violation.ttl",
+    "file": "examples/lims-assayresult-violation.ttl",
     "expect": "violate",
     "desc": "assay result not joined to a sample/service is caught"
   },
   {
-    "phase": 14,
-    "file": "examples/phase14_rbqm_conformant.ttl",
+    "file": "examples/rbqm-conformant.ttl",
     "expect": "conform",
     "desc": "RBQM: high-risk -> intensive SDV, low-risk -> reduced SDV (risk-targeted)"
   },
   {
-    "phase": 14,
-    "file": "examples/phase14_unmitigated_high_risk_violation.ttl",
+    "file": "examples/rbqm-unmitigated-high-risk-violation.ttl",
     "expect": "violate",
     "desc": "high-risk critical-to-quality factor with no mitigation plan is caught"
   },
   {
-    "phase": 14,
-    "file": "examples/phase14_over_monitoring_warning.ttl",
+    "file": "examples/rbqm-over-monitoring-warning.ttl",
     "expect": "warn",
     "desc": "100% SDV on a low-risk factor = over-monitoring Warning"
   },
   {
-    "phase": 14,
-    "file": "examples/phase14_riskassessment_violation.ttl",
+    "file": "examples/rbqm-riskassessment-violation.ttl",
     "expect": "violate",
     "desc": "malformed risk assessment (no factor/level) is caught"
   },
   {
-    "phase": 15,
-    "file": "examples/phase15_activation_conformant.ttl",
+    "file": "examples/site-activation-conformant.ttl",
     "expect": "conform",
     "desc": "site activation backed by IRB approval + executed CTA + completed SIV"
   },
   {
-    "phase": 15,
-    "file": "examples/phase15_incomplete_activation_violation.ttl",
+    "file": "examples/site-activation-incomplete-violation.ttl",
     "expect": "violate",
     "desc": "premature activation (no SIV) is caught"
   }

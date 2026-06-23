@@ -7,7 +7,7 @@
     warning), or 'violate' (>=1 violation). Negative/graded tests prove shapes bite.
 (c) Runs bitemporal SPARQL detective tests (as-of reconstruction; back-dating).
 
-Regression gate: must exit 0 before a new build phase starts.
+Regression gate: must exit 0 before new work lands.
 Usage: python3 cr-domain/tests/run_tests.py
 """
 import glob
@@ -89,7 +89,7 @@ def main():
         else:
             failures.append(("SHACL", c["file"],
                              f"expected {c['expect']}, got {got} (V={v} W={w})"))
-        print(f"[{'PASS' if ok else 'FAIL'}] (P{c.get('phase','?')}) "
+        print(f"[{'PASS' if ok else 'FAIL'}] "
               f"{c['desc']}  [{got}]")
 
     # (c) bitemporal detective tests
@@ -98,7 +98,7 @@ def main():
     # (d) edge-projection tests (standards as views of the native graph)
     pj_passed, pj_total = projection_checks(ont_graph, failures)
 
-    # (e) Phase 6 — integration demo (projection views + regulator query)
+    # (e) integration demo (projection views + regulator query)
     dm_passed, dm_total = demo_checks(failures)
 
     # (f) safety — expedited SAE reporting clock (bitemporal compliance)
@@ -129,7 +129,7 @@ def startup_checks(ont_graph, failures):
     g = Graph()
     for t in ont_graph:
         g.add(t)
-    g.parse(os.path.join(ROOT, "examples", "phase15_enrollment_timing.ttl"), format="turtle")
+    g.parse(os.path.join(ROOT, "examples", "site-activation-enrollment-timing.ttl"), format="turtle")
     act = {}
     for row in g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
@@ -147,14 +147,14 @@ def startup_checks(ont_graph, failures):
     total = passed = 0
     total += 1
     if EX["enroll-ok"] not in early:
-        passed += 1; print("[PASS] (P15) enrollment after activation is allowed")
+        passed += 1; print("[PASS] enrollment after activation is allowed")
     else:
-        failures.append(("STARTUP", "enroll-ok", "should not be flagged")); print("[FAIL] (P15) enroll-ok flagged")
+        failures.append(("STARTUP", "enroll-ok", "should not be flagged")); print("[FAIL] enroll-ok flagged")
     total += 1
     if EX["enroll-early"] in early:
-        passed += 1; print("[PASS] (P15) enrollment BEFORE site activation is flagged (preventive)")
+        passed += 1; print("[PASS] enrollment BEFORE site activation is flagged (preventive)")
     else:
-        failures.append(("STARTUP", "enroll-early", "should be flagged")); print("[FAIL] (P15) enroll-early not flagged")
+        failures.append(("STARTUP", "enroll-early", "should be flagged")); print("[FAIL] enroll-early not flagged")
     return passed, total
 
 
@@ -162,7 +162,7 @@ def lims_checks(ont_graph, failures):
     g = Graph()
     for t in ont_graph:
         g.add(t)
-    g.parse(os.path.join(ROOT, "examples", "phase13_specimen_conformant.ttl"), format="turtle")
+    g.parse(os.path.join(ROOT, "examples", "lims-specimen-conformant.ttl"), format="turtle")
     # Current state = the toState of the latest custody event (by valid time) for spec-1.
     rows = list(g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
@@ -172,10 +172,10 @@ def lims_checks(ont_graph, failures):
               cr:toState ?st ; top:observedAt ?t . }"""))
     latest = max(rows, key=lambda r: r.t.toPython()).st.toPython() if rows else None
     if latest == "Published":
-        print("[PASS] (P13) specimen custody current-state derives to 'Published' (bitemporal chain)")
+        print("[PASS] specimen custody current-state derives to 'Published' (bitemporal chain)")
         return 1, 1
     failures.append(("LIMS", "custody-state", f"expected Published, got {latest}"))
-    print(f"[FAIL] (P13) custody current-state = {latest}")
+    print(f"[FAIL] custody current-state = {latest}")
     return 0, 1
 
 
@@ -183,7 +183,7 @@ def preind_checks(ont_graph, failures):
     g = Graph()
     for t in ont_graph:
         g.add(t)
-    g.parse(os.path.join(ROOT, "examples", "phase9_ind_clock.ttl"), format="turtle")
+    g.parse(os.path.join(ROOT, "examples", "ind-clock.ttl"), format="turtle")
     inds = {row.ind: row.sub.toPython() for row in g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
         PREFIX top: <https://top.scientix.ai/core/v1#>
@@ -201,16 +201,16 @@ def preind_checks(ont_graph, failures):
     total = passed = 0
     total += 1
     if EX["ind-ok"] in may_proceed:
-        passed += 1; print("[PASS] (P9) IND with no hold in 30-day window -> may proceed")
+        passed += 1; print("[PASS] IND with no hold in 30-day window -> may proceed")
     else:
         failures.append(("PREIND", "ind-ok", "expected may-proceed"))
-        print("[FAIL] (P9) ind-ok should may-proceed")
+        print("[FAIL] ind-ok should may-proceed")
     total += 1
     if EX["ind-hold"] in on_hold:
-        passed += 1; print("[PASS] (P9) IND with clinical hold inside 30-day window -> on hold")
+        passed += 1; print("[PASS] IND with clinical hold inside 30-day window -> on hold")
     else:
         failures.append(("PREIND", "ind-hold", "expected on-hold"))
-        print("[FAIL] (P9) ind-hold should be on hold")
+        print("[FAIL] ind-hold should be on hold")
     return passed, total
 
 
@@ -218,7 +218,7 @@ def safety_checks(ont_graph, failures):
     g = Graph()
     for t in ont_graph:
         g.add(t)
-    g.parse(os.path.join(ROOT, "examples", "phase8_sae.ttl"), format="turtle")
+    g.parse(os.path.join(ROOT, "examples", "safety-sae.ttl"), format="turtle")
     q = """
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
         SELECT ?rep ?sub ?aware WHERE {
@@ -233,16 +233,16 @@ def safety_checks(ont_graph, failures):
     total = passed = 0
     total += 1
     if EX["rep-1"] in compliant and EX["rep-1"] not in late:
-        passed += 1; print("[PASS] (P8) SAE rep-1 within 15-day expedited clock (compliant)")
+        passed += 1; print("[PASS] SAE rep-1 within 15-day expedited clock (compliant)")
     else:
         failures.append(("SAFETY", "rep-1", "expected compliant"))
-        print("[FAIL] (P8) SAE rep-1 should be compliant")
+        print("[FAIL] SAE rep-1 should be compliant")
     total += 1
     if EX["rep-2"] in late:
-        passed += 1; print("[PASS] (P8) SAE rep-2 breaches 15-day clock (24d) -> flagged")
+        passed += 1; print("[PASS] SAE rep-2 breaches 15-day clock (24d) -> flagged")
     else:
         failures.append(("SAFETY", "rep-2", "expected late/flagged"))
-        print("[FAIL] (P8) SAE rep-2 should be flagged late")
+        print("[FAIL] SAE rep-2 should be flagged late")
     return passed, total
 
 
@@ -253,14 +253,14 @@ def demo_checks(failures):
         r = demo.run_demo()
     except Exception as e:  # noqa: BLE001
         failures.append(("DEMO", "run", str(e)))
-        print(f"[FAIL] (P6) demo run: {e}")
+        print(f"[FAIL] demo run: {e}")
         return 0, 1
     ok = bool(r["sdtm_ae"]) and bool(r["doa_log"]) and bool(r["regulator_q"])
     if ok:
-        print("[PASS] (P6) integration demo emits SDTM AE + DOA log + regulator-query results")
+        print("[PASS] integration demo emits SDTM AE + DOA log + regulator-query results")
         return 1, 1
     failures.append(("DEMO", "empty", f"{ {k: len(v) for k, v in r.items()} }"))
-    print("[FAIL] (P6) integration demo produced an empty view")
+    print("[FAIL] integration demo produced an empty view")
     return 0, 1
 
 
@@ -285,10 +285,10 @@ def projection_checks(ont_graph, failures):
                               for r in rows)]
         if not missing:
             passed += 1
-            print(f"[PASS] (P{spec.get('phase','?')}) {spec['desc']}")
+            print(f"[PASS] {spec['desc']}")
         else:
             failures.append(("PROJ", spec["query"], f"missing rows {missing}; got {rows}"))
-            print(f"[FAIL] (P{spec.get('phase','?')}) {spec['desc']}  missing={missing}")
+            print(f"[FAIL] {spec['desc']}  missing={missing}")
     return passed, total
 
 
@@ -296,7 +296,7 @@ def bitemporal_checks(ont_graph, failures):
     g = Graph()
     for t in ont_graph:
         g.add(t)
-    g.parse(os.path.join(ROOT, "examples", "phase2_bitemporal.ttl"), format="turtle")
+    g.parse(os.path.join(ROOT, "examples", "bitemporal-asof.ttl"), format="turtle")
     total = passed = 0
 
     def asof(tt):
@@ -318,19 +318,19 @@ def bitemporal_checks(ont_graph, failures):
     total += 1
     got = asof("2026-02-17T00:00:00Z")
     if got == ["4.2"]:
-        passed += 1; print("[PASS] (P2) bitemporal as-of 2026-02-17 -> 4.2 (pre-correction)")
+        passed += 1; print("[PASS] bitemporal as-of 2026-02-17 -> 4.2 (pre-correction)")
     else:
         failures.append(("BITEMP", "as-of-02-17", f"expected ['4.2'], got {got}"))
-        print(f"[FAIL] (P2) bitemporal as-of 2026-02-17  got={got}")
+        print(f"[FAIL] bitemporal as-of 2026-02-17  got={got}")
 
     # as-of 2026-02-21: after the correction, it believes 5.1
     total += 1
     got = asof("2026-02-21T00:00:00Z")
     if got == ["5.1"]:
-        passed += 1; print("[PASS] (P2) bitemporal as-of 2026-02-21 -> 5.1 (post-correction)")
+        passed += 1; print("[PASS] bitemporal as-of 2026-02-21 -> 5.1 (post-correction)")
     else:
         failures.append(("BITEMP", "as-of-02-21", f"expected ['5.1'], got {got}"))
-        print(f"[FAIL] (P2) bitemporal as-of 2026-02-21  got={got}")
+        print(f"[FAIL] bitemporal as-of 2026-02-21  got={got}")
 
     # back-dating detector: flag provenanced entities with >30d valid/transaction gap
     total += 1
@@ -345,10 +345,10 @@ def bitemporal_checks(ont_graph, failures):
             flagged.add(s)
     # ProtocolVersion/Attestation are ProvenancedEntity; only the suspicious one has a >30d gap
     if flagged == {EX["attest-suspicious"]}:
-        passed += 1; print("[PASS] (P2) back-dating detector flags only attest-suspicious (~73d gap)")
+        passed += 1; print("[PASS] back-dating detector flags only attest-suspicious (~73d gap)")
     else:
         failures.append(("BITEMP", "back-dating", f"flagged={sorted(map(str,flagged))}"))
-        print(f"[FAIL] (P2) back-dating detector  flagged={sorted(map(str,flagged))}")
+        print(f"[FAIL] back-dating detector  flagged={sorted(map(str,flagged))}")
 
     return passed, total
 

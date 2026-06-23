@@ -1,7 +1,7 @@
 # Crosswalk & curation registry (v1, oncology Pre-IND→EOP2)
 
 Crosswalks are **owned, provenance-tagged SSSOM mappings** we curate — never imports. Each is a
-`cx:Mapping` validated by the hardened curation gate (`shapes/phase4-crosswalk.ttl`): SKOS
+`cx:Mapping` validated by the hardened curation gate (`shapes/crosswalk.ttl`): SKOS
 predicate (controlled), semapv justification (controlled), confidence, mapping date, author,
 **verification status**, transaction time, and PROV. An SSSOM TSV (`projections/sssom_export.rq`)
 is an edge projection of these mappings.

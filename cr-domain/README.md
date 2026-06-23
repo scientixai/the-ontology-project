@@ -3,17 +3,17 @@
 Operator-led, provenance-native, **bitemporal** reference knowledge graph for the
 clinical-research lifecycle. Founding domain for TOP (The Ontology Project).
 
-This workspace is built **phase by phase**. Every phase ships operator-perspective
-worked examples and a regression-gated test suite:
-**before a new phase starts, the full suite must pass.**
+This workspace is built **incrementally, sub-domain by sub-domain**. Every increment ships
+operator-perspective worked examples and a regression-gated test suite:
+**the full suite must stay green before new work lands.**
 
 ## Layout
 ```
 cr-domain/
   ontology/      # top-core stub + hcls-core + cr-core (specialize the 8 CLOs)
-  shapes/        # SHACL shapes (constraints, graded by severity from Phase 2)
+  shapes/        # SHACL shapes (constraints, graded by severity)
   examples/      # operator-perspective instance data (the worked examples)
-  tests/         # run_tests.py harness + manifest.json (grows each phase)
+  tests/         # run_tests.py harness + manifest.json (grows with each sub-domain)
   conventions.md # bitemporal + PROV envelope conventions
 ```
 
@@ -58,13 +58,13 @@ The harness (a) structurally parses every `ontology/` and `shapes/` file, and
 (b) SHACL-validates every example in `tests/manifest.json`, asserting each either
 **conforms** or **violates** as declared (negative tests prove the shapes bite).
 
-## Phase ledger (all green — `python3 cr-domain/tests/run_tests.py`)
-- **Phase 0 — Foundations & governance** ✅ workspace, conventions, TOP-Core stub, harness, smoke test.
-- **Phase 1 — Operator model** ✅ hcls-core + cr-core; oncology FIH worked example end-to-end.
-- **Phase 2 — Graded constraints & bitemporal integrity** ✅ delegation/credential invariant (Violation vs risk-proportionate Warning); as-of reconstruction; back-dating detection.
-- **Phase 3 — Edge projections** ✅ CDISC SDTM (DM/AE), USDM, FHIR ResearchSubject, DOA log — all as views.
-- **Phase 4 — Crosswalk & curation** ✅ owned SSSOM mappings with **verified** target IRIs (OAE/OBI, confirmed against source); hardened gate (controlled predicate + semapv justification + confidence + date + author + verification status + PROV); SSSOM TSV export projection.
-- **Phase 6 — Projection demo** ✅ standards/log views + regulator-query over one native graph. `python3 cr-domain/demo/demo.py`
+## Coverage (all green — `python3 cr-domain/tests/run_tests.py`)
+- **Foundations & governance** ✅ workspace, conventions, TOP-Core stub, harness, smoke test.
+- **Operator model** ✅ hcls-core + cr-core; oncology FIH worked example end-to-end.
+- **Graded constraints & bitemporal integrity** ✅ delegation/credential invariant (Violation vs risk-proportionate Warning); as-of reconstruction; back-dating detection.
+- **Edge projections** ✅ CDISC SDTM (DM/AE), USDM, FHIR ResearchSubject, DOA log — all as views.
+- **Crosswalk & curation** ✅ owned SSSOM mappings with **verified** target IRIs (OAE/OBI, confirmed against source); hardened gate (controlled predicate + semapv justification + confidence + date + author + verification status + PROV); SSSOM TSV export projection.
+- **Projection demo** ✅ standards/log views + regulator-query over one native graph. `python3 cr-domain/demo/demo.py`
 - **Pre-IND gate** ✅ IND-enabling narrative coherence (unaddressed animal tox = Violation), vague-question Warning, IND 30-day review clock (bitemporal).
 - **EOP2 gate** ✅ efficacy traceability (overstatement guard), EOP2 readiness, Project Optimus, SDTM EX.
 - **Pharmacovigilance** ✅ SAE expedited 15-day reporting clock (bitemporal compliance).
@@ -77,8 +77,6 @@ The harness (a) structurally parses every `ontology/` and `shapes/` file, and
 - **Deviations & CAPA** ✅ the chain most CR models skip — CtQ factor ← *antecedent* (the missing middle) → deviation event → CAPA; significant (critical/major) deviation with no CAPA = Violation (ICH E6 obligation as a shape); deviation with no recorded antecedent = governance Warning; risk signal flags an antecedent; deviation-lineage projection (CAPA → deviation → antecedent → CtQ factor).
 - **TMF document binding** ✅ a SKOS artifact-type scheme aligned (by name) to the DIA TMF Reference Model + content-bridge properties (`records`/`documents`/`defines`) from each artifact type to the `cr:` domain class it concerns; classified-but-unbound artifact type = Warning (filing label, not comprehension); binding-map projection. Commons owns the map; runtime classification/extraction is the consuming system (out of scope).
 - **GCP & essential records (ICH E6(R3))** ✅ the governance vocabulary no existing ontology owns — essential record, source data/document, audit trail, certified copy, TMF, plus IRB/IEC + service-provider actors — encoded *descriptively* (`rdfs:isDefinedBy` E6(R3), paraphrased not copied) with a SKOS glossary; obligations stay in the shapes (certified-copy must reference its source = Violation; source data with no audit-trail node = ALCOA++ Warning); certified-copy register projection. The authoritative anchor under the TMF binding.
-
-> **Phase 5 is intentionally absent** — out of scope for this reference (see the scope boundary below).
 
 - **Universal DNA alignment** ✅ aligned to canonical TOP Core: one `top:Core` root above the 8 CLOs; every entity carries the Universal DNA — `top:identifier` (identity) + `top:observedAt` (time, canonical NGSI-LD term) + `top:status` (lifecycle); `top:UniversalDNAShape` enforces it (conformant + negative test).
 
