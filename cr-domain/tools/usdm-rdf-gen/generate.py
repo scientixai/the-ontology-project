@@ -9,7 +9,8 @@ mechanical, not semantic (cf. the community usdm-rdf project) — so the artifac
 regenerates byte-for-byte on each USDM release and TOP never hand-owns USDM.
 
 Output is byte-reproducible: classes and properties are emitted in sorted order.
-Scope (v1): structure only. NCIt anchoring from USDM_CT.xlsx is a follow-up.
+Classes/properties are NCIt-anchored (skos:exactMatch) and carry CDISC definitions
+from USDM_CT.xlsx (via the vendored usdm_ct.json); inline enums are rendered too.
 
 Run:  python3 tools/usdm-rdf-gen/generate.py
 """
@@ -25,10 +26,25 @@ PROV = os.path.normpath(os.path.join(HERE, "..", "..", "ontology", "vendor", "us
 NS = "https://w3id.org/cdisc/usdm/v4/"
 DDF_RA_TAG = "v4.0.0"
 DDF_RA_COMMIT = "aa303cb32f5d3ceecc68a16803e26720d2c1fc26"
-GEN_VERSION = "0.1.0"
+GEN_VERSION = "0.2.0"
+CT = json.load(open(os.path.join(HERE, "ddf-ra-v4.0.0", "usdm_ct.json")))
+NCIT = "http://purl.obolibrary.org/obo/NCIT_"
 
 XSD = {"string": "xsd:string", "integer": "xsd:integer", "number": "xsd:decimal",
        "boolean": "xsd:boolean"}
+
+
+def enum_values(pv):
+    """Inline allowed values, if the property (or its items / anyOf) declares an enum."""
+    if "enum" in pv:
+        return pv["enum"]
+    it = pv.get("items") or {}
+    if "enum" in it:
+        return it["enum"]
+    for m in pv.get("anyOf", []):
+        if "enum" in m:
+            return m["enum"]
+    return None
 
 
 def cls_name(schema_name):
@@ -71,16 +87,18 @@ def generate(spec):
     w("@prefix owl:  <http://www.w3.org/2002/07/owl#> .")
     w("@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .")
     w("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .")
+    w("@prefix skos: <http://www.w3.org/2004/02/skos/core#> .")
     w("@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .")
     w("")
     w("<%s> a owl:Ontology ;" % NS)
     w('    rdfs:label "CDISC USDM v4.0 (generated)" ;')
     w('    owl:versionInfo "%s" ;' % spec["info"]["version"])
     w('    rdfs:comment "Structural OWL rendering of the CDISC Unified Study Definitions '
-      'Model v4.0, generated deterministically from the DDF-RA OpenAPI model (tag %s). '
-      'A mechanical projection of CDISC\'s model — NOT authoritative and NOT TOP-owned; '
-      'the authoritative source is github.com/cdisc-org/DDF-RA. Crosswalked to TOP cr-core '
-      'in crosswalks/. CC-BY-4.0 (mirrors the DDF-RA source)." .' % DDF_RA_TAG)
+      'Model v4.0, generated deterministically from the DDF-RA OpenAPI model (tag %s), '
+      'NCIt-anchored (skos:exactMatch to NCIT_* concepts) with CDISC definitions from '
+      'USDM_CT.xlsx. A mechanical projection of CDISC\'s model — NOT authoritative and NOT '
+      'TOP-owned; the authoritative source is github.com/cdisc-org/DDF-RA. Crosswalked to TOP '
+      'cr-core in crosswalks/. CC-BY-4.0 (mirrors the DDF-RA source)." .' % DDF_RA_TAG)
     w("")
     w("#" * 70)
     w("# %d classes, generated from USDM_API.json. Do not hand-edit." % len(classes))
@@ -91,15 +109,34 @@ def generate(spec):
         required = set(schema.get("required", []))
         props = schema.get("properties", {})
         w("")
-        w('usdm:%s a owl:Class ; rdfs:label "%s" .' % (c, c))
+        ent = CT["entities"].get(c)
+        cparts = ["a owl:Class", 'rdfs:label "%s"' % c]
+        if ent:
+            if ent.get("pref"):
+                cparts.append('skos:prefLabel "%s"' % esc(ent["pref"]))
+            cparts.append("skos:exactMatch <%s%s>" % (NCIT, ent["ccode"]))
+            if ent.get("defn"):
+                cparts.append('rdfs:comment "%s"' % esc(ent["defn"]))
+        w("usdm:%s %s ." % (c, " ;\n    ".join(cparts)))
         for p in sorted(props):
             kind, rng, multi = resolve(props[p])
             piri = "usdm:%s-%s" % (c, p)
             ptype = "owl:ObjectProperty" if kind == "obj" else "owl:DatatypeProperty"
             rangeval = ("usdm:" + rng) if (kind == "obj" and rng in known) else (
                 rng if kind == "dat" else "owl:Thing")
-            w('%s a %s ; rdfs:domain usdm:%s ; rdfs:range %s ; rdfs:label "%s" .'
-              % (piri, ptype, c, rangeval, esc(p)))
+            pparts = ["a %s" % ptype, "rdfs:domain usdm:%s" % c,
+                      "rdfs:range %s" % rangeval, 'rdfs:label "%s"' % esc(p)]
+            attr = CT["attributes"].get("%s.%s" % (c, p))
+            if attr:
+                pparts.append("skos:exactMatch <%s%s>" % (NCIT, attr["ccode"]))
+            comment = attr["defn"] if (attr and attr.get("defn")) else ""
+            ev = enum_values(props[p])
+            if ev:
+                allowed = "Allowed: " + " | ".join(str(x) for x in ev)
+                comment = (comment + " " + allowed).strip()
+            if comment:
+                pparts.append('rdfs:comment "%s"' % esc(comment))
+            w("%s %s ." % (piri, " ;\n    ".join(pparts)))
             # cardinality restriction (faithful to the schema)
             req = p in required
             if multi and req:
@@ -125,22 +162,29 @@ def main():
         f.write(ttl)
     src_sha = hashlib.sha256(raw).hexdigest()
     out_sha = hashlib.sha256(ttl.encode()).hexdigest()
+    ct_sha = hashlib.sha256(
+        open(os.path.join(HERE, "ddf-ra-v4.0.0", "USDM_CT.xlsx"), "rb").read()).hexdigest()
     nprops = ttl.count(" a owl:ObjectProperty") + ttl.count(" a owl:DatatypeProperty")
+    nanchor = ttl.count("skos:exactMatch <" + NCIT)
     with open(PROV, "w") as f:
         f.write(
             "# Vendored artifact provenance — USDM v4.0 OWL\n\n"
             "Generated, **not authoritative**. The authoritative USDM source is CDISC DDF-RA.\n\n"
             "| field | value |\n|---|---|\n"
-            "| source | github.com/cdisc-org/DDF-RA `Deliverables/API/USDM_API.json` |\n"
+            "| model source | github.com/cdisc-org/DDF-RA `Deliverables/API/USDM_API.json` |\n"
+            "| CT source | github.com/cdisc-org/DDF-RA `Deliverables/CT/USDM_CT.xlsx` |\n"
             "| pinned tag | %s |\n| pinned commit | %s |\n"
-            "| source sha256 | %s |\n"
+            "| model sha256 | %s |\n"
+            "| CT sha256 | %s |\n"
             "| generator | tools/usdm-rdf-gen/generate.py v%s |\n"
             "| output | ontology/vendor/usdm/usdm-v4.ttl |\n"
             "| output sha256 | %s |\n"
-            "| classes | %d |\n| properties | %d |\n"
+            "| classes | %d |\n| properties | %d |\n| NCIt anchors | %d |\n"
             "| license | CC-BY-4.0 (mirrors DDF-RA source) |\n\n"
-            "Regenerate: `python3 tools/usdm-rdf-gen/generate.py` (byte-reproducible).\n"
-            % (DDF_RA_TAG, DDF_RA_COMMIT, src_sha, GEN_VERSION, out_sha, nclasses, nprops))
+            "Regenerate: `python3 tools/usdm-rdf-gen/extract_ct.py && "
+            "python3 tools/usdm-rdf-gen/generate.py` (byte-reproducible).\n"
+            % (DDF_RA_TAG, DDF_RA_COMMIT, src_sha, ct_sha, GEN_VERSION, out_sha,
+               nclasses, nprops, nanchor))
     print("wrote %s: %d classes, %d properties" % (OUT, nclasses, nprops))
     print("output sha256:", out_sha)
 
