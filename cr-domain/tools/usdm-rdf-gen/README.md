@@ -10,8 +10,14 @@ ddf-ra-v4.0.0/USDM_API.json   # pinned CDISC DDF-RA OpenAPI model (CC-BY-4.0, ve
 ddf-ra-v4.0.0/USDM_CT.xlsx     # pinned CDISC controlled terminology (NCIt codes + definitions)
 ddf-ra-v4.0.0/usdm_ct.json     # CT extracted to JSON (so generate.py stays stdlib-only)
 extract_ct.py                  # one-time CT extractor (requires openpyxl)
+verify_ncit.py                 # verify the NCIt anchors against a current NCIt FLAT file
 generate.py                   # the generator (Apache-2.0, stdlib-only)
 ```
+
+The NCIt anchors are verified against a current NCI Thesaurus release (the FLAT file from
+evs.nci.nih.gov/evs-download/thesaurus-downloads — large, not vendored). The durable result
+lives in `ontology/vendor/usdm/ncit-verification.json` + `NCIT_VERIFICATION.md`; the harness
+gates it.
 
 Run:
 

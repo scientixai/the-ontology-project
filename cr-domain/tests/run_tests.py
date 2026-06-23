@@ -119,6 +119,9 @@ def main():
     # (k) vendored USDM-OWL — the generated external interop layer parses + is complete
     uv_passed, uv_total = usdm_vendor_checks(failures)
 
+    # (l) NCIt anchor verification — anchors resolve + match against a pinned NCIt release
+    nv_passed, nv_total = ncit_verification_checks(failures)
+
     _report([
         ("SHACL", passed, len(cases)),
         ("bitemporal", bt_passed, bt_total),
@@ -130,7 +133,27 @@ def main():
         ("startup", su_passed, su_total),
         ("schedule", sd_passed, sd_total),
         ("usdm", uv_passed, uv_total),
+        ("ncit", nv_passed, nv_total),
     ], failures)
+
+
+def ncit_verification_checks(failures):
+    """The USDM-OWL NCIt anchors must resolve and match against the pinned NCIt release
+    (durable record in ontology/vendor/usdm/ncit-verification.json; flat file not vendored)."""
+    path = os.path.join(ROOT, "ontology", "vendor", "usdm", "ncit-verification.json")
+    if not os.path.exists(path):
+        return 0, 0
+    s = json.load(open(path))["summary"]
+    ok = (s["resolved"] == s["total"] and s["ddf_tagged"] == s["total"]
+          and s["label_match"] >= s["total"] - 2)
+    if ok:
+        print(f"[PASS] USDM NCIt anchors verified vs NCIt {s['ncit_version']} "
+              f"({s['resolved']}/{s['total']} resolve, {s['label_match']}/{s['total']} labels, "
+              f"{s['ddf_tagged']}/{s['total']} DDF-tagged)")
+        return 1, 1
+    failures.append(("NCIT", "verify", str(s)))
+    print(f"[FAIL] NCIt anchor verification regressed: {s}")
+    return 0, 1
 
 
 def usdm_vendor_checks(failures):
