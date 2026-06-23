@@ -567,9 +567,12 @@ Same native graph, many standardized outputs, guaranteed consistent.</p>
 <code>ontology/vendor/usdm/usdm-v4.ttl</code> (the USDM class model) and apply
 <code>crosswalks/usdm-to-cr.ttl</code> to map USDM constructs onto cr-core &mdash; respecting the
 <b>plan&harr;execution boundary</b> (USDM is design-time; cr-core is execution + provenance).
-<code>examples/usdm-cdisc-pilot-conformant.ttl</code> shows the target shape end-to-end. USDM
-classes and codelists are NCIt-anchored (verified against the NCI Thesaurus), so your graph
-inherits a verifiable terminology spine.</p>
+<code>tools/usdm-rdf-gen/ingest_usdm.py</code> does exactly this for real on the public, MIT-licensed
+CDISC Pilot (LZZT) study &mdash; emitting <code>examples/usdm-cdisc-pilot-ingested.ttl</code>,
+which validates green &mdash; and <code>examples/usdm-cdisc-pilot-conformant.ttl</code> is a
+clean hand-authored illustration of the target shape. USDM classes and codelists are
+NCIt-anchored (verified against the NCI Thesaurus), so your graph inherits a verifiable
+terminology spine.</p>
 
 <h2>7 &middot; Honor the conventions (so graphs line up)</h2>
 <ul>

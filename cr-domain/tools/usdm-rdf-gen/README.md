@@ -13,7 +13,14 @@ extract_ct.py                  # one-time CT extractor (requires openpyxl)
 verify_ncit.py                 # verify the NCIt anchors against a current NCIt FLAT file
 generate.py                    # the class-model generator (Apache-2.0, stdlib-only)
 generate_ct.py                 # the controlled-terminology -> SKOS generator (stdlib-only)
+ingest_usdm.py                 # ingest a real USDM JSON study -> cr-core project graph
+ddf-ra-v4.0.0/examples/        # vendored MIT example study (CDISC Pilot / LZZT)
 ```
+
+`ingest_usdm.py` reads the pinned, **MIT-licensed** CDISC Pilot USDM v4.0 JSON and emits
+`examples/usdm-cdisc-pilot-ingested.ttl` — the real protocol's design landing in cr-core via
+the crosswalk (study, version, arms, eligibility, endpoints, estimand, sponsor/site, and the
+Schedule of Activities timeline). Deterministic; validates green in the test suite.
 
 `generate_ct.py` emits `ontology/vendor/usdm/usdm-ct-v4.ttl`: the DDF valid value sets as
 SKOS concept schemes (one per codelist, bound to its `usdm:` property, NCIt-anchored), one
