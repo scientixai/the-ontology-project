@@ -116,6 +116,9 @@ def main():
     # (j) schedule — SoA as-of reconstruction across an amendment + missed-visit detection
     sd_passed, sd_total = schedule_checks(ont_graph, failures)
 
+    # (k) vendored USDM-OWL — the generated external interop layer parses + is complete
+    uv_passed, uv_total = usdm_vendor_checks(failures)
+
     _report([
         ("SHACL", passed, len(cases)),
         ("bitemporal", bt_passed, bt_total),
@@ -126,7 +129,31 @@ def main():
         ("lims", lm_passed, lm_total),
         ("startup", su_passed, su_total),
         ("schedule", sd_passed, sd_total),
+        ("usdm", uv_passed, uv_total),
     ], failures)
+
+
+def usdm_vendor_checks(failures):
+    """The vendored, generated USDM v4.0 OWL (external interop layer, crosswalk target)
+    must parse and carry the full class footprint. Kept separate from the cr graph."""
+    path = os.path.join(ROOT, "ontology", "vendor", "usdm", "usdm-v4.ttl")
+    if not os.path.exists(path):
+        return 0, 0
+    try:
+        g = Graph()
+        g.parse(path, format="turtle")
+    except Exception as e:  # noqa: BLE001
+        failures.append(("USDM", "parse", str(e)))
+        print(f"[FAIL] vendored USDM-OWL failed to parse: {e}")
+        return 0, 1
+    owl_class = URIRef("http://www.w3.org/2002/07/owl#Class")
+    nclass = len(set(g.subjects(RDF.type, owl_class)))
+    if nclass >= 80:
+        print(f"[PASS] vendored USDM v4.0 OWL parses ({nclass} classes, {len(g)} triples)")
+        return 1, 1
+    failures.append(("USDM", "classes", f"expected >=80, got {nclass}"))
+    print(f"[FAIL] vendored USDM-OWL has only {nclass} classes")
+    return 0, 1
 
 
 def schedule_checks(ont_graph, failures):
