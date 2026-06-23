@@ -127,6 +127,9 @@ def main():
     # (l) NCIt anchor verification — anchors resolve + match against a pinned NCIt release
     nv_passed, nv_total = ncit_verification_checks(failures)
 
+    # (m) single-pull retrieval view — one entity carries every green-check fact (no recursive lookups)
+    vw_passed, vw_total = view_checks(failures)
+
     _report([
         ("SHACL", passed, len(cases)),
         ("bitemporal", bt_passed, bt_total),
@@ -139,6 +142,7 @@ def main():
         ("schedule", sd_passed, sd_total),
         ("usdm", uv_passed, uv_total),
         ("ncit", nv_passed, nv_total),
+        ("view", vw_passed, vw_total),
     ], failures)
 
 
@@ -260,6 +264,51 @@ def schedule_checks(ont_graph, failures):
         failures.append(("SCHED", "missed", f"flagged={sorted(missed)}"))
         print(f"[FAIL] missed-visit detector flagged={sorted(missed)}")
 
+    return passed, total
+
+
+def view_checks(failures):
+    """Single-pull retrieval view: prove the blood-draw collection resolves into ONE
+    self-contained NGSI-LD object that carries every green-check fact — so the
+    consuming UI never needs a recursive lookup. Guards 'modeled correctly'."""
+    import importlib.util
+    p = os.path.join(ROOT, "tools", "ngsild_view.py")
+    spec = importlib.util.spec_from_file_location("ngsild_view", p)
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    obj = mod.build()
+    total = passed = 0
+
+    def check(desc, cond):
+        nonlocal total, passed
+        total += 1
+        if cond:
+            passed += 1; print(f"[PASS] {desc}")
+        else:
+            failures.append(("VIEW", desc, "single-pull object missing required fact"))
+            print(f"[FAIL] {desc}")
+
+    try:
+        consent = obj["consent"]["entity"]
+        auth = obj["authority"]["entity"]
+        spec_e = obj["specimen"]["entity"]
+        custody = [c["entity"]["custodyState"]["value"] for c in spec_e["custodyChain"]]
+        check("single pull is the collection hub (urn:bd-coll)", obj["id"] == "urn:bd-coll")
+        check("consent inlined, current, for this subject",
+              consent["status"] == "active" and consent["forSubject"]["object"] == "urn:bd-subj")
+        check("venipuncture authority inlined (delegate+capability+credential)",
+              auth["delegate"]["object"] == "urn:bd-phleb"
+              and auth["capability"]["object"] == "urn:bd-cap-venip"
+              and auth["credential"]["object"] == "urn:bd-cred-phleb")
+        check("SoA ordering inlined: ECG act precedes the draw",
+              obj["afterAct"]["entity"]["observedAt"] < obj["observedAt"])
+        check("custody current-state reachable = Published", "Published" in custody)
+        check("aliquot + result inlined (lineage to the draw)",
+              spec_e["aliquot"]["object"] == "urn:bd-aliquot"
+              and obj["result"]["entity"]["value"]["value"] == "1:320")
+    except (KeyError, TypeError) as e:
+        failures.append(("VIEW", "structure", str(e)))
+        print(f"[FAIL] single-pull view structure: {e}")
+        total += 1
     return passed, total
 
 

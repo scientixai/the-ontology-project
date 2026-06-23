@@ -36,3 +36,19 @@ cr:fromService    a owl:ObjectProperty ; rdfs:domain cr:AssayResult ; rdfs:range
 cr:aliquotOf      a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ;
     rdfs:domain hcls:Specimen ; rdfs:range hcls:Specimen ;
     rdfs:label "aliquot of" ; rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." .
+
+# --- Retrieval edges: direct relationships off the collection act so a single
+#     entity pull (the NGSI-LD shape-defined view) reaches the evidentiary context
+#     in one hop, rather than forcing the consuming UI into recursive lookups. ---
+cr:producesSpecimen a owl:ObjectProperty ; owl:inverseOf cr:collectedAt ;
+    rdfs:domain cr:StudyEvent ; rdfs:range hcls:Specimen ;
+    rdfs:label "produces specimen" ; rdfs:comment "The primary specimen a collection act produced (forward of cr:collectedAt)." .
+cr:derivedFromCollection a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ;
+    rdfs:domain cr:AssayResult ; rdfs:range cr:StudyEvent ;
+    rdfs:label "derived from collection" ; rdfs:comment "The collection act a result ultimately traces to (denormalized lineage cite)." .
+cr:hasConsent a owl:ObjectProperty ;
+    rdfs:domain cr:StudyEvent ; rdfs:range cr:InformedConsent ;
+    rdfs:label "has consent" ; rdfs:comment "The informed consent under which a participant-facing act was performed." .
+cr:precededByAct a owl:ObjectProperty ;
+    rdfs:domain cr:StudyEvent ; rdfs:range cr:Assessment ;
+    rdfs:label "preceded by act" ; rdfs:comment "The assessment this act followed (executed ordering cite, e.g. the ECG before the draw)." .

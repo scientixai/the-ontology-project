@@ -201,11 +201,6 @@ cr:certifiedCopyOf a owl:ObjectProperty ;
     rdfs:domain cr:CertifiedCopy ;
     rdfs:range cr:SourceDocument .
 
-cr:collectedAt a owl:ObjectProperty ;
-    rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." ;
-    rdfs:domain hcls:Specimen ;
-    rdfs:range cr:StudyEvent .
-
 cr:conductedAt a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
     rdfs:range cr:StudySite .
@@ -246,6 +241,13 @@ cr:delegator a owl:ObjectProperty ;
     rdfs:comment "The responsible agent (PI)." ;
     rdfs:domain cr:Delegation ;
     rdfs:range hcls:Person .
+
+cr:derivedFromCollection a owl:ObjectProperty ;
+    rdfs:label "derived from collection" ;
+    rdfs:comment "The collection act a result ultimately traces to (denormalized lineage cite)." ;
+    rdfs:domain cr:AssayResult ;
+    rdfs:range cr:StudyEvent ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
 
 cr:deviationCategory a owl:DatatypeProperty ;
     rdfs:label "deviation category" ;
@@ -307,6 +309,12 @@ cr:hasAuditTrail a owl:ObjectProperty ;
 cr:hasBriefingBook a owl:ObjectProperty ;
     rdfs:domain cr:RegulatoryInteraction ;
     rdfs:range cr:BriefingBook .
+
+cr:hasConsent a owl:ObjectProperty ;
+    rdfs:label "has consent" ;
+    rdfs:comment "The informed consent under which a participant-facing act was performed." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range cr:InformedConsent .
 
 cr:hasEligibilityCriterion a owl:ObjectProperty ;
     rdfs:domain cr:ProtocolVersion ;
@@ -473,6 +481,12 @@ cr:placedOn a owl:ObjectProperty ;
     rdfs:domain cr:ClinicalHold ;
     rdfs:range cr:INDApplication .
 
+cr:precededByAct a owl:ObjectProperty ;
+    rdfs:label "preceded by act" ;
+    rdfs:comment "The assessment this act followed (executed ordering cite, e.g. the ECG before the draw)." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range cr:Assessment .
+
 cr:precedes a owl:ObjectProperty ;
     rdfs:label "precedes" ;
     rdfs:comment "Ordering-only constraint: this activity must occur before another, independent of clock timing (e.g. QS2 before ECG)." ;
@@ -488,6 +502,13 @@ cr:produces a owl:ObjectProperty ;
     rdfs:comment "A site-specific output the stream generates from the inputs (customized ICF, DoA log, signed CTA...)." ;
     rdfs:domain cr:WorkStream ;
     rdfs:range cr:StartupArtifact .
+
+cr:producesSpecimen a owl:ObjectProperty ;
+    rdfs:label "produces specimen" ;
+    rdfs:comment "The primary specimen a collection act produced (forward of cr:collectedAt)." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range hcls:Specimen ;
+    owl:inverseOf cr:collectedAt .
 
 cr:projectsEncounter a owl:ObjectProperty ;
     rdfs:label "projects encounter" ;
@@ -970,17 +991,6 @@ cr:Arm a owl:Class ;
     rdfs:comment "A treatment arm of the study." ;
     rdfs:subClassOf top:Scope .
 
-cr:AssayResult a owl:Class ;
-    rdfs:label "Assay Result" ;
-    rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        hcls:Observation .
-
-cr:Assessment a owl:Class ;
-    rdfs:label "Assessment" ;
-    rdfs:comment "A clinical assessment performed during the trial." ;
-    rdfs:subClassOf top:Temporal .
-
 cr:BriefingBook a owl:Class ;
     rdfs:label "Briefing Book" ;
     rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." ;
@@ -1002,12 +1012,6 @@ cr:Estimand a owl:Class ;
     rdfs:label "Estimand" ;
     rdfs:comment "The precise treatment-effect definition a result must trace to (overstatement guard)." ;
     rdfs:subClassOf top:Scope .
-
-cr:InformedConsent a owl:Class ;
-    rdfs:label "Informed Consent" ;
-    rdfs:comment "The act of obtaining a subject's informed consent." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
 
 cr:InvestigationalProduct a owl:Class ;
     rdfs:label "Investigational Product" ;
@@ -1070,6 +1074,11 @@ cr:audits a owl:ObjectProperty ;
     rdfs:label "audits" ;
     rdfs:comment "Independent audit of trial conduct/records (the auditor function as a relationship)." .
 
+cr:collectedAt a owl:ObjectProperty ;
+    rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range cr:StudyEvent .
+
 cr:monitors a owl:ObjectProperty ;
     rdfs:label "monitors" ;
     rdfs:comment "Monitoring oversight of a site (the monitor function as a relationship)." ;
@@ -1105,6 +1114,17 @@ cr:AnalysisService a owl:Class ;
     rdfs:label "Analysis Service" ;
     rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." ;
     rdfs:subClassOf top:Evidence .
+
+cr:AssayResult a owl:Class ;
+    rdfs:label "Assay Result" ;
+    rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
+    rdfs:subClassOf top:ProvenancedEntity,
+        hcls:Observation .
+
+cr:Assessment a owl:Class ;
+    rdfs:label "Assessment" ;
+    rdfs:comment "A clinical assessment performed during the trial." ;
+    rdfs:subClassOf top:Temporal .
 
 cr:AuditTrail a owl:Class ;
     rdfs:label "Audit Trail" ;
@@ -1152,6 +1172,12 @@ cr:INDApplication a owl:Class ;
 cr:IRBApproval a owl:Class ;
     rdfs:label "IRB/IEC Approval" ;
     rdfs:comment "Local IRB/IEC approval (observedAt = approval date)." ;
+    rdfs:subClassOf top:ProvenancedEntity,
+        top:Temporal .
+
+cr:InformedConsent a owl:Class ;
+    rdfs:label "Informed Consent" ;
+    rdfs:comment "The act of obtaining a subject's informed consent." ;
     rdfs:subClassOf top:ProvenancedEntity,
         top:Temporal .
 
@@ -1244,11 +1270,6 @@ cr:SafetyReport a owl:Class ;
     rdfs:comment "Expedited report of an SAE to the regulator." ;
     rdfs:subClassOf top:Evidence,
         top:ProvenancedEntity .
-
-cr:StudyEvent a owl:Class ;
-    rdfs:label "Study Event" ;
-    rdfs:comment "A scheduled or unscheduled timepoint (StudyEventOID) when data is captured." ;
-    rdfs:subClassOf top:Temporal .
 
 cr:StudyStartupPackage a owl:Class ;
     rdfs:label "Study Start-up Package" ;
@@ -1405,20 +1426,25 @@ cr:Timing a owl:Class ;
     rdfs:comment "A relative-timing rule: an offset (days or hours) from an anchor — another node, or an anchor event such as enrollment — with an allowed window. The footnote logic, made explicit." ;
     rdfs:subClassOf top:Constraint .
 
-hcls:Specimen a owl:Class ;
-    rdfs:label "Specimen" ;
-    rdfs:comment "A biospecimen collected from a Person." ;
-    rdfs:subClassOf top:Resource .
-
 top:Scope a owl:Class ;
     rdfs:label "Scope" ;
     rdfs:comment "A bounded context of work (study, arm, population, indication)." ;
     rdfs:subClassOf top:Core .
 
+cr:StudyEvent a owl:Class ;
+    rdfs:label "Study Event" ;
+    rdfs:comment "A scheduled or unscheduled timepoint (StudyEventOID) when data is captured." ;
+    rdfs:subClassOf top:Temporal .
+
 hcls:Organization a owl:Class ;
     rdfs:label "Organization" ;
     rdfs:comment "An organization — sponsor, CRO, site, central lab, or regulator." ;
     rdfs:subClassOf top:Agent .
+
+hcls:Specimen a owl:Class ;
+    rdfs:label "Specimen" ;
+    rdfs:comment "A biospecimen collected from a Person." ;
+    rdfs:subClassOf top:Resource .
 
 ns1:Zone_SiteManagement a skos:Concept ;
     skos:prefLabel "Site Management" ;

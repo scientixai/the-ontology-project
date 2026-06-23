@@ -117,45 +117,52 @@ SPECS = [
 
 
 # The blood draw decomposed into its evidentiary chain. Each checkpoint is green
-# because the model carries the exact parameters behind it — addressable, not buried.
-# (Illustrative values, drawn from the LIMS + delegation + schedule worked examples.)
+# because the ONE returned object carries the exact field behind it — `reads` is
+# the JSON path into that single object (no second query). Every value here is
+# present in examples/blood-draw-context-conformant.ttl and surfaced by the
+# shape-bounded view (views/blood-draw-admissibility.ttl).
 BLOOD_DRAW_CHAIN = [
-    {"check": "Participant verified &amp; consent current", "who": "Jo Santos, CRC",
-     "params": [("Subject", "LIMS-S-001 (pseudonymous)"),
-                ("Consent obtained", "2026-02-05 by Tom Nguyen, RN"),
-                ("Valid at draw", "&#10003; not withdrawn as-of 2026-03-02")],
-     "shape": "cr:InformedConsent (bitemporal)"},
+    {"check": "Participant verified &amp; consent current", "who": "Tom Nguyen, RN",
+     "params": [("Subject", "BD-S-001 (pseudonymous)"),
+                ("Consent for", "<code>consent.forSubject == urn:bd-subj</code>"),
+                ("Consent current", "<code>consent.status == &quot;active&quot;</code>")],
+     "reads": "consent.entity",
+     "shape": "cr:InformedConsentShape (bitemporal)"},
     {"check": "Phlebotomist authorized for venipuncture", "who": "Mary Smith, Phlebotomist",
-     "params": [("Capability", "Venipuncture / specimen collection"),
-                ("Delegated by", "Dr. Ana Rivera, PI"),
-                ("Credential", "&#10003; phlebotomy cert + GCP"),
-                ("Effective window", "2026-01-28 &rarr; (open); active at draw")],
-     "shape": "cr:CapabilityDelegationShape (hard) + cr:DelegationTimingShape"},
-    {"check": "Drawn in-window, after the ECG", "who": "Mary Smith, Phlebotomist",
-     "params": [("SoA rule", "bloods 2h after the ECG (ordering)"),
-                ("ECG performed", "2026-03-02 09:00"), ("Blood drawn", "2026-03-02 11:00"),
-                ("Visit window", "&#10003; within Cycle 1 Day 1")],
-     "shape": "cr:ActivityOrderingShape + cr:VisitWindowShape"},
+     "params": [("Delegate", "<code>authority.delegate == urn:bd-phleb</code>"),
+                ("Capability", "<code>authority.capability == urn:bd-cap-venip</code>"),
+                ("Credential", "<code>authority.credential == urn:bd-cred-phleb</code>")],
+     "reads": "authority.entity",
+     "shape": "cr:CapabilityDelegationShape (hard)"},
+    {"check": "Drawn after the ECG (ordering held)", "who": "Mary Smith, Phlebotomist",
+     "params": [("ECG act", "<code>afterAct.observedAt == 2026-03-02T09:00</code>"),
+                ("Draw", "<code>observedAt == 2026-03-02T11:00</code>"),
+                ("Order", "&#10003; 09:00 &lt; 11:00")],
+     "reads": "afterAct.entity + (root).observedAt",
+     "shape": "cr:ActivityOrderingShape"},
     {"check": "Specimen collected &amp; custody opened", "who": "Mary Smith, Phlebotomist",
-     "params": [("Primary specimen", "Whole blood"),
-                ("Collected (valid time)", "2026-03-02 11:00"),
-                ("Recorded (txn time)", "2026-03-02 11:05"),
-                ("Attributed to", "Mary Smith, Phlebotomist"), ("Custody state", "Received")],
+     "params": [("Primary specimen", "<code>specimen.id == urn:bd-spec</code>"),
+                ("Collected (valid)", "<code>(root).observedAt</code>"),
+                ("Recorded (txn)", "<code>(root).createdAt</code>")],
+     "reads": "specimen.entity + (root)",
      "shape": "cr:SpecimenOriginShape + cr:CustodyEventShape"},
-    {"check": "Aliquot traces back to the draw", "who": "Raj Patel, Lab Technician",
-     "params": [("Aliquot", "Serum aliquot -P01"),
-                ("Derived from", "whole-blood primary &rarr; collection event"),
-                ("Lineage view", "projections/specimen_lineage.rq")],
-     "shape": "prov:wasDerivedFrom* (custody chain)"},
-    {"check": "Assay result attributed &amp; current", "who": "Raj Patel, Lab Technician",
-     "params": [("Result", "NAb titer = 1:320"),
-                ("Custody current-state", "<span class='pill ok'>Published</span> (bitemporal)"),
-                ("Attributed to", "Raj Patel, Lab Technician")],
+    {"check": "Custody current-state = Published", "who": "Raj Patel, Lab Technician",
+     "params": [("Chain", "Received &rarr; Verified &rarr; Published"),
+                ("Current", "<code>specimen.custodyChain[*].custodyState</code> &#8715; "
+                            "<span class='pill ok'>Published</span>")],
+     "reads": "specimen.custodyChain",
      "shape": "bitemporal custody current-state derivation"},
+    {"check": "Aliquot &amp; result trace to the draw", "who": "Raj Patel, Lab Technician",
+     "params": [("Aliquot", "<code>specimen.aliquot == urn:bd-aliquot</code>"),
+                ("Result", "<code>result.value == &quot;1:320&quot;</code>"),
+                ("Lineage", "result &rarr; derivedFromCollection &rarr; this draw")],
+     "reads": "specimen.aliquot + result.entity",
+     "shape": "prov:wasDerivedFrom* (cr:derivedFromCollection)"},
     {"check": "Audit trail present (ALCOA++)", "who": "System of record",
-     "params": [("Every step carries", "observedAt + recordedAt + wasAttributedTo"),
-                ("Reconstructable", "&#10003; as-of any date")],
-     "shape": "cr:SourceDataAuditTrailShape + top:BitemporalProvShape"},
+     "params": [("Every inlined entity carries", "<code>observedAt + createdAt + status</code>"),
+                ("Reconstructable", "&#10003; as-of any date, from this one object")],
+     "reads": "(every entity in the object)",
+     "shape": "top:BitemporalProvShape"},
 ]
 
 
@@ -163,6 +170,8 @@ def _provenance_screen(title, subtitle, badge, chain):
     rows = ""
     for c in chain:
         params = "".join(f'<tr><td>{k}</td><td>{v}</td></tr>' for k, v in c["params"])
+        if c.get("reads"):
+            params += f'<tr><td>reads (from the one object)</td><td><code>{c["reads"]}</code></td></tr>'
         params += f'<tr><td>gated by</td><td><code>{c["shape"]}</code></td></tr>'
         rows += (f'<div class="chk"><div class="chk-head"><span class="ck">&#10003;</span>'
                  f'<b>{c["check"]}</b><span class="who">{c["who"]}</span></div>'
@@ -170,8 +179,8 @@ def _provenance_screen(title, subtitle, badge, chain):
                  f'<table class="prov">{params}</table></details></div>')
     return (f'<div class="screen"><div class="scr-head">{title}<span class="badge">{badge}</span>'
             f'<div class="scr-sub">{subtitle}</div></div>'
-            f'<div class="chk-intro">Each check is backed by addressable model facts &mdash; '
-            f'open one to see the exact parameters that make it green.</div>{rows}</div>')
+            f'<div class="chk-intro">Every check reads a field of the <b>single object</b> on the right '
+            f'(its <code>reads</code> path) &mdash; the UI issues one query, never a recursive lookup.</div>{rows}</div>')
 
 
 def _screen(title, subtitle, rows, badge):
@@ -183,23 +192,42 @@ def _screen(title, subtitle, rows, badge):
 SPEC_BY_NAME = {s[0]: s for s in SPECS}
 
 
+def _blood_draw_view(root):
+    """Load the shape-bounded retrieval view + its worked example and return the
+    actual NGSI-LD object (built by the same traversal as tools/ngsild_view.py)."""
+    import importlib.util
+    p = os.path.join(root, "tools", "ngsild_view.py")
+    spec = importlib.util.spec_from_file_location("ngsild_view", p)
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod.build(), mod.QUERY
+
+
 def render_stop(root, name):
     """Render one stop's split view (operator screen + NGSI-LD from its example)."""
     spec = SPEC_BY_NAME.get(name)
     if not spec:
         return ""
     _name, fname, title, sub, badge, rows, ids = spec
+    if name == "Blood draw":
+        import html as _html
+        obj, query = _blood_draw_view(root)
+        left = _provenance_screen("Specimen &mdash; admissibility at the bench",
+                                  "Subject BD-S-001 &middot; one entity, fully expanded", "LIMS",
+                                  BLOOD_DRAW_CHAIN)
+        objbody = _html.escape(json.dumps(obj, indent=2))
+        right = (f'<div class="jsoncap">the <b>one</b> query the screen issues</div>'
+                 f'<pre class="json q">{_html.escape(query)}</pre>'
+                 f'<div class="jsoncap">the <b>single object</b> it returns &mdash; related entities '
+                 f'inlined per the shape, <b>zero recursive lookups</b></div>'
+                 f'<pre class="json">{objbody}</pre>')
+        return (f'<div class="splitstop"><div class="split"><div>{left}</div>'
+                f'<div>{right}</div></div></div>')
     g = Graph(); g.parse(os.path.join(root, "examples", fname), format="turtle")
     objs = [ngsild(g, E + i) for i in ids]
     body = json.dumps(objs if len(objs) > 1 else objs[0], indent=2)
-    if name == "Blood draw":
-        left = _provenance_screen("Specimen &mdash; evidentiary chain",
-                                  "Subject LIMS-S-001 &middot; Denver Cancer Center", "LIMS",
-                                  BLOOD_DRAW_CHAIN)
-    else:
-        left = _screen(title, sub, rows, badge)
+    left = _screen(title, sub, rows, badge)
     return (f'<div class="splitstop"><div class="split"><div>{left}</div>'
-            f'<div><div class="jsoncap">the data behind the screen &mdash; NGSI-LD, from the graph</div>'
+            f'<div><div class="jsoncap">the data behind the screen &mdash; one entity&rsquo;s own attributes</div>'
             f'<pre class="json">{body}</pre></div></div></div>')
 
 
@@ -213,7 +241,13 @@ def render_stops(root):
     intro = ('<p>The reference graph isn\'t an abstraction &mdash; it\'s what powers the screens an '
              'operator actually uses. Below is the trial as a <b>workflow line</b>; each stop is a '
              'screen, and the panel beside it is the <b>real data behind it</b> &mdash; generated from the '
-             'worked examples, in the NGSI-LD runtime shape, carrying its own time and provenance.</p>')
+             'worked examples, in the NGSI-LD runtime shape, carrying its own time and provenance.</p>'
+             '<p class="principle">The test of the model: an operator should pull <b>one</b> entity and get '
+             'every fact behind the green check &mdash; no recursive lookups. The <b>Blood draw</b> stop is '
+             'the worked proof: one query, and a single self-contained object whose related entities are '
+             'inlined <b>per a SHACL retrieval view</b> '
+             '(<code>views/blood-draw-admissibility.ttl</code>). Each check on the left cites the '
+             '<code>reads</code> path it pulls from that one object.</p>')
     out = [intro, f'<div class="trainline">{chips}</div>']
     for name in names:
         out.append(f'<div class="splitstop"><h4 class="stopname">&#128205; {name}</h4>' + render_stop(root, name)[len('<div class="splitstop">'):])
@@ -237,8 +271,11 @@ SCREEN_CSS = """
 .muted{color:var(--mut);font-weight:400;font-size:12px}
 .pill{font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px}
 .pill.ok{background:#e7f6ee;color:var(--ok)}.pill.warn{background:#fdf4e3;color:var(--warn)}
-.jsoncap{font-size:12px;color:var(--mut);margin-bottom:4px}
+.jsoncap{font-size:12px;color:var(--mut);margin:10px 0 4px}
+.jsoncap:first-child{margin-top:0}
 pre.json{margin:0;max-height:420px}
+pre.json.q{max-height:none;background:#0b2530;color:#cde8ef;border-color:#0b2530}
+p.principle{background:var(--pale);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px}
 .chk-intro{padding:8px 14px;font-size:12px;color:var(--mut);background:var(--pale);border-top:1px solid var(--line)}
 .chk{border-top:1px solid var(--line);padding:9px 14px}
 .chk-head{display:flex;align-items:center;gap:8px;font-size:14px}

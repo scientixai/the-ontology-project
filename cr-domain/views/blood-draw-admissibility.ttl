@@ -1,0 +1,67 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+###############################################################################
+# A RETRIEVAL VIEW (not a constraint). It declares exactly which linked entities
+# a single pull of the collection act inlines, and how deep — so the consuming UI
+# issues ONE query and gets a self-contained object, never a recursive lookup.
+#
+# This is the "based on the shape" in: pull one entity, get all the related
+# entities the shape says belong with it. tools/ngsild_view.py walks this shape
+# over examples/blood-draw-context-conformant.ttl and emits the NGSI-LD object.
+#
+# A NodeShape is the right carrier: sh:path (forward AND sh:inversePath) names the
+# relationship to follow; sh:node names the nested view to expand at the far end;
+# a property with no sh:node is inlined as a leaf attribute. Depth is bounded by
+# the nesting, not by an arbitrary joinLevel.
+###############################################################################
+
+cr:BloodDrawAdmissibilityView a sh:NodeShape ;
+    rdfs:label "Blood-draw admissibility — single-pull projection" ;
+    sh:targetClass cr:StudyEvent ;
+
+    # who it was for, who did it, under what authority
+    sh:property [ sh:path cr:forSubject ;       sh:name "forSubject" ;   sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:performedBy ;       sh:name "performedBy" ;  sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:hasConsent ;        sh:name "consent" ;      sh:node cr:ConsentView ] ;
+    sh:property [ sh:path cr:underDelegation ;   sh:name "authority" ;    sh:node cr:DelegationView ] ;
+    # the SoA ordering it satisfied
+    sh:property [ sh:path cr:precededByAct ;     sh:name "afterAct" ;     sh:node cr:ActLeaf ] ;
+    sh:property [ sh:path cr:atVisit ;           sh:name "atVisit" ;      sh:node cr:VisitLeaf ] ;
+    # the specimen + everything downstream of it
+    sh:property [ sh:path cr:producesSpecimen ;  sh:name "specimen" ;     sh:node cr:SpecimenView ] ;
+    # the result that cites this collection (inverse — it points back at us)
+    sh:property [ sh:path [ sh:inversePath cr:derivedFromCollection ] ; sh:name "result" ; sh:node cr:ResultLeaf ] .
+
+cr:ConsentView a sh:NodeShape ;
+    sh:property [ sh:path cr:forSubject ;   sh:name "forSubject" ;     sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:performedBy ;  sh:name "obtainedBy" ;     sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:underDelegation ; sh:name "authority" ;   sh:node cr:DelegationLeaf ] .
+
+cr:DelegationView a sh:NodeShape ;
+    sh:property [ sh:path cr:delegate ;            sh:name "delegate" ;   sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:delegator ;           sh:name "delegator" ;  sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:delegatedCapability ; sh:name "capability" ; sh:node cr:CapLeaf ] ;
+    sh:property [ sh:path cr:requiresCredential ;  sh:name "credential" ; sh:node cr:CredLeaf ] .
+
+cr:SpecimenView a sh:NodeShape ;
+    # custody events point AT the specimen (cr:specimen) — pull them by inverse
+    sh:property [ sh:path [ sh:inversePath cr:specimen ] ; sh:name "custodyChain" ; sh:node cr:CustodyLeaf ] ;
+    # the aliquot points AT the specimen (cr:aliquotOf) — pull it by inverse
+    sh:property [ sh:path [ sh:inversePath cr:aliquotOf ] ; sh:name "aliquot" ;     sh:node cr:SpecimenLeaf ] .
+
+# Leaf views: inline the node's own scalar facts (label/status/time/state), no
+# further relationship-following. The generator renders these as NGSI-LD
+# Property/Relationship attributes on the inlined object.
+cr:SubjectLeaf    a sh:NodeShape .
+cr:PersonLeaf     a sh:NodeShape .
+cr:ActLeaf        a sh:NodeShape .
+cr:VisitLeaf      a sh:NodeShape .
+cr:CapLeaf        a sh:NodeShape .
+cr:CredLeaf       a sh:NodeShape .
+cr:DelegationLeaf a sh:NodeShape .
+cr:CustodyLeaf    a sh:NodeShape .
+cr:SpecimenLeaf   a sh:NodeShape .
+cr:ResultLeaf     a sh:NodeShape .
