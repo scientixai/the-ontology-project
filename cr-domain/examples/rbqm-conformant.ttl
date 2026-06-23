@@ -19,6 +19,7 @@ ex:ra-pe a cr:RiskAssessment ; cr:assessesFactor ex:ctq-pe ; cr:riskLevel "high"
     prov:wasAttributedTo ex:rbqm-mgr .
 ex:mp-pe a cr:MitigationPlan ; rdfs:label "Targeted 100% SDV on primary endpoint" ;
     cr:mitigates ex:ra-pe ; cr:monitoringStrategy "targeted-SDV" ; cr:sdvIntensity "1.0"^^xsd:decimal .
+ex:ra-pe cr:hasMitigationPlan ex:mp-pe .
 
 # Low risk -> reduced SDV + central monitoring (the RBQM efficiency).
 ex:ctq-demo a cr:CriticalToQualityFactor ; rdfs:label "Demographics accuracy" .
@@ -28,6 +29,7 @@ ex:ra-demo a cr:RiskAssessment ; cr:assessesFactor ex:ctq-demo ; cr:riskLevel "l
     prov:wasAttributedTo ex:rbqm-mgr .
 ex:mp-demo a cr:MitigationPlan ; rdfs:label "Central monitoring + 10% SDV" ;
     cr:mitigates ex:ra-demo ; cr:monitoringStrategy "central-monitoring" ; cr:sdvIntensity "0.1"^^xsd:decimal .
+ex:ra-demo cr:hasMitigationPlan ex:mp-demo .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/ra-demo> top:identifier "urn:ra-demo" ; top:status "active" .

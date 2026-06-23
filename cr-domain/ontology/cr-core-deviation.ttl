@@ -28,6 +28,12 @@ cr:threatens a owl:ObjectProperty ; rdfs:domain cr:DeviationAntecedent ; rdfs:ra
     rdfs:label "threatens" ; rdfs:comment "The critical-to-quality factor this latent condition endangers." .
 cr:manifestsAs a owl:ObjectProperty ; rdfs:domain cr:DeviationAntecedent ; rdfs:range cr:DeviationEvent ;
     rdfs:label "manifests as" ; rdfs:comment "The deviation event this antecedent produced under load." .
+cr:fromAntecedent a owl:ObjectProperty ; owl:inverseOf cr:manifestsAs ;
+    rdfs:domain cr:DeviationEvent ; rdfs:range cr:DeviationAntecedent ;
+    rdfs:label "from antecedent" ; rdfs:comment "The latent condition (the missing middle) this deviation came from (forward of cr:manifestsAs, for single-pull retrieval)." .
+cr:flaggedBy a owl:ObjectProperty ; owl:inverseOf cr:flags ;
+    rdfs:domain cr:DeviationAntecedent ; rdfs:range cr:RiskSignal ;
+    rdfs:label "flagged by" ; rdfs:comment "The leading indicator that pointed at this antecedent (forward of cr:flags)." .
 cr:triggers a owl:ObjectProperty ; rdfs:domain cr:DeviationEvent ; rdfs:range cr:CAPA ;
     rdfs:label "triggers" ; rdfs:comment "The corrective/preventive action this deviation triggered." .
 cr:flags a owl:ObjectProperty ; rdfs:domain cr:RiskSignal ; rdfs:range cr:DeviationAntecedent ;

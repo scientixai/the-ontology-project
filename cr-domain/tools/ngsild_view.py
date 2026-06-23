@@ -47,6 +47,9 @@ VIEWS = {
     "adverse-event":   ("oncology-fih-conformant.ttl", "ae-001", "AdverseEventView"),
     "eop2":            ("eop2-conformant.ttl", "eop2", "EOP2GateView"),
     "startup-package": ("startup-package-conformant.ttl", "sp-act", "StartupActivationView"),
+    "rbqm":            ("rbqm-conformant.ttl", "ra-pe", "RBQMView"),
+    "deviation":       ("deviation-conformant.ttl", "dev-1", "DeviationView"),
+    "gcp":             ("gcp-essential-records-conformant.ttl", "doc-001", "GCPRecordView"),
 }
 
 # NGSI-LD system/core terms that render bare; everything else literal -> Property.

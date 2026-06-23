@@ -25,7 +25,7 @@ ex:sig-late a cr:RiskSignal ; rdfs:label "Late-visit trend (3 sites, 4 weeks)" ;
 
 # The latent condition — the missing middle.
 ex:ante-window a cr:DeviationAntecedent ; rdfs:label "Visit window too tight for site staffing" ;
-    cr:threatens ex:ctq-sched ; cr:manifestsAs ex:dev-1 ;
+    cr:threatens ex:ctq-sched ; cr:manifestsAs ex:dev-1 ; cr:flaggedBy ex:sig-late ;
     top:identifier "urn:ante-window" ; top:status "active" ;
     top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:dev-mgr .
@@ -39,7 +39,7 @@ ex:ra-sched a cr:RiskAssessment ; cr:assessesFactor ex:ctq-sched ; cr:riskLevel 
 
 # The deviation it manifested as — a major deviation requiring a CAPA.
 ex:dev-1 a cr:DeviationEvent ; rdfs:label "Subject seen at Day 31 (window Day 28 +/- 3)" ;
-    cr:deviationCategory "major" ; cr:triggers ex:capa-1 ;
+    cr:deviationCategory "major" ; cr:triggers ex:capa-1 ; cr:fromAntecedent ex:ante-window ;
     top:identifier "urn:dev-1" ; top:status "active" ;
     top:observedAt "2026-03-19T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-19T16:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:dev-mgr .

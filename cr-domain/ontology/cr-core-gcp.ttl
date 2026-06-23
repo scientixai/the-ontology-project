@@ -60,6 +60,9 @@ cr:hasAuditTrail a owl:ObjectProperty ; rdfs:domain top:Evidence ; rdfs:range cr
     rdfs:label "has audit trail" ; rdfs:comment "Links an essential record / source data to its audit trail (ALCOA++ reconstructable)." .
 cr:certifiedCopyOf a owl:ObjectProperty ; rdfs:domain cr:CertifiedCopy ; rdfs:range cr:SourceDocument ;
     rdfs:label "certified copy of" ; rdfs:comment "The source document this certified copy reproduces." .
+cr:hasCertifiedCopy a owl:ObjectProperty ; owl:inverseOf cr:certifiedCopyOf ;
+    rdfs:domain cr:SourceDocument ; rdfs:range cr:CertifiedCopy ;
+    rdfs:label "has certified copy" ; rdfs:comment "A certified copy made of this source document (forward of cr:certifiedCopyOf, for single-pull retrieval)." .
 cr:containsSourceData a owl:ObjectProperty ; rdfs:domain cr:SourceDocument ; rdfs:range cr:SourceData ;
     rdfs:label "contains source data" .
 cr:recordedInTMF a owl:ObjectProperty ; rdfs:domain cr:EssentialRecord ; rdfs:range cr:TrialMasterFile ;

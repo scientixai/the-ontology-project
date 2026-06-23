@@ -98,6 +98,38 @@ cr:PackageView a sh:NodeShape ;
 cr:ArtifactView a sh:NodeShape ;
     sh:property [ sh:path cr:ofArtifactType ;       sh:name "artifactType" ; sh:node cr:TypeLeaf ] .
 
+# --- RBQM: a risk assessment -> the CtQ factor + its mitigation/monitoring plan
+cr:RBQMView a sh:NodeShape ;
+    sh:targetClass cr:RiskAssessment ;
+    sh:property [ sh:path cr:assessesFactor ;     sh:name "factor" ;      sh:node cr:CtqLeaf ] ;
+    sh:property [ sh:path cr:hasMitigationPlan ;  sh:name "mitigation" ;  sh:node cr:MitigationLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;  sh:name "assessedBy" ;  sh:node cr:PersonLeaf ] .
+
+# --- Deviation: the event -> its CAPA + the captured antecedent (the missing
+#     middle), which in turn cites the CtQ it threatens and the signal that flagged it
+cr:DeviationView a sh:NodeShape ;
+    sh:targetClass cr:DeviationEvent ;
+    sh:property [ sh:path cr:triggers ;           sh:name "capa" ;        sh:node cr:CapaLeaf ] ;
+    sh:property [ sh:path cr:fromAntecedent ;     sh:name "antecedent" ;  sh:node cr:AntecedentView ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;  sh:name "raisedBy" ;    sh:node cr:PersonLeaf ] .
+
+cr:AntecedentView a sh:NodeShape ;
+    sh:property [ sh:path cr:threatens ;          sh:name "threatens" ;   sh:node cr:CtqLeaf ] ;
+    sh:property [ sh:path cr:flaggedBy ;          sh:name "flaggedBy" ;   sh:node cr:SignalLeaf ] .
+
+# --- GCP essential records: a source document -> its source data, audit trail,
+#     TMF filing, and the certified copy made of it
+cr:GCPRecordView a sh:NodeShape ;
+    sh:targetClass cr:SourceDocument ;
+    sh:property [ sh:path cr:containsSourceData ; sh:name "sourceData" ;     sh:node cr:SourceDataView ] ;
+    sh:property [ sh:path cr:hasAuditTrail ;      sh:name "auditTrail" ;     sh:node cr:AuditLeaf ] ;
+    sh:property [ sh:path cr:recordedInTMF ;      sh:name "tmf" ;            sh:node cr:TMFLeaf ] ;
+    sh:property [ sh:path cr:hasCertifiedCopy ;   sh:name "certifiedCopy" ;  sh:node cr:CertCopyLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;  sh:name "recordedBy" ;     sh:node cr:PersonLeaf ] .
+
+cr:SourceDataView a sh:NodeShape ;
+    sh:property [ sh:path cr:hasAuditTrail ;      sh:name "auditTrail" ;     sh:node cr:AuditLeaf ] .
+
 # --- Leaf shapes (inline scalar facts only; no further relationship-following)-
 cr:SiteLeaf       a sh:NodeShape .
 cr:MilestoneLeaf  a sh:NodeShape .
@@ -113,3 +145,10 @@ cr:SAPLeaf        a sh:NodeShape .
 cr:DoseOptLeaf    a sh:NodeShape .
 cr:WorkStreamLeaf a sh:NodeShape .
 cr:TypeLeaf       a sh:NodeShape .
+cr:CtqLeaf        a sh:NodeShape .
+cr:MitigationLeaf a sh:NodeShape .
+cr:CapaLeaf       a sh:NodeShape .
+cr:SignalLeaf     a sh:NodeShape .
+cr:AuditLeaf      a sh:NodeShape .
+cr:TMFLeaf        a sh:NodeShape .
+cr:CertCopyLeaf   a sh:NodeShape .

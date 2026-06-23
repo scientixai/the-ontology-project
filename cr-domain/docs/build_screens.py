@@ -88,6 +88,29 @@ SPECS = [
       ("Activation gate", "<span class='pill ok'>Reg + Budget complete &rarr; SIV</span>"),
       ("Activated", "2026-02-05 &middot; Start-up manager")],
      ["sp-pkg", "ws-reg"]),
+    ("Risk-based monitoring", "rbqm-conformant.ttl",
+     "RBQM &mdash; monitoring decision", "Factor: primary endpoint integrity", "RBQM",
+     [("CtQ factor", "Primary endpoint integrity"), ("Risk level", "<span class='pill warn'>high</span> (score 0.80)"),
+      ("Mitigation", "Targeted 100% SDV on primary endpoint"), ("Strategy", "targeted-SDV"),
+      ("SDV intensity", "<span class='pill ok'>100%</span> &mdash; proportionate to risk"),
+      ("Assessed by", "RBQM lead")],
+     ["ra-pe"]),
+    ("Deviation &amp; CAPA", "deviation-conformant.ttl",
+     "Deviation &mdash; why it&rsquo;s green", "OPP-101 &middot; visit-schedule", "QA / eTMF",
+     [("Deviation", "Subject seen at Day 31 (window 28 &plusmn;3)"), ("Category", "<span class='pill warn'>major</span>"),
+      ("CAPA", "<span class='pill ok'>&#10003; open</span> &mdash; corrective &amp; preventive"),
+      ("Antecedent", "<span class='pill ok'>&#10003; captured</span> &mdash; window too tight for staffing"),
+      ("Threatens", "Visit-schedule adherence (CtQ)"), ("Flagged by", "Late-visit trend signal"),
+      ("Raised by", "Quality lead")],
+     ["dev-1"]),
+    ("Essential records", "gcp-essential-records-conformant.ttl",
+     "E6(R3) essential records &mdash; ALCOA++", "Source document SD-001", "eTMF",
+     [("Source document", "Signed vitals worksheet SD-001"), ("Source data", "Vitals worksheet values, C1D1"),
+      ("Audit trail", "<span class='pill ok'>&#10003; present</span> (ALCOA++)"),
+      ("In TMF", "OPP-101 Trial Master File"),
+      ("Certified copy", "<span class='pill ok'>&#10003; reproduces SD-001</span>"),
+      ("Recorded by", "Study coordinator")],
+     ["doc-001"]),
 ]
 
 
@@ -179,6 +202,9 @@ SCREEN_VIEW = {
     "Adverse event": "adverse-event",
     "EOP2 gate": "eop2",
     "Study start-up": "startup-package",
+    "Risk-based monitoring": "rbqm",
+    "Deviation &amp; CAPA": "deviation",
+    "Essential records": "gcp",
 }
 
 _VIEW_MOD = None

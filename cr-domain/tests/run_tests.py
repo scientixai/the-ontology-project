@@ -371,6 +371,30 @@ def view_checks(failures):
           and ws["BudgetContractingWorkStream"] == "complete"
           and ws["ClinOpsWorkStream"] == "active")
 
+    # RBQM — the CtQ factor and the mitigation/monitoring intensity inlined
+    rb = mod.build_view("rbqm")
+    check("rbqm: high-risk factor + targeted 100% SDV mitigation inlined",
+          lambda: val(rb, "riskLevel") == "high"
+          and rb["factor"]["object"] == "urn:ctq-pe"
+          and val(rb["mitigation"]["entity"], "monitoringStrategy") == "targeted-SDV"
+          and val(rb["mitigation"]["entity"], "sdvIntensity") == "1.0")
+
+    # Deviation — the CAPA and the captured antecedent (the missing middle) inlined
+    dv = mod.build_view("deviation")
+    check("deviation: major + CAPA + captured antecedent (CtQ + signal) inlined",
+          lambda: val(dv, "deviationCategory") == "major"
+          and val(dv["capa"]["entity"], "capaStatus") == "open"
+          and dv["antecedent"]["entity"]["threatens"]["object"] == "urn:ctq-sched"
+          and dv["antecedent"]["entity"]["flaggedBy"]["object"] == "urn:sig-late")
+
+    # GCP essential records — source data, audit trail, TMF filing, certified copy
+    gc = mod.build_view("gcp")
+    check("gcp: source data + audit trail + TMF + certified copy inlined",
+          lambda: gc["sourceData"]["object"] == "urn:sd-001"
+          and gc["auditTrail"]["object"] == "urn:at-001"
+          and gc["tmf"]["object"] == "urn:tmf-001"
+          and gc["certifiedCopy"]["object"] == "urn:cc-001")
+
     return passed, total
 
 

@@ -21,6 +21,9 @@ cr:MitigationPlan a owl:Class ; rdfs:subClassOf top:Constraint ;
 
 cr:assessesFactor   a owl:ObjectProperty ; rdfs:domain cr:RiskAssessment ; rdfs:range cr:CriticalToQualityFactor .
 cr:mitigates        a owl:ObjectProperty ; rdfs:domain cr:MitigationPlan ; rdfs:range cr:RiskAssessment .
+cr:hasMitigationPlan a owl:ObjectProperty ; owl:inverseOf cr:mitigates ;
+    rdfs:domain cr:RiskAssessment ; rdfs:range cr:MitigationPlan ; rdfs:label "has mitigation plan" ;
+    rdfs:comment "The mitigation/monitoring plan addressing this assessment (forward of cr:mitigates, for single-pull retrieval)." .
 cr:riskLevel        a owl:DatatypeProperty ; rdfs:domain cr:RiskAssessment ; rdfs:label "risk level" .
 cr:riskScore        a owl:DatatypeProperty ; rdfs:domain cr:RiskAssessment ; rdfs:range xsd:decimal .
 cr:monitoringStrategy a owl:DatatypeProperty ; rdfs:domain cr:MitigationPlan ; rdfs:label "monitoring strategy" .
