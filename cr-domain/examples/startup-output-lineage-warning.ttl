@@ -1,0 +1,16 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# GRADED FIXTURE (Warning) — a work stream produces an output (a DoA log) with no recorded
+# lineage back to the document it was built from. Structurally fine, but the data trail is
+# broken: a governance Warning, not a hard failure.
+
+ex:wl-site a cr:StudySite ; rdfs:label "Site 903" .
+ex:wl-in   a cr:StartupArtifact ; rdfs:label "Protocol v1.0" ; cr:ofArtifactType tmf:Protocol .
+ex:wl-out  a cr:StartupArtifact ; rdfs:label "Delegation-of-Authority log" ; cr:ofArtifactType tmf:DelegationOfAuthorityLog .
+# (note: ex:wl-out has no prov:wasDerivedFrom -> lineage warning)
+
+ex:wl-ws a cr:RegulatoryWorkStream ; cr:streamForSite ex:wl-site ;
+    cr:consumes ex:wl-in ; cr:produces ex:wl-out ; cr:streamStatus "complete" .

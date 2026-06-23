@@ -45,6 +45,25 @@ cr:ADaMTraceabilityShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:AnalysisDataset .
 
+cr:ActivationReadinessShape a sh:NodeShape ;
+    rdfs:label "Activation requires complete regulatory + budget streams" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Site activated without a complete Regulatory and Budget & Contracting work stream." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?anyStream .
+              FILTER (
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?r .
+                             ?r a <https://top.scientix.ai/cr/v1#RegulatoryWorkStream> ;
+                                <https://top.scientix.ai/cr/v1#streamStatus> "complete" . }
+                || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?b .
+                             ?b a <https://top.scientix.ai/cr/v1#BudgetContractingWorkStream> ;
+                                <https://top.scientix.ai/cr/v1#streamStatus> "complete" . }
+              )
+            }
+        """ ] ;
+    sh:targetClass cr:SiteActivation .
+
 cr:ActivityOrderingShape a sh:NodeShape ;
     rdfs:label "Execution violates planned ordering (hard)" ;
     sh:severity sh:Violation ;
@@ -267,6 +286,18 @@ cr:InformedConsentShape a sh:NodeShape ;
             sh:path cr:forSubject ] ;
     sh:targetClass cr:InformedConsent .
 
+cr:OutputLineageShape a sh:NodeShape ;
+    rdfs:label "Produced output should trace to an input (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "A work stream produces an output that does not trace (prov:wasDerivedFrom) to any input." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#produces> ?out .
+              FILTER NOT EXISTS { ?out <http://www.w3.org/ns/prov#wasDerivedFrom> ?in . }
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:produces .
+
 cr:OverMonitoringShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:sparql [ sh:message "100% SDV applied to a low-risk factor (over-monitoring; consider risk-based reduction)." ;
@@ -415,6 +446,15 @@ cr:SpecimenOriginShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass hcls:Specimen .
 
+cr:StartupArtifactTypeShape a sh:NodeShape ;
+    rdfs:label "Start-up artifact must be classified to a TMF type" ;
+    sh:property [ sh:class <https://top.scientix.ai/tmf/v1#TMFArtifactType> ;
+            sh:message "A start-up artifact must be classified to a TMF artifact type (cr:ofArtifactType)." ;
+            sh:minCount 1 ;
+            sh:path cr:ofArtifactType ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:StartupArtifact .
+
 cr:StudyShape a sh:NodeShape ;
     sh:property [ sh:class cr:Sponsor ;
             sh:message "A Study must have a Sponsor." ;
@@ -462,6 +502,20 @@ cr:VisitWindowShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
+
+cr:WorkStreamShape a sh:NodeShape ;
+    rdfs:label "Work stream must consume inputs and name its site" ;
+    sh:property [ sh:class cr:StartupArtifact ;
+            sh:message "A work stream must consume >=1 start-up artifact (the data it works from)." ;
+            sh:minCount 1 ;
+            sh:path cr:consumes ;
+            sh:severity sh:Violation ],
+        [ sh:class cr:StudySite ;
+            sh:message "A work stream must name the site it runs at." ;
+            sh:minCount 1 ;
+            sh:path cr:streamForSite ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:WorkStream .
 
 cx:MappingShape a sh:NodeShape ;
     sh:property [ sh:in ( <https://w3id.org/semapv/vocab/ManualMappingCuration> <https://w3id.org/semapv/vocab/LexicalMatching> <https://w3id.org/semapv/vocab/LogicalReasoning> ) ;
@@ -512,9 +566,9 @@ cx:MappingShape a sh:NodeShape ;
     sh:targetClass cx:Mapping .
 
 <https://top.scientix.ai/tmf/v1#ContentBindingShape> a sh:NodeShape ;
-    sh:property [ sh:message "TMF artifact type has no content binding (no tmf:concerns) — a filing label, not comprehension." ;
+    sh:property [ sh:message "TMF artifact type has no content binding (concerns/defines/records/documents) — a filing label, not comprehension." ;
             sh:minCount 1 ;
-            sh:path <https://top.scientix.ai/tmf/v1#concerns> ;
+            sh:path [ sh:alternativePath ( <https://top.scientix.ai/tmf/v1#concerns> <https://top.scientix.ai/tmf/v1#defines> <https://top.scientix.ai/tmf/v1#records> <https://top.scientix.ai/tmf/v1#documents> ) ] ;
             sh:severity sh:Warning ] ;
     sh:targetClass <https://top.scientix.ai/tmf/v1#TMFArtifactType> .
 

@@ -1,0 +1,54 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Study start-up package + the site activation work streams.
+# A site is awarded a study and receives a START-UP PACKAGE: not one file, but a set of
+# document artifacts (often downloaded one-by-one from a sponsor portal). The site's response
+# splits into three WORK STREAMS — regulatory, budget & contracting, clinical operations —
+# each consuming package documents (the data in them) and PRODUCING site-specific outputs
+# (customized ICF, the Investigator Site File, the Delegation-of-Authority log, a signed CTA).
+# Regulatory + budget completion gates the SIV and activation. Documents are typed via the
+# existing TMF artifact-type scheme (tmf:TMFArtifactType); the work streams turn their data
+# into outputs — the site-operations companion to the sponsor-side protocol model.
+
+cr:StudyStartupPackage a owl:Class ; rdfs:subClassOf top:Evidence ;
+    rdfs:label "Study Start-up Package" ;
+    rdfs:comment "The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals." .
+
+cr:StartupArtifact a owl:Class ; rdfs:subClassOf top:Evidence ;
+    rdfs:label "Start-up Artifact" ;
+    rdfs:comment "A document instance in (or produced from) the start-up package, classified to a TMF artifact type. Carries the data that the work streams consume and transform." .
+
+cr:WorkStream a owl:Class ; rdfs:subClassOf top:Temporal ;
+    rdfs:label "Activation Work Stream" ;
+    rdfs:comment "A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below." .
+cr:RegulatoryWorkStream a owl:Class ; rdfs:subClassOf cr:WorkStream ;
+    rdfs:label "Regulatory Work Stream" ;
+    rdfs:comment "IRB submission, ICF customization, and Investigator Site File preparation (CVs/licenses, Form 1572, Delegation-of-Authority log, IRB approval)." .
+cr:BudgetContractingWorkStream a owl:Class ; rdfs:subClassOf cr:WorkStream ;
+    rdfs:label "Budget & Contracting Work Stream" ;
+    rdfs:comment "Budget negotiation and contract (CTA) review and execution." .
+cr:ClinOpsWorkStream a owl:Class ; rdfs:subClassOf cr:WorkStream ;
+    rdfs:label "Clinical Operations Work Stream" ;
+    rdfs:comment "Enrollment and data-collection readiness from the protocol, SOPs, vendor manuals, monitoring plan, and schedule of activities." .
+
+#################################################################
+# Properties
+#################################################################
+cr:packageForSite   a owl:ObjectProperty ; rdfs:domain cr:StudyStartupPackage ; rdfs:range cr:StudySite ; rdfs:label "package for site" .
+cr:packageForStudy  a owl:ObjectProperty ; rdfs:domain cr:StudyStartupPackage ; rdfs:range cr:Study ; rdfs:label "package for study" .
+cr:includesArtifact a owl:ObjectProperty ; rdfs:domain cr:StudyStartupPackage ; rdfs:range cr:StartupArtifact ; rdfs:label "includes artifact" .
+cr:ofArtifactType   a owl:ObjectProperty ; rdfs:domain cr:StartupArtifact ; rdfs:range tmf:TMFArtifactType ; rdfs:label "of artifact type" ;
+    rdfs:comment "Classifies a document instance to its TMF artifact type (the document-type binding)." .
+cr:hasWorkStream    a owl:ObjectProperty ; rdfs:domain cr:SiteActivation ; rdfs:range cr:WorkStream ; rdfs:label "has work stream" ;
+    rdfs:comment "The activation work streams whose completion gates this activation." .
+cr:streamForSite    a owl:ObjectProperty ; rdfs:domain cr:WorkStream ; rdfs:range cr:StudySite ; rdfs:label "stream for site" .
+cr:consumes a owl:ObjectProperty ; rdfs:domain cr:WorkStream ; rdfs:range cr:StartupArtifact ; rdfs:label "consumes" ;
+    rdfs:comment "An input package document the stream uses (its data)." .
+cr:produces a owl:ObjectProperty ; rdfs:domain cr:WorkStream ; rdfs:range cr:StartupArtifact ; rdfs:label "produces" ;
+    rdfs:comment "A site-specific output the stream generates from the inputs (customized ICF, DoA log, signed CTA...)." .
+cr:streamStatus a owl:DatatypeProperty ; rdfs:domain cr:WorkStream ; rdfs:label "stream status" ;
+    rdfs:comment "planned | active | complete." .

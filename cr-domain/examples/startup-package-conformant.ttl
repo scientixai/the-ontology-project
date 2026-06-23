@@ -1,0 +1,79 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — a site receives a study start-up package and activates.
+# The package is a set of typed document artifacts; three work streams consume those
+# documents and produce site-specific outputs (customized ICF, DoA log, 1572, signed CTA),
+# each output tracing to the input it derived from. Regulatory + budget complete -> the
+# activation is admissible (and still cites IRB approval, executed CTA, and SIV).
+
+ex:sp-site a cr:StudySite ; rdfs:label "Site 701 — Denver" .
+ex:sp-mgr  a hcls:Person, prov:Agent ; rdfs:label "Start-up manager" .
+
+# --- The start-up package (typed input documents) ---
+ex:sp-pkg a cr:StudyStartupPackage ; rdfs:label "OPP-101 start-up package (Site 701)" ;
+    cr:packageForSite ex:sp-site ;
+    cr:includesArtifact ex:a-ib, ex:a-protocol, ex:a-icf-tmpl, ex:a-cta-doc, ex:a-monplan, ex:a-soa .
+
+ex:a-ib       a cr:StartupArtifact ; rdfs:label "Investigator Brochure"     ; cr:ofArtifactType tmf:InvestigatorBrochure .
+ex:a-protocol a cr:StartupArtifact ; rdfs:label "Protocol v1.0"             ; cr:ofArtifactType tmf:Protocol .
+ex:a-icf-tmpl a cr:StartupArtifact ; rdfs:label "ICF template"              ; cr:ofArtifactType tmf:InformedConsentForm .
+ex:a-cta-doc  a cr:StartupArtifact ; rdfs:label "CTA (unsigned)"            ; cr:ofArtifactType tmf:ClinicalTrialAgreementDoc .
+ex:a-monplan  a cr:StartupArtifact ; rdfs:label "Monitoring Plan"           ; cr:ofArtifactType tmf:MonitoringPlan .
+ex:a-soa      a cr:StartupArtifact ; rdfs:label "Schedule of Activities"    ; cr:ofArtifactType tmf:ScheduleOfActivities .
+
+# --- Outputs the work streams produce (each derived from an input) ---
+ex:o-icf-custom a cr:StartupArtifact ; rdfs:label "Site-customized ICF" ; cr:ofArtifactType tmf:InformedConsentForm ;
+    prov:wasDerivedFrom ex:a-icf-tmpl .
+ex:o-doa     a cr:StartupArtifact ; rdfs:label "Delegation-of-Authority log" ; cr:ofArtifactType tmf:DelegationOfAuthorityLog ;
+    prov:wasDerivedFrom ex:a-protocol .
+ex:o-1572    a cr:StartupArtifact ; rdfs:label "Form FDA 1572" ; cr:ofArtifactType tmf:Form1572 ;
+    prov:wasDerivedFrom ex:a-protocol .
+ex:o-irb-ltr a cr:StartupArtifact ; rdfs:label "IRB approval letter" ; cr:ofArtifactType tmf:IRBApprovalLetter ;
+    prov:wasDerivedFrom ex:o-icf-custom .
+ex:o-signed-cta a cr:StartupArtifact ; rdfs:label "Signed CTA" ; cr:ofArtifactType tmf:ClinicalTrialAgreementDoc ;
+    prov:wasDerivedFrom ex:a-cta-doc .
+ex:o-dmplan  a cr:StartupArtifact ; rdfs:label "Site data-management plan" ; cr:ofArtifactType tmf:DataManagementPlan ;
+    prov:wasDerivedFrom ex:a-soa .
+
+# --- The three work streams ---
+ex:ws-reg a cr:RegulatoryWorkStream ; rdfs:label "Regulatory" ; cr:streamForSite ex:sp-site ;
+    cr:consumes ex:a-protocol, ex:a-ib, ex:a-icf-tmpl ;
+    cr:produces ex:o-icf-custom, ex:o-doa, ex:o-1572, ex:o-irb-ltr ;
+    cr:streamStatus "complete" .
+ex:ws-bud a cr:BudgetContractingWorkStream ; rdfs:label "Budget & contracting" ; cr:streamForSite ex:sp-site ;
+    cr:consumes ex:a-cta-doc, ex:a-protocol ;
+    cr:produces ex:o-signed-cta ;
+    cr:streamStatus "complete" .
+ex:ws-clin a cr:ClinOpsWorkStream ; rdfs:label "Clinical operations" ; cr:streamForSite ex:sp-site ;
+    cr:consumes ex:a-protocol, ex:a-soa, ex:a-monplan ;
+    cr:produces ex:o-dmplan ;
+    cr:streamStatus "active" .
+
+# --- Activation prerequisites (bitemporal) + the work-stream gate ---
+ex:sp-irb a cr:IRBApproval ; cr:forStudySite ex:sp-site ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-15T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-mgr .
+ex:sp-cta a cr:ClinicalTrialAgreement ; cr:forStudySite ex:sp-site ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-20T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-mgr .
+ex:sp-siv a cr:SiteInitiationVisit ; cr:forStudySite ex:sp-site ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-01T16:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-mgr .
+ex:sp-act a cr:SiteActivation ; rdfs:label "Site 701 activated" ;
+    cr:activates ex:sp-site ; cr:irbApproval ex:sp-irb ; cr:cta ex:sp-cta ; cr:siv ex:sp-siv ;
+    cr:hasWorkStream ex:ws-reg, ex:ws-bud, ex:ws-clin ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-05T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-mgr .
+
+# --- Universal DNA (TOP Core): identifier + status for the bitemporal entities ---
+ex:sp-irb top:identifier "urn:sp-irb" ; top:status "active" .
+ex:sp-cta top:identifier "urn:sp-cta" ; top:status "active" .
+ex:sp-siv top:identifier "urn:sp-siv" ; top:status "active" .
+ex:sp-act top:identifier "urn:sp-act" ; top:status "active" .

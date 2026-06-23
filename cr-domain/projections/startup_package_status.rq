@@ -1,0 +1,10 @@
+# Start-up package readiness — the activation gate per site: are the Regulatory and
+# Budget & Contracting work streams complete? (SIV/activation is admissible only when both are.)
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?site ?regStatus ?budStatus WHERE {
+  ?act a cr:SiteActivation ; cr:activates ?s ; cr:hasWorkStream ?r, ?b .
+  ?r a cr:RegulatoryWorkStream ; cr:streamStatus ?regStatus .
+  ?b a cr:BudgetContractingWorkStream ; cr:streamStatus ?budStatus .
+  ?s rdfs:label ?site .
+}

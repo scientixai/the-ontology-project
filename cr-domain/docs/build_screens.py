@@ -104,6 +104,15 @@ SPECS = [
       ("Analyzed under", "&#10003; SAP v1.0"), ("FDA agreement", "primary endpoint = OS"),
       ("Phase 3 design", "RP2D (Project Optimus)")],
      ["res-orr", "eop2"]),
+    ("Study start-up", "startup-package-conformant.ttl",
+     "Study start-up &mdash; package &amp; work streams", "Site 701 — Denver", "eReg",
+     [("Start-up package", "6 documents, all typed"),
+      ("Regulatory", "<span class='pill ok'>complete</span> &mdash; ICF, DoA, 1572, IRB"),
+      ("Budget &amp; contracting", "<span class='pill ok'>complete</span> &mdash; signed CTA"),
+      ("Clinical operations", "<span class='pill warn'>active</span>"),
+      ("Activation gate", "<span class='pill ok'>Reg + Budget complete &rarr; SIV</span>"),
+      ("Activated", "2026-02-05 &middot; Start-up manager")],
+     ["sp-pkg", "ws-reg"]),
 ]
 
 

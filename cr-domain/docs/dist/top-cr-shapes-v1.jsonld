@@ -1,5 +1,26 @@
 [
   {
+    "@id": "_:cb0",
+    "http://www.w3.org/ns/shacl#alternativePath": [
+      {
+        "@list": [
+          {
+            "@id": "https://top.scientix.ai/tmf/v1#concerns"
+          },
+          {
+            "@id": "https://top.scientix.ai/tmf/v1#defines"
+          },
+          {
+            "@id": "https://top.scientix.ai/tmf/v1#documents"
+          },
+          {
+            "@id": "https://top.scientix.ai/tmf/v1#records"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "@id": "_:cb1052552a5fac75bb8a01850f7330e4a327a2e7d8f997dcee69813672e31d2c0c5",
     "http://www.w3.org/ns/shacl#minCount": [
       {
@@ -110,6 +131,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#capturedDuring"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb173dea6f33ef5651e5d7f36436f972d5f86165cf2ead2414216b8049128ea718b",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A work stream produces an output that does not trace (prov:wasDerivedFrom) to any input."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#produces> ?out .\n              FILTER NOT EXISTS { ?out <http://www.w3.org/ns/prov#wasDerivedFrom> ?in . }\n            }\n        "
       }
     ]
   },
@@ -487,6 +521,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#assessesFactor"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1ecac955daf0f01fa8f8e563cebe59e298466158b9fb91cd2790e8ebc4058f260",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Site activated without a complete Regulatory and Budget & Contracting work stream."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?anyStream .\n              FILTER (\n                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?r .\n                             ?r a <https://top.scientix.ai/cr/v1#RegulatoryWorkStream> ;\n                                <https://top.scientix.ai/cr/v1#streamStatus> \"complete\" . }\n                || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?b .\n                             ?b a <https://top.scientix.ai/cr/v1#BudgetContractingWorkStream> ;\n                                <https://top.scientix.ai/cr/v1#streamStatus> \"complete\" . }\n              )\n            }\n        "
       }
     ]
   },
@@ -969,6 +1016,30 @@
     ]
   },
   {
+    "@id": "_:cb243f8b0fd28fe43410aedc983691a631760949bbaa6153b7bda71ad8798c83cee",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "TMF artifact type has no content binding (concerns/defines/records/documents) \u2014 a filing label, not comprehension."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "_:cb0"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb24857aab4b8f328ca240b322b3c86dc7bc41ed93f522180dab325273947ad9659",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1174,6 +1245,35 @@
     ]
   },
   {
+    "@id": "_:cb26733a53123fad8b747856650dbba0481f8b74d8fd673dd982d373e44ec98c895",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TMFArtifactType"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A start-up artifact must be classified to a TMF artifact type (cr:ofArtifactType)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ofArtifactType"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb270bda720b7e7aebc0905ec647247d99eb4d8403778d3713b904f77649b2c691d",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -1222,10 +1322,15 @@
     ]
   },
   {
-    "@id": "_:cb275710cef239b8d03f5d130b8f8dfdcbeac4fc69fc9081d30a7de3a6779c3419a",
+    "@id": "_:cb27437ce497f8ab5a47d93aeb092d6d24d0176a448d65bfed73e696f6b0c3bec6b",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StartupArtifact"
+      }
+    ],
     "http://www.w3.org/ns/shacl#message": [
       {
-        "@value": "TMF artifact type has no content binding (no tmf:concerns) \u2014 a filing label, not comprehension."
+        "@value": "A work stream must consume >=1 start-up artifact (the data it works from)."
       }
     ],
     "http://www.w3.org/ns/shacl#minCount": [
@@ -1236,12 +1341,12 @@
     ],
     "http://www.w3.org/ns/shacl#path": [
       {
-        "@id": "https://top.scientix.ai/tmf/v1#concerns"
+        "@id": "https://top.scientix.ai/cr/v1#consumes"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
       {
-        "@id": "http://www.w3.org/ns/shacl#Warning"
+        "@id": "http://www.w3.org/ns/shacl#Violation"
       }
     ]
   },
@@ -1661,6 +1766,35 @@
     ]
   },
   {
+    "@id": "_:cb34ef518499f747d23510a6df2aacc89f8120713696924ecc0ec4f325de380e5ba",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A work stream must name the site it runs at."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#streamForSite"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb4a432b5decf363c1980c782074abbe9787002ca02e118594a278bb174dbe471ac",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -1800,6 +1934,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#AnalysisDataset"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ActivationReadinessShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Activation requires complete regulatory + budget streams"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1ecac955daf0f01fa8f8e563cebe59e298466158b9fb91cd2790e8ebc4058f260"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteActivation"
       }
     ]
   },
@@ -2177,6 +2337,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#OutputLineageShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Produced output should trace to an input (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb173dea6f33ef5651e5d7f36436f972d5f86165cf2ead2414216b8049128ea718b"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetSubjectsOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#produces"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#OverMonitoringShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2493,6 +2679,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#StartupArtifactTypeShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Start-up artifact must be classified to a TMF type"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb26733a53123fad8b747856650dbba0481f8b74d8fd673dd982d373e44ec98c895"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StartupArtifact"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#StudyShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2578,6 +2785,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#WorkStreamShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Work stream must consume inputs and name its site"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb27437ce497f8ab5a47d93aeb092d6d24d0176a448d65bfed73e696f6b0c3bec6b"
+      },
+      {
+        "@id": "_:cb34ef518499f747d23510a6df2aacc89f8120713696924ecc0ec4f325de380e5ba"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#WorkStream"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/crosswalk/v1#MappingShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2632,7 +2863,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb275710cef239b8d03f5d130b8f8dfdcbeac4fc69fc9081d30a7de3a6779c3419a"
+        "@id": "_:cb243f8b0fd28fe43410aedc983691a631760949bbaa6153b7bda71ad8798c83cee"
       }
     ],
     "http://www.w3.org/ns/shacl#targetClass": [

@@ -1,0 +1,41 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED FIXTURE (Violation) — a site activated while the Budget & Contracting work stream
+# is still 'active' (contract not signed). The IRB/CTA/SIV records exist, but the work-stream
+# gate (regulatory + budget complete) is not satisfied -> hard finding.
+
+ex:pv-site a cr:StudySite ; rdfs:label "Site 802" .
+ex:pv-mgr  a hcls:Person, prov:Agent ; rdfs:label "Start-up manager" .
+ex:pv-cta-doc a cr:StartupArtifact ; rdfs:label "CTA (unsigned)" ; cr:ofArtifactType tmf:ClinicalTrialAgreementDoc .
+
+ex:pv-ws-reg a cr:RegulatoryWorkStream ; cr:streamForSite ex:pv-site ;
+    cr:consumes ex:pv-cta-doc ; cr:streamStatus "complete" .
+ex:pv-ws-bud a cr:BudgetContractingWorkStream ; cr:streamForSite ex:pv-site ;
+    cr:consumes ex:pv-cta-doc ; cr:streamStatus "active" .   # NOT complete -> gate fails
+
+ex:pv-irb a cr:IRBApproval ; cr:forStudySite ex:pv-site ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-15T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pv-mgr .
+ex:pv-cta a cr:ClinicalTrialAgreement ; cr:forStudySite ex:pv-site ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-20T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pv-mgr .
+ex:pv-siv a cr:SiteInitiationVisit ; cr:forStudySite ex:pv-site ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-01T16:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pv-mgr .
+ex:pv-act a cr:SiteActivation ; rdfs:label "Site 802 activated (premature)" ;
+    cr:activates ex:pv-site ; cr:irbApproval ex:pv-irb ; cr:cta ex:pv-cta ; cr:siv ex:pv-siv ;
+    cr:hasWorkStream ex:pv-ws-reg, ex:pv-ws-bud ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-05T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:pv-mgr .
+
+ex:pv-irb top:identifier "urn:pv-irb" ; top:status "active" .
+ex:pv-cta top:identifier "urn:pv-cta" ; top:status "active" .
+ex:pv-siv top:identifier "urn:pv-siv" ; top:status "active" .
+ex:pv-act top:identifier "urn:pv-act" ; top:status "active" .

@@ -77,8 +77,13 @@ def main():
     for c in cases:
         data = Graph()
         data.parse(os.path.join(ROOT, c["file"]), format="turtle")
+        # Merge the ontology into the validated graph (not just inference): shapes that
+        # reach commons-resident nodes (e.g. a document's tmf:TMFArtifactType and its
+        # content bindings) must see those triples, not only use them for entailment.
+        for t in ont_graph:
+            data.add(t)
         _, report, _ = validate(
-            data, shacl_graph=shapes_graph, ont_graph=ont_graph,
+            data, shacl_graph=shapes_graph,
             inference="rdfs", advanced=True,
         )
         v, w, _i = severity_counts(report)

@@ -6,5 +6,6 @@
 # value is the bridge to the domain class. A classified-but-unbound artifact type warns.
 tmf:ContentBindingShape a sh:NodeShape ;
     sh:targetClass tmf:TMFArtifactType ;
-    sh:property [ sh:path tmf:concerns ; sh:minCount 1 ; sh:severity sh:Warning ;
-        sh:message "TMF artifact type has no content binding (no tmf:concerns) — a filing label, not comprehension." ] .
+    sh:property [ sh:path [ sh:alternativePath ( tmf:concerns tmf:defines tmf:records tmf:documents ) ] ;
+        sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "TMF artifact type has no content binding (concerns/defines/records/documents) — a filing label, not comprehension." ] .

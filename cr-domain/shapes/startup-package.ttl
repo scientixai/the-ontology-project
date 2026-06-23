@@ -1,0 +1,63 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Study start-up package + activation work-stream governance.
+
+# STRUCTURAL (Violation): every start-up artifact must be classified to a TMF artifact type
+# (a document with no type is unmanageable — the filing-cabinet half).
+cr:StartupArtifactTypeShape a sh:NodeShape ;
+    rdfs:label "Start-up artifact must be classified to a TMF type" ;
+    sh:targetClass cr:StartupArtifact ;
+    sh:property [ sh:path cr:ofArtifactType ; sh:minCount 1 ; sh:class tmf:TMFArtifactType ;
+        sh:severity sh:Violation ;
+        sh:message "A start-up artifact must be classified to a TMF artifact type (cr:ofArtifactType)." ] .
+
+# STRUCTURAL (Violation): a work stream must consume >=1 artifact and name the site it runs at.
+cr:WorkStreamShape a sh:NodeShape ;
+    rdfs:label "Work stream must consume inputs and name its site" ;
+    sh:targetClass cr:WorkStream ;
+    sh:property [ sh:path cr:consumes ; sh:minCount 1 ; sh:class cr:StartupArtifact ; sh:severity sh:Violation ;
+        sh:message "A work stream must consume >=1 start-up artifact (the data it works from)." ] ;
+    sh:property [ sh:path cr:streamForSite ; sh:minCount 1 ; sh:class cr:StudySite ; sh:severity sh:Violation ;
+        sh:message "A work stream must name the site it runs at." ] .
+
+# GATE (Violation): once an activation declares its work streams, the Regulatory AND the
+# Budget & Contracting streams must both be COMPLETE before the site is activated
+# (the operator gate: regulatory + budget complete -> SIV -> activation). Activations that
+# do not model work streams are governed by cr:SiteActivationShape (IRB + CTA + SIV) alone.
+cr:ActivationReadinessShape a sh:NodeShape ;
+    rdfs:label "Activation requires complete regulatory + budget streams" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:SiteActivation ;
+    sh:sparql [
+        sh:message "Site activated without a complete Regulatory and Budget & Contracting work stream." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?anyStream .
+              FILTER (
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?r .
+                             ?r a <https://top.scientix.ai/cr/v1#RegulatoryWorkStream> ;
+                                <https://top.scientix.ai/cr/v1#streamStatus> "complete" . }
+                || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?b .
+                             ?b a <https://top.scientix.ai/cr/v1#BudgetContractingWorkStream> ;
+                                <https://top.scientix.ai/cr/v1#streamStatus> "complete" . }
+              )
+            }
+        """ ] .
+
+# GOVERNANCE (Warning): a produced output should trace to a consumed input — the data
+# lineage from the package document to the site-specific output it became.
+cr:OutputLineageShape a sh:NodeShape ;
+    rdfs:label "Produced output should trace to an input (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetSubjectsOf cr:produces ;
+    sh:sparql [
+        sh:message "A work stream produces an output that does not trace (prov:wasDerivedFrom) to any input." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#produces> ?out .
+              FILTER NOT EXISTS { ?out <http://www.w3.org/ns/prov#wasDerivedFrom> ?in . }
+            }
+        """ ] .
