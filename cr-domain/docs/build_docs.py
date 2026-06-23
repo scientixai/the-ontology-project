@@ -293,7 +293,8 @@ a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:v
 
 
 def nav(active):
-    items = [("index.html", "Overview", "hub"), ("foundation.html", "Foundation", "foundation")]
+    items = [("index.html", "Overview", "hub"), ("foundation.html", "Foundation", "foundation"),
+             ("implementation.html", "Implementation guide", "implementation")]
     flowitems = [(f"{fl['id']}.html", fl["title"], fl["id"]) for fl in FLOWS]
     out = ['<b>Start</b>']
     for href, t, i in items:
@@ -424,7 +425,10 @@ def masthead():
     return (
         '<div class="masthead">'
         f'<dl class="mast">{dl}</dl>'
-        f'<div class="downloads"><div class="dlhead">Download serializations</div>{downloads}</div>'
+        f'<div class="downloads"><div class="dlhead">Download serializations</div>{downloads}'
+        '<div class="muted" style="font-size:11px;margin-top:8px">Served from this site&rsquo;s '
+        '<code>dist/</code> and mirrored in the repository; pin by <code>SHA256SUMS</code>. '
+        'See the <a href="implementation.html">Implementation guide</a>.</div></div>'
         f'<div class="citeas"><b>Cite as</b><br>{esc(m["cite_as"])}</div>'
         f'<div class="citeas attribution"><b>Attribution</b><br>{esc(m["notice"])}</div>'
         '</div>')
@@ -486,6 +490,108 @@ def reference_body():
     return "".join(parts)
 
 
+def implementation_body():
+    return """
+<h1>Implementation guide &mdash; build your own graph</h1>
+<p class='lead'>This is a <b>reference asset</b>, not a runtime: standard W3C artifacts
+(RDF / OWL / SHACL / SPARQL / SKOS / PROV) you load into <i>any</i> graph store to give your
+own clinical-research knowledge graph the operator model, the constraints, and the standard
+views &mdash; out of the box. Nothing here is vendor-specific.</p>
+<p class='note'>A deployable <b>reference architecture and demo</b> (an AWS Garnet / NGSI-LD CDK
+deployment plus a mapping workbench) ship separately with the community release. This page is
+about leveraging the reference <i>on your own stack</i> &mdash; today, with tools you already have.</p>
+
+<h2>1 &middot; What you get</h2>
+<table>
+<tr><th>artifact</th><th>where</th><th>what it's for</th></tr>
+<tr><td>Ontology modules</td><td><code>ontology/*.ttl</code></td><td>the layered model (top &rarr; hcls &rarr; cr), incl. the bitemporal Schedule of Activities</td></tr>
+<tr><td>SHACL shapes</td><td><code>shapes/*.ttl</code></td><td>graded constraints (Violation / Warning) you validate your data against</td></tr>
+<tr><td>SPARQL projections</td><td><code>projections/*.rq</code></td><td>standard views (SDTM, USDM, FHIR, SoA, planned-vs-actual&hellip;) as queries</td></tr>
+<tr><td>Crosswalks</td><td><code>crosswalks/*.ttl</code></td><td>owned SSSOM mappings (incl. USDM&nbsp;v4.0&nbsp;&harr;&nbsp;cr-core)</td></tr>
+<tr><td>USDM&nbsp;v4.0 OWL + CT</td><td><code>ontology/vendor/usdm/</code></td><td>generated USDM class model + SKOS codelists, NCIt-anchored (the crosswalk target)</td></tr>
+<tr><td>Merged bundles</td><td><code>docs/dist/</code></td><td>byte-reproducible Turtle / JSON-LD / N-Triples of the model, shapes, and crosswalks, plus a <code>SHA256SUMS</code></td></tr>
+<tr><td>NGSI-LD context</td><td><code>dist/top-cr-v1.ngsi-context.jsonld</code></td><td>a term&rarr;IRI dictionary to load entities into any NGSI-LD broker</td></tr>
+</table>
+
+<h2>2 &middot; Get the artifacts</h2>
+<p>Two equivalent sources. The <b>repository</b> (<code>cr-domain/</code>) holds the source
+modules &mdash; clone or vendor them. The <b>prebuilt bundles</b> in <code>dist/</code> are a
+single merged file per layer, regenerated deterministically by <code>docs/build_dist.py</code>
+and <b>pinned by checksum</b>:</p>
+<pre>sha256sum -c SHA256SUMS        # verify the bundle you pinned, in dist/</pre>
+<p class='muted'>The download links above are served from this site's <code>dist/</code> folder
+(and mirrored in the repo). When self-hosting, serve <code>dist/</code> alongside these pages,
+or reference the repository directly &mdash; the <code>SHA256SUMS</code> lets consumers pin an
+exact version regardless of where they fetched it.</p>
+
+<h2>3 &middot; Load it into your store</h2>
+<p>It's standard RDF, so any triplestore or RDF-capable graph DB works. A few concrete starts:</p>
+<h4>Python (RDFLib + pySHACL)</h4>
+<pre>from rdflib import Graph
+g = Graph().parse("dist/top-cr-v1.ttl", format="turtle")   # the merged model
+g.parse("my-study-data.ttl", format="turtle")              # your instance data</pre>
+<h4>Neo4j (neosemantics / n10s)</h4>
+<pre>CALL n10s.graphconfig.init({handleVocabUris:'SHORTEN'});
+CALL n10s.rdf.import.fetch('https://&lt;host&gt;/dist/top-cr-v1.ttl','Turtle');
+CALL n10s.rdf.import.fetch('https://&lt;host&gt;/dist/top-cr-shapes-v1.ttl','Turtle');</pre>
+<h4>Apache Jena / Fuseki, GraphDB, Blazegraph, &hellip;</h4>
+<pre># load the Turtle bundle into a dataset, then query with SPARQL 1.1
+fuseki> :data UPLOAD dist/top-cr-v1.ttl
+# or RDF4J / GraphDB: import top-cr-v1.ttl into a repository</pre>
+<h4>NGSI-LD broker (e.g. Scorpio)</h4>
+<pre># load entities using the published @context so terms resolve to cr:/top: IRIs
+Link: &lt;https://&lt;host&gt;/dist/top-cr-v1.ngsi-context.jsonld&gt;; rel="http://www.w3.org/ns/json-ld#context"
+# top:observedAt resolves to NGSI-LD core observedAt (valid time)</pre>
+
+<h2>4 &middot; Validate with the shapes</h2>
+<p>Run the graded SHACL shapes against your data &mdash; hard structural rules surface as
+<code>Violation</code>, risk-proportionate ones as <code>Warning</code>:</p>
+<pre>from pyshacl import validate
+conforms, _, report = validate(
+    my_data_graph,
+    shacl_graph="dist/top-cr-shapes-v1.ttl",
+    ont_graph="dist/top-cr-v1.ttl",
+    inference="rdfs", advanced=True)   # advanced=True enables the SPARQL constraints</pre>
+<p class='muted'>Any SHACL engine works (pySHACL, Apache Jena <code>shacl</code>, TopBraid). The
+test harness <code>tests/run_tests.py</code> is a worked example of validating instance data.</p>
+
+<h2>5 &middot; Project to standards (define once, view many)</h2>
+<p>The standards are <b>queries</b>, not separate databases. Run a projection over your graph to
+emit that view &mdash; e.g. <code>projections/sdtm_dm.rq</code> (CDISC SDTM demographics),
+<code>projections/usdm_study.rq</code>, <code>projections/soa_table.rq</code> (the SoA table as a
+view of the timeline), or <code>projections/planned_vs_actual.rq</code> (visit reconciliation).
+Same native graph, many standardized outputs, guaranteed consistent.</p>
+
+<h2>6 &middot; Ingest an M11 / USDM protocol</h2>
+<p>To turn a protocol into a TOP-grounded graph: load the vendored
+<code>ontology/vendor/usdm/usdm-v4.ttl</code> (the USDM class model) and apply
+<code>crosswalks/usdm-to-cr.ttl</code> to map USDM constructs onto cr-core &mdash; respecting the
+<b>plan&harr;execution boundary</b> (USDM is design-time; cr-core is execution + provenance).
+<code>examples/usdm-cdisc-pilot-conformant.ttl</code> shows the target shape end-to-end. USDM
+classes and codelists are NCIt-anchored (verified against the NCI Thesaurus), so your graph
+inherits a verifiable terminology spine.</p>
+
+<h2>7 &middot; Honor the conventions (so graphs line up)</h2>
+<ul>
+<li><b>Universal DNA</b> on every entity: <code>top:identifier</code> + <code>top:observedAt</code>
+(valid time) + <code>top:status</code>. This is what makes any two TOP graphs align by construction.</li>
+<li><b>Bitemporal envelope:</b> add <code>top:recordedAt</code> (and <code>top:supersededAt</code> on
+correction) so you can reconstruct any past state &ldquo;as of&rdquo; a date. Corrections are new
+assertions, never rewrites.</li>
+<li><b>Provenance:</b> <code>prov:wasAttributedTo</code> on every fact &mdash; who asserted it.</li>
+<li><b>NGSI-LD mapping:</b> <code>top:observedAt</code> &asymp; NGSI-LD <code>observedAt</code>;
+<code>top:recordedAt</code>/<code>supersededAt</code> &asymp; <code>createdAt</code>/<code>modifiedAt</code>.</li>
+</ul>
+<p>See the <a href="foundation.html">Foundation</a> page for the model and the
+<code>conventions.md</code> file for the full envelope.</p>
+
+<h2>What's out of scope here</h2>
+<p>The runtime, automated data mapping, and a one-command deployable stack are <b>not</b> part of
+this reference &mdash; they come with the community release's reference architecture and workbench.
+This guide is deliberately tool-agnostic: it shows how to stand the <i>reference</i> up anywhere.</p>
+"""
+
+
 def build():
     n_cls = len([1 for iris in PER_FILE.values() for i in iris
                  if not (str(i).startswith(TOP) and str(i).split("#")[-1] in CLOS)])
@@ -494,6 +600,7 @@ def build():
     out = os.path.join(ROOT, "docs")
     pages = {"index.html": ("TOP CR &mdash; Overview", "hub", hub_body(stats)),
              "foundation.html": ("Foundation", "foundation", foundation_body()),
+             "implementation.html": ("Implementation guide", "implementation", implementation_body()),
              "reference.html": ("Full reference", "reference", reference_body())}
     for fl in FLOWS:
         pages[f"{fl['id']}.html"] = (fl["title"], fl["id"], flow_body(fl))
