@@ -1503,6 +1503,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ParticipantSchedule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The schedule projected for a specific subject from a ScheduleTimeline once an anchor date (e.g. enrollment) is known. Bitemporal: re-projected when the governing protocol version changes."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Participant Schedule"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/core/v1#ProvenancedEntity"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#Phase3Design",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -1520,6 +1544,69 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/core/v1#Scope"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#PlannedActivity",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A planned activity within an encounter (USDM ScheduledActivityInstance) \u2014 e.g. ECG, blood draw, PRO. Positioned by a cr:Timing and/or an ordering edge (cr:precedes)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Planned Activity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Constraint"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#PlannedEncounter",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Planned Encounter"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Constraint"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#PlannedVisit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Planned Visit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Constraint"
       }
     ]
   },
@@ -1635,6 +1722,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#RepeatingPlannedActivity",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A planned activity that recurs on an interval until a stop condition (e.g. a daily participant diary until Day N; dosing every 7 days)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Repeating Planned Activity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedActivity"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#RiskAssessment",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -1737,6 +1845,30 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "Safety Report"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/core/v1#ProvenancedEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ScheduleTimeline",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The planned Schedule of Activities for a protocol version, as a timeline of planned encounters and activities. Bitemporal: a protocol amendment supersedes it, so the schedule is reconstructable as-of any date."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Schedule Timeline"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
@@ -2046,6 +2178,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#Timing",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A relative-timing rule: an offset (days or hours) from an anchor \u2014 another node, or an anchor event such as enrollment \u2014 with an allowed window. The footnote logic, made explicit."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Constraint"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#TrialMasterFile",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -2097,6 +2250,27 @@
       },
       {
         "@id": "https://top.scientix.ai/cr/v1#StudyEvent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#Window",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "An allowed tolerance around a planned time: a lower and an upper offset in days (e.g. [-2 days, +2 days])."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Window"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Constraint"
       }
     ]
   },
@@ -2180,6 +2354,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#anchorDate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The resolved anchor (e.g. the subject's enrollment date) from which target dates are computed."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ParticipantSchedule"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "anchor date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#asSubject",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -2229,6 +2429,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#atVisit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The actual visit an assessment was performed within."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "at visit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Visit"
       }
     ]
   },
@@ -2706,6 +2932,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#fromTimeline",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ParticipantSchedule"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "from timeline"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ScheduleTimeline"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#hasArm",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -2824,6 +3071,69 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ItemGroup"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#hasPlannedActivity",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedEncounter"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "has planned activity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedActivity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#hasPlannedEncounter",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ScheduleTimeline"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "has planned encounter"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedEncounter"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#hasPlannedVisit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ParticipantSchedule"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "has planned visit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
       }
     ]
   },
@@ -3093,6 +3403,74 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ofProtocolVersion",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ScheduleTimeline"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "of protocol version"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ProtocolVersion"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#offsetDays",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "offset (days)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#offsetHours",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Sub-visit timing offset in hours (e.g. bloods 2h after the ECG)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "offset (hours)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#onForm",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -3220,6 +3598,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#precedes",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Ordering-only constraint: this activity must occur before another, independent of clock timing (e.g. QS2 before ECG)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedActivity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "precedes"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedActivity"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#principalInvestigator",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -3258,6 +3662,27 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#RegulatoryAgreement"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#projectsEncounter",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "projects encounter"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedEncounter"
       }
     ]
   },
@@ -3315,6 +3740,22 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#realizes",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links an actual execution event (cr:Visit, cr:Assessment) to the planned node it fulfils \u2014 the join for planned-vs-actual reconciliation."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "realizes"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#recordedInTMF",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -3332,6 +3773,69 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#TrialMasterFile"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#relativeTo",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The anchor the offset is measured from: another planned node, or an anchor-event type (e.g. the enrollment act)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "relative to"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#repeatIntervalDays",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RepeatingPlannedActivity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "repeat interval (days)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#repeatUntilDay",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RepeatingPlannedActivity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "repeat until (study day)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
       }
     ]
   },
@@ -3449,6 +3953,27 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#scheduleForSubject",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ParticipantSchedule"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "schedule for subject"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
       }
     ]
   },
@@ -3613,6 +4138,27 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#targetDate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "target date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
       }
     ]
   },
@@ -3798,6 +4344,48 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#timing",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The relative-timing rule positioning a planned encounter or activity."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Timing"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#timingType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "before | after | fixed \u2014 the sense of the offset relative to the anchor."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "timing type"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#toState",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -3894,6 +4482,111 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#window",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Timing"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "window"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Window"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#windowEnd",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "window end"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#windowLowerDays",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Window"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "window lower (days)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#windowStart",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "window start"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#windowUpperDays",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Window"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "window upper (days)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
       }
     ]
   },

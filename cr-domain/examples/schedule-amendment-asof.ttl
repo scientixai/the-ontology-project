@@ -1,0 +1,29 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Harness fixture (parsed directly by the SPARQL detective tests, not SHACL-validated).
+# Two things a static SoA table cannot do but the bitemporal timeline can:
+#  (a) reconstruct the planned schedule AS-OF any date across a protocol amendment;
+#  (b) detect a missed planned visit (planned, never realized).
+
+# (a) Amendment: V2's window end was widened from 03-11 to 03-14, recorded 2026-02-20.
+#     The original assertion is superseded at that transaction time (append-only).
+ex:asof-enc-v2 a cr:PlannedEncounter ; rdfs:label "V2 (as-of fixture)" .
+ex:asof-v2-v1 a cr:PlannedVisit ; cr:projectsEncounter ex:asof-enc-v2 ;
+    cr:windowEnd "2026-03-11T23:59:59Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:supersededAt "2026-02-20T00:00:00Z"^^xsd:dateTime .
+ex:asof-v2-v2 a cr:PlannedVisit ; cr:projectsEncounter ex:asof-enc-v2 ;
+    cr:windowEnd "2026-03-14T23:59:59Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-20T00:00:00Z"^^xsd:dateTime .
+
+# (b) Missed-visit fixture: a participant schedule with V1 realized, V3 never realized.
+ex:asof-sched a cr:ParticipantSchedule ; cr:hasPlannedVisit ex:asof-pv-v1, ex:asof-pv-v3 .
+ex:asof-pv-v1 a cr:PlannedVisit ; cr:projectsEncounter ex:asof-enc-v1 .
+ex:asof-pv-v3 a cr:PlannedVisit ; cr:projectsEncounter ex:asof-enc-v3 .
+ex:asof-enc-v1 a cr:PlannedEncounter . ex:asof-enc-v3 a cr:PlannedEncounter .
+ex:asof-visit-v1 a cr:Visit ; cr:realizes ex:asof-pv-v1 ;
+    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime .

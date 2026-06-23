@@ -113,6 +113,9 @@ def main():
     # (i) start-up — enrollment must not precede site activation (preventive, bitemporal)
     su_passed, su_total = startup_checks(ont_graph, failures)
 
+    # (j) schedule — SoA as-of reconstruction across an amendment + missed-visit detection
+    sd_passed, sd_total = schedule_checks(ont_graph, failures)
+
     _report([
         ("SHACL", passed, len(cases)),
         ("bitemporal", bt_passed, bt_total),
@@ -122,7 +125,68 @@ def main():
         ("pre-IND", pi_passed, pi_total),
         ("lims", lm_passed, lm_total),
         ("startup", su_passed, su_total),
+        ("schedule", sd_passed, sd_total),
     ], failures)
+
+
+def schedule_checks(ont_graph, failures):
+    """SoA bitemporal differentiators: reconstruct the planned schedule as-of a
+    transaction time across an amendment, and detect a missed (unrealized) visit."""
+    g = Graph()
+    for t in ont_graph:
+        g.add(t)
+    g.parse(os.path.join(ROOT, "examples", "schedule-amendment-asof.ttl"), format="turtle")
+    ENC_V2 = "https://top.scientix.ai/examples/asof-enc-v2"
+
+    def window_end_asof(tt):
+        q = f"""
+        PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        SELECT ?we WHERE {{
+          ?pv a cr:PlannedVisit ; cr:projectsEncounter <{ENC_V2}> ;
+              cr:windowEnd ?we ; top:recordedAt ?r .
+          OPTIONAL {{ ?pv top:supersededAt ?s }}
+          FILTER ( ?r <= "{tt}"^^xsd:dateTime
+                   && ( !BOUND(?s) || ?s > "{tt}"^^xsd:dateTime ) )
+        }}"""
+        return sorted(str(row.we)[:10] for row in g.query(q))
+
+    total = passed = 0
+
+    # (a) as-of before the amendment: V2 window end is the original 03-11
+    total += 1
+    got = window_end_asof("2026-01-15T00:00:00Z")
+    if got == ["2026-03-11"]:
+        passed += 1; print("[PASS] SoA as-of 2026-01-15 -> V2 window ends 2026-03-11 (pre-amendment)")
+    else:
+        failures.append(("SCHED", "asof-pre", f"expected ['2026-03-11'], got {got}"))
+        print(f"[FAIL] SoA as-of pre-amendment got={got}")
+
+    # (b) as-of after the amendment: the widened 03-14 is in force
+    total += 1
+    got = window_end_asof("2026-03-01T00:00:00Z")
+    if got == ["2026-03-14"]:
+        passed += 1; print("[PASS] SoA as-of 2026-03-01 -> V2 window ends 2026-03-14 (post-amendment)")
+    else:
+        failures.append(("SCHED", "asof-post", f"expected ['2026-03-14'], got {got}"))
+        print(f"[FAIL] SoA as-of post-amendment got={got}")
+
+    # (c) missed-visit detection: V3 planned but never realized
+    total += 1
+    missed = {str(row.pv) for row in g.query("""
+        PREFIX cr: <https://top.scientix.ai/cr/v1#>
+        SELECT ?pv WHERE {
+          <https://top.scientix.ai/examples/asof-sched> cr:hasPlannedVisit ?pv .
+          FILTER NOT EXISTS { ?v cr:realizes ?pv }
+        }""")}
+    if missed == {"https://top.scientix.ai/examples/asof-pv-v3"}:
+        passed += 1; print("[PASS] missed-visit detector flags only the unrealized planned V3")
+    else:
+        failures.append(("SCHED", "missed", f"flagged={sorted(missed)}"))
+        print(f"[FAIL] missed-visit detector flagged={sorted(missed)}")
+
+    return passed, total
 
 
 def startup_checks(ont_graph, failures):

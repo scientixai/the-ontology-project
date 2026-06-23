@@ -1,0 +1,87 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — the Schedule of Activities as a timeline, all three strata.
+# Template (SCRN/V1/V2/V3, windows, ordering, sub-visit timing) -> participant
+# projection (windows resolved to dates off the enrollment anchor) -> actual
+# execution (every visit in-window, every act in-order). Conforms.
+
+ex:sched-mgr a hcls:Person, prov:Agent ; rdfs:label "Scheduling system" .
+ex:su-101    a cr:StudySubject ; rdfs:label "OPP-101-0007" .
+
+#################################################################
+# (1) Design template — the planned SoA (anchored at V1 = Day 1)
+#################################################################
+ex:tl-101 a cr:ScheduleTimeline ; rdfs:label "OPP-101 SoA (v1)" ;
+    cr:hasPlannedEncounter ex:enc-scrn, ex:enc-v1, ex:enc-v2, ex:enc-v3 ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sched-mgr .
+
+ex:enc-scrn a cr:PlannedEncounter ; rdfs:label "Screening" ; cr:timing ex:t-scrn .
+ex:enc-v1   a cr:PlannedEncounter ; rdfs:label "V1 (baseline / first dose)" ; cr:timing ex:t-v1 ;
+    cr:hasPlannedActivity ex:pa-qs2, ex:pa-ecg, ex:pa-blood .
+ex:enc-v2   a cr:PlannedEncounter ; rdfs:label "V2" ; cr:timing ex:t-v2 .
+ex:enc-v3   a cr:PlannedEncounter ; rdfs:label "V3" ; cr:timing ex:t-v3 .
+
+ex:t-scrn a cr:Timing ; cr:timingType "before" ; cr:offsetDays 7 ; cr:relativeTo ex:enc-v1 ; cr:window ex:w2 .
+ex:t-v1   a cr:Timing ; cr:timingType "fixed"  ; cr:offsetDays 0 ; cr:relativeTo ex:enroll-anchor ; cr:window ex:w0 .
+ex:t-v2   a cr:Timing ; cr:timingType "after"  ; cr:offsetDays 7  ; cr:relativeTo ex:enc-v1 ; cr:window ex:w2 .
+ex:t-v3   a cr:Timing ; cr:timingType "after"  ; cr:offsetDays 21 ; cr:relativeTo ex:enc-v1 ; cr:window ex:w2 .
+ex:w0 a cr:Window ; cr:windowLowerDays 0  ; cr:windowUpperDays 0 .
+ex:w2 a cr:Window ; cr:windowLowerDays -2 ; cr:windowUpperDays 2 .
+
+# Activities at V1: QS2 before ECG (ordering only); bloods 2h after the ECG.
+ex:pa-qs2   a cr:PlannedActivity ; rdfs:label "QS2 questionnaire" ; cr:precedes ex:pa-ecg .
+ex:pa-ecg   a cr:PlannedActivity ; rdfs:label "ECG" ; cr:precedes ex:pa-blood .
+ex:pa-blood a cr:PlannedActivity ; rdfs:label "Blood draw" ; cr:timing ex:t-blood .
+ex:t-blood  a cr:Timing ; cr:timingType "after" ; cr:offsetHours 2 ; cr:relativeTo ex:pa-ecg .
+
+#################################################################
+# (2) Participant projection — windows resolved off the anchor (2026-03-02)
+#################################################################
+ex:sched-101 a cr:ParticipantSchedule ; rdfs:label "OPP-101-0007 schedule" ;
+    cr:fromTimeline ex:tl-101 ; cr:scheduleForSubject ex:su-101 ;
+    cr:anchorDate "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    cr:hasPlannedVisit ex:pv-scrn, ex:pv-v1, ex:pv-v2, ex:pv-v3 ;
+    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sched-mgr .
+
+ex:pv-scrn a cr:PlannedVisit ; cr:projectsEncounter ex:enc-scrn ;
+    cr:targetDate "2026-02-23T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-02-21T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2026-02-25T23:59:59Z"^^xsd:dateTime .
+ex:pv-v1 a cr:PlannedVisit ; cr:projectsEncounter ex:enc-v1 ;
+    cr:targetDate "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-03-02T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2026-03-02T23:59:59Z"^^xsd:dateTime .
+ex:pv-v2 a cr:PlannedVisit ; cr:projectsEncounter ex:enc-v2 ;
+    cr:targetDate "2026-03-09T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-03-07T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2026-03-11T23:59:59Z"^^xsd:dateTime .
+ex:pv-v3 a cr:PlannedVisit ; cr:projectsEncounter ex:enc-v3 ;
+    cr:targetDate "2026-03-23T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-03-21T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2026-03-25T23:59:59Z"^^xsd:dateTime .
+
+#################################################################
+# (3) Actual execution — every visit in-window, every act in-order
+#################################################################
+ex:visit-scrn a cr:Visit ; cr:realizes ex:pv-scrn ; cr:forSubject ex:su-101 ;
+    top:observedAt "2026-02-24T09:00:00Z"^^xsd:dateTime .
+ex:visit-v1 a cr:Visit ; cr:realizes ex:pv-v1 ; cr:forSubject ex:su-101 ;
+    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime .
+ex:visit-v2 a cr:Visit ; cr:realizes ex:pv-v2 ; cr:forSubject ex:su-101 ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime .
+ex:visit-v3 a cr:Visit ; cr:realizes ex:pv-v3 ; cr:forSubject ex:su-101 ;
+    top:observedAt "2026-03-23T09:00:00Z"^^xsd:dateTime .
+
+ex:qs2-act   a cr:Assessment ; cr:realizes ex:pa-qs2   ; cr:atVisit ex:visit-v1 ; top:observedAt "2026-03-02T08:00:00Z"^^xsd:dateTime .
+ex:ecg-act   a cr:Assessment ; cr:realizes ex:pa-ecg   ; cr:atVisit ex:visit-v1 ; top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime .
+ex:blood-act a cr:Assessment ; cr:realizes ex:pa-blood ; cr:atVisit ex:visit-v1 ; top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime .
+
+# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
+ex:tl-101    top:identifier "urn:tl-101"    ; top:status "active" .
+ex:sched-101 top:identifier "urn:sched-101" ; top:status "active" .

@@ -1,0 +1,12 @@
+# Schedule of Activities — the classic table is just a VIEW of the timeline.
+# Projects each participant's planned visits back into the familiar visit x date grid.
+# The timeline is the truth; this table is one read of it (no footnotes — the timing
+# logic is in the windows).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?encounter ?target ?windowStart ?windowEnd WHERE {
+  ?sched a cr:ParticipantSchedule ; cr:hasPlannedVisit ?pv .
+  ?pv cr:projectsEncounter ?enc ;
+      cr:targetDate ?target ; cr:windowStart ?windowStart ; cr:windowEnd ?windowEnd .
+  ?enc rdfs:label ?encounter .
+}

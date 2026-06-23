@@ -58,11 +58,6 @@ cr:AnalysisDataset a owl:Class ;
     rdfs:subClassOf top:Evidence,
         top:ProvenancedEntity .
 
-cr:Assessment a owl:Class ;
-    rdfs:label "Assessment" ;
-    rdfs:comment "A clinical assessment performed during the trial." ;
-    rdfs:subClassOf top:Temporal .
-
 cr:Attestation a owl:Class ;
     rdfs:label "Attestation" ;
     rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." ;
@@ -123,12 +118,6 @@ cr:StoppingRule a owl:Class ;
     rdfs:comment "A safety rule that halts dosing or enrollment when triggered." ;
     rdfs:subClassOf top:Constraint .
 
-cr:Visit a owl:Class ;
-    rdfs:label "Trial Visit" ;
-    rdfs:comment "A protocol visit — a kind of study event." ;
-    rdfs:subClassOf top:Temporal,
-        cr:StudyEvent .
-
 cr:activates a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:StudySite .
@@ -148,6 +137,12 @@ cr:analyzedUnder a owl:ObjectProperty ;
     rdfs:domain cr:EndpointResult ;
     rdfs:range cr:StatisticalAnalysisPlan .
 
+cr:anchorDate a owl:DatatypeProperty ;
+    rdfs:label "anchor date" ;
+    rdfs:comment "The resolved anchor (e.g. the subject's enrollment date) from which target dates are computed." ;
+    rdfs:domain cr:ParticipantSchedule ;
+    rdfs:range xsd:dateTime .
+
 cr:asSubject a owl:ObjectProperty ;
     rdfs:domain cr:Enrollment ;
     rdfs:range cr:StudySubject .
@@ -160,6 +155,12 @@ cr:atSite a owl:ObjectProperty ;
     rdfs:comment "The site a subject was enrolled at (enables the enroll-after-activation check)." ;
     rdfs:domain cr:Enrollment ;
     rdfs:range cr:StudySite .
+
+cr:atVisit a owl:ObjectProperty ;
+    rdfs:label "at visit" ;
+    rdfs:comment "The actual visit an assessment was performed within." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range cr:Visit .
 
 cr:attestedBy a owl:ObjectProperty ;
     rdfs:label "attested by" ;
@@ -272,6 +273,11 @@ cr:fromState a owl:DatatypeProperty ;
     rdfs:label "from state" ;
     rdfs:domain cr:CustodyEvent .
 
+cr:fromTimeline a owl:ObjectProperty ;
+    rdfs:label "from timeline" ;
+    rdfs:domain cr:ParticipantSchedule ;
+    rdfs:range cr:ScheduleTimeline .
+
 cr:hasArm a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
     rdfs:range cr:Arm .
@@ -301,6 +307,21 @@ cr:hasItem a owl:ObjectProperty ;
 cr:hasItemGroup a owl:ObjectProperty ;
     rdfs:domain cr:CaseReportForm ;
     rdfs:range cr:ItemGroup .
+
+cr:hasPlannedActivity a owl:ObjectProperty ;
+    rdfs:label "has planned activity" ;
+    rdfs:domain cr:PlannedEncounter ;
+    rdfs:range cr:PlannedActivity .
+
+cr:hasPlannedEncounter a owl:ObjectProperty ;
+    rdfs:label "has planned encounter" ;
+    rdfs:domain cr:ScheduleTimeline ;
+    rdfs:range cr:PlannedEncounter .
+
+cr:hasPlannedVisit a owl:ObjectProperty ;
+    rdfs:label "has planned visit" ;
+    rdfs:domain cr:ParticipantSchedule ;
+    rdfs:range cr:PlannedVisit .
 
 cr:hasProtocolVersion a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
@@ -362,6 +383,22 @@ cr:odmOID a owl:DatatypeProperty ;
     rdfs:label "ODM OID" ;
     rdfs:comment "CDISC ODM OID for interoperability." .
 
+cr:ofProtocolVersion a owl:ObjectProperty ;
+    rdfs:label "of protocol version" ;
+    rdfs:domain cr:ScheduleTimeline ;
+    rdfs:range cr:ProtocolVersion .
+
+cr:offsetDays a owl:DatatypeProperty ;
+    rdfs:label "offset (days)" ;
+    rdfs:domain cr:Timing ;
+    rdfs:range xsd:decimal .
+
+cr:offsetHours a owl:DatatypeProperty ;
+    rdfs:label "offset (hours)" ;
+    rdfs:comment "Sub-visit timing offset in hours (e.g. bloods 2h after the ECG)." ;
+    rdfs:domain cr:Timing ;
+    rdfs:range xsd:decimal .
+
 cr:onForm a owl:ObjectProperty ;
     rdfs:domain cr:ItemGroup ;
     rdfs:range cr:CaseReportForm .
@@ -393,9 +430,20 @@ cr:placedOn a owl:ObjectProperty ;
     rdfs:domain cr:ClinicalHold ;
     rdfs:range cr:INDApplication .
 
+cr:precedes a owl:ObjectProperty ;
+    rdfs:label "precedes" ;
+    rdfs:comment "Ordering-only constraint: this activity must occur before another, independent of clock timing (e.g. QS2 before ECG)." ;
+    rdfs:domain cr:PlannedActivity ;
+    rdfs:range cr:PlannedActivity .
+
 cr:producedAgreement a owl:ObjectProperty ;
     rdfs:domain cr:RegulatoryInteraction ;
     rdfs:range cr:RegulatoryAgreement .
+
+cr:projectsEncounter a owl:ObjectProperty ;
+    rdfs:label "projects encounter" ;
+    rdfs:domain cr:PlannedVisit ;
+    rdfs:range cr:PlannedEncounter .
 
 cr:proposedPosition a owl:DatatypeProperty ;
     rdfs:label "proposed position" ;
@@ -410,10 +458,29 @@ cr:queryOn a owl:ObjectProperty ;
     rdfs:comment "The entity the query is anchored to (observation, event, form, subject...)." ;
     rdfs:domain cr:Query .
 
+cr:realizes a owl:ObjectProperty ;
+    rdfs:label "realizes" ;
+    rdfs:comment "Links an actual execution event (cr:Visit, cr:Assessment) to the planned node it fulfils — the join for planned-vs-actual reconciliation." .
+
 cr:recordedInTMF a owl:ObjectProperty ;
     rdfs:label "recorded in TMF" ;
     rdfs:domain cr:EssentialRecord ;
     rdfs:range cr:TrialMasterFile .
+
+cr:relativeTo a owl:ObjectProperty ;
+    rdfs:label "relative to" ;
+    rdfs:comment "The anchor the offset is measured from: another planned node, or an anchor-event type (e.g. the enrollment act)." ;
+    rdfs:domain cr:Timing .
+
+cr:repeatIntervalDays a owl:DatatypeProperty ;
+    rdfs:label "repeat interval (days)" ;
+    rdfs:domain cr:RepeatingPlannedActivity ;
+    rdfs:range xsd:decimal .
+
+cr:repeatUntilDay a owl:DatatypeProperty ;
+    rdfs:label "repeat until (study day)" ;
+    rdfs:domain cr:RepeatingPlannedActivity ;
+    rdfs:range xsd:integer .
 
 cr:replyTo a owl:ObjectProperty ;
     rdfs:comment "Threaded discrepancy conversation (parent-child)." ;
@@ -443,6 +510,11 @@ cr:riskLevel a owl:DatatypeProperty ;
 cr:riskScore a owl:DatatypeProperty ;
     rdfs:domain cr:RiskAssessment ;
     rdfs:range xsd:decimal .
+
+cr:scheduleForSubject a owl:ObjectProperty ;
+    rdfs:label "schedule for subject" ;
+    rdfs:domain cr:ParticipantSchedule ;
+    rdfs:range cr:StudySubject .
 
 cr:sdvIntensity a owl:DatatypeProperty ;
     rdfs:comment "Fraction of data source-verified (1.0 = 100% SDV; reduced for low-risk)." ;
@@ -483,6 +555,11 @@ cr:targetAccrual a owl:DatatypeProperty ;
     rdfs:label "target accrual" ;
     rdfs:domain cr:StudySite ;
     rdfs:range xsd:integer .
+
+cr:targetDate a owl:DatatypeProperty ;
+    rdfs:label "target date" ;
+    rdfs:domain cr:PlannedVisit ;
+    rdfs:range xsd:dateTime .
 
 cr:term_ALCOAplus a skos:Concept ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
@@ -525,6 +602,16 @@ cr:threatens a owl:ObjectProperty ;
     rdfs:domain cr:DeviationAntecedent ;
     rdfs:range cr:CriticalToQualityFactor .
 
+cr:timing a owl:ObjectProperty ;
+    rdfs:label "timing" ;
+    rdfs:comment "The relative-timing rule positioning a planned encounter or activity." ;
+    rdfs:range cr:Timing .
+
+cr:timingType a owl:DatatypeProperty ;
+    rdfs:label "timing type" ;
+    rdfs:comment "before | after | fixed — the sense of the offset relative to the anchor." ;
+    rdfs:domain cr:Timing .
+
 cr:toState a owl:DatatypeProperty ;
     rdfs:label "to state" ;
     rdfs:domain cr:CustodyEvent .
@@ -548,6 +635,31 @@ cr:verifiedBy a owl:ObjectProperty ;
     rdfs:comment "The monitor who source-verified the value (SDV)." ;
     rdfs:domain cr:ClinicalObservation ;
     rdfs:range hcls:Person .
+
+cr:window a owl:ObjectProperty ;
+    rdfs:label "window" ;
+    rdfs:domain cr:Timing ;
+    rdfs:range cr:Window .
+
+cr:windowEnd a owl:DatatypeProperty ;
+    rdfs:label "window end" ;
+    rdfs:domain cr:PlannedVisit ;
+    rdfs:range xsd:dateTime .
+
+cr:windowLowerDays a owl:DatatypeProperty ;
+    rdfs:label "window lower (days)" ;
+    rdfs:domain cr:Window ;
+    rdfs:range xsd:decimal .
+
+cr:windowStart a owl:DatatypeProperty ;
+    rdfs:label "window start" ;
+    rdfs:domain cr:PlannedVisit ;
+    rdfs:range xsd:dateTime .
+
+cr:windowUpperDays a owl:DatatypeProperty ;
+    rdfs:label "window upper (days)" ;
+    rdfs:domain cr:Window ;
+    rdfs:range xsd:decimal .
 
 <https://top.scientix.ai/cr/v1/gcp> a owl:Ontology ;
     rdfs:label "TOP CR — ICH E6(R3) GCP definitional layer" ;
@@ -742,6 +854,11 @@ cr:AssayResult a owl:Class ;
     rdfs:subClassOf top:ProvenancedEntity,
         hcls:Observation .
 
+cr:Assessment a owl:Class ;
+    rdfs:label "Assessment" ;
+    rdfs:comment "A clinical assessment performed during the trial." ;
+    rdfs:subClassOf top:Temporal .
+
 cr:BriefingBook a owl:Class ;
     rdfs:label "Briefing Book" ;
     rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." ;
@@ -827,6 +944,12 @@ cr:TrialMasterFile a owl:Class ;
     rdfs:subClassOf top:Evidence ;
     skos:altLabel "TMF" ;
     skos:definition "The collection of essential records that allows the conduct of the trial and the quality of the data to be evaluated (paraphrased, ICH E6(R3))." .
+
+cr:Visit a owl:Class ;
+    rdfs:label "Trial Visit" ;
+    rdfs:comment "A protocol visit — a kind of study event." ;
+    rdfs:subClassOf top:Temporal,
+        cr:StudyEvent .
 
 cr:audits a owl:ObjectProperty ;
     rdfs:label "audits" ;
@@ -924,16 +1047,15 @@ cr:Phase3Design a owl:Class ;
     rdfs:comment "A proposed Phase 3 trial design taken to the EOP2 meeting." ;
     rdfs:subClassOf top:Scope .
 
-cr:ProtocolVersion a owl:Class ;
-    rdfs:label "Protocol Version" ;
-    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." ;
-    rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
-
 cr:RegulatoryQuestion a owl:Class ;
     rdfs:label "Regulatory Question" ;
     rdfs:comment "A briefing-book question; should carry a proposed position (FDA punishes vague questions)." ;
     rdfs:subClassOf top:Evidence .
+
+cr:RepeatingPlannedActivity a owl:Class ;
+    rdfs:label "Repeating Planned Activity" ;
+    rdfs:comment "A planned activity that recurs on an interval until a stop condition (e.g. a daily participant diary until Day N; dosing every 7 days)." ;
+    rdfs:subClassOf cr:PlannedActivity .
 
 cr:SeriousAdverseEvent a owl:Class ;
     rdfs:label "Serious Adverse Event" ;
@@ -950,11 +1072,6 @@ cr:Sponsor a owl:Class ;
     rdfs:label "Sponsor" ;
     rdfs:comment "The organization that initiates and is accountable for the trial." ;
     rdfs:subClassOf hcls:Organization .
-
-cr:StudySubject a owl:Class ;
-    rdfs:label "Study Subject" ;
-    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." ;
-    rdfs:subClassOf top:Agent .
 
 hcls:Observation a owl:Class ;
     rdfs:label "Observation" ;
@@ -997,9 +1114,26 @@ cr:EndpointResult a owl:Class ;
     rdfs:subClassOf top:Outcome,
         top:ProvenancedEntity .
 
+cr:PlannedEncounter a owl:Class ;
+    rdfs:label "Planned Encounter" ;
+    rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:ProtocolVersion a owl:Class ;
+    rdfs:label "Protocol Version" ;
+    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." ;
+    rdfs:subClassOf top:Evidence,
+        top:ProvenancedEntity .
+
 cr:SafetyReport a owl:Class ;
     rdfs:label "Safety Report" ;
     rdfs:comment "Expedited report of an SAE to the regulator." ;
+    rdfs:subClassOf top:Evidence,
+        top:ProvenancedEntity .
+
+cr:ScheduleTimeline a owl:Class ;
+    rdfs:label "Schedule Timeline" ;
+    rdfs:comment "The planned Schedule of Activities for a protocol version, as a timeline of planned encounters and activities. Bitemporal: a protocol amendment supersedes it, so the schedule is reconstructable as-of any date." ;
     rdfs:subClassOf top:Evidence,
         top:ProvenancedEntity .
 
@@ -1007,6 +1141,16 @@ cr:StudyEvent a owl:Class ;
     rdfs:label "Study Event" ;
     rdfs:comment "A scheduled or unscheduled timepoint (StudyEventOID) when data is captured." ;
     rdfs:subClassOf top:Temporal .
+
+cr:StudySubject a owl:Class ;
+    rdfs:label "Study Subject" ;
+    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." ;
+    rdfs:subClassOf top:Agent .
+
+cr:Window a owl:Class ;
+    rdfs:label "Window" ;
+    rdfs:comment "An allowed tolerance around a planned time: a lower and an upper offset in days (e.g. [-2 days, +2 days])." ;
+    rdfs:subClassOf top:Constraint .
 
 ns1:Zone_TrialManagement a skos:Concept ;
     skos:prefLabel "Trial Management" ;
@@ -1063,6 +1207,17 @@ cr:MitigationPlan a owl:Class ;
     rdfs:comment "Mitigations for a risk, including the resulting monitoring strategy and SDV intensity." ;
     rdfs:subClassOf top:Constraint .
 
+cr:ParticipantSchedule a owl:Class ;
+    rdfs:label "Participant Schedule" ;
+    rdfs:comment "The schedule projected for a specific subject from a ScheduleTimeline once an anchor date (e.g. enrollment) is known. Bitemporal: re-projected when the governing protocol version changes." ;
+    rdfs:subClassOf top:Evidence,
+        top:ProvenancedEntity .
+
+cr:PlannedActivity a owl:Class ;
+    rdfs:label "Planned Activity" ;
+    rdfs:comment "A planned activity within an encounter (USDM ScheduledActivityInstance) — e.g. ECG, blood draw, PRO. Positioned by a cr:Timing and/or an ordering edge (cr:precedes)." ;
+    rdfs:subClassOf top:Constraint .
+
 cr:SiteActivation a owl:Class ;
     rdfs:label "Site Activation" ;
     rdfs:comment "The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV." ;
@@ -1083,6 +1238,11 @@ cr:ClinicalObservation a owl:Class ;
 cr:E6R3Glossary a skos:ConceptScheme ;
     rdfs:label "ICH E6(R3) glossary (selected terms)" ;
     rdfs:comment "Definitional concepts cited to ICH E6(R3); related to the cr: class/relation that realizes each, where one exists." .
+
+cr:PlannedVisit a owl:Class ;
+    rdfs:label "Planned Visit" ;
+    rdfs:comment "A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled." ;
+    rdfs:subClassOf top:Constraint .
 
 cr:Query a owl:Class ;
     rdfs:label "Query" ;
@@ -1106,6 +1266,11 @@ cr:RiskAssessment a owl:Class ;
     rdfs:comment "An assessment of risk to a CtQ factor (likelihood/impact/detectability -> level); bitemporal." ;
     rdfs:subClassOf top:Evidence,
         top:ProvenancedEntity .
+
+cr:Timing a owl:Class ;
+    rdfs:label "Timing" ;
+    rdfs:comment "A relative-timing rule: an offset (days or hours) from an anchor — another node, or an anchor event such as enrollment — with an allowed window. The footnote logic, made explicit." ;
+    rdfs:subClassOf top:Constraint .
 
 hcls:Specimen a owl:Class ;
     rdfs:label "Specimen" ;
@@ -1132,11 +1297,6 @@ hcls:Organization a owl:Class ;
     rdfs:comment "An organization — sponsor, CRO, site, central lab, or regulator." ;
     rdfs:subClassOf top:Agent .
 
-top:Constraint a owl:Class ;
-    rdfs:label "Constraint" ;
-    rdfs:comment "A rule, criterion, bound, or commitment that admissibility is judged against." ;
-    rdfs:subClassOf top:Core .
-
 top:Core a owl:Class ;
     rdfs:label "Core" ;
     rdfs:comment "The single root of TOP. Everything modeled is, ultimately, a kind of top:Core, and so carries the Universal DNA (identifier + observedAt + status)." .
@@ -1154,6 +1314,11 @@ hcls:Person a owl:Class ;
 ns1:TMFReferenceModel a skos:ConceptScheme ;
     rdfs:label "TOP TMF artifact-type scheme" ;
     rdfs:comment "A SKOS scheme of trial-master-file artifact types, aligned by name to the DIA TMF Reference Model; each artifact type carries content bridges to the domain classes it concerns." .
+
+top:Constraint a owl:Class ;
+    rdfs:label "Constraint" ;
+    rdfs:comment "A rule, criterion, bound, or commitment that admissibility is judged against." ;
+    rdfs:subClassOf top:Core .
 
 top:Temporal a owl:Class ;
     rdfs:label "Temporal" ;

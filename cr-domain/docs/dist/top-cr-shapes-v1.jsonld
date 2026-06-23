@@ -14,6 +14,19 @@
     ]
   },
   {
+    "@id": "_:cb10cc6e59a6d2db7613a5194050e0c4aa4f48010c50c278c5c003f4f0eb8cd8d15",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "PlannedActivity has neither a cr:timing nor an ordering edge (cr:precedes); it is unpositioned."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#timing> ?t . }\n              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#precedes> ?o . }\n              FILTER NOT EXISTS { ?p <https://top.scientix.ai/cr/v1#precedes> $this . }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb10ed5cf425231f1e69ba12c515226b4b7c0fe6619117321758f382cb27a4a90e3",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -47,6 +60,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#performedBy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1449e8b3b06f1ddc38151501d123ebfa32983cd73df219fdd1390a4460296e026",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Actual visit's observedAt falls outside the planned window of the visit it realizes (out-of-window) \u2014 review materiality."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#realizes> ?pv ;\n                    <https://top.scientix.ai/core/v1#observedAt> ?t .\n              ?pv a <https://top.scientix.ai/cr/v1#PlannedVisit> ;\n                  <https://top.scientix.ai/cr/v1#windowStart> ?ws ;\n                  <https://top.scientix.ai/cr/v1#windowEnd> ?we .\n              FILTER ( ?t < ?ws || ?t > ?we )\n            }\n        "
       }
     ]
   },
@@ -337,6 +363,30 @@
     ]
   },
   {
+    "@id": "_:cb1bfaa973cec1498bb746ecc41b0d0cb511cd7300477cbdfb0911862cee83388a1",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "PlannedEncounter has no cr:timing (an encounter must be positioned on the timeline)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#timing"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1c531822befae2f5888fc34cf730dc0d44036ea9d3713c1996bed9d17a96b85aa",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -376,6 +426,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#sponsoredBy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1d136d9c1ecbd640b9944ff741f4c6e4c57098946be41c7a96ca930d84749f63b",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "PlannedVisit has no cr:windowStart."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#windowStart"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
       }
     ]
   },
@@ -452,6 +526,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/crosswalk/v1#justification"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1f32fa017a1bf97bcbebf806c0f0338acf8f8715ea369a3f1841b782e5e8fee6d",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Acts executed out of the order their planned activities require (cr:precedes violated)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this   <https://top.scientix.ai/cr/v1#realizes> ?pa ;\n                      <https://top.scientix.ai/core/v1#observedAt> ?ta .\n              ?pa     <https://top.scientix.ai/cr/v1#precedes> ?pb .\n              ?other  <https://top.scientix.ai/cr/v1#realizes> ?pb ;\n                      <https://top.scientix.ai/core/v1#observedAt> ?tb .\n              FILTER ( ?ta > ?tb )\n            }\n        "
       }
     ]
   },
@@ -685,6 +772,30 @@
     ]
   },
   {
+    "@id": "_:cb227055b0b53f2fd4d64c3b0d1e84e1764433d8e52f01574007b000cffa7e8ebe2",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "PlannedVisit has no cr:windowEnd."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#windowEnd"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb22894a599e5ad3854f0aff6ea96430d59986b44415510cc33db446a33531e0293",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -854,6 +965,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#perEstimand"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb24857aab4b8f328ca240b322b3c86dc7bc41ed93f522180dab325273947ad9659",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "PlannedVisit has no cr:targetDate."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#targetDate"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
       }
     ]
   },
@@ -1669,6 +1804,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ActivityOrderingShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Execution violates planned ordering (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1f32fa017a1bf97bcbebf806c0f0338acf8f8715ea369a3f1841b782e5e8fee6d"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetSubjectsOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#realizes"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#AssayResultShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2068,6 +2229,80 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#PlannedActivityPositionShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Planned activity must be positioned (timing or ordering)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb10cc6e59a6d2db7613a5194050e0c4aa4f48010c50c278c5c003f4f0eb8cd8d15"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedActivity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#PlannedEncounterTimingShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Planned encounter must be positioned"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1bfaa973cec1498bb746ecc41b0d0cb511cd7300477cbdfb0911862cee83388a1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedEncounter"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#PlannedVisitWindowShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Planned visit must carry a resolved target + window"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1d136d9c1ecbd640b9944ff741f4c6e4c57098946be41c7a96ca930d84749f63b"
+      },
+      {
+        "@id": "_:cb227055b0b53f2fd4d64c3b0d1e84e1764433d8e52f01574007b000cffa7e8ebe2"
+      },
+      {
+        "@id": "_:cb24857aab4b8f328ca240b322b3c86dc7bc41ed93f522180dab325273947ad9659"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#PreINDReadinessShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2313,6 +2548,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#RegulatoryQuestion"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#VisitWindowShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Visit outside planned window (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1449e8b3b06f1ddc38151501d123ebfa32983cd73df219fdd1390a4460296e026"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetSubjectsOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#realizes"
       }
     ]
   },

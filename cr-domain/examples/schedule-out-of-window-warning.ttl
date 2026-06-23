@@ -1,0 +1,19 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED FIXTURE (Warning) — an actual visit realized outside its planned window.
+# V2 was planned for [2026-03-07 .. 2026-03-11]; the participant was seen 2026-03-14.
+# Out-of-window is a deviation candidate, not a hard failure -> Warning.
+
+ex:su-201 a cr:StudySubject ; rdfs:label "OPP-101-0021" .
+
+ex:pv2-v2 a cr:PlannedVisit ; rdfs:label "V2 (planned)" ;
+    cr:targetDate "2026-03-09T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-03-07T00:00:00Z"^^xsd:dateTime ;
+    cr:windowEnd   "2026-03-11T00:00:00Z"^^xsd:dateTime .
+
+ex:visit2-v2 a cr:Visit ; cr:realizes ex:pv2-v2 ; cr:forSubject ex:su-201 ;
+    top:observedAt "2026-03-14T09:00:00Z"^^xsd:dateTime .

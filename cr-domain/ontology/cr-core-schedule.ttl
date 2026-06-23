@@ -1,0 +1,102 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Schedule of Activities (SoA) as a dynamic, bitemporal structure.
+# The classic SoA — a 2D table of visits x activities with the real timing logic
+# buried in footnotes — is, in truth, a timeline: planned activities positioned by
+# relative timing, windows, and ordering; projected onto a participant once an anchor
+# is known; then reconciled against what actually happened. This module models the
+# three strata explicitly so the planned-vs-actual gap (out-of-window, missed,
+# out-of-order) is queryable, and the planned schedule is reconstructable as-of any
+# protocol amendment (the bitemporal axis). The footnotes become first-class triples.
+
+#################################################################
+# (1) Design template — the protocol's planned schedule. A Constraint
+#     the world is judged against. The timeline is bitemporal: it is
+#     amendment-versioned, so "what was planned as-of date T" is recoverable.
+#################################################################
+cr:ScheduleTimeline a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Schedule Timeline" ;
+    rdfs:comment "The planned Schedule of Activities for a protocol version, as a timeline of planned encounters and activities. Bitemporal: a protocol amendment supersedes it, so the schedule is reconstructable as-of any date." .
+
+cr:PlannedEncounter a owl:Class ; rdfs:subClassOf top:Constraint ;
+    rdfs:label "Planned Encounter" ;
+    rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." .
+
+cr:PlannedActivity a owl:Class ; rdfs:subClassOf top:Constraint ;
+    rdfs:label "Planned Activity" ;
+    rdfs:comment "A planned activity within an encounter (USDM ScheduledActivityInstance) — e.g. ECG, blood draw, PRO. Positioned by a cr:Timing and/or an ordering edge (cr:precedes)." .
+
+cr:RepeatingPlannedActivity a owl:Class ; rdfs:subClassOf cr:PlannedActivity ;
+    rdfs:label "Repeating Planned Activity" ;
+    rdfs:comment "A planned activity that recurs on an interval until a stop condition (e.g. a daily participant diary until Day N; dosing every 7 days)." .
+
+cr:Timing a owl:Class ; rdfs:subClassOf top:Constraint ;
+    rdfs:label "Timing" ;
+    rdfs:comment "A relative-timing rule: an offset (days or hours) from an anchor — another node, or an anchor event such as enrollment — with an allowed window. The footnote logic, made explicit." .
+
+cr:Window a owl:Class ; rdfs:subClassOf top:Constraint ;
+    rdfs:label "Window" ;
+    rdfs:comment "An allowed tolerance around a planned time: a lower and an upper offset in days (e.g. [-2 days, +2 days])." .
+
+#################################################################
+# (2) Participant projection — the template instantiated for one
+#     subject once the anchor date is known; windows resolve to dates.
+#     ("the windows allowed within the design are not applied because
+#     this is what is planned for a participant" — d4k SoA infographic.)
+#################################################################
+cr:ParticipantSchedule a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Participant Schedule" ;
+    rdfs:comment "The schedule projected for a specific subject from a ScheduleTimeline once an anchor date (e.g. enrollment) is known. Bitemporal: re-projected when the governing protocol version changes." .
+
+cr:PlannedVisit a owl:Class ; rdfs:subClassOf top:Constraint ;
+    rdfs:label "Planned Visit" ;
+    rdfs:comment "A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled." .
+
+#################################################################
+# Object properties — design template
+#################################################################
+cr:ofProtocolVersion   a owl:ObjectProperty ; rdfs:domain cr:ScheduleTimeline ; rdfs:range cr:ProtocolVersion ; rdfs:label "of protocol version" .
+cr:hasPlannedEncounter a owl:ObjectProperty ; rdfs:domain cr:ScheduleTimeline ; rdfs:range cr:PlannedEncounter ; rdfs:label "has planned encounter" .
+cr:hasPlannedActivity  a owl:ObjectProperty ; rdfs:domain cr:PlannedEncounter ; rdfs:range cr:PlannedActivity ; rdfs:label "has planned activity" .
+cr:timing      a owl:ObjectProperty ; rdfs:range cr:Timing ; rdfs:label "timing" ;
+    rdfs:comment "The relative-timing rule positioning a planned encounter or activity." .
+cr:window      a owl:ObjectProperty ; rdfs:domain cr:Timing ; rdfs:range cr:Window ; rdfs:label "window" .
+cr:relativeTo  a owl:ObjectProperty ; rdfs:domain cr:Timing ; rdfs:label "relative to" ;
+    rdfs:comment "The anchor the offset is measured from: another planned node, or an anchor-event type (e.g. the enrollment act)." .
+cr:precedes    a owl:ObjectProperty ; rdfs:domain cr:PlannedActivity ; rdfs:range cr:PlannedActivity ; rdfs:label "precedes" ;
+    rdfs:comment "Ordering-only constraint: this activity must occur before another, independent of clock timing (e.g. QS2 before ECG)." .
+
+#################################################################
+# Datatype properties — timing / window / repeat
+#################################################################
+cr:timingType   a owl:DatatypeProperty ; rdfs:domain cr:Timing ; rdfs:label "timing type" ;
+    rdfs:comment "before | after | fixed — the sense of the offset relative to the anchor." .
+cr:offsetDays   a owl:DatatypeProperty ; rdfs:domain cr:Timing ; rdfs:range xsd:decimal ; rdfs:label "offset (days)" .
+cr:offsetHours  a owl:DatatypeProperty ; rdfs:domain cr:Timing ; rdfs:range xsd:decimal ; rdfs:label "offset (hours)" ;
+    rdfs:comment "Sub-visit timing offset in hours (e.g. bloods 2h after the ECG)." .
+cr:windowLowerDays a owl:DatatypeProperty ; rdfs:domain cr:Window ; rdfs:range xsd:decimal ; rdfs:label "window lower (days)" .
+cr:windowUpperDays a owl:DatatypeProperty ; rdfs:domain cr:Window ; rdfs:range xsd:decimal ; rdfs:label "window upper (days)" .
+cr:repeatIntervalDays a owl:DatatypeProperty ; rdfs:domain cr:RepeatingPlannedActivity ; rdfs:range xsd:decimal ; rdfs:label "repeat interval (days)" .
+cr:repeatUntilDay     a owl:DatatypeProperty ; rdfs:domain cr:RepeatingPlannedActivity ; rdfs:range xsd:integer ; rdfs:label "repeat until (study day)" .
+
+#################################################################
+# Object/datatype properties — participant projection + reconciliation
+#################################################################
+cr:fromTimeline       a owl:ObjectProperty ; rdfs:domain cr:ParticipantSchedule ; rdfs:range cr:ScheduleTimeline ; rdfs:label "from timeline" .
+cr:scheduleForSubject a owl:ObjectProperty ; rdfs:domain cr:ParticipantSchedule ; rdfs:range cr:StudySubject ; rdfs:label "schedule for subject" .
+cr:hasPlannedVisit    a owl:ObjectProperty ; rdfs:domain cr:ParticipantSchedule ; rdfs:range cr:PlannedVisit ; rdfs:label "has planned visit" .
+cr:projectsEncounter  a owl:ObjectProperty ; rdfs:domain cr:PlannedVisit ; rdfs:range cr:PlannedEncounter ; rdfs:label "projects encounter" .
+cr:anchorDate  a owl:DatatypeProperty ; rdfs:domain cr:ParticipantSchedule ; rdfs:range xsd:dateTime ; rdfs:label "anchor date" ;
+    rdfs:comment "The resolved anchor (e.g. the subject's enrollment date) from which target dates are computed." .
+cr:targetDate  a owl:DatatypeProperty ; rdfs:domain cr:PlannedVisit ; rdfs:range xsd:dateTime ; rdfs:label "target date" .
+cr:windowStart a owl:DatatypeProperty ; rdfs:domain cr:PlannedVisit ; rdfs:range xsd:dateTime ; rdfs:label "window start" .
+cr:windowEnd   a owl:DatatypeProperty ; rdfs:domain cr:PlannedVisit ; rdfs:range xsd:dateTime ; rdfs:label "window end" .
+
+cr:realizes a owl:ObjectProperty ; rdfs:label "realizes" ;
+    rdfs:comment "Links an actual execution event (cr:Visit, cr:Assessment) to the planned node it fulfils — the join for planned-vs-actual reconciliation." .
+cr:atVisit  a owl:ObjectProperty ; rdfs:domain cr:Assessment ; rdfs:range cr:Visit ; rdfs:label "at visit" ;
+    rdfs:comment "The actual visit an assessment was performed within." .

@@ -1,0 +1,11 @@
+# Planned-vs-actual reconciliation — the join a static SoA cannot express.
+# For each realized visit, the planned target and resolved window beside what
+# actually happened, so out-of-window adherence is a projection, not a manual review.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?encounter ?target ?actual WHERE {
+  ?pv cr:projectsEncounter ?enc ; cr:targetDate ?target .
+  ?enc rdfs:label ?encounter .
+  ?v cr:realizes ?pv ; top:observedAt ?actual .
+}

@@ -1,0 +1,19 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED FIXTURE (Violation) — a hard ordering constraint broken in execution.
+# The plan requires the ECG before the blood draw (pa-ecg precedes pa-blood), but
+# the bloods were drawn at 09:00 and the ECG only at 11:00. Order reversed -> hard.
+
+ex:su-301 a cr:StudySubject ; rdfs:label "OPP-101-0033" .
+
+ex:pao-ecg   a cr:PlannedActivity ; rdfs:label "ECG (planned)"   ; cr:precedes ex:pao-blood .
+ex:pao-blood a cr:PlannedActivity ; rdfs:label "Blood (planned)" .
+
+ex:ecg-301   a cr:Assessment ; cr:realizes ex:pao-ecg   ; cr:forSubject ex:su-301 ;
+    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime .
+ex:blood-301 a cr:Assessment ; cr:realizes ex:pao-blood ; cr:forSubject ex:su-301 ;
+    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime .

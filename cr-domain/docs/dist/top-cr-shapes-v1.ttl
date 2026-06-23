@@ -45,6 +45,22 @@ cr:ADaMTraceabilityShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:AnalysisDataset .
 
+cr:ActivityOrderingShape a sh:NodeShape ;
+    rdfs:label "Execution violates planned ordering (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Acts executed out of the order their planned activities require (cr:precedes violated)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this   <https://top.scientix.ai/cr/v1#realizes> ?pa ;
+                      <https://top.scientix.ai/core/v1#observedAt> ?ta .
+              ?pa     <https://top.scientix.ai/cr/v1#precedes> ?pb .
+              ?other  <https://top.scientix.ai/cr/v1#realizes> ?pb ;
+                      <https://top.scientix.ai/core/v1#observedAt> ?tb .
+              FILTER ( ?ta > ?tb )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:realizes .
+
 cr:AssayResultShape a sh:NodeShape ;
     sh:property [ sh:class cr:AnalysisService ;
             sh:message "Assay result must reference the analysis service that produced it." ;
@@ -271,6 +287,43 @@ cr:PIIContainmentShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetObjectsOf cr:forSubject .
 
+cr:PlannedActivityPositionShape a sh:NodeShape ;
+    rdfs:label "Planned activity must be positioned (timing or ordering)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "PlannedActivity has neither a cr:timing nor an ordering edge (cr:precedes); it is unpositioned." ;
+            sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#timing> ?t . }
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#precedes> ?o . }
+              FILTER NOT EXISTS { ?p <https://top.scientix.ai/cr/v1#precedes> $this . }
+            }
+        """ ] ;
+    sh:targetClass cr:PlannedActivity .
+
+cr:PlannedEncounterTimingShape a sh:NodeShape ;
+    rdfs:label "Planned encounter must be positioned" ;
+    sh:property [ sh:message "PlannedEncounter has no cr:timing (an encounter must be positioned on the timeline)." ;
+            sh:minCount 1 ;
+            sh:path cr:timing ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:PlannedEncounter .
+
+cr:PlannedVisitWindowShape a sh:NodeShape ;
+    rdfs:label "Planned visit must carry a resolved target + window" ;
+    sh:property [ sh:message "PlannedVisit has no cr:windowStart." ;
+            sh:minCount 1 ;
+            sh:path cr:windowStart ;
+            sh:severity sh:Violation ],
+        [ sh:message "PlannedVisit has no cr:windowEnd." ;
+            sh:minCount 1 ;
+            sh:path cr:windowEnd ;
+            sh:severity sh:Violation ],
+        [ sh:message "PlannedVisit has no cr:targetDate." ;
+            sh:minCount 1 ;
+            sh:path cr:targetDate ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:PlannedVisit .
+
 cr:PreINDReadinessShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:sparql [ sh:message "Pre-IND meeting lacks a briefing book and/or specific questions (readiness warning)." ;
@@ -393,6 +446,22 @@ cr:VagueQuestionShape a sh:NodeShape ;
             sh:path cr:proposedPosition ;
             sh:severity sh:Warning ] ;
     sh:targetClass cr:RegulatoryQuestion .
+
+cr:VisitWindowShape a sh:NodeShape ;
+    rdfs:label "Visit outside planned window (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Actual visit's observedAt falls outside the planned window of the visit it realizes (out-of-window) — review materiality." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#realizes> ?pv ;
+                    <https://top.scientix.ai/core/v1#observedAt> ?t .
+              ?pv a <https://top.scientix.ai/cr/v1#PlannedVisit> ;
+                  <https://top.scientix.ai/cr/v1#windowStart> ?ws ;
+                  <https://top.scientix.ai/cr/v1#windowEnd> ?we .
+              FILTER ( ?t < ?ws || ?t > ?we )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:realizes .
 
 cx:MappingShape a sh:NodeShape ;
     sh:property [ sh:in ( <https://w3id.org/semapv/vocab/ManualMappingCuration> <https://w3id.org/semapv/vocab/LexicalMatching> <https://w3id.org/semapv/vocab/LogicalReasoning> ) ;
