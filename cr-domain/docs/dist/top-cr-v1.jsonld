@@ -5924,6 +5924,78 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/tmf/v1#CompletenessProfile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "An expected-artifact checklist a TMF is judged complete against: the artifact types it must (essential) and should (recommended) contain. The DIA/ICH essential-documents list as data, reusable across studies."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TMF Completeness Profile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Constraint"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#CoreStartupProfile",
+    "@type": [
+      "https://top.scientix.ai/tmf/v1#CompletenessProfile"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The TMF artifact types expected for a site at activation \u2014 the ICH E6 essential-documents-before-the-trial checklist, as reusable data. Aligned by name to the DIA TMF Reference Model; not transcribed from the licensed model."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Core site start-up essential-documents profile"
+      }
+    ],
+    "https://top.scientix.ai/core/v1#identifier": [
+      {
+        "@value": "tmf:profile/core-startup"
+      }
+    ],
+    "https://top.scientix.ai/core/v1#status": [
+      {
+        "@value": "active"
+      }
+    ],
+    "https://top.scientix.ai/tmf/v1#recommendsArtifactType": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#CurriculumVitae"
+      },
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#MonitoringPlan"
+      }
+    ],
+    "https://top.scientix.ai/tmf/v1#requiresArtifactType": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#ClinicalTrialAgreementDoc"
+      },
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#Form1572"
+      },
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#IRBApprovalLetter"
+      },
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#InformedConsentForm"
+      },
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#Protocol"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/tmf/v1#CurriculumVitae",
     "@type": [
       "https://top.scientix.ai/tmf/v1#TMFArtifactType"
@@ -6013,6 +6085,30 @@
     "https://top.scientix.ai/tmf/v1#records": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Delegation"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A single document instance filed into a TMF, classified to a tmf:TMFArtifactType (whence its content binding). Bitemporal + provenanced: when it became effective (observedAt), when filed (recordedAt), by whom (prov:wasAttributedTo), with lifecycle (top:status: current / superseded / expired)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Filed Artifact"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/core/v1#ProvenancedEntity"
       }
     ]
   },
@@ -6404,6 +6500,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/tmf/v1#TrialMasterFile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The assembled set of filed artifacts evidencing the conduct of one study (the cabinet). Carries the filed set and the completeness profile it is judged against."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Trial Master File"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/core/v1#Evidence"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/tmf/v1#Zone_CentralTrialDocs",
     "@type": [
       "http://www.w3.org/2004/02/skos/core#Concept"
@@ -6536,6 +6653,162 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/tmf/v1#expiresAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "When this filed artifact ceases to be valid (e.g. an IRB approval's expiry). After it, the artifact should carry top:status \"expired\" and no longer satisfies a requirement."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "expires at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#followsProfile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The completeness profile this TMF is judged against."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TrialMasterFile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "follows profile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#CompletenessProfile"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#forStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The study this TMF evidences."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TrialMasterFile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "for study"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#hasFiledArtifact",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A document filed into this TMF (forward edge: the filed set)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TrialMasterFile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "has filed artifact"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#ofType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The artifact type this filed document is classified as \u2014 and thereby the domain class its facts mean (via the type's content binding)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "of type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TMFArtifactType"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#recommendsArtifactType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A RECOMMENDED artifact type: its absence is a reviewable gap (Warning)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#CompletenessProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "recommends artifact type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TMFArtifactType"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/tmf/v1#records",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -6553,6 +6826,58 @@
     "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
       {
         "@id": "https://top.scientix.ai/tmf/v1#concerns"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#requiresArtifactType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "An ESSENTIAL artifact type: its absence (no current filed artifact) is an inspection finding (Violation)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#CompletenessProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "requires artifact type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TMFArtifactType"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#supersedes",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A newer filed version supersedes an older one (the version chain); the superseded one carries top:status \"superseded\"."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "supersedes"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact"
       }
     ]
   }

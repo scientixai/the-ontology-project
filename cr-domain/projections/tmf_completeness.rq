@@ -1,0 +1,20 @@
+# TMF completeness / inspection-readiness report — the expected-vs-filed diff as a query.
+# For each artifact type the TMF's profile expects, is a CURRENT filed artifact present?
+# essentiality distinguishes an inspection finding (essential GAP) from a reviewable gap.
+# This is the manual TMF audit, run as one query over the onboarded graph.
+PREFIX tmf:  <https://top.scientix.ai/tmf/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?artifactType ?essentiality ?status WHERE {
+  ?tmf a tmf:TrialMasterFile ; tmf:followsProfile ?p .
+  {
+    ?p tmf:requiresArtifactType ?at . BIND("essential" AS ?essentiality)
+  } UNION {
+    ?p tmf:recommendsArtifactType ?at . BIND("recommended" AS ?essentiality)
+  }
+  ?at skos:prefLabel ?artifactType .
+  BIND(EXISTS { ?tmf tmf:hasFiledArtifact ?fa . ?fa tmf:ofType ?at ; top:status "current" }
+       AS ?present)
+  BIND(IF(?present, "filed-current", "GAP") AS ?status)
+}
+ORDER BY ?essentiality ?artifactType

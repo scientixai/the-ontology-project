@@ -111,6 +111,15 @@ SPECS = [
       ("Certified copy", "<span class='pill ok'>&#10003; reproduces SD-001</span>"),
       ("Recorded by", "Study coordinator")],
      ["doc-001"]),
+    ("TMF dashboard", "tmf-onboarding-conformant.ttl",
+     "TMF &mdash; inspection readiness", "OPP-101 Trial Master File", "eTMF",
+     [("Trial Master File", "OPP-101 &middot; 8 documents filed"),
+      ("Essential documents", "<span class='pill ok'>5/5 current</span> &mdash; Protocol, IRB, ICF, 1572, CTA"),
+      ("Version control", "Protocol v2.0 current &middot; v1.0 superseded"),
+      ("Recommended", "<span class='pill ok'>2/2</span> &mdash; Monitoring Plan, CV"),
+      ("Inspection status", "<span class='pill ok'>ready</span> &mdash; no essential gaps"),
+      ("Filed by", "Dana Brooks, TMF manager")],
+     ["tmf-opp101"]),
 ]
 
 
@@ -205,6 +214,7 @@ SCREEN_VIEW = {
     "Risk-based monitoring": "rbqm",
     "Deviation &amp; CAPA": "deviation",
     "Essential records": "gcp",
+    "TMF dashboard": "tmf-onboarding",
 }
 
 _VIEW_MOD = None

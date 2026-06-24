@@ -111,6 +111,19 @@
     ]
   },
   {
+    "@id": "_:cb16f727a033a768b13649018aa73fec19e157ec07b1599c412deee828009ece09e",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Recommended TMF artifact type has no current filed artifact \u2014 reviewable completeness gap."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this ?recType WHERE {\n              $this <https://top.scientix.ai/tmf/v1#followsProfile> ?p .\n              ?p <https://top.scientix.ai/tmf/v1#recommendsArtifactType> ?recType .\n              FILTER NOT EXISTS {\n                $this <https://top.scientix.ai/tmf/v1#hasFiledArtifact> ?fa .\n                ?fa <https://top.scientix.ai/tmf/v1#ofType> ?recType ;\n                    <https://top.scientix.ai/core/v1#status> \"current\" .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb173a5627d86c02d46a6be82dfe16240a6999ea7b997b338da1572f3d85c3fbdcd",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -301,6 +314,19 @@
     ]
   },
   {
+    "@id": "_:cb1a8b9c4e375a458f50b8093af3455178349c684e02ced77f1626efdba3ba0a8a3",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Essential TMF artifact type required by the completeness profile has no current filed artifact \u2014 TMF inspection-incomplete."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this ?reqType WHERE {\n              $this <https://top.scientix.ai/tmf/v1#followsProfile> ?p .\n              ?p <https://top.scientix.ai/tmf/v1#requiresArtifactType> ?reqType .\n              FILTER NOT EXISTS {\n                $this <https://top.scientix.ai/tmf/v1#hasFiledArtifact> ?fa .\n                ?fa <https://top.scientix.ai/tmf/v1#ofType> ?reqType ;\n                    <https://top.scientix.ai/core/v1#status> \"current\" .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb1aad94d929e849c00e513de37760752bbbd86db6c671402a9fcfffde2c03b4219",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -484,6 +510,25 @@
     "http://www.w3.org/ns/shacl#severity": [
       {
         "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1d63699400662c162d64e7bfcd41cb77f3633f3cdcfef9d7b84d7cbfb1eb597f5",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Filed artifact has no tmf:ofType \u2014 an unclassified document (cannot bind facts or satisfy a requirement)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#ofType"
       }
     ]
   },
@@ -2869,6 +2914,84 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/tmf/v1#TMFArtifactType"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#FiledArtifactClassifiedShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A filed artifact should be classified to an artifact type (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1d63699400662c162d64e7bfcd41cb77f3633f3cdcfef9d7b84d7cbfb1eb597f5"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#FiledArtifact"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#TMFEssentialCompletenessShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Essential TMF artifact type must have a current filed artifact (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1a8b9c4e375a458f50b8093af3455178349c684e02ced77f1626efdba3ba0a8a3"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TrialMasterFile"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/tmf/v1#TMFRecommendedCompletenessShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Recommended TMF artifact type should have a current filed artifact (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb16f727a033a768b13649018aa73fec19e157ec07b1599c412deee828009ece09e"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/tmf/v1#TrialMasterFile"
       }
     ]
   }

@@ -1,0 +1,66 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED (Violation) — a missing essential document. Every essential type is filed and
+# current EXCEPT the IRB/IEC approval, which has only an EXPIRED filing (status "expired",
+# never renewed). A required type with no CURRENT filed artifact is an inspection finding:
+# tmf:TMFEssentialCompletenessShape raises a Violation. (Expiry is the subtle case the
+# "status must be current" rule catches — the document is on file, but stale.)
+
+ex:inc-mgr   a hcls:Practitioner ; rdfs:label "Dana Brooks, TMF manager" .
+ex:sponsor-inc a cr:Sponsor ; rdfs:label "Acme Oncology" .
+ex:site-inc    a cr:StudySite ; rdfs:label "Denver Cancer Center" .
+ex:elig-inc    a cr:EligibilityCriterion ; rdfs:label "ECOG 0-1" .
+ex:pv-inc a cr:ProtocolVersion ; top:identifier "OPP-101 v1.0" ; top:status "effective" ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr ; cr:hasEligibilityCriterion ex:elig-inc .
+ex:study-inc a cr:Study ; top:identifier "OPP-101" ; rdfs:label "OPP-101 (Phase 1 FIH)" ;
+    cr:sponsoredBy ex:sponsor-inc ; cr:conductedAt ex:site-inc ; cr:hasProtocolVersion ex:pv-inc .
+
+ex:tmf-inc a tmf:TrialMasterFile ;
+    top:identifier "TMF:OPP-101-inc" ; rdfs:label "OPP-101 TMF (incomplete)" ;
+    tmf:forStudy ex:study-inc ;
+    tmf:followsProfile tmf:CoreStartupProfile ;
+    tmf:hasFiledArtifact
+        ex:fai-protocol , ex:fai-irb-expired , ex:fai-icf , ex:fai-1572 , ex:fai-cta ,
+        ex:fai-monplan , ex:fai-cv .
+
+ex:fai-protocol a tmf:FiledArtifact ; rdfs:label "Protocol v1.0" ;
+    top:identifier "FA:i-protocol" ; top:status "current" ; tmf:ofType tmf:Protocol ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .
+
+# The gap: IRB approval is on file but EXPIRED — no current filing of this essential type.
+ex:fai-irb-expired a tmf:FiledArtifact ; rdfs:label "IRB approval letter (lapsed)" ;
+    top:identifier "FA:i-irb" ; top:status "expired" ; tmf:ofType tmf:IRBApprovalLetter ;
+    tmf:expiresAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2025-06-02T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .
+
+ex:fai-icf a tmf:FiledArtifact ; rdfs:label "Informed consent form v2.0" ;
+    top:identifier "FA:i-icf" ; top:status "current" ; tmf:ofType tmf:InformedConsentForm ;
+    top:observedAt "2026-01-18T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-18T11:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .
+ex:fai-1572 a tmf:FiledArtifact ; rdfs:label "Form FDA 1572 (signed)" ;
+    top:identifier "FA:i-1572" ; top:status "current" ; tmf:ofType tmf:Form1572 ;
+    top:observedAt "2026-01-12T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-12T15:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .
+ex:fai-cta a tmf:FiledArtifact ; rdfs:label "Clinical trial agreement (executed)" ;
+    top:identifier "FA:i-cta" ; top:status "current" ; tmf:ofType tmf:ClinicalTrialAgreementDoc ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-20T16:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .
+
+ex:fai-monplan a tmf:FiledArtifact ; rdfs:label "Monitoring plan v1.0" ;
+    top:identifier "FA:i-monplan" ; top:status "current" ; tmf:ofType tmf:MonitoringPlan ;
+    top:observedAt "2026-01-22T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-22T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .
+ex:fai-cv a tmf:FiledArtifact ; rdfs:label "Principal investigator CV" ;
+    top:identifier "FA:i-cv" ; top:status "current" ; tmf:ofType tmf:CurriculumVitae ;
+    top:observedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-10T08:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inc-mgr .

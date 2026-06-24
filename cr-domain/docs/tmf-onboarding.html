@@ -1,0 +1,716 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] TMF onboarding &amp; completeness</title><style>
+:root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{display:flex;max-width:1200px;margin:0 auto}
+nav{position:sticky;top:0;align-self:flex-start;width:240px;padding:24px 18px;height:100vh;overflow:auto;font-size:13px;border-right:1px solid var(--line)}
+nav b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 5px}
+nav a{display:block;color:var(--sec);padding:3px 0}
+nav a.on{color:var(--acc);font-weight:700}
+.brandmark{padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.toplogo{width:172px;height:auto;display:block}
+.brandsub{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:var(--mut);margin-top:8px;letter-spacing:.02em}
+main{flex:1;padding:26px 40px;max-width:900px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);margin:34px 0 12px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
+h4{margin:0 0 6px;font-size:15px}
+.lead{background:#fff;border-left:3px solid var(--acc);padding:14px 18px;margin:0 0 14px;font-size:15px;line-height:1.6}
+.tag{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--acc);font-size:12px;margin:0 0 16px}
+.muted{color:var(--mut)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:3px;padding:15px}.card h4{color:var(--acc)}
+.step{display:flex;gap:14px;margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:3px;padding:15px}
+.step .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+pre{background:#fafaf6;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:0 3px 3px 0;color:var(--sec);padding:13px 16px;overflow:auto;font:12px/1.7 ui-monospace,"SF Mono",Menlo,monospace}
+pre .c{color:#888;font-style:italic}
+code{background:var(--pale);border-radius:3px;padding:1px 5px;font:12px ui-monospace,"SF Mono",Menlo,monospace}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{text-align:left;padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+th{background:var(--pale);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+table.map td:first-child{color:var(--mut)}.ref td.clo{color:var(--acc);font-size:12px;white-space:nowrap;font-family:ui-monospace,Menlo,monospace}
+.ref ul,td ul{margin:0;padding-left:16px}
+.sev{font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px}
+.sev.violation{background:#f4e3e4;color:var(--danger)}.sev.warning{background:#f4ebd9;color:var(--warn)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 0}.stats div{background:#fff;border:1px solid var(--line);border-radius:3px;padding:8px 14px;font-size:12px;color:var(--mut)}.stats b{display:block;font-size:20px;color:var(--acc)}
+.note{background:#f4faf7;border:1px solid #cde4d8;border-left:3px solid var(--ok);border-radius:0 3px 3px 0;padding:12px 15px}
+.flowgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.flowgrid a{display:block;background:#fff;border:1px solid var(--line);border-radius:3px;padding:13px 15px;color:var(--sec)}
+.flowgrid a:hover{border-color:var(--acc);text-decoration:none}.flowgrid b{color:var(--acc)}
+footer{color:var(--mut);font-size:12px;margin:44px 0 20px;border-top:1px solid var(--line);padding-top:14px}
+.masthead{background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 18px;margin:0 0 18px}
+dl.mast{display:grid;grid-template-columns:130px 1fr;gap:4px 14px;margin:0 0 12px;font-size:13px}
+dl.mast dt{color:var(--mut);text-transform:uppercase;font-size:11px;letter-spacing:.04em;padding-top:2px}
+dl.mast dd{margin:0}
+.downloads{border-top:1px solid var(--line);padding-top:12px}
+.dlhead{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:5px 0}
+.dllabel{font-size:12px;color:var(--sec);width:96px;flex:none}
+a.fmt{display:inline-block;font:11px ui-monospace,Menlo,monospace;background:var(--pale);border:1px solid var(--line);border-radius:3px;padding:2px 9px;color:var(--acc)}
+a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:var(--acc)}
+.citeas{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;font-size:13px;color:var(--sec)}
+.citeas.attribution{font-size:12px;color:var(--mut)}
+
+.trainline{display:flex;align-items:center;flex-wrap:wrap;gap:4px 0;margin:14px 0 26px}
+.tstop{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--mut);white-space:nowrap}
+.tstop.live{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.trail{width:14px;height:2px;background:var(--accent);opacity:.55}
+.splitstop{margin:22px 0}
+.stopname{margin:0 0 8px;color:var(--ink)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06)}
+.scr-head{background:linear-gradient(180deg,#0e7490,#0b5563);color:#fff;padding:12px 14px;font-weight:600;position:relative}
+.scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
+.badge{position:absolute;right:12px;top:12px;background:rgba(255,255,255,.2);font-size:11px;padding:2px 8px;border-radius:10px}
+.scr-row{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;border-top:1px solid var(--line);font-size:14px}
+.scr-row span{color:var(--mut)}
+.muted{color:var(--mut);font-weight:400;font-size:12px}
+.pill{font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px}
+.pill.ok{background:#e7f6ee;color:var(--ok)}.pill.warn{background:#fdf4e3;color:var(--warn)}
+.jsoncap{font-size:12px;color:var(--mut);margin:10px 0 4px}
+.jsoncap:first-child{margin-top:0}
+pre.json{margin:0;max-height:420px}
+pre.json.q{max-height:none;background:#0b2530;color:#cde8ef;border-color:#0b2530}
+p.principle{background:var(--pale);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px}
+.chk-intro{padding:8px 14px;font-size:12px;color:var(--mut);background:var(--pale);border-top:1px solid var(--line)}
+.chk{border-top:1px solid var(--line);padding:9px 14px}
+.chk-head{display:flex;align-items:center;gap:8px;font-size:14px}
+.chk .ck{color:var(--ok);font-weight:700}
+.chk .who{margin-left:auto;font-size:12px;color:var(--mut);white-space:nowrap}
+.chk details{margin-top:5px}
+.chk summary{cursor:pointer;font-size:12px;color:var(--accent);list-style:none}
+.chk summary::-webkit-details-marker{display:none}
+.chk summary::before{content:'\25B8 ';color:var(--accent)}
+.chk details[open] summary::before{content:'\25BE '}
+table.prov{width:100%;border-collapse:collapse;margin:6px 0 2px}
+table.prov td{border-top:1px solid var(--line);padding:4px 6px;font-size:12px;color:var(--ink);vertical-align:top}
+table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+.draft-ribbon{position:fixed;top:16px;right:-52px;transform:rotate(45deg);background:#b00020;color:#fff;font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;padding:6px 60px;z-index:2000;box-shadow:0 1px 5px rgba(0,0,0,.3)}.draft-banner{background:#fff3f3;border-bottom:1px solid #b00020;color:#7a0016;font:600 12px/1.5 ui-sans-serif,system-ui,sans-serif;text-align:center;padding:8px 14px}.draft-banner b{letter-spacing:.08em}</style></head><body><div class='draft-ribbon'>DRAFT</div><div class='draft-banner'><b>DRAFT &mdash; PRE-RELEASE.</b> The TOP Clinical Research reference graph is a work in progress and not yet finalized; content, identifiers, and constraints may change.</div><div class='wrap'><nav><div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div><b>Start</b>
+<a class="" href="index.html">Overview</a>
+<a class="" href="foundation.html">Foundation</a>
+<a class="" href="implementation.html">Implementation guide</a>
+<b>Flows / sub-domains</b>
+<a class="" href="setup.html">Study &amp; site set-up</a>
+<a class="" href="startup-package.html">Study start-up package</a>
+<a class="" href="delegation.html">Delegation &amp; attestation</a>
+<a class="" href="enrollment.html">Enrollment &amp; consent</a>
+<a class="" href="schedule.html">Schedule of Activities</a>
+<a class="" href="edc.html">Data capture (EDC) &amp; fidelity</a>
+<a class="" href="lims.html">Biospecimen &amp; LIMS custody</a>
+<a class="" href="safety.html">Safety &amp; pharmacovigilance</a>
+<a class="" href="rbqm.html">Risk-based monitoring (RBQM)</a>
+<a class="" href="deviation.html">Deviations &amp; CAPA</a>
+<a class="" href="preind.html">Pre-IND gate</a>
+<a class="" href="eop2.html">EOP2 &amp; analysis</a>
+<a class="" href="gcp.html">GCP &amp; essential records</a>
+<a class="" href="tmf.html">TMF document binding</a>
+<a class="on" href="tmf-onboarding.html">TMF onboarding &amp; completeness</a>
+<a class="" href="interop.html">Interoperability</a>
+<b>Detail</b>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>TMF onboarding &amp; completeness</h1><p class='lead'>Onboard a customer&#8217;s filing cabinet: each document classified to its artifact type and given the bitemporal + provenance envelope, then judged against an essential-documents checklist &mdash; so &#8220;is my TMF inspection-ready?&#8221; becomes a query and a shape, not a manual audit.</p><h2>Operator screen &mdash; TMF dashboard</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">TMF &mdash; inspection readiness<span class="badge">eTMF</span><div class="scr-sub">OPP-101 Trial Master File</div></div><div class="scr-row"><span>Trial Master File</span><b>OPP-101 &middot; 8 documents filed</b></div><div class="scr-row"><span>Essential documents</span><b><span class='pill ok'>5/5 current</span> &mdash; Protocol, IRB, ICF, 1572, CTA</b></div><div class="scr-row"><span>Version control</span><b>Protocol v2.0 current &middot; v1.0 superseded</b></div><div class="scr-row"><span>Recommended</span><b><span class='pill ok'>2/2</span> &mdash; Monitoring Plan, CV</b></div><div class="scr-row"><span>Inspection status</span><b><span class='pill ok'>ready</span> &mdash; no essential gaps</b></div><div class="scr-row"><span>Filed by</span><b>Dana Brooks, TMF manager</b></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:tmf-opp101?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:TMFDashboardView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:tmf-opp101&quot;,
+  &quot;type&quot;: &quot;TrialMasterFile&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;OPP-101 Trial Master File&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;TMF:OPP-101&quot;
+  },
+  &quot;study&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:study-tmf&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:study-tmf&quot;,
+      &quot;type&quot;: &quot;Study&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;OPP-101 (Phase 1 FIH)&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;OPP-101&quot;
+      }
+    }
+  },
+  &quot;profile&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:CoreStartupProfile&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:CoreStartupProfile&quot;,
+      &quot;type&quot;: &quot;CompletenessProfile&quot;,
+      &quot;comment&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;The TMF artifact types expected for a site at activation \u2014 the ICH E6 essential-documents-before-the-trial checklist, as reusable data. Aligned by name to the DIA TMF Reference Model; not transcribed from the licensed model.&quot;
+      },
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Core site start-up essential-documents profile&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;tmf:profile/core-startup&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;requires&quot;: [
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:ClinicalTrialAgreementDoc&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:ClinicalTrialAgreementDoc&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Clinical Trial Agreement (artifact)&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Clinical Trial Agreement&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:Form1572&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:Form1572&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Form FDA 1572&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Form FDA 1572&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:IRBApprovalLetter&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:IRBApprovalLetter&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;IRB/IEC Approval Letter&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;IRB/IEC Approval Letter&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:InformedConsentForm&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:InformedConsentForm&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Informed Consent Form&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Informed Consent Form&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:Protocol&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:Protocol&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol&quot;
+            }
+          }
+        }
+      ],
+      &quot;recommends&quot;: [
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:CurriculumVitae&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:CurriculumVitae&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Curriculum Vitae&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Curriculum Vitae&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:MonitoringPlan&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:MonitoringPlan&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Monitoring Plan&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Monitoring Plan&quot;
+            }
+          }
+        }
+      ]
+    }
+  },
+  &quot;filed&quot;: [
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-1572&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-1572&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Form FDA 1572 (signed)&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:1572&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-12T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-12T15:00:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:Form1572&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:Form1572&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Form FDA 1572&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Form FDA 1572&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-cta&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-cta&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Clinical trial agreement (executed)&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:cta&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-20T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-20T16:30:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:ClinicalTrialAgreementDoc&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:ClinicalTrialAgreementDoc&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Clinical Trial Agreement (artifact)&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Clinical Trial Agreement&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-cv&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-cv&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Principal investigator CV&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:cv&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-10T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-10T08:30:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:CurriculumVitae&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:CurriculumVitae&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Curriculum Vitae&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Curriculum Vitae&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-icf&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-icf&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Informed consent form v2.0&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:icf&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-18T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-18T11:00:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:InformedConsentForm&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:InformedConsentForm&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Informed Consent Form&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Informed Consent Form&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-irb&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-irb&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;IRB approval letter&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:irb&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-15T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-16T09:00:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;expiresAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2027-01-15T00:00:00+00:00&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:IRBApprovalLetter&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:IRBApprovalLetter&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;IRB/IEC Approval Letter&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;IRB/IEC Approval Letter&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-monplan&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-monplan&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Monitoring plan v1.0&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:monplan&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-22T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-22T10:00:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:MonitoringPlan&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:MonitoringPlan&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Monitoring Plan&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Monitoring Plan&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-protocol-v1&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-protocol-v1&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Protocol v1.0 (original)&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:protocol-v1&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-01-05T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-01-05T10:00:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;superseded&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:Protocol&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:Protocol&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:fa-protocol-v2&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:fa-protocol-v2&quot;,
+        &quot;type&quot;: &quot;FiledArtifact&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Protocol v2.0 (amended)&quot;
+        },
+        &quot;identifier&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;FA:protocol-v2&quot;
+        },
+        &quot;observedAt&quot;: &quot;2026-02-20T00:00:00+00:00&quot;,
+        &quot;recordedAt&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2026-02-20T14:00:00+00:00&quot;
+        },
+        &quot;status&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;current&quot;
+        },
+        &quot;ofType&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:Protocol&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:Protocol&quot;,
+            &quot;type&quot;: &quot;TMFArtifactType&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol&quot;
+            },
+            &quot;prefLabel&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Protocol&quot;
+            }
+          }
+        },
+        &quot;filedBy&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tmf-mgr&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tmf-mgr&quot;,
+            &quot;type&quot;: &quot;Practitioner&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Dana Brooks, TMF manager&quot;
+            }
+          }
+        }
+      }
+    }
+  ]
+}</pre></div></div></div><p class='note'>Builds on the TMF binding map: a filed document inherits its artifact type&#8217;s content binding, so completeness and comprehension share one model. The expected set is reusable data &mdash; the DIA/ICH essential-documents checklist as a <code>tmf:CompletenessProfile</code>; a <i>current</i> filing satisfies a requirement, a superseded or expired one does not. The single pull returns the expected set <i>and</i> the filed set, so the dashboard diffs them at the glass. Classifying real PDFs and extracting their facts stays the consuming system&#8217;s job.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>tmf:FiledArtifact</code></td><td>Filed Artifact</td><td class='clo'>Evidence</td><td>A single document instance filed into a TMF, classified to a tmf:TMFArtifactType (whence its content binding). Bitemporal + provenanced: when it became effective (observedAt), when filed (recordedAt), by whom (prov:wasAttributedTo), with lifecycle (top:status: current / superseded / expired).</td></tr><tr><td><code>tmf:CompletenessProfile</code></td><td>TMF Completeness Profile</td><td class='clo'>Constraint</td><td>An expected-artifact checklist a TMF is judged complete against: the artifact types it must (essential) and should (recommended) contain. The DIA/ICH essential-documents list as data, reusable across studies.</td></tr><tr><td><code>tmf:TrialMasterFile</code></td><td>Trial Master File</td><td class='clo'>Evidence</td><td>The assembled set of filed artifacts evidencing the conduct of one study (the cabinet). Carries the filed set and the completeness profile it is judged against.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>tmf:TMFEssentialCompletenessShape</code></td><td><code>tmf:TrialMasterFile</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Essential TMF artifact type required by the completeness profile has no current filed artifact — TMF inspection-incomplete.</li></ul></td></tr><tr><td><code>tmf:TMFRecommendedCompletenessShape</code></td><td><code>tmf:TrialMasterFile</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Recommended TMF artifact type has no current filed artifact — reviewable completeness gap.</li></ul></td></tr><tr><td><code>tmf:FiledArtifactClassifiedShape</code></td><td><code>tmf:FiledArtifact</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Filed artifact has no tmf:ofType — an unclassified document (cannot bind facts or satisfy a requirement).</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>tmf_completeness.rq</code></td><td>TMF completeness / inspection-readiness report — the expected-vs-filed diff as a query. For each artifact type the TMF&#x27;s profile expects, is a CURRENT filed artifact present? essentiality distinguishes an inspection finding (essential GAP) from a reviewable gap. This is the manual TMF audit, run as one query over the onboarded graph.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>

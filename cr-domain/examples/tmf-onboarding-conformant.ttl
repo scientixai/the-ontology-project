@@ -1,0 +1,77 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WORKED EXAMPLE — TMF onboarding, complete (conform).
+# A customer's filing cabinet for one site/study, onboarded: each filed document is
+# classified to an artifact type and carries the bitemporal + provenance envelope. The
+# TMF is judged against tmf:CoreStartupProfile (the essential-documents checklist). Every
+# ESSENTIAL type has a CURRENT filed artifact (incl. a superseded older Protocol version,
+# proving onboarding handles versions), and both RECOMMENDED types are filed too —
+# so the completeness shapes raise nothing. Inspection-ready, by construction.
+
+ex:tmf-mgr   a hcls:Practitioner ; rdfs:label "Dana Brooks, TMF manager" .
+ex:sponsor-tmf a cr:Sponsor ; rdfs:label "Acme Oncology" .
+ex:site-tmf    a cr:StudySite ; rdfs:label "Denver Cancer Center" .
+ex:elig-tmf    a cr:EligibilityCriterion ; rdfs:label "ECOG 0-1" .
+ex:pv-tmf a cr:ProtocolVersion ; top:identifier "OPP-101 v2.0" ; top:status "effective" ;
+    top:observedAt "2026-02-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-20T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr ; cr:hasEligibilityCriterion ex:elig-tmf .
+ex:study-tmf a cr:Study ; top:identifier "OPP-101" ; rdfs:label "OPP-101 (Phase 1 FIH)" ;
+    cr:sponsoredBy ex:sponsor-tmf ; cr:conductedAt ex:site-tmf ; cr:hasProtocolVersion ex:pv-tmf .
+
+ex:tmf-opp101 a tmf:TrialMasterFile ;
+    top:identifier "TMF:OPP-101" ; rdfs:label "OPP-101 Trial Master File" ;
+    tmf:forStudy ex:study-tmf ;
+    tmf:followsProfile tmf:CoreStartupProfile ;
+    tmf:hasFiledArtifact
+        ex:fa-protocol-v2 , ex:fa-protocol-v1 ,
+        ex:fa-irb , ex:fa-icf , ex:fa-1572 , ex:fa-cta ,
+        ex:fa-monplan , ex:fa-cv .
+
+# --- Essential: Protocol (current v2 supersedes filed v1) ---
+ex:fa-protocol-v2 a tmf:FiledArtifact ; rdfs:label "Protocol v2.0 (amended)" ;
+    top:identifier "FA:protocol-v2" ; top:status "current" ; tmf:ofType tmf:Protocol ;
+    tmf:supersedes ex:fa-protocol-v1 ;
+    top:observedAt "2026-02-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-20T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+ex:fa-protocol-v1 a tmf:FiledArtifact ; rdfs:label "Protocol v1.0 (original)" ;
+    top:identifier "FA:protocol-v1" ; top:status "superseded" ; tmf:ofType tmf:Protocol ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+
+# --- Essential: IRB approval (current, with an expiry) ---
+ex:fa-irb a tmf:FiledArtifact ; rdfs:label "IRB approval letter" ;
+    top:identifier "FA:irb" ; top:status "current" ; tmf:ofType tmf:IRBApprovalLetter ;
+    tmf:expiresAt "2027-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-16T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+
+# --- Essential: ICF, Form 1572, CTA (all current) ---
+ex:fa-icf a tmf:FiledArtifact ; rdfs:label "Informed consent form v2.0" ;
+    top:identifier "FA:icf" ; top:status "current" ; tmf:ofType tmf:InformedConsentForm ;
+    top:observedAt "2026-01-18T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-18T11:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+ex:fa-1572 a tmf:FiledArtifact ; rdfs:label "Form FDA 1572 (signed)" ;
+    top:identifier "FA:1572" ; top:status "current" ; tmf:ofType tmf:Form1572 ;
+    top:observedAt "2026-01-12T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-12T15:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+ex:fa-cta a tmf:FiledArtifact ; rdfs:label "Clinical trial agreement (executed)" ;
+    top:identifier "FA:cta" ; top:status "current" ; tmf:ofType tmf:ClinicalTrialAgreementDoc ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-20T16:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+
+# --- Recommended: Monitoring Plan, CV (both current) ---
+ex:fa-monplan a tmf:FiledArtifact ; rdfs:label "Monitoring plan v1.0" ;
+    top:identifier "FA:monplan" ; top:status "current" ; tmf:ofType tmf:MonitoringPlan ;
+    top:observedAt "2026-01-22T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-22T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .
+ex:fa-cv a tmf:FiledArtifact ; rdfs:label "Principal investigator CV" ;
+    top:identifier "FA:cv" ; top:status "current" ; tmf:ofType tmf:CurriculumVitae ;
+    top:observedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-10T08:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:tmf-mgr .

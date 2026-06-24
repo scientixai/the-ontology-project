@@ -1,0 +1,61 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# TMF COMPLETENESS — inspection-readiness as graded shapes over the assembled file.
+# "Complete" means: for every artifact type the followed profile requires, the TMF holds
+# a CURRENT filed artifact of that type. A type with only a superseded/expired filing does
+# NOT satisfy the requirement (status must be "current"). The check is an absence test, so
+# it is a SPARQL constraint (FILTER NOT EXISTS), like the start-up activation gate.
+
+# (1) ESSENTIAL gap (Violation): a required artifact type has no current filed artifact.
+#     This is the inspection finding — a missing essential document.
+tmf:TMFEssentialCompletenessShape a sh:NodeShape ;
+    rdfs:label "Essential TMF artifact type must have a current filed artifact (hard)" ;
+    sh:targetClass tmf:TrialMasterFile ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "Essential TMF artifact type required by the completeness profile has no current filed artifact — TMF inspection-incomplete." ;
+        sh:select """
+            SELECT $this ?reqType WHERE {
+              $this <https://top.scientix.ai/tmf/v1#followsProfile> ?p .
+              ?p <https://top.scientix.ai/tmf/v1#requiresArtifactType> ?reqType .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/tmf/v1#hasFiledArtifact> ?fa .
+                ?fa <https://top.scientix.ai/tmf/v1#ofType> ?reqType ;
+                    <https://top.scientix.ai/core/v1#status> "current" .
+              }
+            }
+        """ ] .
+
+# (2) RECOMMENDED gap (Warning): a recommended artifact type has no current filed artifact.
+#     A reviewable completeness gap, not an inspection failure.
+tmf:TMFRecommendedCompletenessShape a sh:NodeShape ;
+    rdfs:label "Recommended TMF artifact type should have a current filed artifact (warning)" ;
+    sh:targetClass tmf:TrialMasterFile ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Recommended TMF artifact type has no current filed artifact — reviewable completeness gap." ;
+        sh:select """
+            SELECT $this ?recType WHERE {
+              $this <https://top.scientix.ai/tmf/v1#followsProfile> ?p .
+              ?p <https://top.scientix.ai/tmf/v1#recommendsArtifactType> ?recType .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/tmf/v1#hasFiledArtifact> ?fa .
+                ?fa <https://top.scientix.ai/tmf/v1#ofType> ?recType ;
+                    <https://top.scientix.ai/core/v1#status> "current" .
+              }
+            }
+        """ ] .
+
+# (3) UNCLASSIFIED filing (Warning): a filed document with no artifact type — an onboarding
+#     hygiene nudge. It is in the cabinet but not classified, so its facts cannot be bound
+#     to the domain and it cannot satisfy any requirement.
+tmf:FiledArtifactClassifiedShape a sh:NodeShape ;
+    rdfs:label "A filed artifact should be classified to an artifact type (warning)" ;
+    sh:targetClass tmf:FiledArtifact ;
+    sh:severity sh:Warning ;
+    sh:property [
+        sh:path tmf:ofType ; sh:minCount 1 ;
+        sh:message "Filed artifact has no tmf:ofType — an unclassified document (cannot bind facts or satisfy a requirement)." ] .

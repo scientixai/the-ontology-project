@@ -1,0 +1,85 @@
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# TMF ONBOARDING + COMPLETENESS — the day-one journey, built on the binding map.
+#
+# tmf-reference.ttl is the MAP (artifact TYPE -> domain class). This module is the
+# FILE: a customer's actual filing cabinet expressed as filed-document instances,
+# each classified to an artifact type (so it inherits that type's content binding to
+# the domain), plus the EXPECTED set — the essential-documents checklist — so
+# "is my TMF inspection-ready?" becomes a query and a shape, not a manual audit.
+#
+# Three moving parts:
+#   1. tmf:TrialMasterFile  — the assembled TMF for a study (the cabinet).
+#   2. tmf:FiledArtifact    — one filed document instance (provenanced; bitemporal).
+#   3. tmf:CompletenessProfile — the expected artifact types (essential + recommended);
+#      the ICH E6 "essential documents" checklist as data, aligned by name to the DIA
+#      TMF Reference Model (licensed; named, not transcribed — see tmf-reference.ttl).
+#
+# The COMMONS owns the cabinet, the filed-document envelope, and the checklist. The
+# runtime that classifies a real PDF, extracts its facts, and asserts provenance is the
+# consuming system — out of scope here, exactly as in the binding map.
+
+#################################################################
+# Classes
+#################################################################
+tmf:TrialMasterFile a owl:Class ; rdfs:subClassOf top:Evidence ;
+    rdfs:label "Trial Master File" ;
+    rdfs:comment "The assembled set of filed artifacts evidencing the conduct of one study (the cabinet). Carries the filed set and the completeness profile it is judged against." .
+
+tmf:FiledArtifact a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+    rdfs:label "Filed Artifact" ;
+    rdfs:comment "A single document instance filed into a TMF, classified to a tmf:TMFArtifactType (whence its content binding). Bitemporal + provenanced: when it became effective (observedAt), when filed (recordedAt), by whom (prov:wasAttributedTo), with lifecycle (top:status: current / superseded / expired)." .
+
+tmf:CompletenessProfile a owl:Class ; rdfs:subClassOf top:Constraint ;
+    rdfs:label "TMF Completeness Profile" ;
+    rdfs:comment "An expected-artifact checklist a TMF is judged complete against: the artifact types it must (essential) and should (recommended) contain. The DIA/ICH essential-documents list as data, reusable across studies." .
+
+#################################################################
+# Object properties (forward edges — single-pull join=inline friendly)
+#################################################################
+tmf:forStudy a owl:ObjectProperty ; rdfs:domain tmf:TrialMasterFile ; rdfs:range cr:Study ;
+    rdfs:label "for study" ; rdfs:comment "The study this TMF evidences." .
+tmf:followsProfile a owl:ObjectProperty ; rdfs:domain tmf:TrialMasterFile ; rdfs:range tmf:CompletenessProfile ;
+    rdfs:label "follows profile" ; rdfs:comment "The completeness profile this TMF is judged against." .
+tmf:hasFiledArtifact a owl:ObjectProperty ; rdfs:domain tmf:TrialMasterFile ; rdfs:range tmf:FiledArtifact ;
+    rdfs:label "has filed artifact" ; rdfs:comment "A document filed into this TMF (forward edge: the filed set)." .
+
+tmf:ofType a owl:ObjectProperty ; rdfs:domain tmf:FiledArtifact ; rdfs:range tmf:TMFArtifactType ;
+    rdfs:label "of type" ; rdfs:comment "The artifact type this filed document is classified as — and thereby the domain class its facts mean (via the type's content binding)." .
+tmf:supersedes a owl:ObjectProperty ; rdfs:domain tmf:FiledArtifact ; rdfs:range tmf:FiledArtifact ;
+    rdfs:label "supersedes" ; rdfs:comment "A newer filed version supersedes an older one (the version chain); the superseded one carries top:status \"superseded\"." .
+
+tmf:requiresArtifactType a owl:ObjectProperty ; rdfs:domain tmf:CompletenessProfile ; rdfs:range tmf:TMFArtifactType ;
+    rdfs:label "requires artifact type" ; rdfs:comment "An ESSENTIAL artifact type: its absence (no current filed artifact) is an inspection finding (Violation)." .
+tmf:recommendsArtifactType a owl:ObjectProperty ; rdfs:domain tmf:CompletenessProfile ; rdfs:range tmf:TMFArtifactType ;
+    rdfs:label "recommends artifact type" ; rdfs:comment "A RECOMMENDED artifact type: its absence is a reviewable gap (Warning)." .
+
+#################################################################
+# Datatype properties
+#################################################################
+tmf:expiresAt a owl:DatatypeProperty ; rdfs:domain tmf:FiledArtifact ; rdfs:range xsd:dateTime ;
+    rdfs:label "expires at" ; rdfs:comment "When this filed artifact ceases to be valid (e.g. an IRB approval's expiry). After it, the artifact should carry top:status \"expired\" and no longer satisfies a requirement." .
+
+#################################################################
+# Reference data: the core site start-up essential-documents profile
+# (ICH E6 'essential documents before the trial begins', as data; DIA-named)
+#################################################################
+tmf:CoreStartupProfile a tmf:CompletenessProfile ;
+    top:identifier "tmf:profile/core-startup" ; top:status "active" ;
+    rdfs:label "Core site start-up essential-documents profile" ;
+    rdfs:comment "The TMF artifact types expected for a site at activation — the ICH E6 essential-documents-before-the-trial checklist, as reusable data. Aligned by name to the DIA TMF Reference Model; not transcribed from the licensed model." ;
+    tmf:requiresArtifactType
+        tmf:Protocol ,
+        tmf:IRBApprovalLetter ,
+        tmf:InformedConsentForm ,
+        tmf:Form1572 ,
+        tmf:ClinicalTrialAgreementDoc ;
+    tmf:recommendsArtifactType
+        tmf:MonitoringPlan ,
+        tmf:CurriculumVitae .

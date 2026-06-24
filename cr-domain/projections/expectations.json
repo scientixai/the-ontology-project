@@ -1,5 +1,22 @@
 [
   {
+    "query": "projections/tmf_completeness.rq",
+    "desc": "TMF completeness report: every essential artifact type filed-current in a complete TMF",
+    "source": "examples/tmf-onboarding-conformant.ttl",
+    "expect_rows": [
+      { "artifactType": "Protocol", "essentiality": "essential", "status": "filed-current" },
+      { "artifactType": "IRB/IEC Approval Letter", "essentiality": "essential", "status": "filed-current" }
+    ]
+  },
+  {
+    "query": "projections/tmf_completeness.rq",
+    "desc": "TMF completeness report detects the essential GAP (IRB approval only expired, not current)",
+    "source": "examples/tmf-incomplete-violation.ttl",
+    "expect_rows": [
+      { "artifactType": "IRB/IEC Approval Letter", "essentiality": "essential", "status": "GAP" }
+    ]
+  },
+  {
     "query": "projections/deviation_lineage.rq",
     "desc": "deviation lineage traces CAPA -> deviation -> antecedent -> CtQ factor",
     "source": "examples/deviation-conformant.ttl",

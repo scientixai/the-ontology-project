@@ -572,3 +572,45 @@ cx:MappingShape a sh:NodeShape ;
             sh:severity sh:Warning ] ;
     sh:targetClass <https://top.scientix.ai/tmf/v1#TMFArtifactType> .
 
+<https://top.scientix.ai/tmf/v1#FiledArtifactClassifiedShape> a sh:NodeShape ;
+    rdfs:label "A filed artifact should be classified to an artifact type (warning)" ;
+    sh:property [ sh:message "Filed artifact has no tmf:ofType — an unclassified document (cannot bind facts or satisfy a requirement)." ;
+            sh:minCount 1 ;
+            sh:path <https://top.scientix.ai/tmf/v1#ofType> ] ;
+    sh:severity sh:Warning ;
+    sh:targetClass <https://top.scientix.ai/tmf/v1#FiledArtifact> .
+
+<https://top.scientix.ai/tmf/v1#TMFEssentialCompletenessShape> a sh:NodeShape ;
+    rdfs:label "Essential TMF artifact type must have a current filed artifact (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Essential TMF artifact type required by the completeness profile has no current filed artifact — TMF inspection-incomplete." ;
+            sh:select """
+            SELECT $this ?reqType WHERE {
+              $this <https://top.scientix.ai/tmf/v1#followsProfile> ?p .
+              ?p <https://top.scientix.ai/tmf/v1#requiresArtifactType> ?reqType .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/tmf/v1#hasFiledArtifact> ?fa .
+                ?fa <https://top.scientix.ai/tmf/v1#ofType> ?reqType ;
+                    <https://top.scientix.ai/core/v1#status> "current" .
+              }
+            }
+        """ ] ;
+    sh:targetClass <https://top.scientix.ai/tmf/v1#TrialMasterFile> .
+
+<https://top.scientix.ai/tmf/v1#TMFRecommendedCompletenessShape> a sh:NodeShape ;
+    rdfs:label "Recommended TMF artifact type should have a current filed artifact (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Recommended TMF artifact type has no current filed artifact — reviewable completeness gap." ;
+            sh:select """
+            SELECT $this ?recType WHERE {
+              $this <https://top.scientix.ai/tmf/v1#followsProfile> ?p .
+              ?p <https://top.scientix.ai/tmf/v1#recommendsArtifactType> ?recType .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/tmf/v1#hasFiledArtifact> ?fa .
+                ?fa <https://top.scientix.ai/tmf/v1#ofType> ?recType ;
+                    <https://top.scientix.ai/core/v1#status> "current" .
+              }
+            }
+        """ ] ;
+    sh:targetClass <https://top.scientix.ai/tmf/v1#TrialMasterFile> .
+

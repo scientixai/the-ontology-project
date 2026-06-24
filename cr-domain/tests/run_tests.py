@@ -436,6 +436,19 @@ def view_checks(failures):
           and gc["tmf"]["object"] == "urn:tmf-001"
           and gc["certifiedCopy"]["object"] == "urn:cc-001")
 
+    # TMF onboarding dashboard — the EXPECTED set (profile) and the FILED set in ONE pull,
+    # so the screen diffs expected-vs-filed at the glass (inspection-readiness, no 2nd call).
+    tm = mod.build_view("tmf-onboarding")
+    req = {r["entity"]["prefLabel"]["value"] for r in tm["profile"]["entity"]["requires"]}
+    filed_current = {f["entity"]["ofType"]["entity"]["prefLabel"]["value"]
+                     for f in tm["filed"] if val(f["entity"], "status") == "current"}
+    check("tmf: dashboard inlines expected essentials + current filed set (diff in one pull)",
+          lambda: tm["id"] == "urn:tmf-opp101"
+          and req == {"Protocol", "IRB/IEC Approval Letter", "Informed Consent Form",
+                      "Form FDA 1572", "Clinical Trial Agreement"}
+          and req <= filed_current
+          and val(tm["study"]["entity"], "name").startswith("OPP-101"))
+
     return passed, total
 
 
