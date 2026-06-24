@@ -130,6 +130,10 @@ def main():
     # (m) single-pull retrieval view — one entity carries every green-check fact (no recursive lookups)
     vw_passed, vw_total = view_checks(failures)
 
+    # (n) OWL DL well-formedness — the authored ontology is sound "ingredients" for a
+    #     consumer's reasoner (structural gate; we ship the ingredients, not the cake)
+    ol_passed, ol_total = owl_lint_checks(failures)
+
     _report([
         ("SHACL", passed, len(cases)),
         ("bitemporal", bt_passed, bt_total),
@@ -143,7 +147,44 @@ def main():
         ("usdm", uv_passed, uv_total),
         ("ncit", nv_passed, nv_total),
         ("view", vw_passed, vw_total),
+        ("owl-lint", ol_passed, ol_total),
     ], failures)
+
+
+def owl_lint_checks(failures):
+    """OWL DL well-formedness: prove the authored ontology is sound "ingredients" for a
+    consumer's reasoner WITHOUT running one. (a) the real modules trip zero structural
+    OWL-DL problems; (b) the gate provably bites on a crafted broken ontology — so a
+    green result is meaningful, not a no-op. See tools/owl_lint.py."""
+    import importlib.util
+    p = os.path.join(ROOT, "tools", "owl_lint.py")
+    spec = importlib.util.spec_from_file_location("owl_lint", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    total = passed = 0
+
+    # (a) the authored ontology must be well-formed
+    total += 1
+    problems = mod.lint(mod.ont_files())
+    if not problems:
+        passed += 1
+        print("[PASS] OWL DL well-formedness: authored ontology trips 0 structural problems")
+    else:
+        for code, term, detail in problems:
+            failures.append(("OWL", f"{code} {term}", detail))
+        print(f"[FAIL] OWL DL well-formedness: {len(problems)} problem(s)")
+
+    # (b) the gate must bite (negative control, like the SHACL 'violate' cases)
+    total += 1
+    ok, missing = mod.selftest()
+    if ok:
+        passed += 1
+        print("[PASS] OWL lint self-test: gate bites on a broken ontology (P1/P2/P4/P5)")
+    else:
+        failures.append(("OWL", "selftest", f"gate failed to catch {sorted(missing)}"))
+        print(f"[FAIL] OWL lint self-test missed {sorted(missing)}")
+
+    return passed, total
 
 
 def ncit_verification_checks(failures):

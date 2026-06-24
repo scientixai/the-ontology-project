@@ -518,6 +518,7 @@ about leveraging the reference <i>on your own stack</i> &mdash; today, with tool
 <tr><td>USDM&nbsp;v4.0 OWL + CT</td><td><code>ontology/vendor/usdm/</code></td><td>generated USDM class model + SKOS codelists, NCIt-anchored (the crosswalk target)</td></tr>
 <tr><td>Merged bundles</td><td><code>docs/dist/</code></td><td>byte-reproducible Turtle / JSON-LD / N-Triples of the model, shapes, and crosswalks, plus a <code>SHA256SUMS</code></td></tr>
 <tr><td>NGSI-LD context</td><td><code>dist/top-cr-v1.ngsi-context.jsonld</code></td><td>a term&rarr;IRI dictionary to load entities into any NGSI-LD broker</td></tr>
+<tr><td>OWL-DL well-formedness gate</td><td><code>tools/owl_lint.py</code></td><td>CI-enforced proof the ontology is sound &ldquo;ingredients&rdquo; for your reasoner (&sect;5)</td></tr>
 </table>
 
 <h2>2 &middot; Get the artifacts</h2>
@@ -530,6 +531,12 @@ and <b>pinned by checksum</b>:</p>
 (and mirrored in the repo). When self-hosting, serve <code>dist/</code> alongside these pages,
 or reference the repository directly &mdash; the <code>SHA256SUMS</code> lets consumers pin an
 exact version regardless of where they fetched it.</p>
+<p><b>Pick a serialization.</b> Every bundle ships in three byte-equivalent forms:
+<code>.ttl</code> (Turtle &mdash; read, author, load), <code>.jsonld</code> (JSON-LD &mdash; web/JS
+toolchains; the separate <code>*.ngsi-context.jsonld</code> is the broker term map), and
+<code>.nt</code> (N-Triples &mdash; one canonical triple per line: stream-load into large stores,
+line-diff cleanly across versions, and the form the <code>SHA256SUMS</code> hashes over). Same
+triples, different envelope &mdash; choose by tool, not by content.</p>
 
 <h2>3 &middot; Load it into your store</h2>
 <p>It's standard RDF, so any triplestore or RDF-capable graph DB works. A few concrete starts:</p>
@@ -546,9 +553,9 @@ CALL n10s.rdf.import.fetch('https://&lt;host&gt;/dist/top-cr-shapes-v1.ttl','Tur
 fuseki> :data UPLOAD dist/top-cr-v1.ttl
 # or RDF4J / GraphDB: import top-cr-v1.ttl into a repository</pre>
 <h4>NGSI-LD broker (e.g. Scorpio)</h4>
-<pre># load entities using the published @context so terms resolve to cr:/top: IRIs
-Link: &lt;https://&lt;host&gt;/dist/top-cr-v1.ngsi-context.jsonld&gt;; rel="http://www.w3.org/ns/json-ld#context"
-# top:observedAt resolves to NGSI-LD core observedAt (valid time)</pre>
+<p>The broker is the <b>runtime serving layer</b> &mdash; not another triplestore for the model.
+You load <i>instance entities</i> into it (after reasoning and validating offline); see
+<b>&sect;6&nbsp;&mdash;&nbsp;Serve it</b> below for the <code>@context</code> and the term mapping.</p>
 
 <h2>4 &middot; Validate with the shapes</h2>
 <p>Run the graded SHACL shapes against your data &mdash; hard structural rules surface as
@@ -560,16 +567,82 @@ conforms, _, report = validate(
     ont_graph="dist/top-cr-v1.ttl",
     inference="rdfs", advanced=True)   # advanced=True enables the SPARQL constraints</pre>
 <p class='muted'>Any SHACL engine works (pySHACL, Apache Jena <code>shacl</code>, TopBraid). The
-test harness <code>tests/run_tests.py</code> is a worked example of validating instance data.</p>
+test harness <code>tests/run_tests.py</code> is a worked example of validating instance data.
+The shapes are vended in all three serializations (<code>top-cr-shapes-v1.{ttl,nt,jsonld}</code>)
+and pinned by <code>SHA256SUMS</code> &mdash; same graded rules, whichever your engine prefers.</p>
 
-<h2>5 &middot; Project to standards (define once, view many)</h2>
+<h2>5 &middot; Reason over it &mdash; bring your own reasoner</h2>
+<p>This reference ships the <b>ingredients, not the baked cake</b>: it does <b>not</b> run a
+reasoner. Classification, materialization, and entailment are the consumer's job &mdash; which
+reasoner, at what profile, and when you materialize are <i>your</i> deployment decisions, not the
+reference's. What the reference guarantees is that the ingredients are <b>sound</b>: the OWL is
+authored to the OWL&nbsp;2&nbsp;DL typing discipline, and a CI gate
+(<code>tools/owl_lint.py</code>) proves it on every change &mdash; no illegal punning, every term
+declared, every <code>domain</code>/<code>range</code> well-typed &mdash; so a reasoner you point
+at it returns sound entailments, not garbage.</p>
+<p><b>Profile.</b> The model is deliberately light: one rooted class hierarchy, object/datatype
+properties with <code>rdfs:domain</code>/<code>rdfs:range</code>, and a few
+<code>owl:inverseOf</code> pairs. That sits inside <b>both</b> OWL&nbsp;2&nbsp;RL and
+OWL&nbsp;2&nbsp;DL, so it runs unchanged in rule reasoners (owlrl, RDFox, GraphDB&nbsp;rules) and
+in tableau/EL reasoners (HermiT, ELK, Pellet). Layer your own restrictions, equivalences, or
+property chains on top as your use demands &mdash; the reference stays the shared base.</p>
+<p><b>What reasoning gives you</b> over the reference&nbsp;+&nbsp;your data:</p>
+<ul>
+<li><b>Subclass entailment</b> &mdash; a <code>cr:DoseLimitingToxicity</code> is entailed a
+<code>cr:AdverseEvent</code> &rarr; <code>top:Outcome</code> &rarr; <code>top:Core</code>, so it
+carries the Universal DNA.</li>
+<li><b>Domain/range typing</b> &mdash; asserting <code>ex:s cr:sponsoredBy ex:o</code> types
+<code>ex:s</code> a <code>cr:Study</code> and <code>ex:o</code> a <code>cr:Sponsor</code>.</li>
+<li><b>Inverse fills</b> &mdash; <code>cr:hasQuery</code>&harr;<code>cr:queryOn</code>,
+<code>cr:specimen</code>&harr;<code>cr:hasCustodyEvent</code>, and the other inverse pairs.</li>
+<li><b>Whatever you add</b> &mdash; defined classes (necessary&amp;sufficient), property chains,
+or <code>owl:disjointWith</code> (whose violation a DL reasoner reports as an inconsistency).</li>
+</ul>
+<h4>Python &mdash; OWL&nbsp;2&nbsp;RL, pure-Python (no Java)</h4>
+<pre>from rdflib import Graph
+from owlrl import DeductiveClosure, OWLRL_Semantics
+g = Graph().parse("dist/top-cr-v1.ttl", format="turtle")
+g.parse("my-study-data.ttl", format="turtle")
+DeductiveClosure(OWLRL_Semantics).expand(g)   <span class="c"># forward-chain; g now holds the entailed triples</span></pre>
+<h4>Python &mdash; OWL&nbsp;2&nbsp;DL via HermiT (owlready2, needs Java)</h4>
+<pre>from owlready2 import get_ontology, sync_reasoner
+onto = get_ontology("dist/top-cr-v1.ttl").load()
+onto.load("my-study-data.ttl")
+with onto: sync_reasoner()                     <span class="c"># HermiT: classify + detect inconsistency</span></pre>
+<h4>Java / CLI &mdash; ELK or HermiT</h4>
+<pre>robot reason --reasoner ELK --input top-cr-v1.ttl --output inferred.ttl
+<span class="c"># or drive HermiT / ELK directly through the OWL API</span></pre>
+<p class='note'><b>Reason offline, then serve.</b> Forward-chain once, persist the entailed
+triples, and load <i>those</i> into your runtime store or broker &mdash; the broker doesn't reason
+(next section). Re-materialize when the model or your data changes.</p>
+
+<h2>6 &middot; Serve it &mdash; NGSI-LD as the runtime</h2>
+<p>The runtime is an <b>NGSI-LD context broker</b> (e.g. Scorpio on AWS&nbsp;Garnet) &mdash; not a
+reasoner, not a validator. It <b>stores entities and serves them</b>: relationships,
+temporal/&ldquo;as-of&rdquo; queries, subscriptions, federation, and <b>single-pull retrieval</b>.
+It does <b>not</b> load OWL axioms, classify, or run SHACL.</p>
+<p>So the division of labor is clean: <b>reason</b> (&sect;5) and <b>validate</b> (&sect;4)
+<i>offline</i>; load the resulting asserted&nbsp;+&nbsp;entailed&nbsp;+&nbsp;validated entities into
+the broker; the broker serves them fast at the glass.</p>
+<pre><span class="c"># load entities under the published @context so JSON terms resolve to cr:/top: IRIs</span>
+Link: &lt;https://&lt;host&gt;/dist/top-cr-v1.ngsi-context.jsonld&gt;; rel="http://www.w3.org/ns/json-ld#context"
+<span class="c"># top:observedAt -> NGSI-LD core observedAt (valid time)</span>
+<span class="c"># top:recordedAt / top:supersededAt -> createdAt / modifiedAt</span></pre>
+<p><b>Single-pull retrieval.</b> The model is shaped so each operator screen resolves to <b>one
+self-contained entity</b> that already carries its green-check facts &mdash; no recursive lookups
+at the glass. <code>tools/ngsild_view.py</code> builds these views, and the per-flow pages show
+the screen each one feeds.</p>
+<p class='muted'>A deployable Garnet / NGSI-LD CDK stack and a mapping workbench ship with the
+community release; this section is the architecture, not that deployment.</p>
+
+<h2>7 &middot; Project to standards (define once, view many)</h2>
 <p>The standards are <b>queries</b>, not separate databases. Run a projection over your graph to
 emit that view &mdash; e.g. <code>projections/sdtm_dm.rq</code> (CDISC SDTM demographics),
 <code>projections/usdm_study.rq</code>, <code>projections/soa_table.rq</code> (the SoA table as a
 view of the timeline), or <code>projections/planned_vs_actual.rq</code> (visit reconciliation).
 Same native graph, many standardized outputs, guaranteed consistent.</p>
 
-<h2>6 &middot; Ingest an M11 / USDM protocol</h2>
+<h2>8 &middot; Ingest an M11 / USDM protocol</h2>
 <p>To turn a protocol into a TOP-grounded graph: load the vendored
 <code>ontology/vendor/usdm/usdm-v4.ttl</code> (the USDM class model) and apply
 <code>crosswalks/usdm-to-cr.ttl</code> to map USDM constructs onto cr-core &mdash; respecting the
@@ -581,7 +654,7 @@ clean hand-authored illustration of the target shape. USDM classes and codelists
 NCIt-anchored (verified against the NCI Thesaurus), so your graph inherits a verifiable
 terminology spine.</p>
 
-<h2>7 &middot; Honor the conventions (so graphs line up)</h2>
+<h2>9 &middot; Honor the conventions (so graphs line up)</h2>
 <ul>
 <li><b>Universal DNA</b> on every entity: <code>top:identifier</code> + <code>top:observedAt</code>
 (valid time) + <code>top:status</code>. This is what makes any two TOP graphs align by construction.</li>

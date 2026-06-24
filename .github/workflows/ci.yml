@@ -1,0 +1,32 @@
+name: CI
+
+# The build gate: every change to the reference graph is checked here. The harness
+# must exit 0 before new work lands (parse + SHACL severity + bitemporal/SPARQL +
+# single-pull views + OWL DL well-formedness of the authored "ingredients").
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: OWL DL well-formedness gate (ingredients are sound for a consumer's reasoner)
+        run: python3 cr-domain/tools/owl_lint.py
+
+      - name: Full regression harness
+        run: python3 cr-domain/tests/run_tests.py

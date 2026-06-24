@@ -58,6 +58,9 @@ The harness (a) structurally parses every `ontology/` and `shapes/` file, and
 (b) SHACL-validates every example in `tests/manifest.json`, asserting each either
 **conforms** or **violates** as declared (negative tests prove the shapes bite).
 
+CI runs the full harness on every push/PR (`.github/workflows/ci.yml`) — so every change to
+the reference graph is gated. The harness must exit 0 before new work lands.
+
 ## Coverage (all green — `python3 cr-domain/tests/run_tests.py`)
 - **Foundations & governance** ✅ project scaffolding, conventions, TOP-Core stub, harness, smoke test.
 - **Operator model** ✅ hcls-core + cr-core; oncology FIH worked example end-to-end.
@@ -83,7 +86,9 @@ The harness (a) structurally parses every `ontology/` and `shapes/` file, and
 - **Universal DNA alignment** ✅ aligned to canonical TOP Core: one `top:Core` root above the 8 CLOs; every entity carries the Universal DNA — `top:identifier` (identity) + `top:observedAt` (time, canonical NGSI-LD term) + `top:status` (lifecycle); `top:UniversalDNAShape` enforces it (conformant + negative test).
 - **Single-pull retrieval views (NGSI-LD, no recursive lookups) — every applicable screen** ✅ the test of the model: an operator pulls **one** entity and gets *every* fact behind the green check, inlined into **one self-contained object** — proven across the whole workflow line (**site activation, delegation, enrollment, consent, blood draw, EDC capture, adverse event, EOP2 gate, study start-up, risk-based monitoring, deviation & CAPA, essential records**). Faithful to **ETSI GS CIM 009** Linked Entity Retrieval: `?join=inline&joinLevel=3` embeds each linked Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2), following relationships **forward** only (clause 4.5.23.1). That forward-only rule drove **modeling corrections** — direct forward retrieval edges where the graph pointed the wrong way (`cr:hasConsent`/`cr:producesSpecimen`/`cr:hasCustodyEvent`/`cr:hasAliquot`/`cr:yieldsResult`/`cr:precededByAct` for the draw; `cr:hasQuery` for EDC; `cr:reviewsResult`/`cr:concernsStudy` for EOP2; `cr:activationPackage` for start-up) so each object is reachable by a *stock broker* `join`, not a materialized inverse view. Each screen has a **SHACL retrieval view** (`views/`) that is the attribute projection (the `pick`/`attrs` the screen consumes); `tools/ngsild_view.py` walks them and emits the exact objects the docs render. The blood-draw view is the deep showcase (each green check cites the `reads` path into the one object). Guarded by `view 13/13`.
 
-Current suite: SHACL 56/56 · bitemporal 3/3 · projections 18/18 · demo 1/1 · safety 2/2 · pre-IND 2/2 · lims 1/1 · startup 2/2 · schedule 3/3 · usdm 1/1 · ncit 1/1 · view 13/13.
+- **OWL DL well-formedness gate (ingredients, not the cake)** ✅ the reference does **not** run a reasoner — classification/entailment is the consumer's job — but a cheap, pure-Python **structural** gate (`tools/owl_lint.py`, no reasoner, no Java) proves the authored OWL is *sound ingredients* for someone else's reasoner: no illegal punning, every owned term declared, every `domain`/`range` well-typed, no `subClassOf`∩`disjointWith` contradiction. The gate **provably bites** (self-test on a crafted broken ontology). Consuming it — how to point HermiT/ELK/owlrl at the OWL, and how NGSI-LD serves the result — is documented in the **Implementation guide** (§5 Reason, §6 Serve).
+
+Current suite: SHACL 56/56 · bitemporal 3/3 · projections 18/18 · demo 1/1 · safety 2/2 · pre-IND 2/2 · lims 1/1 · startup 2/2 · schedule 3/3 · usdm 1/1 · ncit 1/1 · view 13/13 · owl-lint 2/2.
 
 > Brand note: the substrate/runtime is referred to functionally; TOP is the open commons.
 > `ontology/top-core.ttl` is a **local working stub** aligned to the canonical Apache-2.0
