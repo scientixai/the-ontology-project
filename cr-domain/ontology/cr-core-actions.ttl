@@ -1,0 +1,1096 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Clinical Research Action Catalog
+#
+# Named individuals — one per CTA in the TOP Clinical Research OOUX Map v0.2.
+# Each Action carries:
+#   hcls:authorizedFor  — role(s) from cr-core-roles.ttl
+#   hcls:occursIn       — primary phase/sub-phase from cr-core-phases.ttl
+#   hcls:operatesOn     — primary object class (OWL class IRI)
+#   rdfs:label         — human-readable CTA name matching the OOUX map
+#
+# Naming convention: CamelCase IRI = concatenated CTA words.
+# Multi-role authorization: hcls:authorizedFor may appear multiple times on one Action.
+# Organization by section below matches the phase taxonomy.
+#
+# Source: ALL 78-object CTAs extracted from OOUX Map v0.2 objects/*.yaml.
+# This file is the machine-readable CTA registry; the OOUX YAML files are the
+# authoritative human-readable source.
+
+#################################################################
+# A. Startup — Design Sub-phase
+#################################################################
+
+cr:CreateStudy a hcls:Action ;
+    rdfs:label "Create Study" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateStudyDetails a hcls:Action ;
+    rdfs:label "Update Study Details" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ActivateStudy a hcls:Action ;
+    rdfs:label "Activate Study" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:PutStudyOnHold a hcls:Action ;
+    rdfs:label "Put Study on Hold" ;
+    hcls:authorizedFor cr:SponsorPMRole , cr:SponsorOperationsRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseStudy a hcls:Action ;
+    rdfs:label "Close Study" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ArchiveStudy a hcls:Action ;
+    rdfs:label "Archive Study" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CreateArm a hcls:Action ;
+    rdfs:label "Create Arm" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:UpdateArmDetails a hcls:Action ;
+    rdfs:label "Update Arm Details" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:CloseArm a hcls:Action ;
+    rdfs:label "Close Arm" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:CloseoutPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:AssignParticipantsToArm a hcls:Action ;
+    rdfs:label "Assign Participants to Arm" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:DraftAmendment a hcls:Action ;
+    rdfs:label "Draft Amendment" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:SubmitAmendmentForReview a hcls:Action ;
+    rdfs:label "Submit Amendment for Review" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:ApproveAmendment a hcls:Action ;
+    rdfs:label "Approve Amendment" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:ImplementAmendment a hcls:Action ;
+    rdfs:label "Implement Amendment" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:WithdrawAmendment a hcls:Action ;
+    rdfs:label "Withdraw Amendment" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:AddTherapeuticArea a hcls:Action ;
+    rdfs:label "Add Therapeutic Area" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:MapTherapeuticAreaCodes a hcls:Action ;
+    rdfs:label "Map Therapeutic Area Codes" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ConfigureSystemForStudy a hcls:Action ;
+    rdfs:label "Configure System for Study" ;
+    hcls:authorizedFor cr:SponsorPMRole , cr:SponsorOperationsRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CreateCRF a hcls:Action ;
+    rdfs:label "Create CRF" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+#################################################################
+# B. Startup — Site Selection Sub-phase
+#################################################################
+
+cr:DefineRegion a hcls:Action ;
+    rdfs:label "Define Region" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AssignCountryToRegion a hcls:Action ;
+    rdfs:label "Assign Country to Region" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RegisterSiteNetwork a hcls:Action ;
+    rdfs:label "Register Site Network" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CreateSite a hcls:Action ;
+    rdfs:label "Create Site" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:SelectSiteForStudy a hcls:Action ;
+    rdfs:label "Select Site for Study" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AssociateStudyToSponsor a hcls:Action ;
+    rdfs:label "Associate or Remove Study" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AddCountry a hcls:Action ;
+    rdfs:label "Add Country" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+#################################################################
+# C. Startup — Regulatory Sub-phase
+#################################################################
+
+cr:RegisterRegulatoryAuthority a hcls:Action ;
+    rdfs:label "Register Regulatory Authority" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:UpdateRegulatoryAuthority a hcls:Action ;
+    rdfs:label "Update Regulatory Authority" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:CreateRegulatorySubmission a hcls:Action ;
+    rdfs:label "Create Regulatory Submission" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:SubmitRegulatorySubmission a hcls:Action ;
+    rdfs:label "Submit Regulatory Submission" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:RecordRegulatoryDecision a hcls:Action ;
+    rdfs:label "Record Regulatory Decision" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:WithdrawRegulatorySubmission a hcls:Action ;
+    rdfs:label "Withdraw Regulatory Submission" ;
+    hcls:authorizedFor cr:RegulatoryAffairsRole ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+#################################################################
+# D. Startup — Activation Sub-phase
+#################################################################
+
+cr:ActivateSite a hcls:Action ;
+    rdfs:label "Activate Site" ;
+    hcls:authorizedFor cr:SponsorOperationsRole , cr:CRARole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:PlaceSiteOnHold a hcls:Action ;
+    rdfs:label "Place Site On Hold" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ResumeSite a hcls:Action ;
+    rdfs:label "Resume Site" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:InitiateSite a hcls:Action ;
+    rdfs:label "Initiate Site (SIV)" ;
+    hcls:authorizedFor cr:CRARole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:UpdateSiteDetails a hcls:Action ;
+    rdfs:label "Update Site Details" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:TerminateStartupPackage a hcls:Action ;
+    rdfs:label "Terminate Startup" ;
+    hcls:authorizedFor cr:SponsorOperationsRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RefreshGCPTraining a hcls:Action ;
+    rdfs:label "Refresh GCP Training" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Credential .
+
+cr:UpdateFCOIDisclosure a hcls:Action ;
+    rdfs:label "Update FCOI Disclosure" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Credential .
+
+cr:AddInvestigatorDelegation a hcls:Action ;
+    rdfs:label "Add Investigator Delegation" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Delegation .
+
+cr:RegisterEquipment a hcls:Action ;
+    rdfs:label "Register Equipment" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CalibrateEquipment a hcls:Action ;
+    rdfs:label "Calibrate Equipment" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RegisterStorageLocation a hcls:Action ;
+    rdfs:label "Register Storage Location" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CreateMilestone a hcls:Action ;
+    rdfs:label "Create Milestone" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateMilestoneDetails a hcls:Action ;
+    rdfs:label "Update Milestone Details" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AchieveMilestone a hcls:Action ;
+    rdfs:label "Achieve Milestone" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:DelayMilestone a hcls:Action ;
+    rdfs:label "Delay Milestone" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReviewPlanProgress a hcls:Action ;
+    rdfs:label "Review Plan Progress" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AssignTask a hcls:Action ;
+    rdfs:label "Assign Task" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CancelTask a hcls:Action ;
+    rdfs:label "Cancel Task" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AssignActionItem a hcls:Action ;
+    rdfs:label "Assign Action Item" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CancelActionItem a hcls:Action ;
+    rdfs:label "Cancel Action Item" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateTimeline a hcls:Action ;
+    rdfs:label "Update Timeline" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:RebaselineTimeline a hcls:Action ;
+    rdfs:label "Rebaseline Timeline" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+#################################################################
+# E. Conduct — Recruitment Sub-phase
+#################################################################
+
+cr:ObtainParticipantConsent a hcls:Action ;
+    rdfs:label "Obtain Participant Consent" ;
+    hcls:authorizedFor cr:InvestigatorRole , cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:UpdateInformedConsent a hcls:Action ;
+    rdfs:label "Update Informed Consent" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:RecordConsentDiscussion a hcls:Action ;
+    rdfs:label "Record Consent Discussion" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:WithdrawConsent a hcls:Action ;
+    rdfs:label "Withdraw Consent" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:ScreenParticipant a hcls:Action ;
+    rdfs:label "Screen Participant" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:EnrollParticipant a hcls:Action ;
+    rdfs:label "Enroll Participant" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:UpdateParticipantDetails a hcls:Action ;
+    rdfs:label "Update Participant Details" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:ScheduleParticipantVisit a hcls:Action ;
+    rdfs:label "Schedule Participant Visit" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:WithdrawParticipant a hcls:Action ;
+    rdfs:label "Withdraw Participant" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:CompleteParticipantStudy a hcls:Action ;
+    rdfs:label "Complete Participant Study" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:CloseoutPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:RecordScreenFail a hcls:Action ;
+    rdfs:label "Record Screen Fail" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:ScreeningRecord .
+
+cr:PlanRescreen a hcls:Action ;
+    rdfs:label "Plan Rescreen" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:ScreeningRecord .
+
+cr:ReviewScreenFail a hcls:Action ;
+    rdfs:label "Review Screen Fail" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:ScreeningRecord .
+
+cr:UpdateEnrollmentStatus a hcls:Action ;
+    rdfs:label "Update Enrollment Status" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:EnrollmentRecord .
+
+cr:OpenEnrollment a hcls:Action ;
+    rdfs:label "Open Enrollment" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseEnrollment a hcls:Action ;
+    rdfs:label "Close Enrollment" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:RecordMedicalHistory a hcls:Action ;
+    rdfs:label "Record Medical History" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:UpdateMedicalHistory a hcls:Action ;
+    rdfs:label "Update Medical History" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+#################################################################
+# F. Conduct — Visit Execution Sub-phase
+#################################################################
+
+cr:ScheduleVisit a hcls:Action ;
+    rdfs:label "Schedule Visit" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:RescheduleVisit a hcls:Action ;
+    rdfs:label "Reschedule Visit" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:StartVisit a hcls:Action ;
+    rdfs:label "Start Visit" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:CompleteVisit a hcls:Action ;
+    rdfs:label "Complete Visit" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:CancelVisit a hcls:Action ;
+    rdfs:label "Cancel Visit" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ScheduleMonitoringVisit a hcls:Action ;
+    rdfs:label "Schedule Monitoring Visit" ;
+    hcls:authorizedFor cr:CRARole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ConductMonitoringVisit a hcls:Action ;
+    rdfs:label "Conduct Monitoring Visit" ;
+    hcls:authorizedFor cr:CRARole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:SubmitMonitoringReport a hcls:Action ;
+    rdfs:label "Submit Monitoring Report" ;
+    hcls:authorizedFor cr:CRARole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:SignMonitoringReport a hcls:Action ;
+    rdfs:label "Sign Monitoring Report" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:CollectSample a hcls:Action ;
+    rdfs:label "Collect Sample" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:ShipSample a hcls:Action ;
+    rdfs:label "Ship Sample" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:AcknowledgeShipmentReceipt a hcls:Action ;
+    rdfs:label "Acknowledge Shipment Receipt" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:ReportShipmentExcursion a hcls:Action ;
+    rdfs:label "Report Shipment Excursion" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:AdministerQuestionnaire a hcls:Action ;
+    rdfs:label "Administer Questionnaire" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:ReviewQuestionnaire a hcls:Action ;
+    rdfs:label "Review Questionnaire" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+#################################################################
+# G. Conduct — Data Collection Sub-phase
+#################################################################
+
+cr:UpdateCRF a hcls:Action ;
+    rdfs:label "Update CRF" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:CompleteCRF a hcls:Action ;
+    rdfs:label "Complete CRF" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:ReviewCRF a hcls:Action ;
+    rdfs:label "Review CRF" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:SignCRF a hcls:Action ;
+    rdfs:label "Sign CRF" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:LockUnlockCRF a hcls:Action ;
+    rdfs:label "Lock / Unlock CRF" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataAnalysisSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:CreateQuery a hcls:Action ;
+    rdfs:label "Create Query" ;
+    hcls:authorizedFor cr:DataManagerRole , cr:CRARole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:AssignQuery a hcls:Action ;
+    rdfs:label "Assign Query" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:RespondToQuery a hcls:Action ;
+    rdfs:label "Respond to Query" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:CloseQuery a hcls:Action ;
+    rdfs:label "Close Query" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:ReopenQuery a hcls:Action ;
+    rdfs:label "Reopen Query" ;
+    hcls:authorizedFor cr:DataManagerRole , cr:CRARole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:ReconcileLabResults a hcls:Action ;
+    rdfs:label "Reconcile Lab" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:ReconcileDate a hcls:Action ;
+    rdfs:label "Reconcile Date" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:RecordDate a hcls:Action ;
+    rdfs:label "Record Date" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:FlagClinicallySignificant a hcls:Action ;
+    rdfs:label "Flag Clinically Significant" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:RecordConMed a hcls:Action ;
+    rdfs:label "Record ConMed" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:UpdateConMed a hcls:Action ;
+    rdfs:label "Update ConMed" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:RecordClinicalEvent a hcls:Action ;
+    rdfs:label "Record Other Clinical Event" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:UpdateClinicalEventOutcome a hcls:Action ;
+    rdfs:label "Update Outcome" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:FlagForSponsorReport a hcls:Action ;
+    rdfs:label "Flag for Sponsor Report" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:ConfigureDataQualityMetric a hcls:Action ;
+    rdfs:label "Configure Data Quality Metric" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:DrillIntoDataQualityMetric a hcls:Action ;
+    rdfs:label "Drill Into Metric" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ScheduleDataTransfer a hcls:Action ;
+    rdfs:label "Schedule Data Transfer" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:RunDataTransfer a hcls:Action ;
+    rdfs:label "Run Data Transfer" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReconcileDataTransfer a hcls:Action ;
+    rdfs:label "Reconcile Data Transfer" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReprocessFailedDataTransfer a hcls:Action ;
+    rdfs:label "Reprocess Failed Transfer" ;
+    hcls:authorizedFor cr:DataManagerRole ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:LogCommunication a hcls:Action ;
+    rdfs:label "Log Communication" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CreateLog a hcls:Action ;
+    rdfs:label "Create Log" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AddLogEntry a hcls:Action ;
+    rdfs:label "Add Log Entry" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ArchiveLog a hcls:Action ;
+    rdfs:label "Archive Log" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+#################################################################
+# H. Conduct — Safety Sub-phase
+#################################################################
+
+cr:ReportAdverseEvent a hcls:Action ;
+    rdfs:label "Report Adverse Event" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:UpdateAdverseEventDetails a hcls:Action ;
+    rdfs:label "Update Adverse Event Details" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:FollowUpAdverseEvent a hcls:Action ;
+    rdfs:label "Follow Up on Adverse Event" ;
+    hcls:authorizedFor cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:AssessAdverseEvent a hcls:Action ;
+    rdfs:label "Assess Adverse Event" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseAdverseEvent a hcls:Action ;
+    rdfs:label "Close Adverse Event" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:ReportSAE a hcls:Action ;
+    rdfs:label "Report SAE" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:UpdateSAE a hcls:Action ;
+    rdfs:label "Update SAE" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:SubmitExpeditedReport a hcls:Action ;
+    rdfs:label "Submit Expedited Report" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:ReconcileSAE a hcls:Action ;
+    rdfs:label "Reconcile SAE" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseSAE a hcls:Action ;
+    rdfs:label "Close SAE" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:IdentifySafetySignal a hcls:Action ;
+    rdfs:label "Identify Safety Signal" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:EvaluateSafetySignal a hcls:Action ;
+    rdfs:label "Evaluate Safety Signal" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseSafetySignal a hcls:Action ;
+    rdfs:label "Close Safety Signal" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:PrepareSafetyReport a hcls:Action ;
+    rdfs:label "Prepare Safety Report" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:SubmitSafetyReport a hcls:Action ;
+    rdfs:label "Submit Safety Report" ;
+    hcls:authorizedFor cr:PharmacovigilianceRole ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+#################################################################
+# I. Conduct — Oversight Sub-phase
+#################################################################
+
+cr:ReportDeviation a hcls:Action ;
+    rdfs:label "Report Deviation" ;
+    hcls:authorizedFor cr:CRARole , cr:SiteCoordinatorRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:RecordFinding a hcls:Action ;
+    rdfs:label "Record Finding" ;
+    hcls:authorizedFor cr:CRARole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:RespondToFinding a hcls:Action ;
+    rdfs:label "Respond to Finding" ;
+    hcls:authorizedFor cr:InvestigatorRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ReviewDeviation a hcls:Action ;
+    rdfs:label "Review Deviation" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ApproveOrRejectDeviation a hcls:Action ;
+    rdfs:label "Approve or Reject Deviation" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:CloseDeviation a hcls:Action ;
+    rdfs:label "Close Deviation" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ConductRiskAssessment a hcls:Action ;
+    rdfs:label "Conduct Risk Assessment" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateRiskRegister a hcls:Action ;
+    rdfs:label "Update Risk Register" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ApproveRiskAssessment a hcls:Action ;
+    rdfs:label "Approve Risk Assessment" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:OpenCAPA a hcls:Action ;
+    rdfs:label "Open CAPA" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:UpdateCAPA a hcls:Action ;
+    rdfs:label "Update CAPA" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:VerifyCAPAEffectiveness a hcls:Action ;
+    rdfs:label "Verify CAPA Effectiveness" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseCAPA a hcls:Action ;
+    rdfs:label "Close CAPA" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:ScheduleAudit a hcls:Action ;
+    rdfs:label "Schedule Audit" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ConductAudit a hcls:Action ;
+    rdfs:label "Conduct Audit" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:IssueAuditFindings a hcls:Action ;
+    rdfs:label "Issue Audit Findings" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseAudit a hcls:Action ;
+    rdfs:label "Close Audit" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseFinding a hcls:Action ;
+    rdfs:label "Close Finding" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ValidateSystem a hcls:Action ;
+    rdfs:label "Validate System" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:PromoteSystemConfigToProduction a hcls:Action ;
+    rdfs:label "Promote System Config to Production" ;
+    hcls:authorizedFor cr:SponsorQualityRole ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Study .
+
+#################################################################
+# J. Closeout — Reporting Sub-phase
+#################################################################
+
+cr:GenerateReport a hcls:Action ;
+    rdfs:label "Generate Report" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:ScheduleRecurringReport a hcls:Action ;
+    rdfs:label "Schedule Recurring Report" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:FinalizeReport a hcls:Action ;
+    rdfs:label "Finalize Report" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:DistributeReport a hcls:Action ;
+    rdfs:label "Distribute Report" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+#################################################################
+# K. Closeout — Site Close + Archival
+#################################################################
+
+cr:CloseSiteToEnrollment a hcls:Action ;
+    rdfs:label "Close Site to Enrollment" ;
+    hcls:authorizedFor cr:SponsorPMRole ;
+    hcls:occursIn cr:CloseoutPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CloseSite a hcls:Action ;
+    rdfs:label "Close Site" ;
+    hcls:authorizedFor cr:SponsorPMRole , cr:CRARole ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+#################################################################
+# L. Finance actions (cross-cutting — Startup + Conduct)
+#################################################################
+
+cr:CreateBudget a hcls:Action ;
+    rdfs:label "Create Budget" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AddBudgetLineItem a hcls:Action ;
+    rdfs:label "Add Budget Line Item" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ApproveBudget a hcls:Action ;
+    rdfs:label "Approve Budget" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:LockBudget a hcls:Action ;
+    rdfs:label "Lock Budget" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReforecastBudget a hcls:Action ;
+    rdfs:label "Reforecast Budget" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseBudget a hcls:Action ;
+    rdfs:label "Close Budget" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:GenerateBudgetForecast a hcls:Action ;
+    rdfs:label "Generate Budget Forecast" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateBudgetForecast a hcls:Action ;
+    rdfs:label "Update Budget Forecast" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:IssueSitePayment a hcls:Action ;
+    rdfs:label "Issue Site Payment" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CreatePayment a hcls:Action ;
+    rdfs:label "Create Payment" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ApprovePayment a hcls:Action ;
+    rdfs:label "Approve Payment" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ProcessPayment a hcls:Action ;
+    rdfs:label "Process Payment" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CancelPayment a hcls:Action ;
+    rdfs:label "Cancel Payment" ;
+    hcls:authorizedFor cr:FinanceRole ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .

@@ -1,0 +1,567 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Clinical Research Operator Role Archetypes
+#
+# Named individuals in the reference graph. These are NOT Person instances;
+# they are role archetypes that Person instances point to via hcls:actsIn
+# at instance-graph time.
+#
+# Each role carries:
+#   hcls:canPerform      — authorized CTAs (from cr-core-actions.ttl)
+#   hcls:primaryPhase    — dominant lifecycle phase
+#   hcls:handOffTo       — workflow handoff edges
+#   hcls:organizationBoundary — Site, Sponsor, CRO, Regulator
+#   JTBD individuals    — cr:JobToBeDone instances for this role
+#
+# Source: TOP Clinical Research OOUX Map v0.2 (10 personas fully modelled).
+# Persona aliases normalized: PI / Investigator / Site PI → InvestigatorRole;
+# CRA / Monitor / Site Monitor → CRARole; etc.
+#
+# Organization boundary individuals (used as value of hcls:organizationBoundary)
+cr:SiteBoundary     a owl:NamedIndividual ; rdfs:label "Site" .
+cr:SponsorBoundary  a owl:NamedIndividual ; rdfs:label "Sponsor" .
+cr:CROBoundary      a owl:NamedIndividual ; rdfs:label "CRO" .
+cr:RegulatorBoundary a owl:NamedIndividual ; rdfs:label "Regulator" .
+
+#################################################################
+# 1. Investigator (PI)
+#################################################################
+
+cr:InvestigatorRole a hcls:OperatorRole ;
+    rdfs:label "Principal Investigator" ;
+    rdfs:comment "The legally responsible physician at a Site. Delegates tasks via the Delegation of Authority (DOA); signs CRFs; assesses AEs for causality; obtains informed consent. Aliases in map: PI, Investigator, Site PI." ;
+    hcls:organizationBoundary cr:SiteBoundary ;
+    hcls:primaryPhase cr:ConductPhase ;
+    hcls:handOffTo cr:CRARole , cr:PharmacovigilianceRole , cr:SiteCoordinatorRole ;
+    hcls:canPerform
+        cr:ObtainParticipantConsent ,
+        cr:AddInvestigatorDelegation ,
+        cr:AssessAdverseEvent ,
+        cr:CloseAdverseEvent ,
+        cr:ReviewCRF ,
+        cr:SignCRF ,
+        cr:RefreshGCPTraining ,
+        cr:UpdateFCOIDisclosure ,
+        cr:FlagClinicallySignificant ,
+        cr:UpdateClinicalEventOutcome ,
+        cr:FlagForSponsorReport ,
+        cr:WithdrawParticipant ,
+        cr:CompleteParticipantStudy ,
+        cr:ReviewQuestionnaire ,
+        cr:ReviewScreenFail ,
+        cr:ReportSAE ,
+        cr:UpdateSAE ,
+        cr:RespondToFinding ,
+        cr:SignMonitoringReport .
+
+# Jobs to be Done — Investigator
+
+cr:PI-J01 a hcls:JobToBeDone ;
+    rdfs:label "Hold legal responsibility for trial conduct at the Site" ;
+    hcls:jobOfRole cr:InvestigatorRole ;
+    hcls:jobTrigger "Site selected for a Study; PI delegated as Principal Investigator." ;
+    hcls:successSignal "Form 1572 on file (US studies)." ;
+    hcls:successSignal "GCP training current throughout the Study." ;
+    hcls:successSignal "No regulatory or sponsor actions escalated to debarment." ;
+    hcls:involvesObject cr:Study , cr:Credential , cr:Delegation ;
+    hcls:executesAction cr:RefreshGCPTraining , cr:UpdateFCOIDisclosure , cr:AddInvestigatorDelegation .
+
+cr:PI-J02 a hcls:JobToBeDone ;
+    rdfs:label "Assess adverse events for causality and seriousness" ;
+    hcls:jobOfRole cr:InvestigatorRole ;
+    hcls:jobTrigger "Site Coordinator reports an AE; or an SAE becomes known." ;
+    hcls:successSignal "Investigator assessment recorded within 24h of SAE awareness." ;
+    hcls:successSignal "Causality and expectedness logged on every AE." ;
+    hcls:successSignal "Zero SAEs missed for expedited reporting." ;
+    hcls:involvesObject cr:AdverseEvent , cr:InvestigationalProduct ;
+    hcls:executesAction cr:AssessAdverseEvent , cr:CloseAdverseEvent , cr:ReportSAE , cr:UpdateSAE .
+
+cr:PI-J03 a hcls:JobToBeDone ;
+    rdfs:label "Review and sign CRFs" ;
+    hcls:jobOfRole cr:InvestigatorRole ;
+    hcls:jobTrigger "CRF status reaches COMPLETED; PI review required per protocol." ;
+    hcls:successSignal "CRF electronicSignatureStatus = SIGNED within sponsor target TTR." ;
+    hcls:successSignal "Review and sign cycle does not block CRF lock." ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:executesAction cr:ReviewCRF , cr:SignCRF .
+
+cr:PI-J04 a hcls:JobToBeDone ;
+    rdfs:label "Delegate tasks to qualified site staff" ;
+    hcls:jobOfRole cr:InvestigatorRole ;
+    hcls:jobTrigger "New staff onboarded; or protocol amendment changes delegation requirements." ;
+    hcls:successSignal "Delegation of Authority log current and matches Person.delegatedBy." ;
+    hcls:successSignal "Each delegated task has a qualified delegate with training in place." ;
+    hcls:involvesObject cr:Delegation , cr:Credential ;
+    hcls:executesAction cr:AddInvestigatorDelegation .
+
+cr:PI-J05 a hcls:JobToBeDone ;
+    rdfs:label "Withdraw or close out a participant" ;
+    hcls:jobOfRole cr:InvestigatorRole ;
+    hcls:jobTrigger "Participant withdraws consent, completes study, or meets discontinuation criteria." ;
+    hcls:successSignal "Participant.participantStatus reflects correct end state (COMPLETED, WITHDRAWN)." ;
+    hcls:successSignal "Withdrawal reason and date captured." ;
+    hcls:successSignal "In-flight SAEs followed up post-withdrawal." ;
+    hcls:involvesObject cr:Participant , cr:AdverseEvent , cr:InformedConsentAct ;
+    hcls:executesAction cr:WithdrawParticipant , cr:CompleteParticipantStudy .
+
+#################################################################
+# 2. Site Coordinator
+#################################################################
+
+cr:SiteCoordinatorRole a hcls:OperatorRole ;
+    rdfs:label "Site Coordinator" ;
+    rdfs:comment "The day-to-day clinical operations role at a Site. Screens and enrolls participants, executes visits, completes CRFs, manages AE reporting, maintains site logs. Aliases in map: Coordinator, Study Coordinator, CRC." ;
+    hcls:organizationBoundary cr:SiteBoundary ;
+    hcls:primaryPhase cr:ConductPhase ;
+    hcls:handOffTo cr:InvestigatorRole , cr:CRARole , cr:DataManagerRole ;
+    hcls:canPerform
+        cr:UpdateSiteDetails ,
+        cr:ScreenParticipant ,
+        cr:EnrollParticipant ,
+        cr:UpdateParticipantDetails ,
+        cr:ScheduleParticipantVisit ,
+        cr:ScheduleVisit ,
+        cr:RescheduleVisit ,
+        cr:StartVisit ,
+        cr:CompleteVisit ,
+        cr:CancelVisit ,
+        cr:UpdateCRF ,
+        cr:CompleteCRF ,
+        cr:ReportAdverseEvent ,
+        cr:UpdateAdverseEventDetails ,
+        cr:FollowUpAdverseEvent ,
+        cr:ObtainParticipantConsent ,
+        cr:UpdateInformedConsent ,
+        cr:RecordConsentDiscussion ,
+        cr:WithdrawConsent ,
+        cr:RespondToQuery ,
+        cr:RecordScreenFail ,
+        cr:PlanRescreen ,
+        cr:CollectSample ,
+        cr:ShipSample ,
+        cr:RegisterEquipment ,
+        cr:CalibrateEquipment ,
+        cr:CreateLog ,
+        cr:AddLogEntry ,
+        cr:ArchiveLog ,
+        cr:AcknowledgeShipmentReceipt ,
+        cr:ReportShipmentExcursion ,
+        cr:RecordConMed ,
+        cr:UpdateConMed ,
+        cr:RecordMedicalHistory ,
+        cr:RecordClinicalEvent ,
+        cr:LogCommunication ,
+        cr:RecordDate ,
+        cr:UpdateEnrollmentStatus ,
+        cr:AdministerQuestionnaire ,
+        cr:AssignParticipantsToArm ,
+        cr:RegisterStorageLocation .
+
+cr:COORD-J01 a hcls:JobToBeDone ;
+    rdfs:label "Screen and enroll a candidate participant" ;
+    hcls:jobOfRole cr:SiteCoordinatorRole ;
+    hcls:jobTrigger "Candidate presents for screening; Informed Consent obtained." ;
+    hcls:successSignal "Participant.participantStatus = ON_TREATMENT within eligibility window." ;
+    hcls:successSignal "All enrollment CRFs complete at baseline visit." ;
+    hcls:successSignal "Zero open queries on eligibility data at enrollment." ;
+    hcls:involvesObject cr:Participant , cr:InformedConsentAct , cr:VisitOccurrence , cr:eCRF , cr:EnrollmentRecord ;
+    hcls:executesAction
+        cr:ObtainParticipantConsent ,
+        cr:ScreenParticipant ,
+        cr:ScheduleVisit ,
+        cr:CompleteCRF ,
+        cr:EnrollParticipant ,
+        cr:UpdateEnrollmentStatus .
+
+cr:COORD-J02 a hcls:JobToBeDone ;
+    rdfs:label "Run a protocol visit on schedule and within window" ;
+    hcls:jobOfRole cr:SiteCoordinatorRole ;
+    hcls:jobTrigger "Visit.visitStatus = SCHEDULED; visit window approaching." ;
+    hcls:successSignal "Visit.visitStatus = COMPLETED with windowStatus = IN_WINDOW." ;
+    hcls:successSignal "All per-protocol CRFs for the visit reach COMPLETED or VERIFIED." ;
+    hcls:successSignal "Samples shipped within chain-of-custody SLA." ;
+    hcls:involvesObject cr:VisitOccurrence , cr:ActivityOccurrence , cr:eCRF ;
+    hcls:executesAction cr:StartVisit , cr:UpdateCRF , cr:CollectSample , cr:CompleteVisit .
+
+cr:COORD-J03 a hcls:JobToBeDone ;
+    rdfs:label "Capture data cleanly and respond to queries" ;
+    hcls:jobOfRole cr:SiteCoordinatorRole ;
+    hcls:jobTrigger "Data Manager raises a query; Discrepancy.queryStatus = OPEN." ;
+    hcls:successSignal "Coordinator response posted within sponsor target TTR." ;
+    hcls:successSignal "Query moves to ANSWERED or CLOSED." ;
+    hcls:successSignal "No repeated re-open on the same data point." ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:executesAction cr:RespondToQuery , cr:UpdateCRF .
+
+cr:COORD-J04 a hcls:JobToBeDone ;
+    rdfs:label "Report adverse events within sponsor-required timelines" ;
+    hcls:jobOfRole cr:SiteCoordinatorRole ;
+    hcls:jobTrigger "Adverse Event observed or reported by participant." ;
+    hcls:successSignal "AE reported with reportedDate within 24h for SAEs." ;
+    hcls:successSignal "Investigator assessment completed within protocol timeline." ;
+    hcls:involvesObject cr:AdverseEvent ;
+    hcls:executesAction cr:ReportAdverseEvent , cr:UpdateAdverseEventDetails , cr:FollowUpAdverseEvent .
+
+cr:COORD-J05 a hcls:JobToBeDone ;
+    rdfs:label "Keep the site regulatory binder and logs current" ;
+    hcls:jobOfRole cr:SiteCoordinatorRole ;
+    hcls:jobTrigger "New amendment approved, new staff onboarded, or monitoring visit upcoming." ;
+    hcls:successSignal "Delegation, training, enrollment, and drug accountability logs up to date." ;
+    hcls:successSignal "Monitoring visit finds zero major findings in the binder category." ;
+    hcls:involvesObject cr:Delegation , cr:Credential ;
+    hcls:executesAction cr:CreateLog , cr:AddLogEntry , cr:LogCommunication .
+
+#################################################################
+# 3. Clinical Research Associate (CRA / Monitor)
+#################################################################
+
+cr:CRARole a hcls:OperatorRole ;
+    rdfs:label "Clinical Research Associate" ;
+    rdfs:comment "The sponsor-side field monitor responsible for site oversight. Conducts monitoring visits, raises queries, files deviations, verifies source data. Aliases in map: CRA, Monitor, Site Monitor." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:OversightSubPhase ;
+    hcls:handOffTo cr:DataManagerRole , cr:SponsorQualityRole , cr:SponsorPMRole ;
+    hcls:canPerform
+        cr:InitiateSite ,
+        cr:ScheduleMonitoringVisit ,
+        cr:ConductMonitoringVisit ,
+        cr:SubmitMonitoringReport ,
+        cr:ReportDeviation ,
+        cr:CreateQuery ,
+        cr:ReopenQuery ,
+        cr:RecordFinding .
+
+cr:CRA-J01 a hcls:JobToBeDone ;
+    rdfs:label "Get a site ready to enroll its first participant" ;
+    hcls:jobOfRole cr:CRARole ;
+    hcls:jobTrigger "Site.siteStatus enters READY_TO_INITIATE after Study Startup Package is ready." ;
+    hcls:successSignal "Site activated on or before plannedActivationDate." ;
+    hcls:successSignal "Zero open regulatory or training deficiencies at SIV close." ;
+    hcls:successSignal "First participant enrolled within sponsor target window after activation." ;
+    hcls:involvesObject cr:StudySite , cr:Credential , cr:Delegation ;
+    hcls:executesAction cr:ConductMonitoringVisit , cr:InitiateSite , cr:SubmitMonitoringReport .
+
+cr:CRA-J02 a hcls:JobToBeDone ;
+    rdfs:label "Verify that site data matches source documents" ;
+    hcls:jobOfRole cr:CRARole ;
+    hcls:jobTrigger "Monitoring visit scheduled or risk-based trigger fires." ;
+    hcls:successSignal "SDV rate meets monitoring plan target for the window." ;
+    hcls:successSignal "CRFs reviewed during the visit left in VERIFIED status." ;
+    hcls:successSignal "No outstanding major findings recorded." ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:executesAction cr:ConductMonitoringVisit , cr:CreateQuery , cr:RecordFinding , cr:SubmitMonitoringReport .
+
+cr:CRA-J03 a hcls:JobToBeDone ;
+    rdfs:label "Catch and close protocol deviations early" ;
+    hcls:jobOfRole cr:CRARole ;
+    hcls:jobTrigger "Deviation identified during a monitoring visit or pattern review." ;
+    hcls:successSignal "Deviation moved to REVIEWED within sponsor target cycle time." ;
+    hcls:successSignal "IRB reporting deadline met." ;
+    hcls:involvesObject cr:VisitOccurrence , cr:Participant ;
+    hcls:executesAction cr:ReportDeviation , cr:RecordFinding .
+
+cr:CRA-J04 a hcls:JobToBeDone ;
+    rdfs:label "Close the site cleanly at study end" ;
+    hcls:jobOfRole cr:CRARole ;
+    hcls:jobTrigger "Site.siteStatus moves to CLOSED_TO_ENROLLMENT; close-out visit scheduled." ;
+    hcls:successSignal "Close-out monitoring visit completed and signed by PI." ;
+    hcls:successSignal "All essential documents transferred to sponsor eTMF." ;
+    hcls:successSignal "Open findings and action items closed." ;
+    hcls:involvesObject cr:StudySite ;
+    hcls:executesAction cr:ConductMonitoringVisit , cr:SubmitMonitoringReport .
+
+#################################################################
+# 4. Sponsor Project Manager
+#################################################################
+
+cr:SponsorPMRole a hcls:OperatorRole ;
+    rdfs:label "Sponsor Project Manager" ;
+    rdfs:comment "Creates and activates studies, selects sites, manages enrollment, tracks milestones, and closes studies. Aliases: Sponsor PM, Study PM, Project Manager, Study Manager." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:StartupPhase ;
+    hcls:handOffTo cr:SponsorOperationsRole , cr:CRARole , cr:RegulatoryAffairsRole , cr:FinanceRole ;
+    hcls:canPerform
+        cr:CreateStudy ,
+        cr:UpdateStudyDetails ,
+        cr:ActivateStudy ,
+        cr:PutStudyOnHold ,
+        cr:CloseStudy ,
+        cr:ArchiveStudy ,
+        cr:SelectSiteForStudy ,
+        cr:CloseSiteToEnrollment ,
+        cr:CloseSite ,
+        cr:CreateArm ,
+        cr:UpdateArmDetails ,
+        cr:CloseArm ,
+        cr:OpenEnrollment ,
+        cr:CloseEnrollment ,
+        cr:CreateMilestone ,
+        cr:UpdateMilestoneDetails ,
+        cr:AchieveMilestone ,
+        cr:DelayMilestone ,
+        cr:AssignActionItem ,
+        cr:CancelActionItem ,
+        cr:AssignTask ,
+        cr:CancelTask ,
+        cr:GenerateReport ,
+        cr:ScheduleRecurringReport ,
+        cr:FinalizeReport ,
+        cr:DistributeReport ,
+        cr:UpdateTimeline ,
+        cr:RebaselineTimeline ,
+        cr:ReviewPlanProgress ,
+        cr:ConfigureSystemForStudy .
+
+cr:PM-J01 a hcls:JobToBeDone ;
+    rdfs:label "Initialize a new study" ;
+    hcls:jobOfRole cr:SponsorPMRole ;
+    hcls:jobTrigger "Program approval; Sponsor Exec authorises study start." ;
+    hcls:successSignal "Study in ACTIVE status within sponsor target cycle time." ;
+    hcls:successSignal "Protocol, SOA, CRFs, and Budget approved and locked." ;
+    hcls:successSignal "First site selected within target window." ;
+    hcls:involvesObject cr:Study , cr:Arm ;
+    hcls:executesAction cr:CreateStudy , cr:UpdateStudyDetails , cr:CreateArm , cr:CreateMilestone , cr:ActivateStudy .
+
+cr:PM-J02 a hcls:JobToBeDone ;
+    rdfs:label "Select and activate sites to hit enrollment plan" ;
+    hcls:jobOfRole cr:SponsorPMRole ;
+    hcls:jobTrigger "Study in IN_STARTUP; feasibility responses in from candidate sites." ;
+    hcls:successSignal "Target number of sites SELECTED within window." ;
+    hcls:successSignal "First site activated on or before plannedActivationDate." ;
+    hcls:involvesObject cr:StudySite ;
+    hcls:executesAction cr:SelectSiteForStudy , cr:AchieveMilestone .
+
+cr:PM-J03 a hcls:JobToBeDone ;
+    rdfs:label "Manage enrollment across sites to meet plan" ;
+    hcls:jobOfRole cr:SponsorPMRole ;
+    hcls:jobTrigger "Study ENROLLING; enrollment plan and forecast in place." ;
+    hcls:successSignal "Actual enrollmentCount tracks forecast within tolerance." ;
+    hcls:successSignal "Enrollment cycle time per site within sponsor target." ;
+    hcls:involvesObject cr:Study , cr:StudySite , cr:Participant ;
+    hcls:executesAction cr:OpenEnrollment , cr:CloseEnrollment , cr:DelayMilestone , cr:RebaselineTimeline .
+
+cr:PM-J04 a hcls:JobToBeDone ;
+    rdfs:label "Drive milestone achievement and timeline" ;
+    hcls:jobOfRole cr:SponsorPMRole ;
+    hcls:jobTrigger "Milestone deadline approaches or slips." ;
+    hcls:successSignal "Milestone moved to COMPLETED on or before plannedDate." ;
+    hcls:successSignal "Variance on Study Timeline within sponsor tolerance." ;
+    hcls:involvesObject cr:Study ;
+    hcls:executesAction cr:AchieveMilestone , cr:DelayMilestone , cr:UpdateTimeline , cr:AssignTask .
+
+cr:PM-J05 a hcls:JobToBeDone ;
+    rdfs:label "Close study and archive cleanly" ;
+    hcls:jobOfRole cr:SponsorPMRole ;
+    hcls:jobTrigger "Last Patient Out (LPO) reached; database lock in progress." ;
+    hcls:successSignal "CSR finalized and distributed." ;
+    hcls:successSignal "All sites closed; all open Tasks and Findings resolved." ;
+    hcls:successSignal "Study moves to COMPLETED then archived." ;
+    hcls:involvesObject cr:Study , cr:StudySite , cr:CSR ;
+    hcls:executesAction cr:CloseSiteToEnrollment , cr:CloseSite , cr:CloseStudy , cr:FinalizeReport , cr:ArchiveStudy .
+
+#################################################################
+# 5. Sponsor Operations
+#################################################################
+
+cr:SponsorOperationsRole a hcls:OperatorRole ;
+    rdfs:label "Sponsor Operations" ;
+    rdfs:comment "Manages amendments, site network structure, regions, country configuration, site activation mechanics, and system configuration. Aliases: Sponsor Operations, Sponsor Ops, Site Activation Manager." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:StartupPhase ;
+    hcls:handOffTo cr:SponsorPMRole , cr:CRARole ;
+    hcls:canPerform
+        cr:DraftAmendment ,
+        cr:SubmitAmendmentForReview ,
+        cr:ApproveAmendment ,
+        cr:ImplementAmendment ,
+        cr:WithdrawAmendment ,
+        cr:DefineRegion ,
+        cr:AssignCountryToRegion ,
+        cr:RegisterSiteNetwork ,
+        cr:TerminateStartupPackage ,
+        cr:AddTherapeuticArea ,
+        cr:MapTherapeuticAreaCodes ,
+        cr:CreateSite ,
+        cr:ActivateSite ,
+        cr:PlaceSiteOnHold ,
+        cr:ResumeSite ,
+        cr:AssociateStudyToSponsor .
+
+#################################################################
+# 6. Data Manager
+#################################################################
+
+cr:DataManagerRole a hcls:OperatorRole ;
+    rdfs:label "Data Manager" ;
+    rdfs:comment "Creates and locks CRFs, manages queries, reconciles lab and date data, manages data transfers. Dual-lens: sees CRF as data source for analysis (sponsor perspective)." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:DataCollectionSubPhase ;
+    hcls:handOffTo cr:SponsorPMRole , cr:SponsorQualityRole ;
+    hcls:canPerform
+        cr:CreateCRF ,
+        cr:LockUnlockCRF ,
+        cr:ConfigureDataQualityMetric ,
+        cr:DrillIntoDataQualityMetric ,
+        cr:ScheduleDataTransfer ,
+        cr:RunDataTransfer ,
+        cr:ReconcileDataTransfer ,
+        cr:ReprocessFailedDataTransfer ,
+        cr:ReconcileDate ,
+        cr:CreateQuery ,
+        cr:AssignQuery ,
+        cr:CloseQuery ,
+        cr:ReopenQuery ,
+        cr:ReconcileLabResults .
+
+cr:DM-J01 a hcls:JobToBeDone ;
+    rdfs:label "Resolve open queries and achieve clean data state" ;
+    hcls:jobOfRole cr:DataManagerRole ;
+    hcls:jobTrigger "Query created on a CRF; or discrepancy detected in incoming data." ;
+    hcls:successSignal "All queries on a CRF closed before CRF lock." ;
+    hcls:successSignal "Re-open rate below sponsor threshold." ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:executesAction cr:CreateQuery , cr:AssignQuery , cr:CloseQuery , cr:ReopenQuery .
+
+cr:DM-J02 a hcls:JobToBeDone ;
+    rdfs:label "Lock CRFs and database for analysis" ;
+    hcls:jobOfRole cr:DataManagerRole ;
+    hcls:jobTrigger "Last patient last visit completed; data cleaning cycle closed." ;
+    hcls:successSignal "All CRFs in LOCKED state." ;
+    hcls:successSignal "Database lock confirmed by authorized Data Manager sign-off." ;
+    hcls:involvesObject cr:eCRF , cr:Study ;
+    hcls:executesAction cr:LockUnlockCRF .
+
+#################################################################
+# 7. Sponsor Quality
+#################################################################
+
+cr:SponsorQualityRole a hcls:OperatorRole ;
+    rdfs:label "Sponsor Quality" ;
+    rdfs:comment "Classifies, approves or rejects, and closes deviations. Conducts audits and risk assessments; manages CAPAs. Aliases: Sponsor Quality, Quality, Auditor." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:OversightSubPhase ;
+    hcls:handOffTo cr:SponsorPMRole , cr:RegulatoryAffairsRole ;
+    hcls:canPerform
+        cr:ReviewDeviation ,
+        cr:ApproveOrRejectDeviation ,
+        cr:CloseDeviation ,
+        cr:ScheduleAudit ,
+        cr:ConductAudit ,
+        cr:IssueAuditFindings ,
+        cr:CloseAudit ,
+        cr:OpenCAPA ,
+        cr:UpdateCAPA ,
+        cr:VerifyCAPAEffectiveness ,
+        cr:CloseCAPA ,
+        cr:CloseFinding ,
+        cr:ConductRiskAssessment ,
+        cr:UpdateRiskRegister ,
+        cr:ApproveRiskAssessment ,
+        cr:ValidateSystem ,
+        cr:PromoteSystemConfigToProduction .
+
+#################################################################
+# 8. Regulatory Affairs
+#################################################################
+
+cr:RegulatoryAffairsRole a hcls:OperatorRole ;
+    rdfs:label "Regulatory Affairs" ;
+    rdfs:comment "Manages regulatory submissions (IND, CTA, BLA/NDA/MAA), country configuration, and regulatory authority relationships." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:RegulatorySubPhase ;
+    hcls:handOffTo cr:SponsorPMRole , cr:SponsorQualityRole ;
+    hcls:canPerform
+        cr:AddCountry ,
+        cr:RegisterRegulatoryAuthority ,
+        cr:UpdateRegulatoryAuthority ,
+        cr:CreateRegulatorySubmission ,
+        cr:SubmitRegulatorySubmission ,
+        cr:RecordRegulatoryDecision ,
+        cr:WithdrawRegulatorySubmission .
+
+#################################################################
+# 9. Pharmacovigilance
+#################################################################
+
+cr:PharmacovigilianceRole a hcls:OperatorRole ;
+    rdfs:label "Pharmacovigilance" ;
+    rdfs:comment "Manages safety signal detection, expedited SAE reporting, safety line listings, and periodic safety reports (DSUR, PSUR). Aliases: Pharmacovigilance, PV." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:SafetySubPhase ;
+    hcls:handOffTo cr:RegulatoryAffairsRole , cr:SponsorQualityRole ;
+    hcls:canPerform
+        cr:PrepareSafetyReport ,
+        cr:SubmitSafetyReport ,
+        cr:IdentifySafetySignal ,
+        cr:EvaluateSafetySignal ,
+        cr:CloseSafetySignal ,
+        cr:SubmitExpeditedReport ,
+        cr:ReconcileSAE ,
+        cr:CloseSAE .
+
+cr:PV-J01 a hcls:JobToBeDone ;
+    rdfs:label "Detect and evaluate emerging safety signals" ;
+    hcls:jobOfRole cr:PharmacovigilianceRole ;
+    hcls:jobTrigger "Aggregate AE data shows unexpected frequency or severity pattern." ;
+    hcls:successSignal "Signal evaluated and action (escalate, monitor, or close) documented within SOP timeline." ;
+    hcls:successSignal "DSMB/IDMC notified if threshold met." ;
+    hcls:involvesObject cr:AdverseEvent ;
+    hcls:executesAction cr:IdentifySafetySignal , cr:EvaluateSafetySignal , cr:CloseSafetySignal .
+
+cr:PV-J02 a hcls:JobToBeDone ;
+    rdfs:label "File expedited SAE reports within regulatory timelines" ;
+    hcls:jobOfRole cr:PharmacovigilianceRole ;
+    hcls:jobTrigger "SAE meets expedited reporting criteria (unexpected + possibly related)." ;
+    hcls:successSignal "7-day initial or 15-day full report filed within regulatory deadline." ;
+    hcls:successSignal "Narrative and causality consistent across all SAE documents." ;
+    hcls:involvesObject cr:AdverseEvent ;
+    hcls:executesAction cr:SubmitExpeditedReport , cr:ReconcileSAE .
+
+#################################################################
+# 10. Finance
+#################################################################
+
+cr:FinanceRole a hcls:OperatorRole ;
+    rdfs:label "Finance" ;
+    rdfs:comment "Creates and approves budgets, issues site payments, processes participant reimbursements, generates budget forecasts. Aliases: Finance, Sponsor Finance, Finance Manager." ;
+    hcls:organizationBoundary cr:SponsorBoundary ;
+    hcls:primaryPhase cr:StartupPhase ;
+    hcls:handOffTo cr:SponsorPMRole , cr:SponsorOperationsRole ;
+    hcls:canPerform
+        cr:CreateBudget ,
+        cr:AddBudgetLineItem ,
+        cr:ApproveBudget ,
+        cr:LockBudget ,
+        cr:ReforecastBudget ,
+        cr:CloseBudget ,
+        cr:GenerateBudgetForecast ,
+        cr:UpdateBudgetForecast ,
+        cr:IssueSitePayment ,
+        cr:CreatePayment ,
+        cr:ApprovePayment ,
+        cr:ProcessPayment ,
+        cr:CancelPayment .
+
+cr:FIN-J01 a hcls:JobToBeDone ;
+    rdfs:label "Create and approve budgets per study and per site" ;
+    hcls:jobOfRole cr:FinanceRole ;
+    hcls:jobTrigger "Study in IN_STARTUP; or new site activated." ;
+    hcls:successSignal "Budget approved before first site activation." ;
+    hcls:successSignal "Site-level budget approved before first patient enrolled." ;
+    hcls:successSignal "Line items match the SOA procedures and visit schedule." ;
+    hcls:involvesObject cr:Study , cr:StudySite ;
+    hcls:executesAction cr:CreateBudget , cr:AddBudgetLineItem , cr:ApproveBudget , cr:LockBudget .
+
+cr:FIN-J02 a hcls:JobToBeDone ;
+    rdfs:label "Issue payments to sites per budget and visit accrual" ;
+    hcls:jobOfRole cr:FinanceRole ;
+    hcls:jobTrigger "Visit.visitStatus = COMPLETED; accrual condition met; invoice received." ;
+    hcls:successSignal "Payment issued within contract paymentTermsDays." ;
+    hcls:successSignal "complianceCheckStatus = PASSED (anti-kickback, Sunshine Act)." ;
+    hcls:involvesObject cr:StudySite , cr:VisitOccurrence ;
+    hcls:executesAction cr:IssueSitePayment , cr:CreatePayment , cr:ApprovePayment , cr:ProcessPayment .

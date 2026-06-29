@@ -1,0 +1,116 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Clinical Trial Lifecycle Phase Taxonomy
+#
+# Named individuals (reference-graph archetypes, not instances of any specific trial).
+# Three top-level phases with named sub-phases; forms a containment tree plus a
+# precedence chain at the top level.
+#
+# Operator grounding: each sub-phase anchors the hcls:occursIn relation on Actions
+# and the hcls:primaryPhase relation on OperatorRoles, letting agents answer:
+#   "What am I authorized to do right now given where this trial is?"
+#
+# Source: operator taxonomy described in the OOUX v0.2 map + user-defined trial stages.
+
+cr:TrialLifecycle a hcls:Phase ;
+    rdfs:label "Clinical Trial Lifecycle" ;
+    rdfs:comment "The root phase encompassing the entire lifespan of a clinical trial from protocol design to study archival." ;
+    hcls:contains cr:StartupPhase , cr:ConductPhase , cr:CloseoutPhase .
+
+#################################################################
+# Phase 1 — Startup
+#################################################################
+
+cr:StartupPhase a hcls:Phase ;
+    rdfs:label "Startup" ;
+    rdfs:comment "Everything from initial protocol design through first-patient-in (FPI). Gate condition: first participant randomized. Canonical ICH E6(R3) pre-trial period." ;
+    hcls:precedes cr:ConductPhase ;
+    hcls:contains
+        cr:DesignSubPhase ,
+        cr:SiteSelectionSubPhase ,
+        cr:RegulatorySubPhase ,
+        cr:ActivationSubPhase .
+
+cr:DesignSubPhase a hcls:Phase ;
+    rdfs:label "Design" ;
+    rdfs:comment "Protocol authoring, statistical analysis plan, SOA construction, CRF design, arm configuration, endpoint definition. Output: approved protocol version." .
+
+cr:SiteSelectionSubPhase a hcls:Phase ;
+    rdfs:label "Site Selection" ;
+    rdfs:comment "Feasibility assessment, site evaluation, qualification visit (SQV), site selection committee review. Output: selected site list with signed contracts." .
+
+cr:RegulatorySubPhase a hcls:Phase ;
+    rdfs:label "Regulatory Submissions" ;
+    rdfs:comment "IND/CTA filing, IRB/EC review, country-level submissions, amendment management. Output: regulatory clearance per country." .
+
+cr:ActivationSubPhase a hcls:Phase ;
+    rdfs:label "Site Activation" ;
+    rdfs:comment "Study Startup Package readiness, Site Initiation Visit (SIV), training, delegation of authority, equipment qualification. Output: site activated and ready to enroll." .
+
+#################################################################
+# Phase 2 — Conduct
+#################################################################
+
+cr:ConductPhase a hcls:Phase ;
+    rdfs:label "Conduct" ;
+    rdfs:comment "From first patient in (FPI) through last patient out (LPO) / database lock (DBL). The operational execution window of the trial." ;
+    hcls:precedes cr:CloseoutPhase ;
+    hcls:contains
+        cr:RecruitmentSubPhase ,
+        cr:VisitExecutionSubPhase ,
+        cr:DataCollectionSubPhase ,
+        cr:SafetySubPhase ,
+        cr:OversightSubPhase .
+
+cr:RecruitmentSubPhase a hcls:Phase ;
+    rdfs:label "Recruitment" ;
+    rdfs:comment "Recruit identification, screening, informed consent, eligibility assessment, enrollment, randomization. Operator primary: Site Coordinator + Investigator." .
+
+cr:VisitExecutionSubPhase a hcls:Phase ;
+    rdfs:label "Visit Execution" ;
+    rdfs:comment "Scheduled and unscheduled visit conduct: actuals vs. SOA, activity completion, IP administration, sample collection, CRF completion at visit level." .
+
+cr:DataCollectionSubPhase a hcls:Phase ;
+    rdfs:label "Data Collection" ;
+    rdfs:comment "EDC data entry and CRF completion, query management, lab reconciliation, concomitant medication and medical history recording. Dual-lens: site captures, sponsor/DM validates." .
+
+cr:SafetySubPhase a hcls:Phase ;
+    rdfs:label "Safety" ;
+    rdfs:comment "Adverse event reporting, SAE expedited reporting, investigator causality assessment, pharmacovigilance line listing, safety signal detection. Always concurrent with other sub-phases." .
+
+cr:OversightSubPhase a hcls:Phase ;
+    rdfs:label "Oversight" ;
+    rdfs:comment "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality." .
+
+#################################################################
+# Phase 3 — Closeout
+#################################################################
+
+cr:CloseoutPhase a hcls:Phase ;
+    rdfs:label "Closeout" ;
+    rdfs:comment "From last patient last visit (LPLV) through regulatory submission and study archival. Includes database lock, CSR, and eTMF finalization." ;
+    hcls:contains
+        cr:FollowUpSubPhase ,
+        cr:DataAnalysisSubPhase ,
+        cr:ReportingSubPhase ,
+        cr:ArchivalSubPhase .
+
+cr:FollowUpSubPhase a hcls:Phase ;
+    rdfs:label "Follow-up" ;
+    rdfs:comment "Post-treatment assessments, long-term safety evaluation, survival follow-up, adverse event monitoring through the follow-up window." .
+
+cr:DataAnalysisSubPhase a hcls:Phase ;
+    rdfs:label "Data Analysis" ;
+    rdfs:comment "Database lock, data cleaning and validation, statistical analysis planning execution, longitudinal analysis, survival analysis, interim and final analyses." .
+
+cr:ReportingSubPhase a hcls:Phase ;
+    rdfs:label "Reporting" ;
+    rdfs:comment "Clinical Study Report (CSR) authoring, regulatory submission package preparation, safety reporting, data disclosure." .
+
+cr:ArchivalSubPhase a hcls:Phase ;
+    rdfs:label "Archival" ;
+    rdfs:comment "Site close-out visits, eTMF finalization, study archival, storage period compliance per country regulations." .
