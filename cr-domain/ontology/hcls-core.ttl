@@ -9,23 +9,29 @@ hcls: a owl:Ontology ;
 
 # Promotion rule: a concept is promoted to hcls-core when it recurs in >=2 distinct HCLS
 # sub-domains with the same semantic meaning. Domain-specific specializations (e.g.
-# InformedConsentAct, InvestigatorRole) stay in the sub-domain module (cr-core-*.ttl).
+# cr:InformedConsentAct, cr:Investigator) stay in the sub-domain module (cr-core-*.ttl).
 
 # --- Agents ---
 hcls:Person a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Person" ;
     rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." .
 hcls:Practitioner a owl:Class ; rdfs:subClassOf hcls:Person ; rdfs:label "Practitioner" ;
     rdfs:comment "A healthcare professional." .
-hcls:Organization a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Organization" ; rdfs:comment "An organization — sponsor, CRO, site, central lab, or regulator." .
+hcls:Clinician a owl:Class ; rdfs:subClassOf hcls:Practitioner ; rdfs:label "Clinician" ;
+    rdfs:comment "A licensed clinician who provides or oversees clinical care or research. Specializes in sub-domains: Investigator (clinical research), Physician (clinical care), Pharmacist, etc." .
+hcls:Organization a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Organization" ;
+    rdfs:comment "An organization — sponsor, CRO, site, central lab, or regulator." .
 
 # --- Locations ---
-hcls:HealthcareFacility a owl:Class ; rdfs:subClassOf top:Location ; rdfs:label "Healthcare Facility" ; rdfs:comment "A physical place where care or research is conducted." .
+hcls:HealthcareFacility a owl:Class ; rdfs:subClassOf top:Location ; rdfs:label "Healthcare Facility" ;
+    rdfs:comment "A physical place where care or research is conducted." .
 
 # --- Resources ---
 hcls:Specimen a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Specimen" ;
     rdfs:comment "A biospecimen collected from a Person." .
-hcls:Substance a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Substance" ; rdfs:comment "A chemical or biological substance." .
-hcls:MedicinalProduct a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Medicinal Product" ; rdfs:comment "A medicinal product (drug or biologic)." .
+hcls:Substance a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Substance" ;
+    rdfs:comment "A chemical or biological substance." .
+hcls:MedicinalProduct a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Medicinal Product" ;
+    rdfs:comment "A medicinal product (drug or biologic)." .
 hcls:Lot a owl:Class ; rdfs:subClassOf top:Resource ; rdfs:label "Lot" ;
     rdfs:comment "A manufactured batch/lot; the primary join to the manufacturing domain." .
 
@@ -35,10 +41,6 @@ hcls:Condition a owl:Class ; rdfs:subClassOf top:Outcome ; rdfs:label "Condition
 hcls:Observation a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Observation" ;
     rdfs:comment "An information artifact recording a measured value; refersTo the Person/Specimen it is about." .
 
-# --- Agents (extended) ---
-hcls:Clinician a owl:Class ; rdfs:subClassOf hcls:Practitioner ; rdfs:label "Clinician" ;
-    rdfs:comment "A licensed clinician who provides or oversees clinical care or research. Specializes in sub-domains: Investigator (clinical research), Physician (clinical care), Pharmacist, etc." .
-
 # --- Temporal acts ---
 hcls:Consent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
     rdfs:label "Consent" ;
@@ -47,72 +49,44 @@ hcls:Consent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
 #################################################################
 # Operator-grounding layer — HCLS-core level
 #
-# These four classes define the frame of reference for operator-
-# grounded AI agents across ALL HCLS domains.  They live here (not
-# top-core) because the concept of a named role, lifecycle phase,
-# authorized action, and job-to-be-done is universal within HCLS
-# but not proven universal outside it (FinTech roles / phases are
-# structurally similar but semantically distinct enough to warrant
-# independent modeling at the top level if needed).
+# Three classes define the authorization frame for operator-grounded
+# AI agents across ALL HCLS domains:
+#
+#   hcls:Phase       — sequenced lifecycle stage; hierarchy via hcls:contains
+#   hcls:Action      — authorized CTA archetype (top:Constraint); realized at
+#                      instance-time as prov:Activity via hcls:realizationOf
+#   hcls:JobToBeDone — agent-type-scoped goal with trigger + success signals
+#
+# Authorization binds directly to agent types (OWL classes), not to a
+# separate OperatorRole intermediary. A query answers:
+#   "Given I am a <agent-class> in <phase>, what Actions are authorized?"
+# => SELECT ?a WHERE { ?a hcls:authorizedAgentType <MyClass> ;
+#                         hcls:occursIn/hcls:contains? <MyPhase> }
+#
+# Instance-graph contextual role is a string annotation (hcls:actsAs) on
+# the Person within a Scope — not a modeled class.
 #
 # Sub-domain packages (cr-core-roles.ttl, cr-core-phases.ttl,
-# cr-core-actions.ttl) provide the named individuals.
-# Clinical-care, pharmacovigilance, etc. will add their own.
-#
-# Design contract:
-#   hcls:OperatorRole  — archetype; instance-graph binding via hcls:actsIn
-#   hcls:Phase         — sequenced stage; hierarchy via hcls:contains
-#   hcls:Action        — authorized CTA; realized at instance-time via prov:Activity
-#   hcls:JobToBeDone   — role-scoped goal with trigger + success signals
+# cr-core-actions.ttl) provide agent type classes and named individuals.
 #################################################################
-
-hcls:OperatorRole a owl:Class ; rdfs:subClassOf top:Core ;
-    rdfs:label "Operator Role" ;
-    rdfs:comment "An archetype of accountability: a named role that a Person or system plays within an HCLS process, defining an authorized action space and primary accountability scope. Roles are reference-graph named individuals, not Person instances. Permutates to: cr:InvestigatorRole, cr:CRARole (clinical research); Nurse, Pharmacist (clinical care); Inspector, QC Analyst (manufacturing)." .
 
 hcls:Phase a owl:Class ; rdfs:subClassOf top:Scope ;
     rdfs:label "Phase" ;
     rdfs:comment "A bounded, sequenced stage of a process lifecycle within an HCLS domain. Phases form a containment tree (hcls:contains) and a precedence chain (hcls:precedes). Permutates to: cr:StartupPhase/ConductPhase/CloseoutPhase (clinical research); Admission/Inpatient/Discharge (clinical care); Formulation/Fill-Finish/Release (manufacturing)." .
 
-hcls:Action a owl:Class ; rdfs:subClassOf top:Temporal ;
+hcls:Action a owl:Class ; rdfs:subClassOf top:Constraint ;
     rdfs:label "Action" ;
-    rdfs:comment "A named, authorized operation (Call To Action in OOUX terms) that an OperatorRole may perform on an entity in a given Phase. Actions are reference-graph archetypes. Realized occurrences in instance graphs are prov:Activity individuals linked back via hcls:realizationOf. This is the vocabulary bridge that lets an AI agent query: given my role and the current phase, what am I authorized to do?" .
+    rdfs:comment "A named, authorized operation (Call To Action in OOUX terms) that an agent of a given type may perform in a given Phase. Actions are reference-graph archetypes (top:Constraint: they specify what is authorized). Realized occurrences in instance graphs are prov:Activity individuals linked back via hcls:realizationOf." .
 
 hcls:JobToBeDone a owl:Class ; rdfs:subClassOf top:Scope ;
     rdfs:label "Job to Be Done" ;
-    rdfs:comment "A bounded unit of operator intent: the goal a role is trying to achieve, with a trigger condition and measurable success signals. Scoped to an OperatorRole and a Phase. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." .
-
-# --- OperatorRole properties ---
-hcls:canPerform a owl:ObjectProperty ;
-    rdfs:domain hcls:OperatorRole ; rdfs:range hcls:Action ;
-    rdfs:label "can perform" ;
-    rdfs:comment "The Actions this role is authorized to execute. Inverse of hcls:authorizedFor." .
-
-hcls:primaryPhase a owl:ObjectProperty ;
-    rdfs:domain hcls:OperatorRole ; rdfs:range hcls:Phase ;
-    rdfs:label "primary phase" ;
-    rdfs:comment "The lifecycle phase in which this role is most active." .
-
-hcls:handOffTo a owl:ObjectProperty ;
-    rdfs:domain hcls:OperatorRole ; rdfs:range hcls:OperatorRole ;
-    rdfs:label "hands off to" ;
-    rdfs:comment "Workflow handoff: when this role completes its job, work transitions to the named role. Encodes the operator-to-operator coordination seam." .
-
-hcls:actsIn a owl:ObjectProperty ;
-    rdfs:range hcls:OperatorRole ;
-    rdfs:label "acts in" ;
-    rdfs:comment "At instance-graph time, links a prov:Agent (Person) to the OperatorRole archetype it is playing. Typically scoped to a Scope (Study, Site, Care Episode) in the instance graph." .
-
-hcls:organizationBoundary a owl:ObjectProperty ;
-    rdfs:domain hcls:OperatorRole ;
-    rdfs:label "organization boundary" ;
-    rdfs:comment "The organizational locus of this role (Site, Sponsor, CRO, Regulator, Hospital, etc.). Determines which operator lens applies when projecting object views." .
+    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a Phase. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." .
 
 # --- Action properties ---
-hcls:authorizedFor a owl:ObjectProperty ;
-    rdfs:domain hcls:Action ; rdfs:range hcls:OperatorRole ;
-    rdfs:label "authorized for" ;
-    rdfs:comment "The role(s) authorized to execute this Action. Inverse of hcls:canPerform." .
+hcls:authorizedAgentType a owl:ObjectProperty ;
+    rdfs:domain hcls:Action ; rdfs:range owl:Class ;
+    rdfs:label "authorized agent type" ;
+    rdfs:comment "The OWL class of agent authorized to execute this Action. Authorization binds directly to agent type — no OperatorRole intermediary. Multi-valued: an Action may be authorized for more than one agent type." .
 
 hcls:occursIn a owl:ObjectProperty ;
     rdfs:domain hcls:Action ; rdfs:range hcls:Phase ;
@@ -122,7 +96,7 @@ hcls:occursIn a owl:ObjectProperty ;
 hcls:operatesOn a owl:ObjectProperty ;
     rdfs:domain hcls:Action ; rdfs:range owl:Class ;
     rdfs:label "operates on" ;
-    rdfs:comment "The OWL class of the primary entity this Action targets. Enables querying: what Actions are available on a given entity type for a given role in a given phase?" .
+    rdfs:comment "The OWL class of the primary entity this Action targets. Enables querying: what Actions are available on a given entity type for a given agent type in a given phase?" .
 
 hcls:realizationOf a owl:ObjectProperty ;
     rdfs:range hcls:Action ;
@@ -141,10 +115,10 @@ hcls:contains a owl:ObjectProperty ;
     rdfs:comment "Containment: a phase contains its named sub-phases. Transitive; used to derive the top-level phase for any sub-phase." .
 
 # --- Job-to-be-Done properties ---
-hcls:jobOfRole a owl:ObjectProperty ;
-    rdfs:domain hcls:JobToBeDone ; rdfs:range hcls:OperatorRole ;
-    rdfs:label "job of role" ;
-    rdfs:comment "The OperatorRole this job belongs to." .
+hcls:jobOfAgentType a owl:ObjectProperty ;
+    rdfs:domain hcls:JobToBeDone ; rdfs:range owl:Class ;
+    rdfs:label "job of agent type" ;
+    rdfs:comment "The OWL class of agent this job belongs to." .
 
 hcls:jobTrigger a owl:DatatypeProperty ;
     rdfs:domain hcls:JobToBeDone ;
@@ -165,6 +139,12 @@ hcls:executesAction a owl:ObjectProperty ;
     rdfs:domain hcls:JobToBeDone ; rdfs:range hcls:Action ;
     rdfs:label "executes action" ;
     rdfs:comment "An Action performed as part of accomplishing this job." .
+
+# --- Instance-graph contextual role binding ---
+hcls:actsAs a owl:DatatypeProperty ;
+    rdfs:domain hcls:Person ;
+    rdfs:label "acts as" ;
+    rdfs:comment "At instance-graph time, a human-readable label for the contextual role a Person plays within a Scope (Study, Site, Care Episode). Not a class; purely a string annotation on the Person-Scope binding. Example value: 'Principal Investigator'." .
 
 # --- Relations (clearly cross-domain) ---
 hcls:affiliatedWith a owl:ObjectProperty ; rdfs:domain hcls:Person ; rdfs:range hcls:Organization ;
