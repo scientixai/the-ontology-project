@@ -160,11 +160,23 @@ def build_ngsi_context(onto):
             pfx, local = split(s)
             if pfx and local and local not in NGSI_RESERVED:
                 terms[local] = f"{pfx}:{local}"
-    for t in (OWL.ObjectProperty, OWL.DatatypeProperty, OWL.AnnotationProperty, RDF.Property):
+
+    # ObjectProperties need @type: @id so brokers treat their values as URIs
+    # (NGSI-LD Relationship semantics) rather than plain strings. DatatypeProperty
+    # and AnnotationProperty terms are emitted as plain IRI shortcuts (no @type).
+    obj_props = set()
+    for s in onto.subjects(RDF.type, OWL.ObjectProperty):
+        if isinstance(s, URIRef):
+            pfx, local = split(s)
+            if pfx and local and local not in NGSI_RESERVED:
+                obj_props.add(local)
+                terms[local] = {"@id": f"{pfx}:{local}", "@type": "@id"}
+
+    for t in (OWL.DatatypeProperty, OWL.AnnotationProperty, RDF.Property):
         for s in onto.subjects(RDF.type, t):
             if isinstance(s, URIRef):
                 pfx, local = split(s)
-                if pfx and local and local not in NGSI_RESERVED:
+                if pfx and local and local not in NGSI_RESERVED and local not in obj_props:
                     terms[local] = f"{pfx}:{local}"
 
     local_ctx = dict(NGSI_PREFIXES)
