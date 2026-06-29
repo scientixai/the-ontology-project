@@ -7,92 +7,439 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix top: <https://top.scientix.ai/core/v1#> .
+@prefix top: <https://top.scientix.ai/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-top: a owl:Ontology ;
-    rdfs:label "TOP Core (local working stub)" ;
-    rdfs:comment "Local working stub of TOP Core: one root (top:Core) + eight Category-Level Objects (CLOs), aligned to the canonical Apache-2.0 TOP Core at github.com/scientixai/the-ontology-project. NOT authoritative; serves as the specialization anchor and carries TOP's Universal DNA (identifier + observedAt + status) plus the bitemporal + PROV convention vocabulary for the CR-domain build." .
-
-top:identifier a owl:DatatypeProperty ;
-    rdfs:label "identifier" ;
-    rdfs:comment "A stable, dereferenceable identifier for the entity (the 'who/what is this' of the Universal DNA)." .
-
-top:observedAt a owl:DatatypeProperty ;
-    rdfs:label "observed at" ;
-    rdfs:comment "Valid-time instant — when the fact became true in the world (NGSI-LD observedAt)." ;
-    rdfs:range xsd:dateTime .
-
-top:recordedAt a owl:DatatypeProperty ;
-    rdfs:label "recorded at" ;
-    rdfs:comment "Transaction-time instant — when the system first recorded the assertion (append-only)." ;
-    rdfs:range xsd:dateTime .
-
-top:status a owl:DatatypeProperty ;
-    rdfs:label "status" ;
-    rdfs:comment "The lifecycle state of the entity (e.g. active, retired, superseded) — the 'where in its life' of the Universal DNA." .
-
-top:supersededAt a owl:DatatypeProperty ;
-    rdfs:label "superseded at" ;
-    rdfs:comment "Transaction-time close — when a later assertion superseded this one." ;
-    rdfs:range xsd:dateTime .
-
-top:validTo a owl:DatatypeProperty ;
-    rdfs:label "valid to" ;
-    rdfs:comment "Valid-time close — when the fact stopped being true in the world." ;
-    rdfs:range xsd:dateTime .
 
 cr: a owl:Ontology ;
     rdfs:label "CR-core" ;
     rdfs:comment "Clinical-research domain core: entities recurring across >=2 CR workflows. Specializes TOP Core / HCLS-core. Scope: oncology Pre-IND -> EOP2. Standards projection target: CDISC (SDTM/CDASH/Define-XML), USDM, MedDRA." .
 
+cr:AcknowledgeShipmentReceipt a hcls:Action ;
+    rdfs:label "Acknowledge Shipment Receipt" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:ActivateSite a hcls:Action ;
+    rdfs:label "Activate Site" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate,
+        cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AddCountry a hcls:Action ;
+    rdfs:label "Add Country" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AddTherapeuticArea a hcls:Action ;
+    rdfs:label "Add Therapeutic Area" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AdministerQuestionnaire a hcls:Action ;
+    rdfs:label "Administer Questionnaire" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
 cr:Administration a owl:Class ;
     rdfs:label "Administration" ;
     rdfs:comment "A dosing event." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:AnalysisDataset a owl:Class ;
     rdfs:label "Analysis Dataset (ADaM)" ;
     rdfs:comment "An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
+
+cr:ApproveAmendment a hcls:Action ;
+    rdfs:label "Approve Amendment" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:ApproveOrRejectDeviation a hcls:Action ;
+    rdfs:label "Approve or Reject Deviation" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ApproveRiskAssessment a hcls:Action ;
+    rdfs:label "Approve Risk Assessment" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ArchiveLog a hcls:Action ;
+    rdfs:label "Archive Log" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AssignActionItem a hcls:Action ;
+    rdfs:label "Assign Action Item" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AssignCountryToRegion a hcls:Action ;
+    rdfs:label "Assign Country to Region" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:AssignParticipantsToArm a hcls:Action ;
+    rdfs:label "Assign Participants to Arm" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:AssociateStudyToSponsor a hcls:Action ;
+    rdfs:label "Associate or Remove Study" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:Study .
 
 cr:Attestation a owl:Class ;
     rdfs:label "Attestation" ;
     rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:BudgetContractingWorkStream a owl:Class ;
     rdfs:label "Budget & Contracting Work Stream" ;
     rdfs:comment "Budget negotiation and contract (CTA) review and execution." ;
     rdfs:subClassOf cr:WorkStream .
 
+cr:CDISC_CDASH a top:RegulatoryLaw ;
+    rdfs:label "CDISC CDASH — Clinical Data Acquisition Standards Harmonization" ;
+    rdfs:comment "CDISC standard defining the content of data collected on case report forms. Primary crosswalk target for cr:OperationalRecord field mapping." ;
+    skos:notation "CDISC CDASH" ;
+    top:status "active" .
+
+cr:CDISC_SDTM a top:RegulatoryLaw ;
+    rdfs:label "CDISC SDTM — Study Data Tabulation Model" ;
+    rdfs:comment "CDISC standard for organizing and formatting clinical trial data for regulatory submissions (FDA/PMDA)." ;
+    skos:notation "CDISC SDTM" ;
+    top:status "active" .
+
+cr:CFR_21_Part_11 a top:RegulatoryLaw ;
+    rdfs:label "21 CFR Part 11 — Electronic Records and Signatures" ;
+    rdfs:comment "US FDA regulation governing electronic records and electronic signatures in clinical data systems. Requires audit trails, access controls, and non-repudiable e-signatures." ;
+    skos:notation "21 CFR Part 11" ;
+    top:status "active" .
+
+cr:CFR_21_Part_312 a top:RegulatoryLaw ;
+    rdfs:label "21 CFR Part 312 — Investigational New Drug Application" ;
+    rdfs:comment "US FDA IND regulations. Governs the submission, conduct, and reporting obligations of IND-enabling and IND-active clinical trials in the US." ;
+    skos:notation "21 CFR Part 312" ;
+    top:status "active" .
+
+cr:CFR_21_Part_50 a top:RegulatoryLaw ;
+    rdfs:label "21 CFR Part 50 — Protection of Human Subjects" ;
+    rdfs:comment "US FDA informed consent regulations. Governs the process and documentation of consent from trial participants." ;
+    skos:notation "21 CFR Part 50" ;
+    top:status "active" .
+
+cr:CFR_21_Part_56 a top:RegulatoryLaw ;
+    rdfs:label "21 CFR Part 56 — Institutional Review Boards" ;
+    rdfs:comment "US FDA IRB regulations. Governs the composition, operations, and responsibilities of IRBs that review clinical trials." ;
+    skos:notation "21 CFR Part 56" ;
+    top:status "active" .
+
+cr:COORD-J01 a hcls:JobToBeDone ;
+    rdfs:label "Screen and enroll a candidate participant" ;
+    hcls:executesAction cr:CompleteCRF,
+        cr:EnrollParticipant,
+        cr:ObtainParticipantConsent,
+        cr:ScheduleVisit,
+        cr:ScreenParticipant,
+        cr:UpdateEnrollmentStatus ;
+    hcls:involvesObject cr:EnrollmentRecord,
+        cr:InformedConsentAct,
+        cr:Participant,
+        cr:VisitOccurrence,
+        cr:eCRF ;
+    hcls:jobOfAgentType cr:SiteCoordinator ;
+    hcls:jobTrigger "Candidate presents for screening; Informed Consent obtained." ;
+    hcls:successSignal "All enrollment CRFs complete at baseline visit.",
+        "Participant.participantStatus = ON_TREATMENT within eligibility window.",
+        "Zero open queries on eligibility data at enrollment." .
+
+cr:COORD-J02 a hcls:JobToBeDone ;
+    rdfs:label "Run a protocol visit on schedule and within window" ;
+    hcls:executesAction cr:CollectSample,
+        cr:CompleteVisit,
+        cr:StartVisit,
+        cr:UpdateCRF ;
+    hcls:involvesObject cr:ActivityOccurrence,
+        cr:VisitOccurrence,
+        cr:eCRF ;
+    hcls:jobOfAgentType cr:SiteCoordinator ;
+    hcls:jobTrigger "Visit.visitStatus = SCHEDULED; visit window approaching." ;
+    hcls:successSignal "All per-protocol CRFs for the visit reach COMPLETED or VERIFIED.",
+        "Samples shipped within chain-of-custody SLA.",
+        "Visit.visitStatus = COMPLETED with windowStatus = IN_WINDOW." .
+
+cr:COORD-J03 a hcls:JobToBeDone ;
+    rdfs:label "Capture data cleanly and respond to queries" ;
+    hcls:executesAction cr:RespondToQuery,
+        cr:UpdateCRF ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:jobOfAgentType cr:SiteCoordinator ;
+    hcls:jobTrigger "Data Manager raises a query; Discrepancy.queryStatus = OPEN." ;
+    hcls:successSignal "Coordinator response posted within sponsor target TTR.",
+        "No repeated re-open on the same data point.",
+        "Query moves to ANSWERED or CLOSED." .
+
+cr:COORD-J04 a hcls:JobToBeDone ;
+    rdfs:label "Report adverse events within sponsor-required timelines" ;
+    hcls:executesAction cr:FollowUpAdverseEvent,
+        cr:ReportAdverseEvent,
+        cr:UpdateAdverseEventDetails ;
+    hcls:involvesObject cr:AdverseEvent ;
+    hcls:jobOfAgentType cr:SiteCoordinator ;
+    hcls:jobTrigger "Adverse Event observed or reported by participant." ;
+    hcls:successSignal "AE reported with reportedDate within 24h for SAEs.",
+        "Investigator assessment completed within protocol timeline." .
+
+cr:COORD-J05 a hcls:JobToBeDone ;
+    rdfs:label "Keep the site regulatory binder and logs current" ;
+    hcls:executesAction cr:AddLogEntry,
+        cr:CreateLog,
+        cr:LogCommunication ;
+    hcls:involvesObject cr:Credential,
+        cr:Delegation ;
+    hcls:jobOfAgentType cr:SiteCoordinator ;
+    hcls:jobTrigger "New amendment approved, new staff onboarded, or monitoring visit upcoming." ;
+    hcls:successSignal "Delegation, training, enrollment, and drug accountability logs up to date.",
+        "Monitoring visit finds zero major findings in the binder category." .
+
+cr:CRA-J01 a hcls:JobToBeDone ;
+    rdfs:label "Get a site ready to enroll its first participant" ;
+    hcls:executesAction cr:ConductMonitoringVisit,
+        cr:InitiateSite,
+        cr:SubmitMonitoringReport ;
+    hcls:involvesObject cr:Credential,
+        cr:Delegation,
+        cr:StudySite ;
+    hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
+    hcls:jobTrigger "Site.siteStatus enters READY_TO_INITIATE after Study Startup Package is ready." ;
+    hcls:successSignal "First participant enrolled within sponsor target window after activation.",
+        "Site activated on or before plannedActivationDate.",
+        "Zero open regulatory or training deficiencies at SIV close." .
+
+cr:CRA-J02 a hcls:JobToBeDone ;
+    rdfs:label "Verify that site data matches source documents" ;
+    hcls:executesAction cr:ConductMonitoringVisit,
+        cr:CreateQuery,
+        cr:RecordFinding,
+        cr:SubmitMonitoringReport ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
+    hcls:jobTrigger "Monitoring visit scheduled or risk-based trigger fires." ;
+    hcls:successSignal "CRFs reviewed during the visit left in VERIFIED status.",
+        "No outstanding major findings recorded.",
+        "SDV rate meets monitoring plan target for the window." .
+
+cr:CRA-J03 a hcls:JobToBeDone ;
+    rdfs:label "Catch and close protocol deviations early" ;
+    hcls:executesAction cr:RecordFinding,
+        cr:ReportDeviation ;
+    hcls:involvesObject cr:Participant,
+        cr:VisitOccurrence ;
+    hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
+    hcls:jobTrigger "Deviation identified during a monitoring visit or pattern review." ;
+    hcls:successSignal "Deviation moved to REVIEWED within sponsor target cycle time.",
+        "IRB reporting deadline met." .
+
+cr:CRA-J04 a hcls:JobToBeDone ;
+    rdfs:label "Close the site cleanly at study end" ;
+    hcls:executesAction cr:ConductMonitoringVisit,
+        cr:SubmitMonitoringReport ;
+    hcls:involvesObject cr:StudySite ;
+    hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
+    hcls:jobTrigger "Site.siteStatus moves to CLOSED_TO_ENROLLMENT; close-out visit scheduled." ;
+    hcls:successSignal "All essential documents transferred to sponsor eTMF.",
+        "Close-out monitoring visit completed and signed by PI.",
+        "Open findings and action items closed." .
+
 cr:CRO a owl:Class ;
     rdfs:label "CRO" ;
     rdfs:comment "A contract research organization the sponsor delegates trial conduct to." ;
     rdfs:subClassOf hcls:Organization .
 
-cr:CSR a owl:Class ;
-    rdfs:label "Clinical Study Report" ;
-    rdfs:comment "The definitive summary of a study's results (CSR)." ;
-    rdfs:subClassOf top:Evidence .
+cr:CROBoundary a owl:NamedIndividual ;
+    rdfs:label "CRO" .
+
+cr:CalibrateEquipment a hcls:Action ;
+    rdfs:label "Calibrate Equipment" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CancelActionItem a hcls:Action ;
+    rdfs:label "Cancel Action Item" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CancelPayment a hcls:Action ;
+    rdfs:label "Cancel Payment" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CancelTask a hcls:Action ;
+    rdfs:label "Cancel Task" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CancelVisit a hcls:Action ;
+    rdfs:label "Cancel Visit" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
 
 cr:ClinOpsWorkStream a owl:Class ;
     rdfs:label "Clinical Operations Work Stream" ;
     rdfs:comment "Enrollment and data-collection readiness from the protocol, SOPs, vendor manuals, monitoring plan, and schedule of activities." ;
     rdfs:subClassOf cr:WorkStream .
 
+cr:CloseArm a hcls:Action ;
+    rdfs:label "Close Arm" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:CloseoutPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:CloseAudit a hcls:Action ;
+    rdfs:label "Close Audit" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseBudget a hcls:Action ;
+    rdfs:label "Close Budget" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseCAPA a hcls:Action ;
+    rdfs:label "Close CAPA" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseDeviation a hcls:Action ;
+    rdfs:label "Close Deviation" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:CloseFinding a hcls:Action ;
+    rdfs:label "Close Finding" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseSAE a hcls:Action ;
+    rdfs:label "Close SAE" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
 cr:Cohort a owl:Class ;
     rdfs:label "Cohort" ;
     rdfs:comment "A group of subjects sharing a dosing or treatment assignment." ;
     rdfs:subClassOf top:Scope .
 
+cr:ConductAudit a hcls:Action ;
+    rdfs:label "Conduct Audit" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ConductRiskAssessment a hcls:Action ;
+    rdfs:label "Conduct Risk Assessment" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ConfigureDataQualityMetric a hcls:Action ;
+    rdfs:label "Configure Data Quality Metric" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ConfigureSystemForStudy a hcls:Action ;
+    rdfs:label "Configure System for Study" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff,
+        cr:SponsorProjectManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
 cr:CoverageAnalysis a owl:Class ;
     rdfs:label "Coverage Analysis (MCA)" ;
     rdfs:comment "A Medicare/insurance coverage analysis for study procedures." ;
     rdfs:subClassOf top:Evidence .
+
+cr:CreateCRF a hcls:Action ;
+    rdfs:label "Create CRF" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:CreateRegulatorySubmission a hcls:Action ;
+    rdfs:label "Create Regulatory Submission" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:CreateSite a hcls:Action ;
+    rdfs:label "Create Site" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:DM-J01 a hcls:JobToBeDone ;
+    rdfs:label "Resolve open queries and achieve clean data state" ;
+    hcls:executesAction cr:AssignQuery,
+        cr:CloseQuery,
+        cr:CreateQuery,
+        cr:ReopenQuery ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:jobOfAgentType cr:DataManager ;
+    hcls:jobTrigger "Query created on a CRF; or discrepancy detected in incoming data." ;
+    hcls:successSignal "All queries on a CRF closed before CRF lock.",
+        "Re-open rate below sponsor threshold." .
+
+cr:DM-J02 a hcls:JobToBeDone ;
+    rdfs:label "Lock CRFs and database for analysis" ;
+    hcls:executesAction cr:LockUnlockCRF ;
+    hcls:involvesObject cr:Study,
+        cr:eCRF ;
+    hcls:jobOfAgentType cr:DataManager ;
+    hcls:jobTrigger "Last patient last visit completed; data cleaning cycle closed." ;
+    hcls:successSignal "All CRFs in LOCKED state.",
+        "Database lock confirmed by authorized Data Manager sign-off." .
+
+cr:DefineRegion a hcls:Action ;
+    rdfs:label "Define Region" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:DistributeReport a hcls:Action ;
+    rdfs:label "Distribute Report" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
 
 cr:DoseLevel a owl:Class ;
     rdfs:label "Dose Level" ;
@@ -104,6 +451,99 @@ cr:DoseLimitingToxicity a owl:Class ;
     rdfs:comment "Oncology dose-escalation: a DLT informs the next dose decision." ;
     rdfs:subClassOf cr:AdverseEvent .
 
+cr:DraftAmendment a hcls:Action ;
+    rdfs:label "Draft Amendment" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:DrillIntoDataQualityMetric a hcls:Action ;
+    rdfs:label "Drill Into Metric" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:EU_CTR_536_2014 a top:RegulatoryLaw ;
+    rdfs:label "EU Clinical Trials Regulation (EU) No 536/2014" ;
+    rdfs:comment "European Union regulation governing clinical trials on medicinal products for human use. Replaces Directive 2001/20/EC. Requires submission via CTIS." ;
+    skos:notation "EU CTR 536/2014" ;
+    top:status "active" .
+
+cr:EU_GDPR a top:RegulatoryLaw ;
+    rdfs:label "EU General Data Protection Regulation (2016/679)" ;
+    rdfs:comment "GDPR — governs processing of personal data for EU residents. Applies to any trial data linked to identifiable persons." ;
+    skos:notation "GDPR 2016/679" ;
+    top:status "active" .
+
+cr:FIN-J01 a hcls:JobToBeDone ;
+    rdfs:label "Create and approve budgets per study and per site" ;
+    hcls:executesAction cr:AddBudgetLineItem,
+        cr:ApproveBudget,
+        cr:CreateBudget,
+        cr:LockBudget ;
+    hcls:involvesObject cr:Study,
+        cr:StudySite ;
+    hcls:jobOfAgentType cr:FinanceStaff ;
+    hcls:jobTrigger "Study in IN_STARTUP; or new site activated." ;
+    hcls:successSignal "Budget approved before first site activation.",
+        "Line items match the SOA procedures and visit schedule.",
+        "Site-level budget approved before first patient enrolled." .
+
+cr:FIN-J02 a hcls:JobToBeDone ;
+    rdfs:label "Issue payments to sites per budget and visit accrual" ;
+    hcls:executesAction cr:ApprovePayment,
+        cr:CreatePayment,
+        cr:IssueSitePayment,
+        cr:ProcessPayment ;
+    hcls:involvesObject cr:StudySite,
+        cr:VisitOccurrence ;
+    hcls:jobOfAgentType cr:FinanceStaff ;
+    hcls:jobTrigger "Visit.visitStatus = COMPLETED; accrual condition met; invoice received." ;
+    hcls:successSignal "Payment issued within contract paymentTermsDays.",
+        "complianceCheckStatus = PASSED (anti-kickback, Sunshine Act)." .
+
+cr:FlagClinicallySignificant a hcls:Action ;
+    rdfs:label "Flag Clinically Significant" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:FlagForSponsorReport a hcls:Action ;
+    rdfs:label "Flag for Sponsor Report" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:GenerateBudgetForecast a hcls:Action ;
+    rdfs:label "Generate Budget Forecast" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:GenerateReport a hcls:Action ;
+    rdfs:label "Generate Report" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:ICH_E6_R3 a top:RegulatoryLaw ;
+    rdfs:label "ICH E6(R3) — Good Clinical Practice" ;
+    rdfs:comment "ICH E6(R3) GCP Guideline (Step 4, 2025). Governs the conduct of clinical trials to protect subjects and ensure data integrity. Primary governance document for CR domain actions." ;
+    skos:notation "ICH E6(R3)" ;
+    top:status "active" .
+
+cr:ICH_E8_R1 a top:RegulatoryLaw ;
+    rdfs:label "ICH E8(R1) — General Considerations for Clinical Studies" ;
+    rdfs:comment "ICH E8(R1) (2021). Updated guidance on quality and risk-based approaches to clinical trial design. Companion to E6(R3)." ;
+    skos:notation "ICH E8(R1)" ;
+    top:status "active" .
+
+cr:ICH_E9_R1 a top:RegulatoryLaw ;
+    rdfs:label "ICH E9(R1) — Estimands and Sensitivity Analysis" ;
+    rdfs:comment "ICH E9(R1) (2019). Addendum on estimands and sensitivity analysis in clinical trials." ;
+    skos:notation "ICH E9(R1)" ;
+    top:status "active" .
+
 cr:IRB a owl:Class ;
     rdfs:label "IRB / IEC" ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
@@ -112,10 +552,402 @@ cr:IRB a owl:Class ;
         "Institutional Review Board" ;
     skos:definition "An independent body that reviews and provides ongoing oversight to protect the rights, safety, and well-being of trial participants (paraphrased, ICH E6(R3))." .
 
+cr:ImplementAmendment a hcls:Action ;
+    rdfs:label "Implement Amendment" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:IssueAuditFindings a hcls:Action ;
+    rdfs:label "Issue Audit Findings" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:MapTherapeuticAreaCodes a hcls:Action ;
+    rdfs:label "Map Therapeutic Area Codes" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:OpenCAPA a hcls:Action ;
+    rdfs:label "Open CAPA" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:OperationalRecord a owl:Class ;
+    rdfs:label "Operational Record" ;
+    rdfs:comment "Non-clinical, non-GCP-governed data captured during trial operations — process metrics, site performance indicators, sponsor-defined operational fields (e.g. X_WHATEVER extensions in Medidata). Not an hcls:Observation (no clinical value) and not directly regulated by ICH E6; captured in operational CRFs or sponsor-specific payloads. Primary target for LLM-assisted field-mapping inference (cr:mappingConfidence)." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:PI-J01 a hcls:JobToBeDone ;
+    rdfs:label "Hold legal responsibility for trial conduct at the Site" ;
+    hcls:executesAction cr:AddInvestigatorDelegation,
+        cr:RefreshGCPTraining,
+        cr:UpdateFCOIDisclosure ;
+    hcls:involvesObject cr:Credential,
+        cr:Delegation,
+        cr:Study ;
+    hcls:jobOfAgentType cr:Investigator ;
+    hcls:jobTrigger "Site selected for a Study; PI designated as Principal Investigator." ;
+    hcls:successSignal "Form 1572 on file (US studies).",
+        "GCP training current throughout the Study.",
+        "No regulatory or sponsor actions escalated to debarment." .
+
+cr:PI-J02 a hcls:JobToBeDone ;
+    rdfs:label "Assess adverse events for causality and seriousness" ;
+    hcls:executesAction cr:AssessAdverseEvent,
+        cr:CloseAdverseEvent,
+        cr:ReportSAE,
+        cr:UpdateSAE ;
+    hcls:involvesObject cr:AdverseEvent,
+        cr:InvestigationalProduct ;
+    hcls:jobOfAgentType cr:Investigator ;
+    hcls:jobTrigger "Site Coordinator reports an AE; or an SAE becomes known." ;
+    hcls:successSignal "Causality and expectedness logged on every AE.",
+        "Investigator assessment recorded within 24h of SAE awareness.",
+        "Zero SAEs missed for expedited reporting." .
+
+cr:PI-J03 a hcls:JobToBeDone ;
+    rdfs:label "Review and sign CRFs" ;
+    hcls:executesAction cr:ReviewCRF,
+        cr:SignCRF ;
+    hcls:involvesObject cr:eCRF ;
+    hcls:jobOfAgentType cr:Investigator ;
+    hcls:jobTrigger "CRF status reaches COMPLETED; PI review required per protocol." ;
+    hcls:successSignal "CRF electronicSignatureStatus = SIGNED within sponsor target TTR.",
+        "Review and sign cycle does not block CRF lock." .
+
+cr:PI-J04 a hcls:JobToBeDone ;
+    rdfs:label "Delegate tasks to qualified site staff" ;
+    hcls:executesAction cr:AddInvestigatorDelegation ;
+    hcls:involvesObject cr:Credential,
+        cr:Delegation ;
+    hcls:jobOfAgentType cr:Investigator ;
+    hcls:jobTrigger "New staff onboarded; or protocol amendment changes delegation requirements." ;
+    hcls:successSignal "Delegation of Authority log current and matches Person.delegatedBy.",
+        "Each delegated task has a qualified delegate with training in place." .
+
+cr:PI-J05 a hcls:JobToBeDone ;
+    rdfs:label "Withdraw or close out a participant" ;
+    hcls:executesAction cr:CompleteParticipantStudy,
+        cr:WithdrawParticipant ;
+    hcls:involvesObject cr:AdverseEvent,
+        cr:InformedConsentAct,
+        cr:Participant ;
+    hcls:jobOfAgentType cr:Investigator ;
+    hcls:jobTrigger "Participant withdraws consent, completes study, or meets discontinuation criteria." ;
+    hcls:successSignal "In-flight SAEs followed up post-withdrawal.",
+        "Participant.participantStatus reflects correct end state (COMPLETED, WITHDRAWN).",
+        "Withdrawal reason and date captured." .
+
+cr:PM-J01 a hcls:JobToBeDone ;
+    rdfs:label "Initialize a new study" ;
+    hcls:executesAction cr:ActivateStudy,
+        cr:CreateArm,
+        cr:CreateMilestone,
+        cr:CreateStudy,
+        cr:UpdateStudyDetails ;
+    hcls:involvesObject cr:Arm,
+        cr:Study ;
+    hcls:jobOfAgentType cr:SponsorProjectManager ;
+    hcls:jobTrigger "Program approval; Sponsor Exec authorises study start." ;
+    hcls:successSignal "First site selected within target window.",
+        "Protocol, SOA, CRFs, and Budget approved and locked.",
+        "Study in ACTIVE status within sponsor target cycle time." .
+
+cr:PM-J02 a hcls:JobToBeDone ;
+    rdfs:label "Select and activate sites to hit enrollment plan" ;
+    hcls:executesAction cr:AchieveMilestone,
+        cr:SelectSiteForStudy ;
+    hcls:involvesObject cr:StudySite ;
+    hcls:jobOfAgentType cr:SponsorProjectManager ;
+    hcls:jobTrigger "Study in IN_STARTUP; feasibility responses in from candidate sites." ;
+    hcls:successSignal "First site activated on or before plannedActivationDate.",
+        "Target number of sites SELECTED within window." .
+
+cr:PM-J03 a hcls:JobToBeDone ;
+    rdfs:label "Manage enrollment across sites to meet plan" ;
+    hcls:executesAction cr:CloseEnrollment,
+        cr:DelayMilestone,
+        cr:OpenEnrollment,
+        cr:RebaselineTimeline ;
+    hcls:involvesObject cr:Participant,
+        cr:Study,
+        cr:StudySite ;
+    hcls:jobOfAgentType cr:SponsorProjectManager ;
+    hcls:jobTrigger "Study ENROLLING; enrollment plan and forecast in place." ;
+    hcls:successSignal "Actual enrollmentCount tracks forecast within tolerance.",
+        "Enrollment cycle time per site within sponsor target." .
+
+cr:PM-J04 a hcls:JobToBeDone ;
+    rdfs:label "Drive milestone achievement and timeline" ;
+    hcls:executesAction cr:AchieveMilestone,
+        cr:AssignTask,
+        cr:DelayMilestone,
+        cr:UpdateTimeline ;
+    hcls:involvesObject cr:Study ;
+    hcls:jobOfAgentType cr:SponsorProjectManager ;
+    hcls:jobTrigger "Milestone deadline approaches or slips." ;
+    hcls:successSignal "Milestone moved to COMPLETED on or before plannedDate.",
+        "Variance on Study Timeline within sponsor tolerance." .
+
+cr:PM-J05 a hcls:JobToBeDone ;
+    rdfs:label "Close study and archive cleanly" ;
+    hcls:executesAction cr:ArchiveStudy,
+        cr:CloseSite,
+        cr:CloseSiteToEnrollment,
+        cr:CloseStudy,
+        cr:FinalizeReport ;
+    hcls:involvesObject cr:CSR,
+        cr:Study,
+        cr:StudySite ;
+    hcls:jobOfAgentType cr:SponsorProjectManager ;
+    hcls:jobTrigger "Last Patient Out (LPO) reached; database lock in progress." ;
+    hcls:successSignal "All sites closed; all open Tasks and Findings resolved.",
+        "CSR finalized and distributed.",
+        "Study moves to COMPLETED then archived." .
+
+cr:PV-J01 a hcls:JobToBeDone ;
+    rdfs:label "Detect and evaluate emerging safety signals" ;
+    hcls:executesAction cr:CloseSafetySignal,
+        cr:EvaluateSafetySignal,
+        cr:IdentifySafetySignal ;
+    hcls:involvesObject cr:AdverseEvent ;
+    hcls:jobOfAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:jobTrigger "Aggregate AE data shows unexpected frequency or severity pattern." ;
+    hcls:successSignal "DSMB/IDMC notified if threshold met.",
+        "Signal evaluated and action (escalate, monitor, or close) documented within SOP timeline." .
+
+cr:PV-J02 a hcls:JobToBeDone ;
+    rdfs:label "File expedited SAE reports within regulatory timelines" ;
+    hcls:executesAction cr:ReconcileSAE,
+        cr:SubmitExpeditedReport ;
+    hcls:involvesObject cr:AdverseEvent ;
+    hcls:jobOfAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:jobTrigger "SAE meets expedited reporting criteria (unexpected + possibly related)." ;
+    hcls:successSignal "7-day initial or 15-day full report filed within regulatory deadline.",
+        "Narrative and causality consistent across all SAE documents." .
+
+cr:PlaceSiteOnHold a hcls:Action ;
+    rdfs:label "Place Site On Hold" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:PlanRescreen a hcls:Action ;
+    rdfs:label "Plan Rescreen" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:ScreeningRecord .
+
+cr:PrepareSafetyReport a hcls:Action ;
+    rdfs:label "Prepare Safety Report" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:PromoteSystemConfigToProduction a hcls:Action ;
+    rdfs:label "Promote System Config to Production" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:PutStudyOnHold a hcls:Action ;
+    rdfs:label "Put Study on Hold" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff,
+        cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReconcileDataTransfer a hcls:Action ;
+    rdfs:label "Reconcile Data Transfer" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReconcileDate a hcls:Action ;
+    rdfs:label "Reconcile Date" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:ReconcileLabResults a hcls:Action ;
+    rdfs:label "Reconcile Lab" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:RecordClinicalEvent a hcls:Action ;
+    rdfs:label "Record Other Clinical Event" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:RecordConMed a hcls:Action ;
+    rdfs:label "Record ConMed" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:RecordConsentDiscussion a hcls:Action ;
+    rdfs:label "Record Consent Discussion" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:RecordDate a hcls:Action ;
+    rdfs:label "Record Date" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:RecordMedicalHistory a hcls:Action ;
+    rdfs:label "Record Medical History" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:RecordRegulatoryDecision a hcls:Action ;
+    rdfs:label "Record Regulatory Decision" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:RecordScreenFail a hcls:Action ;
+    rdfs:label "Record Screen Fail" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:ScreeningRecord .
+
+cr:ReforecastBudget a hcls:Action ;
+    rdfs:label "Reforecast Budget" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:RegisterEquipment a hcls:Action ;
+    rdfs:label "Register Equipment" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RegisterRegulatoryAuthority a hcls:Action ;
+    rdfs:label "Register Regulatory Authority" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:RegisterSiteNetwork a hcls:Action ;
+    rdfs:label "Register Site Network" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RegisterStorageLocation a hcls:Action ;
+    rdfs:label "Register Storage Location" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RegulatorBoundary a owl:NamedIndividual ;
+    rdfs:label "Regulator" .
+
 cr:RegulatoryWorkStream a owl:Class ;
     rdfs:label "Regulatory Work Stream" ;
     rdfs:comment "IRB submission, ICF customization, and Investigator Site File preparation (CVs/licenses, Form 1572, Delegation-of-Authority log, IRB approval)." ;
     rdfs:subClassOf cr:WorkStream .
+
+cr:ReportShipmentExcursion a hcls:Action ;
+    rdfs:label "Report Shipment Excursion" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:ReprocessFailedDataTransfer a hcls:Action ;
+    rdfs:label "Reprocess Failed Transfer" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:RescheduleVisit a hcls:Action ;
+    rdfs:label "Reschedule Visit" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:RespondToFinding a hcls:Action ;
+    rdfs:label "Respond to Finding" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ResumeSite a hcls:Action ;
+    rdfs:label "Resume Site" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ReviewDeviation a hcls:Action ;
+    rdfs:label "Review Deviation" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ReviewPlanProgress a hcls:Action ;
+    rdfs:label "Review Plan Progress" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReviewQuestionnaire a hcls:Action ;
+    rdfs:label "Review Questionnaire" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:ReviewScreenFail a hcls:Action ;
+    rdfs:label "Review Screen Fail" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:ScreeningRecord .
+
+cr:RunDataTransfer a hcls:Action ;
+    rdfs:label "Run Data Transfer" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ScheduleAudit a hcls:Action ;
+    rdfs:label "Schedule Audit" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ScheduleDataTransfer a hcls:Action ;
+    rdfs:label "Schedule Data Transfer" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ScheduleMonitoringVisit a hcls:Action ;
+    rdfs:label "Schedule Monitoring Visit" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ScheduleParticipantVisit a hcls:Action ;
+    rdfs:label "Schedule Participant Visit" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:ScheduleRecurringReport a hcls:Action ;
+    rdfs:label "Schedule Recurring Report" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
 
 cr:ServiceProvider a owl:Class ;
     rdfs:label "Service Provider" ;
@@ -123,10 +955,161 @@ cr:ServiceProvider a owl:Class ;
     rdfs:subClassOf hcls:Organization ;
     skos:definition "A party to whom a sponsor or investigator transfers specified trial-related duties and functions (paraphrased, ICH E6(R3)). The CRO is a specialized service provider." .
 
+cr:ShipSample a hcls:Action ;
+    rdfs:label "Ship Sample" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:SignMonitoringReport a hcls:Action ;
+    rdfs:label "Sign Monitoring Report" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:SiteBoundary a owl:NamedIndividual ;
+    rdfs:label "Site" .
+
+cr:SponsorBoundary a owl:NamedIndividual ;
+    rdfs:label "Sponsor" .
+
 cr:StoppingRule a owl:Class ;
     rdfs:label "Stopping Rule" ;
     rdfs:comment "A safety rule that halts dosing or enrollment when triggered." ;
     rdfs:subClassOf top:Constraint .
+
+cr:SubmitAmendmentForReview a hcls:Action ;
+    rdfs:label "Submit Amendment for Review" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:SubmitRegulatorySubmission a hcls:Action ;
+    rdfs:label "Submit Regulatory Submission" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:SubmitSafetyReport a hcls:Action ;
+    rdfs:label "Submit Safety Report" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:TerminateStartupPackage a hcls:Action ;
+    rdfs:label "Terminate Startup" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:TrialLifecycle a hcls:Phase ;
+    rdfs:label "Clinical Trial Lifecycle" ;
+    rdfs:comment "The root phase encompassing the entire lifespan of a clinical trial from protocol design to study archival." ;
+    hcls:contains cr:CloseoutPhase,
+        cr:ConductPhase,
+        cr:StartupPhase .
+
+cr:UpdateArmDetails a hcls:Action ;
+    rdfs:label "Update Arm Details" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:UpdateBudgetForecast a hcls:Action ;
+    rdfs:label "Update Budget Forecast" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateCAPA a hcls:Action ;
+    rdfs:label "Update CAPA" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:UpdateClinicalEventOutcome a hcls:Action ;
+    rdfs:label "Update Outcome" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ClinicalObservation .
+
+cr:UpdateConMed a hcls:Action ;
+    rdfs:label "Update ConMed" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:UpdateInformedConsent a hcls:Action ;
+    rdfs:label "Update Informed Consent" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:UpdateMedicalHistory a hcls:Action ;
+    rdfs:label "Update Medical History" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:UpdateMilestoneDetails a hcls:Action ;
+    rdfs:label "Update Milestone Details" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateParticipantDetails a hcls:Action ;
+    rdfs:label "Update Participant Details" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:UpdateRegulatoryAuthority a hcls:Action ;
+    rdfs:label "Update Regulatory Authority" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
+
+cr:UpdateRiskRegister a hcls:Action ;
+    rdfs:label "Update Risk Register" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateSiteDetails a hcls:Action ;
+    rdfs:label "Update Site Details" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ValidateSystem a hcls:Action ;
+    rdfs:label "Validate System" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:VerifyCAPAEffectiveness a hcls:Action ;
+    rdfs:label "Verify CAPA Effectiveness" ;
+    hcls:authorizedAgentType cr:SponsorQualityStaff ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:WithdrawAmendment a hcls:Action ;
+    rdfs:label "Withdraw Amendment" ;
+    hcls:authorizedAgentType cr:SponsorOperationsStaff ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:ProtocolVersion .
+
+cr:WithdrawConsent a hcls:Action ;
+    rdfs:label "Withdraw Consent" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:WithdrawRegulatorySubmission a hcls:Action ;
+    rdfs:label "Withdraw Regulatory Submission" ;
+    hcls:authorizedAgentType cr:RegulatoryAffairsSpecialist ;
+    hcls:occursIn cr:RegulatorySubPhase ;
+    hcls:operatesOn cr:RegulatoryInteraction .
 
 cr:activates a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
@@ -163,6 +1146,12 @@ cr:assessesFactor a owl:ObjectProperty ;
 cr:atSite a owl:ObjectProperty ;
     rdfs:comment "The site a subject was enrolled at (enables the enroll-after-activation check)." ;
     rdfs:domain cr:Enrollment ;
+    rdfs:range cr:StudySite .
+
+cr:atStudySite a owl:ObjectProperty ;
+    rdfs:label "at study site" ;
+    rdfs:comment "1..1. The StudySite that operationally owns this visit (in-person or remote). Redundant with Participant.forStudySite but kept direct for query convenience." ;
+    rdfs:domain cr:VisitOccurrence ;
     rdfs:range cr:StudySite .
 
 cr:atVisit a owl:ObjectProperty ;
@@ -215,6 +1204,18 @@ cr:containsSourceData a owl:ObjectProperty ;
     rdfs:domain cr:SourceDocument ;
     rdfs:range cr:SourceData .
 
+cr:convertedFromRecruit a owl:ObjectProperty ;
+    rdfs:label "converted from recruit" ;
+    rdfs:comment "0..1. Operational-funnel trace. Empty for direct walk-ins." ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:Recruit .
+
+cr:convertedToParticipant a owl:ObjectProperty ;
+    rdfs:label "converted to participant" ;
+    rdfs:comment "0..1. Inverse of Participant.convertedFromRecruit. Mandatory when recruitStatus=CONVERTED_TO_PARTICIPANT (SHACL hard)." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:Participant .
+
 cr:credentialOf a owl:ObjectProperty ;
     rdfs:domain cr:Credential ;
     rdfs:range hcls:Person .
@@ -224,9 +1225,13 @@ cr:cta a owl:ObjectProperty ;
     rdfs:range cr:ClinicalTrialAgreement .
 
 cr:definedBy a owl:ObjectProperty ;
-    rdfs:comment "The value's variable definition (aboutness); decouples value from definition." ;
-    rdfs:domain cr:ClinicalObservation ;
-    rdfs:range cr:DataElementDef .
+    rdfs:label "defined by" ;
+    rdfs:comment "0..1. The protocol template this occurrence instantiates. Absent for unscheduled visits.",
+        "The value's variable definition (aboutness); decouples value from definition." ;
+    rdfs:domain cr:ClinicalObservation,
+        cr:VisitOccurrence ;
+    rdfs:range cr:DataElementDef,
+        cr:VisitDefinition .
 
 cr:delegate a owl:ObjectProperty ;
     rdfs:domain cr:Delegation ;
@@ -246,12 +1251,6 @@ cr:deviationCategory a owl:DatatypeProperty ;
     rdfs:comment "Materiality: critical | major | minor. Critical/major are significant deviations requiring a CAPA." ;
     rdfs:domain cr:DeviationEvent .
 
-cr:eCRF a owl:Class ;
-    rdfs:label "eCRF" ;
-    rdfs:comment "Electronic case report form — the data-collection instrument used at the site." ;
-    rdfs:subClassOf top:Evidence,
-        cr:CaseReportForm .
-
 cr:enrolledPerson a owl:ObjectProperty ;
     rdfs:domain cr:Enrollment ;
     rdfs:range hcls:Person .
@@ -268,8 +1267,28 @@ cr:flaggedBy a owl:ObjectProperty ;
     rdfs:range cr:RiskSignal ;
     owl:inverseOf cr:flags .
 
+cr:forParticipant a owl:ObjectProperty ;
+    rdfs:label "for participant" ;
+    rdfs:comment "1..1. Whose visit this is." ;
+    rdfs:domain cr:VisitOccurrence ;
+    rdfs:range cr:Participant .
+
+cr:forStudyRecruit a owl:ObjectProperty ;
+    rdfs:label "for study (recruit)" ;
+    rdfs:comment "1..1. Recruits are scoped per-Study." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:Study .
+
 cr:forStudySite a owl:ObjectProperty ;
     rdfs:label "for study site" ;
+    rdfs:comment "1..1. The StudySite where enrollment happened. Per OOUX correction: NOT Site directly." ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:StudySite .
+
+cr:forStudySiteRecruit a owl:ObjectProperty ;
+    rdfs:label "for study site (recruit)" ;
+    rdfs:comment "0..1. May not be set when site assignment is finalized centrally." ;
+    rdfs:domain cr:Recruit ;
     rdfs:range cr:StudySite .
 
 cr:forSubject a owl:ObjectProperty ;
@@ -295,6 +1314,16 @@ cr:fromTimeline a owl:ObjectProperty ;
     rdfs:label "from timeline" ;
     rdfs:domain cr:ParticipantSchedule ;
     rdfs:range cr:ScheduleTimeline .
+
+cr:hasActivityOccurrence a owl:ObjectProperty ;
+    rdfs:label "has activity occurrence" ;
+    rdfs:domain cr:VisitOccurrence ;
+    rdfs:range cr:ActivityOccurrence .
+
+cr:hasActivityTemplate a owl:ObjectProperty ;
+    rdfs:label "has activity template" ;
+    rdfs:domain cr:VisitDefinition ;
+    rdfs:range cr:ActivityTemplate .
 
 cr:hasAliquot a owl:ObjectProperty ;
     rdfs:label "has aliquot" ;
@@ -345,6 +1374,11 @@ cr:hasEndpoint a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
     rdfs:range cr:Endpoint .
 
+cr:hasEnrollmentRecord a owl:ObjectProperty ;
+    rdfs:label "has enrollment record" ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:EnrollmentRecord .
+
 cr:hasItem a owl:ObjectProperty ;
     rdfs:domain cr:ItemGroup ;
     rdfs:range cr:DataElementDef .
@@ -359,6 +1393,11 @@ cr:hasMitigationPlan a owl:ObjectProperty ;
     rdfs:domain cr:RiskAssessment ;
     rdfs:range cr:MitigationPlan ;
     owl:inverseOf cr:mitigates .
+
+cr:hasObservation a owl:ObjectProperty ;
+    rdfs:label "has observation" ;
+    rdfs:domain cr:ActivityOccurrence ;
+    rdfs:range cr:ClinicalObservation .
 
 cr:hasPlannedActivity a owl:ObjectProperty ;
     rdfs:label "has planned activity" ;
@@ -394,6 +1433,28 @@ cr:hasRiskRegister a owl:ObjectProperty ;
     rdfs:domain cr:RegulatoryInteraction ;
     rdfs:range cr:RiskRegister .
 
+cr:hasScreeningRecord a owl:ObjectProperty ;
+    rdfs:label "has screening record" ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:ScreeningRecord .
+
+cr:hasVisitDefinition a owl:ObjectProperty ;
+    rdfs:label "has visit definition" ;
+    rdfs:comment "Links a Study to its protocol visit templates (via the SOA / ScheduleTimeline chain)." ;
+    rdfs:domain cr:Study ;
+    rdfs:range cr:VisitDefinition .
+
+cr:hasVisitOccurrence a owl:ObjectProperty ;
+    rdfs:label "has visit occurrence" ;
+    rdfs:comment "0..N. Per-Participant visit records; resolved when cr-core-visit-execution.ttl lifts." ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:VisitOccurrence .
+
+cr:hasWithdrawalRecord a owl:ObjectProperty ;
+    rdfs:label "has withdrawal record" ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:WithdrawalRecord .
+
 cr:hasWorkStream a owl:ObjectProperty ;
     rdfs:label "has work stream" ;
     rdfs:comment "The activation work streams whose completion gates this activation." ;
@@ -419,6 +1480,12 @@ cr:includesArtifact a owl:ObjectProperty ;
     rdfs:domain cr:StudyStartupPackage ;
     rdfs:range cr:StartupArtifact .
 
+cr:instantiatesTemplate a owl:ObjectProperty ;
+    rdfs:label "instantiates template" ;
+    rdfs:comment "0..1. Links to the protocol-defined activity template. Absent for unscheduled activities." ;
+    rdfs:domain cr:ActivityOccurrence ;
+    rdfs:range cr:ActivityTemplate .
+
 cr:intoStudy a owl:ObjectProperty ;
     rdfs:domain cr:Enrollment ;
     rdfs:range cr:Study .
@@ -438,6 +1505,12 @@ cr:meetingType a owl:DatatypeProperty ;
 cr:monitoringStrategy a owl:DatatypeProperty ;
     rdfs:label "monitoring strategy" ;
     rdfs:domain cr:MitigationPlan .
+
+cr:observationForSubject a owl:ObjectProperty ;
+    rdfs:label "observation for subject" ;
+    rdfs:comment "The pseudonymous StudySubject this observation is about. Never links to hcls:Person directly (PII containment)." ;
+    rdfs:domain cr:ClinicalObservation ;
+    rdfs:range cr:StudySubject .
 
 cr:odmOID a owl:DatatypeProperty ;
     rdfs:label "ODM OID" ;
@@ -496,6 +1569,11 @@ cr:perEstimand a owl:ObjectProperty ;
 cr:performedBy a owl:ObjectProperty ;
     rdfs:label "performed by" ;
     rdfs:range hcls:Person .
+
+cr:performedInVisit a owl:ObjectProperty ;
+    rdfs:label "performed in visit" ;
+    rdfs:domain cr:ActivityOccurrence ;
+    rdfs:range cr:VisitOccurrence .
 
 cr:phiClassification a owl:DatatypeProperty ;
     rdfs:label "PHI classification" ;
@@ -556,6 +1634,12 @@ cr:recordedInTMF a owl:ObjectProperty ;
     rdfs:label "recorded in TMF" ;
     rdfs:domain cr:EssentialRecord ;
     rdfs:range cr:TrialMasterFile .
+
+cr:recruitedBy a owl:ObjectProperty ;
+    rdfs:label "recruited by" ;
+    rdfs:comment "0..1. The recruitment coordinator (Person) handling this Recruit." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range hcls:Person .
 
 cr:relativeTo a owl:ObjectProperty ;
     rdfs:label "relative to" ;
@@ -793,6 +1877,19 @@ cx:confidence a owl:DatatypeProperty ;
     rdfs:label "confidence" ;
     rdfs:range xsd:decimal .
 
+cx:confirmedAt a owl:DatatypeProperty ;
+    rdfs:label "confirmed at" ;
+    rdfs:comment "Timestamp when a mapping was confirmed by a human reviewer. Together with cx:confirmedBy, closes the audit trail for human-in-the-loop validation." ;
+    rdfs:range xsd:dateTime .
+
+cx:confirmedBy a owl:ObjectProperty ;
+    rdfs:label "confirmed by" ;
+    rdfs:comment "The human agent (or committee) that reviewed and confirmed a proposed mapping. Required for promotion from 'under_review' to 'confirmed'." .
+
+cx:inferredBy a owl:ObjectProperty ;
+    rdfs:label "inferred by" ;
+    rdfs:comment "The top:AutonomousAgent instance that proposed this mapping via LLM inference. Enables provenance tracing back to the agent model and prompt version." .
+
 cx:justification a owl:ObjectProperty ;
     rdfs:label "mapping justification" ;
     rdfs:comment "A semapv justification IRI (e.g. ManualMappingCuration)." .
@@ -800,6 +1897,15 @@ cx:justification a owl:ObjectProperty ;
 cx:mappingDate a owl:DatatypeProperty ;
     rdfs:label "mapping date" ;
     rdfs:range xsd:date .
+
+cx:mappingMethod a owl:DatatypeProperty ;
+    rdfs:label "mapping method" ;
+    rdfs:comment "How the mapping was produced: ManualCuration | LLMInference | RuleBasedExtraction | HybridReview. Drives downstream trust and routing." .
+
+cx:mappingRationale a owl:DatatypeProperty ;
+    rdfs:label "mapping rationale" ;
+    rdfs:comment "Human-readable explanation of why this mapping was proposed, especially for LLM-inferred mappings. Mirrors top:rationale on a Conclusion." ;
+    rdfs:range xsd:string .
 
 cx:objectId a owl:ObjectProperty ;
     rdfs:label "object id" ;
@@ -812,6 +1918,10 @@ cx:predicateId a owl:ObjectProperty ;
 cx:retrievedFrom a owl:DatatypeProperty ;
     rdfs:label "retrieved from" ;
     rdfs:comment "The primary source the target IRI was verified against (URL + retrieval date)." .
+
+cx:reviewStatus a owl:DatatypeProperty ;
+    rdfs:label "review status" ;
+    rdfs:comment "Lifecycle state of the mapping: proposed | under_review | confirmed | rejected | deprecated. Confirmed mappings graduate from ephemeral inference to Layer-2 crosswalk." .
 
 cx:subjectId a owl:ObjectProperty ;
     rdfs:label "subject id" ;
@@ -835,30 +1945,103 @@ hcls:Lot a owl:Class ;
     rdfs:comment "A manufactured batch/lot; the primary join to the manufacturing domain." ;
     rdfs:subClassOf top:Resource .
 
-hcls:Practitioner a owl:Class ;
-    rdfs:label "Practitioner" ;
-    rdfs:comment "A healthcare professional." ;
-    rdfs:subClassOf hcls:Person .
-
 hcls:Substance a owl:Class ;
     rdfs:label "Substance" ;
     rdfs:comment "A chemical or biological substance." ;
     rdfs:subClassOf top:Resource .
+
+hcls:actsAs a owl:DatatypeProperty ;
+    rdfs:label "acts as" ;
+    rdfs:comment "At instance-graph time, a human-readable label for the contextual role a Person plays within a Scope (Study, Site, Care Episode). Not a class; purely a string annotation on the Person-Scope binding. Example value: 'Principal Investigator'." ;
+    rdfs:domain hcls:Person .
 
 hcls:affiliatedWith a owl:ObjectProperty ;
     rdfs:label "affiliated with" ;
     rdfs:domain hcls:Person ;
     rdfs:range hcls:Organization .
 
+hcls:authorizedAgentType a owl:ObjectProperty ;
+    rdfs:label "authorized agent type" ;
+    rdfs:comment "The OWL class of agent authorized to execute this Action. Authorization binds directly to agent type — no OperatorRole intermediary. Multi-valued: an Action may be authorized for more than one agent type." ;
+    rdfs:domain hcls:Action ;
+    rdfs:range owl:Class .
+
 hcls:collectedFrom a owl:ObjectProperty ;
     rdfs:label "collected from" ;
     rdfs:domain hcls:Specimen ;
     rdfs:range hcls:Person .
 
+hcls:consentSubject a owl:ObjectProperty ;
+    rdfs:label "consent subject" ;
+    rdfs:domain hcls:Consent ;
+    rdfs:range hcls:Person .
+
+hcls:contains a owl:ObjectProperty ;
+    rdfs:label "contains" ;
+    rdfs:comment "Containment: a phase contains its named sub-phases. Transitive; used to derive the top-level phase for any sub-phase." ;
+    rdfs:domain hcls:Phase ;
+    rdfs:range hcls:Phase .
+
+hcls:executesAction a owl:ObjectProperty ;
+    rdfs:label "executes action" ;
+    rdfs:comment "An Action performed as part of accomplishing this job." ;
+    rdfs:domain hcls:JobToBeDone ;
+    rdfs:range hcls:Action .
+
+hcls:givesConsent a owl:ObjectProperty ;
+    rdfs:label "gives consent" ;
+    rdfs:domain hcls:Person ;
+    rdfs:range hcls:Consent .
+
+hcls:involvesObject a owl:ObjectProperty ;
+    rdfs:label "involves object" ;
+    rdfs:comment "An entity class that participates in this job's object graph." ;
+    rdfs:domain hcls:JobToBeDone ;
+    rdfs:range owl:Class .
+
+hcls:jobOfAgentType a owl:ObjectProperty ;
+    rdfs:label "job of agent type" ;
+    rdfs:comment "The OWL class of agent this job belongs to." ;
+    rdfs:domain hcls:JobToBeDone ;
+    rdfs:range owl:Class .
+
+hcls:jobTrigger a owl:DatatypeProperty ;
+    rdfs:label "job trigger" ;
+    rdfs:comment "The condition or event that initiates this job (from OOUX JTBD 'trigger' field)." ;
+    rdfs:domain hcls:JobToBeDone .
+
 hcls:locatedAt a owl:ObjectProperty ;
     rdfs:label "located at" ;
     rdfs:domain hcls:Organization ;
     rdfs:range hcls:HealthcareFacility .
+
+hcls:occursIn a owl:ObjectProperty ;
+    rdfs:label "occurs in" ;
+    rdfs:comment "The lifecycle phase in which this Action is typically performed." ;
+    rdfs:domain hcls:Action ;
+    rdfs:range hcls:Phase .
+
+hcls:operatesOn a owl:ObjectProperty ;
+    rdfs:label "operates on" ;
+    rdfs:comment "The OWL class of the primary entity this Action targets. Enables querying: what Actions are available on a given entity type for a given agent type in a given phase?" ;
+    rdfs:domain hcls:Action ;
+    rdfs:range owl:Class .
+
+hcls:precedes a owl:ObjectProperty ;
+    rdfs:label "precedes" ;
+    rdfs:comment "Temporal sequencing: Phase A precedes Phase B means B cannot begin before A's gate conditions are met." ;
+    rdfs:domain hcls:Phase ;
+    rdfs:range hcls:Phase .
+
+hcls:realizationOf a owl:ObjectProperty ;
+    rdfs:label "realization of" ;
+    rdfs:comment "Links a prov:Activity instance (an occurrence that actually happened) to the hcls:Action archetype it realizes. Instance-to-archetype traceability link." ;
+    rdfs:range hcls:Action .
+
+hcls:successSignal a owl:DatatypeProperty ;
+    rdfs:label "success signal" ;
+    rdfs:comment "A measurable indicator that the job has been completed. Multi-valued." ;
+    rdfs:domain hcls:JobToBeDone .
 
 ns1:CAPALog a ns1:TMFArtifactType ;
     rdfs:label "CAPA Log" ;
@@ -990,11 +2173,6 @@ ns1:records a owl:ObjectProperty ;
     rdfs:comment "The artifact is a running log of the entity's instances (e.g. a Deviation Log records deviation events)." ;
     rdfs:subPropertyOf ns1:concerns .
 
-top:Location a owl:Class ;
-    rdfs:label "Location" ;
-    rdfs:comment "A place or spatial/jurisdictional region." ;
-    rdfs:subClassOf top:Core .
-
 <https://top.scientix.ai/cr/v1> a owl:Ontology ;
     rdfs:label "TOP — Clinical Research Reference Graph" ;
     dcterms:bibliographicCitation "ScientixAI (2026). TOP — Clinical Research Reference Graph (v1). The Ontology Project." ;
@@ -1009,16 +2187,65 @@ top:Location a owl:Class ;
     owl:versionIRI <https://top.scientix.ai/cr/v1> ;
     owl:versionInfo "v1" .
 
+cr:ActivateStudy a hcls:Action ;
+    rdfs:label "Activate Study" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AddBudgetLineItem a hcls:Action ;
+    rdfs:label "Add Budget Line Item" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AddLogEntry a hcls:Action ;
+    rdfs:label "Add Log Entry" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
 cr:AnalysisRequest a owl:Class ;
     rdfs:label "Analysis Request" ;
     rdfs:comment "Binds an AnalysisService to a Specimen (the order)." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
-cr:Arm a owl:Class ;
-    rdfs:label "Arm" ;
-    rdfs:comment "A treatment arm of the study." ;
-    rdfs:subClassOf top:Scope .
+cr:ApproveBudget a hcls:Action ;
+    rdfs:label "Approve Budget" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ApprovePayment a hcls:Action ;
+    rdfs:label "Approve Payment" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:ArchiveStudy a hcls:Action ;
+    rdfs:label "Archive Study" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:AssessAdverseEvent a hcls:Action ;
+    rdfs:label "Assess Adverse Event" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:AssignQuery a hcls:Action ;
+    rdfs:label "Assign Query" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:AssignTask a hcls:Action ;
+    rdfs:label "Assign Task" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
 
 cr:BriefingBook a owl:Class ;
     rdfs:label "Briefing Book" ;
@@ -1030,20 +2257,257 @@ cr:ClinicalHold a owl:Class ;
     rdfs:comment "An FDA order that halts or prevents a trial from proceeding." ;
     rdfs:subClassOf top:Outcome .
 
+cr:CloseAdverseEvent a hcls:Action ;
+    rdfs:label "Close Adverse Event" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseEnrollment a hcls:Action ;
+    rdfs:label "Close Enrollment" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CloseQuery a hcls:Action ;
+    rdfs:label "Close Query" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:CloseSafetySignal a hcls:Action ;
+    rdfs:label "Close Safety Signal" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:CloseSite a hcls:Action ;
+    rdfs:label "Close Site" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate,
+        cr:SponsorProjectManager ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CloseSiteToEnrollment a hcls:Action ;
+    rdfs:label "Close Site to Enrollment" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:CloseoutPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CloseStudy a hcls:Action ;
+    rdfs:label "Close Study" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ArchivalSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CollectSample a hcls:Action ;
+    rdfs:label "Collect Sample" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:ActivityOccurrence .
+
+cr:CompleteCRF a hcls:Action ;
+    rdfs:label "Complete CRF" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:CompleteParticipantStudy a hcls:Action ;
+    rdfs:label "Complete Participant Study" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:CloseoutPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:CompleteVisit a hcls:Action ;
+    rdfs:label "Complete Visit" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:CreateArm a hcls:Action ;
+    rdfs:label "Create Arm" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Arm .
+
+cr:CreateBudget a hcls:Action ;
+    rdfs:label "Create Budget" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CreateLog a hcls:Action ;
+    rdfs:label "Create Log" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CreateMilestone a hcls:Action ;
+    rdfs:label "Create Milestone" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:CreatePayment a hcls:Action ;
+    rdfs:label "Create Payment" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:CreateStudy a hcls:Action ;
+    rdfs:label "Create Study" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:EnrollParticipant a hcls:Action ;
+    rdfs:label "Enroll Participant" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Participant .
+
 cr:Estimand a owl:Class ;
     rdfs:label "Estimand" ;
     rdfs:comment "The precise treatment-effect definition a result must trace to (overstatement guard)." ;
     rdfs:subClassOf top:Scope .
 
-cr:InvestigationalProduct a owl:Class ;
-    rdfs:label "Investigational Product" ;
-    rdfs:comment "The investigational drug or biologic being studied." ;
-    rdfs:subClassOf hcls:MedicinalProduct .
+cr:EvaluateSafetySignal a hcls:Action ;
+    rdfs:label "Evaluate Safety Signal" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:FinalizeReport a hcls:Action ;
+    rdfs:label "Finalize Report" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ReportingSubPhase ;
+    hcls:operatesOn cr:CSR .
+
+cr:FollowUpAdverseEvent a hcls:Action ;
+    rdfs:label "Follow Up on Adverse Event" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:FollowUpSubPhase a hcls:Phase ;
+    rdfs:label "Follow-up" ;
+    rdfs:comment "Post-treatment assessments, long-term safety evaluation, survival follow-up, adverse event monitoring through the follow-up window." .
+
+cr:IdentifySafetySignal a hcls:Action ;
+    rdfs:label "Identify Safety Signal" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:InitiateSite a hcls:Action ;
+    rdfs:label "Initiate Site (SIV)" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:IssueSitePayment a hcls:Action ;
+    rdfs:label "Issue Site Payment" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:LockBudget a hcls:Action ;
+    rdfs:label "Lock Budget" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:StartupPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:LockUnlockCRF a hcls:Action ;
+    rdfs:label "Lock / Unlock CRF" ;
+    hcls:authorizedAgentType cr:DataManager ;
+    hcls:occursIn cr:DataAnalysisSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:LogCommunication a hcls:Action ;
+    rdfs:label "Log Communication" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ObtainParticipantConsent a hcls:Action ;
+    rdfs:label "Obtain Participant Consent" ;
+    hcls:authorizedAgentType cr:Investigator,
+        cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:InformedConsentAct .
+
+cr:OpenEnrollment a hcls:Action ;
+    rdfs:label "Open Enrollment" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ProcessPayment a hcls:Action ;
+    rdfs:label "Process Payment" ;
+    hcls:authorizedAgentType cr:FinanceStaff ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:RebaselineTimeline a hcls:Action ;
+    rdfs:label "Rebaseline Timeline" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ReconcileSAE a hcls:Action ;
+    rdfs:label "Reconcile SAE" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:RefreshGCPTraining a hcls:Action ;
+    rdfs:label "Refresh GCP Training" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Credential .
 
 cr:RegulatoryAgreement a owl:Class ;
     rdfs:label "Regulatory Agreement" ;
     rdfs:comment "A binding FDA agreement (a commitment the program is held to)." ;
     rdfs:subClassOf top:Constraint .
+
+cr:ReopenQuery a hcls:Action ;
+    rdfs:label "Reopen Query" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate,
+        cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:ReportAdverseEvent a hcls:Action ;
+    rdfs:label "Report Adverse Event" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:ReportDeviation a hcls:Action ;
+    rdfs:label "Report Deviation" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate,
+        cr:SiteCoordinator ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ReportSAE a hcls:Action ;
+    rdfs:label "Report SAE" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:RespondToQuery a hcls:Action ;
+    rdfs:label "Respond to Query" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:ReviewCRF a hcls:Action ;
+    rdfs:label "Review CRF" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
 
 cr:RiskRegister a owl:Class ;
     rdfs:label "Risk Register" ;
@@ -1055,23 +2519,59 @@ cr:SafetyAssessment a owl:Class ;
     rdfs:comment "A clinical-protocol safety monitoring provision (e.g. CBC monitoring + dose-hold)." ;
     rdfs:subClassOf top:Constraint .
 
+cr:ScheduleVisit a hcls:Action ;
+    rdfs:label "Schedule Visit" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:ScreenParticipant a hcls:Action ;
+    rdfs:label "Screen Participant" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:SelectSiteForStudy a hcls:Action ;
+    rdfs:label "Select Site for Study" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:SiteSelectionSubPhase ;
+    hcls:operatesOn cr:StudySite .
+
+cr:SignCRF a hcls:Action ;
+    rdfs:label "Sign CRF" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
 cr:SiteInitiationVisit a owl:Class ;
     rdfs:label "Site Initiation Visit (SIV)" ;
     rdfs:comment "The visit that prepares and activates a site for enrollment." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:SourceData a owl:Class ;
     rdfs:label "Source Data" ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity ;
+        top:Versioned ;
     skos:definition "The original recorded information, and certified copies of it, needed to reconstruct and evaluate the trial (paraphrased, ICH E6(R3))." .
+
+cr:StartVisit a hcls:Action ;
+    rdfs:label "Start Visit" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:VisitExecutionSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
 
 cr:StatisticalAnalysisPlan a owl:Class ;
     rdfs:label "Statistical Analysis Plan" ;
     rdfs:comment "The pre-specified plan for analyzing the study's data." ;
     rdfs:subClassOf top:Evidence .
+
+cr:SubmitExpeditedReport a hcls:Action ;
+    rdfs:label "Submit Expedited Report" ;
+    hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
 
 cr:TrialMasterFile a owl:Class ;
     rdfs:label "Trial Master File" ;
@@ -1080,11 +2580,59 @@ cr:TrialMasterFile a owl:Class ;
     skos:altLabel "TMF" ;
     skos:definition "The collection of essential records that allows the conduct of the trial and the quality of the data to be evaluated (paraphrased, ICH E6(R3))." .
 
+cr:UpdateAdverseEventDetails a hcls:Action ;
+    rdfs:label "Update Adverse Event Details" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:UpdateEnrollmentStatus a hcls:Action ;
+    rdfs:label "Update Enrollment Status" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:RecruitmentSubPhase ;
+    hcls:operatesOn cr:EnrollmentRecord .
+
+cr:UpdateFCOIDisclosure a hcls:Action ;
+    rdfs:label "Update FCOI Disclosure" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Credential .
+
+cr:UpdateSAE a hcls:Action ;
+    rdfs:label "Update SAE" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:SafetySubPhase ;
+    hcls:operatesOn cr:AdverseEvent .
+
+cr:UpdateStudyDetails a hcls:Action ;
+    rdfs:label "Update Study Details" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:DesignSubPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:UpdateTimeline a hcls:Action ;
+    rdfs:label "Update Timeline" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
 cr:Visit a owl:Class ;
     rdfs:label "Trial Visit" ;
     rdfs:comment "A protocol visit — a kind of study event." ;
+    rdfs:subClassOf cr:StudyEvent,
+        top:Temporal .
+
+cr:WithdrawParticipant a hcls:Action ;
+    rdfs:label "Withdraw Participant" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Participant .
+
+cr:WithdrawalRecord a owl:Class ;
+    rdfs:label "Withdrawal Record" ;
+    rdfs:comment "One withdrawal or discontinuation event. WITHDRAWN = subject-initiated (CONSENT_WITHDRAWN); DISCONTINUED = investigator-initiated. Distinction is operator-meaningful and preserved in the substrate. SDTM DS: DSDECOD=WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP." ;
     rdfs:subClassOf top:Temporal,
-        cr:StudyEvent .
+        top:Versioned .
 
 cr:aliquotOf a owl:ObjectProperty ;
     rdfs:label "aliquot of" ;
@@ -1151,6 +2699,11 @@ cr:specimen a owl:ObjectProperty ;
     rdfs:domain cr:CustodyEvent ;
     rdfs:range hcls:Specimen .
 
+hcls:Clinician a owl:Class ;
+    rdfs:label "Clinician" ;
+    rdfs:comment "A licensed clinician who provides or oversees clinical care or research. Specializes in sub-domains: Investigator (clinical research), Physician (clinical care), Pharmacist, etc." ;
+    rdfs:subClassOf hcls:Practitioner .
+
 hcls:HealthcareFacility a owl:Class ;
     rdfs:label "Healthcare Facility" ;
     rdfs:comment "A physical place where care or research is conducted." ;
@@ -1165,11 +2718,22 @@ ns1:Zone_SafetyReporting a skos:Concept ;
     skos:prefLabel "Safety Reporting" ;
     skos:topConceptOf ns1:TMFReferenceModel .
 
-cr:AdverseEvent a owl:Class ;
-    rdfs:label "Adverse Event" ;
-    rdfs:comment "An untoward medical occurrence in a trial subject." ;
-    rdfs:subClassOf top:Outcome,
-        top:ProvenancedEntity .
+cr:AchieveMilestone a hcls:Action ;
+    rdfs:label "Achieve Milestone" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
+
+cr:ActivityTemplate a owl:Class ;
+    rdfs:label "Activity Template" ;
+    rdfs:comment "The protocol-defined activity template: the procedure to perform at a visit. USDM-ingest-derivable from StudyDesign.activities[]. Carries the biomedical-concept code that determines what kind of data the activity collects. USDM: Activity." ;
+    rdfs:subClassOf top:Scope .
+
+cr:AddInvestigatorDelegation a hcls:Action ;
+    rdfs:label "Add Investigator Delegation" ;
+    hcls:authorizedAgentType cr:Investigator ;
+    hcls:occursIn cr:ActivationSubPhase ;
+    hcls:operatesOn cr:Delegation .
 
 cr:AnalysisService a owl:Class ;
     rdfs:label "Analysis Service" ;
@@ -1185,7 +2749,7 @@ cr:AuditTrail a owl:Class ;
     rdfs:label "Audit Trail" ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity ;
+        top:Versioned ;
     skos:definition "Secure, computer- or paper-generated documentation that allows reconstruction of the course of events around a record (paraphrased, ICH E6(R3)). In TOP, the bitemporal + PROV envelope realizes this by construction." .
 
 cr:Capability a owl:Class ;
@@ -1197,14 +2761,31 @@ cr:CertifiedCopy a owl:Class ;
     rdfs:label "Certified Copy" ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity ;
+        top:Versioned ;
     skos:definition "A copy of original information verified (dated/signed or generated by a validated process) as a complete and accurate copy (paraphrased, ICH E6(R3))." .
 
 cr:ClinicalTrialAgreement a owl:Class ;
     rdfs:label "Clinical Trial Agreement (CTA)" ;
     rdfs:comment "Executed site contract (observedAt = execution date)." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
+
+cr:CreateQuery a hcls:Action ;
+    rdfs:label "Create Query" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate,
+        cr:DataManager ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+cr:DataAnalysisSubPhase a hcls:Phase ;
+    rdfs:label "Data Analysis" ;
+    rdfs:comment "Database lock, data cleaning and validation, statistical analysis planning execution, longitudinal analysis, survival analysis, interim and final analyses." .
+
+cr:DelayMilestone a hcls:Action ;
+    rdfs:label "Delay Milestone" ;
+    hcls:authorizedAgentType cr:SponsorProjectManager ;
+    hcls:occursIn cr:ConductPhase ;
+    hcls:operatesOn cr:Study .
 
 cr:EligibilityCriterion a owl:Class ;
     rdfs:label "Eligibility Criterion" ;
@@ -1216,7 +2797,7 @@ cr:EssentialRecord a owl:Class ;
     rdfs:comment "The class the TMF artifact-type scheme (tmf:) classifies the documents of." ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity ;
+        top:Versioned ;
     skos:altLabel "Essential Document" ;
     skos:definition "A record that, individually or collectively, permits evaluation of the conduct of a trial and the quality of the data produced (paraphrased, ICH E6(R3))." .
 
@@ -1229,19 +2810,24 @@ cr:INDApplication a owl:Class ;
     rdfs:label "IND Application" ;
     rdfs:comment "The submission authorizing human dosing; starts a 30-day review clock (top:observedAt = submission) after which trials may proceed unless a clinical hold is placed." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:IRBApproval a owl:Class ;
     rdfs:label "IRB/IEC Approval" ;
     rdfs:comment "Local IRB/IEC approval (observedAt = approval date)." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:InformedConsent a owl:Class ;
     rdfs:label "Informed Consent" ;
     rdfs:comment "The act of obtaining a subject's informed consent." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:InvestigationalProduct a owl:Class ;
+    rdfs:label "Investigational Product" ;
+    rdfs:comment "The investigational drug or biologic being studied." ;
+    rdfs:subClassOf hcls:MedicinalProduct .
 
 cr:NonclinicalFinding a owl:Class ;
     rdfs:label "Nonclinical Finding" ;
@@ -1252,6 +2838,12 @@ cr:Phase3Design a owl:Class ;
     rdfs:label "Proposed Phase 3 Design" ;
     rdfs:comment "A proposed Phase 3 trial design taken to the EOP2 meeting." ;
     rdfs:subClassOf top:Scope .
+
+cr:RecordFinding a hcls:Action ;
+    rdfs:label "Record Finding" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
 
 cr:RegulatoryQuestion a owl:Class ;
     rdfs:label "Regulatory Question" ;
@@ -1267,7 +2859,7 @@ cr:RiskSignal a owl:Class ;
     rdfs:label "Risk Signal" ;
     rdfs:comment "A leading indicator (a trend or metric) that flags a deviation antecedent before it manifests — the signal a provenance-native graph can hold as low-trust, provenance-tagged evidence." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:SeriousAdverseEvent a owl:Class ;
     rdfs:label "Serious Adverse Event" ;
@@ -1279,53 +2871,66 @@ cr:Sponsor a owl:Class ;
     rdfs:comment "The organization that initiates and is accountable for the trial." ;
     rdfs:subClassOf hcls:Organization .
 
+cr:UpdateCRF a hcls:Action ;
+    rdfs:label "Update CRF" ;
+    hcls:authorizedAgentType cr:SiteCoordinator ;
+    hcls:occursIn cr:DataCollectionSubPhase ;
+    hcls:operatesOn cr:eCRF .
+
+hcls:Consent a owl:Class ;
+    rdfs:label "Consent" ;
+    rdfs:comment "An act of agreement by a Person authorizing an action or use of their data/person. HCLS-universal: permutates to cr:InformedConsentAct (clinical trial enrollment), HIPAA Authorization (data use), Treatment Consent (clinical care). Carries valid-time (when consent was given, when it expires) and transaction-time (when it was recorded)." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
 hcls:Observation a owl:Class ;
     rdfs:label "Observation" ;
     rdfs:comment "An information artifact recording a measured value; refersTo the Person/Specimen it is about." ;
     rdfs:subClassOf top:Evidence .
 
-top:Agent a owl:Class ;
-    rdfs:label "Agent" ;
-    rdfs:comment "Something that acts or bears responsibility (person, organization, system)." ;
-    rdfs:subClassOf top:Core .
+hcls:Practitioner a owl:Class ;
+    rdfs:label "Practitioner" ;
+    rdfs:comment "A healthcare professional." ;
+    rdfs:subClassOf hcls:Person .
 
 cr:AssayResult a owl:Class ;
     rdfs:label "Assay Result" ;
     rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        hcls:Observation .
+    rdfs:subClassOf hcls:Observation,
+        top:Versioned .
 
 cr:CaseReportForm a owl:Class ;
     rdfs:label "Case Report Form" ;
     rdfs:comment "A case report form — a collection of item groups capturing a visit's data." ;
     rdfs:subClassOf top:Evidence .
 
-cr:Credential a owl:Class ;
-    rdfs:label "Credential" ;
-    rdfs:comment "An attested qualification/training record that gates a delegated capability." ;
-    rdfs:subClassOf top:Evidence .
+cr:ConductMonitoringVisit a hcls:Action ;
+    rdfs:label "Conduct Monitoring Visit" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
 
 cr:Endpoint a owl:Class ;
     rdfs:label "Endpoint" ;
     rdfs:comment "A defined outcome measure the study evaluates." ;
     rdfs:subClassOf top:Scope .
 
+cr:EnrollmentRecord a owl:Class ;
+    rdfs:label "Enrollment Record" ;
+    rdfs:comment "The enrollment event — eligibility confirmed, subject formally on the trial. SDTM DS: DSDECOD=ENROLLED. FHIR: ResearchSubject.status=on-study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
 cr:PlannedEncounter a owl:Class ;
     rdfs:label "Planned Encounter" ;
     rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." ;
     rdfs:subClassOf top:Constraint .
 
-cr:ProtocolVersion a owl:Class ;
-    rdfs:label "Protocol Version" ;
-    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." ;
-    rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
-
 cr:SafetyReport a owl:Class ;
     rdfs:label "Safety Report" ;
     rdfs:comment "Expedited report of an SAE to the regulator." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:SourceDocument a owl:Class ;
     rdfs:label "Source Document" ;
@@ -1333,10 +2938,17 @@ cr:SourceDocument a owl:Class ;
     rdfs:subClassOf cr:EssentialRecord ;
     skos:definition "The original document/record holding source data (paraphrased, ICH E6(R3))." .
 
-cr:StudySubject a owl:Class ;
-    rdfs:label "Study Subject" ;
-    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." ;
-    rdfs:subClassOf top:Agent .
+cr:SubmitMonitoringReport a hcls:Action ;
+    rdfs:label "Submit Monitoring Report" ;
+    hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
+    hcls:occursIn cr:OversightSubPhase ;
+    hcls:operatesOn cr:VisitOccurrence .
+
+cr:VisitDefinition a owl:Class ;
+    rdfs:label "Visit Definition" ;
+    rdfs:comment "The protocol-defined visit template: what is SUPPOSED to happen (type, window, mode, ordering). USDM-ingest-derivable from StudyDesign.encounters[]. UNSCHEDULED visits (urgent care, AE workup) have no VisitDefinition; their VisitOccurrence.definedBy is absent. USDM: Encounter. SDTM projection: SE (Study Elements) domain." ;
+    rdfs:subClassOf prov:Entity,
+        top:Scope .
 
 cr:Window a owl:Class ;
     rdfs:label "Window" ;
@@ -1353,16 +2965,11 @@ ns1:concerns a owl:ObjectProperty ;
     rdfs:domain ns1:TMFArtifactType ;
     rdfs:range owl:Class .
 
-top:Resource a owl:Class ;
-    rdfs:label "Resource" ;
-    rdfs:comment "A persistent material or informational thing that is used or produced." ;
-    rdfs:subClassOf top:Core .
-
 cr:CAPA a owl:Class ;
     rdfs:label "CAPA" ;
     rdfs:comment "Corrective And Preventive Action — the formal response to a deviation or finding (corrective: fix this occurrence; preventive: stop recurrence). Bitemporal + attested." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:CriticalToQualityFactor a owl:Class ;
     rdfs:label "Critical-to-Quality Factor" ;
@@ -1373,8 +2980,8 @@ cr:CriticalToQualityFactor a owl:Class ;
 cr:CustodyEvent a owl:Class ;
     rdfs:label "Custody Event" ;
     rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:DataElementDef a owl:Class ;
     rdfs:label "Data Element Definition" ;
@@ -1385,13 +2992,13 @@ cr:EndpointResult a owl:Class ;
     rdfs:label "Endpoint Result" ;
     rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
     rdfs:subClassOf top:Outcome,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:Enrollment a owl:Class ;
     rdfs:label "Enrollment" ;
     rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:ItemGroup a owl:Class ;
     rdfs:label "Item Group" ;
@@ -1402,7 +3009,7 @@ cr:ParticipantSchedule a owl:Class ;
     rdfs:label "Participant Schedule" ;
     rdfs:comment "The schedule projected for a specific subject from a ScheduleTimeline once an anchor date (e.g. enrollment) is known. Bitemporal: re-projected when the governing protocol version changes." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:PlannedActivity a owl:Class ;
     rdfs:label "Planned Activity" ;
@@ -1413,7 +3020,13 @@ cr:ScheduleTimeline a owl:Class ;
     rdfs:label "Schedule Timeline" ;
     rdfs:comment "The planned Schedule of Activities for a protocol version, as a timeline of planned encounters and activities. Bitemporal: a protocol amendment supersedes it, so the schedule is reconstructable as-of any date." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
+
+cr:ScreeningRecord a owl:Class ;
+    rdfs:label "Screening Record" ;
+    rdfs:comment "One eligibility-screening attempt (ICH E6(R3) §2.5). Re-screening = additional ScreeningRecord. SDTM DS: DSDECOD=SCREEN FAILURE / ENROLLED. SDTM IE: failed criteria." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:StartupArtifact a owl:Class ;
     rdfs:label "Start-up Artifact" ;
@@ -1425,16 +3038,24 @@ cr:StudyStartupPackage a owl:Class ;
     rdfs:comment "The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals." ;
     rdfs:subClassOf top:Evidence .
 
-top:Outcome a owl:Class ;
-    rdfs:label "Outcome" ;
-    rdfs:comment "A result, finding, or state produced by a process." ;
-    rdfs:subClassOf top:Core .
+cr:StudySubject a owl:Class ;
+    rdfs:label "Study Subject" ;
+    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." ;
+    rdfs:subClassOf top:Agent .
+
+cr:CloseoutPhase a hcls:Phase ;
+    rdfs:label "Closeout" ;
+    rdfs:comment "From last patient last visit (LPLV) through regulatory submission and study archival. Includes database lock, CSR, and eTMF finalization." ;
+    hcls:contains cr:ArchivalSubPhase,
+        cr:DataAnalysisSubPhase,
+        cr:FollowUpSubPhase,
+        cr:ReportingSubPhase .
 
 cr:DeviationEvent a owl:Class ;
     rdfs:label "Deviation Event" ;
     rdfs:comment "A protocol deviation occurrence (departure from the protocol or GCP). Classified by materiality; significant deviations require a CAPA. Bitemporal + attested." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:E6R3Glossary a skos:ConceptScheme ;
     rdfs:label "ICH E6(R3) glossary (selected terms)" ;
@@ -1450,55 +3071,81 @@ cr:PlannedVisit a owl:Class ;
     rdfs:comment "A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled." ;
     rdfs:subClassOf top:Constraint .
 
+cr:Recruit a owl:Class ;
+    rdfs:label "Recruit" ;
+    rdfs:comment "A human in the recruitment realm, pre-consent. Separate entity from Participant (recruiter is a distinct operator role; data is lighter; PHI boundary differs). Transitions to Participant when consent is obtained. Fuels twin-for-enrollment analytics." ;
+    rdfs:subClassOf top:Agent .
+
 ns1:Zone_TrialManagement a skos:Concept ;
     skos:prefLabel "Trial Management" ;
     skos:topConceptOf ns1:TMFReferenceModel .
 
-cr:ClinicalObservation a owl:Class ;
-    rdfs:label "Clinical Observation" ;
-    rdfs:comment "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        hcls:Observation .
+cr:ArchivalSubPhase a hcls:Phase ;
+    rdfs:label "Archival" ;
+    rdfs:comment "Site close-out visits, eTMF finalization, study archival, storage period compliance per country regulations." .
 
-cr:Delegation a owl:Class ;
-    rdfs:label "Delegation" ;
-    rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+cr:Arm a owl:Class ;
+    rdfs:label "Arm" ;
+    rdfs:comment "A treatment arm of the study." ;
+    rdfs:subClassOf top:Scope .
 
 cr:DeviationAntecedent a owl:Class ;
     rdfs:label "Deviation Antecedent" ;
     rdfs:comment "A latent operational condition that predisposes a deviation (e.g. a visit window too tight for the site's staffing). The missing middle between a critical-to-quality factor and the deviation event it manifests as; bitemporal (it exists, and is detected, over time)." ;
     rdfs:subClassOf top:Constraint,
-        top:ProvenancedEntity .
+        top:Versioned .
+
+cr:InformedConsentAct a owl:Class ;
+    rdfs:label "Informed Consent Act" ;
+    rdfs:comment "One consent event (ICH E6(R3) §2.4 GCP-required). Supports re-consent after protocol amendment or ICF version change. SDTM DS: DSDECOD=INFORMED CONSENT OBTAINED. FHIR: ResearchSubject.progress entry with subjectState=pending-on-study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:Query a owl:Class ;
     rdfs:label "Query" ;
     rdfs:comment "A discrepancy note / data query anchored to a data point or other entity; threaded." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
+
+cr:StartupPhase a hcls:Phase ;
+    rdfs:label "Startup" ;
+    rdfs:comment "Everything from initial protocol design through first-patient-in (FPI). Gate condition: first participant randomized. Canonical ICH E6(R3) pre-trial period." ;
+    hcls:contains cr:ActivationSubPhase,
+        cr:DesignSubPhase,
+        cr:RegulatorySubPhase,
+        cr:SiteSelectionSubPhase ;
+    hcls:precedes cr:ConductPhase .
 
 cr:Timing a owl:Class ;
     rdfs:label "Timing" ;
     rdfs:comment "A relative-timing rule: an offset (days or hours) from an anchor — another node, or an anchor event such as enrollment — with an allowed window. The footnote logic, made explicit." ;
     rdfs:subClassOf top:Constraint .
 
-top:Scope a owl:Class ;
-    rdfs:label "Scope" ;
-    rdfs:comment "A bounded context of work (study, arm, population, indication)." ;
-    rdfs:subClassOf top:Core .
+cr:CSR a owl:Class ;
+    rdfs:label "Clinical Study Report" ;
+    rdfs:comment "The definitive summary of a study's results (CSR)." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:RegulatoryAffairsSpecialist a owl:Class ;
+    rdfs:label "Regulatory Affairs Specialist" ;
+    rdfs:comment "Manages regulatory submissions (IND, CTA, BLA/NDA/MAA), country configuration, and regulatory authority relationships." ;
+    rdfs:subClassOf hcls:Person .
+
+cr:ReportingSubPhase a hcls:Phase ;
+    rdfs:label "Reporting" ;
+    rdfs:comment "Clinical Study Report (CSR) authoring, regulatory submission package preparation, safety reporting, data disclosure." .
 
 cr:RiskAssessment a owl:Class ;
     rdfs:label "Risk Assessment" ;
     rdfs:comment "An assessment of risk to a CtQ factor (likelihood/impact/detectability -> level); bitemporal." ;
     rdfs:subClassOf top:Evidence,
-        top:ProvenancedEntity .
+        top:Versioned .
 
 cr:SiteActivation a owl:Class ;
     rdfs:label "Site Activation" ;
     rdfs:comment "The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV." ;
-    rdfs:subClassOf top:ProvenancedEntity,
-        top:Temporal .
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 hcls:Organization a owl:Class ;
     rdfs:label "Organization" ;
@@ -1509,14 +3156,15 @@ ns1:Zone_SiteManagement a skos:Concept ;
     skos:prefLabel "Site Management" ;
     skos:topConceptOf ns1:TMFReferenceModel .
 
-top:Core a owl:Class ;
-    rdfs:label "Core" ;
-    rdfs:comment "The single root of TOP. Everything modeled is, ultimately, a kind of top:Core, and so carries the Universal DNA (identifier + observedAt + status)." .
+cr:ProtocolVersion a owl:Class ;
+    rdfs:label "Protocol Version" ;
+    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
 
-cr:RegulatoryInteraction a owl:Class ;
-    rdfs:label "Regulatory Interaction" ;
-    rdfs:comment "Pre-IND / EOP2 meeting." ;
-    rdfs:subClassOf top:Temporal .
+cr:SiteSelectionSubPhase a hcls:Phase ;
+    rdfs:label "Site Selection" ;
+    rdfs:comment "Feasibility assessment, site evaluation, qualification visit (SQV), site selection committee review. Output: selected site list with signed contracts." .
 
 cr:StudyEvent a owl:Class ;
     rdfs:label "Study Event" ;
@@ -1528,51 +3176,191 @@ cr:WorkStream a owl:Class ;
     rdfs:comment "A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below." ;
     rdfs:subClassOf top:Temporal .
 
-cr:Study a owl:Class ;
-    rdfs:label "Study" ;
-    rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
-    rdfs:subClassOf top:Scope .
+cr:Credential a owl:Class ;
+    rdfs:label "Credential" ;
+    rdfs:comment "An attested qualification/training record that gates a delegated capability." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:PharmacovigilianceSpecialist a owl:Class ;
+    rdfs:label "Pharmacovigilance Specialist" ;
+    rdfs:comment "Manages safety signal detection, expedited SAE reporting, safety line listings, and periodic safety reports (DSUR, PSUR). OOUX persona aliases: Pharmacovigilance, PV." ;
+    rdfs:subClassOf hcls:Person .
 
 hcls:Specimen a owl:Class ;
     rdfs:label "Specimen" ;
     rdfs:comment "A biospecimen collected from a Person." ;
     rdfs:subClassOf top:Resource .
 
-cr:StudySite a owl:Class ;
-    rdfs:label "Study Site" ;
-    rdfs:comment "An investigative site conducting the study (an organization at a facility)." ;
-    rdfs:subClassOf hcls:Organization .
+cr:Delegation a owl:Class ;
+    rdfs:label "Delegation" ;
+    rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
-hcls:Person a owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
-    rdfs:subClassOf top:Agent .
+cr:DesignSubPhase a hcls:Phase ;
+    rdfs:label "Design" ;
+    rdfs:comment "Protocol authoring, statistical analysis plan, SOA construction, CRF design, arm configuration, endpoint definition. Output: approved protocol version." .
 
-top:Constraint a owl:Class ;
-    rdfs:label "Constraint" ;
-    rdfs:comment "A rule, criterion, bound, or commitment that admissibility is judged against." ;
-    rdfs:subClassOf top:Core .
+cr:RegulatorySubPhase a hcls:Phase ;
+    rdfs:label "Regulatory Submissions" ;
+    rdfs:comment "IND/CTA filing, IRB/EC review, country-level submissions, amendment management. Output: regulatory clearance per country." .
 
-top:Temporal a owl:Class ;
-    rdfs:label "Temporal" ;
-    rdfs:comment "Processes, events, acts, and intervals that unfold in time." ;
-    rdfs:subClassOf top:Core .
+cr:VisitExecutionSubPhase a hcls:Phase ;
+    rdfs:label "Visit Execution" ;
+    rdfs:comment "Scheduled and unscheduled visit conduct: actuals vs. SOA, activity completion, IP administration, sample collection, CRF completion at visit level." .
+
+cr:ActivationSubPhase a hcls:Phase ;
+    rdfs:label "Site Activation" ;
+    rdfs:comment "Study Startup Package readiness, Site Initiation Visit (SIV), training, delegation of authority, equipment qualification. Output: site activated and ready to enroll." .
+
+cr:ActivityOccurrence a owl:Class ;
+    rdfs:label "Activity Occurrence" ;
+    rdfs:comment "One performed activity within a VisitOccurrence. Uses the universal substrate pattern: any assessment (vitals, MRI, ePRO, biopsy, IP administration) uses the same entity shape; content specialisation is via biomedicalConceptCode and taskValueType. FHIR R5: Procedure / Observation / MedicationAdministration (per activity type). SDTM: domain depends on type (VS, LB, EG, EX, PE, etc.)." ;
+    rdfs:subClassOf prov:Activity,
+        top:Temporal,
+        top:Versioned .
+
+cr:ClinicalObservation a owl:Class ;
+    rdfs:label "Clinical Observation" ;
+    rdfs:comment "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef.",
+        "A structured result attached to an ActivityOccurrence. Carries the measured value, unit, reference range, interpretation, and derivedFrom provenance. FHIR R5: Observation. SDTM: one row in the domain matching the parent activity type." ;
+    rdfs:subClassOf prov:Entity,
+        hcls:Observation,
+        top:Evidence,
+        top:Versioned .
+
+cr:RecruitmentSubPhase a hcls:Phase ;
+    rdfs:label "Recruitment" ;
+    rdfs:comment "Recruit identification, screening, informed consent, eligibility assessment, enrollment, randomization. Operator primary: Site Coordinator + Investigator." .
+
+cr:ClinicalResearchAssociate a owl:Class ;
+    rdfs:label "Clinical Research Associate" ;
+    rdfs:comment "Sponsor-side field monitor. Conducts monitoring visits, source data verification, deviation identification, and monitoring report submission. OOUX persona aliases: CRA, Monitor, Site Monitor." ;
+    rdfs:subClassOf hcls:Person .
+
+cr:RegulatoryInteraction a owl:Class ;
+    rdfs:label "Regulatory Interaction" ;
+    rdfs:comment "Pre-IND / EOP2 meeting." ;
+    rdfs:subClassOf top:Temporal .
+
+cr:SafetySubPhase a hcls:Phase ;
+    rdfs:label "Safety" ;
+    rdfs:comment "Adverse event reporting, SAE expedited reporting, investigator causality assessment, pharmacovigilance line listing, safety signal detection. Always concurrent with other sub-phases." .
+
+cr:FinanceStaff a owl:Class ;
+    rdfs:label "Finance" ;
+    rdfs:comment "Creates and approves budgets, issues site payments, and processes participant reimbursements. OOUX persona aliases: Finance, Sponsor Finance, Finance Manager." ;
+    rdfs:subClassOf hcls:Person .
+
+cr:DataManager a owl:Class ;
+    rdfs:label "Data Manager" ;
+    rdfs:comment "Creates and locks CRFs, manages queries, reconciles lab and date data, and manages data transfers. Dual-lens: sees CRF as data source for analysis (sponsor perspective)." ;
+    rdfs:subClassOf hcls:Person .
+
+cr:SponsorQualityStaff a owl:Class ;
+    rdfs:label "Sponsor Quality" ;
+    rdfs:comment "Classifies, approves, and closes deviations. Conducts audits and risk assessments; manages CAPAs. OOUX persona aliases: Sponsor Quality, Quality, Auditor." ;
+    rdfs:subClassOf hcls:Person .
+
+cr:SponsorOperationsStaff a owl:Class ;
+    rdfs:label "Sponsor Operations" ;
+    rdfs:comment "Manages protocol amendments, site network structure, regions, country configuration, site activation mechanics, and system configuration. OOUX persona aliases: Sponsor Operations, Sponsor Ops, Site Activation Manager." ;
+    rdfs:subClassOf hcls:Person .
 
 ns1:TMFArtifactType a owl:Class ;
     rdfs:label "TMF Artifact Type" ;
     rdfs:comment "A kind of trial-master-file document (the document-type binding target)." ;
     rdfs:subClassOf skos:Concept .
 
+cr:Participant a owl:Class ;
+    rdfs:label "Participant" ;
+    rdfs:comment "A human subject enrolled in a clinical trial at a specific StudySite for a specific Study. One entity per Study participation; multi-Study = separate Participant records. FHIR R5: ResearchSubject. SDTM projection: DM domain (demographics) + DS domain (disposition events)." ;
+    rdfs:subClassOf prov:Agent,
+        top:Agent .
+
+cr:eCRF a owl:Class ;
+    rdfs:label "eCRF" ;
+    rdfs:comment "Electronic case report form — the data-collection instrument used at the site." ;
+    rdfs:subClassOf cr:CaseReportForm,
+        top:Evidence .
+
 ns1:TMFReferenceModel a skos:ConceptScheme ;
     rdfs:label "TOP TMF artifact-type scheme" ;
     rdfs:comment "A SKOS scheme of trial-master-file artifact types, aligned by name to the DIA TMF Reference Model; each artifact type carries content bridges to the domain classes it concerns." .
 
-top:ProvenancedEntity a owl:Class ;
-    rdfs:label "Provenanced Entity" ;
-    rdfs:comment "Marker for any assertion/entity carrying the bitemporal + PROV envelope." .
+hcls:Phase a owl:Class ;
+    rdfs:label "Phase" ;
+    rdfs:comment "A bounded, sequenced stage of a process lifecycle within an HCLS domain. Phases form a containment tree (hcls:contains) and a precedence chain (hcls:precedes). Permutates to: cr:StartupPhase/ConductPhase/CloseoutPhase (clinical research); Admission/Inpatient/Discharge (clinical care); Formulation/Fill-Finish/Release (manufacturing)." ;
+    rdfs:subClassOf top:Scope .
 
-top:Evidence a owl:Class ;
-    rdfs:label "Evidence" ;
-    rdfs:comment "An information artifact that asserts or records something." ;
-    rdfs:subClassOf top:Core .
+cr:OversightSubPhase a hcls:Phase ;
+    rdfs:label "Oversight" ;
+    rdfs:comment "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality." .
+
+hcls:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
+    rdfs:subClassOf top:Agent .
+
+cr:AdverseEvent a owl:Class ;
+    rdfs:label "Adverse Event" ;
+    rdfs:comment "An untoward medical occurrence in a trial subject." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
+
+cr:Investigator a owl:Class ;
+    rdfs:label "Investigator" ;
+    rdfs:comment "A licensed clinician designated as PI or Sub-I at a Site. Holds legal responsibility for trial conduct, GCP compliance, AE causality assessment, CRF sign-off, and delegation of authority. OOUX persona aliases: PI, Investigator, Site PI." ;
+    rdfs:subClassOf hcls:Clinician .
+
+cr:DataCollectionSubPhase a hcls:Phase ;
+    rdfs:label "Data Collection" ;
+    rdfs:comment "EDC data entry and CRF completion, query management, lab reconciliation, concomitant medication and medical history recording. Dual-lens: site captures, sponsor/DM validates." .
+
+cr:VisitOccurrence a owl:Class ;
+    rdfs:label "Visit Occurrence" ;
+    rdfs:comment "An actual protocol visit: what DID happen. Anchored at Participant (1..1) and StudySite (1..1). Optionally definedBy a VisitDefinition (absent for unscheduled visits). FHIR R5: Encounter. SDTM: SV domain (SVSTDTC / SVENDTC / VISITNUM / VISIT). OMOP: VISIT_OCCURRENCE." ;
+    rdfs:subClassOf prov:Activity,
+        top:Temporal,
+        top:Versioned .
+
+hcls:JobToBeDone a owl:Class ;
+    rdfs:label "Job to Be Done" ;
+    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a Phase. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
+    rdfs:subClassOf top:Scope .
+
+cr:ConductPhase a hcls:Phase ;
+    rdfs:label "Conduct" ;
+    rdfs:comment "From first patient in (FPI) through last patient out (LPO) / database lock (DBL). The operational execution window of the trial." ;
+    hcls:contains cr:DataCollectionSubPhase,
+        cr:OversightSubPhase,
+        cr:RecruitmentSubPhase,
+        cr:SafetySubPhase,
+        cr:VisitExecutionSubPhase ;
+    hcls:precedes cr:CloseoutPhase .
+
+cr:SponsorProjectManager a owl:Class ;
+    rdfs:label "Sponsor Project Manager" ;
+    rdfs:comment "Creates and activates studies, selects and manages sites, tracks milestones and enrollment, and closes studies. OOUX persona aliases: Sponsor PM, Study PM, Project Manager, Study Manager." ;
+    rdfs:subClassOf hcls:Person .
+
+cr:StudySite a owl:Class ;
+    rdfs:label "Study Site" ;
+    rdfs:comment "An investigative site conducting the study (an organization at a facility)." ;
+    rdfs:subClassOf hcls:Organization .
+
+cr:SiteCoordinator a owl:Class ;
+    rdfs:label "Site Coordinator" ;
+    rdfs:comment "The day-to-day clinical operations professional at a Site. Screens and enrolls participants, executes visits, completes CRFs, manages AE reporting, and maintains site logs. Also known as Clinical Research Coordinator (CRC). OOUX persona aliases: Coordinator, Study Coordinator, CRC." ;
+    rdfs:subClassOf hcls:Practitioner .
+
+cr:Study a owl:Class ;
+    rdfs:label "Study" ;
+    rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
+    rdfs:subClassOf top:Scope .
+
+hcls:Action a owl:Class ;
+    rdfs:label "Action" ;
+    rdfs:comment "A named, authorized operation (Call To Action in OOUX terms) that an agent of a given type may perform in a given Phase. Actions are reference-graph archetypes (top:Constraint: they specify what is authorized). Realized occurrences in instance graphs are prov:Activity individuals linked back via hcls:realizationOf." ;
+    rdfs:subClassOf top:Constraint .
 

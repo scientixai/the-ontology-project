@@ -18,3 +18,29 @@ cx:verificationStatus a owl:DatatypeProperty ; rdfs:label "verification status" 
     rdfs:comment "verified | unverified | deprecated — whether the target IRI was confirmed against a primary source." .
 cx:retrievedFrom a owl:DatatypeProperty ; rdfs:label "retrieved from" ;
     rdfs:comment "The primary source the target IRI was verified against (URL + retrieval date)." .
+
+# ---- LLM-assisted field-mapping provenance (ADR-0022) ----
+# These properties support the two-layer crosswalk architecture:
+#   Layer 1: canonical TOP ↔ CDISC/USDM (curated, high confidence)
+#   Layer 2: sponsor-specific extensions (e.g. X_WHATEVER fields)
+# Unknown Layer-2 fields are submitted to a top:AutonomousAgent which
+# records a cx:Mapping with these properties. High-confidence mappings
+# auto-promote to Layer 2; low-confidence route to human review.
+
+cx:mappingMethod a owl:DatatypeProperty ; rdfs:label "mapping method" ;
+    rdfs:comment "How the mapping was produced: ManualCuration | LLMInference | RuleBasedExtraction | HybridReview. Drives downstream trust and routing." .
+
+cx:mappingRationale a owl:DatatypeProperty ; rdfs:label "mapping rationale" ; rdfs:range xsd:string ;
+    rdfs:comment "Human-readable explanation of why this mapping was proposed, especially for LLM-inferred mappings. Mirrors top:rationale on a Conclusion." .
+
+cx:reviewStatus a owl:DatatypeProperty ; rdfs:label "review status" ;
+    rdfs:comment "Lifecycle state of the mapping: proposed | under_review | confirmed | rejected | deprecated. Confirmed mappings graduate from ephemeral inference to Layer-2 crosswalk." .
+
+cx:inferredBy a owl:ObjectProperty ; rdfs:label "inferred by" ;
+    rdfs:comment "The top:AutonomousAgent instance that proposed this mapping via LLM inference. Enables provenance tracing back to the agent model and prompt version." .
+
+cx:confirmedBy a owl:ObjectProperty ; rdfs:label "confirmed by" ;
+    rdfs:comment "The human agent (or committee) that reviewed and confirmed a proposed mapping. Required for promotion from 'under_review' to 'confirmed'." .
+
+cx:confirmedAt a owl:DatatypeProperty ; rdfs:label "confirmed at" ; rdfs:range xsd:dateTime ;
+    rdfs:comment "Timestamp when a mapping was confirmed by a human reviewer. Together with cx:confirmedBy, closes the audit trail for human-in-the-loop validation." .

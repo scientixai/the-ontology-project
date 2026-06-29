@@ -6,36 +6,8 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix top: <https://top.scientix.ai/core/v1#> .
+@prefix top: <https://top.scientix.ai/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-top:BitemporalProvShape a sh:NodeShape ;
-    sh:property [ sh:datatype xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:message "Must have exactly one transaction-time record (top:recordedAt)." ;
-            sh:minCount 1 ;
-            sh:path top:recordedAt ],
-        [ sh:datatype xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:message "Must have exactly one valid-time start (top:observedAt)." ;
-            sh:minCount 1 ;
-            sh:path top:observedAt ],
-        [ sh:message "Must be attributed to at least one agent (prov:wasAttributedTo)." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path prov:wasAttributedTo ] ;
-    sh:severity sh:Violation ;
-    sh:targetClass top:ProvenancedEntity .
-
-top:UniversalDNAShape a sh:NodeShape ;
-    sh:property [ sh:message "Universal DNA: every entity must carry a top:identifier." ;
-            sh:minCount 1 ;
-            sh:path top:identifier ],
-        [ sh:message "Universal DNA: every entity must carry a top:status." ;
-            sh:minCount 1 ;
-            sh:path top:status ] ;
-    sh:severity sh:Violation ;
-    sh:targetClass top:ProvenancedEntity .
 
 cr:ADaMTraceabilityShape a sh:NodeShape ;
     sh:property [ sh:message "Analysis dataset (ADaM) must declare prov:wasDerivedFrom its source (traceability)." ;
@@ -71,14 +43,29 @@ cr:ActivityOrderingShape a sh:NodeShape ;
             sh:select """
             SELECT $this WHERE {
               $this   <https://top.scientix.ai/cr/v1#realizes> ?pa ;
-                      <https://top.scientix.ai/core/v1#observedAt> ?ta .
+                      <https://top.scientix.ai/v1#observedAt> ?ta .
               ?pa     <https://top.scientix.ai/cr/v1#precedes> ?pb .
               ?other  <https://top.scientix.ai/cr/v1#realizes> ?pb ;
-                      <https://top.scientix.ai/core/v1#observedAt> ?tb .
+                      <https://top.scientix.ai/v1#observedAt> ?tb .
               FILTER ( ?ta > ?tb )
             }
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
+
+cr:ArmStudyConsistencyShape a sh:NodeShape ;
+    rdfs:label "Assigned arm must belong to Participant's Study (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.assignedToArm references an Arm whose parent Study does not match Participant.forStudy." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#assignedToArm> ?arm ;
+                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              FILTER NOT EXISTS {
+                ?study <https://top.scientix.ai/cr/v1#hasArm> ?arm .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
 
 cr:AssayResultShape a sh:NodeShape ;
     sh:property [ sh:class cr:AnalysisService ;
@@ -137,6 +124,42 @@ cr:ClinicalObservationShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:ClinicalObservation .
 
+cr:CompletedShouldHaveDateShape a sh:NodeShape ;
+    rdfs:label "COMPLETED should have completionDate (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Participant.participantStatus=COMPLETED but completionDate is not populated." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "COMPLETED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#completionDate> ?d . }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:CompletedVisitShouldHaveEndDateShape a sh:NodeShape ;
+    rdfs:label "COMPLETED VisitOccurrence should have actualEndDate (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "VisitOccurrence.visitStatus=COMPLETED but actualEndDate is missing." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#visitStatus> "COMPLETED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#actualEndDate> ?d . }
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:ConvertedRecruitRequiresParticipantShape a sh:NodeShape ;
+    rdfs:label "CONVERTED_TO_PARTICIPANT requires convertedToParticipant link (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Recruit.recruitStatus=CONVERTED_TO_PARTICIPANT but convertedToParticipant relationship is missing." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#recruitStatus> "CONVERTED_TO_PARTICIPANT" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#convertedToParticipant> ?p . }
+            }
+        """ ] ;
+    sh:targetClass cr:Recruit .
+
 cr:CustodyEventShape a sh:NodeShape ;
     sh:property [ sh:in ( "SampleDue" "Received" "ToBeVerified" "Verified" "Published" ) ;
             sh:message "Custody event toState must be a valid lifecycle state." ;
@@ -184,12 +207,12 @@ cr:DelegationTimingShape a sh:NodeShape ;
             SELECT $this WHERE {
               $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap ;
                     <https://top.scientix.ai/cr/v1#performedBy> ?p ;
-                    <https://top.scientix.ai/core/v1#observedAt> ?t .
+                    <https://top.scientix.ai/v1#observedAt> ?t .
               ?d a <https://top.scientix.ai/cr/v1#Delegation> ;
                  <https://top.scientix.ai/cr/v1#delegate> ?p ;
                  <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap ;
-                 <https://top.scientix.ai/core/v1#observedAt> ?df .
-              OPTIONAL { ?d <https://top.scientix.ai/core/v1#validTo> ?dt . }
+                 <https://top.scientix.ai/v1#observedAt> ?df .
+              OPTIONAL { ?d <https://top.scientix.ai/v1#validTo> ?dt . }
               FILTER ( ?t < ?df || ( BOUND(?dt) && ?t > ?dt ) )
             }
         """ ] ;
@@ -286,6 +309,27 @@ cr:InformedConsentShape a sh:NodeShape ;
             sh:path cr:forSubject ] ;
     sh:targetClass cr:InformedConsent .
 
+cr:ObservationSubjectPseudonymousShape a sh:NodeShape ;
+    rdfs:label "ClinicalObservation must reference StudySubject, not Person (hard)" ;
+    sh:property [ sh:class cr:StudySubject ;
+            sh:message "ClinicalObservation.observationForSubject must be a cr:StudySubject (pseudonymous). Linking directly to hcls:Person violates PII containment (ADR-0019)." ;
+            sh:minCount 1 ;
+            sh:path cr:observationForSubject ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ClinicalObservation .
+
+cr:OutOfWindowVisitDeviationShape a sh:NodeShape ;
+    rdfs:label "Out-of-window visit should link to a Deviation (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "VisitOccurrence.windowStatus=OUT_OF_WINDOW but no linked Deviation. Consider documenting as a protocol deviation per ICH E6(R3) §4.5." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#windowStatus> "OUT_OF_WINDOW" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#associatedDeviation> ?d . }
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
 cr:OutputLineageShape a sh:NodeShape ;
     rdfs:label "Produced output should trace to an input (warning)" ;
     sh:severity sh:Warning ;
@@ -355,6 +399,26 @@ cr:PlannedVisitWindowShape a sh:NodeShape ;
             sh:severity sh:Violation ] ;
     sh:targetClass cr:PlannedVisit .
 
+cr:PostConsentRequiresConsentShape a sh:NodeShape ;
+    rdfs:label "Post-consent state requires InformedConsentAct (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant is in a post-consent state but has no InformedConsentAct with consentStatus=OBTAINED. ICH E6(R3) §2.4 violation." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> ?s .
+              FILTER ( ?s IN (
+                "ENROLLED", "RANDOMIZED", "ON_TREATMENT",
+                "IN_FOLLOW_UP", "COMPLETED", "WITHDRAWN",
+                "DISCONTINUED", "LOST_TO_FOLLOW_UP"
+              ) )
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasInformedConsentAct> ?c .
+                ?c <https://top.scientix.ai/cr/v1#consentStatus> "OBTAINED" .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
 cr:PreINDReadinessShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:sparql [ sh:message "Pre-IND meeting lacks a briefing book and/or specific questions (readiness warning)." ;
@@ -387,6 +451,21 @@ cr:QueryShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:Query .
 
+cr:RandomizedRequiresArmAndDateShape a sh:NodeShape ;
+    rdfs:label "RANDOMIZED requires assignedToArm and randomizationDate (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.participantStatus=RANDOMIZED but missing assignedToArm or randomizationDate." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "RANDOMIZED" .
+              FILTER (
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assignedToArm> ?a . } ||
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#randomizationDate> ?d . }
+              )
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
 cr:RiskAssessmentShape a sh:NodeShape ;
     sh:property [ sh:in ( "low" "medium" "high" ) ;
             sh:message "Risk assessment must carry a risk level (low/medium/high)." ;
@@ -398,6 +477,21 @@ cr:RiskAssessmentShape a sh:NodeShape ;
             sh:path cr:assessesFactor ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:RiskAssessment .
+
+cr:ScreenFailedRequiresRecordShape a sh:NodeShape ;
+    rdfs:label "SCREEN_FAILED requires ScreeningRecord (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.participantStatus=SCREEN_FAILED but no ScreeningRecord with screeningOutcome=SCREEN_FAILED." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "SCREEN_FAILED" .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasScreeningRecord> ?r .
+                ?r <https://top.scientix.ai/cr/v1#screeningOutcome> "SCREEN_FAILED" .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
 
 cr:SignificantDeviationCAPAShape a sh:NodeShape ;
     sh:severity sh:Violation ;
@@ -446,6 +540,19 @@ cr:SpecimenOriginShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass hcls:Specimen .
 
+cr:StalledRecruitShape a sh:NodeShape ;
+    rdfs:label "Recruit stalled with many contact attempts (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Recruit has 6+ contact attempts but is still in RESPONDED or CONTACTED state. Consider transitioning to DROPPED." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#contactAttempts> ?n ;
+                    <https://top.scientix.ai/cr/v1#recruitStatus> ?s .
+              FILTER ( ?n >= 6 && ?s IN ("RESPONDED", "CONTACTED") )
+            }
+        """ ] ;
+    sh:targetClass cr:Recruit .
+
 cr:StartupArtifactTypeShape a sh:NodeShape ;
     rdfs:label "Start-up artifact must be classified to a TMF type" ;
     sh:property [ sh:class <https://top.scientix.ai/tmf/v1#TMFArtifactType> ;
@@ -470,6 +577,21 @@ cr:StudyShape a sh:NodeShape ;
             sh:path cr:conductedAt ] ;
     sh:targetClass cr:Study .
 
+cr:StudySiteStudyConsistencyShape a sh:NodeShape ;
+    rdfs:label "Participant.forStudySite must match forStudy (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.forStudySite references a StudySite whose forStudy does not match Participant.forStudy." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#forStudySite> ?ss ;
+                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              FILTER NOT EXISTS {
+                ?ss <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
 cr:UncapturedAntecedentShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:sparql [ sh:message "Deviation event has no recorded antecedent (latent cause not captured)." ;
@@ -480,12 +602,54 @@ cr:UncapturedAntecedentShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:DeviationEvent .
 
+cr:UnscheduledVisitShouldHaveReasonShape a sh:NodeShape ;
+    rdfs:label "Unscheduled VisitOccurrence should have unscheduledReason (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "VisitOccurrence.visitType=UNSCHEDULED but unscheduledReason is missing. Maps to SDTM SV SVUPDES." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#visitType> "UNSCHEDULED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#unscheduledReason> ?r . }
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
 cr:VagueQuestionShape a sh:NodeShape ;
     sh:property [ sh:message "Pre-IND question lacks a proposed position (vague question)." ;
             sh:minCount 1 ;
             sh:path cr:proposedPosition ;
             sh:severity sh:Warning ] ;
     sh:targetClass cr:RegulatoryQuestion .
+
+cr:VisitRequiresParticipantShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence requires forParticipant (hard)" ;
+    sh:property [ sh:message "VisitOccurrence must link to exactly one Participant." ;
+            sh:minCount 1 ;
+            sh:path cr:forParticipant ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:VisitRequiresStudySiteShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence requires atStudySite (hard)" ;
+    sh:property [ sh:message "VisitOccurrence must link to a StudySite." ;
+            sh:minCount 1 ;
+            sh:path cr:atStudySite ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:VisitStudySiteConsistencyShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence.atStudySite must match Participant.forStudySite (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "VisitOccurrence.atStudySite does not match the forParticipant's forStudySite." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#atStudySite> ?ss ;
+                    <https://top.scientix.ai/cr/v1#forParticipant> ?p .
+              ?p <https://top.scientix.ai/cr/v1#forStudySite> ?pss .
+              FILTER ( ?ss != ?pss )
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
 
 cr:VisitWindowShape a sh:NodeShape ;
     rdfs:label "Visit outside planned window (warning)" ;
@@ -494,7 +658,7 @@ cr:VisitWindowShape a sh:NodeShape ;
             sh:select """
             SELECT $this WHERE {
               $this <https://top.scientix.ai/cr/v1#realizes> ?pv ;
-                    <https://top.scientix.ai/core/v1#observedAt> ?t .
+                    <https://top.scientix.ai/v1#observedAt> ?t .
               ?pv a <https://top.scientix.ai/cr/v1#PlannedVisit> ;
                   <https://top.scientix.ai/cr/v1#windowStart> ?ws ;
                   <https://top.scientix.ai/cr/v1#windowEnd> ?we .
@@ -502,6 +666,21 @@ cr:VisitWindowShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
+
+cr:WithdrawnRequiresConsentWithdrawalShape a sh:NodeShape ;
+    rdfs:label "WITHDRAWN requires WithdrawalRecord with CONSENT_WITHDRAWN (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.participantStatus=WITHDRAWN but no WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. WITHDRAWN is reserved for subject-initiated withdrawal; investigator-initiated uses DISCONTINUED." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "WITHDRAWN" .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasWithdrawalRecord> ?w .
+                ?w <https://top.scientix.ai/cr/v1#withdrawalCategory> "CONSENT_WITHDRAWN" .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
 
 cr:WorkStreamShape a sh:NodeShape ;
     rdfs:label "Work stream must consume inputs and name its site" ;
@@ -571,4 +750,32 @@ cx:MappingShape a sh:NodeShape ;
             sh:path [ sh:alternativePath ( <https://top.scientix.ai/tmf/v1#concerns> <https://top.scientix.ai/tmf/v1#defines> <https://top.scientix.ai/tmf/v1#records> <https://top.scientix.ai/tmf/v1#documents> ) ] ;
             sh:severity sh:Warning ] ;
     sh:targetClass <https://top.scientix.ai/tmf/v1#TMFArtifactType> .
+
+top:BitemporalProvShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:message "Must have exactly one transaction-time record (top:recordedAt)." ;
+            sh:minCount 1 ;
+            sh:path top:recordedAt ],
+        [ sh:message "Must be attributed to at least one agent (prov:wasAttributedTo)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path prov:wasAttributedTo ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:message "Must have exactly one valid-time start (top:observedAt)." ;
+            sh:minCount 1 ;
+            sh:path top:observedAt ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass top:Versioned .
+
+top:UniversalDNAShape a sh:NodeShape ;
+    sh:property [ sh:message "Universal DNA: every entity must carry a top:identifier." ;
+            sh:minCount 1 ;
+            sh:path top:identifier ],
+        [ sh:message "Universal DNA: every entity must carry a top:status." ;
+            sh:minCount 1 ;
+            sh:path top:status ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass top:Versioned .
 
