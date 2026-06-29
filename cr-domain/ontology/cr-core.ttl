@@ -34,9 +34,9 @@ cr:InvestigationalProduct a owl:Class ; rdfs:subClassOf hcls:MedicinalProduct ;
     rdfs:label "Investigational Product" ; rdfs:comment "The investigational drug or biologic being studied." .
 
 #################################################################
-# Evidence (artifacts) — several are bitemporal (ProvenancedEntity)
+# Evidence (artifacts) — several are bitemporal (top:Versioned)
 #################################################################
-cr:ProtocolVersion a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+cr:ProtocolVersion a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
     rdfs:label "Protocol Version" ;
     rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." .
 cr:BriefingBook a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Briefing Book" ; rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." .
@@ -44,7 +44,7 @@ cr:CSR          a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Clinica
 cr:eCRF         a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "eCRF" ; rdfs:comment "Electronic case report form — the data-collection instrument used at the site." .
 cr:Credential   a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Credential" ;
     rdfs:comment "An attested qualification/training record that gates a delegated capability." .
-cr:Attestation  a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity ;
+cr:Attestation  a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
     rdfs:label "Attestation" ;
     rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." .
 
@@ -57,18 +57,18 @@ cr:Capability   a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Capab
     rdfs:comment "A delegable permission to perform a trial task (e.g. obtain informed consent)." .
 
 #################################################################
-# Temporal acts — bitemporal + PROV (ProvenancedEntity)
+# Temporal acts — bitemporal + PROV (top:Versioned)
 #################################################################
-cr:Enrollment a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:Enrollment a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Enrollment" ;
     rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." .
-cr:Delegation a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:Delegation a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Delegation" ;
     rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." .
-cr:InformedConsent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:InformedConsent a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Informed Consent" ; rdfs:comment "The act of obtaining a subject's informed consent." .
 cr:Visit a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Trial Visit" ; rdfs:comment "A protocol visit — a kind of study event." .
-cr:Administration a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:Administration a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Administration" ; rdfs:comment "A dosing event." .
 cr:Assessment a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Assessment" ; rdfs:comment "A clinical assessment performed during the trial." .
 cr:RegulatoryInteraction a owl:Class ; rdfs:subClassOf top:Temporal ;
@@ -77,7 +77,7 @@ cr:RegulatoryInteraction a owl:Class ; rdfs:subClassOf top:Temporal ;
 #################################################################
 # Outcomes
 #################################################################
-cr:AdverseEvent a owl:Class ; rdfs:subClassOf top:Outcome, top:ProvenancedEntity ;
+cr:AdverseEvent a owl:Class ; rdfs:subClassOf top:Outcome, top:Versioned ;
     rdfs:label "Adverse Event" ; rdfs:comment "An untoward medical occurrence in a trial subject." .
 cr:DoseLimitingToxicity a owl:Class ; rdfs:subClassOf cr:AdverseEvent ;
     rdfs:label "Dose-Limiting Toxicity" ; rdfs:comment "Oncology dose-escalation: a DLT informs the next dose decision." .

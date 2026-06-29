@@ -38,22 +38,22 @@ cr:Recruit a owl:Class ; rdfs:subClassOf top:Agent ;
 #################################################################
 # Participant sub-objects (lifecycle events)
 # Pattern: same as SDTM DS domain — each disposition event is its
-# own record. These are ProvenancedEntity (bitemporal + PROV-O).
+# own record. These are Versioned (bitemporal + PROV-O).
 #################################################################
 
-cr:InformedConsentAct a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:InformedConsentAct a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Informed Consent Act" ;
     rdfs:comment "One consent event (ICH E6(R3) §2.4 GCP-required). Supports re-consent after protocol amendment or ICF version change. SDTM DS: DSDECOD=INFORMED CONSENT OBTAINED. FHIR: ResearchSubject.progress entry with subjectState=pending-on-study." .
 
-cr:ScreeningRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:ScreeningRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Screening Record" ;
     rdfs:comment "One eligibility-screening attempt (ICH E6(R3) §2.5). Re-screening = additional ScreeningRecord. SDTM DS: DSDECOD=SCREEN FAILURE / ENROLLED. SDTM IE: failed criteria." .
 
-cr:EnrollmentRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:EnrollmentRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Enrollment Record" ;
     rdfs:comment "The enrollment event — eligibility confirmed, subject formally on the trial. SDTM DS: DSDECOD=ENROLLED. FHIR: ResearchSubject.status=on-study." .
 
-cr:WithdrawalRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:WithdrawalRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Withdrawal Record" ;
     rdfs:comment "One withdrawal or discontinuation event. WITHDRAWN = subject-initiated (CONSENT_WITHDRAWN); DISCONTINUED = investigator-initiated. Distinction is operator-meaningful and preserved in the substrate. SDTM DS: DSDECOD=WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP." .
 

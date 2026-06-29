@@ -77,7 +77,7 @@ def _stamp(g):
 
 
 def _bind(g):
-    g.bind("top", Namespace("https://top.scientix.ai/core/v1#"))
+    g.bind("top", Namespace("https://top.scientix.ai/v1#"))
     g.bind("hcls", Namespace("https://top.scientix.ai/hcls/v1#"))
     g.bind("cr", Namespace("https://top.scientix.ai/cr/v1#"))
     g.bind("cx", Namespace("https://top.scientix.ai/crosswalk/v1#"))
@@ -128,7 +128,7 @@ def _write(g, base):
 
 # Prefixes the NGSI-LD @context exposes (domain terms compact against these).
 NGSI_PREFIXES = {
-    "top": "https://top.scientix.ai/core/v1#",
+    "top": "https://top.scientix.ai/v1#",
     "hcls": "https://top.scientix.ai/hcls/v1#",
     "cr": "https://top.scientix.ai/cr/v1#",
     "cx": "https://top.scientix.ai/crosswalk/v1#",

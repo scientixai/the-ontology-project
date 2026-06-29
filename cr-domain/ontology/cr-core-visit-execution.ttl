@@ -42,15 +42,15 @@ cr:ActivityTemplate a owl:Class ; rdfs:subClassOf top:Scope ;
 # Execution-side entities
 #################################################################
 
-cr:VisitOccurrence a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity, prov:Activity ;
+cr:VisitOccurrence a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned, prov:Activity ;
     rdfs:label "Visit Occurrence" ;
     rdfs:comment "An actual protocol visit: what DID happen. Anchored at Participant (1..1) and StudySite (1..1). Optionally definedBy a VisitDefinition (absent for unscheduled visits). FHIR R5: Encounter. SDTM: SV domain (SVSTDTC / SVENDTC / VISITNUM / VISIT). OMOP: VISIT_OCCURRENCE." .
 
-cr:ActivityOccurrence a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity, prov:Activity ;
+cr:ActivityOccurrence a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned, prov:Activity ;
     rdfs:label "Activity Occurrence" ;
     rdfs:comment "One performed activity within a VisitOccurrence. Uses the universal substrate pattern: any assessment (vitals, MRI, ePRO, biopsy, IP administration) uses the same entity shape; content specialisation is via biomedicalConceptCode and taskValueType. FHIR R5: Procedure / Observation / MedicationAdministration (per activity type). SDTM: domain depends on type (VS, LB, EG, EX, PE, etc.)." .
 
-cr:ClinicalObservation a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity, prov:Entity ;
+cr:ClinicalObservation a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned, prov:Entity ;
     rdfs:label "Clinical Observation" ;
     rdfs:comment "A structured result attached to an ActivityOccurrence. Carries the measured value, unit, reference range, interpretation, and derivedFrom provenance. FHIR R5: Observation. SDTM: one row in the domain matching the parent activity type." .
 

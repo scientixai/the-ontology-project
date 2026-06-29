@@ -1,11 +1,11 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
-@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 # The bitemporal + PROV envelope: the spine every provenanced assertion must carry.
 top:BitemporalProvShape a sh:NodeShape ;
-    sh:targetClass top:ProvenancedEntity ;
+    sh:targetClass top:Versioned ;
     sh:severity sh:Violation ;
     sh:property [
         sh:path top:observedAt ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;

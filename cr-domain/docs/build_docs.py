@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_screens import render_stop, SCREEN_CSS  # noqa: E402
 from build_dist import MAST  # noqa: E402  (masthead: single source of truth for version/license/authorship)
 
-TOP = "https://top.scientix.ai/core/v1#"
+TOP = "https://top.scientix.ai/v1#"
 CLOS = ["Agent", "Location", "Resource", "Scope", "Temporal", "Evidence", "Outcome", "Constraint"]
 SH = "http://www.w3.org/ns/shacl#"
 
@@ -451,7 +451,7 @@ def foundation_body():
     return (
         "<h1>Foundation &mdash; the shared model</h1>"
         f"{masthead()}"
-        "<p class='lead'>Everything specializes <b>eight universal categories</b> (the Category-Level Objects), all rooted in a single <code>top:Core</code>. A small shared top keeps the model legible; the richness lives in the domain leaves.</p>"
+        "<p class='lead'>Everything specializes <b>eight universal categories</b> (the Category-Level Objects), all rooted in a single <code>top:CommonEntity</code>. A small shared top keeps the model legible; the richness lives in the domain leaves.</p>"
         "<p>Layers add specificity: <code>top</code> (universal) &rarr; <code>hcls</code> (health &amp; life sciences) &rarr; <code>cr</code> (clinical research). Each flow page below specializes these.</p>"
         "<h2>Universal DNA</h2>"
         "<p>Every entity, whatever its category, carries three strands: <b>identity</b> (<code>top:identifier</code>), "

@@ -40,12 +40,12 @@ cr:DelegationTimingShape a sh:NodeShape ;
             SELECT $this WHERE {
               $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap ;
                     <https://top.scientix.ai/cr/v1#performedBy> ?p ;
-                    <https://top.scientix.ai/core/v1#observedAt> ?t .
+                    <https://top.scientix.ai/v1#observedAt> ?t .
               ?d a <https://top.scientix.ai/cr/v1#Delegation> ;
                  <https://top.scientix.ai/cr/v1#delegate> ?p ;
                  <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap ;
-                 <https://top.scientix.ai/core/v1#observedAt> ?df .
-              OPTIONAL { ?d <https://top.scientix.ai/core/v1#validTo> ?dt . }
+                 <https://top.scientix.ai/v1#observedAt> ?df .
+              OPTIONAL { ?d <https://top.scientix.ai/v1#validTo> ?dt . }
               FILTER ( ?t < ?df || ( BOUND(?dt) && ?t > ?dt ) )
             }
         """ ;

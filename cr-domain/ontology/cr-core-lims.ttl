@@ -10,16 +10,16 @@
 # prov:wasDerivedFrom, so an assay result traces aliquot -> primary -> blood draw.
 
 # Specimen lifecycle: a custody transition is a bitemporal, attested act.
-cr:CustodyEvent a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:CustodyEvent a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Custody Event" ;
     rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." .
 
 # Analysis catalog vs request vs result (LabKey Batch-Run-Results / SENAITE service).
 cr:AnalysisService a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Analysis Service" ;
     rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." .
-cr:AnalysisRequest a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity ;
+cr:AnalysisRequest a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
     rdfs:label "Analysis Request" ; rdfs:comment "Binds an AnalysisService to a Specimen (the order)." .
-cr:AssayResult a owl:Class ; rdfs:subClassOf hcls:Observation, top:ProvenancedEntity ;
+cr:AssayResult a owl:Class ; rdfs:subClassOf hcls:Observation, top:Versioned ;
     rdfs:label "Assay Result" ; rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." .
 
 # --- datatype props ---
