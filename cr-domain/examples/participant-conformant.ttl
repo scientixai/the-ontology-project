@@ -1,0 +1,70 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Conformant: Mary enrolled at MSKCC-ONCO423.
+# Demonstrates: StudySite anchor, InformedConsentAct sub-object,
+# EnrollmentRecord, assigned arm, Recruit linkage.
+
+<urn:ngsi-ld:StudySite:mskcc-onco423>
+    a cr:StudySite ;
+    cr:forStudy <urn:ngsi-ld:Study:ONCO-423> .
+
+<urn:ngsi-ld:Study:ONCO-423>
+    a cr:Study ;
+    cr:studyId "ONCO-423" ;
+    cr:hasArm <urn:ngsi-ld:Arm:ONCO-423-arm-a> .
+
+<urn:ngsi-ld:Arm:ONCO-423-arm-a>
+    a cr:Arm ;
+    cr:armCode "A" .
+
+<urn:ngsi-ld:Recruit:onco-423-r001>
+    a cr:Recruit ;
+    cr:forStudyRecruit <urn:ngsi-ld:Study:ONCO-423> ;
+    cr:forStudySiteRecruit <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    cr:recruitStatus "CONVERTED_TO_PARTICIPANT" ;
+    cr:recruitmentSource "DIGITAL_AD" ;
+    cr:responseDate "2026-02-01"^^xsd:date ;
+    cr:convertedToParticipant <urn:ngsi-ld:Participant:onco-423-mskcc-p001> .
+
+<urn:ngsi-ld:Participant:onco-423-mskcc-p001>
+    a cr:Participant ;
+    cr:screeningNumber "P001" ;
+    cr:forStudySite <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    cr:forStudy <urn:ngsi-ld:Study:ONCO-423> ;
+    cr:participantStatus "ON_TREATMENT" ;
+    cr:sex "FEMALE" ;
+    cr:country "USA" ;
+    cr:enrollmentDate "2026-02-05"^^xsd:date ;
+    cr:assignedToArm <urn:ngsi-ld:Arm:ONCO-423-arm-a> ;
+    cr:randomizationDate "2026-02-07"^^xsd:date ;
+    cr:randomizationNumber "R-0001" ;
+    cr:convertedFromRecruit <urn:ngsi-ld:Recruit:onco-423-r001> ;
+    cr:hasInformedConsentAct <urn:ngsi-ld:InformedConsentAct:c-p001-v1> ;
+    cr:hasScreeningRecord <urn:ngsi-ld:ScreeningRecord:sr-p001-1> ;
+    cr:hasEnrollmentRecord <urn:ngsi-ld:EnrollmentRecord:er-p001-1> ;
+    top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T10:05:00Z"^^xsd:dateTime .
+
+<urn:ngsi-ld:InformedConsentAct:c-p001-v1>
+    a cr:InformedConsentAct ;
+    cr:consentVersion "ICF-v3.1" ;
+    cr:consentDate "2026-02-05"^^xsd:date ;
+    cr:consentMethod "IN_PERSON" ;
+    cr:consentStatus "OBTAINED" ;
+    top:observedAt "2026-02-05T09:45:00Z"^^xsd:dateTime .
+
+<urn:ngsi-ld:ScreeningRecord:sr-p001-1>
+    a cr:ScreeningRecord ;
+    cr:screeningStartDate "2026-02-05"^^xsd:date ;
+    cr:screeningOutcome "ENROLLED" ;
+    top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime .
+
+<urn:ngsi-ld:EnrollmentRecord:er-p001-1>
+    a cr:EnrollmentRecord ;
+    cr:enrollmentDate "2026-02-05"^^xsd:date ;
+    cr:enrollmentMethod "ON_SITE" ;
+    cr:protocolVersionAtEnrollment "v3.1" ;
+    top:observedAt "2026-02-05T10:05:00Z"^^xsd:dateTime .

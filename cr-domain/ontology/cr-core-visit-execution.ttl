@@ -1,0 +1,109 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+#################################################################
+# Visit execution — VisitDefinition (design-side) +
+#                   VisitOccurrence (execution-side) +
+#                   ActivityOccurrence + ClinicalObservation
+#
+# Two-chain architecture (per FIRST-PRINCIPLES):
+#   Design:    Protocol → SOA → VisitDefinition → ActivityTemplate
+#   Execution: StudySite → VisitOccurrence → ActivityOccurrence → ClinicalObservation
+#
+# VisitDefinition is USDM-ingest-derivable (from StudyDesign.encounters[]).
+# VisitOccurrence is execution-side: created by EDC / scheduling system
+# when a real Participant attends a real visit. USDM has no runtime
+# visit entity (verified: USDM Encounter is template-only).
+#
+# Standards cross-walks:
+#   VisitDefinition  → USDM v4 Encounter (template), SDTM SE domain
+#   VisitOccurrence  → FHIR R5 Encounter, SDTM SV domain, OMOP VISIT_OCCURRENCE
+#   ActivityOccurrence → FHIR R5 Procedure / Observation, SDTM domain-per-type
+#   ClinicalObservation → FHIR R5 Observation, SDTM VS / LB / EG / PE domains
+#################################################################
+
+#################################################################
+# Design-side entities (USDM-ingest-derivable)
+#################################################################
+
+cr:VisitDefinition a owl:Class ; rdfs:subClassOf top:Scope, prov:Entity ;
+    rdfs:label "Visit Definition" ;
+    rdfs:comment "The protocol-defined visit template: what is SUPPOSED to happen (type, window, mode, ordering). USDM-ingest-derivable from StudyDesign.encounters[]. UNSCHEDULED visits (urgent care, AE workup) have no VisitDefinition; their VisitOccurrence.definedBy is absent. USDM: Encounter. SDTM projection: SE (Study Elements) domain." .
+
+cr:ActivityTemplate a owl:Class ; rdfs:subClassOf top:Scope ;
+    rdfs:label "Activity Template" ;
+    rdfs:comment "The protocol-defined activity template: the procedure to perform at a visit. USDM-ingest-derivable from StudyDesign.activities[]. Carries the biomedical-concept code that determines what kind of data the activity collects. USDM: Activity." .
+
+#################################################################
+# Execution-side entities
+#################################################################
+
+cr:VisitOccurrence a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity, prov:Activity ;
+    rdfs:label "Visit Occurrence" ;
+    rdfs:comment "An actual protocol visit: what DID happen. Anchored at Participant (1..1) and StudySite (1..1). Optionally definedBy a VisitDefinition (absent for unscheduled visits). FHIR R5: Encounter. SDTM: SV domain (SVSTDTC / SVENDTC / VISITNUM / VISIT). OMOP: VISIT_OCCURRENCE." .
+
+cr:ActivityOccurrence a owl:Class ; rdfs:subClassOf top:Temporal, top:ProvenancedEntity, prov:Activity ;
+    rdfs:label "Activity Occurrence" ;
+    rdfs:comment "One performed activity within a VisitOccurrence. Uses the universal substrate pattern: any assessment (vitals, MRI, ePRO, biopsy, IP administration) uses the same entity shape; content specialisation is via biomedicalConceptCode and taskValueType. FHIR R5: Procedure / Observation / MedicationAdministration (per activity type). SDTM: domain depends on type (VS, LB, EG, EX, PE, etc.)." .
+
+cr:ClinicalObservation a owl:Class ; rdfs:subClassOf top:Evidence, top:ProvenancedEntity, prov:Entity ;
+    rdfs:label "Clinical Observation" ;
+    rdfs:comment "A structured result attached to an ActivityOccurrence. Carries the measured value, unit, reference range, interpretation, and derivedFrom provenance. FHIR R5: Observation. SDTM: one row in the domain matching the parent activity type." .
+
+#################################################################
+# Object properties — design-side
+#################################################################
+
+cr:hasVisitDefinition a owl:ObjectProperty ;
+    rdfs:domain cr:Study ; rdfs:range cr:VisitDefinition ;
+    rdfs:label "has visit definition" ;
+    rdfs:comment "Links a Study to its protocol visit templates (via the SOA / ScheduleTimeline chain)." .
+
+cr:hasActivityTemplate a owl:ObjectProperty ;
+    rdfs:domain cr:VisitDefinition ; rdfs:range cr:ActivityTemplate ;
+    rdfs:label "has activity template" .
+
+#################################################################
+# Object properties — execution-side
+#################################################################
+
+cr:forParticipant a owl:ObjectProperty ;
+    rdfs:domain cr:VisitOccurrence ; rdfs:range cr:Participant ;
+    rdfs:label "for participant" ;
+    rdfs:comment "1..1. Whose visit this is." .
+
+cr:atStudySite a owl:ObjectProperty ;
+    rdfs:domain cr:VisitOccurrence ; rdfs:range cr:StudySite ;
+    rdfs:label "at study site" ;
+    rdfs:comment "1..1. The StudySite that operationally owns this visit (in-person or remote). Redundant with Participant.forStudySite but kept direct for query convenience." .
+
+cr:definedBy a owl:ObjectProperty ;
+    rdfs:domain cr:VisitOccurrence ; rdfs:range cr:VisitDefinition ;
+    rdfs:label "defined by" ;
+    rdfs:comment "0..1. The protocol template this occurrence instantiates. Absent for unscheduled visits." .
+
+cr:hasActivityOccurrence a owl:ObjectProperty ;
+    rdfs:domain cr:VisitOccurrence ; rdfs:range cr:ActivityOccurrence ;
+    rdfs:label "has activity occurrence" .
+
+cr:instantiatesTemplate a owl:ObjectProperty ;
+    rdfs:domain cr:ActivityOccurrence ; rdfs:range cr:ActivityTemplate ;
+    rdfs:label "instantiates template" ;
+    rdfs:comment "0..1. Links to the protocol-defined activity template. Absent for unscheduled activities." .
+
+cr:performedInVisit a owl:ObjectProperty ;
+    rdfs:domain cr:ActivityOccurrence ; rdfs:range cr:VisitOccurrence ;
+    rdfs:label "performed in visit" .
+
+cr:hasObservation a owl:ObjectProperty ;
+    rdfs:domain cr:ActivityOccurrence ; rdfs:range cr:ClinicalObservation ;
+    rdfs:label "has observation" .
+
+cr:observationForSubject a owl:ObjectProperty ;
+    rdfs:domain cr:ClinicalObservation ; rdfs:range cr:StudySubject ;
+    rdfs:label "observation for subject" ;
+    rdfs:comment "The pseudonymous StudySubject this observation is about. Never links to hcls:Person directly (PII containment)." .

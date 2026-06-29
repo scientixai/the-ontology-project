@@ -1,0 +1,21 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# VIOLATION: ClinicalObservation links to hcls:Person directly (PHI leak).
+# Triggers Inv #58 (hard — PII containment, ADR-0019).
+# observationForSubject must be a cr:StudySubject, not hcls:Person.
+
+<urn:ngsi-ld:Person:jane-doe>
+    a hcls:Person .
+
+<urn:ngsi-ld:ClinicalObservation:bad-obs>
+    a cr:ClinicalObservation ;
+    cr:observationForSubject <urn:ngsi-ld:Person:jane-doe> ;
+    cr:parameterCode "SYSBP" ;
+    cr:numericValue 118 ;
+    top:observedAt "2026-02-07T08:45:00Z"^^xsd:dateTime .
+
+# VIOLATION: observationForSubject points at hcls:Person, not cr:StudySubject.
+# The PII containment invariant (Inv #58) must catch this.

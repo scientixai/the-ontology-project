@@ -1,0 +1,28 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# VIOLATION: Participant status=RANDOMIZED but no assignedToArm
+# and no randomizationDate. Triggers Inv #45 (hard).
+# Also: participantStatus=ON_TREATMENT (post-consent) but no
+# InformedConsentAct. Triggers Inv #43 (hard).
+
+<urn:ngsi-ld:StudySite:site-bad>
+    a cr:StudySite ;
+    cr:forStudy <urn:ngsi-ld:Study:BAD-01> .
+
+<urn:ngsi-ld:Study:BAD-01>
+    a cr:Study ;
+    cr:studyId "BAD-01" .
+
+<urn:ngsi-ld:Participant:bad-p001>
+    a cr:Participant ;
+    cr:screeningNumber "P001" ;
+    cr:forStudySite <urn:ngsi-ld:StudySite:site-bad> ;
+    cr:forStudy <urn:ngsi-ld:Study:BAD-01> ;
+    cr:participantStatus "ON_TREATMENT" ;
+    top:observedAt "2026-03-01T09:00:00Z"^^xsd:dateTime .
+
+# Missing: hasInformedConsentAct (triggers Inv #43)
+# Missing: assignedToArm, randomizationDate (would trigger Inv #45 if status were RANDOMIZED)

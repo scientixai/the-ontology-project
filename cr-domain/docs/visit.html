@@ -1,0 +1,213 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Visit execution</title><style>
+:root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{display:flex;max-width:1200px;margin:0 auto}
+nav{position:sticky;top:0;align-self:flex-start;width:240px;padding:24px 18px;height:100vh;overflow:auto;font-size:13px;border-right:1px solid var(--line)}
+nav b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 5px}
+nav a{display:block;color:var(--sec);padding:3px 0}
+nav a.on{color:var(--acc);font-weight:700}
+.brandmark{padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.toplogo{width:172px;height:auto;display:block}
+.brandsub{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:var(--mut);margin-top:8px;letter-spacing:.02em}
+main{flex:1;padding:26px 40px;max-width:900px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);margin:34px 0 12px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
+h4{margin:0 0 6px;font-size:15px}
+.lead{background:#fff;border-left:3px solid var(--acc);padding:14px 18px;margin:0 0 14px;font-size:15px;line-height:1.6}
+.tag{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--acc);font-size:12px;margin:0 0 16px}
+.muted{color:var(--mut)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:3px;padding:15px}.card h4{color:var(--acc)}
+.step{display:flex;gap:14px;margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:3px;padding:15px}
+.step .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+pre{background:#fafaf6;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:0 3px 3px 0;color:var(--sec);padding:13px 16px;overflow:auto;font:12px/1.7 ui-monospace,"SF Mono",Menlo,monospace}
+pre .c{color:#888;font-style:italic}
+code{background:var(--pale);border-radius:3px;padding:1px 5px;font:12px ui-monospace,"SF Mono",Menlo,monospace}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{text-align:left;padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+th{background:var(--pale);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+table.map td:first-child{color:var(--mut)}.ref td.clo{color:var(--acc);font-size:12px;white-space:nowrap;font-family:ui-monospace,Menlo,monospace}
+.ref ul,td ul{margin:0;padding-left:16px}
+.sev{font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px}
+.sev.violation{background:#f4e3e4;color:var(--danger)}.sev.warning{background:#f4ebd9;color:var(--warn)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 0}.stats div{background:#fff;border:1px solid var(--line);border-radius:3px;padding:8px 14px;font-size:12px;color:var(--mut)}.stats b{display:block;font-size:20px;color:var(--acc)}
+.note{background:#f4faf7;border:1px solid #cde4d8;border-left:3px solid var(--ok);border-radius:0 3px 3px 0;padding:12px 15px}
+.flowgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.flowgrid a{display:block;background:#fff;border:1px solid var(--line);border-radius:3px;padding:13px 15px;color:var(--sec)}
+.flowgrid a:hover{border-color:var(--acc);text-decoration:none}.flowgrid b{color:var(--acc)}
+footer{color:var(--mut);font-size:12px;margin:44px 0 20px;border-top:1px solid var(--line);padding-top:14px}
+.masthead{background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 18px;margin:0 0 18px}
+dl.mast{display:grid;grid-template-columns:130px 1fr;gap:4px 14px;margin:0 0 12px;font-size:13px}
+dl.mast dt{color:var(--mut);text-transform:uppercase;font-size:11px;letter-spacing:.04em;padding-top:2px}
+dl.mast dd{margin:0}
+.downloads{border-top:1px solid var(--line);padding-top:12px}
+.dlhead{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.dlrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:5px 0}
+.dllabel{font-size:12px;color:var(--sec);width:96px;flex:none}
+a.fmt{display:inline-block;font:11px ui-monospace,Menlo,monospace;background:var(--pale);border:1px solid var(--line);border-radius:3px;padding:2px 9px;color:var(--acc)}
+a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:var(--acc)}
+.citeas{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;font-size:13px;color:var(--sec)}
+.citeas.attribution{font-size:12px;color:var(--mut)}
+
+.trainline{display:flex;align-items:center;flex-wrap:wrap;gap:4px 0;margin:14px 0 26px}
+.tstop{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--mut);white-space:nowrap}
+.tstop.live{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.trail{width:14px;height:2px;background:var(--accent);opacity:.55}
+.splitstop{margin:22px 0}
+.stopname{margin:0 0 8px;color:var(--ink)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06)}
+.scr-head{background:linear-gradient(180deg,#0e7490,#0b5563);color:#fff;padding:12px 14px;font-weight:600;position:relative}
+.scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
+.badge{position:absolute;right:12px;top:12px;background:rgba(255,255,255,.2);font-size:11px;padding:2px 8px;border-radius:10px}
+.scr-row{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;border-top:1px solid var(--line);font-size:14px}
+.scr-row span{color:var(--mut)}
+.muted{color:var(--mut);font-weight:400;font-size:12px}
+.pill{font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px}
+.pill.ok{background:#e7f6ee;color:var(--ok)}.pill.warn{background:#fdf4e3;color:var(--warn)}
+.jsoncap{font-size:12px;color:var(--mut);margin:10px 0 4px}
+.jsoncap:first-child{margin-top:0}
+pre.json{margin:0;max-height:420px}
+pre.json.q{max-height:none;background:#0b2530;color:#cde8ef;border-color:#0b2530}
+p.principle{background:var(--pale);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px}
+.chk-intro{padding:8px 14px;font-size:12px;color:var(--mut);background:var(--pale);border-top:1px solid var(--line)}
+.chk{border-top:1px solid var(--line);padding:9px 14px}
+.chk-head{display:flex;align-items:center;gap:8px;font-size:14px}
+.chk .ck{color:var(--ok);font-weight:700}
+.chk .who{margin-left:auto;font-size:12px;color:var(--mut);white-space:nowrap}
+.chk details{margin-top:5px}
+.chk summary{cursor:pointer;font-size:12px;color:var(--accent);list-style:none}
+.chk summary::-webkit-details-marker{display:none}
+.chk summary::before{content:'\25B8 ';color:var(--accent)}
+.chk details[open] summary::before{content:'\25BE '}
+table.prov{width:100%;border-collapse:collapse;margin:6px 0 2px}
+table.prov td{border-top:1px solid var(--line);padding:4px 6px;font-size:12px;color:var(--ink);vertical-align:top}
+table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+.draft-ribbon{position:fixed;top:16px;right:-52px;transform:rotate(45deg);background:#b00020;color:#fff;font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;padding:6px 60px;z-index:2000;box-shadow:0 1px 5px rgba(0,0,0,.3)}.draft-banner{background:#fff3f3;border-bottom:1px solid #b00020;color:#7a0016;font:600 12px/1.5 ui-sans-serif,system-ui,sans-serif;text-align:center;padding:8px 14px}.draft-banner b{letter-spacing:.08em}</style></head><body><div class='draft-ribbon'>DRAFT</div><div class='draft-banner'><b>DRAFT &mdash; PRE-RELEASE.</b> The TOP Clinical Research reference graph is a work in progress and not yet finalized; content, identifiers, and constraints may change.</div><div class='wrap'><nav><div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div><b>Start</b>
+<a class="" href="index.html">Overview</a>
+<a class="" href="foundation.html">Foundation</a>
+<a class="" href="implementation.html">Implementation guide</a>
+<b>Flows / sub-domains</b>
+<a class="" href="setup.html">Study &amp; site set-up</a>
+<a class="" href="startup-package.html">Study start-up package</a>
+<a class="" href="delegation.html">Delegation &amp; attestation</a>
+<a class="" href="enrollment.html">Enrollment &amp; consent</a>
+<a class="" href="participant.html">Participant &amp; recruit</a>
+<a class="on" href="visit.html">Visit execution</a>
+<a class="" href="schedule.html">Schedule of Activities</a>
+<a class="" href="edc.html">Data capture (EDC) &amp; fidelity</a>
+<a class="" href="lims.html">Biospecimen &amp; LIMS custody</a>
+<a class="" href="safety.html">Safety &amp; pharmacovigilance</a>
+<a class="" href="rbqm.html">Risk-based monitoring (RBQM)</a>
+<a class="" href="deviation.html">Deviations &amp; CAPA</a>
+<a class="" href="preind.html">Pre-IND gate</a>
+<a class="" href="eop2.html">EOP2 &amp; analysis</a>
+<a class="" href="gcp.html">GCP &amp; essential records</a>
+<a class="" href="tmf.html">TMF document binding</a>
+<a class="" href="interop.html">Interoperability</a>
+<b>Detail</b>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Visit execution</h1>
+<p class='lead'>Two chains meet at Visit: the design chain (Protocol &rarr; SOA &rarr; VisitDefinition &rarr; ActivityTemplate) carries <i>what is supposed to happen</i>; the execution chain (StudySite &rarr; VisitOccurrence &rarr; ActivityOccurrence &rarr; ClinicalObservation) carries <i>what actually happened</i>. TOP separates them; most trial systems conflate them.</p>
+
+<h2 id='boundary'>Design boundary</h2>
+<p>USDM v4 <code>Encounter</code> is <b>template-only</b> (verified against <code>cdisc-org/usdm/main/src/usdm_model/encounter.py</code>): no per-occurrence runtime data. <code>VisitDefinition</code> is USDM-ingest-derivable; <code>VisitOccurrence</code> is execution-side (created by EDC / scheduling system when a Participant attends a real visit).</p>
+
+<h2 id='two-chains'>The two chains</h2>
+<pre>Design:    Study &#8594; Protocol &#8594; SOA &#8594; VisitDefinition &#8594; ActivityTemplate
+                                                |
+                                         (defines, 0..1)
+                                                |
+Execution: StudySite &#8594; VisitOccurrence &#8594; ActivityOccurrence &#8594; ClinicalObservation
+                              |                    |
+                    forParticipant               observationForSubject (pseudonymous)
+                              |
+                          Participant</pre>
+
+<p><b>VisitOccurrence anchors at both Participant AND StudySite</b> (not via traversal). Query convenience: "all visits at MSKCC across all participants" requires no join.</p>
+<p><b>UNSCHEDULED visits</b> (urgent care, AE workup, sponsor-requested follow-up) have no VisitDefinition; <code>definedBy</code> is absent.</p>
+
+<h2 id='entities'>Entities</h2>
+<table>
+<tr><th>Entity</th><th>Side</th><th>Standards cross-walk</th></tr>
+<tr><td><code>cr:VisitDefinition</code></td><td>Design (USDM-ingest-derivable)</td><td>USDM v4 <code>Encounter</code>, SDTM SE domain</td></tr>
+<tr><td><code>cr:ActivityTemplate</code></td><td>Design (USDM-ingest-derivable)</td><td>USDM v4 <code>Activity</code></td></tr>
+<tr><td><code>cr:VisitOccurrence</code></td><td>Execution</td><td>FHIR R5 <code>Encounter</code>, SDTM SV domain, OMOP <code>VISIT_OCCURRENCE</code></td></tr>
+<tr><td><code>cr:ActivityOccurrence</code></td><td>Execution</td><td>FHIR R5 <code>Procedure</code> / <code>Observation</code> / <code>MedicationAdministration</code></td></tr>
+<tr><td><code>cr:ClinicalObservation</code></td><td>Execution</td><td>FHIR R5 <code>Observation</code>, SDTM VS / LB / EG / PE domains</td></tr>
+</table>
+
+<h2 id='visit-model'>VisitOccurrence &mdash; model summary</h2>
+<table>
+<tr><th>Attribute / relationship</th><th>Type / target</th><th>Notes</th></tr>
+<tr><td><code>visitStatus</code></td><td>enum (9)</td><td>SCHEDULED / CHECKED_IN / IN_PROGRESS / COMPLETED / MISSED / CANCELLED / RESCHEDULED / WINDOW_DEVIATION / UNSCHEDULED. NGSI-LD temporal property.</td></tr>
+<tr><td><code>visitType</code></td><td>enum</td><td>SCHEDULED / UNSCHEDULED / EARLY_TERMINATION. SDTM SV SVUPDES for unscheduled.</td></tr>
+<tr><td><code>visitMode</code></td><td>enum</td><td>IN_PERSON / REMOTE / HYBRID. Per ICH E6(R3) Annex 2 (decentralised trials).</td></tr>
+<tr><td><code>actualStartDate</code></td><td>dateTime</td><td>SDTM SVSTDTC. NGSI-LD <code>observedAt</code>.</td></tr>
+<tr><td><code>actualEndDate</code></td><td>dateTime &middot; optional</td><td>SDTM SVENDTC. Soft SHACL: should be set when COMPLETED (Inv&nbsp;#55).</td></tr>
+<tr><td><code>windowStatus</code></td><td>enum</td><td>IN_WINDOW / OUT_OF_WINDOW. If OUT_OF_WINDOW, soft SHACL links to Deviation (Inv&nbsp;#57).</td></tr>
+<tr><td><code>unscheduledReason</code></td><td>string &middot; optional</td><td>Mandatory-soft when visitType=UNSCHEDULED (Inv&nbsp;#56). SDTM SVUPDES.</td></tr>
+<tr><td><code>forParticipant</code></td><td>&rarr; Participant &middot; 1..1</td><td>Whose visit. SHACL hard (Inv&nbsp;#52).</td></tr>
+<tr><td><code>atStudySite</code></td><td>&rarr; StudySite &middot; 1..1</td><td>Operational owner. SHACL hard (Inv&nbsp;#53); must match Participant.forStudySite (Inv&nbsp;#54).</td></tr>
+<tr><td><code>definedBy</code></td><td>&rarr; VisitDefinition &middot; 0..1</td><td>Absent for UNSCHEDULED.</td></tr>
+<tr><td><code>hasActivityOccurrence</code></td><td>&rarr; ActivityOccurrence &middot; 0..N</td><td>All activities performed in this visit.</td></tr>
+</table>
+
+<h2 id='activity-model'>ActivityOccurrence &mdash; universal substrate pattern</h2>
+<p>Any assessment &mdash; vitals, MRI, ePRO, biopsy, IP administration &mdash; uses the <b>same entity shape</b>. Content specialisation is via <code>biomedicalConceptCode</code> and <code>taskValueType</code>. This avoids a proliferation of activity-type subclasses while preserving full SDTM-domain fidelity at projection time.</p>
+<table>
+<tr><th>Attribute</th><th>Notes</th></tr>
+<tr><td><code>activityStatus</code></td><td>PLANNED / PERFORMED / SKIPPED / FAILED. NGSI-LD temporal property.</td></tr>
+<tr><td><code>biomedicalConceptCode</code></td><td>The CDISC COSMoS BC identifier driving SDTM domain assignment (VS, LB, EG, EX, PE &hellip;).</td></tr>
+<tr><td><code>taskValueType</code></td><td>NUMERIC / TEXT / DATE / CODED / BOOLEAN. Determines the observation structure.</td></tr>
+<tr><td><code>plannedStartDate / actualStartDate</code></td><td>Design vs execution timestamps; bitemporal via NGSI-LD <code>observedAt</code>.</td></tr>
+<tr><td><code>skipReason</code></td><td>Operator-grounded reason when activityStatus=SKIPPED.</td></tr>
+<tr><td><code>instantiatesTemplate</code></td><td>&rarr; ActivityTemplate &middot; 0..1. Absent for unscheduled activities.</td></tr>
+<tr><td><code>performedBy</code></td><td>&rarr; hcls:Person &middot; 0..1. Must be covered by a valid Delegation (enforced by cr:CapabilityDelegationShape).</td></tr>
+<tr><td><code>hasObservation</code></td><td>&rarr; ClinicalObservation &middot; 0..N. Structured results.</td></tr>
+</table>
+
+<h2 id='shacl'>SHACL invariants (Inv #52&ndash;#58)</h2>
+<table>
+<tr><th>#</th><th>Severity</th><th>Constraint</th></tr>
+<tr><td>52</td><td><span class="sev violation">Violation</span></td><td><b>VisitOccurrence requires Participant.</b> forParticipant must be present (1..1).</td></tr>
+<tr><td>53</td><td><span class="sev violation">Violation</span></td><td><b>VisitOccurrence requires StudySite.</b> atStudySite must be present (1..1).</td></tr>
+<tr><td>54</td><td><span class="sev violation">Violation</span></td><td><b>StudySite consistency.</b> atStudySite must match forParticipant.forStudySite.</td></tr>
+<tr><td>55</td><td><span class="sev warning">Warning</span></td><td><b>COMPLETED visit should have actualEndDate.</b></td></tr>
+<tr><td>56</td><td><span class="sev warning">Warning</span></td><td><b>UNSCHEDULED visit should have reason.</b> unscheduledReason should be set when visitType=UNSCHEDULED. Maps to SDTM SV SVUPDES.</td></tr>
+<tr><td>57</td><td><span class="sev warning">Warning</span></td><td><b>Out-of-window visit should link to Deviation.</b> windowStatus=OUT_OF_WINDOW should have an associatedDeviation per ICH E6(R3) §4.5.</td></tr>
+<tr><td>58</td><td><span class="sev violation">Violation</span></td><td><b>ClinicalObservation must use pseudonymous subject.</b> observationForSubject must be a cr:StudySubject, never an hcls:Person (PII containment, ADR-0019).</td></tr>
+</table>
+
+<h2 id='crosswalks'>Standards cross-walks</h2>
+<table>
+<tr><th>TOP entity</th><th>FHIR R5</th><th>SDTM domain</th><th>USDM v4</th><th>OMOP</th></tr>
+<tr><td><code>VisitDefinition</code></td><td>&mdash;</td><td>SE (Study Elements)</td><td>Encounter (template)</td><td>&mdash;</td></tr>
+<tr><td><code>VisitOccurrence</code></td><td>Encounter</td><td>SV (Subject Visits)</td><td>&mdash; (execution-side)</td><td>VISIT_OCCURRENCE</td></tr>
+<tr><td><code>ActivityOccurrence</code></td><td>Procedure / MedicationAdministration</td><td>EX / PE / MH &hellip; (by BC code)</td><td>&mdash;</td><td>PROCEDURE_OCCURRENCE</td></tr>
+<tr><td><code>ClinicalObservation</code></td><td>Observation</td><td>VS / LB / EG / PE &hellip;</td><td>&mdash;</td><td>MEASUREMENT / OBSERVATION</td></tr>
+</table>
+
+<h2 id='queries'>Query patterns</h2>
+<pre class="json q">GET /ngsi-ld/v1/entities?type=VisitOccurrence
+  &amp;q=forParticipant=="urn:ngsi-ld:Participant:onco-423-mskcc-p001"
+    ;visitStatus=="COMPLETED"
+<span style="color:#888"># Coordinator: all completed visits for Mary</span>
+
+GET /ngsi-ld/v1/entities?type=VisitOccurrence
+  &amp;q=atStudySite=="urn:ngsi-ld:StudySite:mskcc-onco423"
+    ;windowStatus=="OUT_OF_WINDOW"
+<span style="color:#888"># Monitor: out-of-window visits at MSKCC requiring deviation docs</span>
+
+GET /ngsi-ld/v1/entities/urn:ngsi-ld:VisitOccurrence:v-001?join=inline&amp;joinLevel=3
+<span style="color:#888"># Coordinator screen: full visit with inline ActivityOccurrences + ClinicalObservations</span></pre>
+
+<h2 id='open'>Open issues</h2>
+<ul>
+<li><b>Observation lift</b>: ClinicalObservation is modeled but the full SDTM-domain projection rules (VS vs LB vs EG vs PE based on biomedicalConceptCode) need a projection map per domain. Defer to when COSMoS BC catalog integration lands.</li>
+<li><b>Appointment as pre-visit artifact</b>: FHIR R5 distinguishes Appointment (pre-occurrence scheduling) from Encounter (occurred). TOP currently collapses both into VisitOccurrence via status=SCHEDULED. If sponsors need separate scheduling artifact, lift cr:VisitAppointment as a sub-object.</li>
+<li><b>Digital-twin surface</b>: when ClinicalObservation carries time-varying measurements (vitals over time, lab trajectories), it becomes the primary twin-queryability surface. See participant.html §Twin-for-enrollment context.</li>
+</ul>
+<footer>cr-domain/docs/visit.html &middot; <code>cr:VisitOccurrence</code> + <code>cr:ActivityOccurrence</code> + <code>cr:ClinicalObservation</code> &middot; shapes: <code>shapes/visit-execution.ttl</code> (Inv #52&ndash;#58) &middot; ontology: <code>ontology/cr-core-visit-execution.ttl</code></footer></main></div></body></html>

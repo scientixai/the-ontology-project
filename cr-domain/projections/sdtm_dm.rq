@@ -1,11 +1,100 @@
 # CDISC SDTM — DM (Demographics) domain, projected from the native operator graph.
-# One row per enrolled subject. Standards are views, not the stored model.
-PREFIX cr:   <https://top.scientix.ai/cr/v1#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?USUBJID ?STUDYID WHERE {
-  ?enr a cr:Enrollment ;
-       cr:asSubject ?subj ;
-       cr:intoStudy ?study .
-  ?subj  rdfs:label ?USUBJID .
-  ?study rdfs:label ?STUDYID .
+# One row per enrolled Participant. Standards are views, not the stored model.
+#
+# Column mapping:
+#   STUDYID      ← Study.studyId (sponsor-assigned; trimmed to 8 chars per SDTM IG convention)
+#   DOMAIN       = "DM" (literal)
+#   USUBJID      ← Study.studyId + "-" + Participant.screeningNumber (sponsor-unique concat)
+#   SUBJID       ← Participant.screeningNumber
+#   RFSTDTC      ← Participant.enrollmentDate (reference start = first dose or first exposure)
+#   RFENDTC      ← Participant.completionDate (reference end)
+#   RFICDTC      ← InformedConsentAct.consentDate (first consent date)
+#   BRTHDTC      ← Participant.dateOfBirth
+#   AGE / AGEU   ← derived at projection time (not stored on Participant; avoid redundancy)
+#   SEX          ← Participant.sex (MALE→M, FEMALE→F, INTERSEX→UNDIFFERENTIATED, UNKNOWN→U)
+#   RACE         ← Participant.race
+#   ETHNIC       ← Participant.ethnicity (HISPANIC_OR_LATINO→HISPANIC OR LATINO, etc.)
+#   COUNTRY      ← Participant.country (ISO 3166-1 alpha-3)
+#   SITEID       ← Participant.forStudySite identifier (site reference number)
+#   ARMCD        ← Arm.armCode (assigned arm; null pre-randomization)
+#   ACTARMCD     ← Arm.armCode (actual arm; matches ARMCD in most trials)
+#   INVID        ← StudySite.principalInvestigator identifier
+PREFIX cr:    <https://top.scientix.ai/cr/v1#>
+PREFIX hcls:  <https://top.scientix.ai/hcls/v1#>
+PREFIX top:   <https://top.scientix.ai/core/v1#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+
+SELECT
+  ?STUDYID
+  ("DM" AS ?DOMAIN)
+  ?USUBJID
+  ?SUBJID
+  ?SEX
+  ?RACE
+  ?ETHNIC
+  ?COUNTRY
+  ?BRTHDTC
+  ?RFSTDTC
+  ?RFENDTC
+  ?RFICDTC
+  ?SITEID
+  ?ARMCD
+  ?ACTARMCD
+WHERE {
+  ?p a cr:Participant ;
+     cr:forStudy     ?study ;
+     cr:forStudySite ?ss .
+
+  # Study identity
+  ?study cr:studyId ?STUDYID .
+
+  # Subject identifiers
+  ?p cr:screeningNumber ?SUBJID .
+  BIND(CONCAT(STR(?STUDYID), "-", STR(?SUBJID)) AS ?USUBJID)
+
+  # Demographics
+  OPTIONAL { ?p cr:sex       ?rawSex . }
+  OPTIONAL { ?p cr:race      ?RACE . }
+  OPTIONAL { ?p cr:ethnicity ?rawEthnic . }
+  OPTIONAL { ?p cr:country   ?COUNTRY . }
+  OPTIONAL { ?p cr:dateOfBirth ?BRTHDTC . }
+
+  # Sex projection (TOP enum → SDTM CT)
+  BIND(
+    IF(?rawSex = "MALE", "M",
+    IF(?rawSex = "FEMALE", "F",
+    IF(?rawSex = "INTERSEX", "UNDIFFERENTIATED",
+    "U"))) AS ?SEX
+  )
+
+  # Ethnicity projection
+  BIND(
+    IF(?rawEthnic = "HISPANIC_OR_LATINO", "HISPANIC OR LATINO",
+    IF(?rawEthnic = "NOT_HISPANIC_OR_LATINO", "NOT HISPANIC OR LATINO",
+    "UNKNOWN")) AS ?ETHNIC
+  )
+
+  # Reference dates
+  OPTIONAL { ?p cr:enrollmentDate  ?RFSTDTC . }
+  OPTIONAL { ?p cr:completionDate  ?RFENDTC . }
+
+  # First informed consent date (minimum over all InformedConsentAct for this participant)
+  OPTIONAL {
+    SELECT ?p (MIN(?cd) AS ?RFICDTC) WHERE {
+      ?p cr:hasInformedConsentAct ?ca .
+      ?ca cr:consentDate ?cd .
+    } GROUP BY ?p
+  }
+
+  # Site identifier
+  OPTIONAL { ?ss cr:siteReferenceNumber ?SITEID . }
+
+  # Arm assignment
+  OPTIONAL {
+    ?p cr:assignedToArm ?arm .
+    ?arm cr:armCode ?ARMCD .
+    BIND(?ARMCD AS ?ACTARMCD)
+  }
 }
+ORDER BY ?STUDYID ?USUBJID

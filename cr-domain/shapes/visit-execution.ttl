@@ -1,0 +1,106 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Visit execution SHACL invariants
+# Inv #52–#57
+#################################################################
+
+# Inv #52 — VisitOccurrence requires Participant anchor (hard)
+cr:VisitRequiresParticipantShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence requires forParticipant (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence ;
+    sh:property [
+        sh:path cr:forParticipant ;
+        sh:minCount 1 ;
+        sh:message "VisitOccurrence must link to exactly one Participant." ;
+    ] .
+
+# Inv #53 — VisitOccurrence requires StudySite anchor (hard)
+cr:VisitRequiresStudySiteShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence requires atStudySite (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence ;
+    sh:property [
+        sh:path cr:atStudySite ;
+        sh:minCount 1 ;
+        sh:message "VisitOccurrence must link to a StudySite." ;
+    ] .
+
+# Inv #54 — VisitOccurrence StudySite must match Participant's StudySite (hard)
+cr:VisitStudySiteConsistencyShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence.atStudySite must match Participant.forStudySite (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence ;
+    sh:sparql [
+        sh:message "VisitOccurrence.atStudySite does not match the forParticipant's forStudySite." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#atStudySite> ?ss ;
+                    <https://top.scientix.ai/cr/v1#forParticipant> ?p .
+              ?p <https://top.scientix.ai/cr/v1#forStudySite> ?pss .
+              FILTER ( ?ss != ?pss )
+            }
+        """ ;
+    ] .
+
+# Inv #55 — COMPLETED visit should have actualEndDate (soft)
+cr:CompletedVisitShouldHaveEndDateShape a sh:NodeShape ;
+    rdfs:label "COMPLETED VisitOccurrence should have actualEndDate (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:VisitOccurrence ;
+    sh:sparql [
+        sh:message "VisitOccurrence.visitStatus=COMPLETED but actualEndDate is missing." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#visitStatus> "COMPLETED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#actualEndDate> ?d . }
+            }
+        """ ;
+    ] .
+
+# Inv #56 — Unscheduled visit should have reason (soft)
+cr:UnscheduledVisitShouldHaveReasonShape a sh:NodeShape ;
+    rdfs:label "Unscheduled VisitOccurrence should have unscheduledReason (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:VisitOccurrence ;
+    sh:sparql [
+        sh:message "VisitOccurrence.visitType=UNSCHEDULED but unscheduledReason is missing. Maps to SDTM SV SVUPDES." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#visitType> "UNSCHEDULED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#unscheduledReason> ?r . }
+            }
+        """ ;
+    ] .
+
+# Inv #57 — Out-of-window visit should reference a protocol deviation (soft)
+cr:OutOfWindowVisitDeviationShape a sh:NodeShape ;
+    rdfs:label "Out-of-window visit should link to a Deviation (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:VisitOccurrence ;
+    sh:sparql [
+        sh:message "VisitOccurrence.windowStatus=OUT_OF_WINDOW but no linked Deviation. Consider documenting as a protocol deviation per ICH E6(R3) §4.5." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#windowStatus> "OUT_OF_WINDOW" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#associatedDeviation> ?d . }
+            }
+        """ ;
+    ] .
+
+# Inv #58 — ClinicalObservation must use pseudonymous subject (hard — PII containment)
+cr:ObservationSubjectPseudonymousShape a sh:NodeShape ;
+    rdfs:label "ClinicalObservation must reference StudySubject, not Person (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ClinicalObservation ;
+    sh:property [
+        sh:path cr:observationForSubject ;
+        sh:minCount 1 ;
+        sh:class cr:StudySubject ;
+        sh:message "ClinicalObservation.observationForSubject must be a cr:StudySubject (pseudonymous). Linking directly to hcls:Person violates PII containment (ADR-0019)." ;
+    ] .

@@ -1,0 +1,53 @@
+# CDISC SDTM — SV (Subject Visits) domain, projected from VisitOccurrence.
+# One row per subject per visit. Standards are views, not the stored model.
+#
+# Column mapping:
+#   STUDYID    ← Study.studyId
+#   DOMAIN     = "SV"
+#   USUBJID    ← Study.studyId + "-" + Participant.screeningNumber
+#   VISITNUM   ← VisitDefinition.visitNumber (absent for unscheduled)
+#   VISIT      ← VisitDefinition.visitName / "UNSCHEDULED" for unscheduled
+#   VISITDY    ← VisitDefinition.plannedStudyDay (protocol-defined)
+#   SVSTDTC    ← VisitOccurrence.actualStartDate
+#   SVENDTC    ← VisitOccurrence.actualEndDate
+#   SVUPDES    ← VisitOccurrence.unscheduledReason (unscheduled visits only)
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT
+  ?STUDYID
+  ("SV" AS ?DOMAIN)
+  ?USUBJID
+  ?VISITNUM
+  ?VISIT
+  ?VISITDY
+  ?SVSTDTC
+  ?SVENDTC
+  ?SVUPDES
+WHERE {
+  ?v a cr:VisitOccurrence ;
+     cr:forParticipant ?p ;
+     cr:visitStatus ?vstatus .
+
+  FILTER (?vstatus = "COMPLETED")
+
+  ?p cr:forStudy ?study ;
+     cr:screeningNumber ?SUBJID .
+
+  ?study cr:studyId ?STUDYID .
+  BIND(CONCAT(STR(?STUDYID), "-", STR(?SUBJID)) AS ?USUBJID)
+
+  ?v cr:actualStartDate ?SVSTDTC .
+  OPTIONAL { ?v cr:actualEndDate   ?SVENDTC . }
+  OPTIONAL { ?v cr:unscheduledReason ?SVUPDES . }
+
+  OPTIONAL {
+    ?v cr:definedBy ?vd .
+    OPTIONAL { ?vd cr:visitNumber  ?VISITNUM . }
+    OPTIONAL { ?vd cr:visitName    ?VISIT . }
+    OPTIONAL { ?vd cr:plannedStudyDay ?VISITDY . }
+  }
+  BIND(IF(!BOUND(?VISIT), "UNSCHEDULED", ?VISIT) AS ?VISIT)
+}
+ORDER BY ?STUDYID ?USUBJID ?VISITNUM ?SVSTDTC

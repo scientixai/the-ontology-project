@@ -1,0 +1,116 @@
+# CDISC SDTM — DS (Disposition) domain, projected from Participant lifecycle sub-objects.
+# One row per disposition event (InformedConsentAct, ScreeningRecord, EnrollmentRecord,
+# WithdrawalRecord). Standards are views, not the stored model.
+#
+# Key insight: TOP's sub-object pattern (lifecycle events as first-class records)
+# IS the SDTM DS pattern. Each sub-object maps to exactly one DS row with its
+# DSDECOD controlled term.
+#
+# Column mapping:
+#   STUDYID    ← Study.studyId
+#   DOMAIN     = "DS"
+#   USUBJID    ← Study.studyId + "-" + Participant.screeningNumber
+#   DSSEQ      ← ordinal (assigned at projection time by event date)
+#   DSTERM     ← operator-vocabulary reason text
+#   DSDECOD    ← CDISC CT controlled term (see table below)
+#   DSSTDTC    ← event date (consentDate / screeningStartDate / enrollmentDate / withdrawalDate)
+#   DSCAT      ← category (PROTOCOL MILESTONE / STUDY COMPLETION STATUS)
+#
+# DSDECOD mapping:
+#   InformedConsentAct (consentStatus=OBTAINED)   → INFORMED CONSENT OBTAINED
+#   InformedConsentAct (consentStatus=RECONSENTED) → RECONSENTED
+#   InformedConsentAct (consentStatus=WITHDRAWN)   → WITHDRAWAL OF CONSENT
+#   ScreeningRecord (screeningOutcome=SCREEN_FAILED) → SCREEN FAILURE
+#   ScreeningRecord (screeningOutcome=ENROLLED)       → ENROLLED
+#   EnrollmentRecord                                  → ENROLLED
+#   WithdrawalRecord (withdrawalCategory=CONSENT_WITHDRAWN)     → WITHDRAWAL OF CONSENT
+#   WithdrawalRecord (withdrawalCategory=INVESTIGATOR_DECISION) → DISCONTINUED
+#   WithdrawalRecord (withdrawalCategory=AE)                    → ADVERSE EVENT
+#   WithdrawalRecord (withdrawalCategory=LOST)                  → LOST TO FOLLOW-UP
+#   WithdrawalRecord (withdrawalCategory=COMPLETED)             → COMPLETED
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/core/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT
+  ?STUDYID
+  ("DS" AS ?DOMAIN)
+  ?USUBJID
+  ?DSTERM
+  ?DSDECOD
+  ?DSSTDTC
+  ?DSCAT
+WHERE {
+  # --- InformedConsentAct rows ---
+  {
+    ?p a cr:Participant ;
+       cr:forStudy ?study ;
+       cr:screeningNumber ?SUBJID ;
+       cr:hasInformedConsentAct ?ca .
+    ?study cr:studyId ?STUDYID .
+    BIND(CONCAT(STR(?STUDYID), "-", STR(?SUBJID)) AS ?USUBJID)
+    ?ca cr:consentStatus ?cs ;
+        cr:consentDate   ?DSSTDTC .
+    OPTIONAL { ?ca cr:consentNotes ?DSTERM . }
+    BIND(
+      IF(?cs = "OBTAINED",    "INFORMED CONSENT OBTAINED",
+      IF(?cs = "RECONSENTED", "RECONSENTED",
+      IF(?cs = "WITHDRAWN",   "WITHDRAWAL OF CONSENT",
+      "INFORMED CONSENT"))) AS ?DSDECOD
+    )
+    BIND("PROTOCOL MILESTONE" AS ?DSCAT)
+  }
+  UNION
+  # --- ScreeningRecord rows (failures only; pass goes to EnrollmentRecord) ---
+  {
+    ?p a cr:Participant ;
+       cr:forStudy ?study ;
+       cr:screeningNumber ?SUBJID ;
+       cr:hasScreeningRecord ?sr .
+    ?study cr:studyId ?STUDYID .
+    BIND(CONCAT(STR(?STUDYID), "-", STR(?SUBJID)) AS ?USUBJID)
+    ?sr cr:screeningOutcome "SCREEN_FAILED" ;
+        cr:screeningStartDate ?DSSTDTC .
+    OPTIONAL { ?sr cr:screenFailReason ?DSTERM . }
+    BIND("SCREEN FAILURE" AS ?DSDECOD)
+    BIND("PROTOCOL MILESTONE" AS ?DSCAT)
+  }
+  UNION
+  # --- EnrollmentRecord rows ---
+  {
+    ?p a cr:Participant ;
+       cr:forStudy ?study ;
+       cr:screeningNumber ?SUBJID ;
+       cr:hasEnrollmentRecord ?er .
+    ?study cr:studyId ?STUDYID .
+    BIND(CONCAT(STR(?STUDYID), "-", STR(?SUBJID)) AS ?USUBJID)
+    ?er cr:enrollmentDate ?DSSTDTC .
+    BIND("ENROLLED" AS ?DSTERM)
+    BIND("ENROLLED" AS ?DSDECOD)
+    BIND("PROTOCOL MILESTONE" AS ?DSCAT)
+  }
+  UNION
+  # --- WithdrawalRecord rows ---
+  {
+    ?p a cr:Participant ;
+       cr:forStudy ?study ;
+       cr:screeningNumber ?SUBJID ;
+       cr:hasWithdrawalRecord ?wr .
+    ?study cr:studyId ?STUDYID .
+    BIND(CONCAT(STR(?STUDYID), "-", STR(?SUBJID)) AS ?USUBJID)
+    ?wr cr:withdrawalCategory ?wc ;
+        cr:withdrawalDate     ?DSSTDTC .
+    OPTIONAL { ?wr cr:withdrawalReason ?DSTERM . }
+    BIND(
+      IF(?wc = "CONSENT_WITHDRAWN",     "WITHDRAWAL OF CONSENT",
+      IF(?wc = "INVESTIGATOR_DECISION", "DISCONTINUED",
+      IF(?wc = "AE",                    "ADVERSE EVENT",
+      IF(?wc = "LOST",                  "LOST TO FOLLOW-UP",
+      IF(?wc = "COMPLETED",             "COMPLETED",
+      "DISCONTINUED"))))) AS ?DSDECOD
+    )
+    BIND("STUDY COMPLETION STATUS" AS ?DSCAT)
+  }
+}
+ORDER BY ?STUDYID ?USUBJID ?DSSTDTC

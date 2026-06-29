@@ -1,0 +1,179 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Participant SHACL invariants
+# Numbering continues from cr-domain's existing 42 rules.
+# Severity: sh:Violation = hard / sh:Warning = soft.
+#
+# Cross-walk notes:
+#   Inv #43–#49 enforce lifecycle state-machine rules (SDTM DS
+#   disposition events = sub-object pattern).
+#   Inv #50–#51 enforce Recruit funnel integrity.
+#################################################################
+
+# Inv #43 — Post-consent state requires consent act (GCP hard)
+cr:PostConsentRequiresConsentShape a sh:NodeShape ;
+    rdfs:label "Post-consent state requires InformedConsentAct (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant is in a post-consent state but has no InformedConsentAct with consentStatus=OBTAINED. ICH E6(R3) §2.4 violation." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> ?s .
+              FILTER ( ?s IN (
+                "ENROLLED", "RANDOMIZED", "ON_TREATMENT",
+                "IN_FOLLOW_UP", "COMPLETED", "WITHDRAWN",
+                "DISCONTINUED", "LOST_TO_FOLLOW_UP"
+              ) )
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasInformedConsentAct> ?c .
+                ?c <https://top.scientix.ai/cr/v1#consentStatus> "OBTAINED" .
+              }
+            }
+        """ ;
+    ] .
+
+# Inv #44 — SCREEN_FAILED requires a ScreeningRecord (hard)
+cr:ScreenFailedRequiresRecordShape a sh:NodeShape ;
+    rdfs:label "SCREEN_FAILED requires ScreeningRecord (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant.participantStatus=SCREEN_FAILED but no ScreeningRecord with screeningOutcome=SCREEN_FAILED." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "SCREEN_FAILED" .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasScreeningRecord> ?r .
+                ?r <https://top.scientix.ai/cr/v1#screeningOutcome> "SCREEN_FAILED" .
+              }
+            }
+        """ ;
+    ] .
+
+# Inv #45 — RANDOMIZED requires arm + date (hard)
+cr:RandomizedRequiresArmAndDateShape a sh:NodeShape ;
+    rdfs:label "RANDOMIZED requires assignedToArm and randomizationDate (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant.participantStatus=RANDOMIZED but missing assignedToArm or randomizationDate." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "RANDOMIZED" .
+              FILTER (
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assignedToArm> ?a . } ||
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#randomizationDate> ?d . }
+              )
+            }
+        """ ;
+    ] .
+
+# Inv #46 — WITHDRAWN requires consent-withdrawal record (hard)
+cr:WithdrawnRequiresConsentWithdrawalShape a sh:NodeShape ;
+    rdfs:label "WITHDRAWN requires WithdrawalRecord with CONSENT_WITHDRAWN (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant.participantStatus=WITHDRAWN but no WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. WITHDRAWN is reserved for subject-initiated withdrawal; investigator-initiated uses DISCONTINUED." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "WITHDRAWN" .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasWithdrawalRecord> ?w .
+                ?w <https://top.scientix.ai/cr/v1#withdrawalCategory> "CONSENT_WITHDRAWN" .
+              }
+            }
+        """ ;
+    ] .
+
+# Inv #47 — COMPLETED should have completionDate (soft)
+cr:CompletedShouldHaveDateShape a sh:NodeShape ;
+    rdfs:label "COMPLETED should have completionDate (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant.participantStatus=COMPLETED but completionDate is not populated." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "COMPLETED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#completionDate> ?d . }
+            }
+        """ ;
+    ] .
+
+# Inv #48 — Arm-Study consistency (hard)
+cr:ArmStudyConsistencyShape a sh:NodeShape ;
+    rdfs:label "Assigned arm must belong to Participant's Study (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant.assignedToArm references an Arm whose parent Study does not match Participant.forStudy." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#assignedToArm> ?arm ;
+                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              FILTER NOT EXISTS {
+                ?study <https://top.scientix.ai/cr/v1#hasArm> ?arm .
+              }
+            }
+        """ ;
+    ] .
+
+# Inv #49 — StudySite-Study consistency (hard)
+cr:StudySiteStudyConsistencyShape a sh:NodeShape ;
+    rdfs:label "Participant.forStudySite must match forStudy (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Participant ;
+    sh:sparql [
+        sh:message "Participant.forStudySite references a StudySite whose forStudy does not match Participant.forStudy." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#forStudySite> ?ss ;
+                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              FILTER NOT EXISTS {
+                ?ss <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              }
+            }
+        """ ;
+    ] .
+
+#################################################################
+# Recruit SHACL invariants
+#################################################################
+
+# Inv #50 — Converted recruit must link to Participant (hard)
+cr:ConvertedRecruitRequiresParticipantShape a sh:NodeShape ;
+    rdfs:label "CONVERTED_TO_PARTICIPANT requires convertedToParticipant link (hard)" ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Recruit ;
+    sh:sparql [
+        sh:message "Recruit.recruitStatus=CONVERTED_TO_PARTICIPANT but convertedToParticipant relationship is missing." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#recruitStatus> "CONVERTED_TO_PARTICIPANT" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#convertedToParticipant> ?p . }
+            }
+        """ ;
+    ] .
+
+# Inv #51 — Stalled recruit with many contact attempts (soft)
+cr:StalledRecruitShape a sh:NodeShape ;
+    rdfs:label "Recruit stalled with many contact attempts (warning)" ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:Recruit ;
+    sh:sparql [
+        sh:message "Recruit has 6+ contact attempts but is still in RESPONDED or CONTACTED state. Consider transitioning to DROPPED." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#contactAttempts> ?n ;
+                    <https://top.scientix.ai/cr/v1#recruitStatus> ?s .
+              FILTER ( ?n >= 6 && ?s IN ("RESPONDED", "CONTACTED") )
+            }
+        """ ;
+    ] .

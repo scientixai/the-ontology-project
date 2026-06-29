@@ -278,5 +278,25 @@
     "file": "examples/startup-output-lineage-warning.ttl",
     "expect": "warn",
     "desc": "a produced output has no lineage back to the document it was built from"
+  },
+  {
+    "file": "examples/participant-conformant.ttl",
+    "expect": "conform",
+    "desc": "Mary enrolled at MSKCC-ONCO423: StudySite anchor, InformedConsentAct, ScreeningRecord, EnrollmentRecord, arm assignment, Recruit linkage — all Inv #43-#51 satisfied"
+  },
+  {
+    "file": "examples/participant-violation.ttl",
+    "expect": "violate",
+    "desc": "Participant status ON_TREATMENT with no InformedConsentAct: triggers Inv #43 (post-consent state requires OBTAINED consent)"
+  },
+  {
+    "file": "examples/visit-execution-conformant.ttl",
+    "expect": "conform",
+    "desc": "Mary's Visit 1 (Cycle 1 Day 1) at MSKCC: VisitOccurrence + two ActivityOccurrences + ClinicalObservation linked to cr:StudySubject (PII-compliant)"
+  },
+  {
+    "file": "examples/visit-pii-violation.ttl",
+    "expect": "violate",
+    "desc": "ClinicalObservation.observationForSubject points at hcls:Person instead of cr:StudySubject: triggers Inv #58 (PII containment, ADR-0019)"
   }
 ]
