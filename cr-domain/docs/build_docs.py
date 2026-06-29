@@ -304,15 +304,43 @@ a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:v
 
 
 def nav(active):
-    items = [("index.html", "Overview", "hub"), ("foundation.html", "Foundation", "foundation"),
-             ("implementation.html", "Implementation guide", "implementation")]
-    flowitems = [(f"{fl['id']}.html", fl["title"], fl["id"]) for fl in FLOWS]
-    out = ['<b>Start</b>']
-    for href, t, i in items:
-        out.append(f'<a class="{"on" if i==active else ""}" href="{href}">{t}</a>')
-    out.append('<b>Flows / sub-domains</b>')
-    for href, t, i in flowitems:
-        out.append(f'<a class="{"on" if i==active else ""}" href="{href}">{t}</a>')
+    NAV = [
+        ("", [
+            ("index.html",          "Overview",              "hub"),
+            ("foundation.html",     "Foundation",            "foundation"),
+            ("implementation.html", "Implementation guide",  "implementation"),
+        ]),
+        ("Start-up", [
+            ("preind.html",         "Pre-IND gate",          "preind"),
+            ("setup.html",          "Study &amp; site set-up", "setup"),
+            ("startup-package.html","Start-up package",      "startup-package"),
+            ("delegation.html",     "Delegation &amp; DoA",  "delegation"),
+        ]),
+        ("Conduct", [
+            ("enrollment.html",     "Enrollment &amp; consent", "enrollment"),
+            ("schedule.html",       "Schedule of Activities", "schedule"),
+            ("edc.html",            "Data capture (EDC)",    "edc"),
+            ("lims.html",           "Biospecimen &amp; LIMS","lims"),
+            ("safety.html",         "Safety &amp; PV",       "safety"),
+            ("rbqm.html",           "Risk-based monitoring", "rbqm"),
+            ("deviation.html",      "Deviations &amp; CAPA", "deviation"),
+        ]),
+        ("Closeout", [
+            ("eop2.html",           "EOP2 &amp; analysis",   "eop2"),
+        ]),
+        ("Cross-cutting", [
+            ("roles.html",          "Roles, phases &amp; actions", "roles"),
+            ("gcp.html",            "GCP &amp; essential records", "gcp"),
+            ("tmf.html",            "TMF document binding",  "tmf"),
+            ("interop.html",        "Interoperability",      "interop"),
+        ]),
+    ]
+    out = []
+    for section, items in NAV:
+        if section:
+            out.append(f'<b>{section}</b>')
+        for href, t, i in items:
+            out.append(f'<a class="{"on" if i==active else ""}" href="{href}">{t}</a>')
     out.append('<b>Detail</b>')
     out.append(f'<a class="{"on" if active=="reference" else ""}" href="reference.html">Full reference</a>')
     return "\n".join(out)

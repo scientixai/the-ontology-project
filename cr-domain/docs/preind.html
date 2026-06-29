@@ -86,26 +86,28 @@ table.prov{width:100%;border-collapse:collapse;margin:6px 0 2px}
 table.prov td{border-top:1px solid var(--line);padding:4px 6px;font-size:12px;color:var(--ink);vertical-align:top}
 table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 @media(max-width:760px){.split{grid-template-columns:1fr}}
-.draft-ribbon{position:fixed;top:16px;right:-52px;transform:rotate(45deg);background:#b00020;color:#fff;font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;padding:6px 60px;z-index:2000;box-shadow:0 1px 5px rgba(0,0,0,.3)}.draft-banner{background:#fff3f3;border-bottom:1px solid #b00020;color:#7a0016;font:600 12px/1.5 ui-sans-serif,system-ui,sans-serif;text-align:center;padding:8px 14px}.draft-banner b{letter-spacing:.08em}</style></head><body><div class='draft-ribbon'>DRAFT</div><div class='draft-banner'><b>DRAFT &mdash; PRE-RELEASE.</b> The TOP Clinical Research reference graph is a work in progress and not yet finalized; content, identifiers, and constraints may change.</div><div class='wrap'><nav><div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div><b>Start</b>
-<a class="" href="index.html">Overview</a>
+.draft-ribbon{position:fixed;top:16px;right:-52px;transform:rotate(45deg);background:#b00020;color:#fff;font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;padding:6px 60px;z-index:2000;box-shadow:0 1px 5px rgba(0,0,0,.3)}.draft-banner{background:#fff3f3;border-bottom:1px solid #b00020;color:#7a0016;font:600 12px/1.5 ui-sans-serif,system-ui,sans-serif;text-align:center;padding:8px 14px}.draft-banner b{letter-spacing:.08em}</style></head><body><div class='draft-ribbon'>DRAFT</div><div class='draft-banner'><b>DRAFT &mdash; PRE-RELEASE.</b> The TOP Clinical Research reference graph is a work in progress and not yet finalized; content, identifiers, and constraints may change.</div><div class='wrap'><nav><div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div><a class="" href="index.html">Overview</a>
 <a class="" href="foundation.html">Foundation</a>
 <a class="" href="implementation.html">Implementation guide</a>
-<b>Flows / sub-domains</b>
+<b>Start-up</b>
+<a class="on" href="preind.html">Pre-IND gate</a>
 <a class="" href="setup.html">Study &amp; site set-up</a>
-<a class="" href="startup-package.html">Study start-up package</a>
-<a class="" href="delegation.html">Delegation &amp; attestation</a>
+<a class="" href="startup-package.html">Start-up package</a>
+<a class="" href="delegation.html">Delegation &amp; DoA</a>
+<b>Conduct</b>
 <a class="" href="enrollment.html">Enrollment &amp; consent</a>
 <a class="" href="schedule.html">Schedule of Activities</a>
-<a class="" href="edc.html">Data capture (EDC) &amp; fidelity</a>
-<a class="" href="lims.html">Biospecimen &amp; LIMS custody</a>
-<a class="" href="safety.html">Safety &amp; pharmacovigilance</a>
-<a class="" href="rbqm.html">Risk-based monitoring (RBQM)</a>
+<a class="" href="edc.html">Data capture (EDC)</a>
+<a class="" href="lims.html">Biospecimen &amp; LIMS</a>
+<a class="" href="safety.html">Safety &amp; PV</a>
+<a class="" href="rbqm.html">Risk-based monitoring</a>
 <a class="" href="deviation.html">Deviations &amp; CAPA</a>
-<a class="on" href="preind.html">Pre-IND gate</a>
+<b>Closeout</b>
 <a class="" href="eop2.html">EOP2 &amp; analysis</a>
+<b>Cross-cutting</b>
+<a class="" href="roles.html">Roles, phases &amp; actions</a>
 <a class="" href="gcp.html">GCP &amp; essential records</a>
 <a class="" href="tmf.html">TMF document binding</a>
-<a class="" href="roles.html">Roles, phases &amp; actions</a>
 <a class="" href="interop.html">Interoperability</a>
 <b>Detail</b>
 <a class="" href="reference.html">Full reference</a></nav><main><h1>Pre-IND gate</h1><p class='lead'>The front bracket: an IND-enabling narrative where every animal toxicity is addressed by a clinical safety assessment, plus the 30-day review clock.</p><p class='note'>The IND 30-day review clock (may-proceed vs on-hold) is a bitemporal detective check.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:ClinicalHold</code></td><td>Clinical Hold</td><td class='clo'>Outcome</td><td>An FDA order that halts or prevents a trial from proceeding.</td></tr><tr><td><code>cr:GLPToxReport</code></td><td>GLP Toxicology Report</td><td class='clo'>Evidence</td><td>A GLP toxicology study report supporting safe human dosing.</td></tr><tr><td><code>cr:INDApplication</code></td><td>IND Application</td><td class='clo'>Evidence</td><td>The submission authorizing human dosing; starts a 30-day review clock (top:observedAt = submission) after which trials may proceed unless a clinical hold is placed.</td></tr><tr><td><code>cr:NonclinicalFinding</code></td><td>Nonclinical Finding</td><td class='clo'>Outcome</td><td>An observed animal toxicity/finding that the clinical protocol must address.</td></tr><tr><td><code>cr:RegulatoryQuestion</code></td><td>Regulatory Question</td><td class='clo'>Evidence</td><td>A briefing-book question; should carry a proposed position (FDA punishes vague questions).</td></tr><tr><td><code>cr:SafetyAssessment</code></td><td>Safety Assessment</td><td class='clo'>Constraint</td><td>A clinical-protocol safety monitoring provision (e.g. CBC monitoring + dose-hold).</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:INDNarrativeShape</code></td><td><code>cr:NonclinicalFinding</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Nonclinical finding is not addressed by any clinical-protocol safety assessment (broken IND narrative -&gt; clinical-hold risk).</li></ul></td></tr><tr><td><code>cr:VagueQuestionShape</code></td><td><code>cr:RegulatoryQuestion</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Pre-IND question lacks a proposed position (vague question).</li></ul></td></tr><tr><td><code>cr:PreINDReadinessShape</code></td><td><code>cr:RegulatoryInteraction</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Pre-IND meeting lacks a briefing book and/or specific questions (readiness warning).</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer></main></div></body></html>
