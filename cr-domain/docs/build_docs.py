@@ -10,7 +10,7 @@ import json
 import os
 import sys
 
-from rdflib import Graph, RDF, RDFS, OWL, URIRef
+from rdflib import Graph, RDF, RDFS, OWL, URIRef, Literal
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -189,6 +189,10 @@ FLOWS = [
          shapes=["tmf:ContentBindingShape"],
          proj=["tmf_binding_map.rq"], screens=[],
          note="Two bindings, kept distinct: document-type (&#8220;this is a Protocol Deviation Log&#8221;) and content (&#8220;its facts mean <code>cr:DeviationEvent</code>&#8221;). The commons owns the map (align + build); the consuming system classifies, extracts, and asserts <code>prov:wasDerivedFrom</code> at runtime &mdash; that seam is deliberate, and the runtime is out of scope."),
+    dict(id="roles", title="Roles, phases &amp; actions",
+         blurb="Who can do what, when &mdash; the operator-grounding layer that turns the reference graph into a system of record for authorization, delegation, and Jobs to Be Done.",
+         onto=["cr-core-roles.ttl", "cr-core-phases.ttl", "cr-core-actions.ttl"],
+         shapes=[], proj=[]),
     dict(id="interop", title="Interoperability",
          blurb="Owned, provenance-tagged crosswalks to external ontologies (verified IRIs), and every standard view the graph emits &mdash; the standards are projections, not the source of truth.",
          onto=["crosswalk-vocab.ttl"],
@@ -602,6 +606,193 @@ This guide is deliberately tool-agnostic: it shows how to stand the <i>reference
 """
 
 
+def roles_body():  # noqa: C901
+    CR = "https://top.scientix.ai/cr/v1#"
+    HCLS = "https://top.scientix.ai/hcls/v1#"
+    HCLS_NS = URIRef(HCLS)
+
+    hcls_action = URIRef(HCLS + "Action")
+    hcls_phase = URIRef(HCLS + "Phase")
+    hcls_jtbd = URIRef(HCLS + "JobToBeDone")
+    p_authz = URIRef(HCLS + "authorizedAgentType")
+    p_occurs = URIRef(HCLS + "occursIn")
+    p_operates = URIRef(HCLS + "operatesOn")
+    p_contains = URIRef(HCLS + "contains")
+    p_precedes = URIRef(HCLS + "precedes")
+    p_job_of = URIRef(HCLS + "jobOfAgentType")
+    p_trigger = URIRef(HCLS + "jobTrigger")
+    p_signal = URIRef(HCLS + "successSignal")
+    p_executes = URIRef(HCLS + "executesAction")
+    p_involves = URIRef(HCLS + "involvesObject")
+
+    # ---- agent type table ----
+    agent_hier = [
+        ("cr:Investigator", "hcls:Clinician", "Site"),
+        ("cr:SiteCoordinator", "hcls:Practitioner", "Site"),
+        ("cr:ClinicalResearchAssociate", "hcls:Person", "CRO / Sponsor"),
+        ("cr:SponsorProjectManager", "hcls:Person", "Sponsor"),
+        ("cr:SponsorOperationsStaff", "hcls:Person", "Sponsor"),
+        ("cr:DataManager", "hcls:Person", "Sponsor / CRO"),
+        ("cr:SponsorQualityStaff", "hcls:Person", "Sponsor"),
+        ("cr:RegulatoryAffairsSpecialist", "hcls:Person", "Sponsor"),
+        ("cr:PharmacovigilianceSpecialist", "hcls:Person", "Sponsor / CRO"),
+        ("cr:FinanceStaff", "hcls:Person", "Sponsor"),
+    ]
+    agent_rows = ""
+    for qname, parent, org in agent_hier:
+        local = qname.split(":")[1]
+        iri = URIRef(CR + local)
+        label = str(MERGED.value(iri, RDFS.label) or local)
+        comment = str(MERGED.value(iri, RDFS.comment) or "")
+        # count authorized actions
+        n_actions = len(list(MERGED.subjects(p_authz, iri)))
+        agent_rows += (
+            f"<tr><td><code>{esc(qname)}</code></td>"
+            f"<td>{esc(label)}</td>"
+            f"<td><code>{esc(parent)}</code></td>"
+            f"<td>{esc(org)}</td>"
+            f"<td style='text-align:center'>{n_actions}</td>"
+            f"<td style='font-size:12px'>{esc(comment[:120])}{'&hellip;' if len(comment)>120 else ''}</td></tr>"
+        )
+    agent_table = (
+        "<table><tr><th>class</th><th>label</th><th>superclass</th>"
+        "<th>org boundary</th><th>actions</th><th>description</th></tr>"
+        f"{agent_rows}</table>"
+    )
+
+    # ---- phase tree ----
+    def phase_rows(phase_iri, depth=0):
+        label = str(MERGED.value(phase_iri, RDFS.label) or phase_iri)
+        comment = str(MERGED.value(phase_iri, RDFS.comment) or "")
+        qname = qn(phase_iri)
+        indent = "&nbsp;&nbsp;&nbsp;&nbsp;" * depth
+        n_act = len(list(MERGED.subjects(p_occurs, phase_iri)))
+        rows = (f"<tr><td>{indent}<code>{esc(qname)}</code></td>"
+                f"<td>{esc(label)}</td>"
+                f"<td style='text-align:center'>{n_act if n_act else '&mdash;'}</td>"
+                f"<td style='font-size:12px'>{esc(comment[:100])}{'&hellip;' if len(comment)>100 else ''}</td></tr>")
+        for child in MERGED.objects(phase_iri, p_contains):
+            rows += phase_rows(child, depth + 1)
+        return rows
+
+    root_phase = URIRef(CR + "TrialLifecycle")
+    phase_table = (
+        "<table><tr><th>phase</th><th>label</th><th>actions</th><th>description</th></tr>"
+        + phase_rows(root_phase)
+        + "</table>"
+    )
+
+    # ---- actions by role/phase summary ----
+    # Build a matrix: role -> phase -> [action labels]
+    from collections import defaultdict
+    role_phase_actions = defaultdict(lambda: defaultdict(list))
+    for action in MERGED.subjects(RDF.type, hcls_action):
+        action_label = str(MERGED.value(action, RDFS.label) or qn(action))
+        phase = MERGED.value(action, p_occurs)
+        phase_label = str(MERGED.value(phase, RDFS.label) or qn(phase)) if phase else "—"
+        for role in MERGED.objects(action, p_authz):
+            role_label = str(MERGED.value(role, RDFS.label) or qn(role))
+            role_phase_actions[role_label][phase_label].append(action_label)
+
+    action_rows = ""
+    for role_label in sorted(role_phase_actions):
+        for phase_label in sorted(role_phase_actions[role_label]):
+            acts = sorted(role_phase_actions[role_label][phase_label])
+            pills = " ".join(f"<code style='margin:1px 2px;display:inline-block'>{esc(a)}</code>" for a in acts)
+            action_rows += (
+                f"<tr><td><b>{esc(role_label)}</b></td>"
+                f"<td>{esc(phase_label)}</td>"
+                f"<td style='font-size:12px'>{pills}</td></tr>"
+            )
+    action_table = (
+        "<table><tr><th>role</th><th>phase</th><th>authorized actions</th></tr>"
+        f"{action_rows}</table>"
+    )
+
+    # ---- JTBD ----
+    jtbd_rows = ""
+    current_role = None
+    for jtbd in sorted(MERGED.subjects(RDF.type, hcls_jtbd), key=lambda x: str(x)):
+        label = str(MERGED.value(jtbd, RDFS.label) or qn(jtbd))
+        role_iri = MERGED.value(jtbd, p_job_of)
+        role_label = str(MERGED.value(role_iri, RDFS.label) or qn(role_iri)) if role_iri else "—"
+        trigger = str(MERGED.value(jtbd, p_trigger) or "")
+        signals = [str(s) for s in MERGED.objects(jtbd, p_signal)]
+        sig_html = "<ul>" + "".join(f"<li>{esc(s)}</li>" for s in signals) + "</ul>" if signals else ""
+        if role_label != current_role:
+            current_role = role_label
+            jtbd_rows += f"<tr style='background:var(--pale)'><td colspan='3'><b>{esc(role_label)}</b></td></tr>"
+        jtbd_rows += (
+            f"<tr><td>{esc(label)}</td>"
+            f"<td style='font-size:12px'>{esc(trigger)}</td>"
+            f"<td style='font-size:12px'>{sig_html}</td></tr>"
+        )
+    jtbd_table = (
+        "<table><tr><th>job to be done</th><th>trigger</th><th>success signals</th></tr>"
+        f"{jtbd_rows}</table>"
+    )
+
+    sparql = (
+        "SELECT ?action ?label WHERE {\n"
+        "  ?action hcls:authorizedAgentType cr:SiteCoordinator ;\n"
+        "          hcls:occursIn ?phase ;\n"
+        "          rdfs:label ?label .\n"
+        "  # include sub-phases:\n"
+        "  cr:ConductPhase hcls:contains+ ?phase .\n"
+        "}"
+    )
+
+    return (
+        "<h1>Roles, phases &amp; actions</h1>"
+        "<p class='lead'>Who can do what, when &mdash; the operator-grounding layer. "
+        "Authorization binds directly to OWL agent type classes; no separate Role intermediary. "
+        "A real <code>hcls:Person</code> is typed as one of these classes; their contextual title "
+        "within a Study is a plain string (<code>hcls:actsAs</code>).</p>"
+
+        "<h2>Design principles</h2>"
+        "<ul>"
+        "<li><b>Agent types are OWL classes</b>, not named individuals. A Person typed as "
+        "<code>cr:Investigator</code> inherits all authorizations declared on that class.</li>"
+        "<li><b>Delegation at instance time</b>: the PI delegates to staff via <code>cr:Delegation</code> "
+        "acts; <code>top:authorizedBy</code> on the Person records who delegated to them. "
+        "The DoA log is a SPARQL projection of those acts, not a maintained spreadsheet.</li>"
+        "<li><b>Credentials at instance time</b>: <code>top:hasCredential</code> on Person "
+        "&rarr; <code>top:Credential</code>. A delegated task requires both delegation and "
+        "the matching credential before it may proceed.</li>"
+        "<li><b>Regulatory constraint is additive</b>: some actions carry a "
+        "<code>top:RegulatoryLaw</code> individual (e.g. ICH E6(R3) mandate to delegate "
+        "at the site level). Most do not.</li>"
+        "</ul>"
+
+        "<h2>Agent type taxonomy</h2>"
+        "<p>Ten OWL classes organized into site-boundary (delegated from PI) and "
+        "sponsor/CRO-boundary roles.</p>"
+        f"{agent_table}"
+
+        "<h2>Trial lifecycle phases</h2>"
+        "<p>Three top-level phases (<code>cr:StartupPhase</code>, <code>cr:ConductPhase</code>, "
+        "<code>cr:CloseoutPhase</code>) form a containment tree and a precedence chain. "
+        "Actions bind to sub-phases via <code>hcls:occursIn</code>; the <code>hcls:contains+</code> "
+        "transitive closure lets you query all actions within a top-level phase.</p>"
+        f"{phase_table}"
+
+        "<h2>Authorization query pattern</h2>"
+        "<p>To answer <i>\"What am I authorized to do right now?\"</i> given an agent type and phase:</p>"
+        f"<pre>{esc(sparql)}</pre>"
+
+        "<h2>Actions by role and phase</h2>"
+        "<p>All authorized actions from <code>cr-core-actions.ttl</code>, grouped by role and sub-phase. "
+        "Multi-role actions appear in each authorized role&rsquo;s row.</p>"
+        f"{action_table}"
+
+        "<h2>Jobs to Be Done</h2>"
+        "<p>Each JTBD is a bounded unit of operator intent: the goal an agent type is trying to achieve, "
+        "the event that triggers it, and the measurable signals that confirm it&rsquo;s done. "
+        "Derived from the OOUX JTBD blocks in the OOUX Map v0.2.</p>"
+        f"{jtbd_table}"
+    )
+
+
 def build():
     n_cls = len([1 for iris in PER_FILE.values() for i in iris
                  if not (str(i).startswith(TOP) and str(i).split("#")[-1] in CLOS)])
@@ -613,7 +804,8 @@ def build():
              "implementation.html": ("Implementation guide", "implementation", implementation_body()),
              "reference.html": ("Full reference", "reference", reference_body())}
     for fl in FLOWS:
-        pages[f"{fl['id']}.html"] = (fl["title"], fl["id"], flow_body(fl))
+        body = roles_body() if fl["id"] == "roles" else flow_body(fl)
+        pages[f"{fl['id']}.html"] = (fl["title"], fl["id"], body)
     for fname, (title, active, body) in pages.items():
         open(os.path.join(out, fname), "w").write(shell(title, active, body))
     print(f"Wrote {len(pages)} pages to {out}/")
