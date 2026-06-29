@@ -970,6 +970,34 @@ cr:SignMonitoringReport a hcls:Action ;
 cr:SiteBoundary a owl:NamedIndividual ;
     rdfs:label "Site" .
 
+cr:SiteStatusActive a owl:NamedIndividual ;
+    rdfs:label "Active" ;
+    rdfs:comment "Site is actively enrolling or conducting the trial (post-SIV, first subject possible or enrolled)." .
+
+cr:SiteStatusClosed a owl:NamedIndividual ;
+    rdfs:label "Closed" ;
+    rdfs:comment "Site close-out visit completed; no further subject activity; eTMF finalization in progress." .
+
+cr:SiteStatusDropped a owl:NamedIndividual ;
+    rdfs:label "Dropped" ;
+    rdfs:comment "Site was not selected or was withdrawn after selection. The reason MUST be captured in a cr:SiteSelectionDecision — this is institutional intelligence almost never recorded today." .
+
+cr:SiteStatusFeasibility a owl:NamedIndividual ;
+    rdfs:label "Feasibility" ;
+    rdfs:comment "Site is under feasibility assessment: SQV scheduled or completed, selection committee review pending." .
+
+cr:SiteStatusReserve a owl:NamedIndividual ;
+    rdfs:label "Reserve" ;
+    rdfs:comment "Site has passed feasibility but is held in reserve as a rescue site. Sponsor may activate it if enrollment falls short at active sites. Distinct from Selected: no startup work has begun." .
+
+cr:SiteStatusSelected a owl:NamedIndividual ;
+    rdfs:label "Selected" ;
+    rdfs:comment "Site has been selected: contracts signed, Study Startup Package in preparation." .
+
+cr:SiteStatusStartup a owl:NamedIndividual ;
+    rdfs:label "Startup" ;
+    rdfs:comment "Site Initiation Visit completed or in progress; staff training, delegation of authority, equipment qualification underway." .
+
 cr:SponsorBoundary a owl:NamedIndividual ;
     rdfs:label "Sponsor" .
 
@@ -1223,6 +1251,37 @@ cr:credentialOf a owl:ObjectProperty ;
 cr:cta a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:ClinicalTrialAgreement .
+
+cr:decisionMadeBy a owl:ObjectProperty ;
+    rdfs:label "decision made by" ;
+    rdfs:comment "The person (sponsor PM, CRO lead) who recorded this decision." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range hcls:Person ;
+    rdfs:subPropertyOf prov:wasAttributedTo .
+
+cr:decisionOutcome a owl:ObjectProperty ;
+    rdfs:label "decision outcome" ;
+    rdfs:comment "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range owl:NamedIndividual .
+
+cr:decisionRationale a owl:DatatypeProperty ;
+    rdfs:label "decision rationale" ;
+    rdfs:comment "Free-text explanation of why the decision was made. Mandatory for Dropped and Reserve outcomes." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range xsd:string .
+
+cr:decisionSite a owl:ObjectProperty ;
+    rdfs:label "decision site" ;
+    rdfs:comment "The study site this decision pertains to." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range cr:StudySite .
+
+cr:decisionStudy a owl:ObjectProperty ;
+    rdfs:label "decision study" ;
+    rdfs:comment "The study for which this site selection decision was made." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range cr:Study .
 
 cr:definedBy a owl:ObjectProperty ;
     rdfs:label "defined by" ;
@@ -3076,6 +3135,12 @@ cr:Recruit a owl:Class ;
     rdfs:comment "A human in the recruitment realm, pre-consent. Separate entity from Participant (recruiter is a distinct operator role; data is lighter; PHI boundary differs). Transitions to Participant when consent is obtained. Fuels twin-for-enrollment analytics." ;
     rdfs:subClassOf top:Agent .
 
+cr:SiteSelectionDecision a owl:Class ;
+    rdfs:label "Site Selection Decision" ;
+    rdfs:comment "A recorded, provenance-tagged decision about a study site at a specific lifecycle transition. Captures both positive (Selected, Reserve) and negative (Dropped) outcomes with mandatory rationale. The negative path — why a site was not selected — is institutional intelligence that is almost never captured in practice today but is essential for: (a) sponsor learning across studies, (b) avoiding repeat qualification of unsuitable sites, (c) CRO accountability. Bitemporal (top:Versioned) because decisions can be revised (a Dropped site can become Reserve under rescue conditions)." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
 ns1:Zone_TrialManagement a skos:Concept ;
     skos:prefLabel "Trial Management" ;
     skos:topConceptOf ns1:TMFReferenceModel .
@@ -3297,11 +3362,6 @@ cr:OversightSubPhase a hcls:Phase ;
     rdfs:label "Oversight" ;
     rdfs:comment "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality." .
 
-hcls:Person a owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
-    rdfs:subClassOf top:Agent .
-
 cr:AdverseEvent a owl:Class ;
     rdfs:label "Adverse Event" ;
     rdfs:comment "An untoward medical occurrence in a trial subject." ;
@@ -3312,6 +3372,11 @@ cr:Investigator a owl:Class ;
     rdfs:label "Investigator" ;
     rdfs:comment "A licensed clinician designated as PI or Sub-I at a Site. Holds legal responsibility for trial conduct, GCP compliance, AE causality assessment, CRF sign-off, and delegation of authority. OOUX persona aliases: PI, Investigator, Site PI." ;
     rdfs:subClassOf hcls:Clinician .
+
+hcls:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
+    rdfs:subClassOf top:Agent .
 
 cr:DataCollectionSubPhase a hcls:Phase ;
     rdfs:label "Data Collection" ;

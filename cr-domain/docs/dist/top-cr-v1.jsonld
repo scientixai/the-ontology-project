@@ -7495,6 +7495,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A recorded, provenance-tagged decision about a study site at a specific lifecycle transition. Captures both positive (Selected, Reserve) and negative (Dropped) outcomes with mandatory rationale. The negative path \u2014 why a site was not selected \u2014 is institutional intelligence that is almost never captured in practice today but is essential for: (a) sponsor learning across studies, (b) avoiding repeat qualification of unsuitable sites, (c) CRO accountability. Bitemporal (top:Versioned) because decisions can be revised (a Dropped site can become Reserve under rescue conditions)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Site Selection Decision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#SiteSelectionSubPhase",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Phase"
@@ -7507,6 +7531,118 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "Site Selection"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusActive",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site is actively enrolling or conducting the trial (post-SIV, first subject possible or enrolled)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Active"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusClosed",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site close-out visit completed; no further subject activity; eTMF finalization in progress."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Closed"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusDropped",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site was not selected or was withdrawn after selection. The reason MUST be captured in a cr:SiteSelectionDecision \u2014 this is institutional intelligence almost never recorded today."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Dropped"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusFeasibility",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site is under feasibility assessment: SQV scheduled or completed, selection committee review pending."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Feasibility"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusReserve",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site has passed feasibility but is held in reserve as a rescue site. Sponsor may activate it if enrollment falls short at active sites. Distinct from Selected: no startup work has begun."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Reserve"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusSelected",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site has been selected: contracts signed, Study Startup Package in preparation."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Selected"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteStatusStartup",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#NamedIndividual"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site Initiation Visit completed or in progress; staff training, delegation of authority, equipment qualification underway."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Startup"
       }
     ]
   },
@@ -9495,6 +9631,141 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ClinicalTrialAgreement"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#decisionMadeBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The person (sponsor PM, CRO lead) who recorded this decision."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decision made by"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://www.w3.org/ns/prov#wasAttributedTo"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#decisionOutcome",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decision outcome"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2002/07/owl#NamedIndividual"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#decisionRationale",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Free-text explanation of why the decision was made. Mandatory for Dropped and Reserve outcomes."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decision rationale"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#decisionSite",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The study site this decision pertains to."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decision site"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#decisionStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The study for which this site selection decision was made."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decision study"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
       }
     ]
   },

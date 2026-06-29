@@ -4,6 +4,7 @@
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 cr: a owl:Ontology ;
     rdfs:label "CR-core" ;
@@ -15,6 +16,33 @@ cr: a owl:Ontology ;
 cr:Sponsor   a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "Sponsor" ; rdfs:comment "The organization that initiates and is accountable for the trial." .
 cr:CRO       a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "CRO" ; rdfs:comment "A contract research organization the sponsor delegates trial conduct to." .
 cr:StudySite a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "Study Site" ; rdfs:comment "An investigative site conducting the study (an organization at a facility)." .
+
+# Site lifecycle status codelist (top:status values on cr:StudySite instances).
+# Modeled as named individuals so agents and SHACL shapes can reference them
+# by IRI rather than by string literal — enabling OWL reasoning over site state.
+#
+# State machine (linear + branch):
+#   Feasibility → Selected → Startup → Active → Closed  (normal path)
+#   Feasibility → Reserve  → (rescue trigger) → Startup  (hold path)
+#   Feasibility → Dropped                                 (negative path — WHY must be captured)
+#
+# The WHY of negative paths (Dropped / Reserve) is institutional intelligence
+# that is almost never captured today. cr:SiteSelectionDecision records it.
+
+cr:SiteStatusFeasibility a owl:NamedIndividual ; rdfs:label "Feasibility" ;
+    rdfs:comment "Site is under feasibility assessment: SQV scheduled or completed, selection committee review pending." .
+cr:SiteStatusSelected a owl:NamedIndividual ; rdfs:label "Selected" ;
+    rdfs:comment "Site has been selected: contracts signed, Study Startup Package in preparation." .
+cr:SiteStatusReserve a owl:NamedIndividual ; rdfs:label "Reserve" ;
+    rdfs:comment "Site has passed feasibility but is held in reserve as a rescue site. Sponsor may activate it if enrollment falls short at active sites. Distinct from Selected: no startup work has begun." .
+cr:SiteStatusStartup a owl:NamedIndividual ; rdfs:label "Startup" ;
+    rdfs:comment "Site Initiation Visit completed or in progress; staff training, delegation of authority, equipment qualification underway." .
+cr:SiteStatusActive a owl:NamedIndividual ; rdfs:label "Active" ;
+    rdfs:comment "Site is actively enrolling or conducting the trial (post-SIV, first subject possible or enrolled)." .
+cr:SiteStatusClosed a owl:NamedIndividual ; rdfs:label "Closed" ;
+    rdfs:comment "Site close-out visit completed; no further subject activity; eTMF finalization in progress." .
+cr:SiteStatusDropped a owl:NamedIndividual ; rdfs:label "Dropped" ;
+    rdfs:comment "Site was not selected or was withdrawn after selection. The reason MUST be captured in a cr:SiteSelectionDecision — this is institutional intelligence almost never recorded today." .
 cr:StudySubject a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Study Subject" ;
     rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." .
 
@@ -42,6 +70,22 @@ cr:ProtocolVersion a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
 cr:BriefingBook a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Briefing Book" ; rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." .
 cr:CSR          a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Clinical Study Report" ; rdfs:comment "The definitive summary of a study's results (CSR)." .
 cr:eCRF         a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "eCRF" ; rdfs:comment "Electronic case report form — the data-collection instrument used at the site." .
+cr:SiteSelectionDecision a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
+    rdfs:label "Site Selection Decision" ;
+    rdfs:comment "A recorded, provenance-tagged decision about a study site at a specific lifecycle transition. Captures both positive (Selected, Reserve) and negative (Dropped) outcomes with mandatory rationale. The negative path — why a site was not selected — is institutional intelligence that is almost never captured in practice today but is essential for: (a) sponsor learning across studies, (b) avoiding repeat qualification of unsuitable sites, (c) CRO accountability. Bitemporal (top:Versioned) because decisions can be revised (a Dropped site can become Reserve under rescue conditions)." .
+
+cr:decisionOutcome a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range owl:NamedIndividual ;
+    rdfs:label "decision outcome" ; rdfs:comment "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." .
+cr:decisionRationale a owl:DatatypeProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range xsd:string ;
+    rdfs:label "decision rationale" ; rdfs:comment "Free-text explanation of why the decision was made. Mandatory for Dropped and Reserve outcomes." .
+cr:decisionSite a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range cr:StudySite ;
+    rdfs:label "decision site" ; rdfs:comment "The study site this decision pertains to." .
+cr:decisionStudy a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range cr:Study ;
+    rdfs:label "decision study" ; rdfs:comment "The study for which this site selection decision was made." .
+cr:decisionMadeBy a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range hcls:Person ;
+    rdfs:subPropertyOf prov:wasAttributedTo ;
+    rdfs:label "decision made by" ; rdfs:comment "The person (sponsor PM, CRO lead) who recorded this decision." .
+
 cr:OperationalRecord a owl:Class ; rdfs:subClassOf top:Evidence ;
     rdfs:label "Operational Record" ;
     rdfs:comment "Non-clinical, non-GCP-governed data captured during trial operations — process metrics, site performance indicators, sponsor-defined operational fields (e.g. X_WHATEVER extensions in Medidata). Not an hcls:Observation (no clinical value) and not directly regulated by ICH E6; captured in operational CRFs or sponsor-specific payloads. Primary target for LLM-assisted field-mapping inference (cr:mappingConfidence)." .
