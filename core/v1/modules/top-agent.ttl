@@ -1,0 +1,61 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Agent a owl:Class ;
+    rdfs:label "Agent"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Agent, bfo:IndependentContinuant ;
+    rdfs:comment "The entity with capacity to act, hold authority, or carry responsibility."@en .
+
+top:hasCredential a owl:ObjectProperty ;
+    rdfs:label "has credential"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Agent ;
+    rdfs:range top:Credential ;
+    rdfs:comment "Links the Agent to their proof of qualification or identity."@en .
+
+top:memberOf a owl:ObjectProperty ;
+    rdfs:label "member of"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Agent ;
+    rdfs:range top:Agent ;
+    rdfs:subPropertyOf prov:actedOnBehalfOf ;
+    rdfs:comment "Organizational or group hierarchy the Agent belongs to."@en .
+
+top:authorizedBy a owl:ObjectProperty ;
+    rdfs:label "authorized by"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Agent ;
+    rdfs:range top:Agent ;
+    rdfs:comment "The authority that granted the Agent permission to act in a specific scope."@en .
+
+top:Person a owl:Class ;
+    rdfs:label "Person"@en ;
+    rdfs:subClassOf top:Agent, prov:Person ;
+    rdfs:comment "An individual human acting in any role across any workflow."@en .
+
+top:Organization a owl:Class ;
+    rdfs:label "Organization"@en ;
+    rdfs:subClassOf top:Agent, prov:Organization ;
+    rdfs:comment "A legal or business entity — corporate parent, operating company, hospital, academic institution, regulator, vendor, sponsor."@en .
+
+top:Group a owl:Class ;
+    rdfs:label "Group"@en ;
+    rdfs:subClassOf top:Agent, prov:Agent ;
+    rdfs:comment "A bounded collective acting with shared purpose and accountability — committee, team, working group, oversight body, panel."@en .
+
+top:AutonomousAgent a owl:Class ;
+    rdfs:label "Autonomous Agent"@en ;
+    rdfs:subClassOf top:Agent, prov:SoftwareAgent ;
+    rdfs:comment "A software entity acting on delegated authority — robotic process, AI agent, automated decision system, scheduler, monitor."@en .
+
+top:Organism a owl:Class ;
+    rdfs:label "Organism"@en ;
+    rdfs:subClassOf top:Agent, prov:Agent ;
+    rdfs:comment "A living biological non-human entity acting or being acted upon in an operational context — laboratory animal, livestock under veterinary care, plant in an agricultural trial, microbial culture, model organism in a biology study."@en .

@@ -1,0 +1,66 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+# Root class, Universal DNA, flavor annotation, UniversalDNAShape.
+
+top:flavor a owl:AnnotationProperty ;
+    rdfs:label "flavor"@en ;
+    rdfs:comment "Extensibility flavor per ADR-0019. Permitted values: 'Invariant', 'Tightenable', 'Additive'."@en .
+
+top:CommonEntity a owl:Class ;
+    rdfs:label "Common Entity"@en ;
+    rdfs:comment "The root of every TOP entity. Carries Universal DNA — top:identifier, top:observedAt, top:status — that every Category and every Leaf inherits. Not directly instantiated; serves as the type lattice that lets queries reach across every Category."@en .
+
+top:identifier a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "identifier"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:anyURI ;
+    rdfs:comment "Globally unique URI / URN. The opaque, durable, system-of-record handle for the entity. Functional: every TOP entity has exactly one."@en .
+
+top:observedAt a owl:DatatypeProperty ;
+    rdfs:label "observed at"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "When the system recorded this entity-version — the transaction-time anchor (per ADR-0021), NGSI-LD-style. Distinct from valid time (top:validFrom / top:validUntil, the second clock, opt-in) and from intrinsic activity times (Temporal.startTime / endTime, domain-level)."@en .
+
+top:status a owl:DatatypeProperty ;
+    rdfs:label "status"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Current lifecycle / health state. Each Category narrows the enum at its layer; leaves narrow further. Universal at this layer because every entity has SOME state and the project-wide status query is operationally meaningful."@en .
+
+top:UniversalDNAShape a sh:NodeShape ;
+    rdfs:label "Universal DNA Shape"@en ;
+    rdfs:comment "The minimum every TOP entity must carry: a unique identifier, an observation timestamp, and a current status."@en ;
+    sh:targetClass top:CommonEntity ;
+    sh:property [
+        sh:path top:identifier ;
+        sh:datatype xsd:anyURI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Every TOP entity must carry exactly one top:identifier (xsd:anyURI)." ;
+    ] ;
+    sh:property [
+        sh:path top:observedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Every TOP entity must carry exactly one top:observedAt (xsd:dateTime)." ;
+    ] ;
+    sh:property [
+        sh:path top:status ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Every TOP entity must carry exactly one top:status (xsd:string)." ;
+    ] .

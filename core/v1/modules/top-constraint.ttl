@@ -1,0 +1,53 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+# Constraint category (L2) + relational extensions + leaves (PhysicalLimit, RegulatoryLaw, SafetyGuardrail).
+
+top:Constraint a owl:Class ;
+    rdfs:label "Constraint"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity ;
+    rdfs:comment "Non-negotiable boundaries — physical, legal, regulatory, contractual, safety. Inclusion criteria, dose limits, regulatory deadlines, blinding rules, biosafety floors, SLAs."@en .
+
+top:enforcedBy a owl:ObjectProperty ;
+    rdfs:label "enforced by"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Constraint ;
+    rdfs:range top:Agent ;
+    rdfs:subPropertyOf prov:wasAssociatedWith ;
+    rdfs:comment "Links the Constraint to the Agent responsible for oversight. The IRB enforces the inclusion criterion; the QA Lead enforces the calibration window; the Pharmacist enforces the dose limit."@en .
+
+top:severityLevel a owl:DatatypeProperty ;
+    rdfs:label "severity level"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Constraint ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Operational impact of violation. Universal enum — INFORMATIONAL / MINOR / MAJOR / CRITICAL. Workflow extensions can refine."@en .
+
+top:appliesTo a owl:ObjectProperty ;
+    rdfs:label "applies to"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Constraint ;
+    rdfs:range top:CommonEntity ;
+    rdfs:comment "Targets of the Constraint. Constraints can scope to Agents, Resources, Scopes, or Temporals; range is top:CommonEntity so the targeting is uniform across Categories. Leaf layer narrows by domain."@en .
+
+top:PhysicalLimit a owl:Class ;
+    rdfs:label "Physical Limit"@en ;
+    rdfs:subClassOf top:Constraint, prov:Entity, bfo:Quality ;
+    rdfs:comment "A bound rooted in physical reality — temperature range, dose ceiling, pressure limit, mass tolerance, biological viability window."@en .
+
+top:RegulatoryLaw a owl:Class ;
+    rdfs:label "Regulatory Law"@en ;
+    rdfs:subClassOf top:Constraint, prov:Entity, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "A rule rooted in legal or regulatory authority — 21 CFR clause, ICH guideline, EU CTR provision, contractual SLA, jurisdictional reporting requirement."@en .
+
+top:SafetyGuardrail a owl:Class ;
+    rdfs:label "Safety Guardrail"@en ;
+    rdfs:subClassOf top:Constraint, prov:Entity, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "A boundary rooted in safety discipline — biosafety floor, blinding rule, contamination boundary, escalation threshold, stop-rule."@en .

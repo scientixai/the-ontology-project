@@ -1,0 +1,89 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned"@en ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf."@en .
+
+top:validFrom a owl:DatatypeProperty ;
+    rdfs:label "valid from"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Versioned ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time)."@en .
+
+top:validUntil a owl:DatatypeProperty ;
+    rdfs:label "valid until"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Versioned ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version."@en .
+
+top:BitemporalShape a sh:NodeShape ;
+    rdfs:label "Bitemporal Shape"@en ;
+    rdfs:comment "The contract a versioned value satisfies: a valid-time start, an optional (open) valid-time end, and a stable identity via prov:specializationOf."@en ;
+    sh:targetClass top:Versioned ;
+    sh:property [
+        sh:path top:validFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A versioned value must state when its state became valid (top:validFrom, exactly one)." ;
+    ] ;
+    sh:property [
+        sh:path top:validUntil ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+        sh:message "top:validUntil is open (absent) for the current version, or exactly one xsd:dateTime when closed." ;
+    ] ;
+    sh:property [
+        sh:path prov:specializationOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A versioned value must point at its stable identity (prov:specializationOf, exactly one)." ;
+    ] .
+
+top:HashedMustVersionShape a sh:NodeShape ;
+    rdfs:label "Hashed values must be versioned"@en ;
+    sh:targetSubjectsOf top:integrityHash ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A value carrying top:integrityHash must be an immutable version (top:Versioned: top:validFrom + prov:specializationOf). You cannot hash a value and leave it mutable." .
+
+top:SignedMustVersionShape a sh:NodeShape ;
+    rdfs:label "Signed values must be versioned"@en ;
+    sh:targetSubjectsOf top:signedBy ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A value carrying top:signedBy must be an immutable version. You cannot sign a value and leave it mutable." .
+
+top:AttestationMustVersionShape a sh:NodeShape ;
+    rdfs:label "Attestations must be versioned"@en ;
+    sh:targetClass top:Attestation ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A top:Attestation is a committed, signed declaration and must be an immutable version." .
+
+top:StatusChangeMustVersionShape a sh:NodeShape ;
+    rdfs:label "Status changes must be versioned"@en ;
+    sh:targetClass top:StatusChange ;
+    sh:severity sh:Violation ;
+    sh:node top:BitemporalShape ;
+    sh:message "A top:StatusChange is the audit event of a transition and must be an immutable version." .
+
+top:EvidenceShouldVersionShape a sh:NodeShape ;
+    rdfs:label "Evidence should be versioned once committed"@en ;
+    sh:targetClass top:Document, top:Log, top:Credential ;
+    sh:property [
+        sh:path top:validFrom ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "This evidentiary value is not yet a version. Drafts may stay mutable; once finalized (and certainly once hashed or signed) it must be versioned (top:Versioned with top:validFrom)." ;
+    ] .

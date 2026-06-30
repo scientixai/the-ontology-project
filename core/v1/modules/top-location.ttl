@@ -1,0 +1,50 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Location a owl:Class ;
+    rdfs:label "Location"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Location, bfo:Site ;
+    rdfs:comment "The spatial or logical context where an Activity occurs or a Resource resides."@en .
+
+top:withinLocation a owl:ObjectProperty , owl:TransitiveProperty ;
+    rdfs:label "within location"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Location ;
+    rdfs:range top:Location ;
+    rdfs:comment "Recursive parent location. Transitive: Room within Building within Campus is queryable as Room within Campus."@en .
+
+top:geoSpatialData a owl:DatatypeProperty ;
+    rdfs:label "geo-spatial data"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Location ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Physical coordinates or digital path. WKT / GeoJSON for physical spaces; structured locator (URI, file path, network address) for logical spaces."@en .
+
+top:accessRequirement a owl:ObjectProperty ;
+    rdfs:label "access requirement"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Location ;
+    rdfs:range top:Constraint ;
+    rdfs:comment "Constraints required to enter this Location (clearance, training prerequisite, escort policy, biosafety level)."@en .
+
+top:Physical a owl:Class ;
+    rdfs:label "Physical Location"@en ;
+    rdfs:subClassOf top:Location, prov:Location ;
+    rdfs:comment "A real-world place with geospatial coordinates — building, room, floor, campus, depot, manufacturing line, ward."@en .
+
+top:Virtual a owl:Class ;
+    rdfs:label "Virtual Location"@en ;
+    rdfs:subClassOf top:Location, prov:Location ;
+    rdfs:comment "A logical place addressable via URI / path / network identifier — data warehouse, system zone, application namespace, regulatory jurisdiction."@en .
+
+top:Storage a owl:Class ;
+    rdfs:label "Storage Location"@en ;
+    rdfs:subClassOf top:Location, prov:Location ;
+    rdfs:comment "A place where Resources reside under controlled conditions — biorepository freezer, IP storage, sample archive, document repository, data vault."@en .

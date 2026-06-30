@@ -1,0 +1,57 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Scope a owl:Class ;
+    rdfs:label "Scope"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Plan ;
+    rdfs:comment "The logical boundary, strategic intent, or organizational container for work."@en .
+
+top:governedBy a owl:ObjectProperty ;
+    rdfs:label "governed by"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Scope ;
+    rdfs:range top:Constraint ;
+    rdfs:comment "Links the Scope to specific Constraints — regulatory, contractual, safety. The legal frame the Scope operates within."@en .
+
+top:containsActivity a owl:ObjectProperty ;
+    rdfs:label "contains activity"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Scope ;
+    rdfs:range top:Temporal ;
+    rdfs:comment "Links the Scope to the Temporal entities (planned or executed activities) happening within it."@en .
+
+top:partOfScope a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "part of scope"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Scope ;
+    rdfs:range top:Scope ;
+    rdfs:comment "Hierarchical containment between Scopes. Transitive: Portfolio contains Program contains Project."@en .
+
+top:objectiveStatement a owl:DatatypeProperty ;
+    rdfs:label "objective statement"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Scope ;
+    rdfs:range xsd:string ;
+    rdfs:comment "High-level description of the strategic 'why'. Operator-grounded — what an investigator, sponsor, or regulator would say this Scope is for."@en .
+
+top:Portfolio a owl:Class ;
+    rdfs:label "Portfolio"@en ;
+    rdfs:subClassOf top:Scope, prov:Plan, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "The widest organizational container — a collection of Programs sharing strategic direction, oversight, or funding."@en .
+
+top:Program a owl:Class ;
+    rdfs:label "Program"@en ;
+    rdfs:subClassOf top:Scope, prov:Plan, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "An intermediate container — a coordinated set of Projects sharing therapeutic area, product family, or regulatory pathway."@en .
+
+top:Project a owl:Class ;
+    rdfs:label "Project"@en ;
+    rdfs:subClassOf top:Scope, prov:Plan, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "A bounded body of work with a defined start, end, and objective — a study, a campaign, a batch, a submission, a commissioning effort."@en .

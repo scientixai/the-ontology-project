@@ -1,0 +1,66 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Temporal a owl:Class ;
+    rdfs:label "Temporal"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Activity, bfo:Process ;
+    rdfs:comment "The time-based dimension of operations. Both plans (schedules, milestones, campaigns) and execution (visits, procedures, batches, shipments)."@en .
+
+top:startTime a owl:DatatypeProperty ;
+    rdfs:label "start time"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Temporal ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf prov:startedAtTime ;
+    rdfs:comment "Actual or planned start. PROV-aligned to prov:startedAtTime."@en .
+
+top:endTime a owl:DatatypeProperty ;
+    rdfs:label "end time"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Temporal ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf prov:endedAtTime ;
+    rdfs:comment "Actual or planned end. May be open (null) for ongoing activities."@en .
+
+top:precededBy a owl:ObjectProperty ;
+    rdfs:label "preceded by"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Temporal ;
+    rdfs:range top:Temporal ;
+    rdfs:subPropertyOf prov:wasInformedBy ;
+    rdfs:comment "Sequence logic — the Temporal that immediately precedes this one."@en .
+
+top:occursAt a owl:ObjectProperty ;
+    rdfs:label "occurs at"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Temporal ;
+    rdfs:range top:Location ;
+    rdfs:subPropertyOf prov:atLocation ;
+    rdfs:comment "Where the Temporal happens. PROV-aligned to prov:atLocation."@en .
+
+top:Schedule a owl:Class ;
+    rdfs:label "Schedule"@en ;
+    rdfs:subClassOf top:Temporal, prov:Activity ;
+    rdfs:comment "A planned sequence of activities with intended timing — Schedule of Assessments, manufacturing campaign plan, audit calendar, dosing schedule."@en .
+
+top:Window a owl:Class ;
+    rdfs:label "Window"@en ;
+    rdfs:subClassOf top:Temporal, prov:Activity ;
+    rdfs:comment "A bounded interval within which an activity must occur — visit window, dose window, regulatory submission window, calibration window."@en .
+
+top:Activity a owl:Class ;
+    rdfs:label "Activity"@en ;
+    rdfs:subClassOf top:Temporal, prov:Activity ;
+    rdfs:comment "An executed unit of operational work — a procedure performed, a batch run, a shipment received, a review completed."@en .
+
+top:Milestone a owl:Class ;
+    rdfs:label "Milestone"@en ;
+    rdfs:subClassOf top:Temporal, prov:Activity ;
+    rdfs:comment "A point-in-time marker of significant progress — first-patient-in, last-patient-last-visit, batch release, regulatory approval."@en .

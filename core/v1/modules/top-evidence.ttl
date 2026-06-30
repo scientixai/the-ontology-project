@@ -1,0 +1,56 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Evidence a owl:Class ;
+    rdfs:label "Evidence"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "Artifacts that provide verifiable proof of an event, state, or action. Lab reports, signed forms, audit logs, calibration certificates, batch records, MedWatch submissions."@en .
+
+top:verifiesOutcome a owl:ObjectProperty ;
+    rdfs:label "verifies outcome"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Evidence ;
+    rdfs:range top:Outcome ;
+    rdfs:comment "Direct link to the Outcome this Evidence supports."@en .
+
+top:integrityHash a owl:DatatypeProperty ;
+    rdfs:label "integrity hash"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:Evidence ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Digital fingerprint (SHA-256 or stronger) ensuring non-repudiation. Anchors GxP / 21 CFR Part 11 audit-trail discipline at the Core layer."@en .
+
+top:signedBy a owl:ObjectProperty ;
+    rdfs:label "signed by"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Evidence ;
+    rdfs:range top:Agent ;
+    rdfs:subPropertyOf prov:wasAttributedTo ;
+    rdfs:comment "Links the Evidence to the Agent who attested to its truth. E-signature semantics (21 CFR Part 11) and PROV attribution."@en .
+
+top:Document a owl:Class ;
+    rdfs:label "Document"@en ;
+    rdfs:subClassOf top:Evidence, prov:Entity ;
+    rdfs:comment "A formal artifact carrying recorded content — protocol, SOP, IB, ICF, CAPA report, batch record, regulatory submission."@en .
+
+top:Log a owl:Class ;
+    rdfs:label "Log"@en ;
+    rdfs:subClassOf top:Evidence, prov:Collection ;
+    rdfs:comment "A time-ordered collection of recorded events — audit log, communication log, calibration log, equipment log, system event log."@en .
+
+top:Attestation a owl:Class ;
+    rdfs:label "Attestation"@en ;
+    rdfs:subClassOf top:Evidence, prov:Entity ;
+    rdfs:comment "A formal declaration by an Agent affirming a fact — signed consent, regulatory attestation, compliance declaration, e-signature on a record."@en .
+
+top:Credential a owl:Class ;
+    rdfs:label "Credential"@en ;
+    rdfs:subClassOf top:Evidence, prov:Entity ;
+    rdfs:comment "Proof of qualification or identity for an Agent — license, certification, training record, role assignment, e-credential."@en .

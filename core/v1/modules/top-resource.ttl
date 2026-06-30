@@ -1,0 +1,50 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+
+top:Resource a owl:Class ;
+    rdfs:label "Resource"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Entity ;
+    rdfs:comment "Physical or digital assets used to execute tasks or produce outcomes. Equipment, instruments, software systems, samples, kits, raw materials, consumables."@en .
+
+top:ownedBy a owl:ObjectProperty ;
+    rdfs:label "owned by"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Resource ;
+    rdfs:range top:Agent ;
+    rdfs:comment "The Agent (Person or Organization) that owns / has custody of the Resource. Chain-of-custody anchor."@en .
+
+top:hasMaintenanceLog a owl:ObjectProperty ;
+    rdfs:label "has maintenance log"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Resource ;
+    rdfs:range top:Log ;
+    rdfs:comment "Links the Resource to its history of maintenance / calibration / validation Log."@en .
+
+top:operationalState a owl:DatatypeProperty ;
+    rdfs:label "operational state"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:Resource ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Hardware/software-specific readiness beyond top:status. CALIBRATED / DUE_FOR_CALIBRATION / OUT_OF_SERVICE for Equipment; RUNNING / DEGRADED / OFFLINE for System."@en .
+
+top:System a owl:Class ;
+    rdfs:label "System"@en ;
+    rdfs:subClassOf top:Resource, prov:Entity, bfo:GenericallyDependentContinuant ;
+    rdfs:comment "A software or operational system used to execute work — EDC, CTMS, IRT, LIMS, MES, ERP."@en .
+
+top:Equipment a owl:Class ;
+    rdfs:label "Equipment"@en ;
+    rdfs:subClassOf top:Resource, prov:Entity, bfo:MaterialEntity ;
+    rdfs:comment "A physical device used in operations — analyzer, scale, freezer, infusion pump, imaging modality, sequencer, sensor."@en .
+
+top:Material a owl:Class ;
+    rdfs:label "Material"@en ;
+    rdfs:subClassOf top:Resource, prov:Entity, bfo:MaterialEntity ;
+    rdfs:comment "A consumable or substance used or transformed — sample, kit, reagent, raw material, drug substance, dosage unit."@en .
