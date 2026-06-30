@@ -8,27 +8,29 @@
 @prefix bfo:   <http://purl.obolibrary.org/obo/bfo#> .
 @prefix top:   <https://top.scientix.ai/v1#> .
 
+# Bitemporal model (per ADR-0021): Versioned class, valid-time properties, SHACL shapes.
+
 top:Versioned a owl:Class ;
     rdfs:label "Versioned"@en ;
-    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf."@en .
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
 
 top:validFrom a owl:DatatypeProperty ;
     rdfs:label "valid from"@en ;
     top:flavor "Invariant" ;
     rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
-    rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time)."@en .
+    rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en .
 
 top:validUntil a owl:DatatypeProperty ;
     rdfs:label "valid until"@en ;
     top:flavor "Invariant" ;
     rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
-    rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version."@en .
+    rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
 
 top:BitemporalShape a sh:NodeShape ;
     rdfs:label "Bitemporal Shape"@en ;
-    rdfs:comment "The contract a versioned value satisfies: a valid-time start, an optional (open) valid-time end, and a stable identity via prov:specializationOf."@en ;
+    rdfs:comment "The contract a versioned value satisfies: a valid-time start, an optional (open) valid-time end, and a stable identity via prov:specializationOf. Opt-in — NOT targeted at top:CommonEntity, so it never burdens mono-temporal entities."@en ;
     sh:targetClass top:Versioned ;
     sh:property [
         sh:path top:validFrom ;
