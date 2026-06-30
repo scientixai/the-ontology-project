@@ -333,6 +333,7 @@ def nav(active):
             ("gcp.html",            "GCP &amp; essential records", "gcp"),
             ("tmf.html",            "TMF document binding",  "tmf"),
             ("interop.html",        "Interoperability",      "interop"),
+            ("ingestion.html",      "Ingestion example",     "ingestion"),
         ]),
     ]
     out = []
@@ -689,6 +690,197 @@ def flow_body(flow):
     return "".join(parts)
 
 
+def ingestion_body():
+    study_json = """{
+  "id": "urn:ngsi-ld:top-cr:Study:LY900018",
+  "type": "cr:Study",
+  "@context": [
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
+    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+  ],
+  "identifier":  { "type": "Property",      "value": "LY900018" },
+  "status":      { "type": "Property",      "value": "active" },
+  "observedAt":  { "type": "Property",      "value": "2026-06-30T00:00:00Z" },
+  "sponsoredBy": { "type": "Relationship",  "object": "urn:ngsi-ld:top-cr:Sponsor:EliLilly" }
+}"""
+    proto_json = """{
+  "id": "urn:ngsi-ld:top-cr:ProtocolVersion:StudyVersion_1",
+  "type": "cr:ProtocolVersion",
+  "@context": [
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
+    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+  ],
+  "identifier":        { "type": "Property",     "value": "1" },
+  "status":            { "type": "Property",     "value": "active" },
+  "observedAt":        { "type": "Property",     "value": "2026-06-30T00:00:00Z" },
+  "versionIdentifier": { "type": "Property",     "value": "1" },
+  "validFrom":         { "type": "Property",     "value": "2017-12-05" },
+  "hasProtocolVersionOf": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:top-cr:Study:LY900018"
+  },
+  "rationale": {
+    "type": "Property",
+    "value": "Nasal glucagon (LY900018) is a powder formulation of human glucagon for the rescue treatment of hypoglycaemia..."
+  }
+}"""
+    ec_json = """{
+  "id": "urn:ngsi-ld:top-cr:EligibilityCriterion:EligibilityCriterion_1",
+  "type": "cr:EligibilityCriterion",
+  "@context": [
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
+    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+  ],
+  "identifier":      { "type": "Property", "value": "INC1" },
+  "status":          { "type": "Property", "value": "active" },
+  "observedAt":      { "type": "Property", "value": "2026-06-30T00:00:00Z" },
+  "criterionCategory": { "type": "Property", "value": "inclusion" },
+  "criterionNumber": { "type": "Property", "value": "1" },
+  "criterionText": {
+    "type": "Property",
+    "value": "have had a diagnosis of either: [1a] T1DM based on WHO diagnostic criteria and on daily insulin therapy for at least 1 year — multiple daily injection of long-acting insulin analog or continuous subcutaneous insulin infusion; OR [1b] T2DM based on WHO diagnostic criteria and on daily insulin therapy with or without OAMs for at least 1 year..."
+  }
+}"""
+    visit_json = """{
+  "id": "urn:ngsi-ld:top-cr:Visit:Encounter_1",
+  "type": "cr:Visit",
+  "@context": [
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
+    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+  ],
+  "identifier":           { "type": "Property",    "value": "SCREENING" },
+  "status":               { "type": "Property",    "value": "active" },
+  "observedAt":           { "type": "Property",    "value": "2026-06-30T00:00:00Z" },
+  "label":                { "type": "Property",    "value": "Screening" },
+  "visitType": {
+    "type": "Property",
+    "value": { "code": "C25716", "codeSystem": "http://www.cdisc.org", "decode": "Visit" }
+  },
+  "nextVisit":            { "type": "Relationship", "object": "urn:ngsi-ld:top-cr:Visit:Encounter_2" },
+  "contactModes":         { "type": "Property",    "value": ["In Person"] },
+  "environmentalSettings":{ "type": "Property",    "value": ["Ambulatory Care Facility"] }
+}"""
+
+    return (
+        "<h1>Ingestion worked example &mdash; LY900018 (USDM&nbsp;v4 &rarr; NGSI-LD)</h1>"
+        "<p class='lead'>"
+        "Eli Lilly <b>LY900018</b> is a nasal glucagon rescue treatment for hypoglycaemia in "
+        "T1DM / T2DM patients. Its USDM v4 JSON protocol is the reference fixture for the "
+        "TOP ingestion pipeline. The transformer (<code>examples/usdm/to-ngsi-ld.py</code>) "
+        "reads the raw USDM document and emits <b>102 NGSI-LD entities</b> across 10 type "
+        "buckets, each carrying the Universal DNA and ready to POST to a Scorpio broker."
+        "</p>"
+
+        "<h2>What USDM gives you</h2>"
+        "<p>USDM v4 (CDISC Unified Study Definitions Model) is a structured JSON export of a "
+        "protocol: study versions, arms, epochs, encounters (visits), eligibility criteria, "
+        "objectives, endpoints, and governance history. It is the ICH M11 machine-readable "
+        "equivalent &mdash; the canonical protocol source.</p>"
+        "<p>The transformer does three things:</p>"
+        "<ol>"
+        "<li><b>Structural mapping</b> &mdash; USDM <code>StudyVersion</code> → "
+        "<code>cr:ProtocolVersion</code>; USDM <code>Encounter</code> → "
+        "<code>cr:Visit</code>; USDM <code>EligibilityCriterion</code> → "
+        "<code>cr:EligibilityCriterion</code>; etc.</li>"
+        "<li><b>Bitemporality injection</b> &mdash; extracts <code>GovernanceDate</code> "
+        "from the USDM StudyVersion and uses it as <code>top:validFrom</code> on the "
+        "emitted <code>cr:ProtocolVersion</code>. When the protocol is amended, a new "
+        "ProtocolVersion entity with a later <code>validFrom</code> is POSTed; the broker "
+        "keeps both, and a SPARQL query can reconstruct which version was in force on any "
+        "given date.</li>"
+        "<li><b>URN assignment</b> &mdash; every entity gets a stable "
+        "<code>urn:ngsi-ld:top-cr:{Type}:{localId}</code> built from the USDM object "
+        "identifier, so the same study ingested twice produces the same URNs and the broker "
+        "can upsert idempotently.</li>"
+        "</ol>"
+
+        "<h2>Entity walk-through</h2>"
+        "<h3>1&ensp;Study &mdash; the anchor node</h3>"
+        "<p>One entity per study. All other entities hang off it via Relationship nodes. "
+        "The <code>sponsoredBy</code> Relationship uses <code>@type: @id</code> in the "
+        "<code>@context</code> so the broker serialises it as a URI reference — enabling "
+        "traversal in a single NGSI-LD request with the <code>options=keyValues&amp;attrs=sponsoredBy</code> "
+        "query parameter.</p>"
+        f"<pre>{esc(study_json)}</pre>"
+
+        "<h3>2&ensp;ProtocolVersion &mdash; bitemporal protocol snapshot</h3>"
+        "<p><code>cr:ProtocolVersion</code> is a <code>top:Versioned</code> entity. "
+        "The <code>validFrom</code> property records when this version of the protocol "
+        "was authorised in the world (extracted from the USDM <code>GovernanceDate</code>), "
+        "independently of when the system ingested it (<code>observedAt</code>). "
+        "Querying the broker with <code>q=validFrom&lt;=2018-03-01</code> returns the "
+        "protocol version that was in force on that date &mdash; essential for reconstructing "
+        "what rules governed a specific visit.</p>"
+        f"<pre>{esc(proto_json)}</pre>"
+
+        "<h3>3&ensp;EligibilityCriterion &mdash; full text, structured category</h3>"
+        "<p>The transformer strips HTML tags from USDM criterion text and maps the "
+        "USDM <code>InclusionExclusion</code> flag to <code>criterionCategory: inclusion | exclusion</code>. "
+        "Criteria are linked to the <code>cr:ProtocolVersion</code> they belong to via "
+        "<code>cr:hasEligibilityCriterion</code> (not shown in this abbreviated payload; "
+        "the full transformer also emits that relationship on the ProtocolVersion entity).</p>"
+        f"<pre>{esc(ec_json)}</pre>"
+
+        "<h3>4&ensp;Visit &mdash; relationship chain across the SoA</h3>"
+        "<p><code>cr:Visit</code> entities form a linked list via <code>nextVisit</code> "
+        "Relationships — enabling a broker to traverse the schedule of activities in sequence "
+        "without a SPARQL join. The <code>visitType</code> Property carries a structured "
+        "object with a CDISC CT code reference (<code>C25716</code> = &ldquo;Visit&rdquo;). "
+        "<code>contactModes</code> and <code>environmentalSettings</code> are arrays, "
+        "serialised as NGSI-LD multi-value Properties.</p>"
+        f"<pre>{esc(visit_json)}</pre>"
+
+        "<h2>Output summary</h2>"
+        "<table>"
+        "<tr><th>Entity type</th><th>Count</th><th>Key relationships</th></tr>"
+        "<tr><td><code>cr:Study</code></td><td>1</td><td><code>sponsoredBy</code> → Sponsor</td></tr>"
+        "<tr><td><code>cr:Sponsor</code></td><td>1</td><td>anchor for all sponsor-level data</td></tr>"
+        "<tr><td><code>cr:ProtocolVersion</code></td><td>1</td><td><code>hasProtocolVersionOf</code> → Study; <code>validFrom</code> bitemporal</td></tr>"
+        "<tr><td><code>cr:Arm</code></td><td>2</td><td><code>hasArm</code> (on Study)</td></tr>"
+        "<tr><td><code>cr:Visit</code></td><td>varies</td><td><code>nextVisit</code> chain; linked to Epoch</td></tr>"
+        "<tr><td><code>cr:EligibilityCriterion</code></td><td>varies</td><td><code>hasEligibilityCriterion</code> on ProtocolVersion</td></tr>"
+        "<tr><td><code>cr:Endpoint</code></td><td>varies</td><td>linked to Arm via Objective</td></tr>"
+        "<tr><td>Others (Scope, Temporal, &hellip;)</td><td>varies</td><td>biomedical concepts, amendments</td></tr>"
+        "</table>"
+
+        "<h2>Running the transformer yourself</h2>"
+        "<pre>"
+        "# from repo root\n"
+        "python3 examples/usdm/to-ngsi-ld.py \\\n"
+        "    examples/usdm/ly900018-usdm-v4.json \\\n"
+        "    --out examples/usdm/out/\n"
+        "\n"
+        "# POST to a local Scorpio broker\n"
+        "for f in examples/usdm/out/*.json; do\n"
+        "  curl -s -X POST http://localhost:9090/ngsi-ld/v1/entities \\\n"
+        "    -H 'Content-Type: application/ld+json' \\\n"
+        "    -d @$f\n"
+        "done\n"
+        "</pre>"
+        "<p class='muted'>The transformer is idempotent: POST the same file twice and the broker "
+        "upserts (no duplicate entities). Entities that differ only in <code>observedAt</code> "
+        "are treated as updates; entities that differ in <code>validFrom</code> or other "
+        "bitemporal properties create a new version snapshot.</p>"
+
+        "<h2>What&rsquo;s next</h2>"
+        "<ul>"
+        "<li><b>EDC streaming</b> &mdash; a Kafka consumer subscribing to a Castor EDC "
+        "topic ingests subject-level <code>cr:Assessment</code> and <code>cr:Enrollment</code> "
+        "entities as they are CRF-captured, linking them to the <code>cr:StudySubject</code> "
+        "anchor. The PII bridge (<code>cr:Enrollment</code> → <code>hcls:Person</code>) stays "
+        "encrypted at rest and is not written to the broker.</li>"
+        "<li><b>Veeva DDA catch-up</b> &mdash; a bulk loader reads an ODM-XML export from S3, "
+        "resolves subjects and visits against the already-loaded protocol graph, and emits "
+        "clinical <code>hcls:Observation</code> entities timestamped with the original "
+        "collection date (<code>validFrom</code>) vs the import date (<code>observedAt</code>).</li>"
+        "<li><b>LLM field mapping</b> &mdash; sponsor-specific <code>X_WHATEVER</code> fields "
+        "in Medidata are emitted as <code>cr:OperationalRecord</code> entities with a "
+        "<code>cx:mappingConfidence</code> score from the LLM inference step. A human reviewer "
+        "promotes confirmed mappings to canonical <code>cx:Mapping</code> records.</li>"
+        "</ul>"
+    )
+
+
 def reference_body():
     parts = ["<h1>Full reference</h1><p class='muted'>Every entity, constraint, and projection &mdash; auto-generated from the model.</p><h2>Entities by module</h2>"]
     for fname, iris in PER_FILE.items():
@@ -1001,6 +1193,7 @@ def build():
     pages = {"index.html": ("TOP CR &mdash; Overview", "hub", hub_body(stats)),
              "foundation.html": ("Foundation", "foundation", foundation_body()),
              "implementation.html": ("Implementation guide", "implementation", implementation_body()),
+             "ingestion.html": ("Ingestion example", "ingestion", ingestion_body()),
              "reference.html": ("Full reference", "reference", reference_body())}
     for fl in FLOWS:
         body = roles_body() if fl["id"] == "roles" else flow_body(fl)
