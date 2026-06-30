@@ -394,43 +394,113 @@ def hub_body(stats):
     flowcards = "".join(
         f'<a href="{fl["id"]}.html"><b>{fl["title"]}</b><br><span class="muted" style="font-size:13px">{fl["blurb"]}</span></a>'
         for fl in FLOWS)
-    howto = """
-<div class="step"><span class="num">1</span><div><h4>Map your entities to the model</h4>
-<p>Point your concepts at the shared ones (patient&rarr;<code>hcls:Person</code>, your subject&rarr;<code>cr:StudySubject</code>, a value&rarr;<code>cr:ClinicalObservation</code>). You align, you don't redesign.</p></div></div>
-<div class="step"><span class="num">2</span><div><h4>Attach the envelope</h4>
-<pre>ex:obs1 a cr:ClinicalObservation ; rdf:value "128" ;
-    cr:forSubject ex:subj-001 ;            <span class="c"># pseudonymous, never a Person</span>
-    top:observedAt  "2026-03-10T09:00:00Z" ; <span class="c"># true-in-world time</span>
-    top:recordedAt "2026-03-10T09:05:00Z" ; <span class="c"># when the system knew it</span>
-    prov:wasAttributedTo ex:coordinator .</pre></div></div>
-<div class="step"><span class="num">3</span><div><h4>Validate &mdash; the graph catches PII leaks, undelegated work, orphan data, premature activation, unmitigated risk.</h4></div></div>
-<div class="step"><span class="num">4</span><div><h4>Emit what you need</h4><p>Run a projection &rarr; SDTM, USDM, FHIR, the DOA log, a data mart, ADaM lineage &mdash; provenance intact.</p></div></div>
-<div class="step"><span class="num">5</span><div><h4>Ask questions across time</h4><p>As-of reconstruction, lineage walks, and bitemporal compliance ("reported within 15 days?") are queries, not reconstructions.</p></div></div>
-"""
+
+    hero = """
+<div style="background:#fff;border:1px solid var(--line);border-radius:3px;padding:20px 22px;margin:0 0 14px">
+<p style="margin:0 0 6px"><b>Natural language question</b></p>
+<p style="font-size:18px;margin:0 0 16px;color:var(--acc)">&ldquo;How is GLP1-TRIAL-27 doing?&rdquo;</p>
+<p style="margin:0 0 10px;color:var(--mut);font-size:13px">Sounds simple. The reality: 149 participants are simultaneously in different sub-phases of the trial &mdash; some still in screening, some mid-treatment, some in follow-up. Twelve sites are at different lifecycle stages (three still activating, one just closed). There are two protocol amendments; a participant&rsquo;s visit-3 eligibility may have been evaluated under version 1 or version 2 of the protocol depending on when they enrolled. Two SAEs are in the 15-day reporting window.</p>
+<p style="margin:0 0 6px"><b>What the broker answers (NGSI-LD entity query)</b></p>
+<pre style="margin:0 0 12px">GET /ngsi-ld/v1/entities?type=cr:Study&amp;id=urn:ngsi-ld:top-cr:Study:GLP1-TRIAL-27
+  &amp;attrs=identifier,status,conductedAt,hasProtocolVersion
+  &amp;options=keyValues</pre>
+<p style="margin:0 0 6px"><b>What the reasoner adds when the broker returns null or incomplete</b></p>
+<p style="font-size:13px;color:var(--mut)">The broker holds the runtime state (current entity versions). When a query crosses a temporal boundary &mdash; &ldquo;which protocol version was in effect for Subject 042 at Visit 3?&rdquo; &mdash; the OWL reasoner resolves the bitemporal join. The LLM agent routes: broker first, reasoner on null or temporal qualifier, human escalation on conflict.</p>
+<p style="margin:4px 0 0" class="note" style="font-size:13px"><b>The hard truth:</b> answering &ldquo;how is a trial doing&rdquo; correctly requires bitemporality (what was true when), concurrent state (149 participants &times; their individual temporal planes), and provenance (which amendment governed which visit). No flat table gives you all three. This is why the model exists.</p>
+</div>"""
+
+    tradeoffs = """
+<table>
+<tr><th>dimension</th><th>RDF / OWL / SPARQL</th><th>NGSI-LD (broker)</th><th>LPG / Neo4j</th></tr>
+<tr><td><b>Bitemporality</b></td>
+    <td>Possible via reification or named graphs; verbose, non-standard; query complexity is high</td>
+    <td><b>Native</b> &mdash; <code>observedAt</code> is a first-class attribute on every Property/Relationship; no plumbing required</td>
+    <td>Requires custom plumbing (shadow nodes or separate timestamp properties); no standard</td></tr>
+<tr><td><b>OWL reasoning</b></td>
+    <td><b>Native</b> &mdash; subclass inference, property restrictions, consistency checking</td>
+    <td>RDF/OWL compatible (NGSI-LD is JSON-LD over RDF); use a companion triple store for inference</td>
+    <td>No OWL; Cypher property rules are procedural, not declarative</td></tr>
+<tr><td><b>Runtime / IoT scale</b></td>
+    <td>Triple stores scale but are batch-oriented; not designed for high-frequency entity updates</td>
+    <td><b>Designed for this</b> &mdash; entity lifecycle, subscriptions, geo-queries; ETSI standard</td>
+    <td>Good for connected data at scale; no subscription or geo-query standard</td></tr>
+<tr><td><b>Standards alignment</b></td>
+    <td>W3C / OWL / SHACL; import-ready by ontologists</td>
+    <td>ETSI GS CIM 009; used by EU data spaces (Gaia-X, IDS)</td>
+    <td>Proprietary (Neo4j); openCypher is emerging but not finalized</td></tr>
+<tr><td><b>Query language</b></td>
+    <td>SPARQL &mdash; powerful, temporal joins possible, steep learning curve</td>
+    <td>NGSI-LD query API (q= filter, geo-query, temporal API) &mdash; REST, learnable</td>
+    <td>Cypher &mdash; very readable for graph traversal; limited temporal support</td></tr>
+<tr><td><b>Cold-start cost</b></td>
+    <td>High &mdash; requires ontology expertise to build a domain model from scratch</td>
+    <td>High without a reference model; low <b>with TOP as the @context</b></td>
+    <td>Medium &mdash; schema-on-write but flexible; harder to share across organizations</td></tr>
+</table>
+<p class="note"><b>TOP&rsquo;s position:</b> the OWL model is the design-time specification and the source of the @context. NGSI-LD is the preferred runtime substrate because bitemporality is native and the standard is broker-agnostic. LPG / Neo4j is a valid implementation choice; the same entity model applies, and this reference graph can serve as the property graph schema. All three benefit from the shared vocabulary; none requires the others.</p>"""
+
+    ngsi_owl = """
+<p>NGSI-LD is JSON-LD &mdash; a serialization of RDF. Every NGSI-LD entity, when expanded, is a valid RDF graph. The TOP CR <code>@context</code> (<a href="dist/top-cr-v1.ngsi-context.jsonld" download>download</a>) maps the short names used in broker payloads (<code>cr:Study</code>, <code>hasProtocolVersion</code>) to their full IRIs, and annotates ObjectProperty terms with <code>@type: @id</code> so relationship values compact correctly.</p>
+<p><b>What this means in practice:</b></p>
+<ul>
+<li>An entity stored in a Scorpio / Orion-LD broker can be loaded into a triple store by expanding its JSON-LD &mdash; no conversion required.</li>
+<li>OWL reasoning over broker data works: load the expanded triples into a reasoner alongside <code>core/v1/shapes.ttl</code>; the class hierarchy and property restrictions apply.</li>
+<li>SHACL validation works on the same graph: run <code>top-cr-shapes-v1.ttl</code> against the expanded triples to validate any broker payload.</li>
+<li><b>The gap:</b> NGSI-LD&rsquo;s Property-of-Property model (metadata on a Property node) does not map to a single RDF triple; it requires reification. This is the one place where the two models diverge structurally. TOP handles this by using <code>top:observedAt</code> on the entity (transaction time) and <code>top:validFrom</code> / <code>top:validUntil</code> on versioned nodes (valid time), which round-trip cleanly through JSON-LD expansion.</li>
+</ul>"""
+
     limits = """<ul>
-<li><b>Not here:</b> agent orchestration, the runtime/broker &mdash; those consume the reference; they aren't part of it.</li>
+<li><b>Not here:</b> agent orchestration, the runtime/broker &mdash; those consume the reference; they aren&rsquo;t part of it.</li>
 <li><b>Pseudonymized, not anonymized:</b> identifiable data is kept from flowing downstream, but statistical anonymization is an upstream/runtime responsibility.</li>
-<li><b>Scope today:</b> oncology, Pre-IND &rarr; End-of-Phase-2, plus the site-operations layer. The architecture generalizes; the content is bounded.</li></ul>"""
+<li><b>Scope today:</b> oncology, Pre-IND &rarr; End-of-Phase-2, plus the site-operations layer. The architecture generalizes; the content is bounded.</li>
+<li><b>Multi-source provenance:</b> different sponsors run EDC on different platforms (S3/ODM, Databricks, Snowflake, Veeva). The crosswalk layer handles field mapping; but when provenance logs live in different systems, reconciliation is an unsolved problem at the industry level. TOP gives you the vocabulary; the pipeline is implementation work.</li></ul>"""
+
+    howto = """
+<div class="step"><span class="num">1</span><div><h4>Ingest a protocol</h4>
+<p>Parse an ICH M11 / USDM v4 JSON. Map each entity type to its TOP CR equivalent. POST as NGSI-LD entities to your broker with the TOP @context. See the <a href="ingestion.html">Ingestion worked example</a> for the LY900018 nasal glucagon protocol.</p></div></div>
+<div class="step"><span class="num">2</span><div><h4>Subscribe to a data source</h4>
+<p>Point the runtime at an S3 bucket (ODM/XML), a Kafka stream (Castor EDC), or a Veeva DDA export. The crosswalk layer maps vendor fields to TOP CR terms; unknown fields route to LLM inference with a confidence score.</p></div></div>
+<div class="step"><span class="num">3</span><div><h4>Validate</h4>
+<p>Run <code>top-cr-shapes-v1.ttl</code> over the expanded triples. The SHACL contract catches PII leaks, undelegated work, orphan data, premature activation, unmitigated risk.</p></div></div>
+<div class="step"><span class="num">4</span><div><h4>Query across time</h4>
+<p>Broker queries answer &ldquo;what is the current state?&rdquo;. Temporal API queries answer &ldquo;what was true at T?&rdquo;. For cross-amendment joins, route to the triple store + reasoner.</p></div></div>
+<div class="step"><span class="num">5</span><div><h4>Emit what you need</h4>
+<p>Run a projection &rarr; SDTM, USDM, FHIR, the DOA log, a data mart, ADaM lineage &mdash; provenance intact.</p></div></div>"""
+
     return (
         "<h1>TOP &mdash; Clinical Research Reference Graph</h1>"
-        "<p class='tag'>An inheritable, provenance-native, bitemporal model of how a clinical trial runs. Open commons &middot; organized by flow.</p>"
+        "<p class='tag'>An inheritable, provenance-native, bitemporal reference model for the clinical trial lifecycle. Technology-agnostic &middot; NGSI-LD native &middot; open commons.</p>"
         f"<div class='stats'><div><b>{stats['c']}</b><br>entities</div><div><b>{stats['s']}</b><br>rules</div>"
         f"<div><b>{stats['p']}</b><br>views</div><div><b>{stats['e']}</b><br>examples</div><div><b>{stats['t']}</b><br>tested</div></div>"
         f"{download_badges('top-cr-v1', 'Download the model')}"
         "<p class='muted' style='font-size:12px;margin-top:4px'>Apache-2.0 &middot; "
         f"<code>{esc(MAST['namespace'])}</code> &middot; see <a href='foundation.html'>Foundation</a> for full masthead &amp; citation.</p>"
+
         "<h2 id='what'>What this is</h2>"
-        "<p class='lead'>A ready-made, shared model of how a clinical trial actually runs &mdash; from a site's first activation through an End-of-Phase-2 decision. "
+        "<p class='lead'>A ready-made, shared model of how a clinical trial actually runs &mdash; from a site&rsquo;s first activation through an End-of-Phase-2 decision. "
         "Instead of every organization re-inventing how to represent studies, subjects, visits, samples, consent and safety data, <b>you inherit a model the industry can share, and your own data plugs into it.</b></p>"
-        "<p>Because it captures <i>who did what, when, and on what evidence</i> &mdash; and remembers every version of the truth over time &mdash; the documents you already owe (SDTM, USDM, a delegation log, an analysis dataset) come out as <b>views</b>, and a regulator's question becomes a <b>query</b>.</p>"
+        "<p>Because it captures <i>who did what, when, and on what evidence</i> &mdash; and remembers every version of the truth over time &mdash; the documents you already owe (SDTM, USDM, a delegation log, an analysis dataset) come out as <b>views</b>, and a regulator&rsquo;s question becomes a <b>query</b>.</p>"
+
+        "<h2 id='hero'>Why bitemporality is hard &mdash; a real example</h2>"
+        f"{hero}"
+
         "<h2 id='value'>The value</h2>"
         f"<div class='cards'>{cardhtml}</div>"
+
+        "<h2 id='tradeoffs'>Technology tradeoffs &mdash; honest</h2>"
+        "<p>TOP is technology-agnostic. The OWL model is the canonical specification; NGSI-LD is the preferred runtime substrate; LPG / Neo4j is a valid alternative. Each has real tradeoffs.</p>"
+        f"{tradeoffs}"
+
+        "<h2 id='ngsi-owl'>NGSI-LD and OWL &mdash; how they fit together</h2>"
+        f"{ngsi_owl}"
+
         "<h2 id='line'>The trial as a workflow &mdash; click a stop</h2>"
         f"<div class='trainline'>{chips}</div>"
         f"<div class='flowgrid'>{flowcards}</div>"
-        "<h2 id='howto'>How to put it to work on your data</h2>"
+
+        "<h2 id='howto'>How to put it to work</h2>"
         f"{howto}"
-        "<p class='note'>You brought thin data in your own shape; you got a validated, provenanced, regulator-ready graph &mdash; and the documents you owe come out as views.</p>"
+
         "<h2 id='limits'>Honest limits</h2>"
         f"{limits}")
 
