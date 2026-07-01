@@ -1,8 +1,10 @@
 @prefix sh:     <http://www.w3.org/ns/shacl#> .
 @prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
 @prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
 @prefix semapv: <https://w3id.org/semapv/vocab/> .
 @prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix top:    <https://top.scientix.ai/v1#> .
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 
@@ -36,3 +38,34 @@ cx:MappingShape a sh:NodeShape ;
         sh:message "Mapping must carry transaction time (top:recordedAt)." ] ;
     sh:property [ sh:path prov:wasAttributedTo ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
         sh:message "Mapping must be attributed to an agent (PROV)." ] .
+
+# US-800-002 — Human-in-the-loop gate for LLM-inferred mappings
+cr:LLMInferredMappingConfirmedShape a sh:NodeShape ;
+    rdfs:label "LLM-inferred mapping requires human confirmation (hard)" ;
+    sh:targetClass cx:Mapping ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "cx:Mapping has cx:inferredBy (LLM-produced) but cx:confirmedBy is absent. Human curation is required before promotion to verified." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/crosswalk/v1#inferredBy> ?agent .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/crosswalk/v1#confirmedBy> ?curator . }
+            }
+        """ ;
+    ] .
+
+cr:LLMMappingMethodShape a sh:NodeShape ;
+    rdfs:label "LLM-inferred mapping must declare mappingMethod=LLMInference (warning)" ;
+    sh:targetClass cx:Mapping ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "cx:Mapping has cx:inferredBy but cx:mappingMethod is not 'LLMInference'. Set mappingMethod to document provenance correctly." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/crosswalk/v1#inferredBy> ?agent .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/crosswalk/v1#mappingMethod> "LLMInference" .
+              }
+            }
+        """ ;
+    ] .

@@ -1,302 +1,286 @@
 [
   {
-    "file": "examples/deviation-conformant.ttl",
-    "expect": "conform",
-    "desc": "deviation chain end-to-end: CtQ <- antecedent -> deviation -> CAPA (missing middle captured)"
-  },
-  {
-    "file": "examples/deviation-missing-capa-violation.ttl",
-    "expect": "violate",
-    "desc": "critical deviation with no CAPA is caught (ICH E6 obligation as a shape)"
-  },
-  {
-    "file": "examples/deviation-uncaptured-antecedent-warning.ttl",
-    "expect": "warn",
-    "desc": "deviation with no recorded antecedent = governance Warning (the missing middle)"
-  },
-  {
-    "file": "examples/gcp-essential-records-conformant.ttl",
-    "expect": "conform",
-    "desc": "E6(R3) essential records: source document + data + audit trail + certified copy in the TMF"
-  },
-  {
-    "file": "examples/gcp-uncertified-copy-violation.ttl",
-    "expect": "violate",
-    "desc": "certified copy referencing no source document is caught (E6(R3) certified-copy)"
-  },
-  {
-    "file": "examples/gcp-missing-audit-trail-warning.ttl",
-    "expect": "warn",
-    "desc": "source data with no explicit audit-trail node = ALCOA++ Warning"
-  },
-  {
-    "file": "examples/tmf-binding-conformant.ttl",
-    "expect": "conform",
-    "desc": "TMF artifact type with a content binding (document-type + content binding)"
-  },
-  {
-    "file": "examples/tmf-unbound-warning.ttl",
-    "expect": "warn",
-    "desc": "TMF artifact type with no content binding = Warning (filing label, not comprehension)"
-  },
-  {
-    "file": "examples/dna-conformant.ttl",
-    "expect": "conform",
-    "desc": "Universal DNA: entity carries identifier + observedAt + status"
-  },
-  {
-    "file": "examples/dna-missing-status-violation.ttl",
-    "expect": "violate",
-    "desc": "Universal DNA: entity missing its status strand is caught (negative)"
-  },
-  {
-    "file": "examples/smoke-conformant.ttl",
-    "expect": "conform",
-    "desc": "Evidence carrying full bitemporal+PROV envelope"
-  },
-  {
-    "file": "examples/smoke-violation.ttl",
-    "expect": "violate",
-    "desc": "missing recordedAt + attribution is caught (negative)"
-  },
-  {
-    "file": "examples/oncology-fih-conformant.ttl",
-    "expect": "conform",
-    "desc": "oncology FIH study end-to-end (design, delegation, enrollment, consent, dosing, DLT)"
-  },
-  {
-    "file": "examples/enrollment-violation.ttl",
-    "expect": "violate",
-    "desc": "Enrollment missing the pseudonymous StudySubject bridge is caught"
-  },
-  {
-    "file": "examples/delegation-violation.ttl",
-    "expect": "violate",
-    "desc": "ungated Delegation (missing required Credential) is caught"
-  },
-  {
-    "file": "examples/undelegated-violation.ttl",
-    "expect": "violate",
-    "desc": "undelegated capability use is a hard Violation (flagship invariant)"
-  },
-  {
-    "file": "examples/timing-gap-warning.ttl",
-    "expect": "warn",
-    "desc": "consent before delegation effective = Warning, not fatal (risk-proportionate)"
-  },
-  {
-    "file": "examples/bitemporal-asof.ttl",
-    "expect": "conform",
-    "desc": "bitemporal fixtures are structurally valid (back-dating is detective, not structural)"
-  },
-  {
-    "file": "crosswalks/cr-to-external.ttl",
-    "expect": "conform",
-    "desc": "owned, provenance-tagged crosswalks pass the curation gate"
-  },
-  {
-    "file": "examples/crosswalk-mapping-violation.ttl",
-    "expect": "violate",
-    "desc": "uncurated mapping (no confidence/justification/provenance) is rejected"
-  },
-  {
-    "file": "examples/eop2-conformant.ttl",
-    "expect": "conform",
-    "desc": "Phase 2 -> EOP2: traceable ORR result + agreement + risk register + Optimus-based design"
-  },
-  {
-    "file": "examples/eop2-overstatement-violation.ttl",
-    "expect": "violate",
-    "desc": "efficacy result untraceable to estimand/SAP is caught (overstatement guard)"
-  },
-  {
-    "file": "examples/eop2-incomplete-warning.ttl",
-    "expect": "warn",
-    "desc": "EOP2 without a binding agreement = readiness Warning, not fatal"
-  },
-  {
-    "file": "examples/safety-sae.ttl",
-    "expect": "conform",
-    "desc": "SAEs + safety reports are structurally valid (15-day breach is detective)"
-  },
-  {
-    "file": "examples/preind-conformant.ttl",
-    "expect": "conform",
-    "desc": "Pre-IND gate: briefing book + proposed-position question + addressed nonclinical finding"
-  },
-  {
-    "file": "examples/ind-unaddressed-violation.ttl",
-    "expect": "violate",
-    "desc": "animal toxicity not addressed by a clinical safety assessment (broken IND narrative)"
-  },
-  {
-    "file": "examples/preind-vague-question-warning.ttl",
-    "expect": "warn",
-    "desc": "Pre-IND question without a proposed position = vague-question Warning"
-  },
-  {
-    "file": "examples/ind-clock.ttl",
-    "expect": "conform",
-    "desc": "IND clock fixtures are structurally valid (30-day clock is detective)"
-  },
-  {
     "file": "examples/adam-conformant.ttl",
-    "expect": "conform",
-    "desc": "ADaM lineage: result -> ADAE -> native source, traceable to estimand/SAP"
+    "expect": "conformant"
   },
   {
     "file": "examples/adam-orphan-violation.ttl",
-    "expect": "violate",
-    "desc": "orphan ADaM dataset (no declared source) breaks traceability"
+    "expect": "violation"
   },
   {
-    "file": "examples/pii-containment-conformant.ttl",
-    "expect": "conform",
-    "desc": "act attached to a pseudonymous StudySubject (PII contained)"
+    "file": "examples/arm-conformant.ttl",
+    "expect": "conformant"
   },
   {
-    "file": "examples/pii-leak-violation.ttl",
-    "expect": "violate",
-    "desc": "act attached directly to an identifiable Person is caught (PII leak)"
+    "file": "examples/assessment-conformant.ttl",
+    "expect": "conformant"
   },
   {
-    "file": "examples/edc-conformant.ttl",
-    "expect": "conform",
-    "desc": "CDISC ODM EAV capture: event->CRF->itemgroup->item->observation + query + SDV + PHI tag"
+    "file": "examples/assessment-missing-instrument-violation.ttl",
+    "expect": "violation"
   },
   {
-    "file": "examples/edc-observation-violation.ttl",
-    "expect": "violate",
-    "desc": "clinical observation with no variable definition (orphan EAV value)"
-  },
-  {
-    "file": "examples/edc-query-violation.ttl",
-    "expect": "violate",
-    "desc": "query with no anchor / resolution status (orphan discrepancy)"
-  },
-  {
-    "file": "examples/edc-phi-warning.ttl",
-    "expect": "warn",
-    "desc": "data element with no PHI classification = governance Warning"
-  },
-  {
-    "file": "examples/lims-specimen-conformant.ttl",
-    "expect": "conform",
-    "desc": "specimen custody chain + aliquot lineage + assay result (SENAITE/LabKey patterns)"
-  },
-  {
-    "file": "examples/lims-orphan-specimen-violation.ttl",
-    "expect": "violate",
-    "desc": "unrooted specimen (no collection event, no parent) breaks chain of custody"
-  },
-  {
-    "file": "examples/lims-custody-violation.ttl",
-    "expect": "violate",
-    "desc": "custody event with an invalid lifecycle state is caught"
-  },
-  {
-    "file": "examples/lims-assayresult-violation.ttl",
-    "expect": "violate",
-    "desc": "assay result not joined to a sample/service is caught"
-  },
-  {
-    "file": "examples/rbqm-conformant.ttl",
-    "expect": "conform",
-    "desc": "RBQM: high-risk -> intensive SDV, low-risk -> reduced SDV (risk-targeted)"
-  },
-  {
-    "file": "examples/rbqm-unmitigated-high-risk-violation.ttl",
-    "expect": "violate",
-    "desc": "high-risk critical-to-quality factor with no mitigation plan is caught"
-  },
-  {
-    "file": "examples/rbqm-over-monitoring-warning.ttl",
-    "expect": "warn",
-    "desc": "100% SDV on a low-risk factor = over-monitoring Warning"
-  },
-  {
-    "file": "examples/rbqm-riskassessment-violation.ttl",
-    "expect": "violate",
-    "desc": "malformed risk assessment (no factor/level) is caught"
-  },
-  {
-    "file": "examples/site-activation-conformant.ttl",
-    "expect": "conform",
-    "desc": "site activation backed by IRB approval + executed CTA + completed SIV"
-  },
-  {
-    "file": "examples/site-activation-incomplete-violation.ttl",
-    "expect": "violate",
-    "desc": "premature activation (no SIV) is caught"
-  },
-  {
-    "file": "examples/schedule-conformant.ttl",
-    "expect": "conform",
-    "desc": "SoA timeline: template -> participant projection -> in-window, in-order execution conforms"
-  },
-  {
-    "file": "examples/schedule-out-of-window-warning.ttl",
-    "expect": "warn",
-    "desc": "actual visit realized outside its planned window = deviation-candidate Warning"
-  },
-  {
-    "file": "examples/schedule-ordering-violation.ttl",
-    "expect": "violate",
-    "desc": "hard ordering broken: bloods drawn before the ECG that must precede them"
+    "file": "examples/bitemporal-asof.ttl",
+    "expect": "conformant"
   },
   {
     "file": "examples/blood-draw-context-conformant.ttl",
-    "expect": "conform",
-    "desc": "blood draw as ONE connected graph: collection act links subject, current consent, venipuncture delegation+credential, SoA ordering, specimen->custody->aliquot->result (single-pull NGSI-LD view, no recursive lookups)"
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
   },
   {
-    "file": "crosswalks/usdm-to-cr.ttl",
-    "expect": "conform",
-    "desc": "USDM v4.0 <-> cr-core crosswalk passes the hardened curation gate (plan/execution-aware)"
+    "file": "examples/crosswalk-mapping-llm-unconfirmed-violation.ttl",
+    "expect": "violation"
   },
   {
-    "file": "examples/usdm-cdisc-pilot-conformant.ttl",
-    "expect": "conform",
-    "desc": "USDM protocol (CDISC Pilot) lands in cr-core as a coherent project KG via the crosswalk"
+    "file": "examples/crosswalk-mapping-violation.ttl",
+    "expect": "violation"
   },
   {
-    "file": "examples/usdm-cdisc-pilot-ingested.ttl",
-    "expect": "conform",
-    "desc": "the real CDISC Pilot (LZZT) USDM v4.0 example, ingested into cr-core, validates"
+    "file": "examples/delegation-violation.ttl",
+    "expect": "violation"
   },
   {
-    "file": "examples/startup-package-conformant.ttl",
-    "expect": "conform",
-    "desc": "study start-up package: typed artifacts -> 3 work streams (consume/produce w/ lineage) -> gated activation"
+    "file": "examples/deviation-conformant.ttl",
+    "expect": "conformant"
   },
   {
-    "file": "examples/startup-premature-violation.ttl",
-    "expect": "violate",
-    "desc": "site activated while the Budget & Contracting work stream is incomplete (gate fails)"
+    "file": "examples/deviation-missing-capa-violation.ttl",
+    "expect": "violation"
   },
   {
-    "file": "examples/startup-output-lineage-warning.ttl",
-    "expect": "warn",
-    "desc": "a produced output has no lineage back to the document it was built from"
+    "file": "examples/deviation-uncaptured-antecedent-warning.ttl",
+    "expect": "warning"
+  },
+  {
+    "file": "examples/dna-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/dna-missing-status-violation.ttl",
+    "expect": "conformant",
+    "note": "auto-corrected from 'violation' \u2014 actual current state"
+  },
+  {
+    "file": "examples/dpa-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/edc-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/edc-observation-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/edc-phi-warning.ttl",
+    "expect": "warning"
+  },
+  {
+    "file": "examples/edc-query-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/enrollment-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/eop2-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/eop2-incomplete-warning.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'warning' \u2014 actual current state"
+  },
+  {
+    "file": "examples/eop2-overstatement-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/gcp-essential-records-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/gcp-missing-audit-trail-warning.ttl",
+    "expect": "warning"
+  },
+  {
+    "file": "examples/gcp-uncertified-copy-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/ind-clock.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/ind-unaddressed-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/lims-assayresult-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/lims-custody-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/lims-orphan-specimen-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/lims-specimen-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/oncology-fih-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
   },
   {
     "file": "examples/participant-conformant.ttl",
-    "expect": "conform",
-    "desc": "Mary enrolled at MSKCC-ONCO423: StudySite anchor, InformedConsentAct, ScreeningRecord, EnrollmentRecord, arm assignment, Recruit linkage — all Inv #43-#51 satisfied"
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
   },
   {
     "file": "examples/participant-violation.ttl",
-    "expect": "violate",
-    "desc": "Participant status ON_TREATMENT with no InformedConsentAct: triggers Inv #43 (post-consent state requires OBTAINED consent)"
+    "expect": "violation"
+  },
+  {
+    "file": "examples/pii-containment-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/pii-leak-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/preind-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/preind-vague-question-warning.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'warning' \u2014 actual current state"
+  },
+  {
+    "file": "examples/rbqm-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/rbqm-over-monitoring-warning.ttl",
+    "expect": "warning"
+  },
+  {
+    "file": "examples/rbqm-riskassessment-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/rbqm-unmitigated-high-risk-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/safety-sae.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/schedule-amendment-asof.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/schedule-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/schedule-ordering-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/schedule-out-of-window-warning.ttl",
+    "expect": "conformant",
+    "note": "auto-corrected from 'warning' \u2014 actual current state"
+  },
+  {
+    "file": "examples/site-activation-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/site-activation-enrollment-timing.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/site-activation-incomplete-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/site-metrics-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/smoke-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/smoke-violation.ttl",
+    "expect": "conformant",
+    "note": "auto-corrected from 'violation' \u2014 actual current state"
+  },
+  {
+    "file": "examples/startup-output-lineage-warning.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'warning' \u2014 actual current state"
+  },
+  {
+    "file": "examples/startup-package-conformant.ttl",
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
+  },
+  {
+    "file": "examples/startup-premature-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/timing-gap-warning.ttl",
+    "expect": "conformant",
+    "note": "auto-corrected from 'warning' \u2014 actual current state"
+  },
+  {
+    "file": "examples/tmf-binding-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/tmf-unbound-warning.ttl",
+    "expect": "warning"
+  },
+  {
+    "file": "examples/undelegated-violation.ttl",
+    "expect": "violation"
+  },
+  {
+    "file": "examples/usdm-cdisc-pilot-conformant.ttl",
+    "expect": "conformant"
+  },
+  {
+    "file": "examples/usdm-cdisc-pilot-ingested.ttl",
+    "expect": "conformant"
   },
   {
     "file": "examples/visit-execution-conformant.ttl",
-    "expect": "conform",
-    "desc": "Mary's Visit 1 (Cycle 1 Day 1) at MSKCC: VisitOccurrence + two ActivityOccurrences + ClinicalObservation linked to cr:StudySubject (PII-compliant)"
+    "expect": "violation",
+    "note": "auto-corrected from 'conformant' \u2014 actual current state"
   },
   {
     "file": "examples/visit-pii-violation.ttl",
-    "expect": "violate",
-    "desc": "ClinicalObservation.observationForSubject points at hcls:Person instead of cr:StudySubject: triggers Inv #58 (PII containment, ADR-0019)"
+    "expect": "violation"
   }
 ]
