@@ -1,0 +1,187 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/top/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# ============================================================
+#  CR Privacy & Compliance Ontology  (US-600)
+# ============================================================
+
+<https://top.scientix.ai/cr/v1/privacy>
+    a owl:Ontology ;
+    owl:imports <https://top.scientix.ai/cr/v1> ;
+    dcterms:title "CR Privacy & Compliance Ontology" ;
+    dcterms:description "Classes and properties for GDPR-aligned clinical-research data governance: consent withdrawal, lawful basis, DPAs, retention policies, and DSARs." ;
+    owl:versionInfo "1.0.0" .
+
+
+# ============================================================
+#  US-600-001  ConsentWithdrawal
+# ============================================================
+
+cr:ConsentWithdrawal
+    a owl:Class ;
+    rdfs:subClassOf cr:RegulatoryEvent ;
+    rdfs:label "Consent Withdrawal" ;
+    skos:definition "A formal act by which a research participant revokes a previously granted informed consent, terminating authorised processing of their personal data for the study." .
+
+cr:closesConsent
+    a owl:ObjectProperty ;
+    rdfs:domain cr:ConsentWithdrawal ;
+    rdfs:range  cr:InformedConsent ;
+    rdfs:label  "closes consent" ;
+    skos:definition "Links a ConsentWithdrawal to the InformedConsent record it revokes." .
+
+cr:withdrawalReason
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:ConsentWithdrawal ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "withdrawal reason" ;
+    skos:definition "Coded reason for the consent withdrawal. Allowed values: PersonalDecision | AdverseEvent | ProtocolConcern | Other." .
+
+
+# ============================================================
+#  US-600-002  LawfulBasis
+# ============================================================
+
+cr:LawfulBasis
+    a owl:Class ;
+    rdfs:subClassOf top:RegulatoryLaw ;
+    rdfs:label "Lawful Basis" ;
+    skos:definition "A GDPR-recognised legal ground that authorises processing of personal (including special-category) data in a clinical study." .
+
+# Named individuals — GDPR Articles
+cr:Art6_1_a
+    a cr:LawfulBasis ;
+    rdfs:label "GDPR Art 6(1)(a) — Consent" ;
+    skos:notation "Art6_1_a" .
+
+cr:Art9_2_a
+    a cr:LawfulBasis ;
+    rdfs:label "GDPR Art 9(2)(a) — Explicit Consent" ;
+    skos:notation "Art9_2_a" .
+
+cr:Art9_2_j
+    a cr:LawfulBasis ;
+    rdfs:label "GDPR Art 9(2)(j) — Scientific Research" ;
+    skos:notation "Art9_2_j" .
+
+cr:hasLawfulBasis
+    a owl:ObjectProperty ;
+    rdfs:domain cr:ClinicalStudy ;
+    rdfs:range  cr:LawfulBasis ;
+    rdfs:label  "has lawful basis" ;
+    skos:definition "Associates a clinical study with the GDPR lawful basis under which participant data are processed." .
+
+
+# ============================================================
+#  US-600-003  DataProcessingAgreement
+# ============================================================
+
+cr:DataProcessingAgreement
+    a owl:Class ;
+    rdfs:subClassOf top:LegalDocument ;
+    rdfs:label "Data Processing Agreement" ;
+    skos:definition "A contract between a data controller and a data processor that governs the processing of personal data in accordance with GDPR Article 28." .
+
+cr:processorOrg
+    a owl:ObjectProperty ;
+    rdfs:domain cr:DataProcessingAgreement ;
+    rdfs:range  top:Organization ;
+    rdfs:label  "processor organisation" .
+
+cr:controllerOrg
+    a owl:ObjectProperty ;
+    rdfs:domain cr:DataProcessingAgreement ;
+    rdfs:range  top:Organization ;
+    rdfs:label  "controller organisation" .
+
+cr:dpaEffectiveDate
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:DataProcessingAgreement ;
+    rdfs:range  xsd:date ;
+    rdfs:label  "DPA effective date" .
+
+cr:processingPurposes
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:DataProcessingAgreement ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "processing purposes" ;
+    skos:definition "Free-text or coded description of the personal-data processing purposes covered by this DPA." .
+
+cr:governedByDPA
+    a owl:ObjectProperty ;
+    rdfs:domain cr:ClinicalStudy ;
+    rdfs:range  cr:DataProcessingAgreement ;
+    rdfs:label  "governed by DPA" .
+
+
+# ============================================================
+#  US-600-004  RetentionPolicy & DataSubjectRequest
+# ============================================================
+
+cr:RetentionPolicy
+    a owl:Class ;
+    rdfs:subClassOf top:Policy ;
+    rdfs:label "Retention Policy" ;
+    skos:definition "A policy specifying how long personal data from a clinical study must be retained and the regulatory or contractual basis for that period." .
+
+cr:retentionPeriod
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:RetentionPolicy ;
+    rdfs:range  xsd:duration ;
+    rdfs:label  "retention period" .
+
+cr:retentionBasis
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:RetentionPolicy ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "retention basis" ;
+    skos:definition "Regulatory or contractual citation that mandates the retention period (e.g. ICH E6(R2) §5.5.3)." .
+
+cr:hasRetentionPolicy
+    a owl:ObjectProperty ;
+    rdfs:domain cr:ClinicalStudy ;
+    rdfs:range  cr:RetentionPolicy ;
+    rdfs:label  "has retention policy" .
+
+# -- Data Subject Request (DSAR) --
+
+cr:DataSubjectRequest
+    a owl:Class ;
+    rdfs:subClassOf cr:RegulatoryEvent ;
+    rdfs:label "Data Subject Request" ;
+    skos:definition "A request exercised by a data subject under GDPR Chapter III (e.g. access, rectification, erasure, portability)." .
+
+cr:dsrType
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:DataSubjectRequest ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "DSR type" ;
+    skos:definition "Coded request type. Allowed values: Access | Rectification | Erasure | Portability." .
+
+cr:dsrDeadline
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:DataSubjectRequest ;
+    rdfs:range  xsd:date ;
+    rdfs:label  "DSR deadline" ;
+    skos:definition "Statutory deadline by which the controller must respond (GDPR Art 12(3): 1 month, extendable by 2 months)." .
+
+cr:dsrStatus
+    a owl:DatatypeProperty ;
+    rdfs:domain cr:DataSubjectRequest ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "DSR status" ;
+    skos:definition "Fulfilment status of the request. Typical values: Pending | InProgress | Fulfilled | Denied." .
+
+cr:dsrForSubject
+    a owl:ObjectProperty ;
+    rdfs:domain cr:DataSubjectRequest ;
+    rdfs:range  hcls:PersonalData ;
+    rdfs:label  "DSR for subject" ;
+    skos:definition "Links the DSAR to the personal-data record(s) of the requesting data subject." .

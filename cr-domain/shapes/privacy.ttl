@@ -1,0 +1,191 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/top/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# ============================================================
+#  Privacy & Compliance SHACL Shapes  (US-600)
+# ============================================================
+
+
+# -----------------------------------------------------------
+#  US-600-001  ConsentWithdrawal
+# -----------------------------------------------------------
+
+cr:ConsentWithdrawalShape
+    a sh:NodeShape ;
+    sh:targetClass cr:ConsentWithdrawal ;
+    sh:property [
+        sh:path     cr:closesConsent ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class    cr:InformedConsent ;
+        sh:message  "A ConsentWithdrawal must reference exactly one InformedConsent via cr:closesConsent." ;
+    ] ;
+    sh:property [
+        sh:path cr:withdrawalReason ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:in ( "PersonalDecision" "AdverseEvent" "ProtocolConcern" "Other" ) ;
+        sh:message  "cr:withdrawalReason must be one of: PersonalDecision, AdverseEvent, ProtocolConcern, Other." ;
+    ] .
+
+# Post-withdrawal: no new observations may be recorded for a withdrawn subject
+cr:NoObservationAfterWithdrawalShape
+    a sh:NodeShape ;
+    sh:targetClass cr:Observation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Observation recorded after the subject's consent withdrawal date." ;
+        sh:prefixes [
+            sh:declare [
+                sh:prefix    "cr" ;
+                sh:namespace "https://top.scientix.ai/cr/v1#" ;
+            ] ;
+        ] ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this cr:hasSubject      ?subj ;
+                      cr:observationDate ?obsDate .
+                ?withdrawal a cr:ConsentWithdrawal ;
+                            cr:closesConsent/cr:forSubject ?subj ;
+                            cr:eventDate ?wdDate .
+                FILTER ( ?obsDate > ?wdDate )
+            }
+        """ ;
+    ] .
+
+
+# -----------------------------------------------------------
+#  US-600-002  LawfulBasis
+# -----------------------------------------------------------
+
+cr:LawfulBasisShape
+    a sh:NodeShape ;
+    sh:targetClass cr:LawfulBasis ;
+    sh:property [
+        sh:path     rdfs:label ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message  "Each LawfulBasis individual must have at least one rdfs:label." ;
+    ] .
+
+# EU-governed studies must declare a lawful basis
+cr:EUStudyLawfulBasisShape
+    a sh:NodeShape ;
+    sh:targetClass cr:ClinicalStudy ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "EU-governed ClinicalStudy must declare at least one cr:hasLawfulBasis." ;
+        sh:prefixes [
+            sh:declare [
+                sh:prefix    "cr" ;
+                sh:namespace "https://top.scientix.ai/cr/v1#" ;
+            ] ;
+            sh:declare [
+                sh:prefix    "top" ;
+                sh:namespace "https://top.scientix.ai/top/v1#" ;
+            ] ;
+        ] ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this top:jurisdiction ?j .
+                FILTER ( STRSTARTS(STR(?j), "https://top.scientix.ai/top/v1#EU") )
+                FILTER NOT EXISTS { $this cr:hasLawfulBasis ?lb }
+            }
+        """ ;
+    ] .
+
+
+# -----------------------------------------------------------
+#  US-600-003  DataProcessingAgreement
+# -----------------------------------------------------------
+
+cr:DataProcessingAgreementShape
+    a sh:NodeShape ;
+    sh:targetClass cr:DataProcessingAgreement ;
+    sh:property [
+        sh:path     cr:processorOrg ;
+        sh:minCount 1 ;
+        sh:class    top:Organization ;
+        sh:message  "A DPA must reference at least one processor organisation." ;
+    ] ;
+    sh:property [
+        sh:path     cr:controllerOrg ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class    top:Organization ;
+        sh:message  "A DPA must reference exactly one controller organisation." ;
+    ] ;
+    sh:property [
+        sh:path     cr:dpaEffectiveDate ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:date ;
+        sh:message  "A DPA must have exactly one effective date (xsd:date)." ;
+    ] ;
+    sh:property [
+        sh:path     cr:processingPurposes ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message  "A DPA must describe at least one processing purpose." ;
+    ] .
+
+
+# -----------------------------------------------------------
+#  US-600-004  RetentionPolicy & DataSubjectRequest
+# -----------------------------------------------------------
+
+cr:RetentionPolicyShape
+    a sh:NodeShape ;
+    sh:targetClass cr:RetentionPolicy ;
+    sh:property [
+        sh:path     cr:retentionPeriod ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:duration ;
+        sh:message  "RetentionPolicy must specify exactly one retention period as xsd:duration." ;
+    ] ;
+    sh:property [
+        sh:path     cr:retentionBasis ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message  "RetentionPolicy must cite the regulatory or contractual basis for the period." ;
+    ] .
+
+cr:DataSubjectRequestShape
+    a sh:NodeShape ;
+    sh:targetClass cr:DataSubjectRequest ;
+    sh:property [
+        sh:path  cr:dsrType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:in ( "Access" "Rectification" "Erasure" "Portability" ) ;
+        sh:message  "cr:dsrType must be one of: Access, Rectification, Erasure, Portability." ;
+    ] ;
+    sh:property [
+        sh:path     cr:dsrDeadline ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:date ;
+        sh:message  "A DataSubjectRequest must have a response deadline (xsd:date)." ;
+    ] ;
+    sh:property [
+        sh:path     cr:dsrStatus ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message  "A DataSubjectRequest must have a status value." ;
+    ] ;
+    sh:property [
+        sh:path     cr:dsrForSubject ;
+        sh:minCount 1 ;
+        sh:class    hcls:PersonalData ;
+        sh:message  "A DataSubjectRequest must link to at least one hcls:PersonalData record." ;
+    ] .
