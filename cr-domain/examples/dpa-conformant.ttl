@@ -1,30 +1,20 @@
 @prefix ex:  <https://top.scientix.ai/examples/> .
 @prefix cr:  <https://top.scientix.ai/cr/v1#> .
-@prefix top: <https://top.scientix.ai/top/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top: <https://top.scientix.ai/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-# -----------------------------------------------------------
-#  Conformant DataProcessingAgreement example  (US-600-003)
-# -----------------------------------------------------------
+# Conformant DataProcessingAgreement example (US-600-003)
+ex:DPA_CRO_Alpha_2024 a cr:DataProcessingAgreement ;
+    rdfs:label "DPA: Sponsor XYZ — CRO Alpha (2024)" ;
+    cr:controllerOrg ex:SponsorXYZ ;
+    cr:processorOrg ex:CRO_Alpha ;
+    cr:dpaEffectiveDate "2024-01-15"^^xsd:date ;
+    cr:processingPurposes cr:GDPR_Art9_2_j .
 
-ex:Org_CRO_Acme
-    a top:Organization ;
-    rdfs:label "Acme CRO Ltd" .
+ex:SponsorXYZ a cr:Sponsor ;
+    rdfs:label "Sponsor XYZ Pharmaceuticals" .
 
-ex:Org_Sponsor_Pharma
-    a top:Organization ;
-    rdfs:label "Pharma Sponsor Inc." .
-
-ex:DPA_Trial42
-    a cr:DataProcessingAgreement ;
-    cr:controllerOrg      ex:Org_Sponsor_Pharma ;
-    cr:processorOrg       ex:Org_CRO_Acme ;
-    cr:dpaEffectiveDate   "2025-01-15"^^xsd:date ;
-    cr:processingPurposes "Clinical trial data management and biostatistical analysis for Study TRIAL-42 under GDPR Art 28." .
-
-ex:Study_Trial42
-    a cr:ClinicalStudy ;
-    rdfs:label      "TRIAL-42 Phase III" ;
-    cr:governedByDPA ex:DPA_Trial42 ;
-    cr:hasLawfulBasis cr:Art9_2_j .
+ex:CRO_Alpha a hcls:Organization ;
+    rdfs:label "CRO Alpha Clinical Services" .

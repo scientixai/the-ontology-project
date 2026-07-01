@@ -1,18 +1,16 @@
-# overdue_dsar.rq — Data Subject Requests past their deadline and not yet fulfilled.
-# Useful for compliance dashboards and audit trails.
+# overdue_dsar.rq — Data Subject Requests past their deadline and not yet fulfilled (US-600-004).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 
-PREFIX cr:  <https://top.scientix.ai/cr/v1#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-SELECT ?dsr ?dsrType ?deadline ?status ?subject
+SELECT ?dsr ?dsrType ?dsrDeadline ?dsrStatus ?person
 WHERE {
-    ?dsr  a              cr:DataSubjectRequest ;
-          cr:dsrType     ?dsrType ;
-          cr:dsrDeadline ?deadline ;
-          cr:dsrStatus   ?status ;
-          cr:dsrForSubject ?subject .
-
-    FILTER ( ?status NOT IN ("Fulfilled", "Denied") )
-    FILTER ( ?deadline < NOW() )
+  ?dsr a cr:DataSubjectRequest ;
+       cr:dsrType ?dsrType ;
+       cr:dsrDeadline ?dsrDeadline ;
+       cr:dsrStatus ?dsrStatus .
+  FILTER ( ?dsrStatus NOT IN ("fulfilled") )
+  FILTER ( ?dsrDeadline < xsd:date(NOW()) )
+  OPTIONAL { ?dsr cr:dsrForSubject ?person . }
 }
-ORDER BY ASC(?deadline)
+ORDER BY ?dsrDeadline

@@ -1,46 +1,25 @@
-# gdpr_data_map.rq — All graph entities transitively linked to a given hcls:PersonalData node.
-# Use: data mapping / Article 30 Records of Processing Activities report.
-#
-# Bind ?rootPD to the IRI of the target personal-data record before execution.
+# gdpr_data_map.rq — All graph entities transitively linked to a given hcls:Person (US-600-004).
+# Use for GDPR DSAR Art 15 (right of access) — enumerate all personal data held.
+# Substitute ?personIRI with the IRI of the subject of the request.
+PREFIX cr:    <https://top.scientix.ai/cr/v1#>
+PREFIX hcls:  <https://top.scientix.ai/hcls/v1#>
+PREFIX top:   <https://top.scientix.ai/v1#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 
-PREFIX cr:   <https://top.scientix.ai/cr/v1#>
-PREFIX hcls: <https://top.scientix.ai/hcls/v1#>
-PREFIX top:  <https://top.scientix.ai/top/v1#>
-PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT DISTINCT
-    ?entity
-    ?entityType
-    ?study
-    ?lawfulBasis
-    ?dpa
-    ?retentionPeriod
+SELECT DISTINCT ?entity ?entityType ?entityLabel
 WHERE {
-    BIND( <urn:example:pd-subj-001> AS ?rootPD )   # ← replace with target IRI
-
-    # Entities linked to the personal-data record
-    ?entity  ?anyProp  ?rootPD .
-    OPTIONAL { ?entity a ?entityType }
-
-    # Study context
-    OPTIONAL {
-        ?study  a  cr:ClinicalStudy ;
-                cr:hasLawfulBasis  ?lawfulBasis .
-        ?entity  cr:partOfStudy  ?study .
-    }
-
-    # DPA
-    OPTIONAL {
-        ?dpa  a  cr:DataProcessingAgreement .
-        ?study  cr:governedByDPA  ?dpa .
-    }
-
-    # Retention
-    OPTIONAL {
-        ?rp  a  cr:RetentionPolicy ;
-             cr:retentionPeriod  ?retentionPeriod .
-        ?study  cr:hasRetentionPolicy  ?rp .
-    }
+  BIND ( <urn:example:person/P001> AS ?person )
+  {
+    ?entity cr:forSubject ?person .
+  } UNION {
+    ?entity cr:dsrForSubject ?person .
+  } UNION {
+    ?consent cr:forSubject ?person .
+    ?entity cr:closesConsent ?consent .
+  } UNION {
+    ?entity cr:enrolledSubject ?person .
+  }
+  OPTIONAL { ?entity a ?entityType . }
+  OPTIONAL { ?entity rdfs:label ?entityLabel . }
 }
 ORDER BY ?entityType ?entity
