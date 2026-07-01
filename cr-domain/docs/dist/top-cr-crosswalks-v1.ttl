@@ -1,203 +1,571 @@
 @prefix cr: <https://top.scientix.ai/cr/v1#> .
 @prefix cx: <https://top.scientix.ai/crosswalk/v1#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix top: <https://top.scientix.ai/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<https://top.scientix.ai/crosswalk/cdisc> a owl:Ontology ;
-    owl:versionInfo "1.0" ;
-    dcterms:source <https://www.cdisc.org/standards/foundational/cdash>,
-        <https://www.cdisc.org/standards/foundational/sdtm> ;
-    dcterms:title "CR-core to CDISC CDASH/SDTM crosswalk" .
-
-<https://top.scientix.ai/crosswalk/fhir-r4> a owl:Ontology ;
-    owl:versionInfo "1.0" ;
-    dcterms:source <http://hl7.org/fhir/R4/> ;
-    dcterms:title "CR-core to FHIR R4 crosswalk" .
-
-<https://top.scientix.ai/examples/curator-wg> prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> .
-
-<https://top.scientix.ai/examples/map-ae-cdisc> a cx:Mapping ;
+<https://top.scientix.ai/examples/map-ae-aesev> a cx:Mapping ;
+    rdfs:comment "cr:AdverseEvent.severity → SDTM AE.AESEV (MILD/MODERATE/SEVERE)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8.8e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/AE> ;
-    cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:AdverseEvent ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
-
-<https://top.scientix.ai/examples/map-ae-fhir> a cx:Mapping ;
-    cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 9.2e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
     cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/AdverseEvent> ;
-    cx:predicateId skos:exactMatch ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/AE.AESEV> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
     cx:subjectId cr:AdverseEvent ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-arm-cdisc> a cx:Mapping ;
+<https://top.scientix.ai/examples/map-ae-aeterm> a cx:Mapping ;
+    rdfs:comment "cr:AdverseEvent.termText → SDTM AE.AETERM (verbatim term)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8.5e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/Arm> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/AE.AETERM> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:AdverseEvent ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-ae-domain> a cx:Mapping ;
+    rdfs:comment "cr:AdverseEvent maps to the SDTM AE domain (domain-level)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/AE> ;
     cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:AdverseEvent ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-ae-llt> a cx:Mapping ;
+    rdfs:comment "cr:AdverseEvent instances are coded at the Lowest Level Term (LLT); IRI pattern: meddra:LLT/{llt_code}" ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.75 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.meddra.org/term/LLT> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:subjectId cr:AdverseEvent ;
+    cx:targetSchemaVersion "26.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-ae-oae> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.95 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:objectId <http://purl.obolibrary.org/obo/OAE_0000001> ;
+    cx:predicateId skos:exactMatch ;
+    cx:retrievedFrom "raw.githubusercontent.com/OAE-ontology/OAE/master/oae.owl @2026-06-20" ;
+    cx:subjectId cr:AdverseEvent ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-20T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-ae-pt> a cx:Mapping ;
+    rdfs:comment "cr:AdverseEvent is reported at Preferred Term (PT) level for regulatory submission; IRI pattern: meddra:PT/{pt_code}" ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.meddra.org/term/PT> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:subjectId cr:AdverseEvent ;
+    cx:targetSchemaVersion "26.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-ae-soc> a cx:Mapping ;
+    rdfs:comment "System Organ Class (SOC) is the broadest grouping; IRI pattern: meddra:SOC/{soc_code}" ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.70 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.meddra.org/term/SOC> ;
+    cx:predicateId skos:broadMatch ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:subjectId cr:AdverseEvent ;
+    cx:targetSchemaVersion "26.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-consent-obi> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:objectId <http://purl.obolibrary.org/obo/OBI_0000810> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "raw.githubusercontent.com/obi-ontology/obi/master/obi.owl @2026-06-20" ;
+    cx:subjectId cr:InformedConsent ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-20T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-dlt-pt> a cx:Mapping ;
+    rdfs:comment "Dose-limiting toxicity is a subtype of AE; coded at PT level; IRI pattern: meddra:PT/{pt_code}" ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.meddra.org/term/PT> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:subjectId cr:DoselimitingToxicity ;
+    cx:targetSchemaVersion "26.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-dm-actarm> a cx:Mapping ;
+    rdfs:comment "cr:Arm.label → SDTM DM.ACTARM (actual arm description, execution-time)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/DM.ACTARM> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
     cx:subjectId cr:Arm ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-consent-cdisc> a cx:Mapping ;
+<https://top.scientix.ai/examples/map-dm-domain> a cx:Mapping ;
+    rdfs:comment "cr:Subject maps to the SDTM DM (Demographics) domain (domain-level)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8.7e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/InformedConsent> ;
-    cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:InformedConsent ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
-
-<https://top.scientix.ai/examples/map-consent-fhir> a cx:Mapping ;
-    cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8.5e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
     cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/Consent> ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/DM> ;
     cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:InformedConsent ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:Subject ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-eligibility-cdisc> a cx:Mapping ;
+<https://top.scientix.ai/examples/map-ds-domain> a cx:Mapping ;
+    rdfs:comment "cr:SubjectDisposition (withdrawal, completion) maps to SDTM DS domain." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/InclusionExclusionCriteria> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/DS> ;
     cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:SubjectDisposition ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-ex-domain> a cx:Mapping ;
+    rdfs:comment "cr:Administration (executed dosing event) → SDTM EX domain (Exposure). relatedMatch because cr adds bitemporal provenance." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/EX> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:Administration ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-protocol-obi> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:objectId <http://purl.obolibrary.org/obo/OBI_0000272> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "raw.githubusercontent.com/obi-ontology/obi/master/obi.owl @2026-06-20" ;
+    cx:subjectId cr:ProtocolVersion ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-20T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-sae-seriousness> a cx:Mapping ;
+    rdfs:comment "cr:SeriousAdverseEvent seriousness flags (death, hospitalization, life-threatening, etc.) map to MedDRA seriousnessCriteria enumeration" ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.meddra.org/term/seriousnessCriteria> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:subjectId cr:SeriousAdverseEvent ;
+    cx:targetSchemaVersion "26.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-study-obi> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-20"^^xsd:date ;
+    cx:objectId <http://purl.obolibrary.org/obo/OBI_0000066> ;
+    cx:predicateId skos:broadMatch ;
+    cx:retrievedFrom "raw.githubusercontent.com/obi-ontology/obi/master/obi.owl @2026-06-20" ;
+    cx:subjectId cr:Study ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-20T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-sv-domain> a cx:Mapping ;
+    rdfs:comment "cr:PlannedEncounter (planned) and its execution record map to SDTM SV domain." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/SV> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:PlannedEncounter ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-sv-svstdtc> a cx:Mapping ;
+    rdfs:comment "cr:PlannedEncounter.actualStartDate → SDTM SV.SVSTDTC (visit start date/time, ISO 8601)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/SV.SVSTDTC> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:subjectId cr:PlannedEncounter ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-activity> a cx:Mapping ;
+    rdfs:comment "USDM Activity is a reusable planned-activity definition; cr:Capability is the delegable action-type a performer must be authorized for. Related, not equivalent." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.60 ;
+    cx:justification <https://w3id.org/semapv/vocab/LogicalReasoning> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Activity> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Capability ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-administration> a cx:Mapping ;
+    rdfs:comment "USDM Administration is a PLANNED regimen (dose/route/frequency, design-time); cr:Administration is the EXECUTED, bitemporal dosing event. Same clinical act across the plan/execution boundary — relatedMatch, NOT the exactMatch(0.95) of the early analysis." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.50 ;
+    cx:justification <https://w3id.org/semapv/vocab/LogicalReasoning> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Administration> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Administration ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-amendment> a cx:Mapping ;
+    rdfs:comment "cr:ProtocolAmendment (bitemporal amendment record) closeMatch usdm:Amendment (design-time amendment entity)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Amendment> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:ProtocolAmendment ;
+    cx:targetSchemaVersion "4.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-arm> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/StudyArm> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Arm ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-biomedconceptproperty> a cx:Mapping ;
+    rdfs:comment "Property-level mapping: cr:DataElementProperty → usdm:BiomedicalConceptProperty (individual property within a BiomedicalConcept)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.82 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/BiomedicalConceptProperty> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:DataElementProperty ;
+    cx:targetSchemaVersion "4.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-cohort> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/StudyCohort> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Cohort ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-dataelement> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.80 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/BiomedicalConcept> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:DataElementDef ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-eligibility> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.95 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/EligibilityCriterion> ;
+    cx:predicateId skos:exactMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
     cx:subjectId cr:EligibilityCriterion ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-enrollment-cdisc> a cx:Mapping ;
+<https://top.scientix.ai/examples/ux-encounter> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8.5e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/SubjectEnrollment> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Encounter> ;
     cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:PlannedEncounter ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-endpoint> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Endpoint> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Endpoint ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-enrollment> a cx:Mapping ;
+    rdfs:comment "USDM SubjectEnrollment is a PLANNED enrollment QUANTITY by cohort/site (carries 'quantity', design-time); cr:Enrollment is the EXECUTED bitemporal Person<->Subject act. relatedMatch, NOT the exactMatch(1.0) of the early analysis." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.40 ;
+    cx:justification <https://w3id.org/semapv/vocab/LogicalReasoning> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/SubjectEnrollment> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
     cx:subjectId cr:Enrollment ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-enrollment-fhir> a cx:Mapping ;
+<https://top.scientix.ai/examples/ux-estimand> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 9e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/ResearchSubject> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Estimand> ;
     cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:Enrollment ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Estimand ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-observation-cdisc> a cx:Mapping ;
+<https://top.scientix.ai/examples/ux-estimandpopulation> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 9.2e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/Finding> ;
+    cx:confidence 0.88 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/EstimandPopulation> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:EstimandPopulation ;
+    cx:targetSchemaVersion "4.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-estimandvariable> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.88 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/EstimandVariable> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:EstimandVariable ;
+    cx:targetSchemaVersion "4.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-intercurrenteventstrategy> a cx:Mapping ;
+    rdfs:comment "USDM IntercurrentEventStrategy (ICH E9 R1): treatment policy, hypothetical, composite, while-on-treatment, principal stratum." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/IntercurrentEventStrategy> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:IntercurrentEventStrategy ;
+    cx:targetSchemaVersion "4.0" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-organization> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Organization> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId hcls:Organization ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-protocolversion> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/StudyVersion> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:ProtocolVersion ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-scheduledactivity> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/ScheduledActivityInstance> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:PlannedActivity ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-scheduletimeline> a cx:Mapping ;
+    rdfs:comment "USDM ScheduleTimeline is static design; cr:ScheduleTimeline is bitemporal (amendment as-of) and reconciled against execution. The design content corresponds; the temporal capability is a TOP extension." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/ScheduleTimeline> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:ScheduleTimeline ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/ux-site> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
+    cx:author <https://top.scientix.ai/examples/curator-wg> ;
+    cx:confidence 0.95 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/StudySite> ;
     cx:predicateId skos:exactMatch ;
-    cx:subjectId hcls:Observation ;
-    cx:targetSchemaVersion "SDTM IG 3.4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:StudySite ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-observation-fhir> a cx:Mapping ;
+<https://top.scientix.ai/examples/ux-study> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 9e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/Observation> ;
-    cx:predicateId skos:exactMatch ;
-    cx:subjectId hcls:Observation ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
-
-<https://top.scientix.ai/examples/map-person-fhir> a cx:Mapping ;
-    cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 7.5e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/Patient> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Study> ;
     cx:predicateId skos:closeMatch ;
-    cx:subjectId hcls:Person ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
-
-<https://top.scientix.ai/examples/map-study-cdisc> a cx:Mapping ;
-    cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 9e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/Study> ;
-    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
     cx:subjectId cr:Study ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-study-fhir> a cx:Mapping ;
+<https://top.scientix.ai/examples/ux-timing> a cx:Mapping ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8.5e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/ResearchStudy> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-06-23"^^xsd:date ;
+    cx:objectId <https://w3id.org/cdisc/usdm/v4/Timing> ;
     cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:Study ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
+    cx:retrievedFrom "DDF-RA USDM_API.json @ v4.0.0 (sha dc4303bc)" ;
+    cx:subjectId cr:Timing ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-06-23T00:00:00+00:00"^^xsd:dateTime .
 
-<https://top.scientix.ai/examples/map-visit-cdisc> a cx:Mapping ;
-    cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-06-24"^^xsd:date ;
-    cx:objectId <https://www.cdisc.org/standards/foundational/cdash/Visit> ;
-    cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:Visit ;
-    cx:targetSchemaVersion "CDASH 2.1" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-06-24T00:00:00Z"^^xsd:dateTime .
-
-<https://top.scientix.ai/examples/map-visit-fhir> a cx:Mapping ;
-    cx:author <https://top.scientix.ai/examples/curator-wg> ;
-    cx:confidence 8e-01 ;
-    cx:justification semapv:ManualMappingCuration ;
-    cx:mappingDate "2026-07-01"^^xsd:date ;
-    cx:objectId <http://hl7.org/fhir/Encounter> ;
-    cx:predicateId skos:closeMatch ;
-    cx:subjectId cr:Visit ;
-    cx:targetSchemaVersion "R4" ;
-    cx:verificationStatus "validated" ;
-    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime .
+<https://top.scientix.ai/examples/curator-wg> a prov:Agent ;
+    rdfs:label "TOP CR curation WG" .
