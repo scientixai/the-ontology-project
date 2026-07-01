@@ -1194,6 +1194,13 @@ cr:assessedAt a owl:ObjectProperty ;
     rdfs:range cr:Visit ;
     top:flavor "Additive" .
 
+cr:assessedBy a owl:ObjectProperty ;
+    rdfs:label "assessed by" ;
+    rdfs:comment "The reporting physician who made this causality assessment." ;
+    rdfs:domain cr:CausalityAssessment ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
 cr:assessesFactor a owl:ObjectProperty ;
     rdfs:domain cr:RiskAssessment ;
     rdfs:range cr:CriticalToQualityFactor ;
@@ -1275,6 +1282,13 @@ cr:capturedDuring a owl:ObjectProperty ;
     rdfs:range cr:StudyEvent ;
     top:flavor "Additive" .
 
+cr:causalityVerdict a owl:DatatypeProperty ;
+    rdfs:label "causality verdict" ;
+    rdfs:comment "Coded causality judgment: unrelated, possible, probable, or definite (ICH E2A)." ;
+    rdfs:domain cr:CausalityAssessment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:concernsStudy a owl:ObjectProperty ;
     rdfs:label "concerns study" ;
     rdfs:comment "The study the regulatory interaction concerns." ;
@@ -1322,6 +1336,26 @@ cr:credentialOf a owl:ObjectProperty ;
 cr:cta a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:ClinicalTrialAgreement ;
+    top:flavor "Additive" .
+
+cr:ctcaeGrade a owl:DatatypeProperty ;
+    rdfs:label "CTCAE grade" ;
+    rdfs:comment "NCI CTCAE severity grade (integer 1–5)." ;
+    rdfs:domain cr:AdverseEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:ctcaeTerm a owl:ObjectProperty ;
+    rdfs:label "CTCAE term" ;
+    rdfs:comment "IRI reference to the NCI Thesaurus CTCAE term." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
+cr:ctcaeVersion a owl:DatatypeProperty ;
+    rdfs:label "CTCAE version" ;
+    rdfs:comment "Version of CTCAE used for grading (e.g. '5.0')." ;
+    rdfs:domain cr:AdverseEvent ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:dataQueryRate a owl:DatatypeProperty ;
@@ -1736,6 +1770,25 @@ cr:measuresEndpoint a owl:ObjectProperty ;
     rdfs:range cr:Endpoint ;
     top:flavor "Additive" .
 
+cr:meddraDictionaryVersion a owl:DatatypeProperty ;
+    rdfs:label "MedDRA dictionary version" ;
+    rdfs:comment "Version of MedDRA used for coding (e.g. '26.0')." ;
+    rdfs:domain cr:AdverseEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:meddraPreferredTerm a owl:ObjectProperty ;
+    rdfs:label "MedDRA preferred term" ;
+    rdfs:comment "IRI reference to a MedDRA Preferred Term (PT). Does not reproduce licensed content." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
+cr:meddraSystemOrganClass a owl:ObjectProperty ;
+    rdfs:label "MedDRA system organ class" ;
+    rdfs:comment "IRI reference to a MedDRA System Organ Class (SOC). Does not reproduce licensed content." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
 cr:meetingAgency a owl:ObjectProperty ;
     rdfs:label "meeting agency" ;
     rdfs:comment "The regulatory agency conducting the meeting (e.g. FDA, EMA, PMDA)." ;
@@ -1982,6 +2035,13 @@ cr:replyTo a owl:ObjectProperty ;
     rdfs:range cr:Query ;
     top:flavor "Additive" .
 
+cr:reportingDeadline a owl:DatatypeProperty ;
+    rdfs:label "reporting deadline" ;
+    rdfs:comment "Regulatory reporting deadline computed from cr:sponsorAwareAt + 7 or 15 days per ICH E2A." ;
+    rdfs:domain cr:SUSAR ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
 cr:reportsEvent a owl:ObjectProperty ;
     rdfs:domain cr:SafetyReport ;
     rdfs:range cr:SeriousAdverseEvent ;
@@ -2083,10 +2143,30 @@ cr:streamStatus a owl:DatatypeProperty ;
     rdfs:domain cr:WorkStream ;
     top:flavor "Additive" .
 
+cr:submissionDate a owl:DatatypeProperty ;
+    rdfs:label "submission date" ;
+    rdfs:comment "Date the SUSAR was submitted to the regulator." ;
+    rdfs:domain cr:SUSAR ;
+    rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
 cr:submittedAt a owl:DatatypeProperty ;
     rdfs:label "submitted at" ;
     rdfs:domain cr:SafetyReport ;
     rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:submittedTo a owl:ObjectProperty ;
+    rdfs:label "submitted to" ;
+    rdfs:comment "The regulatory agency this SUSAR was submitted to." ;
+    rdfs:domain cr:SUSAR ;
+    top:flavor "Additive" .
+
+cr:susarUnexpected a owl:DatatypeProperty ;
+    rdfs:label "SUSAR unexpected" ;
+    rdfs:comment "Whether the reaction was unexpected per the current Investigator's Brochure." ;
+    rdfs:domain cr:SUSAR ;
+    rdfs:range xsd:boolean ;
     top:flavor "Additive" .
 
 cr:targetAccrual a owl:DatatypeProperty ;
@@ -3156,6 +3236,11 @@ cr:Capability a owl:Class ;
     rdfs:comment "A delegable permission to perform a trial task (e.g. obtain informed consent)." ;
     rdfs:subClassOf top:Constraint .
 
+cr:CausalityAssessment a owl:Class ;
+    rdfs:label "Causality Assessment" ;
+    rdfs:comment "Physician's coded causality judgment for an adverse event, recorded with provenance and rationale." ;
+    rdfs:subClassOf top:Conclusion .
+
 cr:CertifiedCopy a owl:Class ;
     rdfs:label "Certified Copy" ;
     rdfs:isDefinedBy <https://www.ich.org/page/efficacy-guidelines> ;
@@ -3265,11 +3350,6 @@ cr:RiskSignal a owl:Class ;
     rdfs:subClassOf top:Evidence,
         top:Versioned .
 
-cr:SeriousAdverseEvent a owl:Class ;
-    rdfs:label "Serious Adverse Event" ;
-    rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting)." ;
-    rdfs:subClassOf cr:AdverseEvent .
-
 cr:Sponsor a owl:Class ;
     rdfs:label "Sponsor" ;
     rdfs:comment "The organization that initiates and is accountable for the trial." ;
@@ -3330,6 +3410,11 @@ cr:SafetyReport a owl:Class ;
     rdfs:comment "Expedited report of an SAE to the regulator." ;
     rdfs:subClassOf top:Evidence,
         top:Versioned .
+
+cr:SeriousAdverseEvent a owl:Class ;
+    rdfs:label "Serious Adverse Event" ;
+    rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting)." ;
+    rdfs:subClassOf cr:AdverseEvent .
 
 cr:SourceDocument a owl:Class ;
     rdfs:label "Source Document" ;
@@ -3416,6 +3501,11 @@ cr:PlannedActivity a owl:Class ;
     rdfs:label "Planned Activity" ;
     rdfs:comment "A planned activity within an encounter (USDM ScheduledActivityInstance) — e.g. ECG, blood draw, PRO. Positioned by a cr:Timing and/or an ordering edge (cr:precedes)." ;
     rdfs:subClassOf top:Constraint .
+
+cr:SUSAR a owl:Class ;
+    rdfs:label "SUSAR" ;
+    rdfs:comment "Suspected Unexpected Serious Adverse Reaction — requires expedited regulatory reporting (7 days fatal/life-threatening, 15 days other)." ;
+    rdfs:subClassOf cr:SeriousAdverseEvent .
 
 cr:ScheduleTimeline a owl:Class ;
     rdfs:label "Schedule Timeline" ;
@@ -3725,21 +3815,10 @@ cr:OversightSubPhase a hcls:Phase ;
     rdfs:label "Oversight" ;
     rdfs:comment "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality." .
 
-cr:AdverseEvent a owl:Class ;
-    rdfs:label "Adverse Event" ;
-    rdfs:comment "An untoward medical occurrence in a trial subject." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned .
-
 cr:Investigator a owl:Class ;
     rdfs:label "Investigator" ;
     rdfs:comment "A licensed clinician designated as PI or Sub-I at a Site. Holds legal responsibility for trial conduct, GCP compliance, AE causality assessment, CRF sign-off, and delegation of authority. OOUX persona aliases: PI, Investigator, Site PI." ;
     rdfs:subClassOf hcls:Clinician .
-
-hcls:Person a owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
-    rdfs:subClassOf top:Agent .
 
 cr:DataCollectionSubPhase a hcls:Phase ;
     rdfs:label "Data Collection" ;
@@ -3750,6 +3829,17 @@ cr:VisitOccurrence a owl:Class ;
     rdfs:comment "An actual protocol visit: what DID happen. Anchored at Participant (1..1) and StudySite (1..1). Optionally definedBy a VisitDefinition (absent for unscheduled visits). FHIR R5: Encounter. SDTM: SV domain (SVSTDTC / SVENDTC / VISITNUM / VISIT). OMOP: VISIT_OCCURRENCE." ;
     rdfs:subClassOf prov:Activity,
         top:Temporal,
+        top:Versioned .
+
+hcls:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
+    rdfs:subClassOf top:Agent .
+
+cr:AdverseEvent a owl:Class ;
+    rdfs:label "Adverse Event" ;
+    rdfs:comment "An untoward medical occurrence in a trial subject." ;
+    rdfs:subClassOf top:Outcome,
         top:Versioned .
 
 hcls:JobToBeDone a owl:Class ;

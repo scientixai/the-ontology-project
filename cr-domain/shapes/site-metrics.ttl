@@ -1,0 +1,21 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# SiteMetrics completeness shape (US-200-005).
+
+cr:SiteMetricsRequiredShape a sh:NodeShape ;
+    rdfs:label "Site metrics snapshot completeness" ;
+    sh:targetClass cr:SiteMetrics ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:metricsForSite ;
+        sh:minCount 1 ;
+        sh:message "cr:SiteMetrics must link to a cr:StudySite via cr:metricsForSite." ;
+    ] ;
+    sh:property [
+        sh:path top:observedAt ;
+        sh:minCount 1 ;
+        sh:message "cr:SiteMetrics must carry top:observedAt (the snapshot date)." ;
+    ] .

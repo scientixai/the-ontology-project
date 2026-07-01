@@ -1,0 +1,23 @@
+@prefix ex:  <https://top.scientix.ai/examples/> .
+@prefix cr:  <https://top.scientix.ai/cr/v1#> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Conformant: cr:SiteMetrics snapshot for a study site (US-200-005).
+# Expected: validates cleanly against cr:SiteMetricsRequiredShape.
+
+ex:site-001 a cr:StudySite ;
+    top:identifier "urn:site:MAYO-001"^^xsd:anyURI ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:site-metrics-q1-2026 a cr:SiteMetrics ;
+    top:identifier "urn:metrics:MAYO-001-Q1-2026"^^xsd:anyURI ;
+    top:observedAt "2026-04-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "final" ;
+    cr:metricsForSite ex:site-001 ;
+    cr:screenFailureRate "0.18"^^xsd:decimal ;
+    cr:enrollmentRate "3.2"^^xsd:decimal ;
+    cr:dataQueryRate "0.04"^^xsd:decimal ;
+    cr:daysToQueryResolution "6.5"^^xsd:decimal ;
+    cr:protocolDeviationRate "0.02"^^xsd:decimal .

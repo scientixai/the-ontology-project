@@ -106,6 +106,18 @@ cr:AssessmentResultUnitShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:Assessment .
 
+cr:CTCAEGradeRangeShape a sh:NodeShape ;
+    rdfs:label "CTCAE grade must be 1–5" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "cr:ctcaeGrade must be an integer between 1 and 5 inclusive." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .
+              FILTER ( ?g < 1 || ?g > 5 )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:ctcaeGrade .
+
 cr:CapabilityDelegationShape a sh:NodeShape ;
     rdfs:label "Capability requires delegation (hard)" ;
     sh:severity sh:Violation ;
@@ -122,6 +134,15 @@ cr:CapabilityDelegationShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetSubjectsOf cr:exercisesCapability .
+
+cr:CausalityVerdictShape a sh:NodeShape ;
+    rdfs:label "Causality verdict must be a coded value" ;
+    sh:property [ sh:in ( "unrelated" "possible" "probable" "definite" ) ;
+            sh:message "cr:causalityVerdict must be one of: unrelated, possible, probable, definite." ;
+            sh:minCount 1 ;
+            sh:path cr:causalityVerdict ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:CausalityAssessment .
 
 cr:CertifiedCopyShape a sh:NodeShape ;
     sh:property [ sh:class cr:SourceDocument ;
@@ -194,6 +215,21 @@ cr:CustodyEventShape a sh:NodeShape ;
             sh:path cr:specimen ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:CustodyEvent .
+
+cr:DLTGradeShape a sh:NodeShape ;
+    rdfs:label "DLT requires CTCAE grade >= 3" ;
+    sh:property [ sh:message "cr:DoseLimitingToxicity must declare a CTCAE grade." ;
+            sh:minCount 1 ;
+            sh:path cr:ctcaeGrade ] ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "cr:DoseLimitingToxicity must have cr:ctcaeGrade of 3, 4, or 5 to meet DLT criteria." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .
+              FILTER ( ?g < 3 )
+            }
+        """ ] ;
+    sh:targetClass cr:DoseLimitingToxicity .
 
 cr:DataElementPHIShape a sh:NodeShape ;
     sh:property [ sh:in ( "NotPHI" "LimitedPHI" "FullPHI" "Restricted" ) ;
@@ -512,6 +548,34 @@ cr:RiskAssessmentShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:RiskAssessment .
 
+cr:SAECausalityShape a sh:NodeShape ;
+    rdfs:label "Serious AE should have a causality assessment" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "cr:SeriousAdverseEvent lacks a cr:CausalityAssessment concluding about it." ;
+            sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS {
+                ?ca a <https://top.scientix.ai/cr/v1#CausalityAssessment> ;
+                     <https://top.scientix.ai/v1#concludesAbout> $this .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:SeriousAdverseEvent .
+
+cr:SUSARDeadlineShape a sh:NodeShape ;
+    rdfs:label "SUSAR submission deadline" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "SUSAR submitted after regulatory deadline (submissionDate > reportingDeadline)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#submissionDate> ?sub ;
+                    <https://top.scientix.ai/cr/v1#reportingDeadline> ?dl .
+              BIND(xsd:date(?dl) AS ?dlDate)
+              FILTER ( ?sub > ?dlDate )
+            }
+        """ ] ;
+    sh:targetClass cr:SUSAR .
+
 cr:ScreenFailedRequiresRecordShape a sh:NodeShape ;
     rdfs:label "SCREEN_FAILED requires ScreeningRecord (hard)" ;
     sh:severity sh:Violation ;
@@ -526,6 +590,14 @@ cr:ScreenFailedRequiresRecordShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetClass cr:Participant .
+
+cr:SeriousAEMedDRAShape a sh:NodeShape ;
+    rdfs:label "Serious AE should carry MedDRA preferred term" ;
+    sh:property [ sh:message "cr:SeriousAdverseEvent should carry a MedDRA preferred term (cr:meddraPreferredTerm)." ;
+            sh:minCount 1 ;
+            sh:path cr:meddraPreferredTerm ] ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:SeriousAdverseEvent .
 
 cr:SignificantDeviationCAPAShape a sh:NodeShape ;
     sh:severity sh:Violation ;

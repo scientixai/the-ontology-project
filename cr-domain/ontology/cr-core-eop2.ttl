@@ -2,6 +2,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 cr:analyzedUnder a owl:ObjectProperty ;
     rdfs:domain cr:EndpointResult ;
@@ -38,7 +39,30 @@ cr:measuresEndpoint a owl:ObjectProperty ;
 
 cr:meetingType a owl:DatatypeProperty ;
     rdfs:label "meeting type" ;
+    rdfs:comment "Coded type: Pre-IND, EOP1, EOP2, Type-A, Type-B, Type-C." ;
     rdfs:domain cr:RegulatoryInteraction ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+# RegulatoryInteraction enrichment (US-200-004)
+cr:meetingAgency a owl:ObjectProperty ;
+    rdfs:label "meeting agency" ;
+    rdfs:comment "The regulatory agency conducting the meeting (e.g. FDA, EMA, PMDA)." ;
+    rdfs:domain cr:RegulatoryInteraction ;
+    top:flavor "Additive" .
+
+cr:meetingDate a owl:DatatypeProperty ;
+    rdfs:label "meeting date" ;
+    rdfs:comment "The scheduled or actual date of the regulatory meeting." ;
+    rdfs:domain cr:RegulatoryInteraction ;
+    rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
+cr:meetingOutcome a owl:DatatypeProperty ;
+    rdfs:label "meeting outcome" ;
+    rdfs:comment "Summary of the meeting outcome or FDA response (e.g. 'agreed on Phase 3 design', 'additional data requested')." ;
+    rdfs:domain cr:RegulatoryInteraction ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:perEstimand a owl:ObjectProperty ;

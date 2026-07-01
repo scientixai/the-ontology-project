@@ -143,6 +143,19 @@
     ]
   },
   {
+    "@id": "_:cb14dcfc16ce9fad2423deaac47c6ab5a3cd864586eece468dd417b22399a1e45a7",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "SUSAR submitted after regulatory deadline (submissionDate > reportingDeadline)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#submissionDate> ?sub ;\n                    <https://top.scientix.ai/cr/v1#reportingDeadline> ?dl .\n              BIND(xsd:date(?dl) AS ?dlDate)\n              FILTER ( ?sub > ?dlDate )\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb152d4881209cdbe7ea68b7ac8e8faaf50245e12603c6dde860513ff04d78c0188",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -675,6 +688,25 @@
     ]
   },
   {
+    "@id": "_:cb1d5c87f9e95fd3b602cfbc8500c5d9e3655f18ffbe1cdb7de812447d95bd7f597",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DoseLimitingToxicity must declare a CTCAE grade."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ctcaeGrade"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1da8ee017e86038dbd3ccded55d8d4c844a1d66dc3d3f94ccb2d590ec901eb209",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -684,6 +716,43 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this a <https://top.scientix.ai/cr/v1#NonclinicalFinding> .\n              FILTER NOT EXISTS {\n                ?sa a <https://top.scientix.ai/cr/v1#SafetyAssessment> ;\n                    <https://top.scientix.ai/cr/v1#addressesFinding> $this .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1dc9cc789e0635590d35f834a5208029273e7e5e9343d354110ef3ba99fac7703",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "definite"
+          },
+          {
+            "@value": "possible"
+          },
+          {
+            "@value": "probable"
+          },
+          {
+            "@value": "unrelated"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:causalityVerdict must be one of: unrelated, possible, probable, definite."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#causalityVerdict"
       }
     ]
   },
@@ -1439,6 +1508,25 @@
     ]
   },
   {
+    "@id": "_:cb2611c9cc5248394ebc72733f90fa6ed6f0fc5d76e9f972c5b0ec07a84fcc4c99f",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:SeriousAdverseEvent should carry a MedDRA preferred term (cr:meddraPreferredTerm)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#meddraPreferredTerm"
+      }
+    ]
+  },
+  {
     "@id": "_:cb266ad46d80ac22688396d67a210defa045039917e096f0ec1b615393d0ec89bd9",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2144,6 +2232,19 @@
     ]
   },
   {
+    "@id": "_:cb90b1a505a038831b9df7a16af04b2c6c731c4db823239d0820bb6671d8d25322",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:ctcaeGrade must be an integer between 1 and 5 inclusive."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .\n              FILTER ( ?g < 1 || ?g > 5 )\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb9fdeefc9431e0f1510e342c2eec201fabbac3a2e14e1bf5df053969b06a783a7",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2184,6 +2285,19 @@
     ]
   },
   {
+    "@id": "_:cbc67162c71828f1cafe687ba91b15423271e8d31a82119dc41a8d11c0607dc2db",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:SeriousAdverseEvent lacks a cr:CausalityAssessment concluding about it."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              FILTER NOT EXISTS {\n                ?ca a <https://top.scientix.ai/cr/v1#CausalityAssessment> ;\n                     <https://top.scientix.ai/v1#concludesAbout> $this .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cbcd4c95a7aee25cc953501ecc9cb29652c92f9106af3e3d02c26f8b8d7abb7748",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2212,6 +2326,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#assessmentInstrument"
+      }
+    ]
+  },
+  {
+    "@id": "_:cbe5f75c5d55e78cdb106daa781c7df64ab4f15ff811c077e38380d9524d22951a",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DoseLimitingToxicity must have cr:ctcaeGrade of 3, 4, or 5 to meet DLT criteria."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .\n              FILTER ( ?g < 3 )\n            }\n        "
       }
     ]
   },
@@ -2405,6 +2532,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#CTCAEGradeRangeShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "CTCAE grade must be 1\u20135"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb90b1a505a038831b9df7a16af04b2c6c731c4db823239d0820bb6671d8d25322"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetSubjectsOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ctcaeGrade"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#CapabilityDelegationShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2427,6 +2580,32 @@
     "http://www.w3.org/ns/shacl#targetSubjectsOf": [
       {
         "@id": "https://top.scientix.ai/cr/v1#exercisesCapability"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#CausalityVerdictShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Causality verdict must be a coded value"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1dc9cc789e0635590d35f834a5208029273e7e5e9343d354110ef3ba99fac7703"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CausalityAssessment"
       }
     ]
   },
@@ -2577,6 +2756,37 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#CustodyEvent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DLTGradeShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "DLT requires CTCAE grade >= 3"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1d5c87f9e95fd3b602cfbc8500c5d9e3655f18ffbe1cdb7de812447d95bd7f597"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cbe5f75c5d55e78cdb106daa781c7df64ab4f15ff811c077e38380d9524d22951a"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DoseLimitingToxicity"
       }
     ]
   },
@@ -3178,6 +3388,58 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#SAECausalityShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Serious AE should have a causality assessment"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cbc67162c71828f1cafe687ba91b15423271e8d31a82119dc41a8d11c0607dc2db"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SeriousAdverseEvent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SUSARDeadlineShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "SUSAR submission deadline"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb14dcfc16ce9fad2423deaac47c6ab5a3cd864586eece468dd417b22399a1e45a7"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SUSAR"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#ScreenFailedRequiresRecordShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -3200,6 +3462,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Participant"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SeriousAEMedDRAShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Serious AE should carry MedDRA preferred term"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb2611c9cc5248394ebc72733f90fa6ed6f0fc5d76e9f972c5b0ec07a84fcc4c99f"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SeriousAdverseEvent"
       }
     ]
   },

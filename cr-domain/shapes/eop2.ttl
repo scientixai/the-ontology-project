@@ -1,6 +1,7 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 # OVERSTATEMENT GUARD (Violation): an efficacy result presented anywhere must trace
 # to its endpoint, its pre-specified estimand, and the SAP it was analyzed under.
@@ -14,6 +15,22 @@ cr:EndpointResultTraceShape a sh:NodeShape ;
         sh:message "EndpointResult must trace to a pre-specified estimand." ] ;
     sh:property [ sh:path cr:analyzedUnder ; sh:minCount 1 ; sh:class cr:StatisticalAnalysisPlan ;
         sh:message "EndpointResult must trace to the SAP it was analyzed under." ] .
+
+# RegulatoryInteraction required fields (US-200-004)
+cr:RegulatoryInteractionRequiredShape a sh:NodeShape ;
+    rdfs:label "Regulatory interaction required fields" ;
+    sh:targetClass cr:RegulatoryInteraction ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:meetingDate ;
+        sh:minCount 1 ;
+        sh:message "cr:RegulatoryInteraction must carry cr:meetingDate." ;
+    ] ;
+    sh:property [
+        sh:path cr:meetingType ;
+        sh:minCount 1 ;
+        sh:message "cr:RegulatoryInteraction must carry cr:meetingType (Pre-IND, EOP1, EOP2, Type-A/B/C)." ;
+    ] .
 
 # EOP2 READINESS (Warning): an EOP2 meeting should produce a binding agreement and a
 # risk register before Phase 3. (Doc 1: "make-or-break" gate; misalignment is fatal later.)
