@@ -27,6 +27,7 @@
 - T-100-001-002: Add a SHACL `sh:not / sh:class` constraint for each L2 pair in a new `core/v1/shapes/top-disjoint.ttl`
 - T-100-001-003: Write one conformant and one violation example per category pair (spot-check 3 pairs)
 - T-100-001-004: Run pyshacl against examples; confirm violations fire
+- T-100-001-005: Update `foundation.html` narrative to explain the disjointness axioms and their role in closed-world validation
 
 #### Success Criteria
 - [ ] Every pair of L2 categories has an explicit `owl:disjointWith` triple in the OWL graph
@@ -48,6 +49,7 @@
 - T-100-002-003: Update the `top:BitemporalShape` to require `prov:specializationOf` on every `top:Versioned` instance
 - T-100-002-004: Update existing walkthroughs (`consent-bitemporal.ttl`) to include a `top:VersionSeries` node
 - T-100-002-005: Update `rdfs:comment` on `top:Versioned` to reference `top:VersionSeries`
+- T-100-002-006: Update `foundation.html` bitemporal section to explain `top:VersionSeries` as the stable identity root; include a diagram or code block showing the versioned node pattern
 
 #### Success Criteria
 - [ ] `top:VersionSeries` exists with correct superclass, label, and comment
@@ -68,6 +70,7 @@
 - T-100-003-002: Add `owl:imports <https://top.scientix.ai/core/v1/modules/top-root>` to each non-root module
 - T-100-003-003: Verify `shapes.ttl` aggregator still resolves correctly after module ontology declarations are added
 - T-100-003-004: Add a build check that asserts each module file contains exactly one `owl:Ontology` triple
+- T-100-003-005: Update `foundation.html` module-split section to reference the self-declaring module IRI pattern and how tools can load individual modules
 
 #### Success Criteria
 - [ ] Loading any single `top-*.ttl` file in rdflib returns at least one `owl:Ontology` triple
@@ -87,6 +90,7 @@
 - T-100-004-002: Add `skos:prefLabel` and `skos:definition` to each flavor concept
 - T-100-004-003: Add a SHACL `sh:in` constraint on `top:flavor` to the existing `top:UniversalDNAShape` or a new shape
 - T-100-004-004: Update all existing `top:flavor` literal values to use the concept IRIs (not strings)
+- T-100-004-005: Update `foundation.html` extensibility section to document the three flavor values with their definitions and a downstream ontology example
 
 #### Success Criteria
 - [ ] `top:flavor` accepts only `top:FlavorInvariant`, `top:FlavorTightenable`, or `top:FlavorAdditive`
@@ -108,6 +112,7 @@
 - T-100-005-003: Add a new `top:subjectOf` object property (domain `top:Organism`, range `top:Scope`) for experimental subject relationships
 - T-100-005-004: Update `rdfs:comment` on `top:Organism` to explain the BFO alignment
 - T-100-005-005: Check that no existing examples or CR domain files depend on `top:Organism rdfs:subClassOf prov:Agent`
+- T-100-005-006: Update `foundation.html` agent taxonomy section to reflect the reclassification and note the BFO alignment rationale
 
 #### Success Criteria
 - [ ] `top:Organism` no longer has `prov:Agent` in its superclass chain
@@ -137,6 +142,7 @@
 - T-200-001-004: Add `cr:assessmentScale` (ObjectProperty — for CTCAE, RECIST, ECOG, etc.)
 - T-200-001-005: Add a `cr:AssessmentShape` SHACL shape requiring `assessmentCode` and `performedBy`
 - T-200-001-006: Write a conformant assessment example and a violation example (missing code)
+- T-200-001-007: Rebuild docs; verify `cr:Assessment` properties appear in `reference.html`; add assessment property table to `visit.html` clinical act section
 
 #### Success Criteria
 - [ ] `cr:Assessment` has at minimum `assessmentCode`, `performedBy`, and `assessmentResult` as declared properties
@@ -159,6 +165,7 @@
 - T-200-002-004: Add `cr:actualEnrollment` (DatatypeProperty, xsd:integer) — for plan-vs-actual
 - T-200-002-005: Update the `usdm-to-cr.ttl` arm mapping to note these additional properties
 - T-200-002-006: Update LY900018 transformer to extract randomization ratio if present in USDM
+- T-200-002-007: Rebuild docs; verify `cr:Arm` enriched properties appear in `reference.html`; add arm design table to `setup.html` study design section
 
 #### Success Criteria
 - [ ] `cr:Arm` has `randomizationRatio`, `plannedEnrollment`, `actualEnrollment` as declared datatype properties
@@ -180,6 +187,7 @@
 - T-200-003-003: Add `cr:endpointTimepoint` (ObjectProperty, range `cr:Visit` or xsd:duration)
 - T-200-003-004: Add `cr:endpointEstimand` (ObjectProperty, range `cr:Estimand`) — links endpoint to its estimand
 - T-200-003-005: Add `cr:endpointType` to the `eop2.ttl` SHACL shape for EndpointResult
+- T-200-003-006: Rebuild docs; verify `cr:Endpoint` properties appear in `reference.html`; update `eop2.html` endpoint table to show type and estimand link
 
 #### Success Criteria
 - [ ] `cr:Endpoint` has `endpointType`, `analysisMethod`, `endpointTimepoint`, `endpointEstimand` as declared properties
@@ -202,6 +210,7 @@
 - T-200-004-004: Confirm `cr:meetingType` already declared in `cr-core-eop2.ttl`; add coded values
 - T-200-004-005: Add a SHACL shape requiring `meetingDate` and `meetingType` on every `cr:RegulatoryInteraction`
 - T-200-004-006: Update `preind-conformant.ttl` and `eop2-conformant.ttl` examples to use the new properties
+- T-200-004-007: Rebuild docs; verify properties appear in `reference.html`; update `preind.html` and `eop2.html` to show meeting properties in the regulatory interaction sections
 
 #### Success Criteria
 - [ ] `cr:RegulatoryInteraction` has `meetingAgency`, `meetingDate`, `meetingType`, `meetingOutcome` as declared properties
@@ -228,6 +237,7 @@
 - T-200-005-008: Add a SHACL shape requiring `metricsForSite`, `top:observedAt` (snapshot date), and at least one metric
 - T-200-005-009: Write a site-metrics conformant example
 - T-200-005-010: Add a SPARQL projection `site_kpi_timeseries.rq`
+- T-200-005-011: Rebuild docs; verify `cr:SiteMetrics` appears in `reference.html`; add a site KPI snapshot section to `rbqm.html` with a sample query and explanation
 
 #### Success Criteria
 - [ ] `cr:SiteMetrics` exists with five KPI properties and the `metricsForSite` relationship
@@ -252,6 +262,7 @@
 - T-200-006-006: Add `cr:milestoneForStudy` (ObjectProperty, range `cr:Study`)
 - T-200-006-007: Add SHACL shape: `milestoneType` and `plannedDate` required; `milestoneVariance` must equal `actualDate - plannedDate` when both are present (SPARQL constraint)
 - T-200-006-008: Add `planned_vs_milestone.rq` projection showing milestone status table
+- T-200-006-009: Rebuild docs; verify `cr:StudyMilestone` appears in `reference.html`; add milestone timeline section to `setup.html` with the milestone type codes and plan-vs-actual pattern explained
 
 #### Success Criteria
 - [ ] `cr:StudyMilestone` with six coded milestone types is queryable from the graph
@@ -280,6 +291,7 @@
 - T-300-001-004: Add NOTICE comment in ontology file that MedDRA is a licensed terminology; IRIs reference, not reproduce
 - T-300-001-005: Add SHACL shape: serious AEs (`cr:SeriousAdverseEvent`) require `meddraPreferredTerm` (severity: Warning for non-serious AEs)
 - T-300-001-006: Update `safety-sae.ttl` example to include MedDRA IRI references
+- T-300-001-007: Rebuild docs; verify MedDRA properties appear in `reference.html`; update `safety.html` to explain the MedDRA IRI reference pattern and licensing notice
 
 #### Success Criteria
 - [ ] `cr:meddraPreferredTerm`, `cr:meddraSystemOrganClass`, `cr:meddraDictionaryVersion` declared on `cr:AdverseEvent`
@@ -303,6 +315,7 @@
 - T-300-002-004: Add SHACL `sh:in` constraint on `cr:ctcaeGrade` values (1–5 as typed literals or NCI IRIs)
 - T-300-002-005: Add SHACL shape: `cr:DoseLimitingToxicity` requires `ctcaeGrade` ≥ 3 (SPARQL constraint)
 - T-300-002-006: Update `safety-sae.ttl` and oncology examples with CTCAE grade
+- T-300-002-007: Rebuild docs; verify CTCAE properties appear in `reference.html`; update `safety.html` to show the CTCAE grading pattern and NCI Thesaurus IRI structure
 
 #### Success Criteria
 - [ ] `cr:ctcaeGrade`, `cr:ctcaeTerm`, `cr:ctcaeVersion` declared on `cr:AdverseEvent`
@@ -326,6 +339,7 @@
 - T-300-003-005: Add `cr:susarUnexpected` (DatatypeProperty, xsd:boolean — whether the reaction was unexpected per IB)
 - T-300-003-006: Add SHACL shape: if `submissionDate` > `reportingDeadline`, fire a Violation with message "SUSAR submitted after regulatory deadline"
 - T-300-003-007: Write a conformant SUSAR example and an out-of-deadline violation example
+- T-300-003-008: Rebuild docs; verify `cr:SUSAR` appears in `reference.html`; update `safety.html` with a SUSAR reporting clock diagram showing the sponsorAwareAt → reportingDeadline → submissionDate chain
 
 #### Success Criteria
 - [ ] `cr:SUSAR` class exists with all required properties
@@ -350,6 +364,7 @@
 - T-300-004-005: Add SHACL `sh:in` constraint on `cr:causalityVerdict`
 - T-300-004-006: Add SHACL shape: every `cr:SeriousAdverseEvent` should have at least one `cr:CausalityAssessment` (severity: Warning)
 - T-300-004-007: Update `safety-sae.ttl` example to include a causality assessment
+- T-300-004-008: Rebuild docs; verify `cr:CausalityAssessment` appears in `reference.html`; update `safety.html` to explain the causality-as-Conclusion pattern and how the four coded verdicts relate to ICH E2A
 
 #### Success Criteria
 - [ ] `cr:CausalityAssessment` exists with `causalityVerdict`, `assessedBy`, and inherited `top:Conclusion` properties
@@ -371,6 +386,7 @@
 - T-300-005-003: Write `safety_dlt_by_cohort.rq` — DLTs per cohort/dose level with CTCAE grade
 - T-300-005-004: Add expectations to `projections/expectations.json` for each new query
 - T-300-005-005: Validate queries against the updated `safety-sae.ttl` example
+- T-300-005-006: Rebuild docs; verify new projections appear in the `reference.html` projections table; add aggregate safety query examples to `safety.html`
 
 #### Success Criteria
 - [ ] Three SPARQL projections exist and return expected results against fixture data
@@ -399,6 +415,7 @@
 - T-400-001-004: Add `cr:sapAmends` (ObjectProperty, range `cr:StatisticalAnalysisPlan` — for amended SAPs)
 - T-400-001-005: Add SHACL shape: `cr:StatisticalAnalysisPlan` requires `sapVersion`, `sapGovernsStudy`, and `top:observedAt`
 - T-400-001-006: Update `eop2-conformant.ttl` to include a versioned SAP entity
+- T-400-001-007: Rebuild docs; verify `cr:StatisticalAnalysisPlan` properties appear in `reference.html`; update `eop2.html` to explain the SAP-versioning pattern and the `sapAmends` chain
 
 #### Success Criteria
 - [ ] `cr:StatisticalAnalysisPlan` subclasses both `top:Evidence` and `top:Versioned`
@@ -422,6 +439,7 @@
 - T-400-002-005: Add SHACL `sh:in` on `cr:intercurrentEventStrategy` (five ICH E9R1 strategies)
 - T-400-002-006: Add SHACL shape requiring all four components on `cr:Estimand`
 - T-400-002-007: Update `eop2-conformant.ttl` estimand example with all four components
+- T-400-002-008: Rebuild docs; verify estimand properties appear in `reference.html`; update `eop2.html` with a four-component estimand worked example linking to ICH E9(R1)
 
 #### Success Criteria
 - [ ] `cr:Estimand` has all four ICH E9(R1) components as declared properties
@@ -445,6 +463,7 @@
 - T-400-003-005: Add SHACL shape requiring `cutDate`, `cutForStudy`, and `cutType`
 - T-400-003-006: Write a DataCut example entity
 - T-400-003-007: Write a SPARQL query `enrollment_as_of_cut.rq` — subjects enrolled (validFrom ≤ cutDate and validUntil absent or > cutDate)
+- T-400-003-008: Rebuild docs; verify `cr:DataCut` appears in `reference.html`; update `eop2.html` to explain the data cut as the bitemporal anchor for analysis population queries
 
 #### Success Criteria
 - [ ] `cr:DataCut` class exists with `cutDate`, `cutForStudy`, `cutType`
@@ -468,6 +487,7 @@
 - T-400-004-005: Add SHACL shape requiring `populationType` and `populationForCut`
 - T-400-004-006: Add `cr:analysisBasis` (ObjectProperty, domain `cr:EndpointResult`, range `cr:AnalysisPopulation`) to `cr-core-eop2.ttl`
 - T-400-004-007: Write SPARQL `analysis_population_membership.rq` — subjects in a named population at the data cut
+- T-400-004-008: Rebuild docs; verify `cr:AnalysisPopulation` appears in `reference.html`; update `eop2.html` to show ITT/PP/safety population definitions with the data cut anchor pattern
 
 #### Success Criteria
 - [ ] `cr:AnalysisPopulation` exists with four coded population types
@@ -497,6 +517,7 @@
 - T-500-001-005: Note property-level gaps (e.g., `cr:Assessment` needs `assessmentCode` before FHIR Procedure mapping is viable)
 - T-500-001-006: Update `crosswalks/registry.md` to include the FHIR crosswalk
 - T-500-001-007: Rebuild dist to include `cr-to-fhir.ttl` in the crosswalk bundle
+- T-500-001-008: Rebuild docs; update `interop.html` to include FHIR crosswalk table showing the seven mapped entity pairs with mapping predicates and confidence scores
 
 #### Success Criteria
 - [ ] `cr-to-fhir.ttl` exists with at minimum 7 mapped entity pairs
@@ -520,6 +541,7 @@
 - T-500-002-004: Add enrollment criteria projection: `fhir:ResearchStudy.enrollment` from `cr:EligibilityCriterion`
 - T-500-002-005: Add subject projection: `fhir:ResearchSubject` from `cr:Enrollment`
 - T-500-002-006: Add to `expectations.json`; validate against LY900018 fixture
+- T-500-002-007: Rebuild docs; verify expanded projection appears in `reference.html` projections table; update `interop.html` FHIR section to show the ResearchStudy bundle reconstruction pattern
 
 #### Success Criteria
 - [ ] Projection covers ResearchStudy + arm + enrollment criteria + ResearchSubject
@@ -542,6 +564,7 @@
 - T-500-003-004: Add `cr:withdrawalDate` (DatatypeProperty, xsd:date — sets the `top:validUntil` close event)
 - T-500-003-005: Add SHACL shape: `withdrawalDate` must be ≥ `top:validFrom` (SPARQL constraint)
 - T-500-003-006: Update `participant-conformant.ttl` to use the enriched consent properties
+- T-500-003-007: Rebuild docs; verify `cr:InformedConsent` properties appear in `reference.html`; update `participant.html` consent section to show version, form IRI, witness, and withdrawal date as a complete consent record pattern
 
 #### Success Criteria
 - [ ] `cr:InformedConsent` has `consentVersion`, `consentFormIRI`, `witnessedBy`, `withdrawalDate`
@@ -566,6 +589,7 @@
 - T-500-004-006: Create a minimal FHIR R4 fixture JSON (`examples/fhir/sample-research-study.json`)
 - T-500-004-007: Run transformer against fixture; validate output with pyshacl against CR shapes
 - T-500-004-008: Document entity count and coverage in a SOURCES.md-style note
+- T-500-004-009: Rebuild docs; update `interop.html` to add a FHIR ingestion worked example alongside the USDM transformer example, showing the parallel structure and entity mapping
 
 #### Success Criteria
 - [ ] Transformer exists and runs without errors against the fixture
@@ -595,6 +619,7 @@
 - T-600-001-004: Add SHACL SPARQL shape: if a `hcls:Observation` has `top:validFrom` after the linked consent's `withdrawalDate`, fire a Violation
 - T-600-001-005: Update `participant-conformant.ttl` to include a withdrawal entity
 - T-600-001-006: Write `participant-withdrawal-violation.ttl` — an observation recorded after withdrawal date
+- T-600-001-007: Rebuild docs; verify `cr:ConsentWithdrawal` appears in `reference.html`; update `participant.html` to show the consent withdrawal event closing the valid-time interval and flagging post-withdrawal observations
 
 #### Success Criteria
 - [ ] `cr:ConsentWithdrawal` exists and links to the consent it closes
@@ -618,6 +643,7 @@
 - T-600-002-004: Wire `cr:Study` to lawful basis via `top:governedBy → cr:LawfulBasis`
 - T-600-002-005: Add SHACL shape: studies with `top:governedBy cr:EU_GDPR` must also have `top:governedBy` pointing to a `cr:LawfulBasis` individual
 - T-600-002-006: Update a study example to declare `cr:GDPR_Art9_2_j`
+- T-600-002-007: Rebuild docs; verify `cr:LawfulBasis` individuals appear in `reference.html`; add a GDPR lawful basis section to `foundation.html` or a new compliance page explaining Article 9(2)(j) and the `top:governedBy` pattern
 
 #### Success Criteria
 - [ ] `cr:LawfulBasis` and three GDPR Article individuals exist
@@ -641,6 +667,7 @@
 - T-600-003-005: Add `cr:processingPurposes` (ObjectProperty, range `cr:LawfulBasis`)
 - T-600-003-006: Add SHACL shape requiring `processorOrg`, `controllerOrg`, and `dpaEffectiveDate`
 - T-600-003-007: Write a conformant DPA example linking a CRO and sponsor
+- T-600-003-008: Rebuild docs; verify `cr:DataProcessingAgreement` appears in `reference.html`; add a Data Processing Agreement section to `foundation.html` or a new compliance page showing the controller/processor/lawful-basis pattern
 
 #### Success Criteria
 - [ ] `cr:DataProcessingAgreement` exists with four required properties
@@ -666,6 +693,7 @@
 - T-600-004-007: Add `cr:dsrStatus` (DatatypeProperty — coded: open/in-progress/fulfilled/rejected)
 - T-600-004-008: Write SPARQL `gdpr_data_map.rq` — given a `hcls:Person` IRI, return all graph entities linked to that person transitively
 - T-600-004-009: Write SPARQL `overdue_dsar.rq` — DSARs where `dsrDeadline` has passed and status is not fulfilled
+- T-600-004-010: Rebuild docs; verify `cr:RetentionPolicy` and `cr:DataSubjectRequest` appear in `reference.html`; update `participant.html` to explain the data subject rights model and show the overdue-DSAR query
 
 #### Success Criteria
 - [ ] `cr:RetentionPolicy` and `cr:DataSubjectRequest` exist with all declared properties
@@ -695,6 +723,7 @@
 - T-700-001-005: Add `cx:targetSchemaVersion "4.0"` and `cx:targetSchemaIRI` to the crosswalk `owl:Ontology` header
 - T-700-001-006: Add a gap table comment block in the file header listing unmapped USDM classes with rationale (out-of-scope vs. future)
 - T-700-001-007: Update `registry.md` to record coverage percentage
+- T-700-001-008: Rebuild dist; update `interop.html` to show the USDM coverage gap table and the expanded mapping count
 
 #### Success Criteria
 - [ ] `cx:targetSchemaVersion` declared on the crosswalk file
@@ -719,6 +748,7 @@
 - T-700-002-005: Map `cr:SeriousAdverseEvent` → MedDRA seriousness criteria terms
 - T-700-002-006: Add `cx:targetSchemaVersion` for MedDRA version 26.0 and a note that the version pin must be updated annually
 - T-700-002-007: Update `registry.md`
+- T-700-002-008: Rebuild dist; add a MedDRA section to `interop.html` (or `safety.html`) explaining the licensing constraint, the IRI-pattern-only approach, and the annual version-pin update process
 
 #### Success Criteria
 - [ ] `cr-to-meddra.ttl` exists with NOTICE block and at least 5 mapping entries
@@ -743,6 +773,7 @@
 - T-700-003-005: Add `cx:targetSchemaVersion "3.4"` (SDTM IG version)
 - T-700-003-006: Cross-reference to the corresponding SPARQL projection for each domain
 - T-700-003-007: Update `registry.md`
+- T-700-003-008: Rebuild dist; add an SDTM section to `interop.html` showing the domain-level mapping table and cross-referencing the corresponding SPARQL projections
 
 #### Success Criteria
 - [ ] `cr-to-sdtm.ttl` exists with domain-level and variable-level mappings
@@ -764,6 +795,7 @@
 - T-700-004-002: Add a `crosswalk_check.py` script to `cr-domain/docs/` that fetches each `cx:targetSchemaIRI` and checks HTTP 200
 - T-700-004-003: Add `cx:lastVerifiedDate` to each crosswalk `owl:Ontology` header
 - T-700-004-004: Document the versioning policy in `crosswalks/registry.md`: when a target schema updates, all affected mappings move to `cx:reviewStatus "needs-review"`
+- T-700-004-005: Update `registry.md` docs to include the full versioning governance section; add a crosswalk maintenance callout to `interop.html` explaining the review-on-schema-update policy
 
 #### Success Criteria
 - [ ] All crosswalk files have `cx:targetSchemaVersion` and `cx:targetSchemaIRI` declared
@@ -792,6 +824,7 @@
 - T-800-001-004: Add SHACL shape: `top:Conclusion` subclasses require `top:promptTemplate` or `top:sourceContext` (severity: Warning — not all conclusions are LLM-generated)
 - T-800-001-005: Update `cx:CausalityAssessment` (SAFETY-300-004) and any existing `top:Conclusion` examples to include the new properties
 - T-800-001-006: Add `top:modelVersion` property to `top:AutonomousAgent`
+- T-800-001-007: Rebuild docs; update `foundation.html` AI/provenance section to show the `top:Conclusion` reproducibility properties and the `top:AutonomousAgent` model identity pattern
 
 #### Success Criteria
 - [ ] `top:Conclusion` has `top:promptTemplate`, `top:sourceContext`, `top:modelVersion` as declared properties
@@ -813,6 +846,7 @@
 - T-800-002-003: Add SHACL shape: `cx:reviewStatus "confirmed"` with `cx:inferredBy` but without `cx:confirmedBy` → Violation
 - T-800-002-004: Write a crosswalk-mapping-llm-unconfirmed-violation.ttl example
 - T-800-002-005: Update `crosswalk-mapping-violation.ttl` to cover the new shape
+- T-800-002-006: Rebuild docs; add the human-in-the-loop constraint to `reference.html` under the crosswalk shapes section; update `interop.html` to explain the `cx:inferredBy` / `cx:confirmedBy` promotion gate
 
 #### Success Criteria
 - [ ] A `cx:Mapping` with `reviewStatus "confirmed"` but no `cx:confirmedBy` produces a SHACL Violation
@@ -835,6 +869,7 @@
 - T-800-003-004: Document the LLM prompt template and output schema (`top:Conclusion` with `causalityVerdict`)
 - T-800-003-005: Specify which entity properties to embed: `rdfs:label`, `rdfs:comment`, `criterionText`, `top:rationale`
 - T-800-003-006: Add a code sketch (pseudocode or Python) of the hybrid retrieval loop
+- T-800-003-007: Add a new `ai.html` page (or `graphrag.html`) via `build_docs.py` surfacing the recipe; link from the main nav under Cross-cutting; ensure `foundation.html` references the AI/provenance model page
 
 #### Success Criteria
 - [ ] Recipe document exists with all five sections (retrieval, vector step, LLM template, output schema, code sketch)
@@ -863,6 +898,7 @@
 - T-900-001-004: Output a summary table: pass/fail per example, total violations found vs. expected
 - T-900-001-005: Exit non-zero if any example produces unexpected results
 - T-900-001-006: Document run instructions in `cr-domain/README.md`
+- T-900-001-007: Update `cr-domain/README.md` to include a Testing section with `python3 tests/run_shacl.py` as the primary validation command and a description of the manifest format
 
 #### Success Criteria
 - [ ] `run_shacl.py` runs against all 98 examples with zero unexpected failures on current codebase
@@ -884,6 +920,7 @@
 - T-900-002-003: Populate `expectations.json` with minimum row counts for all 21 existing projections against the LY900018 fixture
 - T-900-002-004: Output a summary: query name, rows returned, expected minimum, pass/fail
 - T-900-002-005: Exit non-zero on any projection returning fewer rows than expected
+- T-900-002-006: Update `cr-domain/README.md` Testing section to include `python3 tests/run_projections.py` and document how to update `expectations.json` after adding new fixture data
 
 #### Success Criteria
 - [ ] All 21 projections run without SPARQL syntax errors
@@ -904,6 +941,7 @@
 - T-900-003-002: Assert zero violations (not warnings) on the current LY900018 output
 - T-900-003-003: Document any warnings and whether they are expected (e.g., optional properties absent)
 - T-900-003-004: Add to the test runner sequence: dist build → transformer → validate output
+- T-900-003-005: Update `ingestion.html` to include a validation step in the LY900018 worked example showing the SHACL conformance result and any triaged warnings
 
 #### Success Criteria
 - [ ] Transformer output for LY900018 produces zero SHACL violations
@@ -925,6 +963,7 @@
 - T-900-004-004: Add `owl:priorVersion` pattern for future use
 - T-900-004-005: Document the deprecation pattern: `owl:deprecated true` + `rdfs:comment "Deprecated in v1.x: use {replacement} instead"`
 - T-900-004-006: Add versioning policy section to the Foundation documentation page
+- T-900-004-007: Update `foundation.html` to include the semantic versioning policy (MAJOR/MINOR/PATCH definitions), the deprecation pattern, and a link to `CHANGELOG.md`
 
 #### Success Criteria
 - [ ] `CHANGELOG.md` exists with `v1.0.0` entry listing current capabilities
@@ -947,6 +986,7 @@
 - T-900-005-004: Add a `Content-Type: application/ld+json` requirement and long-lived `Cache-Control` header recommendation
 - T-900-005-005: Add a fallback pattern to the transformer: `if context URL 404, fall back to local file path`
 - T-900-005-006: Add context URL resolution test to `run_projections.py` or a separate `check_context_url.py`
+- T-900-005-007: Update `foundation.html` and `implementation.html` with the canonical context URL, hosting options comparison, the fallback pattern, and a live/not-yet-live status indicator
 
 #### Success Criteria
 - [ ] Context URL hosting plan documented in Foundation page
