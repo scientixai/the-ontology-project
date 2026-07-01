@@ -3,18 +3,25 @@
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix top: <https://top.scientix.ai/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-# Conformant DataProcessingAgreement example (US-600-003)
-ex:DPA_CRO_Alpha_2024 a cr:DataProcessingAgreement ;
-    rdfs:label "DPA: Sponsor XYZ — CRO Alpha (2024)" ;
-    cr:controllerOrg ex:SponsorXYZ ;
-    cr:processorOrg ex:CRO_Alpha ;
-    cr:dpaEffectiveDate "2024-01-15"^^xsd:date ;
+# Conformant: cr:DataProcessingAgreement with all required fields (US-600-003).
+# Expected: validates cleanly against cr:DPARequiredShape.
+
+ex:sponsor-ly a cr:Sponsor ;
+    top:identifier "urn:sponsor:LillyCo"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cro-parexel a cr:CRO ;
+    top:identifier "urn:org:PAREXEL-Global"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:dpa-ly900018-parexel a cr:DataProcessingAgreement ;
+    top:identifier "urn:dpa:LY900018-PAREXEL-2025"^^xsd:anyURI ;
+    top:observedAt "2025-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:processorOrg ex:cro-parexel ;
+    cr:controllerOrg ex:sponsor-ly ;
+    cr:dpaEffectiveDate "2025-03-01"^^xsd:date ;
     cr:processingPurposes cr:GDPR_Art9_2_j .
-
-ex:SponsorXYZ a cr:Sponsor ;
-    rdfs:label "Sponsor XYZ Pharmaceuticals" .
-
-ex:CRO_Alpha a hcls:Organization ;
-    rdfs:label "CRO Alpha Clinical Services" .

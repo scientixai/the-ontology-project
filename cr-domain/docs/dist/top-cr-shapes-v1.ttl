@@ -1,1 +1,1029 @@
-placeholder-shapes-ttl
+@prefix cr: <https://top.scientix.ai/cr/v1#> .
+@prefix cx: <https://top.scientix.ai/crosswalk/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+cr:ADaMTraceabilityShape a sh:NodeShape ;
+    sh:property [ sh:message "Analysis dataset (ADaM) must declare prov:wasDerivedFrom its source (traceability)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path prov:wasDerivedFrom ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:AnalysisDataset .
+
+cr:ActivationReadinessShape a sh:NodeShape ;
+    rdfs:label "Activation requires complete regulatory + budget streams" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Site activated without a complete Regulatory and Budget & Contracting work stream." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?anyStream .
+              FILTER (
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?r .
+                             ?r a <https://top.scientix.ai/cr/v1#RegulatoryWorkStream> ;
+                                <https://top.scientix.ai/cr/v1#streamStatus> "complete" . }
+                || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasWorkStream> ?b .
+                             ?b a <https://top.scientix.ai/cr/v1#BudgetContractingWorkStream> ;
+                                <https://top.scientix.ai/cr/v1#streamStatus> "complete" . }
+              )
+            }
+        """ ] ;
+    sh:targetClass cr:SiteActivation .
+
+cr:ActivityOrderingShape a sh:NodeShape ;
+    rdfs:label "Execution violates planned ordering (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Acts executed out of the order their planned activities require (cr:precedes violated)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this   <https://top.scientix.ai/cr/v1#realizes> ?pa ;
+                      <https://top.scientix.ai/v1#observedAt> ?ta .
+              ?pa     <https://top.scientix.ai/cr/v1#precedes> ?pb .
+              ?other  <https://top.scientix.ai/cr/v1#realizes> ?pb ;
+                      <https://top.scientix.ai/v1#observedAt> ?tb .
+              FILTER ( ?ta > ?tb )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:realizes .
+
+cr:AnalysisPopulationRequiredShape a sh:NodeShape ;
+    rdfs:label "Analysis population required fields" ;
+    sh:property [ sh:message "cr:AnalysisPopulation must link to a cr:DataCut via cr:populationForCut." ;
+            sh:minCount 1 ;
+            sh:path cr:populationForCut ],
+        [ sh:in ( "ITT" "mITT" "PP" "safety" "other" ) ;
+            sh:message "cr:AnalysisPopulation must carry cr:populationType: ITT, mITT, PP, safety, or other." ;
+            sh:minCount 1 ;
+            sh:path cr:populationType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:AnalysisPopulation .
+
+cr:ArmStudyConsistencyShape a sh:NodeShape ;
+    rdfs:label "Assigned arm must belong to Participant's Study (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.assignedToArm references an Arm whose parent Study does not match Participant.forStudy." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#assignedToArm> ?arm ;
+                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              FILTER NOT EXISTS {
+                ?study <https://top.scientix.ai/cr/v1#hasArm> ?arm .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:AssayResultShape a sh:NodeShape ;
+    sh:property [ sh:class cr:AnalysisService ;
+            sh:message "Assay result must reference the analysis service that produced it." ;
+            sh:minCount 1 ;
+            sh:path cr:fromService ],
+        [ sh:class hcls:Specimen ;
+            sh:message "Assay result must reference the sample analyzed." ;
+            sh:minCount 1 ;
+            sh:path cr:onSample ],
+        [ sh:class cr:StudySubject ;
+            sh:message "Assay result must join to the (pseudonymous) StudySubject." ;
+            sh:minCount 1 ;
+            sh:path cr:forSubject ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:AssayResult .
+
+cr:AssessmentRequiredShape a sh:NodeShape ;
+    rdfs:label "Assessment completeness (required fields)" ;
+    sh:property [ sh:message "cr:Assessment must link to the visit during which it was performed (cr:assessedAt). Missing on this assessment." ;
+            sh:minCount 1 ;
+            sh:path cr:assessedAt ],
+        [ sh:message "cr:Assessment must declare its instrument (cr:assessmentInstrument). Missing on this assessment." ;
+            sh:minCount 1 ;
+            sh:path cr:assessmentInstrument ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Assessment .
+
+cr:AssessmentResultUnitShape a sh:NodeShape ;
+    rdfs:label "Assessment result/unit co-occurrence" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "An assessment carrying cr:assessmentResult should also carry cr:assessmentUnit (UCUM code)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#assessmentResult> ?v .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assessmentUnit> ?u . }
+            }
+        """ ] ;
+    sh:targetClass cr:Assessment .
+
+cr:CTCAEGradeRangeShape a sh:NodeShape ;
+    rdfs:label "CTCAE grade must be 1–5" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "cr:ctcaeGrade must be an integer between 1 and 5 inclusive." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .
+              FILTER ( ?g < 1 || ?g > 5 )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:ctcaeGrade .
+
+cr:CapabilityDelegationShape a sh:NodeShape ;
+    rdfs:label "Capability requires delegation (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Act exercises a capability with no delegation of that capability to its performer (undelegated work)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap .
+              $this <https://top.scientix.ai/cr/v1#performedBy> ?p .
+              FILTER NOT EXISTS {
+                ?d a <https://top.scientix.ai/cr/v1#Delegation> ;
+                   <https://top.scientix.ai/cr/v1#delegate> ?p ;
+                   <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap .
+              }
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:exercisesCapability .
+
+cr:CausalityVerdictShape a sh:NodeShape ;
+    rdfs:label "Causality verdict must be a coded value" ;
+    sh:property [ sh:in ( "unrelated" "possible" "probable" "definite" ) ;
+            sh:message "cr:causalityVerdict must be one of: unrelated, possible, probable, definite." ;
+            sh:minCount 1 ;
+            sh:path cr:causalityVerdict ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:CausalityAssessment .
+
+cr:CertifiedCopyShape a sh:NodeShape ;
+    sh:property [ sh:class cr:SourceDocument ;
+            sh:message "A certified copy must reference the source document it copies." ;
+            sh:minCount 1 ;
+            sh:path cr:certifiedCopyOf ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:CertifiedCopy .
+
+cr:ClinicalObservationShape a sh:NodeShape ;
+    sh:property [ sh:class cr:StudyEvent ;
+            sh:message "Observation must reference the StudyEvent it was captured at." ;
+            sh:minCount 1 ;
+            sh:path cr:capturedDuring ],
+        [ sh:class cr:DataElementDef ;
+            sh:message "Observation must reference its variable definition (DataElementDef)." ;
+            sh:minCount 1 ;
+            sh:path cr:definedBy ],
+        [ sh:class cr:StudySubject ;
+            sh:message "Observation must reference the (pseudonymous) StudySubject." ;
+            sh:minCount 1 ;
+            sh:path cr:forSubject ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ClinicalObservation .
+
+cr:CompletedShouldHaveDateShape a sh:NodeShape ;
+    rdfs:label "COMPLETED should have completionDate (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Participant.participantStatus=COMPLETED but completionDate is not populated." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "COMPLETED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#completionDate> ?d . }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:CompletedVisitShouldHaveEndDateShape a sh:NodeShape ;
+    rdfs:label "COMPLETED VisitOccurrence should have actualEndDate (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "VisitOccurrence.visitStatus=COMPLETED but actualEndDate is missing." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#visitStatus> "COMPLETED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#actualEndDate> ?d . }
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:ConsentWithdrawalDateShape a sh:NodeShape ;
+    rdfs:label "Withdrawal date must be >= consent validFrom" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "cr:withdrawalDate precedes the consent top:validFrom — withdrawal cannot predate the consent itself." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#withdrawalDate> ?wd ;
+                    <https://top.scientix.ai/v1#validFrom> ?vf .
+              FILTER ( ?wd < xsd:date(?vf) )
+            }
+        """ ] ;
+    sh:targetClass cr:InformedConsent .
+
+cr:ConvertedRecruitRequiresParticipantShape a sh:NodeShape ;
+    rdfs:label "CONVERTED_TO_PARTICIPANT requires convertedToParticipant link (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Recruit.recruitStatus=CONVERTED_TO_PARTICIPANT but convertedToParticipant relationship is missing." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#recruitStatus> "CONVERTED_TO_PARTICIPANT" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#convertedToParticipant> ?p . }
+            }
+        """ ] ;
+    sh:targetClass cr:Recruit .
+
+cr:CustodyEventShape a sh:NodeShape ;
+    sh:property [ sh:in ( "SampleDue" "Received" "ToBeVerified" "Verified" "Published" ) ;
+            sh:message "Custody event toState must be a valid lifecycle state." ;
+            sh:minCount 1 ;
+            sh:path cr:toState ],
+        [ sh:class hcls:Specimen ;
+            sh:message "Custody event must reference its specimen." ;
+            sh:minCount 1 ;
+            sh:path cr:specimen ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:CustodyEvent .
+
+cr:DLTGradeShape a sh:NodeShape ;
+    rdfs:label "DLT requires CTCAE grade >= 3" ;
+    sh:property [ sh:message "cr:DoseLimitingToxicity must declare a CTCAE grade." ;
+            sh:minCount 1 ;
+            sh:path cr:ctcaeGrade ] ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "cr:DoseLimitingToxicity must have cr:ctcaeGrade of 3, 4, or 5 to meet DLT criteria." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .
+              FILTER ( ?g < 3 )
+            }
+        """ ] ;
+    sh:targetClass cr:DoseLimitingToxicity .
+
+cr:DPARequiredShape a sh:NodeShape ;
+    rdfs:label "Data Processing Agreement required fields" ;
+    sh:property [ sh:message "cr:DataProcessingAgreement must link to a processor organization via cr:processorOrg." ;
+            sh:minCount 1 ;
+            sh:path cr:processorOrg ],
+        [ sh:message "cr:DataProcessingAgreement must carry cr:dpaEffectiveDate." ;
+            sh:minCount 1 ;
+            sh:path cr:dpaEffectiveDate ],
+        [ sh:message "cr:DataProcessingAgreement must link to a controller (sponsor) via cr:controllerOrg." ;
+            sh:minCount 1 ;
+            sh:path cr:controllerOrg ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DataProcessingAgreement .
+
+cr:DSRTypeShape a sh:NodeShape ;
+    rdfs:label "Data Subject Request type must be coded" ;
+    sh:property [ sh:in ( "access" "erasure" "rectification" "portability" ) ;
+            sh:message "cr:dsrType must be one of: access, erasure, rectification, portability." ;
+            sh:minCount 1 ;
+            sh:path cr:dsrType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DataSubjectRequest .
+
+cr:DataCutRequiredShape a sh:NodeShape ;
+    rdfs:label "DataCut required fields" ;
+    sh:property [ sh:message "cr:DataCut must carry cr:cutDate (database lock date)." ;
+            sh:minCount 1 ;
+            sh:path cr:cutDate ],
+        [ sh:message "cr:DataCut must link to a cr:Study via cr:cutForStudy." ;
+            sh:minCount 1 ;
+            sh:path cr:cutForStudy ],
+        [ sh:in ( "primary" "interim" "safety-review" ) ;
+            sh:message "cr:DataCut must carry cr:cutType: primary, interim, or safety-review." ;
+            sh:minCount 1 ;
+            sh:path cr:cutType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DataCut .
+
+cr:DataElementPHIShape a sh:NodeShape ;
+    sh:property [ sh:in ( "NotPHI" "LimitedPHI" "FullPHI" "Restricted" ) ;
+            sh:message "DataElementDef should carry a PHI classification (NotPHI/LimitedPHI/FullPHI/Restricted)." ;
+            sh:minCount 1 ;
+            sh:path cr:phiClassification ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:DataElementDef .
+
+cr:DelegationShape a sh:NodeShape ;
+    sh:property [ sh:class hcls:Person ;
+            sh:message "Delegation must name the responsible delegator (PI)." ;
+            sh:minCount 1 ;
+            sh:path cr:delegator ],
+        [ sh:class cr:Capability ;
+            sh:message "Delegation must grant a Capability." ;
+            sh:minCount 1 ;
+            sh:path cr:delegatedCapability ],
+        [ sh:class hcls:Person ;
+            sh:message "Delegation must name the delegate." ;
+            sh:minCount 1 ;
+            sh:path cr:delegate ],
+        [ sh:class cr:Credential ;
+            sh:message "Delegation must be gated by a Credential." ;
+            sh:minCount 1 ;
+            sh:path cr:requiresCredential ] ;
+    sh:targetClass cr:Delegation .
+
+cr:DelegationTimingShape a sh:NodeShape ;
+    rdfs:label "Delegation timing gap (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Act performed outside the effective window of its delegation (timing gap) — review materiality." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap ;
+                    <https://top.scientix.ai/cr/v1#performedBy> ?p ;
+                    <https://top.scientix.ai/v1#observedAt> ?t .
+              ?d a <https://top.scientix.ai/cr/v1#Delegation> ;
+                 <https://top.scientix.ai/cr/v1#delegate> ?p ;
+                 <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap ;
+                 <https://top.scientix.ai/v1#observedAt> ?df .
+              OPTIONAL { ?d <https://top.scientix.ai/v1#validTo> ?dt . }
+              FILTER ( ?t < ?df || ( BOUND(?dt) && ?t > ?dt ) )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:exercisesCapability .
+
+cr:DeviationEventShape a sh:NodeShape ;
+    sh:property [ sh:in ( "critical" "major" "minor" ) ;
+            sh:message "Deviation event must carry a category (critical/major/minor)." ;
+            sh:minCount 1 ;
+            sh:path cr:deviationCategory ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DeviationEvent .
+
+cr:EOP2ReadinessShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "EOP2 meeting lacks a binding agreement and/or a risk register (readiness warning)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#meetingType> "EOP2" .
+              FILTER ( NOT EXISTS { $this <https://top.scientix.ai/cr/v1#producedAgreement> ?a }
+                       || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasRiskRegister> ?r } )
+            }
+        """ ] ;
+    sh:targetClass cr:RegulatoryInteraction .
+
+cr:EndpointResultTraceShape a sh:NodeShape ;
+    sh:property [ sh:class cr:StatisticalAnalysisPlan ;
+            sh:message "EndpointResult must trace to the SAP it was analyzed under." ;
+            sh:minCount 1 ;
+            sh:path cr:analyzedUnder ],
+        [ sh:class cr:Estimand ;
+            sh:message "EndpointResult must trace to a pre-specified estimand." ;
+            sh:minCount 1 ;
+            sh:path cr:perEstimand ],
+        [ sh:class cr:Endpoint ;
+            sh:message "EndpointResult must reference the endpoint it measures." ;
+            sh:minCount 1 ;
+            sh:path cr:measuresEndpoint ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:EndpointResult .
+
+cr:EnrollmentShape a sh:NodeShape ;
+    sh:property [ sh:class hcls:Person ;
+            sh:message "Enrollment must reference the real Person (PII bridge)." ;
+            sh:minCount 1 ;
+            sh:path cr:enrolledPerson ],
+        [ sh:class cr:Study ;
+            sh:message "Enrollment must reference the Study." ;
+            sh:minCount 1 ;
+            sh:path cr:intoStudy ],
+        [ sh:class cr:StudySubject ;
+            sh:message "Enrollment must reference the pseudonymous StudySubject." ;
+            sh:minCount 1 ;
+            sh:path cr:asSubject ] ;
+    sh:targetClass cr:Enrollment .
+
+cr:EstimandRequiredShape a sh:NodeShape ;
+    rdfs:label "Estimand ICH E9(R1) four-component completeness" ;
+    sh:property [ sh:message "cr:Estimand must declare cr:estimandPopulation (ICH E9R1 component 1)." ;
+            sh:minCount 1 ;
+            sh:path cr:estimandPopulation ],
+        [ sh:message "cr:Estimand must declare cr:estimandVariable (ICH E9R1 component 2)." ;
+            sh:minCount 1 ;
+            sh:path cr:estimandVariable ],
+        [ sh:message "cr:Estimand must carry cr:populationLevelSummary (the statistical estimand statement)." ;
+            sh:minCount 1 ;
+            sh:path cr:populationLevelSummary ],
+        [ sh:in ( "treatment-policy" "hypothetical" "composite" "while-on-treatment" "principal-stratum" ) ;
+            sh:message "cr:Estimand must declare cr:intercurrentEventStrategy from the five ICH E9R1 strategies." ;
+            sh:minCount 1 ;
+            sh:path cr:intercurrentEventStrategy ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Estimand .
+
+cr:HighRiskMitigationShape a sh:NodeShape ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "High-risk critical-to-quality factor has no mitigation plan." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#riskLevel> "high" .
+              FILTER NOT EXISTS { ?mp <https://top.scientix.ai/cr/v1#mitigates> $this . }
+            }
+        """ ] ;
+    sh:targetClass cr:RiskAssessment .
+
+cr:INDNarrativeShape a sh:NodeShape ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Nonclinical finding is not addressed by any clinical-protocol safety assessment (broken IND narrative -> clinical-hold risk)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this a <https://top.scientix.ai/cr/v1#NonclinicalFinding> .
+              FILTER NOT EXISTS {
+                ?sa a <https://top.scientix.ai/cr/v1#SafetyAssessment> ;
+                    <https://top.scientix.ai/cr/v1#addressesFinding> $this .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:NonclinicalFinding .
+
+cr:InformedConsentShape a sh:NodeShape ;
+    sh:property [ sh:class hcls:Person ;
+            sh:message "Consent must record who performed it." ;
+            sh:minCount 1 ;
+            sh:path cr:performedBy ],
+        [ sh:class cr:Delegation ;
+            sh:message "Consent must reference the authorizing Delegation." ;
+            sh:minCount 1 ;
+            sh:path cr:underDelegation ],
+        [ sh:class cr:StudySubject ;
+            sh:message "Consent must reference the StudySubject." ;
+            sh:minCount 1 ;
+            sh:path cr:forSubject ] ;
+    sh:targetClass cr:InformedConsent .
+
+cr:LawfulBasisRequiredShape a sh:NodeShape ;
+    rdfs:label "EU-governed study must declare lawful basis" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Study governed by EU_GDPR must declare a cr:LawfulBasis via top:governedBy." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/v1#governedBy> <https://top.scientix.ai/v1#EU_GDPR> .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/v1#governedBy> ?basis .
+                ?basis a <https://top.scientix.ai/cr/v1#LawfulBasis> .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Study .
+
+cr:ObservationSubjectPseudonymousShape a sh:NodeShape ;
+    rdfs:label "ClinicalObservation must reference StudySubject, not Person (hard)" ;
+    sh:property [ sh:class cr:StudySubject ;
+            sh:message "ClinicalObservation.observationForSubject must be a cr:StudySubject (pseudonymous). Linking directly to hcls:Person violates PII containment (ADR-0019)." ;
+            sh:minCount 1 ;
+            sh:path cr:observationForSubject ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ClinicalObservation .
+
+cr:OutOfWindowVisitDeviationShape a sh:NodeShape ;
+    rdfs:label "Out-of-window visit should link to a Deviation (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "VisitOccurrence.windowStatus=OUT_OF_WINDOW but no linked Deviation. Consider documenting as a protocol deviation per ICH E6(R3) §4.5." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#windowStatus> "OUT_OF_WINDOW" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#associatedDeviation> ?d . }
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:OutputLineageShape a sh:NodeShape ;
+    rdfs:label "Produced output should trace to an input (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "A work stream produces an output that does not trace (prov:wasDerivedFrom) to any input." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#produces> ?out .
+              FILTER NOT EXISTS { ?out <http://www.w3.org/ns/prov#wasDerivedFrom> ?in . }
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:produces .
+
+cr:OverMonitoringShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "100% SDV applied to a low-risk factor (over-monitoring; consider risk-based reduction)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#sdvIntensity> ?i ;
+                    <https://top.scientix.ai/cr/v1#mitigates> ?ra .
+              ?ra <https://top.scientix.ai/cr/v1#riskLevel> "low" .
+              FILTER ( ?i = 1.0 )
+            }
+        """ ] ;
+    sh:targetClass cr:MitigationPlan .
+
+cr:PIIContainmentShape a sh:NodeShape ;
+    sh:class cr:StudySubject ;
+    sh:message "cr:forSubject must reference a pseudonymous StudySubject, never an identifiable Person (PII containment); the only legal Person<->Subject link is the attested Enrollment bridge." ;
+    sh:not [ sh:class hcls:Person ] ;
+    sh:severity sh:Violation ;
+    sh:targetObjectsOf cr:forSubject .
+
+cr:PlannedActivityPositionShape a sh:NodeShape ;
+    rdfs:label "Planned activity must be positioned (timing or ordering)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "PlannedActivity has neither a cr:timing nor an ordering edge (cr:precedes); it is unpositioned." ;
+            sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#timing> ?t . }
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#precedes> ?o . }
+              FILTER NOT EXISTS { ?p <https://top.scientix.ai/cr/v1#precedes> $this . }
+            }
+        """ ] ;
+    sh:targetClass cr:PlannedActivity .
+
+cr:PlannedEncounterTimingShape a sh:NodeShape ;
+    rdfs:label "Planned encounter must be positioned" ;
+    sh:property [ sh:message "PlannedEncounter has no cr:timing (an encounter must be positioned on the timeline)." ;
+            sh:minCount 1 ;
+            sh:path cr:timing ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:PlannedEncounter .
+
+cr:PlannedVisitWindowShape a sh:NodeShape ;
+    rdfs:label "Planned visit must carry a resolved target + window" ;
+    sh:property [ sh:message "PlannedVisit has no cr:windowStart." ;
+            sh:minCount 1 ;
+            sh:path cr:windowStart ;
+            sh:severity sh:Violation ],
+        [ sh:message "PlannedVisit has no cr:windowEnd." ;
+            sh:minCount 1 ;
+            sh:path cr:windowEnd ;
+            sh:severity sh:Violation ],
+        [ sh:message "PlannedVisit has no cr:targetDate." ;
+            sh:minCount 1 ;
+            sh:path cr:targetDate ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:PlannedVisit .
+
+cr:PostConsentRequiresConsentShape a sh:NodeShape ;
+    rdfs:label "Post-consent state requires InformedConsentAct (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant is in a post-consent state but has no InformedConsentAct with consentStatus=OBTAINED. ICH E6(R3) §2.4 violation." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> ?s .
+              FILTER ( ?s IN (
+                "ENROLLED", "RANDOMIZED", "ON_TREATMENT",
+                "IN_FOLLOW_UP", "COMPLETED", "WITHDRAWN",
+                "DISCONTINUED", "LOST_TO_FOLLOW_UP"
+              ) )
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasInformedConsentAct> ?c .
+                ?c <https://top.scientix.ai/cr/v1#consentStatus> "OBTAINED" .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:PostWithdrawalObservationShape a sh:NodeShape ;
+    rdfs:label "Observation recorded after consent withdrawal" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Observation recorded after the subject's consent withdrawal date (GDPR / ICH E6(R3) concern)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/v1#validFrom> ?obsDate .
+              ?withdrawal a <https://top.scientix.ai/cr/v1#ConsentWithdrawal> ;
+                          <https://top.scientix.ai/cr/v1#closesConsent> ?consent .
+              ?consent <https://top.scientix.ai/cr/v1#withdrawalDate> ?wd .
+              FILTER ( xsd:date(?obsDate) > ?wd )
+            }
+        """ ] ;
+    sh:targetClass hcls:Observation .
+
+cr:PreINDReadinessShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Pre-IND meeting lacks a briefing book and/or specific questions (readiness warning)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#meetingType> "Pre-IND" .
+              FILTER ( NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasBriefingBook> ?b }
+                       || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasQuestion> ?q } )
+            }
+        """ ] ;
+    sh:targetClass cr:RegulatoryInteraction .
+
+cr:ProtocolEligibilityShape a sh:NodeShape ;
+    rdfs:label "Protocol should declare eligibility (warning)" ;
+    sh:property [ sh:message "ProtocolVersion declares no eligibility criteria (design-quality warning)." ;
+            sh:minCount 1 ;
+            sh:path cr:hasEligibilityCriterion ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:ProtocolVersion .
+
+cr:QueryShape a sh:NodeShape ;
+    sh:property [ sh:message "Query must be anchored to a target entity (cr:queryOn)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cr:queryOn ],
+        [ sh:in ( "open" "answered" "closed" ) ;
+            sh:message "Query must carry a resolution status (open/answered/closed)." ;
+            sh:minCount 1 ;
+            sh:path cr:resolutionStatus ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Query .
+
+cr:RandomizedRequiresArmAndDateShape a sh:NodeShape ;
+    rdfs:label "RANDOMIZED requires assignedToArm and randomizationDate (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.participantStatus=RANDOMIZED but missing assignedToArm or randomizationDate." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "RANDOMIZED" .
+              FILTER (
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assignedToArm> ?a . } ||
+                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#randomizationDate> ?d . }
+              )
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:RegulatoryInteractionRequiredShape a sh:NodeShape ;
+    rdfs:label "Regulatory interaction required fields" ;
+    sh:property [ sh:message "cr:RegulatoryInteraction must carry cr:meetingType (Pre-IND, EOP1, EOP2, Type-A/B/C)." ;
+            sh:minCount 1 ;
+            sh:path cr:meetingType ],
+        [ sh:message "cr:RegulatoryInteraction must carry cr:meetingDate." ;
+            sh:minCount 1 ;
+            sh:path cr:meetingDate ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:RegulatoryInteraction .
+
+cr:RiskAssessmentShape a sh:NodeShape ;
+    sh:property [ sh:in ( "low" "medium" "high" ) ;
+            sh:message "Risk assessment must carry a risk level (low/medium/high)." ;
+            sh:minCount 1 ;
+            sh:path cr:riskLevel ],
+        [ sh:class cr:CriticalToQualityFactor ;
+            sh:message "Risk assessment must reference the critical-to-quality factor it assesses." ;
+            sh:minCount 1 ;
+            sh:path cr:assessesFactor ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:RiskAssessment .
+
+cr:SAECausalityShape a sh:NodeShape ;
+    rdfs:label "Serious AE should have a causality assessment" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "cr:SeriousAdverseEvent lacks a cr:CausalityAssessment concluding about it." ;
+            sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS {
+                ?ca a <https://top.scientix.ai/cr/v1#CausalityAssessment> ;
+                     <https://top.scientix.ai/v1#concludesAbout> $this .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:SeriousAdverseEvent .
+
+cr:SAPRequiredShape a sh:NodeShape ;
+    rdfs:label "SAP completeness" ;
+    sh:property [ sh:message "cr:StatisticalAnalysisPlan must carry cr:sapVersion." ;
+            sh:minCount 1 ;
+            sh:path cr:sapVersion ],
+        [ sh:message "cr:StatisticalAnalysisPlan must link to a cr:Study via cr:sapGovernsStudy." ;
+            sh:minCount 1 ;
+            sh:path cr:sapGovernsStudy ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:StatisticalAnalysisPlan .
+
+cr:SUSARDeadlineShape a sh:NodeShape ;
+    rdfs:label "SUSAR submission deadline" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "SUSAR submitted after regulatory deadline (submissionDate > reportingDeadline)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#submissionDate> ?sub ;
+                    <https://top.scientix.ai/cr/v1#reportingDeadline> ?dl .
+              BIND(xsd:date(?dl) AS ?dlDate)
+              FILTER ( ?sub > ?dlDate )
+            }
+        """ ] ;
+    sh:targetClass cr:SUSAR .
+
+cr:ScreenFailedRequiresRecordShape a sh:NodeShape ;
+    rdfs:label "SCREEN_FAILED requires ScreeningRecord (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.participantStatus=SCREEN_FAILED but no ScreeningRecord with screeningOutcome=SCREEN_FAILED." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "SCREEN_FAILED" .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasScreeningRecord> ?r .
+                ?r <https://top.scientix.ai/cr/v1#screeningOutcome> "SCREEN_FAILED" .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:SeriousAEMedDRAShape a sh:NodeShape ;
+    rdfs:label "Serious AE should carry MedDRA preferred term" ;
+    sh:property [ sh:message "cr:SeriousAdverseEvent should carry a MedDRA preferred term (cr:meddraPreferredTerm)." ;
+            sh:minCount 1 ;
+            sh:path cr:meddraPreferredTerm ] ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:SeriousAdverseEvent .
+
+cr:SignificantDeviationCAPAShape a sh:NodeShape ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Significant deviation (critical/major) has no CAPA." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#deviationCategory> ?c .
+              FILTER ( ?c IN ( "critical", "major" ) )
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#triggers> ?capa . }
+            }
+        """ ] ;
+    sh:targetClass cr:DeviationEvent .
+
+cr:SiteActivationShape a sh:NodeShape ;
+    sh:property [ sh:class cr:IRBApproval ;
+            sh:message "Activation requires local IRB/IEC approval." ;
+            sh:minCount 1 ;
+            sh:path cr:irbApproval ],
+        [ sh:class cr:SiteInitiationVisit ;
+            sh:message "Activation requires a completed Site Initiation Visit." ;
+            sh:minCount 1 ;
+            sh:path cr:siv ],
+        [ sh:class cr:StudySite ;
+            sh:message "Activation must name the site it activates." ;
+            sh:minCount 1 ;
+            sh:path cr:activates ],
+        [ sh:class cr:ClinicalTrialAgreement ;
+            sh:message "Activation requires an executed Clinical Trial Agreement." ;
+            sh:minCount 1 ;
+            sh:path cr:cta ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:SiteActivation .
+
+cr:SiteMetricsRequiredShape a sh:NodeShape ;
+    rdfs:label "Site metrics snapshot completeness" ;
+    sh:property [ sh:message "cr:SiteMetrics must carry top:observedAt (the snapshot date)." ;
+            sh:minCount 1 ;
+            sh:path top:observedAt ],
+        [ sh:message "cr:SiteMetrics must link to a cr:StudySite via cr:metricsForSite." ;
+            sh:minCount 1 ;
+            sh:path cr:metricsForSite ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:SiteMetrics .
+
+cr:SourceDataAuditTrailShape a sh:NodeShape ;
+    sh:property [ sh:message "Source data has no audit trail (ALCOA++ reconstructability not explicitly asserted)." ;
+            sh:minCount 1 ;
+            sh:path cr:hasAuditTrail ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:SourceData .
+
+cr:SpecimenOriginShape a sh:NodeShape ;
+    sh:message "Specimen must have an origin: a collection event (cr:collectedAt) or a parent (prov:wasDerivedFrom)." ;
+    sh:or ( [ sh:minCount 1 ;
+                sh:path cr:collectedAt ] [ sh:minCount 1 ;
+                sh:path prov:wasDerivedFrom ] ) ;
+    sh:severity sh:Violation ;
+    sh:targetClass hcls:Specimen .
+
+cr:StalledRecruitShape a sh:NodeShape ;
+    rdfs:label "Recruit stalled with many contact attempts (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Recruit has 6+ contact attempts but is still in RESPONDED or CONTACTED state. Consider transitioning to DROPPED." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#contactAttempts> ?n ;
+                    <https://top.scientix.ai/cr/v1#recruitStatus> ?s .
+              FILTER ( ?n >= 6 && ?s IN ("RESPONDED", "CONTACTED") )
+            }
+        """ ] ;
+    sh:targetClass cr:Recruit .
+
+cr:StartupArtifactTypeShape a sh:NodeShape ;
+    rdfs:label "Start-up artifact must be classified to a TMF type" ;
+    sh:property [ sh:class <https://top.scientix.ai/tmf/v1#TMFArtifactType> ;
+            sh:message "A start-up artifact must be classified to a TMF artifact type (cr:ofArtifactType)." ;
+            sh:minCount 1 ;
+            sh:path cr:ofArtifactType ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:StartupArtifact .
+
+cr:StudyShape a sh:NodeShape ;
+    sh:property [ sh:class cr:Sponsor ;
+            sh:message "A Study must have a Sponsor." ;
+            sh:minCount 1 ;
+            sh:path cr:sponsoredBy ],
+        [ sh:class cr:ProtocolVersion ;
+            sh:message "A Study must have >=1 ProtocolVersion." ;
+            sh:minCount 1 ;
+            sh:path cr:hasProtocolVersion ],
+        [ sh:class cr:StudySite ;
+            sh:message "A Study must be conducted at >=1 StudySite." ;
+            sh:minCount 1 ;
+            sh:path cr:conductedAt ] ;
+    sh:targetClass cr:Study .
+
+cr:StudySiteStudyConsistencyShape a sh:NodeShape ;
+    rdfs:label "Participant.forStudySite must match forStudy (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.forStudySite references a StudySite whose forStudy does not match Participant.forStudy." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#forStudySite> ?ss ;
+                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              FILTER NOT EXISTS {
+                ?ss <https://top.scientix.ai/cr/v1#forStudy> ?study .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:UncapturedAntecedentShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Deviation event has no recorded antecedent (latent cause not captured)." ;
+            sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS { ?a <https://top.scientix.ai/cr/v1#manifestsAs> $this . }
+            }
+        """ ] ;
+    sh:targetClass cr:DeviationEvent .
+
+cr:UnscheduledVisitShouldHaveReasonShape a sh:NodeShape ;
+    rdfs:label "Unscheduled VisitOccurrence should have unscheduledReason (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "VisitOccurrence.visitType=UNSCHEDULED but unscheduledReason is missing. Maps to SDTM SV SVUPDES." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#visitType> "UNSCHEDULED" .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#unscheduledReason> ?r . }
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:VagueQuestionShape a sh:NodeShape ;
+    sh:property [ sh:message "Pre-IND question lacks a proposed position (vague question)." ;
+            sh:minCount 1 ;
+            sh:path cr:proposedPosition ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:RegulatoryQuestion .
+
+cr:VisitRequiresParticipantShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence requires forParticipant (hard)" ;
+    sh:property [ sh:message "VisitOccurrence must link to exactly one Participant." ;
+            sh:minCount 1 ;
+            sh:path cr:forParticipant ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:VisitRequiresStudySiteShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence requires atStudySite (hard)" ;
+    sh:property [ sh:message "VisitOccurrence must link to a StudySite." ;
+            sh:minCount 1 ;
+            sh:path cr:atStudySite ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:VisitStudySiteConsistencyShape a sh:NodeShape ;
+    rdfs:label "VisitOccurrence.atStudySite must match Participant.forStudySite (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "VisitOccurrence.atStudySite does not match the forParticipant's forStudySite." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#atStudySite> ?ss ;
+                    <https://top.scientix.ai/cr/v1#forParticipant> ?p .
+              ?p <https://top.scientix.ai/cr/v1#forStudySite> ?pss .
+              FILTER ( ?ss != ?pss )
+            }
+        """ ] ;
+    sh:targetClass cr:VisitOccurrence .
+
+cr:VisitWindowShape a sh:NodeShape ;
+    rdfs:label "Visit outside planned window (warning)" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Actual visit's observedAt falls outside the planned window of the visit it realizes (out-of-window) — review materiality." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#realizes> ?pv ;
+                    <https://top.scientix.ai/v1#observedAt> ?t .
+              ?pv a <https://top.scientix.ai/cr/v1#PlannedVisit> ;
+                  <https://top.scientix.ai/cr/v1#windowStart> ?ws ;
+                  <https://top.scientix.ai/cr/v1#windowEnd> ?we .
+              FILTER ( ?t < ?ws || ?t > ?we )
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:realizes .
+
+cr:WithdrawalReasonShape a sh:NodeShape ;
+    rdfs:label "Withdrawal reason must be coded" ;
+    sh:property [ sh:in ( "subject-decision" "AE" "lost-to-follow-up" "other" ) ;
+            sh:message "cr:withdrawalReason must be one of: subject-decision, AE, lost-to-follow-up, other." ;
+            sh:minCount 1 ;
+            sh:path cr:withdrawalReason ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ConsentWithdrawal .
+
+cr:WithdrawnRequiresConsentWithdrawalShape a sh:NodeShape ;
+    rdfs:label "WITHDRAWN requires WithdrawalRecord with CONSENT_WITHDRAWN (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Participant.participantStatus=WITHDRAWN but no WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. WITHDRAWN is reserved for subject-initiated withdrawal; investigator-initiated uses DISCONTINUED." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#participantStatus> "WITHDRAWN" .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/cr/v1#hasWithdrawalRecord> ?w .
+                ?w <https://top.scientix.ai/cr/v1#withdrawalCategory> "CONSENT_WITHDRAWN" .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Participant .
+
+cr:WorkStreamShape a sh:NodeShape ;
+    rdfs:label "Work stream must consume inputs and name its site" ;
+    sh:property [ sh:class cr:StartupArtifact ;
+            sh:message "A work stream must consume >=1 start-up artifact (the data it works from)." ;
+            sh:minCount 1 ;
+            sh:path cr:consumes ;
+            sh:severity sh:Violation ],
+        [ sh:class cr:StudySite ;
+            sh:message "A work stream must name the site it runs at." ;
+            sh:minCount 1 ;
+            sh:path cr:streamForSite ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:WorkStream .
+
+cx:MappingShape a sh:NodeShape ;
+    sh:property [ sh:in ( <https://w3id.org/semapv/vocab/ManualMappingCuration> <https://w3id.org/semapv/vocab/LexicalMatching> <https://w3id.org/semapv/vocab/LogicalReasoning> ) ;
+            sh:message "Mapping justification must be a semapv justification IRI." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cx:justification ],
+        [ sh:datatype xsd:dateTime ;
+            sh:message "Mapping must carry transaction time (top:recordedAt)." ;
+            sh:minCount 1 ;
+            sh:path top:recordedAt ],
+        [ sh:message "Mapping must reference a TOP/CR-core subject term (IRI)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cx:subjectId ],
+        [ sh:message "Mapping must be attributed to an agent (PROV)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path prov:wasAttributedTo ],
+        [ sh:in ( "verified" "unverified" "deprecated" ) ;
+            sh:message "Mapping must carry a verification status." ;
+            sh:minCount 1 ;
+            sh:path cx:verificationStatus ],
+        [ sh:message "Mapping must reference the external target term (IRI)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cx:objectId ],
+        [ sh:message "Mapping must name an author/curator (IRI)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cx:author ],
+        [ sh:datatype xsd:date ;
+            sh:message "Mapping must carry a mapping date." ;
+            sh:minCount 1 ;
+            sh:path cx:mappingDate ],
+        [ sh:in ( skos:exactMatch skos:closeMatch skos:relatedMatch skos:broadMatch skos:narrowMatch ) ;
+            sh:message "Mapping predicate must be a SKOS match predicate." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cx:predicateId ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxInclusive 1.0 ;
+            sh:message "Mapping must carry a confidence in [0,1]." ;
+            sh:minCount 1 ;
+            sh:minInclusive 0.0 ;
+            sh:path cx:confidence ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cx:Mapping .
+
+<https://top.scientix.ai/tmf/v1#ContentBindingShape> a sh:NodeShape ;
+    sh:property [ sh:message "TMF artifact type has no content binding (concerns/defines/records/documents) — a filing label, not comprehension." ;
+            sh:minCount 1 ;
+            sh:path [ sh:alternativePath ( <https://top.scientix.ai/tmf/v1#concerns> <https://top.scientix.ai/tmf/v1#defines> <https://top.scientix.ai/tmf/v1#records> <https://top.scientix.ai/tmf/v1#documents> ) ] ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass <https://top.scientix.ai/tmf/v1#TMFArtifactType> .
+
+top:BitemporalProvShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:message "Must have exactly one transaction-time record (top:recordedAt)." ;
+            sh:minCount 1 ;
+            sh:path top:recordedAt ],
+        [ sh:message "Must be attributed to at least one agent (prov:wasAttributedTo)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path prov:wasAttributedTo ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:message "Must have exactly one valid-time start (top:observedAt)." ;
+            sh:minCount 1 ;
+            sh:path top:observedAt ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass top:Versioned .
+
+top:UniversalDNAShape a sh:NodeShape ;
+    sh:property [ sh:message "Universal DNA: every entity must carry a top:identifier." ;
+            sh:minCount 1 ;
+            sh:path top:identifier ],
+        [ sh:message "Universal DNA: every entity must carry a top:status." ;
+            sh:minCount 1 ;
+            sh:path top:status ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass top:Versioned .
+

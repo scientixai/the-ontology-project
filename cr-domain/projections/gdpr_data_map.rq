@@ -1,25 +1,30 @@
 # gdpr_data_map.rq — All graph entities transitively linked to a given hcls:Person (US-600-004).
 # Use for GDPR DSAR Art 15 (right of access) — enumerate all personal data held.
-# Substitute ?personIRI with the IRI of the subject of the request.
-PREFIX cr:    <https://top.scientix.ai/cr/v1#>
-PREFIX hcls:  <https://top.scientix.ai/hcls/v1#>
-PREFIX top:   <https://top.scientix.ai/v1#>
-PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+# Substitute ?personIRI with the target person's IRI.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX hcls: <https://top.scientix.ai/hcls/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
 
-SELECT DISTINCT ?entity ?entityType ?entityLabel
+SELECT DISTINCT ?entity ?entityType
 WHERE {
-  BIND ( <urn:example:person/P001> AS ?person )
+  VALUES ?person { <urn:person:REPLACE_WITH_PERSON_IRI> }
+
   {
-    ?entity cr:forSubject ?person .
+    # Direct: entities that reference the person
+    ?entity ?p ?person .
   } UNION {
-    ?entity cr:dsrForSubject ?person .
+    # Via StudySubject (pseudonymous bridge)
+    ?enrollment a cr:Enrollment ;
+                cr:enrolledPerson ?person ;
+                cr:asSubject ?subject .
+    ?entity ?p2 ?subject .
   } UNION {
-    ?consent cr:forSubject ?person .
-    ?entity cr:closesConsent ?consent .
-  } UNION {
-    ?entity cr:enrolledSubject ?person .
+    # Via Participant
+    ?participant a cr:Participant ;
+                 cr:personRef ?person .
+    ?entity ?p3 ?participant .
   }
-  OPTIONAL { ?entity a ?entityType . }
-  OPTIONAL { ?entity rdfs:label ?entityLabel . }
+
+  ?entity a ?entityType .
 }
 ORDER BY ?entityType ?entity
