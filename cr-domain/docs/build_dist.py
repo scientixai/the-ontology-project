@@ -234,5 +234,21 @@ def build():
     print(f"  SHA256SUMS  ({n_sums} artifacts pinned for downstream consumers)")
 
 
+def run_naming_check():
+    """Run the IRI naming convention linter as a post-build check."""
+    import subprocess, sys as _sys
+    linter = os.path.join(os.path.dirname(ROOT), "tools", "naming_check.py")
+    if not os.path.isfile(linter):
+        print("  naming_check.py not found — skipping")
+        return
+    result = subprocess.run([_sys.executable, linter], capture_output=True, text=True)
+    if result.returncode != 0:
+        print("\nNAMING CHECK FAILED:")
+        print(result.stdout)
+        raise SystemExit(1)
+    print(f"  naming_check: {result.stdout.strip()}")
+
+
 if __name__ == "__main__":
     build()
+    run_naming_check()
