@@ -296,40 +296,6 @@
     ]
   },
   {
-    "@id": "_:cb17c55734a6a0e9fba298668509fafeb412a7b2e173e436afe8e432eef7be43392",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "critical"
-          },
-          {
-            "@value": "major"
-          },
-          {
-            "@value": "minor"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "Deviation event must carry a category (critical/major/minor)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#deviationCategory"
-      }
-    ]
-  },
-  {
     "@id": "_:cb18136b029cfc971b212d580b79d4ad25974be3c02def3f067d9ec93d87badb070",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -640,6 +606,19 @@
     ]
   },
   {
+    "@id": "_:cb1c9df96b256d230fd8805990405d7e7bb43cda872d3a0c066997cd1cb440f6cfd",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Observation recorded after the subject's consent withdrawal date (GDPR / ICH E6(R3) concern)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/v1#validFrom> ?obsDate .\n              ?withdrawal a <https://top.scientix.ai/cr/v1#ConsentWithdrawal> ;\n                          <https://top.scientix.ai/cr/v1#closesConsent> ?consent .\n              ?consent <https://top.scientix.ai/cr/v1#withdrawalDate> ?wd .\n              FILTER ( xsd:date(?obsDate) > ?wd )\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb1cc8ab0a3a9692a6bf5a4d2d72eb1b56251c23c2905dd015280fca733d85b3c9d",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -908,6 +887,25 @@
     ]
   },
   {
+    "@id": "_:cb1f49b825328783dd4ebfafbcf2fe3c2991e397af48012084488ab0a78ba29372e",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:AnalysisPopulation must link to a cr:DataCut via cr:populationForCut."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#populationForCut"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1f859143603f709f9119ec0f138ee4d965f9388ea135ef3c96a62123ea33f8078",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -928,6 +926,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#queryOn"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1fa50f29ff930ab12b4d8b476a0501dc19c452f4f6c493a1535c05cda0bbff996",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:Estimand must declare cr:estimandPopulation (ICH E9R1 component 1)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#estimandPopulation"
       }
     ]
   },
@@ -993,6 +1010,25 @@
     ]
   },
   {
+    "@id": "_:cb20e5689cf66a8a98313823a5d380a5aa5e46f2facafdd64d53650a1ad91ed63a0",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DataCut must carry cr:cutDate (database lock date)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#cutDate"
+      }
+    ]
+  },
+  {
     "@id": "_:cb214f24f50bfad9b6c941d964b7b73298fbd093c94bac19fc5a3066092d489ca2c",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1026,6 +1062,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#delegatedCapability"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb21ccb3e0ccb6ca085650056ae1313a63b4bcb7ccc2e4abc930af6e13cc67ed7cc",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:Estimand must declare cr:estimandVariable (ICH E9R1 component 2)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#estimandVariable"
       }
     ]
   },
@@ -1136,31 +1191,10 @@
     ]
   },
   {
-    "@id": "_:cb22f5e0cbd21bf0002ad016d7ea11baf5b03adb91ef4042e464f05297898024617",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "Published"
-          },
-          {
-            "@value": "Received"
-          },
-          {
-            "@value": "SampleDue"
-          },
-          {
-            "@value": "ToBeVerified"
-          },
-          {
-            "@value": "Verified"
-          }
-        ]
-      }
-    ],
+    "@id": "_:cb2310e0394f0305e1834c9db2daa79f98e6b1876903e23125fbf99d09854e05640",
     "http://www.w3.org/ns/shacl#message": [
       {
-        "@value": "Custody event toState must be a valid lifecycle state."
+        "@value": "cr:DataProcessingAgreement must link to a processor organization via cr:processorOrg."
       }
     ],
     "http://www.w3.org/ns/shacl#minCount": [
@@ -1171,7 +1205,7 @@
     ],
     "http://www.w3.org/ns/shacl#path": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#toState"
+        "@id": "https://top.scientix.ai/cr/v1#processorOrg"
       }
     ]
   },
@@ -1185,6 +1219,43 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#riskLevel> \"high\" .\n              FILTER NOT EXISTS { ?mp <https://top.scientix.ai/cr/v1#mitigates> $this . }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb236d9b6ccb816c3746594b5ae45fe2c2715342abacdb99a0aa8f5f1270846d896",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "AE"
+          },
+          {
+            "@value": "lost-to-follow-up"
+          },
+          {
+            "@value": "other"
+          },
+          {
+            "@value": "subject-decision"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:withdrawalReason must be one of: subject-decision, AE, lost-to-follow-up, other."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#withdrawalReason"
       }
     ]
   },
@@ -1357,6 +1428,25 @@
     ]
   },
   {
+    "@id": "_:cb24a053ea89a765d95732fd39d206563cbf456fdedbfd94102d8bcb2ece9e14397",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DataCut must link to a cr:Study via cr:cutForStudy."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#cutForStudy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb24a4353fbf48b0976b10f798ea639910e759929fc42580fb620a42264ae808baa",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -1377,48 +1467,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/v1#recordedAt"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb24d1944fd585494b79be791c8ba302f5bebed95e1872bbabea7d12e4a8306335f",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "FullPHI"
-          },
-          {
-            "@value": "LimitedPHI"
-          },
-          {
-            "@value": "NotPHI"
-          },
-          {
-            "@value": "Restricted"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "DataElementDef should carry a PHI classification (NotPHI/LimitedPHI/FullPHI/Restricted)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#phiClassification"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#severity": [
-      {
-        "@id": "http://www.w3.org/ns/shacl#Warning"
       }
     ]
   },
@@ -1456,6 +1504,25 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap .\n              $this <https://top.scientix.ai/cr/v1#performedBy> ?p .\n              FILTER NOT EXISTS {\n                ?d a <https://top.scientix.ai/cr/v1#Delegation> ;\n                   <https://top.scientix.ai/cr/v1#delegate> ?p ;\n                   <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb250ca630caa79669ba1d8bccee35f781a385132a7f5bb30c35b7e6efbfc26a315",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:Estimand must carry cr:populationLevelSummary (the statistical estimand statement)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#populationLevelSummary"
       }
     ]
   },
@@ -1504,6 +1571,40 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#observationForSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb25fe62e83370aca61510be7b35dde1ff045b097bc03a366b254f5be63ccbd5a11",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "critical"
+          },
+          {
+            "@value": "major"
+          },
+          {
+            "@value": "minor"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Deviation event must carry a category (critical/major/minor)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#deviationCategory"
       }
     ]
   },
@@ -1580,6 +1681,25 @@
     ]
   },
   {
+    "@id": "_:cb26a2c32fe6eec043c88476259549b6035d506a9c2d1635494b816b427397e75d7",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DataProcessingAgreement must carry cr:dpaEffectiveDate."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#dpaEffectiveDate"
+      }
+    ]
+  },
+  {
     "@id": "_:cb26b729d049617efb5101b4c30766ffdd2f5a5e3ba4a5862db3266130cb1c30f52",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1595,6 +1715,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/v1#observedAt"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb26f798df45227bd2bce11e4c3d310475dd18bf971da993675759d6b57f3286085",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:StatisticalAnalysisPlan must carry cr:sapVersion."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#sapVersion"
       }
     ]
   },
@@ -1619,6 +1758,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#definedBy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2731e12cdeb8c52d963bf125e4e2037143e0a866a86afd8a894a96264a34e5a4c",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DataProcessingAgreement must link to a controller (sponsor) via cr:controllerOrg."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#controllerOrg"
       }
     ]
   },
@@ -1678,6 +1836,43 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/v1#observedAt"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb27b3b0f156d5128202120427523f420f2d94bda6ebaa4db541b0458f2dfedd0dc",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "access"
+          },
+          {
+            "@value": "erasure"
+          },
+          {
+            "@value": "portability"
+          },
+          {
+            "@value": "rectification"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:dsrType must be one of: access, erasure, rectification, portability."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#dsrType"
       }
     ]
   },
@@ -1773,6 +1968,46 @@
     ]
   },
   {
+    "@id": "_:cb2a75b692f2229f6138d55252f2075a27864c2054c26b17f15b6c3bb94c1e893e6",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "composite"
+          },
+          {
+            "@value": "hypothetical"
+          },
+          {
+            "@value": "principal-stratum"
+          },
+          {
+            "@value": "treatment-policy"
+          },
+          {
+            "@value": "while-on-treatment"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:Estimand must declare cr:intercurrentEventStrategy from the five ICH E9R1 strategies."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#intercurrentEventStrategy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2af2637de685661c62d653398ef5778a295f6825425f80631c5ea71a190664228",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1854,6 +2089,40 @@
     "http://www.w3.org/ns/shacl#severity": [
       {
         "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2bc9138e19b0c8491f0446091d1e08a2eb2842205478ee5d512c8571843cb49e6",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "interim"
+          },
+          {
+            "@value": "primary"
+          },
+          {
+            "@value": "safety-review"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:DataCut must carry cr:cutType: primary, interim, or safety-review."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#cutType"
       }
     ]
   },
@@ -2012,6 +2281,46 @@
     ]
   },
   {
+    "@id": "_:cb2ef3af8ccbd0f8ecf5bab0ea88b0e83c9fe023e760fec48bb55c29154c6ecd624",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "Published"
+          },
+          {
+            "@value": "Received"
+          },
+          {
+            "@value": "SampleDue"
+          },
+          {
+            "@value": "ToBeVerified"
+          },
+          {
+            "@value": "Verified"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Custody event toState must be a valid lifecycle state."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#toState"
+      }
+    ]
+  },
+  {
     "@id": "_:cb30296b1476a2e9dc12ba08337986eda063e9fb31661a02b58fae57544bdbee1f9",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2032,6 +2341,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#asSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb304898f998438bbaa00bfa60e52fa41c7dcd969e6928b01c825e82c9df59cddeb",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:StatisticalAnalysisPlan must link to a cr:Study via cr:sapGovernsStudy."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#sapGovernsStudy"
       }
     ]
   },
@@ -2124,6 +2452,48 @@
     ]
   },
   {
+    "@id": "_:cb31e11d11f1f16999cda0c897ffb8ee6081d265be675c6e8ae560fbecbbdb51aea",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "FullPHI"
+          },
+          {
+            "@value": "LimitedPHI"
+          },
+          {
+            "@value": "NotPHI"
+          },
+          {
+            "@value": "Restricted"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "DataElementDef should carry a PHI classification (NotPHI/LimitedPHI/FullPHI/Restricted)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#phiClassification"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb320cc6e561ff813fcabd1e4386bc173d6b293337f3c7fc6e0c52c4d22fa4754e8",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2163,6 +2533,46 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#forSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb326745d9967eda00026b65fd36e2500e2c62e38cf2c8fdd96b2e011d83fd816b4",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "ITT"
+          },
+          {
+            "@value": "PP"
+          },
+          {
+            "@value": "mITT"
+          },
+          {
+            "@value": "other"
+          },
+          {
+            "@value": "safety"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:AnalysisPopulation must carry cr:populationType: ITT, mITT, PP, safety, or other."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#populationType"
       }
     ]
   },
@@ -2258,6 +2668,19 @@
     ]
   },
   {
+    "@id": "_:cba0bd1427b0ffe4bfd43cd3909829cb77f8d908cc2f991323e88f46293ff3692e",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Study governed by EU_GDPR must declare a cr:LawfulBasis via top:governedBy."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/v1#governedBy> <https://top.scientix.ai/v1#EU_GDPR> .\n              FILTER NOT EXISTS {\n                $this <https://top.scientix.ai/v1#governedBy> ?basis .\n                ?basis a <https://top.scientix.ai/cr/v1#LawfulBasis> .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cba0ddb134d2a17aa04bd18fbf0985ba07820f918eb2c5f321167009506c4532ba",
     "http://www.w3.org/ns/shacl#minCount": [
       {
@@ -2307,6 +2730,19 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#meetingType> \"Pre-IND\" .\n              FILTER ( NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasBriefingBook> ?b }\n                       || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasQuestion> ?q } )\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cbd767fcb98266bbe97cd87afe50fd55acae273f28c2b3a25d7b7a26ac2c229e79",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:withdrawalDate precedes the consent top:validFrom \u2014 withdrawal cannot predate the consent itself."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#withdrawalDate> ?wd ;\n                    <https://top.scientix.ai/v1#validFrom> ?vf .\n              FILTER ( ?wd < xsd:date(?vf) )\n            }\n        "
       }
     ]
   },
@@ -2420,6 +2856,35 @@
     "http://www.w3.org/ns/shacl#targetSubjectsOf": [
       {
         "@id": "https://top.scientix.ai/cr/v1#realizes"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulationRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Analysis population required fields"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1f49b825328783dd4ebfafbcf2fe3c2991e397af48012084488ab0a78ba29372e"
+      },
+      {
+        "@id": "_:cb326745d9967eda00026b65fd36e2500e2c62e38cf2c8fdd96b2e011d83fd816b4"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulation"
       }
     ]
   },
@@ -2710,6 +3175,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ConsentWithdrawalDateShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Withdrawal date must be >= consent validFrom"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cbd767fcb98266bbe97cd87afe50fd55acae273f28c2b3a25d7b7a26ac2c229e79"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InformedConsent"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#ConvertedRecruitRequiresParticipantShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -2742,7 +3233,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb22f5e0cbd21bf0002ad016d7ea11baf5b03adb91ef4042e464f05297898024617"
+        "@id": "_:cb2ef3af8ccbd0f8ecf5bab0ea88b0e83c9fe023e760fec48bb55c29154c6ecd624"
       },
       {
         "@id": "_:cb319f708386ccd854efbb2f2f55e5c75e23478403f92338efab8cea8c3398f7572"
@@ -2791,13 +3282,103 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#DPARequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Data Processing Agreement required fields"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb2310e0394f0305e1834c9db2daa79f98e6b1876903e23125fbf99d09854e05640"
+      },
+      {
+        "@id": "_:cb26a2c32fe6eec043c88476259549b6035d506a9c2d1635494b816b427397e75d7"
+      },
+      {
+        "@id": "_:cb2731e12cdeb8c52d963bf125e4e2037143e0a866a86afd8a894a96264a34e5a4c"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataProcessingAgreement"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DSRTypeShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Data Subject Request type must be coded"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb27b3b0f156d5128202120427523f420f2d94bda6ebaa4db541b0458f2dfedd0dc"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataSubjectRequest"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DataCutRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "DataCut required fields"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb20e5689cf66a8a98313823a5d380a5aa5e46f2facafdd64d53650a1ad91ed63a0"
+      },
+      {
+        "@id": "_:cb24a053ea89a765d95732fd39d206563cbf456fdedbfd94102d8bcb2ece9e14397"
+      },
+      {
+        "@id": "_:cb2bc9138e19b0c8491f0446091d1e08a2eb2842205478ee5d512c8571843cb49e6"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataCut"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#DataElementPHIShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb24d1944fd585494b79be791c8ba302f5bebed95e1872bbabea7d12e4a8306335f"
+        "@id": "_:cb31e11d11f1f16999cda0c897ffb8ee6081d265be675c6e8ae560fbecbbdb51aea"
       }
     ],
     "http://www.w3.org/ns/shacl#targetClass": [
@@ -2864,7 +3445,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb17c55734a6a0e9fba298668509fafeb412a7b2e173e436afe8e432eef7be43392"
+        "@id": "_:cb25fe62e83370aca61510be7b35dde1ff045b097bc03a366b254f5be63ccbd5a11"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -2949,6 +3530,41 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#EstimandRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Estimand ICH E9(R1) four-component completeness"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1fa50f29ff930ab12b4d8b476a0501dc19c452f4f6c493a1535c05cda0bbff996"
+      },
+      {
+        "@id": "_:cb21ccb3e0ccb6ca085650056ae1313a63b4bcb7ccc2e4abc930af6e13cc67ed7cc"
+      },
+      {
+        "@id": "_:cb250ca630caa79669ba1d8bccee35f781a385132a7f5bb30c35b7e6efbfc26a315"
+      },
+      {
+        "@id": "_:cb2a75b692f2229f6138d55252f2075a27864c2054c26b17f15b6c3bb94c1e893e6"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Estimand"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#HighRiskMitigationShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -3009,6 +3625,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#InformedConsent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#LawfulBasisRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "EU-governed study must declare lawful basis"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cba0bd1427b0ffe4bfd43cd3909829cb77f8d908cc2f991323e88f46293ff3692e"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
       }
     ]
   },
@@ -3243,6 +3885,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#PostWithdrawalObservationShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Observation recorded after consent withdrawal"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1c9df96b256d230fd8805990405d7e7bb43cda872d3a0c066997cd1cb440f6cfd"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Observation"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#PreINDReadinessShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -3410,6 +4078,35 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#SeriousAdverseEvent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SAPRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "SAP completeness"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb26f798df45227bd2bce11e4c3d310475dd18bf971da993675759d6b57f3286085"
+      },
+      {
+        "@id": "_:cb304898f998438bbaa00bfa60e52fa41c7dcd969e6928b01c825e82c9df59cddeb"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
       }
     ]
   },
@@ -3879,6 +4576,32 @@
     "http://www.w3.org/ns/shacl#targetSubjectsOf": [
       {
         "@id": "https://top.scientix.ai/cr/v1#realizes"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#WithdrawalReasonShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Withdrawal reason must be coded"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb236d9b6ccb816c3746594b5ae45fe2c2715342abacdb99a0aa8f5f1270846d896"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ConsentWithdrawal"
       }
     ]
   },

@@ -52,6 +52,18 @@ cr:ActivityOrderingShape a sh:NodeShape ;
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
 
+cr:AnalysisPopulationRequiredShape a sh:NodeShape ;
+    rdfs:label "Analysis population required fields" ;
+    sh:property [ sh:message "cr:AnalysisPopulation must link to a cr:DataCut via cr:populationForCut." ;
+            sh:minCount 1 ;
+            sh:path cr:populationForCut ],
+        [ sh:in ( "ITT" "mITT" "PP" "safety" "other" ) ;
+            sh:message "cr:AnalysisPopulation must carry cr:populationType: ITT, mITT, PP, safety, or other." ;
+            sh:minCount 1 ;
+            sh:path cr:populationType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:AnalysisPopulation .
+
 cr:ArmStudyConsistencyShape a sh:NodeShape ;
     rdfs:label "Assigned arm must belong to Participant's Study (hard)" ;
     sh:severity sh:Violation ;
@@ -192,6 +204,19 @@ cr:CompletedVisitShouldHaveEndDateShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:VisitOccurrence .
 
+cr:ConsentWithdrawalDateShape a sh:NodeShape ;
+    rdfs:label "Withdrawal date must be >= consent validFrom" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "cr:withdrawalDate precedes the consent top:validFrom — withdrawal cannot predate the consent itself." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#withdrawalDate> ?wd ;
+                    <https://top.scientix.ai/v1#validFrom> ?vf .
+              FILTER ( ?wd < xsd:date(?vf) )
+            }
+        """ ] ;
+    sh:targetClass cr:InformedConsent .
+
 cr:ConvertedRecruitRequiresParticipantShape a sh:NodeShape ;
     rdfs:label "CONVERTED_TO_PARTICIPANT requires convertedToParticipant link (hard)" ;
     sh:severity sh:Violation ;
@@ -230,6 +255,44 @@ cr:DLTGradeShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetClass cr:DoseLimitingToxicity .
+
+cr:DPARequiredShape a sh:NodeShape ;
+    rdfs:label "Data Processing Agreement required fields" ;
+    sh:property [ sh:message "cr:DataProcessingAgreement must link to a processor organization via cr:processorOrg." ;
+            sh:minCount 1 ;
+            sh:path cr:processorOrg ],
+        [ sh:message "cr:DataProcessingAgreement must carry cr:dpaEffectiveDate." ;
+            sh:minCount 1 ;
+            sh:path cr:dpaEffectiveDate ],
+        [ sh:message "cr:DataProcessingAgreement must link to a controller (sponsor) via cr:controllerOrg." ;
+            sh:minCount 1 ;
+            sh:path cr:controllerOrg ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DataProcessingAgreement .
+
+cr:DSRTypeShape a sh:NodeShape ;
+    rdfs:label "Data Subject Request type must be coded" ;
+    sh:property [ sh:in ( "access" "erasure" "rectification" "portability" ) ;
+            sh:message "cr:dsrType must be one of: access, erasure, rectification, portability." ;
+            sh:minCount 1 ;
+            sh:path cr:dsrType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DataSubjectRequest .
+
+cr:DataCutRequiredShape a sh:NodeShape ;
+    rdfs:label "DataCut required fields" ;
+    sh:property [ sh:message "cr:DataCut must carry cr:cutDate (database lock date)." ;
+            sh:minCount 1 ;
+            sh:path cr:cutDate ],
+        [ sh:message "cr:DataCut must link to a cr:Study via cr:cutForStudy." ;
+            sh:minCount 1 ;
+            sh:path cr:cutForStudy ],
+        [ sh:in ( "primary" "interim" "safety-review" ) ;
+            sh:message "cr:DataCut must carry cr:cutType: primary, interim, or safety-review." ;
+            sh:minCount 1 ;
+            sh:path cr:cutType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DataCut .
 
 cr:DataElementPHIShape a sh:NodeShape ;
     sh:property [ sh:in ( "NotPHI" "LimitedPHI" "FullPHI" "Restricted" ) ;
@@ -328,6 +391,24 @@ cr:EnrollmentShape a sh:NodeShape ;
             sh:path cr:asSubject ] ;
     sh:targetClass cr:Enrollment .
 
+cr:EstimandRequiredShape a sh:NodeShape ;
+    rdfs:label "Estimand ICH E9(R1) four-component completeness" ;
+    sh:property [ sh:message "cr:Estimand must declare cr:estimandPopulation (ICH E9R1 component 1)." ;
+            sh:minCount 1 ;
+            sh:path cr:estimandPopulation ],
+        [ sh:message "cr:Estimand must declare cr:estimandVariable (ICH E9R1 component 2)." ;
+            sh:minCount 1 ;
+            sh:path cr:estimandVariable ],
+        [ sh:message "cr:Estimand must carry cr:populationLevelSummary (the statistical estimand statement)." ;
+            sh:minCount 1 ;
+            sh:path cr:populationLevelSummary ],
+        [ sh:in ( "treatment-policy" "hypothetical" "composite" "while-on-treatment" "principal-stratum" ) ;
+            sh:message "cr:Estimand must declare cr:intercurrentEventStrategy from the five ICH E9R1 strategies." ;
+            sh:minCount 1 ;
+            sh:path cr:intercurrentEventStrategy ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Estimand .
+
 cr:HighRiskMitigationShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:sparql [ sh:message "High-risk critical-to-quality factor has no mitigation plan." ;
@@ -367,6 +448,21 @@ cr:InformedConsentShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path cr:forSubject ] ;
     sh:targetClass cr:InformedConsent .
+
+cr:LawfulBasisRequiredShape a sh:NodeShape ;
+    rdfs:label "EU-governed study must declare lawful basis" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Study governed by EU_GDPR must declare a cr:LawfulBasis via top:governedBy." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/v1#governedBy> <https://top.scientix.ai/v1#EU_GDPR> .
+              FILTER NOT EXISTS {
+                $this <https://top.scientix.ai/v1#governedBy> ?basis .
+                ?basis a <https://top.scientix.ai/cr/v1#LawfulBasis> .
+              }
+            }
+        """ ] ;
+    sh:targetClass cr:Study .
 
 cr:ObservationSubjectPseudonymousShape a sh:NodeShape ;
     rdfs:label "ClinicalObservation must reference StudySubject, not Person (hard)" ;
@@ -478,6 +574,21 @@ cr:PostConsentRequiresConsentShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:Participant .
 
+cr:PostWithdrawalObservationShape a sh:NodeShape ;
+    rdfs:label "Observation recorded after consent withdrawal" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "Observation recorded after the subject's consent withdrawal date (GDPR / ICH E6(R3) concern)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/v1#validFrom> ?obsDate .
+              ?withdrawal a <https://top.scientix.ai/cr/v1#ConsentWithdrawal> ;
+                          <https://top.scientix.ai/cr/v1#closesConsent> ?consent .
+              ?consent <https://top.scientix.ai/cr/v1#withdrawalDate> ?wd .
+              FILTER ( xsd:date(?obsDate) > ?wd )
+            }
+        """ ] ;
+    sh:targetClass hcls:Observation .
+
 cr:PreINDReadinessShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:sparql [ sh:message "Pre-IND meeting lacks a briefing book and/or specific questions (readiness warning)." ;
@@ -561,6 +672,17 @@ cr:SAECausalityShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetClass cr:SeriousAdverseEvent .
+
+cr:SAPRequiredShape a sh:NodeShape ;
+    rdfs:label "SAP completeness" ;
+    sh:property [ sh:message "cr:StatisticalAnalysisPlan must carry cr:sapVersion." ;
+            sh:minCount 1 ;
+            sh:path cr:sapVersion ],
+        [ sh:message "cr:StatisticalAnalysisPlan must link to a cr:Study via cr:sapGovernsStudy." ;
+            sh:minCount 1 ;
+            sh:path cr:sapGovernsStudy ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:StatisticalAnalysisPlan .
 
 cr:SUSARDeadlineShape a sh:NodeShape ;
     rdfs:label "SUSAR submission deadline" ;
@@ -783,6 +905,15 @@ cr:VisitWindowShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
+
+cr:WithdrawalReasonShape a sh:NodeShape ;
+    rdfs:label "Withdrawal reason must be coded" ;
+    sh:property [ sh:in ( "subject-decision" "AE" "lost-to-follow-up" "other" ) ;
+            sh:message "cr:withdrawalReason must be one of: subject-decision, AE, lost-to-follow-up, other." ;
+            sh:minCount 1 ;
+            sh:path cr:withdrawalReason ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ConsentWithdrawal .
 
 cr:WithdrawnRequiresConsentWithdrawalShape a sh:NodeShape ;
     rdfs:label "WITHDRAWN requires WithdrawalRecord with CONSENT_WITHDRAWN (hard)" ;
