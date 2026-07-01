@@ -16,6 +16,88 @@ cr:EndpointResultTraceShape a sh:NodeShape ;
     sh:property [ sh:path cr:analyzedUnder ; sh:minCount 1 ; sh:class cr:StatisticalAnalysisPlan ;
         sh:message "EndpointResult must trace to the SAP it was analyzed under." ] .
 
+# SAP completeness (US-400-001)
+cr:SAPRequiredShape a sh:NodeShape ;
+    rdfs:label "SAP completeness" ;
+    sh:targetClass cr:StatisticalAnalysisPlan ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:sapVersion ;
+        sh:minCount 1 ;
+        sh:message "cr:StatisticalAnalysisPlan must carry cr:sapVersion." ;
+    ] ;
+    sh:property [
+        sh:path cr:sapGovernsStudy ;
+        sh:minCount 1 ;
+        sh:message "cr:StatisticalAnalysisPlan must link to a cr:Study via cr:sapGovernsStudy." ;
+    ] .
+
+# Estimand four-component completeness (US-400-002)
+cr:EstimandRequiredShape a sh:NodeShape ;
+    rdfs:label "Estimand ICH E9(R1) four-component completeness" ;
+    sh:targetClass cr:Estimand ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:estimandPopulation ;
+        sh:minCount 1 ;
+        sh:message "cr:Estimand must declare cr:estimandPopulation (ICH E9R1 component 1)." ;
+    ] ;
+    sh:property [
+        sh:path cr:estimandVariable ;
+        sh:minCount 1 ;
+        sh:message "cr:Estimand must declare cr:estimandVariable (ICH E9R1 component 2)." ;
+    ] ;
+    sh:property [
+        sh:path cr:intercurrentEventStrategy ;
+        sh:minCount 1 ;
+        sh:in ("treatment-policy" "hypothetical" "composite" "while-on-treatment" "principal-stratum") ;
+        sh:message "cr:Estimand must declare cr:intercurrentEventStrategy from the five ICH E9R1 strategies." ;
+    ] ;
+    sh:property [
+        sh:path cr:populationLevelSummary ;
+        sh:minCount 1 ;
+        sh:message "cr:Estimand must carry cr:populationLevelSummary (the statistical estimand statement)." ;
+    ] .
+
+# DataCut completeness (US-400-003)
+cr:DataCutRequiredShape a sh:NodeShape ;
+    rdfs:label "DataCut required fields" ;
+    sh:targetClass cr:DataCut ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:cutDate ;
+        sh:minCount 1 ;
+        sh:message "cr:DataCut must carry cr:cutDate (database lock date)." ;
+    ] ;
+    sh:property [
+        sh:path cr:cutForStudy ;
+        sh:minCount 1 ;
+        sh:message "cr:DataCut must link to a cr:Study via cr:cutForStudy." ;
+    ] ;
+    sh:property [
+        sh:path cr:cutType ;
+        sh:minCount 1 ;
+        sh:in ("primary" "interim" "safety-review") ;
+        sh:message "cr:DataCut must carry cr:cutType: primary, interim, or safety-review." ;
+    ] .
+
+# AnalysisPopulation completeness (US-400-004)
+cr:AnalysisPopulationRequiredShape a sh:NodeShape ;
+    rdfs:label "Analysis population required fields" ;
+    sh:targetClass cr:AnalysisPopulation ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:populationType ;
+        sh:minCount 1 ;
+        sh:in ("ITT" "mITT" "PP" "safety" "other") ;
+        sh:message "cr:AnalysisPopulation must carry cr:populationType: ITT, mITT, PP, safety, or other." ;
+    ] ;
+    sh:property [
+        sh:path cr:populationForCut ;
+        sh:minCount 1 ;
+        sh:message "cr:AnalysisPopulation must link to a cr:DataCut via cr:populationForCut." ;
+    ] .
+
 # RegulatoryInteraction required fields (US-200-004)
 cr:RegulatoryInteractionRequiredShape a sh:NodeShape ;
     rdfs:label "Regulatory interaction required fields" ;
@@ -41,7 +123,7 @@ cr:EOP2ReadinessShape a sh:NodeShape ;
         sh:message "EOP2 meeting lacks a binding agreement and/or a risk register (readiness warning)." ;
         sh:select """
             SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#meetingType> "EOP2" .
+              $this <https://top.scientix.ai/cr/v1#meetingType> \"EOP2\" .
               FILTER ( NOT EXISTS { $this <https://top.scientix.ai/cr/v1#producedAgreement> ?a }
                        || NOT EXISTS { $this <https://top.scientix.ai/cr/v1#hasRiskRegister> ?r } )
             }

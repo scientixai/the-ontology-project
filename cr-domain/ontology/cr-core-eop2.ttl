@@ -105,7 +105,121 @@ cr:RiskRegister a owl:Class ;
 cr:StatisticalAnalysisPlan a owl:Class ;
     rdfs:label "Statistical Analysis Plan" ;
     rdfs:comment "The pre-specified plan for analyzing the study's data." ;
-    rdfs:subClassOf top:Evidence .
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+# SAP property enrichment (US-400-001)
+cr:sapVersion a owl:DatatypeProperty ;
+    rdfs:label "SAP version" ;
+    rdfs:comment "Version identifier for this SAP (e.g. 'v1.0', 'v2.1-amendment')." ;
+    rdfs:domain cr:StatisticalAnalysisPlan ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:sapGovernsStudy a owl:ObjectProperty ;
+    rdfs:label "SAP governs study" ;
+    rdfs:comment "The study this statistical analysis plan governs." ;
+    rdfs:domain cr:StatisticalAnalysisPlan ;
+    rdfs:range cr:Study ;
+    top:flavor "Additive" .
+
+cr:sapAmends a owl:ObjectProperty ;
+    rdfs:label "SAP amends" ;
+    rdfs:comment "The prior version of the SAP that this document amends." ;
+    rdfs:domain cr:StatisticalAnalysisPlan ;
+    rdfs:range cr:StatisticalAnalysisPlan ;
+    top:flavor "Additive" .
+
+# Estimand ICH E9(R1) components (US-400-002)
+cr:estimandPopulation a owl:ObjectProperty ;
+    rdfs:label "estimand population" ;
+    rdfs:comment "The analysis population to which the estimand applies." ;
+    rdfs:domain cr:Estimand ;
+    top:flavor "Additive" .
+
+cr:estimandVariable a owl:ObjectProperty ;
+    rdfs:label "estimand variable" ;
+    rdfs:comment "The endpoint variable the estimand is defined on." ;
+    rdfs:domain cr:Estimand ;
+    rdfs:range cr:Endpoint ;
+    top:flavor "Additive" .
+
+cr:intercurrentEventStrategy a owl:DatatypeProperty ;
+    rdfs:label "intercurrent event strategy" ;
+    rdfs:comment "ICH E9(R1) strategy for handling intercurrent events: treatment-policy, hypothetical, composite, while-on-treatment, or principal-stratum." ;
+    rdfs:domain cr:Estimand ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:populationLevelSummary a owl:DatatypeProperty ;
+    rdfs:label "population level summary" ;
+    rdfs:comment "The statistical estimand statement (e.g. 'difference in means at week 26 in the ITT population')." ;
+    rdfs:domain cr:Estimand ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+# DataCut entity (US-400-003)
+cr:DataCut a owl:Class ;
+    rdfs:label "Data Cut" ;
+    rdfs:comment "A database lock event defining the analysis-eligible data for a study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:cutDate a owl:DatatypeProperty ;
+    rdfs:label "cut date" ;
+    rdfs:comment "The database lock date for this data cut." ;
+    rdfs:domain cr:DataCut ;
+    rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
+cr:cutForStudy a owl:ObjectProperty ;
+    rdfs:label "cut for study" ;
+    rdfs:comment "The study this data cut applies to." ;
+    rdfs:domain cr:DataCut ;
+    rdfs:range cr:Study ;
+    top:flavor "Additive" .
+
+cr:cutType a owl:DatatypeProperty ;
+    rdfs:label "cut type" ;
+    rdfs:comment "Coded type: primary, interim, or safety-review." ;
+    rdfs:domain cr:DataCut ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+# AnalysisPopulation entity (US-400-004)
+cr:AnalysisPopulation a owl:Class ;
+    rdfs:label "Analysis Population" ;
+    rdfs:comment "A named, versioned population definition (ITT, mITT, PP, safety) anchored to a data cut." ;
+    rdfs:subClassOf top:Scope,
+        top:Versioned .
+
+cr:populationType a owl:DatatypeProperty ;
+    rdfs:label "population type" ;
+    rdfs:comment "Coded population type: ITT, mITT, PP, safety, or other." ;
+    rdfs:domain cr:AnalysisPopulation ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:populationForCut a owl:ObjectProperty ;
+    rdfs:label "population for cut" ;
+    rdfs:comment "The data cut that anchors this analysis population definition." ;
+    rdfs:domain cr:AnalysisPopulation ;
+    rdfs:range cr:DataCut ;
+    top:flavor "Additive" .
+
+cr:populationCriteria a owl:ObjectProperty ;
+    rdfs:label "population criteria" ;
+    rdfs:comment "The eligibility criterion or rule defining membership in this analysis population." ;
+    rdfs:domain cr:AnalysisPopulation ;
+    rdfs:range cr:EligibilityCriterion ;
+    top:flavor "Additive" .
+
+cr:analysisBasis a owl:ObjectProperty ;
+    rdfs:label "analysis basis" ;
+    rdfs:comment "The analysis population this endpoint result was computed in." ;
+    rdfs:domain cr:EndpointResult ;
+    rdfs:range cr:AnalysisPopulation ;
+    top:flavor "Additive" .
 
 cr:Phase3Design a owl:Class ;
     rdfs:label "Proposed Phase 3 Design" ;
@@ -117,4 +231,3 @@ cr:EndpointResult a owl:Class ;
     rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
     rdfs:subClassOf top:Outcome,
         top:Versioned .
-

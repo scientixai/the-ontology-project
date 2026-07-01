@@ -1,0 +1,20 @@
+# enrollment_as_of_cut.rq — Subjects enrolled as of a named data cut (US-400-003).
+# Uses bitemporal top:validFrom / top:validUntil to filter enrollment valid at cutDate.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?cut ?cutDate ?subject ?enrollment
+WHERE {
+  ?cut a cr:DataCut ;
+       cr:cutDate ?cutDate .
+  ?enrollment a cr:Enrollment ;
+              cr:asSubject ?subject ;
+              top:validFrom ?validFrom .
+  FILTER ( ?validFrom <= ?cutDate )
+  FILTER NOT EXISTS {
+    ?enrollment top:validUntil ?validUntil .
+    FILTER ( ?validUntil <= ?cutDate )
+  }
+}
+ORDER BY ?cut ?subject
