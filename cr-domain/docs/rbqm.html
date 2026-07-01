@@ -1,1 +1,407 @@
-RBQM_PLACEHOLDER
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Risk-based monitoring (RBQM)</title><style>
+:root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{display:flex;max-width:1200px;margin:0 auto}
+nav{position:sticky;top:0;align-self:flex-start;width:240px;padding:24px 18px;height:100vh;overflow:auto;font-size:13px;border-right:1px solid var(--line)}
+nav b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 5px}
+nav a{display:block;color:var(--sec);padding:3px 0}
+nav a.on{color:var(--acc);font-weight:700}
+.brandmark{padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.toplogo{width:172px;height:auto;display:block}
+.brandsub{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:var(--mut);margin-top:8px;letter-spacing:.02em}
+main{flex:1;padding:26px 40px;max-width:900px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);margin:34px 0 12px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
+h4{margin:0 0 6px;font-size:15px}
+.lead{background:#fff;border-left:3px solid var(--acc);padding:14px 18px;margin:0 0 14px;font-size:15px;line-height:1.6}
+code{background:var(--pale);border-radius:3px;padding:1px 5px;font:12px ui-monospace,"SF Mono",Menlo,monospace}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{text-align:left;padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+th{background:var(--pale);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+.ref td.clo{color:var(--acc);font-size:12px;white-space:nowrap;font-family:ui-monospace,Menlo,monospace}
+.ref ul,td ul{margin:0;padding-left:16px}
+.sev{font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px}
+.sev.violation{background:#f4e3e4;color:var(--danger)}.sev.warning{background:#f4ebd9;color:var(--warn)}
+pre{background:#1a2332;border:1px solid #1a2332;border-radius:6px;color:#cde8ef;padding:16px 18px;overflow:auto;font:12px/1.75 ui-monospace,"SF Mono",Menlo,monospace;margin:0}
+pre .c{color:#6a9ab0;font-style:italic}
+pre .k{color:#79c0ff}
+pre .s{color:#a5d6ff}
+pre .n{color:#ffa657}
+footer{color:var(--mut);font-size:12px;margin:44px 0 20px;border-top:1px solid var(--line);padding-top:14px}
+.pill{font-size:12px;font-weight:600;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.pill.ok{background:#e7f6ee;color:var(--ok)}
+.pill.warn{background:#fdf4e3;color:var(--warn)}
+.pill.danger{background:#fde8ea;color:var(--danger)}
+.pill.pend{background:#f0f0ec;color:var(--mut)}
+.impossible-claim{background:#fff8e6;border:1px solid #e0c060;border-left:3px solid #c08410;border-radius:0 6px 6px 0;padding:14px 18px;font-size:13.5px;margin:0 0 18px;color:#4a3600;line-height:1.7}
+.screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 2px 6px rgba(20,40,80,.08)}
+.scr-head{background:linear-gradient(160deg,#0e7490,#0b5563);color:#fff;padding:14px 16px;font-weight:600;font-size:15px;position:relative}
+.scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:3px;letter-spacing:.01em}
+.badge{position:absolute;right:14px;top:14px;background:rgba(255,255,255,.18);font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;letter-spacing:.04em}
+.scr-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid var(--line);font-size:13px}
+.scr-row span{color:var(--mut)}
+.kri-matrix{width:100%;border-collapse:collapse;font-size:12px;background:#fff}
+.kri-matrix th{background:var(--pale);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:7px 10px;border:1px solid var(--line);text-align:center;white-space:nowrap}
+.kri-matrix th:first-child{text-align:left}
+.kri-matrix td{padding:8px 10px;border:1px solid var(--line);vertical-align:middle}
+.kri-matrix td:first-child{font-weight:600;font-size:13px}
+.kri-matrix td.kri-center{text-align:center}
+.kri-cell-ok{background:#f0faf4;color:var(--ok);font-weight:600;text-align:center;font-size:12px}
+.kri-cell-warn{background:#fdf8ec;color:var(--warn);font-weight:600;text-align:center;font-size:12px}
+.kri-cell-danger{background:#fde8ea;color:var(--danger);font-weight:600;text-align:center;font-size:12px}
+.kri-site-active{background:#fffdf0}
+.site-tag{font-size:11px;font-weight:400;color:var(--mut);display:block;margin-top:1px}
+.vtl{padding:16px 16px 6px}
+.vtl-stop{display:grid;grid-template-columns:32px 1fr;gap:0;position:relative}
+.vtl-stop:not(:last-child) .vtl-line{position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--line);z-index:0}
+.vtl-stop.done .vtl-line{background:#b8e4cc}
+.vtl-stop.warn .vtl-line{background:#f0d080}
+.vtl-stop.danger .vtl-line{background:#f8c0c4}
+.vtl-num{width:30px;height:30px;border-radius:50%;background:var(--mut);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;flex:none;margin-top:1px}
+.vtl-stop.done .vtl-num{background:var(--ok)}
+.vtl-stop.warn .vtl-num{background:var(--warn)}
+.vtl-stop.danger .vtl-num{background:var(--danger)}
+.vtl-stop.pend .vtl-num{background:#aaa}
+.vtl-body{padding:2px 0 20px 14px}
+.vtl-head{display:flex;align-items:baseline;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.vtl-name{font-weight:600;font-size:14px;color:var(--ink)}
+.vtl-time{font-size:11px;color:var(--mut);font-family:ui-monospace,Menlo,monospace;background:var(--pale);padding:1px 6px;border-radius:4px}
+.vtl-who{font-size:12px;color:var(--mut);margin-left:auto;text-align:right}
+.vtl-checks{list-style:none;padding:0;margin:3px 0 0}
+.vtl-checks li{font-size:13px;padding:2.5px 0;display:flex;gap:8px;align-items:baseline;line-height:1.5}
+.ck-ok{color:var(--ok);font-weight:700;flex:none;font-size:14px}
+.ck-warn{color:var(--warn);font-weight:700;flex:none;font-size:14px}
+.ck-danger{color:var(--danger);font-weight:700;flex:none;font-size:14px}
+.ck-pend{color:#bbb;flex:none;font-size:14px}
+details.cred{display:inline-block}
+details.cred summary{list-style:none;cursor:pointer;color:var(--ink);display:inline}
+details.cred summary::-webkit-details-marker{display:none}
+details.cred summary .cred-label{border-bottom:1px dotted var(--acc);color:var(--ink)}
+details.cred summary .cred-label.warn{border-bottom-color:var(--warn);color:var(--warn)}
+details.cred summary .cred-label.danger{border-bottom-color:var(--danger);color:var(--danger)}
+details.cred summary .cred-arrow{font-size:10px;color:var(--acc);margin-left:3px}
+details.cred .cred-body{background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:6px 0 2px;box-shadow:0 2px 8px rgba(0,0,0,.09);max-width:480px}
+table.cprov{width:100%;border-collapse:collapse;margin:0;font-size:12px}
+table.cprov td{padding:4px 6px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink)}
+table.cprov td:first-child{color:var(--mut);white-space:nowrap;width:42%}
+table.cprov tr:first-child td{border-top:none}
+.urn-tag{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--acc);word-break:break-all}
+.divider-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding:10px 16px 6px;border-top:1px solid var(--line);background:var(--pale)}
+.jsoncap{font-size:12px;color:var(--mut);margin:0 0 10px}
+.draft-ribbon{position:fixed;top:16px;right:-52px;transform:rotate(45deg);background:#b00020;color:#fff;font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;padding:6px 60px;z-index:2000;box-shadow:0 1px 5px rgba(0,0,0,.3)}
+.draft-banner{background:#fff3f3;border-bottom:1px solid #b00020;color:#7a0016;font:600 12px/1.5 ui-sans-serif,system-ui,sans-serif;text-align:center;padding:8px 14px}
+.draft-banner b{letter-spacing:.08em}
+</style>
+<script src="https://cdn.tailwindcss.com"></script></head>
+<body>
+<div class='draft-ribbon'>DRAFT</div>
+<div class='draft-banner'><b>DRAFT &mdash; PRE-RELEASE.</b> The TOP Clinical Research reference graph is a work in progress and not yet finalized; content, identifiers, and constraints may change.</div>
+<div class='wrap'>
+<nav>
+<div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div>
+<a class="" href="index.html">Overview</a>
+<a class="" href="foundation.html">Foundation</a>
+<a class="" href="implementation.html">Implementation guide</a>
+<b>Start-up</b>
+<a class="" href="preind.html">Pre-IND gate</a>
+<a class="" href="setup.html">Study &amp; site set-up</a>
+<a class="" href="startup-package.html">Start-up package</a>
+<a class="" href="delegation.html">Delegation &amp; DoA</a>
+<b>Conduct</b>
+<a class="" href="enrollment.html">Enrollment &amp; consent</a>
+<a class="" href="schedule.html">Schedule of Activities</a>
+<a class="" href="edc.html">Data capture (EDC)</a>
+<a class="" href="lims.html">Biospecimen &amp; LIMS</a>
+<a class="" href="safety.html">Safety &amp; PV</a>
+<a class="on" href="rbqm.html">Risk-based monitoring</a>
+<a class="" href="deviation.html">Deviations &amp; CAPA</a>
+<b>Closeout</b>
+<a class="" href="eop2.html">EOP2 &amp; analysis</a>
+<b>Cross-cutting</b>
+<a class="" href="roles.html">Roles, phases &amp; actions</a>
+<a class="" href="gcp.html">GCP &amp; essential records</a>
+<a class="" href="tmf.html">TMF document binding</a>
+<a class="" href="interop.html">Interoperability</a>
+<a class="" href="ingestion.html">Ingestion example</a>
+<b>Detail</b>
+<a class="" href="reference.html">Full reference</a>
+</nav>
+
+<main>
+<h1>Risk-based monitoring (RBQM)</h1>
+<p class='lead'>A KRI breach at a single site triggers a chain of investigation, escalation, unscheduled monitoring, root-cause analysis, and CAPA. TOP makes that chain a graph &mdash; one query assembles it from signal to resolution.</p>
+
+<h2>Operator screen &mdash; KRI dashboard &amp; signal lifecycle &mdash; GLP1-TRIAL-27</h2>
+
+<div class="impossible-claim">
+  <b>The impossible screen.</b> &ldquo;Show me the current risk posture across all sites &mdash; which KRIs are breaching, which site triggered an unscheduled monitoring visit, and trace that signal from the raw EDC data through the risk model to the CAPA being worked today.&rdquo; Today: the risk management plan lives in a Word doc in the eTMF, KRI scores are computed monthly in Excel from EDC exports, monitoring visit records live in CTMS, deviation logs live in a separate module, and CAPA actions live in a quality management system. Connecting them for one signal takes a day of manual work. With TOP: one Scorpio traversal, one screen, 187 ms.
+</div>
+
+<div class="screen">
+  <div class="scr-head">
+    RBQM Dashboard &middot; GLP1-TRIAL-27 &middot; 4 active sites
+    <span class="badge">RBQM</span>
+    <div class="scr-sub">Risk management plan v2.1 &middot; CtQ factors: 7 &middot; KRI snapshot: 2026-07-01 &middot; RBQM lead: Dr. Patricia Nguyen</div>
+  </div>
+
+  <div style="padding:14px 16px 10px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px">Site KRI matrix &mdash; all 4 sites &mdash; 7 indicators</div>
+    <table class="kri-matrix">
+      <tr><th>Site</th><th>Overall risk</th><th>Query aging</th><th>SDV %</th><th>Dev rate</th><th>Consent valid</th><th>Enroll velocity</th><th>Last MV</th></tr>
+      <tr class="kri-site-active">
+        <td>Denver Oncology Center<span class="site-tag">37 participants &middot; CRA: S. Rodriguez</span></td>
+        <td class="kri-cell-warn"><span class="pill warn">MED &#8593;</span></td>
+        <td class="kri-cell-ok">9.2 d &#10003;</td>
+        <td class="kri-cell-warn">88% &#8593;</td>
+        <td class="kri-cell-ok">1.8% &#10003;</td>
+        <td class="kri-cell-ok">100% &#10003;</td>
+        <td class="kri-cell-warn">3.1/mo &#8595;</td>
+        <td class="kri-center" style="font-size:12px">2026-06-28</td>
+      </tr>
+      <tr>
+        <td>Mayo Clinic Rochester<span class="site-tag">44 participants &middot; CRA: J. Kim</span></td>
+        <td class="kri-cell-ok"><span class="pill ok">LOW &#10003;</span></td>
+        <td class="kri-cell-ok">6.1 d &#10003;</td>
+        <td class="kri-cell-ok">94% &#10003;</td>
+        <td class="kri-cell-ok">0.9% &#10003;</td>
+        <td class="kri-cell-ok">100% &#10003;</td>
+        <td class="kri-cell-ok">5.4/mo &#10003;</td>
+        <td class="kri-center" style="font-size:12px">2026-06-10</td>
+      </tr>
+      <tr>
+        <td>UCSF Mission Bay<span class="site-tag">41 participants &middot; CRA: A. Patel</span></td>
+        <td class="kri-cell-ok"><span class="pill ok">LOW &#10003;</span></td>
+        <td class="kri-cell-ok">3.4 d &#10003;</td>
+        <td class="kri-cell-ok">97% &#10003;</td>
+        <td class="kri-cell-ok">0.4% &#10003;</td>
+        <td class="kri-cell-ok">100% &#10003;</td>
+        <td class="kri-cell-ok">4.8/mo &#10003;</td>
+        <td class="kri-center" style="font-size:12px">2026-05-22</td>
+      </tr>
+      <tr>
+        <td>MGH Boston<span class="site-tag">27 participants &middot; CRA: T. Williams</span></td>
+        <td class="kri-cell-ok"><span class="pill ok">LOW &#10003;</span></td>
+        <td class="kri-cell-ok">4.8 d &#10003;</td>
+        <td class="kri-cell-ok">96% &#10003;</td>
+        <td class="kri-cell-ok">0.6% &#10003;</td>
+        <td class="kri-cell-ok">100% &#10003;</td>
+        <td class="kri-cell-ok">3.8/mo &#10003;</td>
+        <td class="kri-center" style="font-size:12px">2026-06-01</td>
+      </tr>
+    </table>
+    <div style="font-size:11px;color:var(--mut);margin-top:6px">&#9650; = improving &nbsp;&#9660; = degrading &nbsp;thresholds: query aging &lt;14 d &middot; SDV &ge;90% &middot; deviation rate &lt;2% &middot; consent validity 100%</div>
+  </div>
+
+  <div class="divider-label">Signal lifecycle &mdash; Denver Oncology Center &middot; KRI breach 2026-06-03 &rarr; normalized 2026-07-01</div>
+
+  <div class="vtl">
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">1</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">CtQ factor: Primary endpoint integrity</span><span class="vtl-time">2026-01-15</span><span class="vtl-who">RBQM lead: Dr. P. Nguyen</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> Classified HIGH risk &mdash; score 0.85 (likelihood 0.7 &times; impact 1.0 &times; detectability 0.6 &times; weights)</li>
+          <li><span class="ck-ok">&#10003;</span> KRI thresholds set: query aging &lt;14 d, SDV &ge;90%, deviation rate &lt;2.0%</li>
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">Risk management plan v2.1 approved &mdash; 7 CtQ factors defined</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Document</td><td>Risk Management Plan v2.1</td></tr><tr><td>Approved by</td><td>Dr. P. Nguyen (RBQM) &middot; Dr. Marcus Webb (PI) &middot; 2026-01-15</td></tr><tr><td>CtQ factors</td><td>7: primary endpoint, SAE reporting, consent validity, IP accountability, randomization integrity, eligibility, SoA adherence</td></tr><tr><td>TMF binding</td><td>Section 8.2 &middot; eTMF doc ID TMF-2026-0044</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:CtQFactor:GLP1-TRIAL-27:primary-endpoint-integrity</td></tr></table></div></details></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop danger">
+      <div style="position:relative"><div class="vtl-num">2</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">KRI breach detected &mdash; Denver Oncology</span><span class="vtl-time">2026-06-03</span><span class="vtl-who">Automated &middot; monthly KRI pull</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-danger">&#10007;</span> <details class="cred"><summary><span class="cred-label danger">Query aging: 18.3 days mean (threshold: &lt;14 days) &mdash; 23 open queries</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Open queries</td><td>23 across 18 participants</td></tr><tr><td>Mean age</td><td>18.3 days (threshold: 14 days)</td></tr><tr><td>Oldest query</td><td>QRY-2026-0744 &middot; 31 days &middot; tube type discrepancy</td></tr><tr><td>Breach severity</td><td>HIGH &mdash; primary endpoint CRF fields affected: 9 of 23 queries</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:KRIReading:GLP1-TRIAL-27:denver:query-aging:2026-06-03</td></tr></table></div></details></li>
+          <li><span class="ck-danger">&#10007;</span> SDV completion: 67% (threshold: &ge;90%) &mdash; 31 of 46 primary endpoint fields verified</li>
+          <li><span class="ck-warn">!</span> Enrollment velocity: 3.1/month (threshold: &ge;4.0) &mdash; trending below target</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop warn">
+      <div style="position:relative"><div class="vtl-num">3</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Signal cross-validation</span><span class="vtl-time">2026-06-05</span><span class="vtl-who">RBQM lead: Dr. P. Nguyen</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-warn">!</span> Protocol deviation rate: 3.2% (threshold: &lt;2.0%) &mdash; 6 deviations in 90 days</li>
+          <li><span class="ck-ok">&#10003;</span> Consent validity: 100% &mdash; all 37 participants on current ICF v3.2</li>
+          <li><span class="ck-ok">&#10003;</span> IP accountability: reconciled, no discrepancies</li>
+          <li><span class="ck-warn">!</span> <details class="cred"><summary><span class="cred-label">Root pattern emerging &mdash; CRC staffing gap since April 2026</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Finding</td><td>Second CRC departed 2026-04-02; position unfilled 63 days</td></tr><tr><td>Single-CRC workload</td><td>37 active participants, 4.8 visits/week &mdash; above solo capacity</td></tr><tr><td>Query entry backlog</td><td>CRC Jo Santos handling queries &gt;2 weeks delayed</td></tr><tr><td>SDV scheduling</td><td>CRA visits not coordinated during CRC transition period</td></tr></table></div></details></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop warn">
+      <div style="position:relative"><div class="vtl-num">4</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Site risk level escalated</span><span class="vtl-time">2026-06-06</span><span class="vtl-who">RBQM lead: Dr. P. Nguyen</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-warn">!</span> Denver Oncology re-scored: <b>MEDIUM &rarr; HIGH</b> &mdash; two concurrent KRI breaches on CtQ factor</li>
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">Risk assessment RA-2026-0088 logged &mdash; rationale documented</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Assessment ID</td><td>RA-2026-0088</td></tr><tr><td>Previous score</td><td>0.52 (MEDIUM) &middot; assessed 2026-03-01</td></tr><tr><td>New score</td><td>0.81 (HIGH) &middot; assessed 2026-06-06</td></tr><tr><td>Contributing factors</td><td>Query aging +30%, SDV shortfall &minus;23%, staffing gap confirmed</td></tr><tr><td>Approved by</td><td>Dr. P. Nguyen &middot; Medical Monitor: Dr. A. Osei</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:RiskAssessment:GLP1-TRIAL-27:denver:RA-2026-0088</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> Monitoring plan updated: SDV strategy elevated from risk-based (30%) to targeted-100% on primary endpoint fields</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop warn">
+      <div style="position:relative"><div class="vtl-num">5</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Unscheduled monitoring visit triggered</span><span class="vtl-time">2026-06-07</span><span class="vtl-who">CRA: Silvia Rodriguez assigned</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">Monitoring visit mandate MV-2026-07 issued</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Mandate ID</td><td>MV-2026-07</td></tr><tr><td>Type</td><td>Unscheduled &mdash; triggered by KRI breach on CtQ HIGH factor</td></tr><tr><td>Scope</td><td>100% SDV on primary endpoint fields (46 items, 37 participants) &middot; query resolution review &middot; deviation root-cause interview</td></tr><tr><td>Required completion</td><td>Within 21 days of trigger (by 2026-06-28)</td></tr><tr><td>Assigned CRA</td><td>Silvia Rodriguez &middot; CRA cert CR-2024-0441 &middot; current</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:MonitoringVisit:GLP1-TRIAL-27:denver:MV-2026-07</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> CRA qualification confirmed &mdash; GCP cert ICH E6(R3) &middot; protocol training v3.2 current</li>
+          <li><span class="ck-ok">&#10003;</span> Site notified 2026-06-07 &middot; visit scheduled 2026-06-25</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">6</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Monitoring visit completed</span><span class="vtl-time">2026-06-25&ndash;28</span><span class="vtl-who">CRA: Silvia Rodriguez</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> 46/46 primary endpoint fields verified (100% SDV complete)</li>
+          <li><span class="ck-warn">!</span> <details class="cred"><summary><span class="cred-label">8 SDV findings logged &mdash; 6 minor, 2 major</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Total findings</td><td>8 (6 minor transcription errors, 2 major data discrepancies)</td></tr><tr><td>Major finding 1</td><td>SUBJ-0038 Visit 2: SBP value transposed (178&rarr;187 mmHg vs source doc)</td></tr><tr><td>Major finding 2</td><td>SUBJ-0021 Visit 4: AUC value missing &mdash; not entered after lab result returned</td></tr><tr><td>Corrections required</td><td>8 CRF queries raised (QRY-2026-1001 through -1008)</td></tr><tr><td>MV report</td><td>MVR-2026-0088 &middot; submitted to TMF 2026-06-30</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> Root cause confirmed: CRC staffing gap &mdash; single CRC managing 37 participants since 2026-04-02</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">7</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">CAPA initiated &mdash; root cause addressed</span><span class="vtl-time">2026-06-30</span><span class="vtl-who">Site PI: Dr. Marcus Webb</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">CAPA-2026-0114 opened &mdash; hire second CRC by 2026-07-15</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>CAPA ID</td><td>CAPA-2026-0114</td></tr><tr><td>Root cause</td><td>CRC staffing gap (single CRC, 37 participants, above capacity)</td></tr><tr><td>Corrective action</td><td>Hire and onboard second CRC by 2026-07-15</td></tr><tr><td>Preventive action</td><td>Minimum 2-CRC staffing policy for sites &gt;30 participants; site initiation checklist updated</td></tr><tr><td>Responsible</td><td>Dr. Marcus Webb (PI) &middot; HR contact: J. Larson</td></tr><tr><td>Effectiveness check</td><td>Query aging KRI re-assessed 30 days post-hire</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:CAPA:GLP1-TRIAL-27:denver:CAPA-2026-0114</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> All 8 SDV findings resolved: CRF corrections entered and re-verified 2026-06-29</li>
+          <li><span class="ck-ok">&#10003;</span> Deviation register updated: 2 deviations filed with root cause linked to CAPA-2026-0114</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">8</div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">KRI normalized &mdash; site re-scored MEDIUM</span><span class="vtl-time">2026-07-01</span><span class="vtl-who">Automated &middot; monthly KRI pull</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> Query aging: 9.2 days (was 18.3 days) &mdash; within threshold &lt;14 days</li>
+          <li><span class="ck-ok">&#10003;</span> SDV completion: 88% &uarr; (was 67%) &mdash; approaching 90% target; 2 sessions scheduled</li>
+          <li><span class="ck-ok">&#10003;</span> Deviation rate: 1.8% (was 3.2%) &mdash; below 2.0% threshold</li>
+          <li><span class="ck-ok">&#10003;</span> Site risk re-scored: 0.81 HIGH &rarr; 0.54 MEDIUM &middot; RA-2026-0099 &middot; approved Dr. P. Nguyen 2026-07-01</li>
+          <li><span class="ck-pend">&#9675;</span> CAPA-2026-0114 effectiveness check: 2026-08-01 (30 days post-hire target)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="scr-row"><span>Systems assembled</span><b style="font-size:12px">Risk mgmt plan &middot; EDC (query/SDV) &middot; CTMS (MV records) &middot; Deviation register &middot; QMS (CAPA) &middot; eTMF</b></div>
+  <div class="scr-row"><span>Active KRI breaches across all sites</span><b><span class="pill ok">0 open &mdash; all within threshold</span></b></div>
+  <div class="scr-row"><span>Open CAPAs study-wide</span><b><span class="pill warn">1 open &mdash; CAPA-2026-0114 effectiveness check due 2026-08-01</span></b></div>
+  <div class="scr-row"><span>Broker query time</span><b>187 ms &middot; joinLevel=4 &middot; 1 traversal</b></div>
+</div>
+
+<div class="mt-5 rounded-lg border border-[#d6d6cf] overflow-hidden">
+  <div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]">
+    <button role="tab" aria-selected="true" aria-controls="rbqm-how" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">How it works</button>
+    <button role="tab" aria-selected="false" aria-controls="rbqm-req" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Request</button>
+    <button role="tab" aria-selected="false" aria-controls="rbqm-res" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Response</button>
+  </div>
+  <div role="tabpanel" id="rbqm-how" class="p-5 bg-white">
+    <p style="font-size:14px;line-height:1.7;margin:0 0 12px"><b>Why this view is impossible today.</b> Risk-based monitoring requires correlating data across systems that have no native connection. The risk management plan lives in a Word document in the eTMF. KRI thresholds are defined in that document but computed monthly by a statistician who exports query-aging data from the EDC, SDV completion from the monitoring system, and deviation counts from the deviation register &mdash; and pastes them into Excel. A KRI breach triggers an email chain, not a graph query. By the time the email reaches the CRA, context has been lost.</p>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 12px"><b>What TOP does differently.</b> Every element of the RBQM chain is a first-class entity: <code>cr:CtQFactor</code>, <code>cr:KRIDefinition</code>, <code>cr:KRIReading</code>, <code>cr:RiskAssessment</code>, <code>cr:MitigationPlan</code>, <code>cr:MonitoringVisit</code>, <code>cr:CAPA</code>. The KRI threshold is a property of the <code>cr:KRIDefinition</code> &mdash; not a number in a Word document. A breach creates a <code>cr:RiskAssessment</code> entity linked via <code>prov:wasDerivedFrom</code> to the readings that triggered it. The monitoring visit mandate is a <code>cr:MonitoringVisit</code> entity linked to the assessment via <code>cr:triggeredBy</code>. The CAPA is linked to the monitoring visit findings. The entire chain is traversable with one <code>join=inline&amp;joinLevel=4</code> call.</p>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 4px"><b>Regulatory traceability.</b> ICH E6(R3) Section 5.18 requires that the sponsor&rsquo;s monitoring plan be documented and that monitoring findings be traceable to corrective actions. In TOP, that traceability is structural: <code>cr:KRIReading &rarr; cr:RiskAssessment &rarr; cr:MonitoringVisit &rarr; cr:CAPA</code>. A regulatory inspector can traverse the same graph the clinical team uses.</p>
+  </div>
+  <div role="tabpanel" id="rbqm-req" class="p-5 bg-white" hidden>
+    <p class="jsoncap">Two queries power the entire screen. The first assembles the site KRI matrix; the second traces the Denver signal lifecycle from breach to CAPA.</p>
+<pre><span class="c">### Query 1 &mdash; KRI matrix (all sites, latest reading per indicator) ###</span>
+<span class="k">GET</span> /ngsi-ld/v1/entities?
+  <span class="n">type</span>=cr:KRIReading
+  &amp;<span class="n">q</span>=prov:wasAssociatedWith==urn:top:Study:GLP1-TRIAL-27
+  &amp;<span class="n">join</span>=inline
+  &amp;<span class="n">joinLevel</span>=2
+  &amp;<span class="n">options</span>=temporalValues
+  &amp;<span class="n">lastN</span>=1
+
+<span class="k">Accept</span>: application/ld+json
+
+<span class="c">### Query 2 &mdash; Denver signal lifecycle (breach &rarr; CAPA chain) ###</span>
+<span class="k">GET</span> /ngsi-ld/v1/entities/urn:top:RiskAssessment:GLP1-TRIAL-27:denver:RA-2026-0088?
+  <span class="n">join</span>=inline
+  &amp;<span class="n">joinLevel</span>=4
+
+<span class="c"># joinLevel=4 traverses:
+#   RiskAssessment
+#     &rarr; CtQFactor (primary endpoint integrity, thresholds)
+#     &rarr; KRIReading &times;3 (query aging, SDV%, deviation rate)
+#     &rarr; MitigationPlan (elevated SDV strategy)
+#       &rarr; MonitoringVisit MV-2026-07
+#         &rarr; SDVFinding &times;8
+#         &rarr; CAPA-2026-0114</span></pre>
+  </div>
+  <div role="tabpanel" id="rbqm-res" class="p-5 bg-white" hidden>
+    <p class="jsoncap">Full NGSI-LD entity &mdash; <code>cr:RiskAssessment</code> RA-2026-0088 &mdash; with KRI readings inlined, monitoring visit mandate, and CAPA linkage.</p>
+<pre>{
+  <span class="s">"@context"</span>: [
+    <span class="s">"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"</span>,
+    <span class="s">"https://ontology.top/cr/v1/context.jsonld"</span>
+  ],
+  <span class="s">"id"</span>:   <span class="s">"urn:top:RiskAssessment:GLP1-TRIAL-27:denver:RA-2026-0088"</span>,
+  <span class="s">"type"</span>: <span class="s">"cr:RiskAssessment"</span>,
+  <span class="s">"validFrom"</span>:  <span class="s">"2026-06-06T00:00:00Z"</span>,
+  <span class="s">"observedAt"</span>: <span class="s">"2026-06-06T14:22:00Z"</span>,
+  <span class="s">"cr:riskScore"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 0.81 },
+  <span class="s">"cr:riskLevel"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"HIGH"</span> },
+  <span class="s">"cr:previousLevel"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"MEDIUM"</span> },
+  <span class="s">"cr:assessedSite"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:StudySite:GLP1-TRIAL-27:denver-oncology"</span> },
+  <span class="s">"prov:wasDerivedFrom"</span>: [
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:KRIReading:GLP1-TRIAL-27:denver:query-aging:2026-06-03"</span>,
+      <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"cr:KRIReading"</span>, <span class="s">"cr:indicator"</span>: { <span class="s">"value"</span>: <span class="s">"QUERY_AGING_MEAN_DAYS"</span> }, <span class="s">"cr:value"</span>: { <span class="s">"value"</span>: 18.3 }, <span class="s">"cr:threshold"</span>: { <span class="s">"value"</span>: 14.0 }, <span class="s">"cr:breached"</span>: { <span class="s">"value"</span>: true } } },
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:KRIReading:GLP1-TRIAL-27:denver:sdv-pct:2026-06-03"</span>,
+      <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"cr:KRIReading"</span>, <span class="s">"cr:indicator"</span>: { <span class="s">"value"</span>: <span class="s">"SDV_COMPLETION_PCT"</span> }, <span class="s">"cr:value"</span>: { <span class="s">"value"</span>: 0.67 }, <span class="s">"cr:threshold"</span>: { <span class="s">"value"</span>: 0.90 }, <span class="s">"cr:breached"</span>: { <span class="s">"value"</span>: true } } }
+  ],
+  <span class="s">"cr:mitigatedBy"</span>: {
+    <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:MitigationPlan:GLP1-TRIAL-27:denver:MP-2026-0088"</span>,
+    <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"cr:MitigationPlan"</span>, <span class="s">"cr:monitoringStrategy"</span>: { <span class="s">"value"</span>: <span class="s">"targeted-100pct-SDV"</span> }, <span class="s">"cr:sdvIntensity"</span>: { <span class="s">"value"</span>: 1.0 } }
+  },
+  <span class="s">"cr:triggeredVisit"</span>: {
+    <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:MonitoringVisit:GLP1-TRIAL-27:denver:MV-2026-07"</span>,
+    <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"cr:MonitoringVisit"</span>, <span class="s">"cr:visitType"</span>: { <span class="s">"value"</span>: <span class="s">"UNSCHEDULED"</span> }, <span class="s">"cr:startDate"</span>: { <span class="s">"value"</span>: <span class="s">"2026-06-25"</span> }, <span class="s">"cr:endDate"</span>: { <span class="s">"value"</span>: <span class="s">"2026-06-28"</span> }, <span class="s">"cr:findingCount"</span>: { <span class="s">"value"</span>: 8 }, <span class="s">"cr:reportId"</span>: { <span class="s">"value"</span>: <span class="s">"MVR-2026-0088"</span> } }
+  },
+  <span class="s">"cr:generatedCAPA"</span>: {
+    <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:CAPA:GLP1-TRIAL-27:denver:CAPA-2026-0114"</span>,
+    <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"cr:CAPA"</span>, <span class="s">"cr:rootCause"</span>: { <span class="s">"value"</span>: <span class="s">"CRC staffing gap &mdash; single CRC below capacity"</span> }, <span class="s">"cr:correctiveAction"</span>: { <span class="s">"value"</span>: <span class="s">"Hire second CRC by 2026-07-15"</span> }, <span class="s">"cr:preventiveAction"</span>: { <span class="s">"value"</span>: <span class="s">"Min 2-CRC policy for sites &gt;30 participants"</span> }, <span class="s">"cr:dueDate"</span>: { <span class="s">"value"</span>: <span class="s">"2026-07-15"</span> }, <span class="s">"cr:capaStatus"</span>: { <span class="s">"value"</span>: <span class="s">"OPEN"</span> } }
+  }
+}</pre>
+  </div>
+</div>
+
+<h2>Entities</h2>
+<table class='ref'>
+<tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr>
+<tr><td><code>cr:CtQFactor</code></td><td>Critical-to-Quality Factor</td><td class='clo'>Constraint</td><td>A quality-critical aspect of the trial. Carries KRI threshold properties.</td></tr>
+<tr><td><code>cr:KRIReading</code></td><td>KRI Reading</td><td class='clo'>Evidence</td><td>A point-in-time measurement of a KRI for a specific site. Bitemporal.</td></tr>
+<tr><td><code>cr:RiskAssessment</code></td><td>Risk Assessment</td><td class='clo'>Evidence</td><td>An assessment of risk to a CtQ factor; derived from KRI readings. Bitemporal.</td></tr>
+<tr><td><code>cr:MitigationPlan</code></td><td>Mitigation Plan</td><td class='clo'>Constraint</td><td>Mitigations for a risk, including the resulting monitoring strategy and SDV intensity.</td></tr>
+<tr><td><code>cr:MonitoringVisit</code></td><td>Monitoring Visit</td><td class='clo'>Evidence</td><td>A scheduled or unscheduled CRA visit &mdash; carries mandate, scope, findings, and report reference.</td></tr>
+<tr><td><code>cr:CAPA</code></td><td>CAPA</td><td class='clo'>Evidence</td><td>Corrective and Preventive Action &mdash; root cause, actions, due date, and effectiveness check date.</td></tr>
+</table>
+
+<h2>What it validates</h2>
+<table>
+<tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr>
+<tr><td><code>cr:RiskAssessmentShape</code></td><td><code>cr:RiskAssessment</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Risk assessment must carry a risk level (low/medium/high).</li><li>Risk assessment must reference the critical-to-quality factor it assesses.</li></ul></td></tr>
+<tr><td><code>cr:HighRiskMitigationShape</code></td><td><code>cr:RiskAssessment</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>HIGH risk assessment has no linked mitigation plan &mdash; ICH E6(R3) &sect;5.18 requires documented mitigations for high-risk CtQ factors.</li></ul></td></tr>
+<tr><td><code>cr:KRIBreachCAPAShape</code></td><td><code>cr:KRIReading</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>KRI reading breached its threshold more than 30 days ago with no linked monitoring visit or CAPA.</li></ul></td></tr>
+</table>
+
+<footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer>
+</main>
+</div>
+
+<script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+</body></html>

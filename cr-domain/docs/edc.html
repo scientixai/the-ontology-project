@@ -1,1 +1,386 @@
-EDC_PLACEHOLDER
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Data capture (EDC) &amp; fidelity</title><style>
+:root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{display:flex;max-width:1200px;margin:0 auto}
+nav{position:sticky;top:0;align-self:flex-start;width:240px;padding:24px 18px;height:100vh;overflow:auto;font-size:13px;border-right:1px solid var(--line)}
+nav b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 5px}
+nav a{display:block;color:var(--sec);padding:3px 0}
+nav a.on{color:var(--acc);font-weight:700}
+.brandmark{padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.toplogo{width:172px;height:auto;display:block}
+.brandsub{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;color:var(--mut);margin-top:8px;letter-spacing:.02em}
+main{flex:1;padding:26px 40px;max-width:900px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);margin:34px 0 12px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
+h4{margin:0 0 6px;font-size:15px}
+.lead{background:#fff;border-left:3px solid var(--acc);padding:14px 18px;margin:0 0 14px;font-size:15px;line-height:1.6}
+.tag{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--acc);font-size:12px;margin:0 0 16px}
+code{background:var(--pale);border-radius:3px;padding:1px 5px;font:12px ui-monospace,"SF Mono",Menlo,monospace}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{text-align:left;padding:7px 10px;border:1px solid var(--line);vertical-align:top}
+th{background:var(--pale);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+table.map td:first-child{color:var(--mut)}.ref td.clo{color:var(--acc);font-size:12px;white-space:nowrap;font-family:ui-monospace,Menlo,monospace}
+.ref ul,td ul{margin:0;padding-left:16px}
+.sev{font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px}
+.sev.violation{background:#f4e3e4;color:var(--danger)}.sev.warning{background:#f4ebd9;color:var(--warn)}
+pre{background:#1a2332;border:1px solid #1a2332;border-radius:6px;color:#cde8ef;padding:16px 18px;overflow:auto;font:12px/1.75 ui-monospace,"SF Mono",Menlo,monospace;margin:0}
+pre .c{color:#6a9ab0;font-style:italic}
+pre .k{color:#79c0ff}
+pre .s{color:#a5d6ff}
+pre .n{color:#ffa657}
+footer{color:var(--mut);font-size:12px;margin:44px 0 20px;border-top:1px solid var(--line);padding-top:14px}
+.pill{font-size:12px;font-weight:600;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.pill.ok{background:#e7f6ee;color:var(--ok)}.pill.warn{background:#fdf4e3;color:var(--warn)}.pill.pend{background:#f0f0ec;color:var(--mut)}
+.impossible-claim{background:#fff8e6;border:1px solid #e0c060;border-left:3px solid #c08410;border-radius:0 6px 6px 0;padding:14px 18px;font-size:13.5px;margin:0 0 18px;color:#4a3600;line-height:1.7}
+.screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 2px 6px rgba(20,40,80,.08)}
+.scr-head{background:linear-gradient(160deg,#0e7490,#0b5563);color:#fff;padding:14px 16px;font-weight:600;font-size:15px;position:relative}
+.scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:3px;letter-spacing:.01em}
+.badge{position:absolute;right:14px;top:14px;background:rgba(255,255,255,.18);font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;letter-spacing:.04em}
+.scr-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid var(--line);font-size:13px}
+.scr-row span{color:var(--mut)}
+
+/* Vertical visit timeline */
+.vtl{padding:16px 16px 6px}
+.vtl-stop{display:grid;grid-template-columns:32px 1fr;gap:0;position:relative}
+.vtl-stop:not(:last-child) .vtl-line{position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--line);z-index:0}
+.vtl-stop.done .vtl-line{background:#b8e4cc}
+.vtl-stop.warn .vtl-line{background:#f0d080}
+.vtl-num{width:30px;height:30px;border-radius:50%;background:var(--mut);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;flex:none;margin-top:1px}
+.vtl-stop.done .vtl-num{background:var(--ok)}
+.vtl-stop.warn .vtl-num{background:var(--warn)}
+.vtl-stop.pend .vtl-num{background:#aaa}
+.vtl-body{padding:2px 0 20px 14px}
+.vtl-head{display:flex;align-items:baseline;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.vtl-name{font-weight:600;font-size:14px;color:var(--ink)}
+.vtl-time{font-size:11px;color:var(--mut);font-family:ui-monospace,Menlo,monospace;background:var(--pale);padding:1px 6px;border-radius:4px}
+.vtl-who{font-size:12px;color:var(--mut);margin-left:auto;text-align:right}
+.vtl-checks{list-style:none;padding:0;margin:3px 0 0}
+.vtl-checks li{font-size:13px;padding:2.5px 0;display:flex;gap:8px;align-items:baseline;line-height:1.5}
+.ck-ok{color:var(--ok);font-weight:700;flex:none;font-size:14px}
+.ck-warn{color:var(--warn);font-weight:700;flex:none;font-size:14px}
+.ck-pend{color:#bbb;flex:none;font-size:14px}
+
+/* Credential inline detail */
+details.cred{display:inline-block}
+details.cred summary{list-style:none;cursor:pointer;color:var(--ink);display:inline}
+details.cred summary::-webkit-details-marker{display:none}
+details.cred summary .cred-label{border-bottom:1px dotted var(--acc);color:var(--ink)}
+details.cred summary .cred-arrow{font-size:10px;color:var(--acc);margin-left:3px}
+details.cred[open] summary .cred-arrow{content:'▾'}
+details.cred .cred-body{background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:6px 0 2px;box-shadow:0 2px 8px rgba(0,0,0,.09);max-width:460px}
+table.cprov{width:100%;border-collapse:collapse;margin:0;font-size:12px}
+table.cprov td{padding:4px 6px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink)}
+table.cprov td:first-child{color:var(--mut);white-space:nowrap;width:42%}
+table.cprov tr:first-child td{border-top:none}
+.urn-tag{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--acc);word-break:break-all}
+
+.jsoncap{font-size:12px;color:var(--mut);margin:0 0 10px}
+.draft-ribbon{position:fixed;top:16px;right:-52px;transform:rotate(45deg);background:#b00020;color:#fff;font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;padding:6px 60px;z-index:2000;box-shadow:0 1px 5px rgba(0,0,0,.3)}
+.draft-banner{background:#fff3f3;border-bottom:1px solid #b00020;color:#7a0016;font:600 12px/1.5 ui-sans-serif,system-ui,sans-serif;text-align:center;padding:8px 14px}
+.draft-banner b{letter-spacing:.08em}
+</style>
+<script src="https://cdn.tailwindcss.com"></script></head>
+<body>
+<div class='draft-ribbon'>DRAFT</div>
+<div class='draft-banner'><b>DRAFT &mdash; PRE-RELEASE.</b> The TOP Clinical Research reference graph is a work in progress and not yet finalized; content, identifiers, and constraints may change.</div>
+<div class='wrap'>
+<nav>
+<div class='brandmark'><img class="toplogo" src="assets/top-logo.svg" alt="The Ontology Project"><div class='brandsub'>Clinical Research reference graph</div></div>
+<a class="" href="index.html">Overview</a>
+<a class="" href="foundation.html">Foundation</a>
+<a class="" href="implementation.html">Implementation guide</a>
+<b>Start-up</b>
+<a class="" href="preind.html">Pre-IND gate</a>
+<a class="" href="setup.html">Study &amp; site set-up</a>
+<a class="" href="startup-package.html">Start-up package</a>
+<a class="" href="delegation.html">Delegation &amp; DoA</a>
+<b>Conduct</b>
+<a class="" href="enrollment.html">Enrollment &amp; consent</a>
+<a class="" href="schedule.html">Schedule of Activities</a>
+<a class="on" href="edc.html">Data capture (EDC)</a>
+<a class="" href="lims.html">Biospecimen &amp; LIMS</a>
+<a class="" href="safety.html">Safety &amp; PV</a>
+<a class="" href="rbqm.html">Risk-based monitoring</a>
+<a class="" href="deviation.html">Deviations &amp; CAPA</a>
+<b>Closeout</b>
+<a class="" href="eop2.html">EOP2 &amp; analysis</a>
+<b>Cross-cutting</b>
+<a class="" href="roles.html">Roles, phases &amp; actions</a>
+<a class="" href="gcp.html">GCP &amp; essential records</a>
+<a class="" href="tmf.html">TMF document binding</a>
+<a class="" href="interop.html">Interoperability</a>
+<a class="" href="ingestion.html">Ingestion example</a>
+<b>Detail</b>
+<a class="" href="reference.html">Full reference</a>
+</nav>
+
+<main>
+<h1>Data capture (EDC) &amp; fidelity</h1>
+<p class='lead'>A single clinical visit generates data across eight systems. TOP makes the graph the integration layer &mdash; one traversal assembles the full story, from consent through lab results to CRF lock.</p>
+
+<h2>Operator screen &mdash; Visit 3 Day 28 &mdash; SUBJ-0042 &mdash; GLP1-TRIAL-27</h2>
+
+<div class="impossible-claim">
+  <b>The impossible screen.</b> &ldquo;Walk me through everything that happened at this subject&rsquo;s Day 28 visit: consent, vitals, blood draw with chain of custody, courier transit, lab analysis, results return, PI signoff, and the current CRF query state.&rdquo; Today: eight system logins &mdash; CTMS, consent management, EDC, LIMS, logistics tracker, central lab portal, eSignature log, query management &mdash; and hours of manual cross-reference per visit. With TOP: one Scorpio broker traversal, one screen, 214 ms.
+</div>
+
+<div class="screen">
+  <div class="scr-head">
+    Visit 3 &middot; Day 28 &middot; SUBJ-0042 &middot; GLP1-TRIAL-27
+    <span class="badge">EDC + LIMS + Lab</span>
+    <div class="scr-sub">2026-06-15 &middot; Denver Oncology Center &middot; Protocol v3.2 &middot; PI: Dr. Marcus Webb</div>
+  </div>
+
+  <div class="vtl">
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">1</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Consent confirmed</span><span class="vtl-time">08:05</span><span class="vtl-who">CRC: Jo Santos</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> ICF version 3.2 &mdash; signed 2026-03-14 &middot; no protocol amendments since enrollment</li>
+          <li><span class="ck-ok">&#10003;</span> HIPAA authorization current &mdash; IRB record #2026-0011 &middot; expiry 2028-03-14</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">2</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Vital signs</span><span class="vtl-time">08:18</span><span class="vtl-who">CRC: Maria Torres</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> BP 124/78 mmHg &middot; HR 68 bpm &middot; Temp 36.7&deg;C &middot; SpO&#x2082; 98%</li>
+          <li><span class="ck-ok">&#10003;</span> Weight 74.2 kg &mdash; baseline 76.1 kg (&minus;2.5%); within protocol limit of &minus;5%</li>
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">CRC delegation active &mdash; Maria Torres</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Delegation log</td><td>DG-2026-0031 &middot; delegated by PI 2026-01-10</td></tr><tr><td>GCP training</td><td>TR-2025-0312 &middot; current &middot; completed 2025-09-01</td></tr><tr><td>Protocol training</td><td>v3.2 &middot; TR-2026-0088 &middot; LMS cert #LMS-7740</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:Delegation:GLP1-TRIAL-27:DG-2026-0031</td></tr></table></div></details></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">3</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Blood draw &mdash; PK samples</span><span class="vtl-time">08:35</span><span class="vtl-who">Phlebotomist: Sarah Chen RN</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">Phlebotomist credentialed &mdash; Sarah Chen RN &middot; ASCP #PH-2024-9231</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Full name</td><td>Sarah M. Chen, RN, BSN</td></tr><tr><td>ASCP certification</td><td>#PH-2024-9231 &middot; valid until 2027-03-15</td></tr><tr><td>PI delegation</td><td>Dr. Marcus Webb &middot; DG-2026-0047 &middot; 2026-01-10</td></tr><tr><td>Protocol training</td><td>v3.2 &middot; 2026-01-08 &middot; LMS cert #LMS-8821</td></tr><tr><td>Blood draw SOP</td><td>SOP-PK-004 rev 2.1 &middot; certified 2026-01-09</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:Delegation:GLP1-TRIAL-27:DG-2026-0047</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> 4 &times; EDTA tubes &middot; 8.5 mL each &middot; LIMS: LAB-2026-0842, -0843, -0844, -0845</li>
+          <li><span class="ck-ok">&#10003;</span> T=0 reference locked: 2026-06-15T08:35:14Z &mdash; PK concentration anchor for this visit</li>
+          <li><span class="ck-ok">&#10003;</span> Cold-chain initiated: 4&deg;C target &middot; sensor TempShield-441 armed</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">4</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Sample transport to central lab</span><span class="vtl-time">09:02</span><span class="vtl-who">CryoLab Courier</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> Handoff to CryoLab Courier &middot; manifest MCL-2026-0312 &middot; 4 samples</li>
+          <li><span class="ck-ok">&#10003;</span> Temperature log: mean 3.8&deg;C (limit 2&ndash;8&deg;C) &mdash; no excursion &middot; sensor TempShield-441</li>
+          <li><span class="ck-ok">&#10003;</span> Arrived BioAnalytica LLC: 11:47 &mdash; 78-minute transit (protocol limit: 120 min)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">5</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Lab receipt &amp; analysis</span><span class="vtl-time">14:20</span><span class="vtl-who">BioAnalytica LLC</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">Analyst credentialed &mdash; R. Park BS &middot; ASCP #MT-2019-4421</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Full name</td><td>Rachel Park, BS, MT (ASCP)</td></tr><tr><td>ASCP certification</td><td>#MT-2019-4421 &middot; valid until 2026-12-31</td></tr><tr><td>Lab CLIA number</td><td>05D2187449 &middot; CAP accredited</td></tr><tr><td>Assay training</td><td>LC-MS/MS PK Panel v4 &middot; 2025-11-12</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:Person:lab:rachel-park-ascp</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> Assay: LC-MS/MS PK Panel &mdash; LY900018 plasma concentration &middot; run ID LB-2026-0841</li>
+          <li><span class="ck-ok">&#10003;</span> QC samples passed: LLOQ 0.5 ng/mL &middot; ULOQ 5000 ng/mL &middot; 3/3 QC levels in range</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">6</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">Results returned to sponsor</span><span class="vtl-time">16:45</span><span class="vtl-who">Auto-transfer via FHIR R5</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> C<sub>max</sub> 342.7 ng/mL &middot; T<sub>max</sub> 1.5 h &middot; AUC<sub>0&ndash;24</sub> 2841 ng&middot;h/mL</li>
+          <li><span class="ck-ok">&#10003;</span> All 4 samples within expected PK range &mdash; no outliers flagged by algorithm</li>
+          <li><span class="ck-ok">&#10003;</span> FHIR R5 DiagnosticReport &rarr; TOP NGSI-LD transformer &rarr; Scorpio broker: 3 s round-trip</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop done">
+      <div style="position:relative"><div class="vtl-num">7</div><div class="vtl-line"></div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">PI review &amp; signoff</span><span class="vtl-time">17:30</span><span class="vtl-who">PI: Dr. Marcus Webb MD</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> <details class="cred"><summary><span class="cred-label">PI qualified investigator &mdash; Dr. Marcus Webb MD &middot; CV on file</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>State license</td><td>CO-MD-28841 &middot; valid until 2027-06-30</td></tr><tr><td>DEA registration</td><td>BW4821047 &middot; schedule II&ndash;V</td></tr><tr><td>GCP certification</td><td>ICH E6(R3) &middot; cert #GCP-2024-0881 &middot; 2024-09-01</td></tr><tr><td>Protocol training</td><td>v3.2 &middot; 2026-01-07 &middot; delegation as PI since 2025-12-01</td></tr><tr><td>TOP entity</td><td class="urn-tag">urn:top:Person:investigator:marcus-webb-md</td></tr></table></div></details></li>
+          <li><span class="ck-ok">&#10003;</span> All PK results reviewed &middot; no dose modification warranted</li>
+          <li><span class="ck-ok">&#10003;</span> No new AEs at this visit &middot; prior Grade 1 fatigue &mdash; resolved</li>
+          <li><span class="ck-ok">&#10003;</span> Electronic signature: 2026-06-15T17:30:22Z &middot; ClinSig e-sign log #ES-8821</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="vtl-stop warn">
+      <div style="position:relative"><div class="vtl-num">8</div></div>
+      <div class="vtl-body">
+        <div class="vtl-head"><span class="vtl-name">EDC entry &amp; verification</span><span class="vtl-time">17:45</span><span class="vtl-who">CRC: Jo Santos &middot; SDV: pending</span></div>
+        <ul class="vtl-checks">
+          <li><span class="ck-ok">&#10003;</span> CRF complete: 12/12 fields entered &middot; Visit 3 Day 28 form</li>
+          <li><span class="ck-warn">!</span> <details class="cred"><summary><span class="cred-label" style="color:var(--warn)">Open query QRY-2026-0892 &mdash; &ldquo;Confirm tube type: EDTA or SST per deviation log?&rdquo;</span><span class="cred-arrow">&#9658;</span></summary><div class="cred-body"><table class="cprov"><tr><td>Query ID</td><td>QRY-2026-0892</td></tr><tr><td>Raised by</td><td>Data manager &middot; 2026-06-16T09:12:00Z</td></tr><tr><td>Anchored to</td><td class="urn-tag">urn:top:SampleCollection:GLP1-TRIAL-27:SUBJ-0042:V03:PKB-001</td></tr><tr><td>Status</td><td><span class="pill warn">OPEN</span></td></tr><tr><td>Response due</td><td>2026-06-23 (7-day SLA)</td></tr></table></div></details></li>
+          <li><span class="ck-pend">&#9675;</span> CRA source data verification pending &mdash; Silvia Rodriguez &middot; next monitoring visit 2026-07-08</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="scr-row"><span>Systems assembled</span><b style="font-size:12px">CTMS &middot; Consent &middot; EDC &middot; LIMS &middot; Logistics &middot; Central lab &middot; eSign log &middot; Query mgmt</b></div>
+  <div class="scr-row"><span>Open queries</span><b><span class="pill warn">1 open &mdash; QRY-2026-0892</span></b></div>
+  <div class="scr-row"><span>SDV status</span><b><span class="pill pend">Pending &mdash; next monitoring visit 2026-07-08</span></b></div>
+  <div class="scr-row"><span>Broker query time</span><b>214 ms &middot; joinLevel=5 &middot; 1 traversal</b></div>
+</div>
+
+<div class="mt-5 rounded-lg border border-[#d6d6cf] overflow-hidden">
+  <div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]">
+    <button role="tab" aria-selected="true" aria-controls="edc-how" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">How it works</button>
+    <button role="tab" aria-selected="false" aria-controls="edc-req" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Request</button>
+    <button role="tab" aria-selected="false" aria-controls="edc-res" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Response</button>
+  </div>
+  <div role="tabpanel" id="edc-how" class="p-5 bg-white">
+    <p style="font-size:14px;line-height:1.7;margin:0 0 12px"><b>Why this view is impossible today.</b> A data manager asking &ldquo;walk me through the Day 28 visit for SUBJ-0042&rdquo; must open eight systems in sequence. The phlebotomist&rsquo;s ASCP credential lives in CTMS. The delegation log linking her to the PI lives in a separate DoA system. The LIMS barcodes live in the lab informatics system. Cold-chain telemetry lives in the logistics portal. The LC-MS/MS result lives in the central lab&rsquo;s LIMS. The PI&rsquo;s e-signature lives in ClinSig. The open query lives in the EDC query module. Cross-referencing eight systems to reconstruct one subject&rsquo;s visit takes hours per visit &mdash; multiplied across 149 participants and 12 visits each.</p>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 12px"><b>What TOP does differently.</b> Every entity in this chain is a first-class NGSI-LD node in the Scorpio broker with a URN identifier: <code>cr:SampleCollection</code>, <code>cr:Specimen</code>, <code>cr:CustodyEvent</code>, <code>cr:Delegation</code>, <code>hcls:Person</code>, <code>cr:AssayResult</code>, <code>cr:Query</code>. Each relationship (<code>cr:performedBy</code>, <code>cr:authorizedBy</code>, <code>prov:wasAssociatedWith</code>) is traversable. A single <code>join=inline&amp;joinLevel=5</code> request to Scorpio returns the entire chain in one response.</p>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 12px"><b>URN identity scheme.</b> Every entity in TOP carries a deterministic URN: <code>urn:top:{EntityType}:{studyId}:{subjectId}:{visitCode}:{localId}</code>. The blood draw entity is <code>urn:top:SampleCollection:GLP1-TRIAL-27:SUBJ-0042:V03:PKB-001</code>. The same URN can be referenced from the EDC query, the LIMS manifest, and the courier manifest &mdash; no join table required.</p>
+    <p style="font-size:14px;line-height:1.7;margin:0 0 4px"><b>Bitemporality.</b> Every entity carries two time axes: <code>validFrom</code>/<code>validUntil</code> (real-world) and <code>observedAt</code> (transaction time). The T=0 reference for PK is the <code>validFrom</code> on the <code>cr:SampleCollection</code>. If the phlebotomist&rsquo;s delegation is later discovered to have lapsed, the audit query still returns the correct bitemporal answer.</p>
+  </div>
+  <div role="tabpanel" id="edc-req" class="p-5 bg-white" hidden>
+    <p class="jsoncap">One traversal to Scorpio assembles the entire visit chain &mdash; phlebotomist credential, LIMS barcodes, cold-chain, lab result, PI signoff, and open query.</p>
+<pre><span class="k">GET</span> /ngsi-ld/v1/entities?
+  <span class="n">type</span>=cr:SampleCollection
+  &amp;<span class="n">q</span>=prov:wasAssociatedWith==urn:top:VisitOccurrence:GLP1-TRIAL-27:SUBJ-0042:V03
+  &amp;<span class="n">join</span>=inline
+  &amp;<span class="n">joinLevel</span>=5
+  &amp;<span class="n">attrs</span>=cr:specimen,cr:performedBy,cr:authorizedBy,cr:limsBarcode,
+         cr:coldChainInitiated,cr:collectionTimeReference,
+         prov:wasAssociatedWith
+
+<span class="k">Accept</span>: application/ld+json
+<span class="k">Link</span>: &lt;https://ontology.top/cr/v1/context.jsonld&gt;;
+      rel=<span class="s">"http://www.w3.org/ns/json-ld#context"</span>
+
+<span class="c"># joinLevel=5 traverses:
+#  SampleCollection
+#    &rarr; Specimen (4 EDTA tubes, LIMS barcodes, status)
+#      &rarr; CustodyEvent (chain of custody transitions)
+#        &rarr; Delegation (phlebotomist authorization, by PI)
+#          &rarr; Person (Sarah Chen: ASCP #, training, expiry)
+#    &rarr; AssayResult (LC-MS/MS Cmax/AUC)
+#    &rarr; Query (QRY-2026-0892, open, due date)
+#    &rarr; PIReview (Dr. Webb, e-sig, timestamp)</span></pre>
+  </div>
+  <div role="tabpanel" id="edc-res" class="p-5 bg-white" hidden>
+    <p class="jsoncap">Full NGSI-LD entity &mdash; <code>cr:SampleCollection</code> &mdash; with context, URN identities, SDTM domain, semantic codes (NCI / SNOMED CT), provenance, and cold-chain metadata.</p>
+<pre>{
+  <span class="s">"@context"</span>: [
+    <span class="s">"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"</span>,
+    <span class="s">"https://ontology.top/cr/v1/context.jsonld"</span>
+  ],
+
+  <span class="s">"id"</span>:   <span class="s">"urn:top:SampleCollection:GLP1-TRIAL-27:SUBJ-0042:V03:PKB-001"</span>,
+  <span class="s">"type"</span>: <span class="s">"cr:SampleCollection"</span>,
+
+  <span class="s">"validFrom"</span>:  <span class="s">"2026-06-15T08:35:14Z"</span>,
+  <span class="s">"observedAt"</span>: <span class="s">"2026-06-15T08:35:14Z"</span>,
+
+  <span class="s">"prov:wasAssociatedWith"</span>: {
+    <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+    <span class="s">"object"</span>: <span class="s">"urn:top:VisitOccurrence:GLP1-TRIAL-27:SUBJ-0042:V03"</span>
+  },
+
+  <span class="s">"cr:performedBy"</span>: {
+    <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+    <span class="s">"object"</span>: <span class="s">"urn:top:Person:staff:sarah-chen-rn"</span>,
+    <span class="s">"entity"</span>: {
+      <span class="s">"type"</span>: <span class="s">"hcls:Person"</span>,
+      <span class="s">"cr:name"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"Sarah M. Chen RN BSN"</span> },
+      <span class="s">"cr:credential"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"ASCP #PH-2024-9231"</span> },
+      <span class="s">"cr:credentialExpiry"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2027-03-15"</span> }
+    }
+  },
+
+  <span class="s">"cr:specimen"</span>: [
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Specimen:GLP1-TRIAL-27:SUBJ-0042:V03-EDTA-01"</span>,
+      <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"hcls:Specimen"</span>, <span class="s">"cr:limsBarcode"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"LAB-2026-0842"</span> }, <span class="s">"cr:tubeType"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"EDTA"</span> }, <span class="s">"cr:volumeMl"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 8.5 } } },
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Specimen:GLP1-TRIAL-27:SUBJ-0042:V03-EDTA-02"</span>,
+      <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"hcls:Specimen"</span>, <span class="s">"cr:limsBarcode"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"LAB-2026-0843"</span> }, <span class="s">"cr:tubeType"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"EDTA"</span> }, <span class="s">"cr:volumeMl"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 8.5 } } },
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Specimen:GLP1-TRIAL-27:SUBJ-0042:V03-EDTA-03"</span>,
+      <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"hcls:Specimen"</span>, <span class="s">"cr:limsBarcode"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"LAB-2026-0844"</span> }, <span class="s">"cr:tubeType"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"EDTA"</span> }, <span class="s">"cr:volumeMl"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 8.5 } } },
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Specimen:GLP1-TRIAL-27:SUBJ-0042:V03-EDTA-04"</span>,
+      <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"hcls:Specimen"</span>, <span class="s">"cr:limsBarcode"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"LAB-2026-0845"</span> }, <span class="s">"cr:tubeType"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"EDTA"</span> }, <span class="s">"cr:volumeMl"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 8.5 } } }
+  ],
+
+  <span class="s">"cr:coldChainInitiated"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: true },
+  <span class="s">"cr:transportTempMeanC"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 3.8 },
+  <span class="s">"cr:tempSensorId"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"TempShield-441"</span> },
+  <span class="s">"cr:transitMinutes"</span>:     { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 78 },
+
+  <span class="s">"cr:assayResult"</span>: {
+    <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+    <span class="s">"object"</span>: <span class="s">"urn:top:AssayResult:GLP1-TRIAL-27:SUBJ-0042:V03:LY900018-PK"</span>,
+    <span class="s">"entity"</span>: {
+      <span class="s">"type"</span>: <span class="s">"cr:AssayResult"</span>,
+      <span class="s">"cr:analyte"</span>:  { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"LY900018"</span> },
+      <span class="s">"cr:cmax"</span>:     { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 342.7, <span class="s">"unitCode"</span>: <span class="s">"ng/mL"</span> },
+      <span class="s">"cr:tmax"</span>:     { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 1.5, <span class="s">"unitCode"</span>: <span class="s">"h"</span> },
+      <span class="s">"cr:auc024"</span>:   { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 2841, <span class="s">"unitCode"</span>: <span class="s">"ng&middot;h/mL"</span> },
+      <span class="s">"cr:sdtmDomain"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"PC"</span> }
+    }
+  },
+
+  <span class="s">"cr:hasQuery"</span>: [
+    {
+      <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+      <span class="s">"object"</span>: <span class="s">"urn:top:Query:GLP1-TRIAL-27:QRY-2026-0892"</span>,
+      <span class="s">"entity"</span>: {
+        <span class="s">"type"</span>: <span class="s">"cr:Query"</span>,
+        <span class="s">"cr:queryType"</span>:   { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"DATA_CLARIFICATION"</span> },
+        <span class="s">"cr:queryText"</span>:   { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"Source document records 'SST' but LIMS barcode LAB-2026-0842 was registered as EDTA. Please confirm tube type against the deviation log and original lab requisition."</span> },
+        <span class="s">"cr:queryOn"</span>:     { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Specimen:GLP1-TRIAL-27:SUBJ-0042:V03-EDTA-01"</span> },
+        <span class="s">"cr:queryStatus"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"OPEN"</span> },
+        <span class="s">"cr:raisedBy"</span>:    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Person:dm:data-manager-team"</span> },
+        <span class="s">"cr:raisedAt"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-06-16T09:12:00Z"</span> },
+        <span class="s">"cr:dueBySLA"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-06-23"</span> }
+      }
+    }
+  ],
+
+  <span class="s">"cr:biomedicalConceptCode"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"C17610"</span>, <span class="s">"cr:vocabulary"</span>: { <span class="s">"value"</span>: <span class="s">"NCI Thesaurus"</span> }, <span class="s">"cr:label"</span>: { <span class="s">"value"</span>: <span class="s">"Blood Specimen Collection"</span> } },
+  <span class="s">"cr:snomedCode"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"396540005"</span>, <span class="s">"cr:vocabulary"</span>: { <span class="s">"value"</span>: <span class="s">"SNOMED CT"</span> }, <span class="s">"cr:label"</span>: { <span class="s">"value"</span>: <span class="s">"Blood specimen collection (procedure)"</span> } },
+  <span class="s">"cr:sdtmDomain"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"PC"</span> },
+  <span class="s">"cr:cdisc_spec"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"SPECTYPE=PLASMA"</span> }
+}</pre>
+  </div>
+</div>
+
+<h2>Entities</h2>
+<table class='ref'>
+<tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr>
+<tr><td><code>cr:CaseReportForm</code></td><td>Case Report Form</td><td class='clo'>Evidence</td><td>A case report form &mdash; a collection of item groups capturing a visit's data.</td></tr>
+<tr><td><code>cr:ClinicalObservation</code></td><td>Clinical Observation</td><td class='clo'>Evidence</td><td>A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef.</td></tr>
+<tr><td><code>cr:DataElementDef</code></td><td>Data Element Definition</td><td class='clo'>Evidence</td><td>A variable DEFINITION (ItemOID), independent of any form version; carries a PHI classification.</td></tr>
+<tr><td><code>cr:Query</code></td><td>Query</td><td class='clo'>Evidence</td><td>A discrepancy note / data query anchored to a data point or other entity; threaded.</td></tr>
+<tr><td><code>cr:SampleCollection</code></td><td>Sample Collection</td><td class='clo'>Evidence</td><td>A blood draw or specimen collection event &mdash; carries LIMS barcodes, tube type, volume, T=0 reference, phlebotomist credential, and cold-chain metadata.</td></tr>
+</table>
+
+<h2>What it validates</h2>
+<table>
+<tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr>
+<tr><td><code>cr:QueryShape</code></td><td><code>cr:Query</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Query must be anchored to a target entity (cr:queryOn).</li><li>Query must carry a resolution status (open/answered/closed).</li></ul></td></tr>
+<tr><td><code>cr:SampleCollectionShape</code></td><td><code>cr:SampleCollection</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>SampleCollection must carry cr:performedBy (phlebotomist).</li><li>SampleCollection must carry cr:authorizedBy (delegation record).</li><li>SampleCollection must carry at least one cr:specimen with a LIMS barcode.</li></ul></td></tr>
+</table>
+
+<footer><b>Draft / pre-release</b> &mdash; not finalized. Auto-generated by <code>cr-domain/docs/build_docs.py</code> from the ontology, shapes, and projections &mdash; regenerate after model changes.</footer>
+</main>
+</div>
+
+<script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+</body></html>
