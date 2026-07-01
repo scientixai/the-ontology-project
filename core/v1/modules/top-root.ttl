@@ -39,6 +39,16 @@ top:status a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     rdfs:comment "Current lifecycle / health state. Each Category narrows the enum at its layer; leaves narrow further. Universal at this layer because every entity has SOME state and the project-wide status query is operationally meaningful."@en .
 
+# Mutual disjointness of the eight L2 categories (per ADR-0019).
+# An OWL reasoner will flag any entity typed as two L2 categories simultaneously.
+top:Agent owl:disjointWith top:Evidence, top:Location, top:Outcome, top:Resource, top:Scope, top:Temporal, top:Constraint .
+top:Evidence owl:disjointWith top:Location, top:Outcome, top:Resource, top:Scope, top:Temporal, top:Constraint .
+top:Location owl:disjointWith top:Outcome, top:Resource, top:Scope, top:Temporal, top:Constraint .
+top:Outcome owl:disjointWith top:Resource, top:Scope, top:Temporal, top:Constraint .
+top:Resource owl:disjointWith top:Scope, top:Temporal, top:Constraint .
+top:Scope owl:disjointWith top:Temporal, top:Constraint .
+top:Temporal owl:disjointWith top:Constraint .
+
 top:UniversalDNAShape a sh:NodeShape ;
     rdfs:label "Universal DNA Shape"@en ;
     rdfs:comment "The minimum every TOP entity must carry: a unique identifier, an observation timestamp, and a current status."@en ;

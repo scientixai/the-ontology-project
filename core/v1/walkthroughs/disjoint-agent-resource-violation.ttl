@@ -1,0 +1,11 @@
+@prefix ex:  <https://top.scientix.ai/examples/> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Violation: entity typed as both top:Agent and top:Resource — disjoint L2 categories.
+# Expected: SHACL Violation from top:AgentNotResourceShape.
+
+ex:bad-agent-resource a top:Agent, top:Resource ;
+    top:identifier "urn:bad-agent-resource"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
