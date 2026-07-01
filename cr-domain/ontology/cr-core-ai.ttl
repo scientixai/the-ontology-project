@@ -1,0 +1,46 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix cx:   <https://top.scientix.ai/crosswalk/v1#> .
+
+# US-800-001 — AI inference reproducibility properties (additive, no breaking changes).
+# These properties are defined on top:Conclusion and cx:Mapping to capture
+# full LLM provenance for reproducibility and regulatory auditability.
+
+top:promptTemplate a owl:DatatypeProperty ;
+    rdfs:label "prompt template" ;
+    rdfs:comment "The prompt template used to elicit the LLM inference, with slot markers. Stored verbatim for reproducibility." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string .
+
+top:sourceContext a owl:DatatypeProperty ;
+    rdfs:label "source context" ;
+    rdfs:comment "The retrieved context passages (e.g. SPARQL results, vector-search snippets) injected into the prompt. Stored verbatim." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string .
+
+top:modelVersion a owl:DatatypeProperty ;
+    rdfs:label "model version" ;
+    rdfs:comment "Identifier of the LLM (name + version/hash) that produced this conclusion, e.g. 'gpt-4o-2024-05-13'." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string .
+
+# US-800-002 — LLM provenance on cx:Mapping (HITL gate support).
+
+cx:inferredBy a owl:ObjectProperty ;
+    rdfs:label "inferred by" ;
+    rdfs:comment "The LLM agent (prov:SoftwareAgent IRI) that produced this mapping candidate. Presence triggers the SHACL HITL gate." ;
+    rdfs:domain cx:Mapping .
+
+cx:confirmedBy a owl:ObjectProperty ;
+    rdfs:label "confirmed by" ;
+    rdfs:comment "The human curator (prov:Person IRI) who reviewed and approved an LLM-inferred mapping. Required before verificationStatus may be set to 'verified'." ;
+    rdfs:domain cx:Mapping .
+
+cx:mappingMethod a owl:DatatypeProperty ;
+    rdfs:label "mapping method" ;
+    rdfs:comment "Free-text tag describing how the mapping was produced. Controlled values: 'ManualCuration', 'LLMInference', 'LexicalMatching', 'LogicalReasoning'." ;
+    rdfs:domain cx:Mapping ;
+    rdfs:range xsd:string .

@@ -1,0 +1,32 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix top:    <https://top.scientix.ai/v1#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# INTENTIONAL VIOLATION EXAMPLE — US-800-002
+# This mapping was produced by an LLM (cx:inferredBy is present) but has NOT
+# been confirmed by a human curator (cx:confirmedBy is absent).
+# Expected SHACL result: sh:Violation from cr:LLMInferredMappingConfirmedShape.
+
+ex:gpt-4o-agent a prov:SoftwareAgent ;
+    rdfs:label "GPT-4o mapping agent v2024-05-13" .
+
+ex:map-ae-snomed-llm-draft a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    <http://snomed.info/id/281647001> ;
+    cx:justification semapv:LexicalMatching ;
+    cx:confidence  "0.72"^^xsd:decimal ;
+    cx:author      ex:gpt-4o-agent ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "unverified" ;
+    cx:inferredBy  ex:gpt-4o-agent ;
+    cx:mappingMethod "LLMInference" ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:gpt-4o-agent .
+# cx:confirmedBy is intentionally absent — triggers cr:LLMInferredMappingConfirmedShape (sh:Violation)

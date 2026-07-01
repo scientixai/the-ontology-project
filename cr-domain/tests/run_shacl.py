@@ -9,7 +9,6 @@ Exit codes:
     1 — one or more examples produced an unexpected outcome
 """
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -26,7 +25,7 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
     expect = entry["expect"]
 
     if not path.exists():
-        return False, f"MISSING  — file not found"
+        return False, "MISSING  — file not found"
 
     data_graph = rdflib.Graph()
     try:
@@ -34,17 +33,6 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
     except Exception as e:
         return False, f"PARSE_ERR — {e}"
 
-    conforms, _, _ = pyshacl.validate(
-        data_graph,
-        shacl_graph=shapes_graph,
-        abort_on_first=False,
-        allow_warnings=True,
-        inference="none",
-    )
-
-    # Gather result severities
-    SH = rdflib.Namespace("http://www.w3.org/ns/shacl#")
-    results_graph = rdflib.Graph()
     _, results_graph_text, _ = pyshacl.validate(
         data_graph,
         shacl_graph=shapes_graph,
@@ -53,15 +41,14 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
         inference="none",
         serialize_report_graph="turtle",
     )
+    results_graph = rdflib.Graph()
     results_graph.parse(data=results_graph_text, format="turtle")
+
+    SH = rdflib.Namespace("http://www.w3.org/ns/shacl#")
     violations = list(results_graph.subjects(
-        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"),
-        SH.Violation,
-    ))
+        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"), SH.Violation))
     warnings = list(results_graph.subjects(
-        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"),
-        SH.Warning,
-    ))
+        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"), SH.Warning))
 
     has_violations = len(violations) > 0
     has_warnings = len(warnings) > 0
@@ -71,14 +58,12 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
         status = "PASS" if ok else f"FAIL (got {len(violations)} violations, expected 0)"
     elif expect == "violation":
         ok = has_violations
-        status = "PASS" if ok else "FAIL (expected ≥1 violation, got 0)"
+        status = "PASS" if ok else "FAIL (expected >=1 violation, got 0)"
     elif expect == "warning":
         ok = has_warnings and not has_violations
         if not ok:
-            if has_violations:
-                status = f"FAIL (got violations, expected only warnings)"
-            else:
-                status = "FAIL (expected ≥1 warning, got 0)"
+            status = (f"FAIL (got violations, expected only warnings)" if has_violations
+                      else "FAIL (expected >=1 warning, got 0)")
         else:
             status = "PASS"
     else:
@@ -107,7 +92,6 @@ def main() -> int:
             failures += 1
         rows.append((entry["file"], entry["expect"], status))
 
-    # Print summary table
     col_file = max(len(r[0]) for r in rows)
     col_exp  = max(len(r[1]) for r in rows)
     print(f"\n{'File':<{col_file}}  {'Expect':<{col_exp}}  Status")
