@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """US-900-003: Validate USDM transformer output against CR SHACL shapes.
 
+Loads usdm-cdisc-pilot-ingested.ttl (the transformer's emitted output for
+LY900018) and runs pyshacl to assert zero violations.
+
 Usage:
     python3 tests/validate_transformer_output.py
 
@@ -23,6 +26,7 @@ def main() -> int:
     if not SHAPES_FILE.exists():
         print(f"ERROR: {SHAPES_FILE} not found — run python3 docs/build_dist.py first.")
         return 1
+
     if not TRANSFORMER_OUTPUT.exists():
         print(f"ERROR: {TRANSFORMER_OUTPUT} not found.")
         return 1
@@ -33,16 +37,23 @@ def main() -> int:
     data_graph = rdflib.Graph()
     data_graph.parse(str(TRANSFORMER_OUTPUT), format="turtle")
 
-    _, results_graph, _ = pyshacl.validate(
-        data_graph, shacl_graph=shapes_graph,
-        abort_on_first=False, allow_warnings=True, inference="none",
+    conforms, results_graph, results_text = pyshacl.validate(
+        data_graph,
+        shacl_graph=shapes_graph,
+        abort_on_first=False,
+        allow_warnings=True,
+        inference="none",
     )
 
     SH = rdflib.Namespace("http://www.w3.org/ns/shacl#")
     violations = list(results_graph.subjects(
-        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"), SH.Violation))
+        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"),
+        SH.Violation,
+    ))
     warnings = list(results_graph.subjects(
-        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"), SH.Warning))
+        rdflib.URIRef("http://www.w3.org/ns/shacl#resultSeverity"),
+        SH.Warning,
+    ))
 
     print(f"Transformer output: {TRANSFORMER_OUTPUT.name}")
     print(f"  Violations : {len(violations)}")
