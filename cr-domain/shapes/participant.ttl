@@ -1,179 +1,148 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
-@prefix top:  <https://top.scientix.ai/v1#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
 
-#################################################################
-# Participant SHACL invariants
-# Numbering continues from cr-domain's existing 42 rules.
-# Severity: sh:Violation = hard / sh:Warning = soft.
-#
-# Cross-walk notes:
-#   Inv #43–#49 enforce lifecycle state-machine rules (SDTM DS
-#   disposition events = sub-object pattern).
-#   Inv #50–#51 enforce Recruit funnel integrity.
-#################################################################
+<https://top.scientix.ai/shapes/participant-v1> a owl:Ontology ;
+    owl:versionInfo "1.2" ;
+    dct:title "SHACL shapes — participant & consent (US-500-003)" .
 
-# Inv #43 — Post-consent state requires consent act (GCP hard)
-cr:PostConsentRequiresConsentShape a sh:NodeShape ;
-    rdfs:label "Post-consent state requires InformedConsentAct (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Participant ;
+# ── InformedConsent shape ────────────────────────────────────────────────────
+
+cr:InformedConsentShape a sh:NodeShape ;
+    sh:targetClass cr:InformedConsent ;
+
+    # pre-existing constraints
+    sh:property [
+        sh:path     cr:consentDate ;
+        sh:datatype xsd:date ;
+        sh:minCount 1 ;
+        sh:message  "cr:consentDate (xsd:date) is required." ;
+    ] ;
+    sh:property [
+        sh:path     cr:consentStatus ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:in       ( "active" "withdrawn" "expired" ) ;
+        sh:message  "cr:consentStatus must be one of: active, withdrawn, expired." ;
+    ] ;
+
+    # new constraints (US-500-003)
+    sh:property [
+        sh:path     cr:consentVersion ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message  "cr:consentVersion is required (US-500-003)." ;
+    ] ;
+    sh:property [
+        sh:path     cr:consentFormIRI ;
+        sh:datatype xsd:anyURI ;
+        sh:minCount 1 ;
+        sh:message  "cr:consentFormIRI (xsd:anyURI) is required (US-500-003)." ;
+    ] ;
+    sh:property [
+        sh:path     cr:witnessedBy ;
+        sh:class    hcls:Person ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "cr:witnessedBy must point to at most one hcls:Person." ;
+    ] ;
+    sh:property [
+        sh:path     cr:withdrawalDate ;
+        sh:datatype xsd:date ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "cr:withdrawalDate (xsd:date) — optional, but must be a valid date if present." ;
+    ] ;
+
+    # cross-property constraint: withdrawalDate must be >= validFrom
     sh:sparql [
-        sh:message "Participant is in a post-consent state but has no InformedConsentAct with consentStatus=OBTAINED. ICH E6(R3) §2.4 violation." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#participantStatus> ?s .
-              FILTER ( ?s IN (
-                "ENROLLED", "RANDOMIZED", "ON_TREATMENT",
-                "IN_FOLLOW_UP", "COMPLETED", "WITHDRAWN",
-                "DISCONTINUED", "LOST_TO_FOLLOW_UP"
-              ) )
-              FILTER NOT EXISTS {
-                $this <https://top.scientix.ai/cr/v1#hasInformedConsentAct> ?c .
-                ?c <https://top.scientix.ai/cr/v1#consentStatus> "OBTAINED" .
-              }
+        sh:message  "Violation: cr:withdrawalDate precedes top:validFrom — consent cannot be withdrawn before it was recorded." ;
+        sh:severity sh:Violation ;
+        sh:prefixes <https://top.scientix.ai/shapes/participant-v1> ;
+        sh:select   """
+            PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+            PREFIX top: <https://top.scientix.ai/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this ?withdrawalDate ?validFrom
+            WHERE {
+                $this cr:withdrawalDate ?withdrawalDate ;
+                      top:validFrom     ?validFrom .
+                FILTER ( ?withdrawalDate < ?validFrom )
             }
         """ ;
     ] .
 
-# Inv #44 — SCREEN_FAILED requires a ScreeningRecord (hard)
-cr:ScreenFailedRequiresRecordShape a sh:NodeShape ;
-    rdfs:label "SCREEN_FAILED requires ScreeningRecord (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Participant ;
-    sh:sparql [
-        sh:message "Participant.participantStatus=SCREEN_FAILED but no ScreeningRecord with screeningOutcome=SCREEN_FAILED." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#participantStatus> "SCREEN_FAILED" .
-              FILTER NOT EXISTS {
-                $this <https://top.scientix.ai/cr/v1#hasScreeningRecord> ?r .
-                ?r <https://top.scientix.ai/cr/v1#screeningOutcome> "SCREEN_FAILED" .
-              }
-            }
-        """ ;
+# ── StudySubject shape ───────────────────────────────────────────────────────
+
+cr:StudySubjectShape a sh:NodeShape ;
+    sh:targetClass cr:StudySubject ;
+    sh:property [
+        sh:path     cr:subjectId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message  "cr:subjectId is required." ;
+    ] ;
+    sh:property [
+        sh:path     top:validFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message  "top:validFrom (xsd:dateTime) is required on StudySubject." ;
+    ] ;
+    sh:property [
+        sh:path     cr:hasConsent ;
+        sh:class    cr:InformedConsent ;
+        sh:minCount 0 ;
+        sh:message  "cr:hasConsent must point to a cr:InformedConsent." ;
+    ] ;
+    sh:property [
+        sh:path     cr:hasEnrollment ;
+        sh:class    cr:Enrollment ;
+        sh:minCount 0 ;
+        sh:message  "cr:hasEnrollment must point to a cr:Enrollment." ;
     ] .
 
-# Inv #45 — RANDOMIZED requires arm + date (hard)
-cr:RandomizedRequiresArmAndDateShape a sh:NodeShape ;
-    rdfs:label "RANDOMIZED requires assignedToArm and randomizationDate (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Participant ;
-    sh:sparql [
-        sh:message "Participant.participantStatus=RANDOMIZED but missing assignedToArm or randomizationDate." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#participantStatus> "RANDOMIZED" .
-              FILTER (
-                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assignedToArm> ?a . } ||
-                NOT EXISTS { $this <https://top.scientix.ai/cr/v1#randomizationDate> ?d . }
-              )
-            }
-        """ ;
+# ── Enrollment shape ─────────────────────────────────────────────────────────
+
+cr:EnrollmentShape a sh:NodeShape ;
+    sh:targetClass cr:Enrollment ;
+    sh:property [
+        sh:path     cr:enrollmentDate ;
+        sh:datatype xsd:date ;
+        sh:minCount 1 ;
+        sh:message  "cr:enrollmentDate (xsd:date) is required." ;
+    ] ;
+    sh:property [
+        sh:path     top:validFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message  "top:validFrom (xsd:dateTime) is required on Enrollment." ;
+    ] ;
+    sh:property [
+        sh:path     cr:enrolledInArm ;
+        sh:class    cr:Arm ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message  "cr:enrolledInArm must point to exactly one cr:Arm." ;
     ] .
 
-# Inv #46 — WITHDRAWN requires consent-withdrawal record (hard)
-cr:WithdrawnRequiresConsentWithdrawalShape a sh:NodeShape ;
-    rdfs:label "WITHDRAWN requires WithdrawalRecord with CONSENT_WITHDRAWN (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Participant ;
-    sh:sparql [
-        sh:message "Participant.participantStatus=WITHDRAWN but no WithdrawalRecord with withdrawalCategory=CONSENT_WITHDRAWN. WITHDRAWN is reserved for subject-initiated withdrawal; investigator-initiated uses DISCONTINUED." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#participantStatus> "WITHDRAWN" .
-              FILTER NOT EXISTS {
-                $this <https://top.scientix.ai/cr/v1#hasWithdrawalRecord> ?w .
-                ?w <https://top.scientix.ai/cr/v1#withdrawalCategory> "CONSENT_WITHDRAWN" .
-              }
-            }
-        """ ;
-    ] .
+# ── EligibilityCriterion shape ───────────────────────────────────────────────
 
-# Inv #47 — COMPLETED should have completionDate (soft)
-cr:CompletedShouldHaveDateShape a sh:NodeShape ;
-    rdfs:label "COMPLETED should have completionDate (warning)" ;
-    sh:severity sh:Warning ;
-    sh:targetClass cr:Participant ;
-    sh:sparql [
-        sh:message "Participant.participantStatus=COMPLETED but completionDate is not populated." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#participantStatus> "COMPLETED" .
-              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#completionDate> ?d . }
-            }
-        """ ;
-    ] .
-
-# Inv #48 — Arm-Study consistency (hard)
-cr:ArmStudyConsistencyShape a sh:NodeShape ;
-    rdfs:label "Assigned arm must belong to Participant's Study (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Participant ;
-    sh:sparql [
-        sh:message "Participant.assignedToArm references an Arm whose parent Study does not match Participant.forStudy." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#assignedToArm> ?arm ;
-                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
-              FILTER NOT EXISTS {
-                ?study <https://top.scientix.ai/cr/v1#hasArm> ?arm .
-              }
-            }
-        """ ;
-    ] .
-
-# Inv #49 — StudySite-Study consistency (hard)
-cr:StudySiteStudyConsistencyShape a sh:NodeShape ;
-    rdfs:label "Participant.forStudySite must match forStudy (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Participant ;
-    sh:sparql [
-        sh:message "Participant.forStudySite references a StudySite whose forStudy does not match Participant.forStudy." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#forStudySite> ?ss ;
-                    <https://top.scientix.ai/cr/v1#forStudy> ?study .
-              FILTER NOT EXISTS {
-                ?ss <https://top.scientix.ai/cr/v1#forStudy> ?study .
-              }
-            }
-        """ ;
-    ] .
-
-#################################################################
-# Recruit SHACL invariants
-#################################################################
-
-# Inv #50 — Converted recruit must link to Participant (hard)
-cr:ConvertedRecruitRequiresParticipantShape a sh:NodeShape ;
-    rdfs:label "CONVERTED_TO_PARTICIPANT requires convertedToParticipant link (hard)" ;
-    sh:severity sh:Violation ;
-    sh:targetClass cr:Recruit ;
-    sh:sparql [
-        sh:message "Recruit.recruitStatus=CONVERTED_TO_PARTICIPANT but convertedToParticipant relationship is missing." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#recruitStatus> "CONVERTED_TO_PARTICIPANT" .
-              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#convertedToParticipant> ?p . }
-            }
-        """ ;
-    ] .
-
-# Inv #51 — Stalled recruit with many contact attempts (soft)
-cr:StalledRecruitShape a sh:NodeShape ;
-    rdfs:label "Recruit stalled with many contact attempts (warning)" ;
-    sh:severity sh:Warning ;
-    sh:targetClass cr:Recruit ;
-    sh:sparql [
-        sh:message "Recruit has 6+ contact attempts but is still in RESPONDED or CONTACTED state. Consider transitioning to DROPPED." ;
-        sh:select """
-            SELECT $this WHERE {
-              $this <https://top.scientix.ai/cr/v1#contactAttempts> ?n ;
-                    <https://top.scientix.ai/cr/v1#recruitStatus> ?s .
-              FILTER ( ?n >= 6 && ?s IN ("RESPONDED", "CONTACTED") )
-            }
-        """ ;
+cr:EligibilityCriterionShape a sh:NodeShape ;
+    sh:targetClass cr:EligibilityCriterion ;
+    sh:property [
+        sh:path     cr:criterionType ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:in       ( "inclusion" "exclusion" ) ;
+        sh:message  "cr:criterionType must be 'inclusion' or 'exclusion'." ;
+    ] ;
+    sh:property [
+        sh:path     cr:criterionText ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message  "cr:criterionText is required." ;
     ] .

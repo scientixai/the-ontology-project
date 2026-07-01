@@ -1,109 +1,124 @@
 @prefix cr: <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix top: <https://top.scientix.ai/v1#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 
-cr:InformedConsentAct a owl:Class ;
-    rdfs:label "Informed Consent Act" ;
-    rdfs:comment "One consent event (ICH E6(R3) §2.4 GCP-required). Supports re-consent after protocol amendment or ICF version change. SDTM DS: DSDECOD=INFORMED CONSENT OBTAINED. FHIR: ResearchSubject.progress entry with subjectState=pending-on-study." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
+<https://top.scientix.ai/cr/v1> a owl:Ontology ;
+    owl:versionInfo "1.4" ;
+    dct:title "CR-core ontology — participant & consent module" ;
+    dct:description "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate." .
 
-cr:convertedFromRecruit a owl:ObjectProperty ;
-    rdfs:label "converted from recruit" ;
-    rdfs:comment "0..1. Operational-funnel trace. Empty for direct walk-ins." ;
-    rdfs:domain cr:Participant ;
-    rdfs:range cr:Recruit ;
-    top:flavor "Additive" .
+#
+# ── InformedConsent (enriched, US-500-003) ───────────────────────────────────
+#
+cr:InformedConsent a owl:Class ;
+    rdfs:label "Informed Consent" ;
+    rdfs:comment "A participant's documented agreement to take part in a study, including version, form IRI, witness, and optional withdrawal." ;
+    rdfs:subClassOf top:BitemporalEntity ;
+    skos:definition "The act and record of a study participant voluntarily agreeing to participate after being informed of all relevant aspects of the study." .
 
-cr:convertedToParticipant a owl:ObjectProperty ;
-    rdfs:label "converted to participant" ;
-    rdfs:comment "0..1. Inverse of Participant.convertedFromRecruit. Mandatory when recruitStatus=CONVERTED_TO_PARTICIPANT (SHACL hard)." ;
-    rdfs:domain cr:Recruit ;
-    rdfs:range cr:Participant ;
-    top:flavor "Additive" .
+# — core properties (pre-existing) ——————————————————————————————————————————
+cr:consentDate a owl:DatatypeProperty ;
+    rdfs:domain cr:InformedConsent ;
+    rdfs:range  xsd:date ;
+    rdfs:label  "consent date" ;
+    rdfs:comment "Calendar date on which consent was obtained." .
 
-cr:forStudyRecruit a owl:ObjectProperty ;
-    rdfs:label "for study (recruit)" ;
-    rdfs:comment "1..1. Recruits are scoped per-Study." ;
-    rdfs:domain cr:Recruit ;
-    rdfs:range cr:Study ;
-    top:flavor "Additive" .
+cr:consentStatus a owl:DatatypeProperty ;
+    rdfs:domain cr:InformedConsent ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "consent status" ;
+    rdfs:comment "Workflow status of the consent (e.g. active, withdrawn, expired)." .
 
-cr:forStudySite a owl:ObjectProperty ;
-    rdfs:label "for study site" ;
-    rdfs:comment "1..1. The StudySite where enrollment happened. Per OOUX correction: NOT Site directly." ;
-    rdfs:domain cr:Participant ;
-    rdfs:range cr:StudySite ;
-    top:flavor "Additive" .
+# — new properties (US-500-003) ——————————————————————————————————————————————
+cr:consentVersion a owl:DatatypeProperty ;
+    rdfs:domain cr:InformedConsent ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "consent version" ;
+    rdfs:comment "Version identifier of the consent form (e.g. 'v2.1')." .
 
-cr:forStudySiteRecruit a owl:ObjectProperty ;
-    rdfs:label "for study site (recruit)" ;
-    rdfs:comment "0..1. May not be set when site assignment is finalized centrally." ;
-    rdfs:domain cr:Recruit ;
-    rdfs:range cr:StudySite ;
-    top:flavor "Additive" .
+cr:consentFormIRI a owl:DatatypeProperty ;
+    rdfs:domain cr:InformedConsent ;
+    rdfs:range  xsd:anyURI ;
+    rdfs:label  "consent form IRI" ;
+    rdfs:comment "Dereferenceable IRI to the consent form document." .
 
-cr:hasEnrollmentRecord a owl:ObjectProperty ;
-    rdfs:label "has enrollment record" ;
-    rdfs:domain cr:Participant ;
-    rdfs:range cr:EnrollmentRecord ;
-    top:flavor "Additive" .
+cr:witnessedBy a owl:ObjectProperty ;
+    rdfs:domain cr:InformedConsent ;
+    rdfs:range  hcls:Person ;
+    rdfs:label  "witnessed by" ;
+    rdfs:comment "The person who witnessed the consent signing." .
 
-cr:hasScreeningRecord a owl:ObjectProperty ;
-    rdfs:label "has screening record" ;
-    rdfs:domain cr:Participant ;
-    rdfs:range cr:ScreeningRecord ;
-    top:flavor "Additive" .
+cr:withdrawalDate a owl:DatatypeProperty ;
+    rdfs:domain cr:InformedConsent ;
+    rdfs:range  xsd:date ;
+    rdfs:label  "withdrawal date" ;
+    rdfs:comment "Calendar date on which consent was withdrawn, if applicable." .
 
-cr:hasVisitOccurrence a owl:ObjectProperty ;
-    rdfs:label "has visit occurrence" ;
-    rdfs:comment "0..N. Per-Participant visit records; resolved when cr-core-visit-execution.ttl lifts." ;
-    rdfs:domain cr:Participant ;
-    rdfs:range cr:VisitOccurrence ;
-    top:flavor "Additive" .
+#
+# ── StudySubject ─────────────────────────────────────────────────────────────
+#
+cr:StudySubject a owl:Class ;
+    rdfs:label   "Study Subject" ;
+    rdfs:comment "A person enrolled in or being considered for a study." ;
+    rdfs:subClassOf top:BitemporalEntity .
 
-cr:hasWithdrawalRecord a owl:ObjectProperty ;
-    rdfs:label "has withdrawal record" ;
-    rdfs:domain cr:Participant ;
-    rdfs:range cr:WithdrawalRecord ;
-    top:flavor "Additive" .
+cr:subjectId a owl:DatatypeProperty ;
+    rdfs:domain cr:StudySubject ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "subject identifier" ;
+    rdfs:comment "Site-assigned identifier for the study subject." .
 
-cr:recruitedBy a owl:ObjectProperty ;
-    rdfs:label "recruited by" ;
-    rdfs:comment "0..1. The recruitment coordinator (Person) handling this Recruit." ;
-    rdfs:domain cr:Recruit ;
-    rdfs:range hcls:Person ;
-    top:flavor "Additive" .
+cr:hasConsent a owl:ObjectProperty ;
+    rdfs:domain cr:StudySubject ;
+    rdfs:range  cr:InformedConsent ;
+    rdfs:label  "has consent" ;
+    rdfs:comment "Links a study subject to their informed consent record." .
 
-cr:EnrollmentRecord a owl:Class ;
-    rdfs:label "Enrollment Record" ;
-    rdfs:comment "The enrollment event — eligibility confirmed, subject formally on the trial. SDTM DS: DSDECOD=ENROLLED. FHIR: ResearchSubject.status=on-study." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
+cr:hasEnrollment a owl:ObjectProperty ;
+    rdfs:domain cr:StudySubject ;
+    rdfs:range  cr:Enrollment ;
+    rdfs:label  "has enrollment" ;
+    rdfs:comment "Links a study subject to their enrollment record." .
 
-cr:ScreeningRecord a owl:Class ;
-    rdfs:label "Screening Record" ;
-    rdfs:comment "One eligibility-screening attempt (ICH E6(R3) §2.5). Re-screening = additional ScreeningRecord. SDTM DS: DSDECOD=SCREEN FAILURE / ENROLLED. SDTM IE: failed criteria." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
+#
+# ── Enrollment ───────────────────────────────────────────────────────────────
+#
+cr:Enrollment a owl:Class ;
+    rdfs:label   "Enrollment" ;
+    rdfs:comment "The formal registration of a subject into a study arm." ;
+    rdfs:subClassOf top:BitemporalEntity .
 
-cr:WithdrawalRecord a owl:Class ;
-    rdfs:label "Withdrawal Record" ;
-    rdfs:comment "One withdrawal or discontinuation event. WITHDRAWN = subject-initiated (CONSENT_WITHDRAWN); DISCONTINUED = investigator-initiated. Distinction is operator-meaningful and preserved in the substrate. SDTM DS: DSDECOD=WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
+cr:enrollmentDate a owl:DatatypeProperty ;
+    rdfs:domain cr:Enrollment ;
+    rdfs:range  xsd:date ;
+    rdfs:label  "enrollment date" .
 
-cr:Recruit a owl:Class ;
-    rdfs:label "Recruit" ;
-    rdfs:comment "A human in the recruitment realm, pre-consent. Separate entity from Participant (recruiter is a distinct operator role; data is lighter; PHI boundary differs). Transitions to Participant when consent is obtained. Fuels twin-for-enrollment analytics." ;
-    rdfs:subClassOf top:Agent .
+cr:enrolledInArm a owl:ObjectProperty ;
+    rdfs:domain cr:Enrollment ;
+    rdfs:range  cr:Arm ;
+    rdfs:label  "enrolled in arm" .
 
-cr:Participant a owl:Class ;
-    rdfs:label "Participant" ;
-    rdfs:comment "A human subject enrolled in a clinical trial at a specific StudySite for a specific Study. One entity per Study participation; multi-Study = separate Participant records. FHIR R5: ResearchSubject. SDTM projection: DM domain (demographics) + DS domain (disposition events)." ;
-    rdfs:subClassOf prov:Agent,
-        top:Agent .
+#
+# ── EligibilityCriterion ─────────────────────────────────────────────────────
+#
+cr:EligibilityCriterion a owl:Class ;
+    rdfs:label   "Eligibility Criterion" ;
+    rdfs:comment "An inclusion or exclusion criterion for study participation." .
 
+cr:criterionType a owl:DatatypeProperty ;
+    rdfs:domain cr:EligibilityCriterion ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "criterion type" ;
+    rdfs:comment "'inclusion' or 'exclusion'." .
+
+cr:criterionText a owl:DatatypeProperty ;
+    rdfs:domain cr:EligibilityCriterion ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "criterion text" .

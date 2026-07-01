@@ -1,11 +1,48 @@
-# FHIR ResearchSubject view, projected from HCLS-core/CR-core — the SAME native
-# graph yielding a FHIR-shaped view (vs the CDISC views), proving one model many edges.
+# fhir_research_subject.rq — FHIR R4 ResearchStudy / ResearchSubject projection
+# Expanded (US-500-002): covers Study, Arm, EligibilityCriterion, ResearchSubject
+# with bitemporal validFrom filtering.
+#
+# Usage: sparql --data top-cr-v1.nt --query fhir_research_subject.rq
+
 PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX hcls: <https://top.scientix.ai/hcls/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?subject ?study WHERE {
-  ?enr a cr:Enrollment ;
-       cr:asSubject ?s ;
-       cr:intoStudy ?st .
-  ?s  rdfs:label ?subject .
-  ?st rdfs:label ?study .
+
+SELECT ?study ?studyTitle ?arm ?armLabel ?criterion ?criterionType ?criterionText
+       ?subject ?subjectId ?enrollmentDate ?validFrom
+WHERE {
+  ?study a cr:Study ;
+         rdfs:label ?studyTitle .
+
+  OPTIONAL {
+    ?arm a cr:Arm ;
+         top:partOf ?study ;
+         rdfs:label ?armLabel .
+  }
+
+  OPTIONAL {
+    ?criterion a cr:EligibilityCriterion ;
+               top:partOf       ?study ;
+               cr:criterionType ?criterionType ;
+               cr:criterionText ?criterionText .
+  }
+
+  OPTIONAL {
+    ?subject a cr:StudySubject ;
+             cr:subjectId ?subjectId ;
+             top:validFrom ?validFrom .
+
+    OPTIONAL {
+      ?enrollment a cr:Enrollment ;
+                  top:partOf         ?study ;
+                  cr:enrollmentDate  ?enrollmentDate ;
+                  cr:enrolledInArm   ?arm .
+      ?subject cr:hasEnrollment ?enrollment .
+    }
+  }
+
+  FILTER ( !BOUND(?validFrom) || ?validFrom <= NOW() )
 }
+ORDER BY ?study ?arm ?subject

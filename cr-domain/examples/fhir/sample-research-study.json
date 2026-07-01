@@ -1,0 +1,65 @@
+{
+  "resourceType": "Bundle",
+  "id": "bundle-lyso-trial-001",
+  "type": "collection",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "ResearchStudy",
+        "id": "study-lyso-001",
+        "status": "active",
+        "title": "LysoTrial Phase II",
+        "description": "Phase II oncology trial for lysosomal targeting therapy.",
+        "arm": [
+          {
+            "name": "Treatment A",
+            "type": {
+              "coding": [{ "code": "experimental", "display": "Experimental" }]
+            },
+            "description": "High-dose arm"
+          },
+          {
+            "name": "Control",
+            "type": {
+              "coding": [{ "code": "control", "display": "Control" }]
+            },
+            "description": "Standard of care"
+          }
+        ],
+        "enrollment": [
+          { "reference": "Group/eligibility-lyso-001" }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Group",
+        "id": "eligibility-lyso-001",
+        "type": "person",
+        "actual": false,
+        "characteristic": [
+          {
+            "code": { "text": "Age >= 18" },
+            "valueBoolean": true,
+            "exclude": false
+          },
+          {
+            "code": { "text": "Prior chemotherapy" },
+            "valueBoolean": true,
+            "exclude": true
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ResearchSubject",
+        "id": "subject-001",
+        "status": "on-study",
+        "study": { "reference": "ResearchStudy/study-lyso-001" },
+        "individual": { "reference": "Patient/patient-001" },
+        "assignedArm": "Treatment A"
+      }
+    }
+  ]
+}

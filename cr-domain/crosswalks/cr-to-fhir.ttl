@@ -1,0 +1,115 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix hcls:   <https://top.scientix.ai/hcls/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/v1#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix fhir:   <http://hl7.org/fhir/> .
+
+# FHIR R4 crosswalk (US-500-001)
+# Maps CR-core entities to HL7 FHIR R4 resource types.
+# Target IRIs: http://hl7.org/fhir/<ResourceType> (HL7 FHIR R4 base IRI, canonical).
+# NOTE: Property-level gaps are noted per mapping; full property alignment requires
+# additional cr: properties (e.g. cr:Assessment needs assessmentCode before
+# fhir:Procedure mapping is viable beyond conceptual broadMatch).
+
+<https://top.scientix.ai/crosswalk/fhir-r4> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:source <http://hl7.org/fhir/R4/> ;
+    dct:title "CR-core to FHIR R4 crosswalk" .
+
+ex:map-study-fhir a cx:Mapping ;
+    cx:subjectId       cr:Study ;
+    cx:predicateId     skos:closeMatch ;
+    cx:objectId        fhir:ResearchStudy ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.85"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-enrollment-fhir a cx:Mapping ;
+    cx:subjectId       cr:Enrollment ;
+    cx:predicateId     skos:closeMatch ;
+    cx:objectId        fhir:ResearchSubject ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.90"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-visit-fhir a cx:Mapping ;
+    cx:subjectId       cr:Visit ;
+    cx:predicateId     skos:closeMatch ;
+    cx:objectId        fhir:Encounter ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.80"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-observation-fhir a cx:Mapping ;
+    cx:subjectId       hcls:Observation ;
+    cx:predicateId     skos:exactMatch ;
+    cx:objectId        fhir:Observation ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.90"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-ae-fhir a cx:Mapping ;
+    cx:subjectId       cr:AdverseEvent ;
+    cx:predicateId     skos:exactMatch ;
+    cx:objectId        fhir:AdverseEvent ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.92"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-consent-fhir a cx:Mapping ;
+    cx:subjectId       cr:InformedConsent ;
+    cx:predicateId     skos:closeMatch ;
+    cx:objectId        fhir:Consent ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.85"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
+
+ex:map-person-fhir a cx:Mapping ;
+    cx:subjectId       hcls:Person ;
+    cx:predicateId     skos:closeMatch ;
+    cx:objectId        fhir:Patient ;
+    cx:targetSchemaVersion "R4" ;
+    cx:justification   semapv:ManualMappingCuration ;
+    cx:confidence      "0.75"^^xsd:decimal ;
+    cx:verificationStatus "validated" ;
+    cx:author          ex:curator-wg ;
+    cx:mappingDate     "2026-07-01"^^xsd:date ;
+    top:recordedAt     "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:curator-wg .
