@@ -332,3 +332,153 @@ cr:Study a owl:Class ;
     rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
     rdfs:subClassOf top:Scope .
 
+# Assessment property enrichment (US-200-001)
+cr:assessmentInstrument a owl:ObjectProperty ;
+    rdfs:label "assessment instrument" ;
+    rdfs:comment "The validated scale or questionnaire used to collect the assessment (e.g. ADAS-Cog, SF-36)." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range top:Evidence ;
+    top:flavor "Additive" .
+
+cr:assessmentScale a owl:DatatypeProperty ;
+    rdfs:label "assessment scale" ;
+    rdfs:comment "Human-readable name of the scale used (e.g. 'ADAS-Cog 13', 'ECOG PS')." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assessmentResult a owl:DatatypeProperty ;
+    rdfs:label "assessment result" ;
+    rdfs:comment "Numeric result value." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:assessmentUnit a owl:DatatypeProperty ;
+    rdfs:label "assessment unit" ;
+    rdfs:comment "UCUM unit code for the result (e.g. 'kg', 'mmHg')." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assessedAt a owl:ObjectProperty ;
+    rdfs:label "assessed at" ;
+    rdfs:comment "The study visit during which this assessment was performed." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range cr:Visit ;
+    top:flavor "Additive" .
+
+cr:measures a owl:ObjectProperty ;
+    rdfs:label "measures" ;
+    rdfs:comment "Links a cr:Assessment to the cr:DataElementDef it operationalizes." ;
+    rdfs:domain cr:Assessment ;
+    rdfs:range cr:DataElementDef ;
+    top:flavor "Additive" .
+
+# Arm property enrichment (US-200-002)
+cr:randomizationRatio a owl:DatatypeProperty ;
+    rdfs:label "randomization ratio" ;
+    rdfs:comment "Ratio of subjects assigned to this arm (e.g. '2:1' for active:control)." ;
+    rdfs:domain cr:Arm ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:stratificationFactor a owl:DatatypeProperty ;
+    rdfs:label "stratification factor" ;
+    rdfs:comment "A stratification variable used in randomization (free-text or coded)." ;
+    rdfs:domain cr:Arm ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:plannedEnrollment a owl:DatatypeProperty ;
+    rdfs:label "planned enrollment" ;
+    rdfs:comment "The number of subjects planned to be enrolled in this arm per the protocol." ;
+    rdfs:domain cr:Arm ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:actualEnrollment a owl:DatatypeProperty ;
+    rdfs:label "actual enrollment" ;
+    rdfs:comment "The number of subjects actually enrolled in this arm (plan-vs-actual tracking)." ;
+    rdfs:domain cr:Arm ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+# SiteMetrics class and properties (US-200-005)
+cr:SiteMetrics a owl:Class ;
+    rdfs:label "Site Metrics" ;
+    rdfs:comment "A periodic KPI snapshot for a study site; bitemporal (top:observedAt = snapshot date, top:validFrom = reporting period start)." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:metricsForSite a owl:ObjectProperty ;
+    rdfs:label "metrics for site" ;
+    rdfs:comment "The study site this KPI snapshot describes." ;
+    rdfs:domain cr:SiteMetrics ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:screenFailureRate a owl:DatatypeProperty ;
+    rdfs:label "screen failure rate" ;
+    rdfs:comment "Proportion of screened subjects who failed screening (0.0–1.0)." ;
+    rdfs:domain cr:SiteMetrics ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:enrollmentRate a owl:DatatypeProperty ;
+    rdfs:label "enrollment rate" ;
+    rdfs:comment "Subjects enrolled per month at this site during the reporting period." ;
+    rdfs:domain cr:SiteMetrics ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:dataQueryRate a owl:DatatypeProperty ;
+    rdfs:label "data query rate" ;
+    rdfs:comment "Queries raised per CRF page during the reporting period." ;
+    rdfs:domain cr:SiteMetrics ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:daysToQueryResolution a owl:DatatypeProperty ;
+    rdfs:label "days to query resolution" ;
+    rdfs:comment "Mean days to resolve an open data query." ;
+    rdfs:domain cr:SiteMetrics ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:protocolDeviationRate a owl:DatatypeProperty ;
+    rdfs:label "protocol deviation rate" ;
+    rdfs:comment "Protocol deviations per subject-visit during the reporting period." ;
+    rdfs:domain cr:SiteMetrics ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+# Endpoint property enrichment (US-200-003)
+cr:endpointType a owl:DatatypeProperty ;
+    rdfs:label "endpoint type" ;
+    rdfs:comment "Classification of the endpoint: primary, key-secondary, secondary, or exploratory." ;
+    rdfs:domain cr:Endpoint ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:analysisMethod a owl:DatatypeProperty ;
+    rdfs:label "analysis method" ;
+    rdfs:comment "Statistical analysis method name or STATO IRI (e.g. 'mixed model repeated measures')." ;
+    rdfs:domain cr:Endpoint ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:endpointTimepoint a owl:ObjectProperty ;
+    rdfs:label "endpoint timepoint" ;
+    rdfs:comment "The visit or duration at which the endpoint is assessed." ;
+    rdfs:domain cr:Endpoint ;
+    rdfs:range cr:Visit ;
+    top:flavor "Additive" .
+
+cr:endpointEstimand a owl:ObjectProperty ;
+    rdfs:label "endpoint estimand" ;
+    rdfs:comment "Links this endpoint to its ICH E9(R1) estimand definition." ;
+    rdfs:domain cr:Endpoint ;
+    rdfs:range cr:Estimand ;
+    top:flavor "Additive" .
+

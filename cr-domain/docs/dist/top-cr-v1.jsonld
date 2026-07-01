@@ -7495,6 +7495,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#SiteMetrics",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A periodic KPI snapshot for a study site; bitemporal (top:observedAt = snapshot date, top:validFrom = reporting period start)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Site Metrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -9120,6 +9144,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#actualEnrollment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The number of subjects actually enrolled in this arm (plan-vs-actual tracking)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "actual enrollment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#addressesFinding",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -9168,6 +9223,37 @@
     "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
       {
         "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#analysisMethod",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Statistical analysis method name or STATO IRI (e.g. 'mixed model repeated measures')."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Endpoint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "analysis method"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -9250,6 +9336,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#assessedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The study visit during which this assessment was performed."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "assessed at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Visit"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#assessesFactor",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -9262,6 +9379,130 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#CriticalToQualityFactor"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#assessmentInstrument",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The validated scale or questionnaire used to collect the assessment (e.g. ADAS-Cog, SF-36)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "assessment instrument"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#assessmentResult",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Numeric result value."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "assessment result"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#assessmentScale",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Human-readable name of the scale used (e.g. 'ADAS-Cog 13', 'ECOG PS')."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "assessment scale"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#assessmentUnit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "UCUM unit code for the result (e.g. 'kg', 'mmHg')."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "assessment unit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -9770,6 +10011,68 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#dataQueryRate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Queries raised per CRF page during the reporting period."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "data query rate"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#daysToQueryResolution",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Mean days to resolve an open data query."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "days to query resolution"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#decisionMadeBy",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -10124,6 +10427,99 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#endpointEstimand",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links this endpoint to its ICH E9(R1) estimand definition."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Endpoint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "endpoint estimand"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Estimand"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#endpointTimepoint",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The visit or duration at which the endpoint is assessed."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Endpoint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "endpoint timepoint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Visit"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#endpointType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Classification of the endpoint: primary, key-secondary, secondary, or exploratory."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Endpoint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "endpoint type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#enrolledPerson",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -10136,6 +10532,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#enrollmentRate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Subjects enrolled per month at this site during the reporting period."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "enrollment rate"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -11448,6 +11875,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#measures",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links a cr:Assessment to the cr:DataElementDef it operationalizes."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "measures"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementDef"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#measuresEndpoint",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11469,9 +11927,102 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#meetingAgency",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The regulatory agency conducting the meeting (e.g. FDA, EMA, PMDA)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteraction"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "meeting agency"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#meetingDate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The scheduled or actual date of the regulatory meeting."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteraction"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "meeting date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#meetingOutcome",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Summary of the meeting outcome or FDA response (e.g. 'agreed on Phase 3 design', 'additional data requested')."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteraction"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "meeting outcome"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#meetingType",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Coded type: Pre-IND, EOP1, EOP2, Type-A, Type-B, Type-C."
+      }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
@@ -11481,6 +12032,42 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "meeting type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#metricsForSite",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The study site this KPI snapshot describes."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "metrics for site"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -11964,6 +12551,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#plannedEnrollment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The number of subjects planned to be enrolled in this arm per the protocol."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "planned enrollment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#precededByAct",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -12213,6 +12831,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#protocolDeviationRate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Protocol deviations per subject-visit during the reporting period."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "protocol deviation rate"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#queryOn",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -12230,6 +12879,37 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "query on"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#randomizationRatio",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Ratio of subjects assigned to this arm (e.g. '2:1' for active:control)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "randomization ratio"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -12604,6 +13284,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#screenFailureRate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Proportion of screened subjects who failed screening (0.0\u20131.0)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "screen failure rate"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#sdvIntensity",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -12752,6 +13463,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Sponsor"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#stratificationFactor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A stratification variable used in randomization (free-text or coded)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "stratification factor"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [

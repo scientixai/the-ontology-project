@@ -83,6 +83,29 @@ cr:AssayResultShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:AssayResult .
 
+cr:AssessmentRequiredShape a sh:NodeShape ;
+    rdfs:label "Assessment completeness (required fields)" ;
+    sh:property [ sh:message "cr:Assessment must link to the visit during which it was performed (cr:assessedAt). Missing on this assessment." ;
+            sh:minCount 1 ;
+            sh:path cr:assessedAt ],
+        [ sh:message "cr:Assessment must declare its instrument (cr:assessmentInstrument). Missing on this assessment." ;
+            sh:minCount 1 ;
+            sh:path cr:assessmentInstrument ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:Assessment .
+
+cr:AssessmentResultUnitShape a sh:NodeShape ;
+    rdfs:label "Assessment result/unit co-occurrence" ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "An assessment carrying cr:assessmentResult should also carry cr:assessmentUnit (UCUM code)." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#assessmentResult> ?v .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assessmentUnit> ?u . }
+            }
+        """ ] ;
+    sh:targetClass cr:Assessment .
+
 cr:CapabilityDelegationShape a sh:NodeShape ;
     rdfs:label "Capability requires delegation (hard)" ;
     sh:severity sh:Violation ;
@@ -466,6 +489,17 @@ cr:RandomizedRequiresArmAndDateShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:Participant .
 
+cr:RegulatoryInteractionRequiredShape a sh:NodeShape ;
+    rdfs:label "Regulatory interaction required fields" ;
+    sh:property [ sh:message "cr:RegulatoryInteraction must carry cr:meetingType (Pre-IND, EOP1, EOP2, Type-A/B/C)." ;
+            sh:minCount 1 ;
+            sh:path cr:meetingType ],
+        [ sh:message "cr:RegulatoryInteraction must carry cr:meetingDate." ;
+            sh:minCount 1 ;
+            sh:path cr:meetingDate ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:RegulatoryInteraction .
+
 cr:RiskAssessmentShape a sh:NodeShape ;
     sh:property [ sh:in ( "low" "medium" "high" ) ;
             sh:message "Risk assessment must carry a risk level (low/medium/high)." ;
@@ -524,6 +558,17 @@ cr:SiteActivationShape a sh:NodeShape ;
             sh:path cr:cta ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:SiteActivation .
+
+cr:SiteMetricsRequiredShape a sh:NodeShape ;
+    rdfs:label "Site metrics snapshot completeness" ;
+    sh:property [ sh:message "cr:SiteMetrics must carry top:observedAt (the snapshot date)." ;
+            sh:minCount 1 ;
+            sh:path top:observedAt ],
+        [ sh:message "cr:SiteMetrics must link to a cr:StudySite via cr:metricsForSite." ;
+            sh:minCount 1 ;
+            sh:path cr:metricsForSite ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:SiteMetrics .
 
 cr:SourceDataAuditTrailShape a sh:NodeShape ;
     sh:property [ sh:message "Source data has no audit trail (ALCOA++ reconstructability not explicitly asserted)." ;

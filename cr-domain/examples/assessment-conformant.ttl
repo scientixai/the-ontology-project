@@ -1,0 +1,33 @@
+@prefix ex:  <https://top.scientix.ai/examples/> .
+@prefix cr:  <https://top.scientix.ai/cr/v1#> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Conformant: cr:Assessment with all required properties.
+# ADAS-Cog 13 assessment for subject LY900018-001 at Week 12 visit.
+
+ex:visit-w12 a cr:Visit ;
+    top:identifier "urn:visit:LY900018-001-W12"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T09:00:00Z"^^xsd:dateTime ;
+    top:status "completed" .
+
+ex:adas-cog-instrument a top:Evidence ;
+    top:identifier "urn:instrument:ADAS-Cog-13"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:assessment-adas-001 a cr:Assessment ;
+    top:identifier "urn:assessment:LY900018-001-ADAS-W12"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T10:30:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
+    cr:assessmentInstrument ex:adas-cog-instrument ;
+    cr:assessmentScale "ADAS-Cog 13" ;
+    cr:assessmentResult "18.5"^^xsd:decimal ;
+    cr:assessmentUnit "points" ;
+    cr:assessedAt ex:visit-w12 ;
+    cr:forSubject ex:subject-001 .
+
+ex:subject-001 a cr:StudySubject ;
+    top:identifier "urn:subject:LY900018-001"^^xsd:anyURI ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .

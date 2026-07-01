@@ -124,6 +124,25 @@
     ]
   },
   {
+    "@id": "_:cb1420056ecab70121706c3d6a0ed49d2f0afba89e1882f0a9d38dc5bb0d4306cff",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:RegulatoryInteraction must carry cr:meetingType (Pre-IND, EOP1, EOP2, Type-A/B/C)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#meetingType"
+      }
+    ]
+  },
+  {
     "@id": "_:cb152d4881209cdbe7ea68b7ac8e8faaf50245e12603c6dde860513ff04d78c0188",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -163,6 +182,25 @@
     ]
   },
   {
+    "@id": "_:cb168087fed14dea848518f8565d1f91bf0d7df94404534ec4652f8555e32b99da4",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:Assessment must link to the visit during which it was performed (cr:assessedAt). Missing on this assessment."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#assessedAt"
+      }
+    ]
+  },
+  {
     "@id": "_:cb173a5627d86c02d46a6be82dfe16240a6999ea7b997b338da1572f3d85c3fbdcd",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -196,6 +234,25 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#produces> ?out .\n              FILTER NOT EXISTS { ?out <http://www.w3.org/ns/prov#wasDerivedFrom> ?in . }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1753a5c21b33fe07f8e8c48a2c7eee87a8305e9b3308c98fad53483a036d84068",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:RegulatoryInteraction must carry cr:meetingDate."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#meetingDate"
       }
     ]
   },
@@ -351,6 +408,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#riskLevel"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1957d4145b1b114576f5253c3201d986c44db499d6bbeead9ec9126dc5c107775",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An assessment carrying cr:assessmentResult should also carry cr:assessmentUnit (UCUM code)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#assessmentResult> ?v .\n              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assessmentUnit> ?u . }\n            }\n        "
       }
     ]
   },
@@ -1422,6 +1492,25 @@
     ]
   },
   {
+    "@id": "_:cb26b729d049617efb5101b4c30766ffdd2f5a5e3ba4a5862db3266130cb1c30f52",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:SiteMetrics must carry top:observedAt (the snapshot date)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/v1#observedAt"
+      }
+    ]
+  },
+  {
     "@id": "_:cb270bda720b7e7aebc0905ec647247d99eb4d8403778d3713b904f77649b2c691d",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -1947,6 +2036,25 @@
     ]
   },
   {
+    "@id": "_:cb320cc6e561ff813fcabd1e4386bc173d6b293337f3c7fc6e0c52c4d22fa4754e8",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:SiteMetrics must link to a cr:StudySite via cr:metricsForSite."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#metricsForSite"
+      }
+    ]
+  },
+  {
     "@id": "_:cb32576951038c3c7c1ba698f757dd6ad9d54689042bb0adbbcbf9ff36fa8cd6767",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2089,6 +2197,25 @@
     ]
   },
   {
+    "@id": "_:cbe1579e44002d98cc52a45915ba33972adca2f6427fdd33f1f6e6ec19b4c59ede",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:Assessment must declare its instrument (cr:assessmentInstrument). Missing on this assessment."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#assessmentInstrument"
+      }
+    ]
+  },
+  {
     "@id": "_:cbebe1b30c8eaa8bc4c5cc063d6ac4ee54455e007fb46af606ab761bf0e54a81d8",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2219,6 +2346,61 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#AssayResult"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#AssessmentRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Assessment completeness (required fields)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb168087fed14dea848518f8565d1f91bf0d7df94404534ec4652f8555e32b99da4"
+      },
+      {
+        "@id": "_:cbe1579e44002d98cc52a45915ba33972adca2f6427fdd33f1f6e6ec19b4c59ede"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#AssessmentResultUnitShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Assessment result/unit co-occurrence"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1957d4145b1b114576f5253c3201d986c44db499d6bbeead9ec9126dc5c107775"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Assessment"
       }
     ]
   },
@@ -2943,6 +3125,35 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteractionRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Regulatory interaction required fields"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1420056ecab70121706c3d6a0ed49d2f0afba89e1882f0a9d38dc5bb0d4306cff"
+      },
+      {
+        "@id": "_:cb1753a5c21b33fe07f8e8c48a2c7eee87a8305e9b3308c98fad53483a036d84068"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteraction"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#RiskAssessmentShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -3040,6 +3251,35 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#SiteActivation"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteMetricsRequiredShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Site metrics snapshot completeness"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb26b729d049617efb5101b4c30766ffdd2f5a5e3ba4a5862db3266130cb1c30f52"
+      },
+      {
+        "@id": "_:cb320cc6e561ff813fcabd1e4386bc173d6b293337f3c7fc6e0c52c4d22fa4754e8"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteMetrics"
       }
     ]
   },

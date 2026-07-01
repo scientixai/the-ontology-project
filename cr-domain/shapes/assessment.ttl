@@ -1,0 +1,35 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Assessment completeness shapes (US-200-001).
+
+cr:AssessmentRequiredShape a sh:NodeShape ;
+    rdfs:label "Assessment completeness (required fields)" ;
+    sh:targetClass cr:Assessment ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:assessmentInstrument ;
+        sh:minCount 1 ;
+        sh:message "cr:Assessment must declare its instrument (cr:assessmentInstrument). Missing on this assessment." ;
+    ] ;
+    sh:property [
+        sh:path cr:assessedAt ;
+        sh:minCount 1 ;
+        sh:message "cr:Assessment must link to the visit during which it was performed (cr:assessedAt). Missing on this assessment." ;
+    ] .
+
+cr:AssessmentResultUnitShape a sh:NodeShape ;
+    rdfs:label "Assessment result/unit co-occurrence" ;
+    sh:targetClass cr:Assessment ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "An assessment carrying cr:assessmentResult should also carry cr:assessmentUnit (UCUM code)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#assessmentResult> ?v .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#assessmentUnit> ?u . }
+            }
+        """ ;
+    ] .
