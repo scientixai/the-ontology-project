@@ -1,0 +1,46 @@
+# gdpr_data_map.rq — All graph entities transitively linked to a given hcls:PersonalData node.
+# Use: data mapping / Article 30 Records of Processing Activities report.
+#
+# Bind ?rootPD to the IRI of the target personal-data record before execution.
+
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX hcls: <https://top.scientix.ai/hcls/v1#>
+PREFIX top:  <https://top.scientix.ai/top/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+    ?entity
+    ?entityType
+    ?study
+    ?lawfulBasis
+    ?dpa
+    ?retentionPeriod
+WHERE {
+    BIND( <urn:example:pd-subj-001> AS ?rootPD )   # ← replace with target IRI
+
+    # Entities linked to the personal-data record
+    ?entity  ?anyProp  ?rootPD .
+    OPTIONAL { ?entity a ?entityType }
+
+    # Study context
+    OPTIONAL {
+        ?study  a  cr:ClinicalStudy ;
+                cr:hasLawfulBasis  ?lawfulBasis .
+        ?entity  cr:partOfStudy  ?study .
+    }
+
+    # DPA
+    OPTIONAL {
+        ?dpa  a  cr:DataProcessingAgreement .
+        ?study  cr:governedByDPA  ?dpa .
+    }
+
+    # Retention
+    OPTIONAL {
+        ?rp  a  cr:RetentionPolicy ;
+             cr:retentionPeriod  ?retentionPeriod .
+        ?study  cr:hasRetentionPolicy  ?rp .
+    }
+}
+ORDER BY ?entityType ?entity
