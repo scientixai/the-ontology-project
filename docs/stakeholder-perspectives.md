@@ -414,6 +414,242 @@ A rich domain model that has made choices that are idiomatic in RDF but require 
 | **Information Architect** | 8-category top-level; `rdfs:label`/`rdfs:comment` coverage; flow-based doc site | No entity detail pages; no class hierarchy view; no crosswalk on entity pages | No browse/search interface |
 | **NGSI-LD Expert** | Correct `@type:@id` on ObjectProperty; `observedAt` alignment; well-formed URNs | Context URL not live; no temporal API examples; no subscriptions; no multi-tenancy | Context endpoint must be served before any real deployment |
 | **Neo4j / PG Expert** | Entity/relationship model maps to LPG naturally; stable node keys | No Cypher translation; no bitemporality pattern; no SHACL equivalent | OWL reasoning must be re-implemented in Cypher |
+| **Biostatistician** | Endpoint and arm model; ICH E9 R1 regulatory law individual | No estimand, no SAP, no analysis population, no ADaM; `cr:Endpoint` has no properties | No submission-ready output without this layer |
+| **Drug Safety / PV Officer** | `cr:AdverseEvent` + `cr:DoseLimitingToxicity` as first-class entities | No SUSAR workflow, no E2B(R3), no aggregate reporting, no signal detection | Cannot replace a pharmacovigilance system |
+| **HL7 FHIR Expert** | RDF/JSON-LD base compatible with FHIR RDF serialization | No FHIR crosswalk; EHR-to-graph path entirely absent; `cr:Assessment` has no properties | EHR data cannot enter the graph without a FHIR bridge |
+| **Patient / Study Participant** | PII isolation by design; no personal data in the main graph | Right to erasure has no implementation; consent withdrawal is not a graph event; subject has no view of their own data | Patients are modeled as data subjects, not as participants with rights |
+| **Data Privacy Counsel / DPO** | `cr:InformedConsent` bitemporal; `cr:EU_GDPR` as named individual; PII separation | No lawful basis declaration; no DPA template; no DSAR path; cross-border transfer unaddressed | Cannot process EU subject data without a GDPR compliance architecture |
+| **DevOps / Platform Engineer** | Deterministic builds; SHA256SUMS pin; CDK reference architecture | No CSV; no IQ/OQ/PQ; no change control; no DR/BCP; Garnet not GxP-validated | GxP validation of the platform is a prerequisite for live trial data |
+| **Enterprise / Data Architect** | Three-layer model fits medallion architecture; stable URN keys for MDM join | No MDM alignment; no data lineage metadata; no integration pattern for EDW/data lake | Graph is a silo until it connects to the sponsor's existing data estate |
+| **AI/ML Engineer** | `top:Conclusion` + `top:AutonomousAgent` inference model; `cx:mappingConfidence`; graph structure for GNN | No vector index; no GraphRAG pattern; no LLM pipeline; no feature store design | Inference capabilities are modeled, not built |
+
+---
+
+## 16. Biostatistician
+
+**What they see when they look at the graph:**
+A model that has mapped the clinical trial world carefully but stopped short of the layer they live in. The biostatistician's universe — estimands, analysis populations, statistical analysis plans, hypothesis tests, power calculations, and ADaM datasets — is entirely absent. `cr:Endpoint` exists as a class but has no properties. `cr:Arm` exists but carries no randomization ratio or stratification factors. The graph can tell you *what* the protocol says; it cannot tell you *how the data will be analysed*.
+
+**Pros:**
+- `cr:Endpoint` as a `top:Scope` subclass is the right ontological placement — an endpoint is a defined outcome measure, a bounded intent, not a data point. It correctly separates the *definition* of an endpoint (the protocol's intent) from the *measurement* (an `hcls:Observation`).
+- `cr:Arm` linked to `cr:Study` via `cr:hasArm` provides the structural backbone for a parallel-group or crossover design. The existence of multiple arms is representable.
+- `cr:StoppingRule` as a `top:Constraint` subclass is the right modeling of a DLT-triggered stopping rule in a dose-escalation oncology study — a constraint that halts an activity when a threshold is crossed.
+- The bitemporal model supports the analysis population definition problem: *"Who was enrolled as of the data-cut date for the primary analysis?"* is answerable via a `top:validFrom`/`top:validUntil` query on `cr:Enrollment` — provided the data-cut date is recorded.
+- ICH E9(R1) is present as `cr:ICH_E9_R1` (a `top:RegulatoryLaw` individual). The estimand framework's regulatory home is acknowledged.
+
+**Cons / Gaps:**
+- `cr:Endpoint` has no properties. Primary vs. secondary vs. exploratory, the endpoint estimand (treatment policy, hypothetical, composite variable, while-on-treatment strategies), the analysis method (MMRM, logrank, CMH), the multiple testing hierarchy — none of these are modeled.
+- There is no `cr:Estimand` class. ICH E9(R1) defines the estimand as a four-component construct (population, variable, intercurrent event strategy, population-level summary). This is now the foundational unit of a regulatory submission's efficacy analysis, and it does not exist in the graph.
+- There is no `cr:StatisticalAnalysisPlan` class. The SAP is a versioned, protocol-governed document — a natural `top:Evidence, top:Versioned` subclass — but it is absent.
+- `cr:Arm` has no `randomizationRatio` property, no `stratificationFactor` links, and no `plannedEnrollment` count. The structural facts a biostatistician needs to validate a power calculation are not capturable.
+- There is no `cr:AnalysisDataset` (ADaM-level) concept. The path from raw `hcls:Observation` to a derived analysis variable in ADSL, ADAE, or ADTTE is completely unmodeled.
+- No `cr:DataCut` entity. The date at which a database is locked for analysis — with all the enrollment, observation, and AE data frozen at that point — is not representable. Without it, "the analysis population as of the primary data cut" is a query that cannot be answered.
+
+**Wishlist:**
+- `cr:Estimand` as a `top:Scope` subclass, with properties for `estimandPopulation` (→ `cr:EligibilityCriterion` set), `estimandVariable` (→ `cr:Endpoint`), `intercurrentEventStrategy` (coded), and `populationLevelSummary` (free text).
+- `cr:Endpoint` properties: `endpointType` (primary/key secondary/secondary/exploratory), `endpointEstimand` (→ `cr:Estimand`), `analysisMethod` (coded or free text), `timepoint` (xsd:duration or `cr:Visit` link).
+- `cr:DataCut` as a `top:Temporal` subclass, linked to `cr:Study` and carrying a `top:observedAt` timestamp — the anchor for all analysis population queries.
+- `cr:AnalysisPopulation` (ITT, mITT, PP, safety population) as a named `top:Scope` subclass linked to the `cr:DataCut` and defined by a set of `cr:EligibilityCriterion`-equivalent inclusion rules.
+- A SPARQL projection for "enrollment as of data cut date" — the canonical analysis population query that every trial must answer.
+
+---
+
+## 17. Drug Safety / Pharmacovigilance Officer
+
+**What they see when they look at the graph:**
+A model with the right foundation for safety data — `cr:AdverseEvent` as a first-class versioned entity, `cr:DoseLimitingToxicity` as a subclass, `cr:StoppingRule` as a constraint — but no operational pharmacovigilance layer built on it. Safety reporting in clinical trials operates under strict regulatory timelines (15-day SUSAR submission, 7-day fatal/life-threatening expedited reports) and produces structured outputs (E2B(R3) ICSRs, DSURs, PBRERs) that require detailed coded data the graph does not yet carry.
+
+**Pros:**
+- `cr:AdverseEvent rdfs:subClassOf top:Outcome, top:Versioned` is the correct placement. An adverse event is a produced outcome, and it is bitemporal — it has a date of onset (valid time) and a date the system recorded it (transaction time). The model correctly separates these.
+- `cr:DoseLimitingToxicity rdfs:subClassOf cr:AdverseEvent` captures the oncology dose-escalation pattern where a DLT triggers a dose decision. The subclass relationship is clean.
+- `cr:StoppingRule rdfs:subClassOf top:Constraint` means stopping rules are computable constraints, not just text in a protocol. A query can ask: *"Which active studies have a stopping rule that references DLT rate > 33%?"*
+- The `prov:wasGeneratedBy` alignment (via `top:producedBy`) means an adverse event can be linked to the clinical assessment that surfaced it — the causality chain is representable.
+- The bitemporal model supports late-reporting detection: if `top:observedAt` (system entry date) is significantly later than `top:validFrom` (event onset date), the delta is a pharmacovigilance signal for late reporting.
+
+**Cons / Gaps:**
+- No MedDRA coding. `cr:AdverseEvent` has no `meddraLLT`, `meddraPT`, `meddraSOC` properties with coded term IRIs and dictionary version. Every regulatory safety submission requires MedDRA coding; without it the AE entities are narratively described but not submission-ready.
+- No CTCAE grading. Adverse event severity is the primary safety signal in oncology. `cr:AdverseEvent` has no grade property linked to NCI CTCAE v5 terms.
+- No SUSAR workflow. A Suspected Unexpected Serious Adverse Reaction triggers a regulatory clock (7 or 15 days to submission). There is no `cr:SUSAR` class, no `reportingDeadline` property, and no link to the regulatory authority to which the report is submitted.
+- No E2B(R3) output path. Individual Case Safety Reports are the unit of pharmacovigilance exchange between sponsors, authorities, and WHO. The graph has the source data for an ICSR but no serialization path to E2B(R3) XML.
+- No aggregate reporting model. DSURs and PBRERs require cumulative exposure counts, AE incidence tables by SOC/PT, and benefit-risk narratives. The graph has the individual events but no aggregate rollup model.
+- No causality assessment. Whether an AE is related to the investigational product (unrelated / possible / probable / definite) is a physician judgment that belongs as a property on `cr:AdverseEvent` — and it is absent.
+
+**Wishlist:**
+- `cr:AdverseEvent` properties: `aeOnsetDate` (xsd:date, the valid time), `aeResolutionDate` (xsd:date), `aeSeverity` (CTCAE grade 1-5 as a coded term IRI), `aeSerious` (xsd:boolean), `aeCausality` (coded: unrelated/possible/probable/definite), `meddraPreferredTerm` (IRI into MedDRA PT), `meddraSystemOrganClass` (IRI into MedDRA SOC).
+- `cr:SUSAR` as a `cr:AdverseEvent` subclass, with `reportingDeadline` (xsd:dateTime), `submittedTo` (→ `top:RegulatoryLaw` individual or regulatory authority IRI), and `submissionDate` (xsd:date).
+- A MedDRA crosswalk file (`cr-to-meddra.ttl`) analogous to the OBI crosswalk — mapping `cr:AdverseEvent` to `OAE_0000001` (already done) and to MedDRA PT codes via `cx:Mapping` with a disclaimer that MedDRA is a licensed dictionary and IRIs are reference pointers, not reproductions.
+- `cr:CausalityAssessment` as a `top:Conclusion` subclass — the physician's judgment recorded as a conclusion with `top:confidence`, `top:rationale`, and `cx:concludesAbout → cr:AdverseEvent`.
+- A SPARQL projection for "all serious AEs in this study, by MedDRA SOC, with their MedDRA PT codes" — the aggregate table that feeds a DSUR section.
+
+---
+
+## 18. HL7 FHIR Expert
+
+**What they see when they look at the graph:**
+A parallel universe. FHIR R4 and TOP both model clinical research concepts — studies, subjects, observations, adverse events — but in different shapes, with different identifiers, different temporal conventions, and different relationship patterns. The EHR world speaks FHIR; the clinical trial world (increasingly) speaks USDM/NGSI-LD. TOP sits between them but currently has no bridge to FHIR. Every data point that comes from a site's EHR — and in decentralised trials that is most of the data — must cross this gap without a map.
+
+**Pros:**
+- The RDF/JSON-LD serialization of TOP entities is compatible with FHIR's own RDF serialization (`fhir:` namespace). Both are JSON-LD; a broker that serves TOP NGSI-LD entities and a FHIR server that serves FHIR RDF can be joined in a SPARQL federated query without a middleware translation layer.
+- `hcls:Person` as the PII boundary maps cleanly to FHIR `Patient`. Both are the real-world human identity at the edge of the system. The `cr:Enrollment` bridge between `hcls:Person` and `cr:StudySubject` has a natural FHIR analog in `ResearchSubject.individual` → `Patient`.
+- `cr:Study` maps to FHIR `ResearchStudy`. `cr:Arm` maps to `ResearchStudy.arm`. `cr:EligibilityCriterion` maps to `ResearchStudy.enrollment` → `Group` (with inclusion/exclusion criteria encoded as `Group.characteristic`). The structural correspondence is real.
+- `hcls:Observation` (the clinical measurement) maps directly to FHIR `Observation`. Both carry a subject reference, a code (LOINC/SNOMED), a value, and a timestamp. A crosswalk here is straightforward.
+- The bitemporal model (`top:observedAt` as transaction time, `top:validFrom` as valid time) aligns with FHIR's `meta.lastUpdated` (transaction time) and `Observation.effectiveDateTime` (valid time). The semantic correspondence is strong.
+
+**Cons / Gaps:**
+- No FHIR crosswalk exists anywhere in the project. `cr:Study` → `ResearchStudy`, `cr:Enrollment` → `ResearchSubject`, `hcls:Observation` → `Observation` — these are obvious mappings that should be in `cr-to-external.ttl` or a dedicated `cr-to-fhir.ttl`. They are absent.
+- `cr:Assessment` (the clinical act) has no properties. In FHIR, `Procedure` and `Observation` both carry `code` (SNOMED CT), `performer`, `subject`, and `encounter`. Without properties on `cr:Assessment`, there is nothing to map.
+- FHIR `Encounter` (the clinical visit) maps to `cr:Visit`, but `cr:Visit` has no FHIR-compatible properties — no encounter class (ambulatory, virtual, inpatient), no service type, no location reference in FHIR's structure.
+- Decentralised trial data (wearable sensor readings, ePRO responses, home nursing assessments) arrives as FHIR `Observation` resources from patient-facing apps. There is no ingestion path from FHIR `Bundle` into TOP NGSI-LD entities.
+- FHIR `Consent` (a legal resource with provision chains, policy references, and actor-specific permissions) is far richer than `cr:InformedConsent` (currently just a bitemporal act with no content properties). A FHIR-based consent management system cannot interoperate with the current model.
+
+**Wishlist:**
+- A `cr-to-fhir.ttl` crosswalk file mapping the core CR entities to their FHIR R4 equivalents: `cr:Study` → `fhir:ResearchStudy`, `cr:Enrollment` → `fhir:ResearchSubject`, `cr:Visit` → `fhir:Encounter`, `hcls:Observation` → `fhir:Observation`, `cr:AdverseEvent` → `fhir:AdverseEvent`.
+- A FHIR `Bundle` → NGSI-LD transformer (analogous to the USDM transformer) that reads a FHIR `ResearchStudy` bundle and emits `cr:Study`, `cr:Arm`, and `cr:EligibilityCriterion` entities.
+- Properties on `cr:Assessment`: `assessmentCode` (SNOMED CT or LOINC IRI), `assessmentMethod` (coded), linked `hcls:Observation` for the result, and a `performedBy` Relationship.
+- `cr:InformedConsent` properties: `consentVersion`, `consentFormIRI`, `witnessedBy` (→ `hcls:Person`), `withdrawalDate` (xsd:date, the event that closes the valid-time interval).
+- A FHIR Subscription profile: a FHIR server that holds EHR data can push new `Observation` resources to the TOP ingestion pipeline via a FHIR R4B Subscription, which the pipeline transforms to `hcls:Observation` NGSI-LD entities in near-real-time.
+
+---
+
+## 19. Patient / Study Participant
+
+**What they see when they look at the graph:**
+Something both reassuring and alienating. Reassuring: their identity is protected by design — `cr:StudySubject` carries no PII, the link to `hcls:Person` (which does) sits behind a separately controlled `cr:Enrollment` act. Alienating: they are modeled entirely as a data subject, never as a participant with rights, preferences, or agency. Their consent is a node. Their withdrawal is not modeled at all. Their right to see their own data, correct it, or have it erased has no representation anywhere in the graph.
+
+**Pros:**
+- The `hcls:Person` / `cr:StudySubject` separation is a genuine privacy protection, not a superficial label. A breach of the operational graph does not expose patient identity. This is the right design for a participant's peace of mind.
+- `cr:InformedConsent` as a bitemporal act means the question *"did this person consent before this procedure was performed?"* is answerable by comparing `cr:InformedConsent.validFrom` to `cr:Administration.startTime`. The consent-before-treatment invariant is computable.
+- The `cr:Attestation` class as a `top:Versioned` evidence type means a consent form, once signed, is immutable. A participant's consent cannot be quietly altered after the fact.
+- `cr:EligibilityCriterion` with full text (demonstrated in the LY900018 transformer) means a participant's eligibility decision is traceable to the exact protocol text that governed it — relevant if a participant later disputes whether they should have been enrolled.
+- `cr:StudySubject` carrying `top:status` means the participant's current trial status (enrolled, completed, withdrawn, screen-failed) is a queryable first-class property, not a field in a spreadsheet that may or may not be current.
+
+**Cons / Gaps:**
+- Consent withdrawal is not modeled. A participant who withdraws consent is one of the most consequential events in a trial — it closes the `cr:InformedConsent` valid-time interval, may trigger data deletion obligations, and certainly stops further data collection. There is no `cr:ConsentWithdrawal` event, no `validUntil` property set on consent, and no downstream cascade to observations collected after withdrawal.
+- GDPR Article 17 (right to erasure) has no implementation path. If a participant in an EU trial requests deletion of their data, there is no mechanism in the graph to identify all entities linked to their `hcls:Person` node, assess which can be deleted under ICH E6(R3) retention requirements, and execute the deletion or pseudonymisation.
+- There is no patient-facing view. A participant who wants to see what data the trial has collected about them — their visits, their assessments, their adverse events — has no interface to the graph. GDPR Article 15 (right of access) requires this to be fulfillable.
+- `cr:StudySubject` has no `preferredLanguage`, `accessibilityNeeds`, or `contactPreferences` properties. The model treats the participant entirely as a data object; their role as a human being with communication needs is invisible.
+- Decentralised trial activities (ePRO, wearable data, home nursing visits) are not modeled. A participant who submits a daily symptom diary via an app is generating `hcls:Observation` data, but the app-to-graph path does not exist.
+
+**Wishlist:**
+- `cr:ConsentWithdrawal` as a `top:Temporal` subclass, linked to the `cr:InformedConsent` it closes (setting `validUntil`), with `withdrawalDate`, `withdrawalReason` (coded), and a cascade rule: observations with `top:validFrom` after `withdrawalDate` are flagged for regulatory review before analysis inclusion.
+- A GDPR data map: a SPARQL query that, given a `hcls:Person` IRI, returns all graph entities linked to that person directly or transitively — the output of a Data Subject Access Request.
+- A `cr:DataRetentionPolicy` linked to each `cr:Study`, declaring the ICH E6(R3)-mandated retention period and the data minimisation policy for post-trial data.
+- A participant-facing data summary view: a SPARQL or NGSI-LD query that returns, for a given `cr:StudySubject`, the visits attended, the assessments recorded, and the adverse events reported — in plain-language labels drawn from `rdfs:label`.
+- `cr:EproSubmission` as a `top:Temporal` subclass — a patient-initiated data entry event (ePRO questionnaire, wearable sync) that produces `hcls:Observation` entities with `top:observedAt` set by the device and `top:validFrom` set to the measurement time.
+
+---
+
+## 20. Data Privacy Counsel / Data Protection Officer
+
+**What they see when they look at the graph:**
+A model that has correctly identified the PII risk and put a structural control in place, but has not followed through on the legal architecture that surrounds it. The `cr:Enrollment` bridge between `hcls:Person` and `cr:StudySubject` is the right privacy-by-design choice. But the GDPR requires more than separation: it requires a declared lawful basis, a documented data processing agreement with every data processor, a data protection impact assessment for high-risk processing, and a mechanism to respond to data subject rights requests. None of these exist in the model or the documentation.
+
+**Pros:**
+- Privacy by design is implemented at the data model level, not as a policy overlay. The separation of `hcls:Person` (PII) from `cr:StudySubject` (pseudonymous trial identity) is an architectural control that cannot be bypassed by a misconfigured application.
+- `cr:InformedConsent` as a bitemporal, attested, immutable act is the correct legal treatment of consent — it is a contract, not a checkbox. The `top:Versioned` + `top:Attestation` pattern means the consent record has integrity properties that GDPR Article 7(1) requires (demonstrable, freely given, specific, informed).
+- `cr:EU_GDPR` as a named `top:RegulatoryLaw` individual means the data governance framework that governs a study can be declared in the data, not just in a Word document.
+- The `top:integrityHash` on `top:Evidence` provides the technical basis for an audit log that satisfies GDPR Article 5(2) accountability principle — the controller can demonstrate, at the data level, that records have not been altered.
+- The multi-jurisdiction regulatory law individuals (`cr:EU_GDPR`, `cr:CFR_21_Part_11`, `cr:EU_CTR_536_2014`) open the door to jurisdiction-scoped compliance queries — *"which studies processing EU subject data are governed by GDPR?"* — once `top:governedBy` is fully implemented.
+
+**Cons / Gaps:**
+- No lawful basis declaration. GDPR Article 6 requires a documented lawful basis for every processing activity. Clinical trial data processing is typically Article 9(2)(j) (scientific research) — but this is not declared anywhere in the model. A DPO cannot demonstrate GDPR compliance without it.
+- No Data Processing Agreement (DPA) model. Under GDPR Article 28, every CRO, central lab, and data processor must have a signed DPA with the sponsor. The graph models the CRO as a `cr:CRO` organisation but has no concept of the legal agreement governing what they can do with the data they receive.
+- No Data Protection Impact Assessment (DPIA) linkage. High-risk processing (large-scale health data, systematic profiling) requires a DPIA under GDPR Article 35. Clinical trials qualify. The graph has no `cr:DPIA` class or link from a study to its DPIA.
+- Cross-border data transfer mechanisms are absent. A study running in the EU with a US-based sponsor processing data on AWS (even in EU regions) requires a transfer mechanism (Standard Contractual Clauses, adequacy decision). There is no `cr:DataTransferMechanism` property or entity.
+- The retention and deletion lifecycle is unmodeled. ICH E6(R3) requires trial records to be retained for 15 years (or longer for paediatric studies). GDPR requires data to be deleted when the purpose expires. These two obligations are in tension for health data, and neither is represented in the graph.
+- No breach notification workflow. GDPR Article 33 requires notification to the supervisory authority within 72 hours of a personal data breach. There is no `cr:DataBreach` class, no `cr:SupervisoryAuthority` entity, and no notification timeline modeled.
+
+**Wishlist:**
+- A `cr:LawfulBasis` class (a `top:RegulatoryLaw` subclass) with instances for GDPR Article 6(1)(a) through (f) and Article 9(2)(a) through (j), linked from `cr:Study` via `top:governedBy`.
+- A `cr:DataProcessingAgreement` class (subClassOf `top:Evidence, top:Versioned`) with `processorOrg` (→ `cr:CRO` or `hcls:Organization`), `controllerOrg` (→ `cr:Sponsor`), `effectiveDate`, and `processingPurposes` (→ `cr:LawfulBasis` instances).
+- A `cr:RetentionPolicy` class linked from `cr:Study`, carrying `retentionPeriod` (xsd:duration), `retentionBasis` (the regulatory requirement IRI), and `deletionEligibleAfter` (computed from study close date + retention period).
+- A `cr:DataSubjectRequest` class for DSAR, erasure, rectification, and portability requests — linked to `hcls:Person`, timestamped, with a `requestStatus` lifecycle and a `responseDeadline` computed from the request date (30 days under GDPR).
+- A SPARQL query template for the DPO: *"for a given study, list all organisations that process personal data, the legal basis for each processing activity, the applicable DPA, and the data transfer mechanism if cross-border."*
+
+---
+
+## 21. DevOps / Platform Engineer / SRE
+
+**What they see when they look at the graph:**
+An application that wants to run on managed infrastructure but has not yet been designed for it. The AWS Garnet CDK reference architecture is a starting point, not an operations manual. A platform engineer's job is to make the system reliable, observable, deployable, and — in a GxP environment — validated. Every one of those dimensions requires work beyond what is currently specified.
+
+**Pros:**
+- The Python build chain (`build_dist.py`, `build_docs.py`) is deterministic and dependency-light. A CI/CD pipeline that runs these scripts and verifies SHA256SUMS between runs can detect accidental ontology changes as a diff in the checksum file. That is a rudimentary but real change-detection mechanism.
+- The SHA256SUMS artifact is a natural pin point for an infrastructure deployment: a Terraform or CDK module can fetch `top-cr-v1.ttl` and verify its checksum before loading it into the graph store, failing the deployment if the checksum does not match the pinned value.
+- The three-format distribution (Turtle, JSON-LD, N-Triples) means the deployment pipeline can choose the format that loads fastest into the target store (N-Triples for Blazegraph/Jena bulk load; JSON-LD for Scorpio entity ingest; Turtle for human review of what was deployed).
+- AWS Garnet as a CDK reference architecture means the infrastructure-as-code is already in a deployable form. A platform engineer can fork the CDK stack, parameterise it for a specific account, and deploy to a VPC without starting from scratch.
+- The NGSI-LD context endpoint (`top-cr-v1.ngsi-context.jsonld`) is a static file — deployable as an S3 object behind CloudFront with a 1-year cache header and versioned object key. No application server required.
+
+**Cons / Gaps:**
+- No GxP computer systems validation (CSV) package. Running clinical trial data through a system under 21 CFR Part 11 / Annex 11 requires documented IQ (Installation Qualification), OQ (Operational Qualification), and PQ (Performance Qualification). None of these exist for the Garnet/Scorpio stack.
+- No change control procedure. The ontology will evolve. In a GxP environment, every change to a validated system requires a documented change request, impact assessment, regression test, and approval before deployment. There is no `CHANGELOG.md`, no semantic versioning strategy (the project is at `v1` with no plan for `v1.1`), and no change control SOP.
+- No observability design. How does a platform engineer know the Scorpio broker is healthy? There are no defined health check endpoints documented, no metrics to scrape (entity count by type, ingest latency, query response time), no structured logging format, and no alerting thresholds.
+- No disaster recovery / business continuity plan. If the Scorpio broker loses its database, what is the recovery procedure? The ontology can be reloaded from the Turtle bundle; the instance data (the actual trial entities) has no backup strategy documented.
+- No infrastructure cost model. The "community runtime" on AWS Garnet has no sizing guidance. How many Scorpio instances for 10,000 entities? For 1,000,000? What RDS instance class for the Scorpio PostgreSQL backend? A platform engineer cannot capacity-plan without this.
+- Secrets management is unaddressed. The `cr:Enrollment` keychain (the PII bridge), database credentials for Scorpio's PostgreSQL backend, and API keys for EDC integrations all require secure storage (AWS Secrets Manager, HashiCorp Vault). None of this is specified.
+
+**Wishlist:**
+- A CSV package template: IQ/OQ/PQ test scripts for the Scorpio broker deployment, covering entity ingest, query response, subscription delivery, and context resolution — structured as a GAMP 5 Category 4 configured product validation.
+- A `CHANGELOG.md` with semantic versioning: `v1.0.0` for the current state, with a documented policy for `MAJOR.MINOR.PATCH` increments — MAJOR for breaking IRI changes, MINOR for additive classes/properties, PATCH for comment and label corrections.
+- A Terraform / CDK module with documented sizing parameters: instance type recommendations for Scorpio + PostgreSQL at three scales (pilot: <10K entities, phase 2: <1M entities, commercial: >1M entities), with estimated monthly AWS cost for each tier.
+- A `docker-compose.yml` for local development: Scorpio broker + PostgreSQL + context file server + pre-loaded LY900018 fixture, with a `make start` target. This is the single highest-leverage piece of missing infrastructure for every downstream stakeholder.
+- An observability stack specification: Prometheus metrics endpoints for Scorpio, Grafana dashboard template for entity ingest rate / query latency / error rate, and CloudWatch alarm thresholds for the production deployment.
+
+---
+
+## 22. Enterprise / Data Architect
+
+**What they see when they look at the graph:**
+A well-designed domain model that exists in isolation from the data estate it needs to connect to. Every large pharma sponsor has an enterprise data warehouse, a data lake or lakehouse, a Master Data Management system for organisations and sites, and a growing number of real-world evidence and analytics platforms. TOP is a new node in that network. An enterprise architect's job is to figure out how it connects to everything else — and currently, that question is entirely unanswered.
+
+**Pros:**
+- The stable URN scheme (`urn:ngsi-ld:top-cr:{Type}:{localId}`) is a natural foreign key for joining to an EDW. A sponsor's site master (`StudySite` dimension table) can carry a `top_cr_urn` column that links to the graph without rebuilding the EDW.
+- The three-layer model (OWL / SHACL / NGSI-LD) maps reasonably well to a medallion architecture: the raw EDC export is the bronze layer; the NGSI-LD entities after transformation and SHACL validation are the silver layer; the SPARQL projections (SDTM, ADaM, FHIR) are the gold layer.
+- The crosswalk layer (`cx:Mapping`) is a data lineage artifact. Every canonical mapping from a sponsor field to a TOP entity is recorded with provenance — who mapped it, when, with what confidence. This is the kind of lineage metadata that data catalogue tools (Collibra, Alation, Atlan) ingest.
+- The `top:observedAt` transaction timestamp on every entity is a natural watermark for incremental ETL. A downstream EDW that pulls from the NGSI-LD broker can use `observedAt > last_extraction_timestamp` as the incremental filter — standard change data capture semantics.
+- The NGSI-LD broker's REST API is a standard integration interface. Any iPaaS platform (MuleSoft, Azure Data Factory, Boomi) can poll `GET /ngsi-ld/v1/entities?type=cr:AdverseEvent&q=observedAt>2026-01-01` without a custom connector.
+
+**Cons / Gaps:**
+- No MDM alignment. A sponsor's organisation MDM holds the authoritative record for CROs, sites, and investigators. `cr:StudySite` in the graph is a local entity; it is not linked to the MDM's site ID. When the same site appears in three studies with three different local IDs, there is no deduplication mechanism.
+- No data catalogue integration. The ontology is a natural fit for a data catalogue (every class is a business term with a definition; every property is a data element with domain and range). But there is no `dcat:Dataset` declaration, no `dcat:Catalog` entry, and no Dublin Core `dcterms:subject` linking to a controlled business glossary.
+- No data lineage model beyond the crosswalk. The path from a raw EDC field → `cx:Mapping` → TOP entity → SPARQL projection → ADaM dataset → submission is not represented end-to-end as a lineage graph. OpenLineage or W3C PROV could carry this, but neither is wired in.
+- No integration pattern for the EDW. How does a sponsor's Snowflake or Databricks lakehouse consume entities from the NGSI-LD broker? Polling? Kafka notification stream from Scorpio subscriptions? An AWS Glue connector? None of this is specified.
+- No master data strategy for shared reference entities. `cr:Sponsor`, `cr:CRO`, and `cr:StudySite` will appear across many studies. Without a governance process for who creates these entities, when, and how they are deduplicated against the MDM, the graph will accumulate duplicates.
+
+**Wishlist:**
+- A `dcat:Dataset` and `dcat:Catalog` declaration wrapping the TOP CR distribution, making the ontology discoverable in enterprise data catalogues via DCAT-AP.
+- An MDM alignment pattern: a `cr:MasterSiteID` property on `cr:StudySite` that carries the sponsor's MDM identifier, enabling graph-to-EDW joins without re-keying. Analogous properties for `cr:Sponsor`, `cr:CRO`, and `hcls:Person` (investigator registry ID).
+- An OpenLineage dataset specification: the USDM transformer emits an OpenLineage `RunEvent` that records the input (`ly900018-usdm-v4.json`), the output (102 NGSI-LD entity files), and the transformation version — feeding any lineage-aware catalogue automatically.
+- A Scorpio → Kafka bridge configuration: Scorpio supports NGSI-LD Subscriptions that POST to a webhook; a Kafka Connect sink can receive those POSTs and publish entity change events to a Kafka topic, making the graph a real-time CDC source for Snowflake, Databricks, or any downstream consumer.
+- A data mesh alignment document: which TOP entities are the domain's data products (Study, ProtocolVersion, Enrollment, AdverseEvent), who owns each product (the domain team), what the SLA is, and how each product is discoverable via the enterprise data mesh portal.
+
+---
+
+## 23. AI / ML Engineer
+
+**What they see when they look at the graph:**
+An exceptionally well-structured knowledge graph that is a natural substrate for graph-augmented AI — but one that currently has no ML pipeline, no vector index, no embedding strategy, and no inference serving layer. The model is correct about what LLM-assisted mapping should look like (`top:AutonomousAgent` produces `top:Conclusion` with `top:confidence` and `top:rationale`); the pipeline that makes this real does not exist.
+
+**Pros:**
+- The knowledge graph structure (entities, typed relationships, coded properties) is the ideal input for a Graph RAG (Retrieval-Augmented Generation) pipeline. A question like *"What eligibility criteria apply to a patient with stage III NSCLC and prior platinum therapy under protocol LY900018?"* can be answered by retrieving the relevant `cr:EligibilityCriterion` nodes from the graph and passing them as context to an LLM — much more reliably than asking the LLM to recall protocol details from parametric memory.
+- `top:Conclusion` with `top:confidence`, `top:rationale`, and `top:concludesAbout` is the right output schema for an LLM inference step. The model already knows that machine-produced conclusions are distinct from human-attested evidence, and that confidence is a first-class property. Most ML systems bolt this on as metadata; here it is in the ontology.
+- `top:AutonomousAgent` as a `prov:SoftwareAgent` subclass means every LLM invocation can be represented as a named agent in the graph, with a version, a model IRI, and a `prov:wasAssociatedWith` link to the conclusion it produced. This is full inference provenance — rare in practice.
+- The `cx:mappingConfidence` + `cx:reviewStatus` lifecycle for field mappings is a human-in-the-loop confirmation workflow — exactly the pattern that responsible AI deployment requires for high-stakes applications. The model demands human confirmation before an LLM mapping is promoted to canonical.
+- The NGSI-LD entity structure (flat JSON with Property/Relationship nodes) is more LLM-friendly than raw Turtle. An LLM given an NGSI-LD entity payload as context needs no RDF parsing — it reads the JSON directly. The `@context` compacts IRIs to human-readable short names (`sponsoredBy` not `https://top.scientix.ai/cr/v1#sponsoredBy`).
+
+**Cons / Gaps:**
+- No vector index. Graph RAG requires a vector embedding of entity descriptions (and optionally of the graph structure) to support semantic search — *"find the eligibility criterion closest in meaning to 'prior platinum-containing chemotherapy'"*. Neither the broker nor the triple store has a vector index, and no embedding strategy is specified.
+- No LLM pipeline. `cx:inferredBy → top:AutonomousAgent` is a provenance claim; there is no actual LLM call, no prompt template, no model selection, and no output parsing that fills in `top:confidence` and `top:rationale`. The inference model is designed but unbuilt.
+- No feature store design. The graph is rich in structured features for ML (site characteristics, enrollment timing, AE rates by arm, protocol amendment history) but there is no feature extraction layer, no training dataset construction query, and no model-to-entity feedback path for writing predictions back to the graph.
+- `top:Conclusion` is missing `top:promptTemplate` and `top:sourceContext` (the input the LLM reasoned over). Without capturing the input, conclusions are not reproducible — a critical failure for regulated use cases where a regulator may ask "show me exactly what the model saw when it made this determination."
+- No Graph Neural Network (GNN) design. The relationship structure (Study → ProtocolVersion → EligibilityCriterion; Study → StudySite → Enrollment → StudySubject → AdverseEvent) is a natural multi-relational graph for link prediction (predicting protocol deviation risk at a site) or node classification (predicting DLT likelihood for a subject). None of this is articulated.
+
+**Wishlist:**
+- A Graph RAG recipe for the canonical use case: *"Given a patient's medical history as FHIR Observations, retrieve relevant eligibility criteria from the TOP graph and ask an LLM whether the patient qualifies."* This is achievable today with the existing graph structure and a vector index over `cr:EligibilityCriterion.criterionText`.
+- A `top:Conclusion` property extension: `top:promptTemplate` (the instruction given to the model, by IRI to a versioned template), `top:sourceContext` (the input excerpt, as a structured reference or hash), and `top:modelVersion` (the LLM model IRI and version — e.g., `anthropic:claude-sonnet-5`).
+- A vector index specification: which entity properties to embed (`rdfs:label`, `rdfs:comment`, `criterionText`, `rationale`), which embedding model to use, and how the index is queried alongside the graph (hybrid retrieval: graph traversal for structure + vector search for semantics).
+- A feedback loop design: when a human reviewer changes `cx:reviewStatus` from `proposed` to `confirmed` or `rejected`, that signal should be captured as a training example for fine-tuning or RLHF on the mapping model. The graph already has the structure for this; it needs a pipeline.
+- A GNN experiment specification for at least one prediction task: predicting site enrollment underperformance from the graph of site characteristics, protocol complexity, historical delegation patterns, and AE rates — using the graph structure as the feature space, not a flat table.
 
 ---
 
