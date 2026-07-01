@@ -1,4 +1,5 @@
 @prefix cr: <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix top: <https://top.scientix.ai/v1#> .
@@ -32,3 +33,98 @@ cr:SeriousAdverseEvent a owl:Class ;
     rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting)." ;
     rdfs:subClassOf cr:AdverseEvent .
 
+# MedDRA properties on AdverseEvent (US-300-001)
+# NOTICE: MedDRA is a licensed terminology (MSSO/ICH). These properties reference MedDRA IRIs;
+# they do not reproduce or distribute MedDRA content. Use requires a valid MedDRA licence.
+cr:meddraPreferredTerm a owl:ObjectProperty ;
+    rdfs:label "MedDRA preferred term" ;
+    rdfs:comment "IRI reference to a MedDRA Preferred Term (PT). Does not reproduce licensed content." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
+cr:meddraSystemOrganClass a owl:ObjectProperty ;
+    rdfs:label "MedDRA system organ class" ;
+    rdfs:comment "IRI reference to a MedDRA System Organ Class (SOC). Does not reproduce licensed content." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
+cr:meddraDictionaryVersion a owl:DatatypeProperty ;
+    rdfs:label "MedDRA dictionary version" ;
+    rdfs:comment "Version of MedDRA used for coding (e.g. '26.0')." ;
+    rdfs:domain cr:AdverseEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+# CTCAE grading on AdverseEvent (US-300-002)
+cr:ctcaeGrade a owl:DatatypeProperty ;
+    rdfs:label "CTCAE grade" ;
+    rdfs:comment "NCI CTCAE severity grade (integer 1–5)." ;
+    rdfs:domain cr:AdverseEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:ctcaeTerm a owl:ObjectProperty ;
+    rdfs:label "CTCAE term" ;
+    rdfs:comment "IRI reference to the NCI Thesaurus CTCAE term." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
+cr:ctcaeVersion a owl:DatatypeProperty ;
+    rdfs:label "CTCAE version" ;
+    rdfs:comment "Version of CTCAE used for grading (e.g. '5.0')." ;
+    rdfs:domain cr:AdverseEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+# SUSAR class and reporting clock (US-300-003)
+cr:SUSAR a owl:Class ;
+    rdfs:label "SUSAR" ;
+    rdfs:comment "Suspected Unexpected Serious Adverse Reaction — requires expedited regulatory reporting (7 days fatal/life-threatening, 15 days other)." ;
+    rdfs:subClassOf cr:SeriousAdverseEvent .
+
+cr:reportingDeadline a owl:DatatypeProperty ;
+    rdfs:label "reporting deadline" ;
+    rdfs:comment "Regulatory reporting deadline computed from cr:sponsorAwareAt + 7 or 15 days per ICH E2A." ;
+    rdfs:domain cr:SUSAR ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:submittedTo a owl:ObjectProperty ;
+    rdfs:label "submitted to" ;
+    rdfs:comment "The regulatory agency this SUSAR was submitted to." ;
+    rdfs:domain cr:SUSAR ;
+    top:flavor "Additive" .
+
+cr:submissionDate a owl:DatatypeProperty ;
+    rdfs:label "submission date" ;
+    rdfs:comment "Date the SUSAR was submitted to the regulator." ;
+    rdfs:domain cr:SUSAR ;
+    rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
+cr:susarUnexpected a owl:DatatypeProperty ;
+    rdfs:label "SUSAR unexpected" ;
+    rdfs:comment "Whether the reaction was unexpected per the current Investigator's Brochure." ;
+    rdfs:domain cr:SUSAR ;
+    rdfs:range xsd:boolean ;
+    top:flavor "Additive" .
+
+# CausalityAssessment as top:Conclusion (US-300-004)
+cr:CausalityAssessment a owl:Class ;
+    rdfs:label "Causality Assessment" ;
+    rdfs:comment "Physician's coded causality judgment for an adverse event, recorded with provenance and rationale." ;
+    rdfs:subClassOf top:Conclusion .
+
+cr:causalityVerdict a owl:DatatypeProperty ;
+    rdfs:label "causality verdict" ;
+    rdfs:comment "Coded causality judgment: unrelated, possible, probable, or definite (ICH E2A)." ;
+    rdfs:domain cr:CausalityAssessment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assessedBy a owl:ObjectProperty ;
+    rdfs:label "assessed by" ;
+    rdfs:comment "The reporting physician who made this causality assessment." ;
+    rdfs:domain cr:CausalityAssessment ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
