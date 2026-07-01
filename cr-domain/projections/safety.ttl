@@ -1,0 +1,98 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Safety signal shapes (US-300-001 through US-300-004).
+
+# MedDRA: serious AEs should carry a preferred term (US-300-001).
+cr:SeriousAEMedDRAShape a sh:NodeShape ;
+    rdfs:label "Serious AE should carry MedDRA preferred term" ;
+    sh:targetClass cr:SeriousAdverseEvent ;
+    sh:severity sh:Warning ;
+    sh:property [
+        sh:path cr:meddraPreferredTerm ;
+        sh:minCount 1 ;
+        sh:message "cr:SeriousAdverseEvent should carry a MedDRA preferred term (cr:meddraPreferredTerm)." ;
+    ] .
+
+# CTCAE: DLT must have grade ≥ 3 (US-300-002).
+cr:DLTGradeShape a sh:NodeShape ;
+    rdfs:label "DLT requires CTCAE grade >= 3" ;
+    sh:targetClass cr:DoseLimitingToxicity ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "cr:DoseLimitingToxicity must have cr:ctcaeGrade of 3, 4, or 5 to meet DLT criteria." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .
+              FILTER ( ?g < 3 )
+            }
+        """ ;
+    ] ;
+    sh:property [
+        sh:path cr:ctcaeGrade ;
+        sh:minCount 1 ;
+        sh:message "cr:DoseLimitingToxicity must declare a CTCAE grade." ;
+    ] .
+
+# CTCAE grade value range (US-300-002).
+cr:CTCAEGradeRangeShape a sh:NodeShape ;
+    rdfs:label "CTCAE grade must be 1–5" ;
+    sh:targetSubjectsOf cr:ctcaeGrade ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "cr:ctcaeGrade must be an integer between 1 and 5 inclusive." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#ctcaeGrade> ?g .
+              FILTER ( ?g < 1 || ?g > 5 )
+            }
+        """ ;
+    ] .
+
+# SUSAR: submission must not exceed reporting deadline (US-300-003).
+cr:SUSARDeadlineShape a sh:NodeShape ;
+    rdfs:label "SUSAR submission deadline" ;
+    sh:targetClass cr:SUSAR ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "SUSAR submitted after regulatory deadline (submissionDate > reportingDeadline)." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#submissionDate> ?sub ;
+                    <https://top.scientix.ai/cr/v1#reportingDeadline> ?dl .
+              BIND(xsd:date(?dl) AS ?dlDate)
+              FILTER ( ?sub > ?dlDate )
+            }
+        """ ;
+    ] .
+
+# CausalityAssessment: verdict must be coded (US-300-004).
+cr:CausalityVerdictShape a sh:NodeShape ;
+    rdfs:label "Causality verdict must be a coded value" ;
+    sh:targetClass cr:CausalityAssessment ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:causalityVerdict ;
+        sh:minCount 1 ;
+        sh:in ("unrelated" "possible" "probable" "definite") ;
+        sh:message "cr:causalityVerdict must be one of: unrelated, possible, probable, definite." ;
+    ] .
+
+# Every SAE should have a causality assessment (US-300-004).
+cr:SAECausalityShape a sh:NodeShape ;
+    rdfs:label "Serious AE should have a causality assessment" ;
+    sh:targetClass cr:SeriousAdverseEvent ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "cr:SeriousAdverseEvent lacks a cr:CausalityAssessment concluding about it." ;
+        sh:select """
+            SELECT $this WHERE {
+              FILTER NOT EXISTS {
+                ?ca a <https://top.scientix.ai/cr/v1#CausalityAssessment> ;
+                     <https://top.scientix.ai/v1#concludesAbout> $this .
+              }
+            }
+        """ ;
+    ] .
