@@ -57,7 +57,7 @@ a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:v
 .trail{width:14px;height:2px;background:var(--accent);opacity:.55}
 .splitstop{margin:22px 0}
 .stopname{margin:0 0 8px;color:var(--ink)}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.split{display:grid;grid-template-columns:3fr 2fr;gap:14px;align-items:start}
 .screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06)}
 .scr-head{background:linear-gradient(180deg,#0e7490,#0b5563);color:#fff;padding:12px 14px;font-weight:600;position:relative}
 .scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
@@ -70,7 +70,7 @@ a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:v
 .jsoncap{font-size:12px;color:var(--mut);margin:10px 0 4px}
 .jsoncap:first-child{margin-top:0}
 pre.json{margin:0;max-height:420px}
-pre.json.q{max-height:none;background:#0b2530;color:#cde8ef;border-color:#0b2530}
+pre.json.q{max-height:200px;overflow:auto;background:#0b2530;color:#cde8ef;border-color:#0b2530}
 p.principle{background:var(--pale);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px}
 .chk-intro{padding:8px 14px;font-size:12px;color:var(--mut);background:var(--pale);border-top:1px solid var(--line)}
 .chk{border-top:1px solid var(--line);padding:9px 14px}
@@ -111,6 +111,25 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <b>Detail</b>
 <a class="" href="reference.html">Full reference</a></nav><main><h1>Participant &amp; recruit</h1>
 <p class='lead'>Track every human in the trial — from first contact as a Recruit through lifecycle as a Participant — with a provenance-complete, bitemporal record that projects to FHIR R5 <code>ResearchSubject</code>, SDTM DM/DS, and CDASH DM without storing standards in the substrate.</p>
+
+<h2>Operator screen &mdash; Screening tracker</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Participant S-042 &mdash; OPP-101 Trial<span class="badge">CTMS</span><div class="scr-sub">Denver Cancer Center · Screening-to-enrollment pipeline</div></div><div class="chk-intro">5-stage activation sequence — each stage is a SHACL-enforced gate on <code>cr:Participant</code></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Stage 1 &mdash; Pre-screening<div class="who">CRA: J. Kim · 2026-01-20</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>Inclusion criteria score</td><td>8 / 10</td></tr><tr><td>ECOG performance status</td><td>0</td></tr><tr><td>Outcome</td><td>Eligible for medical history review</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Stage 2 &mdash; Medical history review<div class="who">PI: Dr. Chen · 2026-01-22</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>Prior immune therapy</td><td>None</td></tr><tr><td>eGFR</td><td>78 mL/min/1.73m²</td></tr><tr><td>Outcome</td><td>No exclusion criteria triggered</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Stage 3 &mdash; Informed consent<div class="who">Subject + Witness · 2026-01-25</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>ICF version</td><td>3.1</td></tr><tr><td>Consent method</td><td>On-site, recorded</td></tr><tr><td>consentStatus</td><td>OBTAINED</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Stage 4 &mdash; Randomization<div class="who">Sponsor · 2026-01-28</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>Randomization arm</td><td>Arm B (treatment)</td></tr><tr><td>Randomization number</td><td>RANDO-042</td></tr><tr><td>participantStatus</td><td>RANDOMIZED</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck pill ok" style="padding:2px 8px;border-radius:10px">ACTIVE</span> Stage 5 &mdash; Enrolled &amp; receiving treatment<div class="who">2026-02-03</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>Enrollment date</td><td>2026-02-03</td></tr><tr><td>Current cycle</td><td>Cycle 2 Day 8</td></tr><tr><td>participantStatus</td><td>ON_TREATMENT</td></tr></table></details></div><div class="scr-row"><span>Enrolled</span><b>2026-02-03</b></div><div class="scr-row"><span>Current status</span><b><span class="pill ok">ON_TREATMENT</span> · Cycle 2 Day 8</b></div></div></div><div><div class="jsoncap"><code>cr:Participant</code> entity — key fields</div><pre class="json q">{
+  "@type": "cr:Participant",
+  "@id": "urn:ngsi-ld:Participant:OPP101-S042",
+  "screeningNumber": { "value": "S-042" },
+  "randomizationNumber": { "value": "RANDO-042" },
+  "randomizationDate": { "value": "2026-01-28" },
+  "participantStatus": { "value": "ON_TREATMENT" },
+  "enrollmentDate": { "value": "2026-02-03" },
+  "assignedToArm": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Arm:OPP101-ArmB"
+  },
+  "consentStatus": { "value": "OBTAINED" },
+  "forStudy": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Study:OPP-101"
+  }
+}</pre></div></div></div>
 
 <h2 id='boundary'>Design boundary</h2>
 <p>USDM v4 has no per-subject runtime entity (verified: <code>cdisc-org/usdm/src/usdm_model/</code> has no <code>study_subject.py</code>; <code>SubjectEnrollment</code> is aggregate-planned-quantity, not per-subject). Participant is <b>execution-side</b> — created by operational systems (eConsent, EDC, IRT, CTMS) when real humans enroll; it references <code>Study</code>, <code>Arm</code>, and <code>VisitDefinition</code> entities the USDM ingester previously wrote.</p>

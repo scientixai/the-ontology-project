@@ -57,7 +57,7 @@ a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:v
 .trail{width:14px;height:2px;background:var(--accent);opacity:.55}
 .splitstop{margin:22px 0}
 .stopname{margin:0 0 8px;color:var(--ink)}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.split{display:grid;grid-template-columns:3fr 2fr;gap:14px;align-items:start}
 .screen{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06)}
 .scr-head{background:linear-gradient(180deg,#0e7490,#0b5563);color:#fff;padding:12px 14px;font-weight:600;position:relative}
 .scr-sub{font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
@@ -70,7 +70,7 @@ a.fmt:hover{background:var(--acc);color:#fff;text-decoration:none;border-color:v
 .jsoncap{font-size:12px;color:var(--mut);margin:10px 0 4px}
 .jsoncap:first-child{margin-top:0}
 pre.json{margin:0;max-height:420px}
-pre.json.q{max-height:none;background:#0b2530;color:#cde8ef;border-color:#0b2530}
+pre.json.q{max-height:200px;overflow:auto;background:#0b2530;color:#cde8ef;border-color:#0b2530}
 p.principle{background:var(--pale);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px}
 .chk-intro{padding:8px 14px;font-size:12px;color:var(--mut);background:var(--pale);border-top:1px solid var(--line)}
 .chk{border-top:1px solid var(--line);padding:9px 14px}
@@ -111,6 +111,35 @@ table.prov td:first-child{color:var(--mut);width:40%;white-space:nowrap}
 <b>Detail</b>
 <a class="" href="reference.html">Full reference</a></nav><main><h1>Visit execution</h1>
 <p class='lead'>Two chains meet at Visit: the design chain (Protocol &rarr; SOA &rarr; VisitDefinition &rarr; ActivityTemplate) carries <i>what is supposed to happen</i>; the execution chain (StudySite &rarr; VisitOccurrence &rarr; ActivityOccurrence &rarr; ClinicalObservation) carries <i>what actually happened</i>. TOP separates them; most trial systems conflate them.</p>
+
+<h2>Operator screen &mdash; Visit execution (S-042 · C2D1)</h2><div class="splitstop"><div class="split"><div><div class="screen"><div class="scr-head">Visit: Cycle 2 Day 1 — S-042<span class="badge">EDC</span><div class="scr-sub">2026-03-15 · Denver Cancer Center · 5 steps</div></div><div class="chk-intro">5 execution steps — each maps to an <code>cr:ActivityOccurrence</code> on this <code>cr:VisitOccurrence</code></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Step 1 &mdash; Subject check-in<div class="who">Receptionist · 08:10</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>ID verified</td><td>Yes</td></tr><tr><td>Weight</td><td>74.2 kg</td></tr><tr><td>activityStatus</td><td>PERFORMED</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Step 2 &mdash; Vital signs<div class="who">CRC: M. Torres · 08:20</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>BP</td><td>118 / 76 mmHg</td></tr><tr><td>Temperature</td><td>36.8 °C</td></tr><tr><td>Heart rate</td><td>72 bpm</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Step 3 &mdash; Blood draw (PK)<div class="who">Phlebotomist · 08:35</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>Tubes collected</td><td>3</td></tr><tr><td>LIMS barcode</td><td>LAB-2026-0842</td></tr><tr><td>Chain of custody</td><td>Initiated</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Step 4 &mdash; Drug administration<div class="who">PI: Dr. Chen · 09:00</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>Dose</td><td>240 mg oral</td></tr><tr><td>Lot number</td><td>OPP-BL-047</td></tr><tr><td>Route</td><td>Oral</td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">✓</span> Step 5 &mdash; AE review<div class="who">PI: Dr. Chen · 09:15</div></div><details><summary>show evidence</summary><table class="prov"><tr><td>New AEs</td><td>None</td></tr><tr><td>Prior AE (mild fatigue)</td><td>Resolved</td></tr></table></details></div><div class="scr-row"><span>Visit closed</span><b>2026-03-15 09:30 · <span class="pill ok">COMPLETED</span></b></div><div class="scr-row"><span>Next visit (V3)</span><b>2026-04-12 · Cycle 3 Day 1</b></div></div></div><div><div class="jsoncap"><code>cr:Assessment</code> entity — Step 2 vitals</div><pre class="json q">{
+  "@type": "cr:ActivityOccurrence",
+  "@id": "urn:act:OPP101-S042-C2D1-vitals",
+  "activityStatus": { "value": "PERFORMED" },
+  "biomedicalConceptCode": {
+    "value": "C25347"
+  },
+  "visitDate": { "value": "2026-03-15" },
+  "actualStartDate": {
+    "value": "2026-03-15T08:20:00Z"
+  },
+  "performedBy": {
+    "object": "urn:person:m-torres"
+  },
+  "assessmentType": { "value": "vital-signs" },
+  "hasObservation": [
+    {
+      "@type": "cr:ClinicalObservation",
+      "observationCode": { "value": "BP" },
+      "result": { "value": "118/76 mmHg" }
+    },
+    {
+      "@type": "cr:ClinicalObservation",
+      "observationCode": { "value": "HR" },
+      "result": { "value": "72 bpm" }
+    }
+  ]
+}</pre></div></div></div>
 
 <h2 id='boundary'>Design boundary</h2>
 <p>USDM v4 <code>Encounter</code> is <b>template-only</b> (verified against <code>cdisc-org/usdm/main/src/usdm_model/encounter.py</code>): no per-occurrence runtime data. <code>VisitDefinition</code> is USDM-ingest-derivable; <code>VisitOccurrence</code> is execution-side (created by EDC / scheduling system when a Participant attends a real visit).</p>
