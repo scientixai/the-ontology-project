@@ -1,0 +1,103 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/v1#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix meddra: <https://www.meddra.org/term/> .
+
+# OWNED crosswalk: TOP cr-core  <->  MedDRA v26.0 (IRI-pattern mappings).
+# MedDRA is a licensed terminology; IRIs below follow the canonical IRI pattern
+# documented at https://www.meddra.org/how-to-use/support-documentation/english.
+# Users must hold a valid MedDRA licence (BYOL) to resolve or redistribute these
+# IRIs. See registry.md §5 (BYOL) for the verification and distribution policy.
+#
+# NOTICE: MedDRA® is a registered trademark of ICH. This crosswalk file maps
+# TOP cr-core class IRIs to MedDRA term IRIs for interoperability purposes only.
+# It does not redistribute MedDRA content. Licence: https://www.meddra.org/licence
+#
+# cx:targetSchemaVersion "26.0"
+
+ex:curator-wg a prov:Agent ; rdfs:label "TOP CR curation WG" .
+
+####################################################################
+# AE -> MedDRA hierarchy (LLT / PT / SOC)
+####################################################################
+ex:map-ae-llt a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    meddra:LLT ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.75"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:targetSchemaVersion "26.0" ;
+    rdfs:comment "cr:AdverseEvent instances are coded at the Lowest Level Term (LLT); IRI pattern: meddra:LLT/{llt_code}" ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:map-ae-pt a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    meddra:PT ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:targetSchemaVersion "26.0" ;
+    rdfs:comment "cr:AdverseEvent is reported at Preferred Term (PT) level for regulatory submission; IRI pattern: meddra:PT/{pt_code}" ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:map-ae-soc a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:broadMatch ;
+    cx:objectId    meddra:SOC ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.70"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:targetSchemaVersion "26.0" ;
+    rdfs:comment "System Organ Class (SOC) is the broadest grouping; IRI pattern: meddra:SOC/{soc_code}" ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# DLT -> MedDRA PT
+####################################################################
+ex:map-dlt-pt a cx:Mapping ;
+    cx:subjectId   cr:DoselimitingToxicity ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    meddra:PT ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.80"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:targetSchemaVersion "26.0" ;
+    rdfs:comment "Dose-limiting toxicity is a subtype of AE; coded at PT level; IRI pattern: meddra:PT/{pt_code}" ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# SAE -> MedDRA seriousnessCriteria
+####################################################################
+ex:map-sae-seriousness a cx:Mapping ;
+    cx:subjectId   cr:SeriousAdverseEvent ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    meddra:seriousnessCriteria ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "https://www.meddra.org/how-to-use/support-documentation/english @MedDRA v26.0" ;
+    cx:targetSchemaVersion "26.0" ;
+    rdfs:comment "cr:SeriousAdverseEvent seriousness flags (death, hospitalization, life-threatening, etc.) map to MedDRA seriousnessCriteria enumeration" ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .

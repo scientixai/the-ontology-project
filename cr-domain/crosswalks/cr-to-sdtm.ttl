@@ -1,0 +1,160 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/v1#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix sdtm:   <https://www.cdisc.org/standards/foundational/sdtm/v3.4/> .
+
+# OWNED crosswalk: TOP cr-core  <->  CDISC SDTM v3.4 (8 mappings).
+# Target IRIs verified against CDISC SDTM Implementation Guide v3.4
+# (cdisc.org/standards/foundational/sdtm). Covers AE/DM/EX/SV/DS domains
+# at domain level and key variable level.
+#
+# cx:targetSchemaVersion "3.4"
+
+ex:curator-wg a prov:Agent ; rdfs:label "TOP CR curation WG" .
+
+####################################################################
+# AE domain — Adverse Events
+####################################################################
+ex:map-ae-domain a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    sdtm:AE ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.90"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:AdverseEvent maps to the SDTM AE domain (domain-level)." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:map-ae-aeterm a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:AE.AETERM ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:AdverseEvent.termText -> SDTM AE.AETERM (verbatim term)." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:map-ae-aesev a cx:Mapping ;
+    cx:subjectId   cr:AdverseEvent ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:AE.AESEV ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:AdverseEvent.severity -> SDTM AE.AESEV (MILD/MODERATE/SEVERE)." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# DM domain — Demographics
+####################################################################
+ex:map-dm-domain a cx:Mapping ;
+    cx:subjectId   cr:Subject ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    sdtm:DM ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.90"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:Subject maps to the SDTM DM (Demographics) domain (domain-level)." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:map-dm-actarm a cx:Mapping ;
+    cx:subjectId   cr:Arm ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:DM.ACTARM ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.80"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:Arm.label -> SDTM DM.ACTARM (actual arm description, execution-time)." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# EX domain — Exposure
+####################################################################
+ex:map-ex-domain a cx:Mapping ;
+    cx:subjectId   cr:Administration ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:EX ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.80"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:Administration (executed dosing event) -> SDTM EX domain (Exposure). relatedMatch because cr adds bitemporal provenance." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# SV domain — Subject Visits
+####################################################################
+ex:map-sv-domain a cx:Mapping ;
+    cx:subjectId   cr:PlannedEncounter ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:SV ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.80"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:PlannedEncounter (planned) and its execution record map to SDTM SV domain." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+ex:map-sv-svstdtc a cx:Mapping ;
+    cx:subjectId   cr:PlannedEncounter ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:SV.SVSTDTC ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:PlannedEncounter.actualStartDate -> SDTM SV.SVSTDTC (visit start date/time, ISO 8601)." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
+
+####################################################################
+# DS domain — Disposition
+####################################################################
+ex:map-ds-domain a cx:Mapping ;
+    cx:subjectId   cr:SubjectDisposition ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    sdtm:DS ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-wg ;
+    cx:mappingDate "2026-07-01"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "cr:SubjectDisposition (withdrawal, completion) maps to SDTM DS domain." ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-wg .
