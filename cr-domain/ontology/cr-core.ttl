@@ -1,163 +1,334 @@
-@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix cr: <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
-@prefix top:  <https://top.scientix.ai/v1#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 cr: a owl:Ontology ;
     rdfs:label "CR-core" ;
     rdfs:comment "Clinical-research domain core: entities recurring across >=2 CR workflows. Specializes TOP Core / HCLS-core. Scope: oncology Pre-IND -> EOP2. Standards projection target: CDISC (SDTM/CDASH/Define-XML), USDM, MedDRA." .
 
-#################################################################
-# Agents / organizations (roles are relationships, NOT classes)
-#################################################################
-cr:Sponsor   a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "Sponsor" ; rdfs:comment "The organization that initiates and is accountable for the trial." .
-cr:CRO       a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "CRO" ; rdfs:comment "A contract research organization the sponsor delegates trial conduct to." .
-cr:StudySite a owl:Class ; rdfs:subClassOf hcls:Organization ; rdfs:label "Study Site" ; rdfs:comment "An investigative site conducting the study (an organization at a facility)." .
+cr:Administration a owl:Class ;
+    rdfs:label "Administration" ;
+    rdfs:comment "A dosing event." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
-# Site lifecycle status codelist (top:status values on cr:StudySite instances).
-# Modeled as named individuals so agents and SHACL shapes can reference them
-# by IRI rather than by string literal — enabling OWL reasoning over site state.
-#
-# State machine (linear + branch):
-#   Feasibility → Selected → Startup → Active → Closed  (normal path)
-#   Feasibility → Reserve  → (rescue trigger) → Startup  (hold path)
-#   Feasibility → Dropped                                 (negative path — WHY must be captured)
-#
-# The WHY of negative paths (Dropped / Reserve) is institutional intelligence
-# that is almost never captured today. cr:SiteSelectionDecision records it.
+cr:Assessment a owl:Class ;
+    rdfs:label "Assessment" ;
+    rdfs:comment "A clinical assessment performed during the trial." ;
+    rdfs:subClassOf top:Temporal .
 
-cr:SiteStatusFeasibility a owl:NamedIndividual ; rdfs:label "Feasibility" ;
-    rdfs:comment "Site is under feasibility assessment: SQV scheduled or completed, selection committee review pending." .
-cr:SiteStatusSelected a owl:NamedIndividual ; rdfs:label "Selected" ;
-    rdfs:comment "Site has been selected: contracts signed, Study Startup Package in preparation." .
-cr:SiteStatusReserve a owl:NamedIndividual ; rdfs:label "Reserve" ;
-    rdfs:comment "Site has passed feasibility but is held in reserve as a rescue site. Sponsor may activate it if enrollment falls short at active sites. Distinct from Selected: no startup work has begun." .
-cr:SiteStatusStartup a owl:NamedIndividual ; rdfs:label "Startup" ;
-    rdfs:comment "Site Initiation Visit completed or in progress; staff training, delegation of authority, equipment qualification underway." .
-cr:SiteStatusActive a owl:NamedIndividual ; rdfs:label "Active" ;
-    rdfs:comment "Site is actively enrolling or conducting the trial (post-SIV, first subject possible or enrolled)." .
-cr:SiteStatusClosed a owl:NamedIndividual ; rdfs:label "Closed" ;
-    rdfs:comment "Site close-out visit completed; no further subject activity; eTMF finalization in progress." .
-cr:SiteStatusDropped a owl:NamedIndividual ; rdfs:label "Dropped" ;
-    rdfs:comment "Site was not selected or was withdrawn after selection. The reason MUST be captured in a cr:SiteSelectionDecision — this is institutional intelligence almost never recorded today." .
-cr:StudySubject a owl:Class ; rdfs:subClassOf top:Agent ; rdfs:label "Study Subject" ;
-    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." .
-
-#################################################################
-# Scope (study design)
-#################################################################
-cr:Study     a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Study" ; rdfs:comment "A clinical study — the unit of investigation the protocol defines." .
-cr:Arm       a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Arm" ; rdfs:comment "A treatment arm of the study." .
-cr:Cohort    a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Cohort" ; rdfs:comment "A group of subjects sharing a dosing or treatment assignment." .
-cr:DoseLevel a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Dose Level" ; rdfs:comment "A dose level in a dose-escalation design." .
-cr:Endpoint  a owl:Class ; rdfs:subClassOf top:Scope ; rdfs:label "Endpoint" ; rdfs:comment "A defined outcome measure the study evaluates." .
-
-#################################################################
-# Resources
-#################################################################
-cr:InvestigationalProduct a owl:Class ; rdfs:subClassOf hcls:MedicinalProduct ;
-    rdfs:label "Investigational Product" ; rdfs:comment "The investigational drug or biologic being studied." .
-
-#################################################################
-# Evidence (artifacts) — several are bitemporal (top:Versioned)
-#################################################################
-cr:ProtocolVersion a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
-    rdfs:label "Protocol Version" ;
-    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." .
-cr:BriefingBook a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Briefing Book" ; rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." .
-cr:CSR          a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Clinical Study Report" ; rdfs:comment "The definitive summary of a study's results (CSR)." .
-cr:eCRF         a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "eCRF" ; rdfs:comment "Electronic case report form — the data-collection instrument used at the site." .
-cr:SiteSelectionDecision a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
-    rdfs:label "Site Selection Decision" ;
-    rdfs:comment "A recorded, provenance-tagged decision about a study site at a specific lifecycle transition. Captures both positive (Selected, Reserve) and negative (Dropped) outcomes with mandatory rationale. The negative path — why a site was not selected — is institutional intelligence that is almost never captured in practice today but is essential for: (a) sponsor learning across studies, (b) avoiding repeat qualification of unsuitable sites, (c) CRO accountability. Bitemporal (top:Versioned) because decisions can be revised (a Dropped site can become Reserve under rescue conditions)." .
-
-cr:decisionOutcome a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range owl:NamedIndividual ;
-    rdfs:label "decision outcome" ; rdfs:comment "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." .
-cr:decisionRationale a owl:DatatypeProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range xsd:string ;
-    rdfs:label "decision rationale" ; rdfs:comment "Free-text explanation of why the decision was made. Mandatory for Dropped and Reserve outcomes." .
-cr:decisionSite a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range cr:StudySite ;
-    rdfs:label "decision site" ; rdfs:comment "The study site this decision pertains to." .
-cr:decisionStudy a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range cr:Study ;
-    rdfs:label "decision study" ; rdfs:comment "The study for which this site selection decision was made." .
-cr:decisionMadeBy a owl:ObjectProperty ; rdfs:domain cr:SiteSelectionDecision ; rdfs:range hcls:Person ;
-    rdfs:subPropertyOf prov:wasAttributedTo ;
-    rdfs:label "decision made by" ; rdfs:comment "The person (sponsor PM, CRO lead) who recorded this decision." .
-
-cr:OperationalRecord a owl:Class ; rdfs:subClassOf top:Evidence ;
-    rdfs:label "Operational Record" ;
-    rdfs:comment "Non-clinical, non-GCP-governed data captured during trial operations — process metrics, site performance indicators, sponsor-defined operational fields (e.g. X_WHATEVER extensions in Medidata). Not an hcls:Observation (no clinical value) and not directly regulated by ICH E6; captured in operational CRFs or sponsor-specific payloads. Primary target for LLM-assisted field-mapping inference (cr:mappingConfidence)." .
-cr:Credential   a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Credential" ;
-    rdfs:comment "An attested qualification/training record that gates a delegated capability." .
-cr:Attestation  a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
+cr:Attestation a owl:Class ;
     rdfs:label "Attestation" ;
-    rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." .
+    rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
 
-#################################################################
-# Constraints (rules / criteria / capabilities)
-#################################################################
-cr:EligibilityCriterion a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Eligibility Criterion" ; rdfs:comment "An inclusion/exclusion rule defining who may enroll." .
-cr:StoppingRule a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Stopping Rule" ; rdfs:comment "A safety rule that halts dosing or enrollment when triggered." .
-cr:Capability   a owl:Class ; rdfs:subClassOf top:Constraint ; rdfs:label "Capability" ;
-    rdfs:comment "A delegable permission to perform a trial task (e.g. obtain informed consent)." .
+cr:BriefingBook a owl:Class ;
+    rdfs:label "Briefing Book" ;
+    rdfs:comment "A dossier submitted to the regulator ahead of a meeting (Pre-IND / EOP2)." ;
+    rdfs:subClassOf top:Evidence .
 
-#################################################################
-# Temporal acts — bitemporal + PROV (top:Versioned)
-#################################################################
-cr:Enrollment a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
+cr:CRO a owl:Class ;
+    rdfs:label "CRO" ;
+    rdfs:comment "A contract research organization the sponsor delegates trial conduct to." ;
+    rdfs:subClassOf hcls:Organization .
+
+cr:CSR a owl:Class ;
+    rdfs:label "Clinical Study Report" ;
+    rdfs:comment "The definitive summary of a study's results (CSR)." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:Cohort a owl:Class ;
+    rdfs:label "Cohort" ;
+    rdfs:comment "A group of subjects sharing a dosing or treatment assignment." ;
+    rdfs:subClassOf top:Scope .
+
+cr:DoseLevel a owl:Class ;
+    rdfs:label "Dose Level" ;
+    rdfs:comment "A dose level in a dose-escalation design." ;
+    rdfs:subClassOf top:Scope .
+
+cr:DoseLimitingToxicity a owl:Class ;
+    rdfs:label "Dose-Limiting Toxicity" ;
+    rdfs:comment "Oncology dose-escalation: a DLT informs the next dose decision." ;
+    rdfs:subClassOf cr:AdverseEvent .
+
+cr:Endpoint a owl:Class ;
+    rdfs:label "Endpoint" ;
+    rdfs:comment "A defined outcome measure the study evaluates." ;
+    rdfs:subClassOf top:Scope .
+
+cr:InformedConsent a owl:Class ;
+    rdfs:label "Informed Consent" ;
+    rdfs:comment "The act of obtaining a subject's informed consent." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:InvestigationalProduct a owl:Class ;
+    rdfs:label "Investigational Product" ;
+    rdfs:comment "The investigational drug or biologic being studied." ;
+    rdfs:subClassOf hcls:MedicinalProduct .
+
+cr:OperationalRecord a owl:Class ;
+    rdfs:label "Operational Record" ;
+    rdfs:comment "Non-clinical, non-GCP-governed data captured during trial operations — process metrics, site performance indicators, sponsor-defined operational fields (e.g. X_WHATEVER extensions in Medidata). Not an hcls:Observation (no clinical value) and not directly regulated by ICH E6; captured in operational CRFs or sponsor-specific payloads. Primary target for LLM-assisted field-mapping inference (cr:mappingConfidence)." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:RegulatoryInteraction a owl:Class ;
+    rdfs:label "Regulatory Interaction" ;
+    rdfs:comment "Pre-IND / EOP2 meeting." ;
+    rdfs:subClassOf top:Temporal .
+
+cr:SiteStatusActive a owl:NamedIndividual ;
+    rdfs:label "Active" ;
+    rdfs:comment "Site is actively enrolling or conducting the trial (post-SIV, first subject possible or enrolled)." .
+
+cr:SiteStatusClosed a owl:NamedIndividual ;
+    rdfs:label "Closed" ;
+    rdfs:comment "Site close-out visit completed; no further subject activity; eTMF finalization in progress." .
+
+cr:SiteStatusDropped a owl:NamedIndividual ;
+    rdfs:label "Dropped" ;
+    rdfs:comment "Site was not selected or was withdrawn after selection. The reason MUST be captured in a cr:SiteSelectionDecision — this is institutional intelligence almost never recorded today." .
+
+cr:SiteStatusFeasibility a owl:NamedIndividual ;
+    rdfs:label "Feasibility" ;
+    rdfs:comment "Site is under feasibility assessment: SQV scheduled or completed, selection committee review pending." .
+
+cr:SiteStatusReserve a owl:NamedIndividual ;
+    rdfs:label "Reserve" ;
+    rdfs:comment "Site has passed feasibility but is held in reserve as a rescue site. Sponsor may activate it if enrollment falls short at active sites. Distinct from Selected: no startup work has begun." .
+
+cr:SiteStatusSelected a owl:NamedIndividual ;
+    rdfs:label "Selected" ;
+    rdfs:comment "Site has been selected: contracts signed, Study Startup Package in preparation." .
+
+cr:SiteStatusStartup a owl:NamedIndividual ;
+    rdfs:label "Startup" ;
+    rdfs:comment "Site Initiation Visit completed or in progress; staff training, delegation of authority, equipment qualification underway." .
+
+cr:StoppingRule a owl:Class ;
+    rdfs:label "Stopping Rule" ;
+    rdfs:comment "A safety rule that halts dosing or enrollment when triggered." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:Visit a owl:Class ;
+    rdfs:label "Trial Visit" ;
+    rdfs:comment "A protocol visit — a kind of study event." ;
+    rdfs:subClassOf top:Temporal .
+
+cr:asSubject a owl:ObjectProperty ;
+    rdfs:domain cr:Enrollment ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:attestedBy a owl:ObjectProperty ;
+    rdfs:label "attested by" ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:conductedAt a owl:ObjectProperty ;
+    rdfs:domain cr:Study ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:credentialOf a owl:ObjectProperty ;
+    rdfs:domain cr:Credential ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:decisionMadeBy a owl:ObjectProperty ;
+    rdfs:label "decision made by" ;
+    rdfs:comment "The person (sponsor PM, CRO lead) who recorded this decision." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range hcls:Person ;
+    rdfs:subPropertyOf prov:wasAttributedTo ;
+    top:flavor "Additive" .
+
+cr:decisionOutcome a owl:ObjectProperty ;
+    rdfs:label "decision outcome" ;
+    rdfs:comment "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range owl:NamedIndividual ;
+    top:flavor "Additive" .
+
+cr:decisionRationale a owl:DatatypeProperty ;
+    rdfs:label "decision rationale" ;
+    rdfs:comment "Free-text explanation of why the decision was made. Mandatory for Dropped and Reserve outcomes." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:decisionSite a owl:ObjectProperty ;
+    rdfs:label "decision site" ;
+    rdfs:comment "The study site this decision pertains to." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:decisionStudy a owl:ObjectProperty ;
+    rdfs:label "decision study" ;
+    rdfs:comment "The study for which this site selection decision was made." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range cr:Study ;
+    top:flavor "Additive" .
+
+cr:delegate a owl:ObjectProperty ;
+    rdfs:domain cr:Delegation ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:delegatedCapability a owl:ObjectProperty ;
+    rdfs:domain cr:Delegation ;
+    rdfs:range cr:Capability ;
+    top:flavor "Additive" .
+
+cr:delegator a owl:ObjectProperty ;
+    rdfs:comment "The responsible agent (PI)." ;
+    rdfs:domain cr:Delegation ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:eCRF a owl:Class ;
+    rdfs:label "eCRF" ;
+    rdfs:comment "Electronic case report form — the data-collection instrument used at the site." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:enrolledPerson a owl:ObjectProperty ;
+    rdfs:domain cr:Enrollment ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:exercisesCapability a owl:ObjectProperty ;
+    rdfs:label "exercises capability" ;
+    rdfs:comment "The capability a performed act requires." ;
+    rdfs:range cr:Capability ;
+    top:flavor "Additive" .
+
+cr:forSubject a owl:ObjectProperty ;
+    rdfs:label "for subject" ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:hasArm a owl:ObjectProperty ;
+    rdfs:domain cr:Study ;
+    rdfs:range cr:Arm ;
+    top:flavor "Additive" .
+
+cr:hasEligibilityCriterion a owl:ObjectProperty ;
+    rdfs:domain cr:ProtocolVersion ;
+    rdfs:range cr:EligibilityCriterion ;
+    top:flavor "Additive" .
+
+cr:hasProtocolVersion a owl:ObjectProperty ;
+    rdfs:domain cr:Study ;
+    rdfs:range cr:ProtocolVersion ;
+    top:flavor "Additive" .
+
+cr:intoStudy a owl:ObjectProperty ;
+    rdfs:domain cr:Enrollment ;
+    rdfs:range cr:Study ;
+    top:flavor "Additive" .
+
+cr:performedBy a owl:ObjectProperty ;
+    rdfs:label "performed by" ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:principalInvestigator a owl:ObjectProperty ;
+    rdfs:label "principal investigator" ;
+    rdfs:comment "Role-as-relationship; bitemporal at instance level." ;
+    rdfs:domain cr:StudySite ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:requiresCredential a owl:ObjectProperty ;
+    rdfs:domain cr:Delegation ;
+    rdfs:range cr:Credential ;
+    top:flavor "Additive" .
+
+cr:sponsoredBy a owl:ObjectProperty ;
+    rdfs:domain cr:Study ;
+    rdfs:range cr:Sponsor ;
+    top:flavor "Additive" .
+
+cr:underDelegation a owl:ObjectProperty ;
+    rdfs:label "under delegation" ;
+    rdfs:comment "Links a performed act to the delegation authorizing it (delegation invariant)." ;
+    rdfs:range cr:Delegation ;
+    top:flavor "Additive" .
+
+cr:AdverseEvent a owl:Class ;
+    rdfs:label "Adverse Event" ;
+    rdfs:comment "An untoward medical occurrence in a trial subject." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
+
+cr:Arm a owl:Class ;
+    rdfs:label "Arm" ;
+    rdfs:comment "A treatment arm of the study." ;
+    rdfs:subClassOf top:Scope .
+
+cr:EligibilityCriterion a owl:Class ;
+    rdfs:label "Eligibility Criterion" ;
+    rdfs:comment "An inclusion/exclusion rule defining who may enroll." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:Sponsor a owl:Class ;
+    rdfs:label "Sponsor" ;
+    rdfs:comment "The organization that initiates and is accountable for the trial." ;
+    rdfs:subClassOf hcls:Organization .
+
+cr:Capability a owl:Class ;
+    rdfs:label "Capability" ;
+    rdfs:comment "A delegable permission to perform a trial task (e.g. obtain informed consent)." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:Credential a owl:Class ;
+    rdfs:label "Credential" ;
+    rdfs:comment "An attested qualification/training record that gates a delegated capability." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:ProtocolVersion a owl:Class ;
+    rdfs:label "Protocol Version" ;
+    rdfs:comment "An effective-dated protocol version (bitemporal): which version was valid for a given visit." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:StudySubject a owl:Class ;
+    rdfs:label "Study Subject" ;
+    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII." ;
+    rdfs:subClassOf top:Agent .
+
+cr:Enrollment a owl:Class ;
     rdfs:label "Enrollment" ;
-    rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." .
-cr:Delegation a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
+    rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:StudySite a owl:Class ;
+    rdfs:label "Study Site" ;
+    rdfs:comment "An investigative site conducting the study (an organization at a facility)." ;
+    rdfs:subClassOf hcls:Organization .
+
+cr:Delegation a owl:Class ;
     rdfs:label "Delegation" ;
-    rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." .
-cr:InformedConsent a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Informed Consent" ; rdfs:comment "The act of obtaining a subject's informed consent." .
-cr:Visit a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Trial Visit" ; rdfs:comment "A protocol visit — a kind of study event." .
-cr:Administration a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Administration" ; rdfs:comment "A dosing event." .
-cr:Assessment a owl:Class ; rdfs:subClassOf top:Temporal ; rdfs:label "Assessment" ; rdfs:comment "A clinical assessment performed during the trial." .
-cr:RegulatoryInteraction a owl:Class ; rdfs:subClassOf top:Temporal ;
-    rdfs:label "Regulatory Interaction" ; rdfs:comment "Pre-IND / EOP2 meeting." .
+    rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
-#################################################################
-# Outcomes
-#################################################################
-cr:AdverseEvent a owl:Class ; rdfs:subClassOf top:Outcome, top:Versioned ;
-    rdfs:label "Adverse Event" ; rdfs:comment "An untoward medical occurrence in a trial subject." .
-cr:DoseLimitingToxicity a owl:Class ; rdfs:subClassOf cr:AdverseEvent ;
-    rdfs:label "Dose-Limiting Toxicity" ; rdfs:comment "Oncology dose-escalation: a DLT informs the next dose decision." .
+cr:SiteSelectionDecision a owl:Class ;
+    rdfs:label "Site Selection Decision" ;
+    rdfs:comment "A recorded, provenance-tagged decision about a study site at a specific lifecycle transition. Captures both positive (Selected, Reserve) and negative (Dropped) outcomes with mandatory rationale. The negative path — why a site was not selected — is institutional intelligence that is almost never captured in practice today but is essential for: (a) sponsor learning across studies, (b) avoiding repeat qualification of unsuitable sites, (c) CRO accountability. Bitemporal (top:Versioned) because decisions can be revised (a Dropped site can become Reserve under rescue conditions)." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
 
-#################################################################
-# Object properties (roles modeled as relationships)
-#################################################################
-cr:sponsoredBy        a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:Sponsor .
-cr:conductedAt        a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:StudySite .
-cr:hasArm             a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:Arm .
-cr:hasProtocolVersion a owl:ObjectProperty ; rdfs:domain cr:Study ; rdfs:range cr:ProtocolVersion .
-cr:hasEligibilityCriterion a owl:ObjectProperty ; rdfs:domain cr:ProtocolVersion ; rdfs:range cr:EligibilityCriterion .
-cr:principalInvestigator a owl:ObjectProperty ; rdfs:domain cr:StudySite ; rdfs:range hcls:Person ;
-    rdfs:label "principal investigator" ; rdfs:comment "Role-as-relationship; bitemporal at instance level." .
+cr:Study a owl:Class ;
+    rdfs:label "Study" ;
+    rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
+    rdfs:subClassOf top:Scope .
 
-# Enrollment relations
-cr:enrolledPerson a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range hcls:Person .
-cr:asSubject      a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range cr:StudySubject .
-cr:intoStudy      a owl:ObjectProperty ; rdfs:domain cr:Enrollment ; rdfs:range cr:Study .
-
-# Delegation relations (+ PROV actedOnBehalfOf at instance level)
-cr:delegator           a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range hcls:Person ;
-    rdfs:comment "The responsible agent (PI)." .
-cr:delegate            a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range hcls:Person .
-cr:delegatedCapability a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range cr:Capability .
-cr:requiresCredential  a owl:ObjectProperty ; rdfs:domain cr:Delegation ; rdfs:range cr:Credential .
-
-# Act participation
-cr:forSubject     a owl:ObjectProperty ; rdfs:range cr:StudySubject ; rdfs:label "for subject" .
-cr:performedBy    a owl:ObjectProperty ; rdfs:range hcls:Person ; rdfs:label "performed by" .
-cr:underDelegation a owl:ObjectProperty ; rdfs:range cr:Delegation ;
-    rdfs:label "under delegation" ; rdfs:comment "Links a performed act to the delegation authorizing it (delegation invariant)." .
-cr:exercisesCapability a owl:ObjectProperty ; rdfs:range cr:Capability ;
-    rdfs:label "exercises capability" ; rdfs:comment "The capability a performed act requires." .
-cr:credentialOf   a owl:ObjectProperty ; rdfs:domain cr:Credential ; rdfs:range hcls:Person .
-cr:attestedBy     a owl:ObjectProperty ; rdfs:range hcls:Person ; rdfs:label "attested by" .

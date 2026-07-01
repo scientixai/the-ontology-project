@@ -1,20 +1,34 @@
-@prefix cr:   <https://top.scientix.ai/cr/v1#> .
-@prefix top:  <https://top.scientix.ai/v1#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix cr: <https://top.scientix.ai/cr/v1#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-# Pharmacovigilance: expedited SAE reporting clock (bitemporal).
+cr:reportsEvent a owl:ObjectProperty ;
+    rdfs:domain cr:SafetyReport ;
+    rdfs:range cr:SeriousAdverseEvent ;
+    top:flavor "Additive" .
 
-cr:SeriousAdverseEvent a owl:Class ; rdfs:subClassOf cr:AdverseEvent ;
-    rdfs:label "Serious Adverse Event" ; rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting)." .
-cr:SafetyReport a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
-    rdfs:label "Safety Report" ; rdfs:comment "Expedited report of an SAE to the regulator." .
+cr:sponsorAwareAt a owl:DatatypeProperty ;
+    rdfs:label "sponsor aware at" ;
+    rdfs:domain cr:SeriousAdverseEvent ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
 
-# The clock has three instants: occurrence (top:observedAt on the SAE),
-# sponsor awareness, and submission. Compliance = submitted within 15 days of awareness.
-cr:sponsorAwareAt a owl:DatatypeProperty ; rdfs:domain cr:SeriousAdverseEvent ;
-    rdfs:range xsd:dateTime ; rdfs:label "sponsor aware at" .
-cr:reportsEvent a owl:ObjectProperty ; rdfs:domain cr:SafetyReport ; rdfs:range cr:SeriousAdverseEvent .
-cr:submittedAt a owl:DatatypeProperty ; rdfs:domain cr:SafetyReport ;
-    rdfs:range xsd:dateTime ; rdfs:label "submitted at" .
+cr:submittedAt a owl:DatatypeProperty ;
+    rdfs:label "submitted at" ;
+    rdfs:domain cr:SafetyReport ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:SafetyReport a owl:Class ;
+    rdfs:label "Safety Report" ;
+    rdfs:comment "Expedited report of an SAE to the regulator." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:SeriousAdverseEvent a owl:Class ;
+    rdfs:label "Serious Adverse Event" ;
+    rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting)." ;
+    rdfs:subClassOf cr:AdverseEvent .
+

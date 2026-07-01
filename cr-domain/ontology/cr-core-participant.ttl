@@ -1,113 +1,109 @@
-@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix cr: <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
-@prefix top:  <https://top.scientix.ai/v1#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix top: <https://top.scientix.ai/v1#> .
 
-#################################################################
-# Participant — the human subject in the trial-conduct realm
-#
-# Design boundary: Participant is EXECUTION-SIDE. USDM v4 has no
-# per-subject runtime entity (verified: no study_subject.py in
-# cdisc-org/usdm/main/src/usdm_model/). Participant is created by
-# operational systems (eConsent, EDC, IRT, CTMS) when real humans
-# enroll; it references Study, Arm, VisitDefinition entities that
-# the USDM ingester previously wrote.
-#
-# Pseudonymisation boundary: cr:StudySubject (in cr-core.ttl) is
-# the pseudonymous in-study identity. hcls:Person is identifiable
-# and stays inside the site sovereign boundary. The one legal
-# bridge is cr:Enrollment (bitemporal, attested). Participant
-# carries operator-vocabulary attributes (firstName, screeningNumber)
-# for site-coordinator UX; the PHI boundary is enforced by
-# deployment, not by the schema.
-#
-# Cross-walk targets: FHIR R5 ResearchSubject, SDTM DM + DS + IE,
-# CDASH DM. USDM is referenced indirectly via Participant.forStudy.
-#################################################################
-
-cr:Participant a owl:Class ; rdfs:subClassOf top:Agent, prov:Agent ;
-    rdfs:label "Participant" ;
-    rdfs:comment "A human subject enrolled in a clinical trial at a specific StudySite for a specific Study. One entity per Study participation; multi-Study = separate Participant records. FHIR R5: ResearchSubject. SDTM projection: DM domain (demographics) + DS domain (disposition events)." .
-
-cr:Recruit a owl:Class ; rdfs:subClassOf top:Agent ;
-    rdfs:label "Recruit" ;
-    rdfs:comment "A human in the recruitment realm, pre-consent. Separate entity from Participant (recruiter is a distinct operator role; data is lighter; PHI boundary differs). Transitions to Participant when consent is obtained. Fuels twin-for-enrollment analytics." .
-
-#################################################################
-# Participant sub-objects (lifecycle events)
-# Pattern: same as SDTM DS domain — each disposition event is its
-# own record. These are Versioned (bitemporal + PROV-O).
-#################################################################
-
-cr:InformedConsentAct a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
+cr:InformedConsentAct a owl:Class ;
     rdfs:label "Informed Consent Act" ;
-    rdfs:comment "One consent event (ICH E6(R3) §2.4 GCP-required). Supports re-consent after protocol amendment or ICF version change. SDTM DS: DSDECOD=INFORMED CONSENT OBTAINED. FHIR: ResearchSubject.progress entry with subjectState=pending-on-study." .
-
-cr:ScreeningRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Screening Record" ;
-    rdfs:comment "One eligibility-screening attempt (ICH E6(R3) §2.5). Re-screening = additional ScreeningRecord. SDTM DS: DSDECOD=SCREEN FAILURE / ENROLLED. SDTM IE: failed criteria." .
-
-cr:EnrollmentRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Enrollment Record" ;
-    rdfs:comment "The enrollment event — eligibility confirmed, subject formally on the trial. SDTM DS: DSDECOD=ENROLLED. FHIR: ResearchSubject.status=on-study." .
-
-cr:WithdrawalRecord a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Withdrawal Record" ;
-    rdfs:comment "One withdrawal or discontinuation event. WITHDRAWN = subject-initiated (CONSENT_WITHDRAWN); DISCONTINUED = investigator-initiated. Distinction is operator-meaningful and preserved in the substrate. SDTM DS: DSDECOD=WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP." .
-
-#################################################################
-# Object properties — Participant
-#################################################################
-
-cr:forStudySite a owl:ObjectProperty ;
-    rdfs:domain cr:Participant ; rdfs:range cr:StudySite ;
-    rdfs:label "for study site" ;
-    rdfs:comment "1..1. The StudySite where enrollment happened. Per OOUX correction: NOT Site directly." .
-
-cr:hasScreeningRecord a owl:ObjectProperty ;
-    rdfs:domain cr:Participant ; rdfs:range cr:ScreeningRecord ;
-    rdfs:label "has screening record" .
-
-cr:hasEnrollmentRecord a owl:ObjectProperty ;
-    rdfs:domain cr:Participant ; rdfs:range cr:EnrollmentRecord ;
-    rdfs:label "has enrollment record" .
-
-cr:hasWithdrawalRecord a owl:ObjectProperty ;
-    rdfs:domain cr:Participant ; rdfs:range cr:WithdrawalRecord ;
-    rdfs:label "has withdrawal record" .
+    rdfs:comment "One consent event (ICH E6(R3) §2.4 GCP-required). Supports re-consent after protocol amendment or ICF version change. SDTM DS: DSDECOD=INFORMED CONSENT OBTAINED. FHIR: ResearchSubject.progress entry with subjectState=pending-on-study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
 
 cr:convertedFromRecruit a owl:ObjectProperty ;
-    rdfs:domain cr:Participant ; rdfs:range cr:Recruit ;
     rdfs:label "converted from recruit" ;
-    rdfs:comment "0..1. Operational-funnel trace. Empty for direct walk-ins." .
-
-cr:hasVisitOccurrence a owl:ObjectProperty ;
-    rdfs:domain cr:Participant ; rdfs:range cr:VisitOccurrence ;
-    rdfs:label "has visit occurrence" ;
-    rdfs:comment "0..N. Per-Participant visit records; resolved when cr-core-visit-execution.ttl lifts." .
-
-#################################################################
-# Object properties — Recruit
-#################################################################
+    rdfs:comment "0..1. Operational-funnel trace. Empty for direct walk-ins." ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:Recruit ;
+    top:flavor "Additive" .
 
 cr:convertedToParticipant a owl:ObjectProperty ;
-    rdfs:domain cr:Recruit ; rdfs:range cr:Participant ;
     rdfs:label "converted to participant" ;
-    rdfs:comment "0..1. Inverse of Participant.convertedFromRecruit. Mandatory when recruitStatus=CONVERTED_TO_PARTICIPANT (SHACL hard)." .
+    rdfs:comment "0..1. Inverse of Participant.convertedFromRecruit. Mandatory when recruitStatus=CONVERTED_TO_PARTICIPANT (SHACL hard)." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:Participant ;
+    top:flavor "Additive" .
 
 cr:forStudyRecruit a owl:ObjectProperty ;
-    rdfs:domain cr:Recruit ; rdfs:range cr:Study ;
     rdfs:label "for study (recruit)" ;
-    rdfs:comment "1..1. Recruits are scoped per-Study." .
+    rdfs:comment "1..1. Recruits are scoped per-Study." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:Study ;
+    top:flavor "Additive" .
+
+cr:forStudySite a owl:ObjectProperty ;
+    rdfs:label "for study site" ;
+    rdfs:comment "1..1. The StudySite where enrollment happened. Per OOUX correction: NOT Site directly." ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
 
 cr:forStudySiteRecruit a owl:ObjectProperty ;
-    rdfs:domain cr:Recruit ; rdfs:range cr:StudySite ;
     rdfs:label "for study site (recruit)" ;
-    rdfs:comment "0..1. May not be set when site assignment is finalized centrally." .
+    rdfs:comment "0..1. May not be set when site assignment is finalized centrally." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:hasEnrollmentRecord a owl:ObjectProperty ;
+    rdfs:label "has enrollment record" ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:EnrollmentRecord ;
+    top:flavor "Additive" .
+
+cr:hasScreeningRecord a owl:ObjectProperty ;
+    rdfs:label "has screening record" ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:ScreeningRecord ;
+    top:flavor "Additive" .
+
+cr:hasVisitOccurrence a owl:ObjectProperty ;
+    rdfs:label "has visit occurrence" ;
+    rdfs:comment "0..N. Per-Participant visit records; resolved when cr-core-visit-execution.ttl lifts." ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:VisitOccurrence ;
+    top:flavor "Additive" .
+
+cr:hasWithdrawalRecord a owl:ObjectProperty ;
+    rdfs:label "has withdrawal record" ;
+    rdfs:domain cr:Participant ;
+    rdfs:range cr:WithdrawalRecord ;
+    top:flavor "Additive" .
 
 cr:recruitedBy a owl:ObjectProperty ;
-    rdfs:domain cr:Recruit ; rdfs:range hcls:Person ;
     rdfs:label "recruited by" ;
-    rdfs:comment "0..1. The recruitment coordinator (Person) handling this Recruit." .
+    rdfs:comment "0..1. The recruitment coordinator (Person) handling this Recruit." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:EnrollmentRecord a owl:Class ;
+    rdfs:label "Enrollment Record" ;
+    rdfs:comment "The enrollment event — eligibility confirmed, subject formally on the trial. SDTM DS: DSDECOD=ENROLLED. FHIR: ResearchSubject.status=on-study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:ScreeningRecord a owl:Class ;
+    rdfs:label "Screening Record" ;
+    rdfs:comment "One eligibility-screening attempt (ICH E6(R3) §2.5). Re-screening = additional ScreeningRecord. SDTM DS: DSDECOD=SCREEN FAILURE / ENROLLED. SDTM IE: failed criteria." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:WithdrawalRecord a owl:Class ;
+    rdfs:label "Withdrawal Record" ;
+    rdfs:comment "One withdrawal or discontinuation event. WITHDRAWN = subject-initiated (CONSENT_WITHDRAWN); DISCONTINUED = investigator-initiated. Distinction is operator-meaningful and preserved in the substrate. SDTM DS: DSDECOD=WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:Recruit a owl:Class ;
+    rdfs:label "Recruit" ;
+    rdfs:comment "A human in the recruitment realm, pre-consent. Separate entity from Participant (recruiter is a distinct operator role; data is lighter; PHI boundary differs). Transitions to Participant when consent is obtained. Fuels twin-for-enrollment analytics." ;
+    rdfs:subClassOf top:Agent .
+
+cr:Participant a owl:Class ;
+    rdfs:label "Participant" ;
+    rdfs:comment "A human subject enrolled in a clinical trial at a specific StudySite for a specific Study. One entity per Study participation; multi-Study = separate Participant records. FHIR R5: ResearchSubject. SDTM projection: DM domain (demographics) + DS domain (disposition events)." ;
+    rdfs:subClassOf prov:Agent,
+        top:Agent .
+

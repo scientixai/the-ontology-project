@@ -1,67 +1,128 @@
-@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix cr: <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
-@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix top: <https://top.scientix.ai/v1#> .
 
-# Biospecimen / LIMS lineage (SENAITE + LabKey patterns).
-# Custody is a bitemporal state machine; aliquot/partition lineage reuses
-# prov:wasDerivedFrom, so an assay result traces aliquot -> primary -> blood draw.
+cr:fromService a owl:ObjectProperty ;
+    rdfs:domain cr:AssayResult ;
+    rdfs:range cr:AnalysisService ;
+    top:flavor "Additive" .
 
-# Specimen lifecycle: a custody transition is a bitemporal, attested act.
-cr:CustodyEvent a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Custody Event" ;
-    rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." .
+cr:fromState a owl:DatatypeProperty ;
+    rdfs:label "from state" ;
+    rdfs:domain cr:CustodyEvent ;
+    top:flavor "Additive" .
 
-# Analysis catalog vs request vs result (LabKey Batch-Run-Results / SENAITE service).
-cr:AnalysisService a owl:Class ; rdfs:subClassOf top:Evidence ; rdfs:label "Analysis Service" ;
-    rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." .
-cr:AnalysisRequest a owl:Class ; rdfs:subClassOf top:Temporal, top:Versioned ;
-    rdfs:label "Analysis Request" ; rdfs:comment "Binds an AnalysisService to a Specimen (the order)." .
-cr:AssayResult a owl:Class ; rdfs:subClassOf hcls:Observation, top:Versioned ;
-    rdfs:label "Assay Result" ; rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." .
+cr:hasAliquot a owl:ObjectProperty ;
+    rdfs:label "has aliquot" ;
+    rdfs:comment "An aliquot partitioned from this specimen (forward of cr:aliquotOf)." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range hcls:Specimen ;
+    owl:inverseOf cr:aliquotOf ;
+    top:flavor "Additive" .
 
-# --- datatype props ---
-cr:toState   a owl:DatatypeProperty ; rdfs:domain cr:CustodyEvent ; rdfs:label "to state" .
-cr:fromState a owl:DatatypeProperty ; rdfs:domain cr:CustodyEvent ; rdfs:label "from state" .
-
-# --- object props ---
-cr:collectedAt    a owl:ObjectProperty ; rdfs:domain hcls:Specimen ; rdfs:range cr:StudyEvent ;
-    rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." .
-cr:specimen       a owl:ObjectProperty ; rdfs:domain cr:CustodyEvent ; rdfs:range hcls:Specimen .
-cr:onSample       a owl:ObjectProperty ; rdfs:range hcls:Specimen ; rdfs:label "on sample" .
-cr:requestsService a owl:ObjectProperty ; rdfs:domain cr:AnalysisRequest ; rdfs:range cr:AnalysisService .
-cr:fromService    a owl:ObjectProperty ; rdfs:domain cr:AssayResult ; rdfs:range cr:AnalysisService .
-cr:aliquotOf      a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ;
-    rdfs:domain hcls:Specimen ; rdfs:range hcls:Specimen ;
-    rdfs:label "aliquot of" ; rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." .
-
-# --- Retrieval edges: FORWARD relationships off the collection act + specimen so a
-#     single NGSI-LD `?join=inline` retrieval (which per ETSI GS CIM 009 clause
-#     4.5.23 follows a Relationship's `object` forward only) reaches the entire
-#     evidentiary context, rather than forcing the consuming UI into recursive
-#     lookups. Each has a natural back-edge too (cr:collectedAt, cr:specimen,
-#     cr:aliquotOf, cr:derivedFromCollection) so the graph stays navigable both
-#     ways; the forward edges are what a stock broker `join` traverses. ---
-cr:producesSpecimen a owl:ObjectProperty ; owl:inverseOf cr:collectedAt ;
-    rdfs:domain cr:StudyEvent ; rdfs:range hcls:Specimen ;
-    rdfs:label "produces specimen" ; rdfs:comment "The primary specimen a collection act produced (forward of cr:collectedAt)." .
-cr:hasCustodyEvent a owl:ObjectProperty ; owl:inverseOf cr:specimen ;
-    rdfs:domain hcls:Specimen ; rdfs:range cr:CustodyEvent ;
-    rdfs:label "has custody event" ; rdfs:comment "A custody transition on this specimen (forward of cr:specimen, for single-pull retrieval)." .
-cr:hasAliquot a owl:ObjectProperty ; owl:inverseOf cr:aliquotOf ;
-    rdfs:domain hcls:Specimen ; rdfs:range hcls:Specimen ;
-    rdfs:label "has aliquot" ; rdfs:comment "An aliquot partitioned from this specimen (forward of cr:aliquotOf)." .
-cr:yieldsResult a owl:ObjectProperty ; owl:inverseOf cr:derivedFromCollection ;
-    rdfs:domain cr:StudyEvent ; rdfs:range cr:AssayResult ;
-    rdfs:label "yields result" ; rdfs:comment "An assay result that traces to this collection act (forward of cr:derivedFromCollection)." .
-cr:derivedFromCollection a owl:ObjectProperty ; rdfs:subPropertyOf prov:wasDerivedFrom ;
-    rdfs:domain cr:AssayResult ; rdfs:range cr:StudyEvent ;
-    rdfs:label "derived from collection" ; rdfs:comment "The collection act a result ultimately traces to (lineage back-edge)." .
 cr:hasConsent a owl:ObjectProperty ;
-    rdfs:domain cr:StudyEvent ; rdfs:range cr:InformedConsent ;
-    rdfs:label "has consent" ; rdfs:comment "The informed consent under which a participant-facing act was performed." .
+    rdfs:label "has consent" ;
+    rdfs:comment "The informed consent under which a participant-facing act was performed." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range cr:InformedConsent ;
+    top:flavor "Additive" .
+
+cr:hasCustodyEvent a owl:ObjectProperty ;
+    rdfs:label "has custody event" ;
+    rdfs:comment "A custody transition on this specimen (forward of cr:specimen, for single-pull retrieval)." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range cr:CustodyEvent ;
+    owl:inverseOf cr:specimen ;
+    top:flavor "Additive" .
+
+cr:onSample a owl:ObjectProperty ;
+    rdfs:label "on sample" ;
+    rdfs:range hcls:Specimen ;
+    top:flavor "Additive" .
+
 cr:precededByAct a owl:ObjectProperty ;
-    rdfs:domain cr:StudyEvent ; rdfs:range cr:Assessment ;
-    rdfs:label "preceded by act" ; rdfs:comment "The assessment this act followed (executed ordering cite, e.g. the ECG before the draw)." .
+    rdfs:label "preceded by act" ;
+    rdfs:comment "The assessment this act followed (executed ordering cite, e.g. the ECG before the draw)." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range cr:Assessment ;
+    top:flavor "Additive" .
+
+cr:producesSpecimen a owl:ObjectProperty ;
+    rdfs:label "produces specimen" ;
+    rdfs:comment "The primary specimen a collection act produced (forward of cr:collectedAt)." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range hcls:Specimen ;
+    owl:inverseOf cr:collectedAt ;
+    top:flavor "Additive" .
+
+cr:requestsService a owl:ObjectProperty ;
+    rdfs:domain cr:AnalysisRequest ;
+    rdfs:range cr:AnalysisService ;
+    top:flavor "Additive" .
+
+cr:toState a owl:DatatypeProperty ;
+    rdfs:label "to state" ;
+    rdfs:domain cr:CustodyEvent ;
+    top:flavor "Additive" .
+
+cr:yieldsResult a owl:ObjectProperty ;
+    rdfs:label "yields result" ;
+    rdfs:comment "An assay result that traces to this collection act (forward of cr:derivedFromCollection)." ;
+    rdfs:domain cr:StudyEvent ;
+    rdfs:range cr:AssayResult ;
+    owl:inverseOf cr:derivedFromCollection ;
+    top:flavor "Additive" .
+
+cr:AnalysisRequest a owl:Class ;
+    rdfs:label "Analysis Request" ;
+    rdfs:comment "Binds an AnalysisService to a Specimen (the order)." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+
+cr:aliquotOf a owl:ObjectProperty ;
+    rdfs:label "aliquot of" ;
+    rdfs:comment "Partition/aliquot lineage (a kind of prov:wasDerivedFrom)." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range hcls:Specimen ;
+    rdfs:subPropertyOf prov:wasDerivedFrom ;
+    top:flavor "Additive" .
+
+cr:collectedAt a owl:ObjectProperty ;
+    rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." ;
+    rdfs:domain hcls:Specimen ;
+    rdfs:range cr:StudyEvent ;
+    top:flavor "Additive" .
+
+cr:derivedFromCollection a owl:ObjectProperty ;
+    rdfs:label "derived from collection" ;
+    rdfs:comment "The collection act a result ultimately traces to (lineage back-edge)." ;
+    rdfs:domain cr:AssayResult ;
+    rdfs:range cr:StudyEvent ;
+    rdfs:subPropertyOf prov:wasDerivedFrom ;
+    top:flavor "Additive" .
+
+cr:specimen a owl:ObjectProperty ;
+    rdfs:domain cr:CustodyEvent ;
+    rdfs:range hcls:Specimen ;
+    top:flavor "Additive" .
+
+cr:AnalysisService a owl:Class ;
+    rdfs:label "Analysis Service" ;
+    rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:AssayResult a owl:Class ;
+    rdfs:label "Assay Result" ;
+    rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
+    rdfs:subClassOf hcls:Observation,
+        top:Versioned .
+
+cr:CustodyEvent a owl:Class ;
+    rdfs:label "Custody Event" ;
+    rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned .
+

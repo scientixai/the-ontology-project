@@ -14,6 +14,18 @@ top:flavor a owl:AnnotationProperty ;
     rdfs:label "flavor"@en ;
     rdfs:comment "Extensibility flavor per ADR-0019. Permitted values: 'Invariant', 'Tightenable', 'Additive'."@en .
 
+top:Invariant a owl:NamedIndividual ;
+    rdfs:label "Invariant"@en ;
+    rdfs:comment "A top:flavor value indicating this property's constraint cannot be changed by domain specializations. Loosening it breaks the universal contract."@en .
+
+top:Tightenable a owl:NamedIndividual ;
+    rdfs:label "Tightenable"@en ;
+    rdfs:comment "A top:flavor value indicating domain specializations may narrow this property's range or add sh:in / sh:minInclusive constraints, but may not loosen the base constraint."@en .
+
+top:Additive a owl:NamedIndividual ;
+    rdfs:label "Additive"@en ;
+    rdfs:comment "A top:flavor value indicating domain specializations may add new properties or shapes at their layer without affecting the base constraint. Purely extensible."@en .
+
 top:CommonEntity a owl:Class ;
     rdfs:label "Common Entity"@en ;
     rdfs:comment "The root of every TOP entity. Carries Universal DNA — top:identifier, top:observedAt, top:status — that every Category and every Leaf inherits. Not directly instantiated; serves as the type lattice that lets queries reach across every Category."@en .

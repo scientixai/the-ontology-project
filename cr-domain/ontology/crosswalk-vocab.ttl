@@ -1,46 +1,92 @@
-@prefix cx:   <https://top.scientix.ai/crosswalk/v1#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix cx: <https://top.scientix.ai/crosswalk/v1#> .
+@prefix ns1: <https://top.scientix.ai/v1#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-cx: a owl:Ontology ; rdfs:label "TOP crosswalk vocabulary (SSSOM-aligned)" ;
+cx: a owl:Ontology ;
+    rdfs:label "TOP crosswalk vocabulary (SSSOM-aligned)" ;
     rdfs:comment "OWNED, provenance-tagged crosswalks from TOP/CR-core to external ontologies. Aligns to SSSOM slots (subject_id/predicate_id/object_id/mapping_justification/confidence/author_id/mapping_date); an SSSOM TSV is an edge projection of these. Crosswalks are assertions WE own and curate, never imports of the external ontology." .
 
-cx:Mapping       a owl:Class ; rdfs:subClassOf <https://top.scientix.ai/v1#Evidence> ; rdfs:label "Crosswalk Mapping" ; rdfs:comment "A curated, provenanced correspondence from a TOP term to an external ontology term." .
-cx:subjectId     a owl:ObjectProperty   ; rdfs:label "subject id"   ; rdfs:comment "The TOP/CR-core term (left side)." .
-cx:predicateId   a owl:ObjectProperty   ; rdfs:label "predicate id" ; rdfs:comment "SKOS mapping predicate." .
-cx:objectId      a owl:ObjectProperty   ; rdfs:label "object id"    ; rdfs:comment "The external ontology term (right side)." .
-cx:justification a owl:ObjectProperty   ; rdfs:label "mapping justification" ; rdfs:comment "A semapv justification IRI (e.g. ManualMappingCuration)." .
-cx:author        a owl:ObjectProperty   ; rdfs:label "author id"    ; rdfs:comment "The curator/agent IRI (SSSOM author_id)." .
-cx:confidence    a owl:DatatypeProperty ; rdfs:label "confidence"   ; rdfs:range xsd:decimal .
-cx:mappingDate   a owl:DatatypeProperty ; rdfs:label "mapping date" ; rdfs:range xsd:date .
-cx:verificationStatus a owl:DatatypeProperty ; rdfs:label "verification status" ;
-    rdfs:comment "verified | unverified | deprecated — whether the target IRI was confirmed against a primary source." .
-cx:retrievedFrom a owl:DatatypeProperty ; rdfs:label "retrieved from" ;
-    rdfs:comment "The primary source the target IRI was verified against (URL + retrieval date)." .
+cx:Mapping a owl:Class ;
+    rdfs:label "Crosswalk Mapping" ;
+    rdfs:comment "A curated, provenanced correspondence from a TOP term to an external ontology term." ;
+    rdfs:subClassOf ns1:Evidence .
 
-# ---- LLM-assisted field-mapping provenance (ADR-0022) ----
-# These properties support the two-layer crosswalk architecture:
-#   Layer 1: canonical TOP ↔ CDISC/USDM (curated, high confidence)
-#   Layer 2: sponsor-specific extensions (e.g. X_WHATEVER fields)
-# Unknown Layer-2 fields are submitted to a top:AutonomousAgent which
-# records a cx:Mapping with these properties. High-confidence mappings
-# auto-promote to Layer 2; low-confidence route to human review.
+cx:author a owl:ObjectProperty ;
+    rdfs:label "author id" ;
+    rdfs:comment "The curator/agent IRI (SSSOM author_id)." ;
+    ns1:flavor "Additive" .
 
-cx:mappingMethod a owl:DatatypeProperty ; rdfs:label "mapping method" ;
-    rdfs:comment "How the mapping was produced: ManualCuration | LLMInference | RuleBasedExtraction | HybridReview. Drives downstream trust and routing." .
+cx:confidence a owl:DatatypeProperty ;
+    rdfs:label "confidence" ;
+    rdfs:range xsd:decimal ;
+    ns1:flavor "Additive" .
 
-cx:mappingRationale a owl:DatatypeProperty ; rdfs:label "mapping rationale" ; rdfs:range xsd:string ;
-    rdfs:comment "Human-readable explanation of why this mapping was proposed, especially for LLM-inferred mappings. Mirrors top:rationale on a Conclusion." .
+cx:confirmedAt a owl:DatatypeProperty ;
+    rdfs:label "confirmed at" ;
+    rdfs:comment "Timestamp when a mapping was confirmed by a human reviewer. Together with cx:confirmedBy, closes the audit trail for human-in-the-loop validation." ;
+    rdfs:range xsd:dateTime ;
+    ns1:flavor "Additive" .
 
-cx:reviewStatus a owl:DatatypeProperty ; rdfs:label "review status" ;
-    rdfs:comment "Lifecycle state of the mapping: proposed | under_review | confirmed | rejected | deprecated. Confirmed mappings graduate from ephemeral inference to Layer-2 crosswalk." .
+cx:confirmedBy a owl:ObjectProperty ;
+    rdfs:label "confirmed by" ;
+    rdfs:comment "The human agent (or committee) that reviewed and confirmed a proposed mapping. Required for promotion from 'under_review' to 'confirmed'." ;
+    ns1:flavor "Additive" .
 
-cx:inferredBy a owl:ObjectProperty ; rdfs:label "inferred by" ;
-    rdfs:comment "The top:AutonomousAgent instance that proposed this mapping via LLM inference. Enables provenance tracing back to the agent model and prompt version." .
+cx:inferredBy a owl:ObjectProperty ;
+    rdfs:label "inferred by" ;
+    rdfs:comment "The top:AutonomousAgent instance that proposed this mapping via LLM inference. Enables provenance tracing back to the agent model and prompt version." ;
+    ns1:flavor "Additive" .
 
-cx:confirmedBy a owl:ObjectProperty ; rdfs:label "confirmed by" ;
-    rdfs:comment "The human agent (or committee) that reviewed and confirmed a proposed mapping. Required for promotion from 'under_review' to 'confirmed'." .
+cx:justification a owl:ObjectProperty ;
+    rdfs:label "mapping justification" ;
+    rdfs:comment "A semapv justification IRI (e.g. ManualMappingCuration)." ;
+    ns1:flavor "Additive" .
 
-cx:confirmedAt a owl:DatatypeProperty ; rdfs:label "confirmed at" ; rdfs:range xsd:dateTime ;
-    rdfs:comment "Timestamp when a mapping was confirmed by a human reviewer. Together with cx:confirmedBy, closes the audit trail for human-in-the-loop validation." .
+cx:mappingDate a owl:DatatypeProperty ;
+    rdfs:label "mapping date" ;
+    rdfs:range xsd:date ;
+    ns1:flavor "Additive" .
+
+cx:mappingMethod a owl:DatatypeProperty ;
+    rdfs:label "mapping method" ;
+    rdfs:comment "How the mapping was produced: ManualCuration | LLMInference | RuleBasedExtraction | HybridReview. Drives downstream trust and routing." ;
+    ns1:flavor "Additive" .
+
+cx:mappingRationale a owl:DatatypeProperty ;
+    rdfs:label "mapping rationale" ;
+    rdfs:comment "Human-readable explanation of why this mapping was proposed, especially for LLM-inferred mappings. Mirrors top:rationale on a Conclusion." ;
+    rdfs:range xsd:string ;
+    ns1:flavor "Additive" .
+
+cx:objectId a owl:ObjectProperty ;
+    rdfs:label "object id" ;
+    rdfs:comment "The external ontology term (right side)." ;
+    ns1:flavor "Additive" .
+
+cx:predicateId a owl:ObjectProperty ;
+    rdfs:label "predicate id" ;
+    rdfs:comment "SKOS mapping predicate." ;
+    ns1:flavor "Additive" .
+
+cx:retrievedFrom a owl:DatatypeProperty ;
+    rdfs:label "retrieved from" ;
+    rdfs:comment "The primary source the target IRI was verified against (URL + retrieval date)." ;
+    ns1:flavor "Additive" .
+
+cx:reviewStatus a owl:DatatypeProperty ;
+    rdfs:label "review status" ;
+    rdfs:comment "Lifecycle state of the mapping: proposed | under_review | confirmed | rejected | deprecated. Confirmed mappings graduate from ephemeral inference to Layer-2 crosswalk." ;
+    ns1:flavor "Additive" .
+
+cx:subjectId a owl:ObjectProperty ;
+    rdfs:label "subject id" ;
+    rdfs:comment "The TOP/CR-core term (left side)." ;
+    ns1:flavor "Additive" .
+
+cx:verificationStatus a owl:DatatypeProperty ;
+    rdfs:label "verification status" ;
+    rdfs:comment "verified | unverified | deprecated — whether the target IRI was confirmed against a primary source." ;
+    ns1:flavor "Additive" .
+
