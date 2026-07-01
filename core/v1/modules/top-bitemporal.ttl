@@ -10,6 +10,10 @@
 
 # Bitemporal model (per ADR-0021): Versioned class, valid-time properties, SHACL shapes.
 
+top:VersionSeries a owl:Class ;
+    rdfs:label "Version Series"@en ;
+    rdfs:comment "The stable identity root for a chain of top:Versioned snapshots. An instance of top:VersionSeries has a single IRI that never changes; each point-in-time value-version links to it via prov:specializationOf. Consumers and external references always point at the VersionSeries; version navigation is a query, not an IRI change."@en .
+
 top:Versioned a owl:Class ;
     rdfs:label "Versioned"@en ;
     rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
@@ -27,6 +31,8 @@ top:validUntil a owl:DatatypeProperty ;
     rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
     rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
+
+prov:specializationOf rdfs:range top:VersionSeries .
 
 top:BitemporalShape a sh:NodeShape ;
     rdfs:label "Bitemporal Shape"@en ;
@@ -47,9 +53,10 @@ top:BitemporalShape a sh:NodeShape ;
     ] ;
     sh:property [
         sh:path prov:specializationOf ;
+        sh:class top:VersionSeries ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:message "A versioned value must point at its stable identity (prov:specializationOf, exactly one)." ;
+        sh:message "A versioned value must point at its stable identity (prov:specializationOf → top:VersionSeries, exactly one)." ;
     ] .
 
 top:HashedMustVersionShape a sh:NodeShape ;
