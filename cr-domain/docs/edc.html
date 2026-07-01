@@ -492,18 +492,36 @@ table.cprov tr:first-child td{border-top:none}
     }
   },
 
-  <span class="c">/* Open query (joined inline) */</span>
-  <span class="s">"cr:hasQuery"</span>: {
-    <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
-    <span class="s">"object"</span>: <span class="s">"urn:top:Query:GLP1-TRIAL-27:QRY-2026-0892"</span>,
-    <span class="s">"entity"</span>: {
-      <span class="s">"type"</span>: <span class="s">"cr:Query"</span>,
-      <span class="s">"cr:queryText"</span>:   { <span class="s">"type"</span>: <span class="s">"Property"</span>,
-                           <span class="s">"value"</span>: <span class="s">"Confirm tube type: EDTA or SST per deviation log?"</span> },
-      <span class="s">"cr:queryStatus"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"OPEN"</span> },
-      <span class="s">"cr:raisedAt"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-06-16T09:12:00Z"</span> }
+  <span class="c">/* Open queries — array because N queries can be anchored to different
+     data points on the same SampleCollection (tube type on one specimen,
+     volume on another, cold-chain on the collection itself, etc.)       */</span>
+  <span class="s">"cr:hasQuery"</span>: [
+    {
+      <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+      <span class="s">"object"</span>: <span class="s">"urn:top:Query:GLP1-TRIAL-27:QRY-2026-0892"</span>,
+      <span class="s">"entity"</span>: {
+        <span class="s">"type"</span>: <span class="s">"cr:Query"</span>,
+        <span class="s">"cr:queryType"</span>:   { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"DATA_CLARIFICATION"</span> },
+        <span class="s">"cr:queryText"</span>:   { <span class="s">"type"</span>: <span class="s">"Property"</span>,
+                             <span class="s">"value"</span>: <span class="s">"Source document records 'SST' but LIMS barcode LAB-2026-0842 was registered as EDTA. Please confirm tube type against the deviation log and original lab requisition."</span> },
+        <span class="s">"cr:queryOn"</span>: {
+          <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+          <span class="s">"object"</span>: <span class="s">"urn:top:Specimen:GLP1-TRIAL-27:SUBJ-0042:V03-EDTA-01"</span>
+        },
+        <span class="s">"cr:queryStatus"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"OPEN"</span> },
+        <span class="s">"cr:raisedBy"</span>: {
+          <span class="s">"type"</span>: <span class="s">"Relationship"</span>,
+          <span class="s">"object"</span>: <span class="s">"urn:top:Person:dm:data-manager-team"</span>
+        },
+        <span class="s">"cr:raisedAt"</span>:  { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-06-16T09:12:00Z"</span> },
+        <span class="s">"cr:dueBySLA"</span>:  { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-06-23"</span> }
+      }
     }
-  },
+    <span class="c">/* Additional queries would appear here as further array members,
+       each with its own cr:queryOn anchor — e.g. a second query about
+       cold-chain transit time would anchor to the SampleCollection
+       itself, not to an individual Specimen.                          */</span>
+  ],
 
   <span class="c">/* Semantic grounding — biomedical vocabulary links */</span>
   <span class="s">"cr:biomedicalConceptCode"</span>: {
