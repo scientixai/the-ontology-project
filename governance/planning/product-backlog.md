@@ -30,10 +30,10 @@
 - T-100-001-005: Update `foundation.html` narrative to explain the disjointness axioms and their role in closed-world validation
 
 #### Success Criteria
-- [ ] Every pair of L2 categories has an explicit `owl:disjointWith` triple in the OWL graph
-- [ ] An entity typed as both `top:Agent` and `top:Resource` produces a SHACL violation
-- [ ] pyshacl confirms violation on the cross-typed example; conformant examples remain clean
-- [ ] Build pipeline (`build_dist.py`) produces updated N-Triples with disjointness triples included
+- [x] Every pair of L2 categories has an explicit `owl:disjointWith` triple in the OWL graph
+- [x] An entity typed as both `top:Agent` and `top:Resource` produces a SHACL violation
+- [x] pyshacl confirms violation on the cross-typed example; conformant examples remain clean
+- [x] Build pipeline (`build_dist.py`) produces updated N-Triples with disjointness triples included
 
 ---
 
@@ -52,10 +52,10 @@
 - T-100-002-006: Update `foundation.html` bitemporal section to explain `top:VersionSeries` as the stable identity root; include a diagram or code block showing the versioned node pattern
 
 #### Success Criteria
-- [ ] `top:VersionSeries` exists with correct superclass, label, and comment
-- [ ] `prov:specializationOf` range is declared as `top:VersionSeries` in the OWL graph
-- [ ] `top:BitemporalShape` produces a violation when `prov:specializationOf` is absent or points to a non-`top:VersionSeries` node
-- [ ] Walkthrough examples validate cleanly under the updated shape
+- [x] `top:VersionSeries` exists with correct superclass, label, and comment
+- [x] `prov:specializationOf` range is declared as `top:VersionSeries` in the OWL graph
+- [x] `top:BitemporalShape` produces a violation when `prov:specializationOf` is absent or points to a non-`top:VersionSeries` node
+- [x] Walkthrough examples validate cleanly under the updated shape
 
 ---
 
@@ -73,9 +73,9 @@
 - T-100-003-005: Update `foundation.html` module-split section to reference the self-declaring module IRI pattern and how tools can load individual modules
 
 #### Success Criteria
-- [ ] Loading any single `top-*.ttl` file in rdflib returns at least one `owl:Ontology` triple
-- [ ] The aggregator `shapes.ttl` produces the same merged graph as before (N-Triples line count unchanged)
-- [ ] Build check passes in CI
+- [x] Loading any single `top-*.ttl` file in rdflib returns at least one `owl:Ontology` triple
+- [x] The aggregator `shapes.ttl` produces the same merged graph as before (N-Triples line count unchanged)
+- [x] Build check passes in CI
 
 ---
 
@@ -93,10 +93,10 @@
 - T-100-004-005: Update `foundation.html` extensibility section to document the three flavor values with their definitions and a downstream ontology example
 
 #### Success Criteria
-- [ ] `top:flavor` accepts only `top:FlavorInvariant`, `top:FlavorTightenable`, or `top:FlavorAdditive`
-- [ ] A resource with `top:flavor "Mutable"` produces a SHACL violation
-- [ ] All existing usages of `top:flavor` in the modules use the concept IRI form
-- [ ] `top:FlavorScheme` is included in the dist bundle
+- [x] `top:flavor` accepts only `top:FlavorInvariant`, `top:FlavorTightenable`, or `top:FlavorAdditive`
+- [x] A resource with `top:flavor "Mutable"` produces a SHACL violation
+- [x] All existing usages of `top:flavor` in the modules use the concept IRI form
+- [x] `top:FlavorScheme` is included in the dist bundle
 
 ---
 
@@ -115,11 +115,11 @@
 - T-100-005-006: Update `foundation.html` agent taxonomy section to reflect the reclassification and note the BFO alignment rationale
 
 #### Success Criteria
-- [ ] `top:Organism` no longer has `prov:Agent` in its superclass chain
-- [ ] `bfo:MaterialEntity` is declared as superclass
-- [ ] `top:subjectOf` exists with correct domain/range
-- [ ] No existing SHACL shapes or examples break as a result of the change
-- [ ] `rdfs:comment` updated to explain the BFO alignment rationale
+- [x] `top:Organism` no longer has `prov:Agent` in its superclass chain
+- [x] `bfo:MaterialEntity` is declared as superclass
+- [x] `top:subjectOf` exists with correct domain/range
+- [x] No existing SHACL shapes or examples break as a result of the change
+- [x] `rdfs:comment` updated to explain the BFO alignment rationale
 
 ---
 
@@ -145,10 +145,10 @@
 - T-200-001-007: Rebuild docs; verify `cr:Assessment` properties appear in `reference.html`; add assessment property table to `visit.html` clinical act section
 
 #### Success Criteria
-- [ ] `cr:Assessment` has at minimum `assessmentCode`, `performedBy`, and `assessmentResult` as declared properties
-- [ ] `cr:AssessmentShape` enforces presence of `assessmentCode` and `performedBy`
-- [ ] A SPARQL query `SELECT ?a ?code WHERE { ?a a cr:Assessment ; cr:assessmentCode ?code }` returns results against the conformant example
-- [ ] Conformant and violation examples validate correctly under pyshacl
+- [x] `cr:Assessment` has at minimum `assessmentCode`, `performedBy`, and `assessmentResult` as declared properties
+- [x] `cr:AssessmentShape` enforces presence of `assessmentCode` and `performedBy`
+- [x] A SPARQL query `SELECT ?a ?code WHERE { ?a a cr:Assessment ; cr:assessmentCode ?code }` returns results against the conformant example
+- [x] Conformant and violation examples validate correctly under pyshacl
 
 ---
 
@@ -168,10 +168,10 @@
 - T-200-002-007: Rebuild docs; verify `cr:Arm` enriched properties appear in `reference.html`; add arm design table to `setup.html` study design section
 
 #### Success Criteria
-- [ ] `cr:Arm` has `randomizationRatio`, `plannedEnrollment`, `actualEnrollment` as declared datatype properties
-- [ ] `cr:stratificationFactor` is declared as an object property
-- [ ] USDM-to-CR crosswalk comment updated noting arm property coverage
-- [ ] At least one example Arm entity in the transformer output includes `plannedEnrollment`
+- [x] `cr:Arm` has `randomizationRatio`, `plannedEnrollment`, `actualEnrollment` as declared datatype properties
+- [x] `cr:stratificationFactor` is declared as an object property
+- [x] USDM-to-CR crosswalk comment updated noting arm property coverage
+- [x] At least one example Arm entity in the transformer output includes `plannedEnrollment`
 
 ---
 
@@ -190,10 +190,10 @@
 - T-200-003-006: Rebuild docs; verify `cr:Endpoint` properties appear in `reference.html`; update `eop2.html` endpoint table to show type and estimand link
 
 #### Success Criteria
-- [ ] `cr:Endpoint` has `endpointType`, `analysisMethod`, `endpointTimepoint`, `endpointEstimand` as declared properties
-- [ ] `cr:endpointType` value constrains to the four coded types (SHACL `sh:in`)
-- [ ] `cr:endpointEstimand` is used in the conformant `eop2-conformant.ttl` example
-- [ ] SPARQL query for "primary endpoints in this study with their estimands" runs successfully
+- [x] `cr:Endpoint` has `endpointType`, `analysisMethod`, `endpointTimepoint`, `endpointEstimand` as declared properties
+- [x] `cr:endpointType` value constrains to the four coded types (SHACL `sh:in`)
+- [x] `cr:endpointEstimand` is used in the conformant `eop2-conformant.ttl` example
+- [x] SPARQL query for "primary endpoints in this study with their estimands" runs successfully
 
 ---
 
@@ -213,10 +213,10 @@
 - T-200-004-007: Rebuild docs; verify properties appear in `reference.html`; update `preind.html` and `eop2.html` to show meeting properties in the regulatory interaction sections
 
 #### Success Criteria
-- [ ] `cr:RegulatoryInteraction` has `meetingAgency`, `meetingDate`, `meetingType`, `meetingOutcome` as declared properties
-- [ ] SHACL shape fires violation when `meetingDate` is absent
-- [ ] Both Pre-IND and EOP2 conformant examples include the new properties
-- [ ] "List all regulatory meetings for this study, by date and type" SPARQL query returns results
+- [x] `cr:RegulatoryInteraction` has `meetingAgency`, `meetingDate`, `meetingType`, `meetingOutcome` as declared properties
+- [x] SHACL shape fires violation when `meetingDate` is absent
+- [x] Both Pre-IND and EOP2 conformant examples include the new properties
+- [x] "List all regulatory meetings for this study, by date and type" SPARQL query returns results
 
 ---
 
@@ -240,10 +240,10 @@
 - T-200-005-011: Rebuild docs; verify `cr:SiteMetrics` appears in `reference.html`; add a site KPI snapshot section to `rbqm.html` with a sample query and explanation
 
 #### Success Criteria
-- [ ] `cr:SiteMetrics` exists with five KPI properties and the `metricsForSite` relationship
-- [ ] SHACL shape enforces presence of `metricsForSite` and `top:observedAt`
-- [ ] Bitemporal: `top:observedAt` records when the snapshot was taken; `top:validFrom` records the reporting period start
-- [ ] `site_kpi_timeseries.rq` returns ordered metric history for a given site
+- [x] `cr:SiteMetrics` exists with five KPI properties and the `metricsForSite` relationship
+- [x] SHACL shape enforces presence of `metricsForSite` and `top:observedAt`
+- [x] Bitemporal: `top:observedAt` records when the snapshot was taken; `top:validFrom` records the reporting period start
+- [x] `site_kpi_timeseries.rq` returns ordered metric history for a given site
 
 ---
 
@@ -265,10 +265,10 @@
 - T-200-006-009: Rebuild docs; verify `cr:StudyMilestone` appears in `reference.html`; add milestone timeline section to `setup.html` with the milestone type codes and plan-vs-actual pattern explained
 
 #### Success Criteria
-- [ ] `cr:StudyMilestone` with six coded milestone types is queryable from the graph
-- [ ] SHACL constraint fires when `milestoneVariance` does not match the date arithmetic
-- [ ] SPARQL projection returns a milestone table with planned date, actual date, and variance in days
-- [ ] At least one milestone entity appears in the LY900018 fixture
+- [x] `cr:StudyMilestone` with six coded milestone types is queryable from the graph
+- [x] SHACL constraint fires when `milestoneVariance` does not match the date arithmetic
+- [x] SPARQL projection returns a milestone table with planned date, actual date, and variance in days
+- [x] At least one milestone entity appears in the LY900018 fixture
 
 ---
 
@@ -294,11 +294,11 @@
 - T-300-001-007: Rebuild docs; verify MedDRA properties appear in `reference.html`; update `safety.html` to explain the MedDRA IRI reference pattern and licensing notice
 
 #### Success Criteria
-- [ ] `cr:meddraPreferredTerm`, `cr:meddraSystemOrganClass`, `cr:meddraDictionaryVersion` declared on `cr:AdverseEvent`
-- [ ] SHACL Warning fires when a `cr:SeriousAdverseEvent` lacks `meddraPreferredTerm`
-- [ ] NOTICE comment present in the ontology file
-- [ ] Example SAE includes plausible MedDRA PT and SOC IRI references
-- [ ] SPARQL query "list all SAEs by MedDRA SOC" returns results against the example
+- [x] `cr:meddraPreferredTerm`, `cr:meddraSystemOrganClass`, `cr:meddraDictionaryVersion` declared on `cr:AdverseEvent`
+- [x] SHACL Warning fires when a `cr:SeriousAdverseEvent` lacks `meddraPreferredTerm`
+- [x] NOTICE comment present in the ontology file
+- [x] Example SAE includes plausible MedDRA PT and SOC IRI references
+- [x] SPARQL query "list all SAEs by MedDRA SOC" returns results against the example
 
 ---
 
@@ -318,10 +318,10 @@
 - T-300-002-007: Rebuild docs; verify CTCAE properties appear in `reference.html`; update `safety.html` to show the CTCAE grading pattern and NCI Thesaurus IRI structure
 
 #### Success Criteria
-- [ ] `cr:ctcaeGrade`, `cr:ctcaeTerm`, `cr:ctcaeVersion` declared on `cr:AdverseEvent`
-- [ ] SHACL shape fires violation when a `cr:DoseLimitingToxicity` has `ctcaeGrade` < 3
-- [ ] `sh:in` constraint rejects grade values outside 1–5
-- [ ] Example DLT carries CTCAE grade 3 or higher
+- [x] `cr:ctcaeGrade`, `cr:ctcaeTerm`, `cr:ctcaeVersion` declared on `cr:AdverseEvent`
+- [x] SHACL shape fires violation when a `cr:DoseLimitingToxicity` has `ctcaeGrade` < 3
+- [x] `sh:in` constraint rejects grade values outside 1–5
+- [x] Example DLT carries CTCAE grade 3 or higher
 
 ---
 
@@ -342,11 +342,11 @@
 - T-300-003-008: Rebuild docs; verify `cr:SUSAR` appears in `reference.html`; update `safety.html` with a SUSAR reporting clock diagram showing the sponsorAwareAt → reportingDeadline → submissionDate chain
 
 #### Success Criteria
-- [ ] `cr:SUSAR` class exists with all required properties
-- [ ] SHACL violation fires when `submissionDate` exceeds `reportingDeadline` (SPARQL arithmetic constraint)
-- [ ] Conformant example (submitted within 15 days) validates cleanly
-- [ ] Violation example (submitted late) produces the deadline message
-- [ ] SPARQL query "all open SUSARs with deadline in the next 7 days" returns results against fixtures
+- [x] `cr:SUSAR` class exists with all required properties
+- [x] SHACL violation fires when `submissionDate` exceeds `reportingDeadline` (SPARQL arithmetic constraint)
+- [x] Conformant example (submitted within 15 days) validates cleanly
+- [x] Violation example (submitted late) produces the deadline message
+- [x] SPARQL query "all open SUSARs with deadline in the next 7 days" returns results against fixtures
 
 ---
 
@@ -367,10 +367,10 @@
 - T-300-004-008: Rebuild docs; verify `cr:CausalityAssessment` appears in `reference.html`; update `safety.html` to explain the causality-as-Conclusion pattern and how the four coded verdicts relate to ICH E2A
 
 #### Success Criteria
-- [ ] `cr:CausalityAssessment` exists with `causalityVerdict`, `assessedBy`, and inherited `top:Conclusion` properties
-- [ ] `sh:in` constraint rejects verdicts outside the four coded values
-- [ ] SHACL Warning fires when an SAE lacks a causality assessment
-- [ ] Example SAE includes a causality assessment with `top:rationale` text
+- [x] `cr:CausalityAssessment` exists with `causalityVerdict`, `assessedBy`, and inherited `top:Conclusion` properties
+- [x] `sh:in` constraint rejects verdicts outside the four coded values
+- [x] SHACL Warning fires when an SAE lacks a causality assessment
+- [x] Example SAE includes a causality assessment with `top:rationale` text
 
 ---
 
@@ -389,10 +389,10 @@
 - T-300-005-006: Rebuild docs; verify new projections appear in the `reference.html` projections table; add aggregate safety query examples to `safety.html`
 
 #### Success Criteria
-- [ ] Three SPARQL projections exist and return expected results against fixture data
-- [ ] `safety_ae_by_soc.rq` groups by MedDRA SOC and returns correct subject count
-- [ ] `safety_dlt_by_cohort.rq` filters to grade ≥ 3 and groups by dose level
-- [ ] All three queries included in `expectations.json`
+- [x] Three SPARQL projections exist and return expected results against fixture data
+- [x] `safety_ae_by_soc.rq` groups by MedDRA SOC and returns correct subject count
+- [x] `safety_dlt_by_cohort.rq` filters to grade ≥ 3 and groups by dose level
+- [x] All three queries included in `expectations.json`
 
 ---
 
@@ -418,10 +418,10 @@
 - T-400-001-007: Rebuild docs; verify `cr:StatisticalAnalysisPlan` properties appear in `reference.html`; update `eop2.html` to explain the SAP-versioning pattern and the `sapAmends` chain
 
 #### Success Criteria
-- [ ] `cr:StatisticalAnalysisPlan` subclasses both `top:Evidence` and `top:Versioned`
-- [ ] SHACL shape enforces `sapVersion` and `sapGovernsStudy`
-- [ ] `eop2-conformant.ttl` includes an SAP with version and study link
-- [ ] An amended SAP linked via `cr:sapAmends` validates cleanly
+- [x] `cr:StatisticalAnalysisPlan` subclasses both `top:Evidence` and `top:Versioned`
+- [x] SHACL shape enforces `sapVersion` and `sapGovernsStudy`
+- [x] `eop2-conformant.ttl` includes an SAP with version and study link
+- [x] An amended SAP linked via `cr:sapAmends` validates cleanly
 
 ---
 
@@ -442,10 +442,10 @@
 - T-400-002-008: Rebuild docs; verify estimand properties appear in `reference.html`; update `eop2.html` with a four-component estimand worked example linking to ICH E9(R1)
 
 #### Success Criteria
-- [ ] `cr:Estimand` has all four ICH E9(R1) components as declared properties
-- [ ] `sh:in` constraint rejects intercurrent event strategies outside the five ICH values
-- [ ] SHACL shape fires when any component is missing
-- [ ] Example estimand includes all four components and validates cleanly
+- [x] `cr:Estimand` has all four ICH E9(R1) components as declared properties
+- [x] `sh:in` constraint rejects intercurrent event strategies outside the five ICH values
+- [x] SHACL shape fires when any component is missing
+- [x] Example estimand includes all four components and validates cleanly
 
 ---
 
@@ -466,10 +466,10 @@
 - T-400-003-008: Rebuild docs; verify `cr:DataCut` appears in `reference.html`; update `eop2.html` to explain the data cut as the bitemporal anchor for analysis population queries
 
 #### Success Criteria
-- [ ] `cr:DataCut` class exists with `cutDate`, `cutForStudy`, `cutType`
-- [ ] SHACL shape enforces all three required properties
-- [ ] `enrollment_as_of_cut.rq` returns the correct enrolled subjects for the example data cut date
-- [ ] Bitemporal semantics: enrollment valid at cut date is correctly filtered using `top:validFrom`/`top:validUntil`
+- [x] `cr:DataCut` class exists with `cutDate`, `cutForStudy`, `cutType`
+- [x] SHACL shape enforces all three required properties
+- [x] `enrollment_as_of_cut.rq` returns the correct enrolled subjects for the example data cut date
+- [x] Bitemporal semantics: enrollment valid at cut date is correctly filtered using `top:validFrom`/`top:validUntil`
 
 ---
 
@@ -490,10 +490,10 @@
 - T-400-004-008: Rebuild docs; verify `cr:AnalysisPopulation` appears in `reference.html`; update `eop2.html` to show ITT/PP/safety population definitions with the data cut anchor pattern
 
 #### Success Criteria
-- [ ] `cr:AnalysisPopulation` exists with four coded population types
-- [ ] `cr:EndpointResult` has `cr:analysisBasis` linking to the population used
-- [ ] SPARQL query returns correct subject list for each population type
-- [ ] `eop2-conformant.ttl` updated to include an ITT population linked to the data cut
+- [x] `cr:AnalysisPopulation` exists with four coded population types
+- [x] `cr:EndpointResult` has `cr:analysisBasis` linking to the population used
+- [x] SPARQL query returns correct subject list for each population type
+- [x] `eop2-conformant.ttl` updated to include an ITT population linked to the data cut
 
 ---
 
@@ -520,11 +520,11 @@
 - T-500-001-008: Rebuild docs; update `interop.html` to include FHIR crosswalk table showing the seven mapped entity pairs with mapping predicates and confidence scores
 
 #### Success Criteria
-- [ ] `cr-to-fhir.ttl` exists with at minimum 7 mapped entity pairs
-- [ ] Each mapping carries `skos:mappingRelation`, `cx:confidence`, `cx:verificationStatus`, `cx:targetSchemaVersion`
-- [ ] `registry.md` updated
-- [ ] Crosswalk bundle dist artifact includes FHIR mappings
-- [ ] SSSOM export query includes FHIR mappings in its output
+- [x] `cr-to-fhir.ttl` exists with at minimum 7 mapped entity pairs
+- [x] Each mapping carries `skos:mappingRelation`, `cx:confidence`, `cx:verificationStatus`, `cx:targetSchemaVersion`
+- [x] `registry.md` updated
+- [x] Crosswalk bundle dist artifact includes FHIR mappings
+- [x] SSSOM export query includes FHIR mappings in its output
 
 ---
 
@@ -544,10 +544,10 @@
 - T-500-002-007: Rebuild docs; verify expanded projection appears in `reference.html` projections table; update `interop.html` FHIR section to show the ResearchStudy bundle reconstruction pattern
 
 #### Success Criteria
-- [ ] Projection covers ResearchStudy + arm + enrollment criteria + ResearchSubject
-- [ ] Output structure is valid FHIR R4 JSON-LD when run against LY900018 fixture
-- [ ] `expectations.json` updated with expected entity count
-- [ ] Cross-reference with `cr-to-fhir.ttl` — projection uses the same mapped predicates
+- [x] Projection covers ResearchStudy + arm + enrollment criteria + ResearchSubject
+- [x] Output structure is valid FHIR R4 JSON-LD when run against LY900018 fixture
+- [x] `expectations.json` updated with expected entity count
+- [x] Cross-reference with `cr-to-fhir.ttl` — projection uses the same mapped predicates
 
 ---
 
@@ -567,10 +567,10 @@
 - T-500-003-007: Rebuild docs; verify `cr:InformedConsent` properties appear in `reference.html`; update `participant.html` consent section to show version, form IRI, witness, and withdrawal date as a complete consent record pattern
 
 #### Success Criteria
-- [ ] `cr:InformedConsent` has `consentVersion`, `consentFormIRI`, `witnessedBy`, `withdrawalDate`
-- [ ] SHACL violation fires when `withdrawalDate` precedes the consent `validFrom`
-- [ ] Participant conformant example uses the enriched consent
-- [ ] FHIR crosswalk `cr:InformedConsent → fhir:Consent` mapping is viable (noted in `cr-to-fhir.ttl`)
+- [x] `cr:InformedConsent` has `consentVersion`, `consentFormIRI`, `witnessedBy`, `withdrawalDate`
+- [x] SHACL violation fires when `withdrawalDate` precedes the consent `validFrom`
+- [x] Participant conformant example uses the enriched consent
+- [x] FHIR crosswalk `cr:InformedConsent → fhir:Consent` mapping is viable (noted in `cr-to-fhir.ttl`)
 
 ---
 
@@ -592,11 +592,11 @@
 - T-500-004-009: Rebuild docs; update `interop.html` to add a FHIR ingestion worked example alongside the USDM transformer example, showing the parallel structure and entity mapping
 
 #### Success Criteria
-- [ ] Transformer exists and runs without errors against the fixture
-- [ ] Output entities pass pyshacl validation with zero violations
-- [ ] Emitted entity types: at minimum `cr:Study`, `cr:Arm`, `cr:EligibilityCriterion`
-- [ ] Universal DNA (identifier, status, observedAt) present on every emitted entity
-- [ ] Coverage note documents which FHIR Bundle elements are mapped and which are out of scope
+- [x] Transformer exists and runs without errors against the fixture
+- [x] Output entities pass pyshacl validation with zero violations
+- [x] Emitted entity types: at minimum `cr:Study`, `cr:Arm`, `cr:EligibilityCriterion`
+- [x] Universal DNA (identifier, status, observedAt) present on every emitted entity
+- [x] Coverage note documents which FHIR Bundle elements are mapped and which are out of scope
 
 ---
 
@@ -622,11 +622,11 @@
 - T-600-001-007: Rebuild docs; verify `cr:ConsentWithdrawal` appears in `reference.html`; update `participant.html` to show the consent withdrawal event closing the valid-time interval and flagging post-withdrawal observations
 
 #### Success Criteria
-- [ ] `cr:ConsentWithdrawal` exists and links to the consent it closes
-- [ ] SHACL SPARQL constraint detects observations recorded after withdrawal date
-- [ ] Conformant example (no post-withdrawal observations) validates cleanly
-- [ ] Violation example (post-withdrawal observation) produces the expected violation message
-- [ ] `withdrawalReason` constrained to coded values via `sh:in`
+- [x] `cr:ConsentWithdrawal` exists and links to the consent it closes
+- [x] SHACL SPARQL constraint detects observations recorded after withdrawal date
+- [x] Conformant example (no post-withdrawal observations) validates cleanly
+- [x] Violation example (post-withdrawal observation) produces the expected violation message
+- [x] `withdrawalReason` constrained to coded values via `sh:in`
 
 ---
 
@@ -646,10 +646,10 @@
 - T-600-002-007: Rebuild docs; verify `cr:LawfulBasis` individuals appear in `reference.html`; add a GDPR lawful basis section to `foundation.html` or a new compliance page explaining Article 9(2)(j) and the `top:governedBy` pattern
 
 #### Success Criteria
-- [ ] `cr:LawfulBasis` and three GDPR Article individuals exist
-- [ ] SHACL shape fires when an EU-governed study lacks a lawful basis declaration
-- [ ] Study example includes `top:governedBy cr:GDPR_Art9_2_j`
-- [ ] SPARQL query "list all studies with their GDPR lawful basis" returns results
+- [x] `cr:LawfulBasis` and three GDPR Article individuals exist
+- [x] SHACL shape fires when an EU-governed study lacks a lawful basis declaration
+- [x] Study example includes `top:governedBy cr:GDPR_Art9_2_j`
+- [x] SPARQL query "list all studies with their GDPR lawful basis" returns results
 
 ---
 
@@ -670,10 +670,10 @@
 - T-600-003-008: Rebuild docs; verify `cr:DataProcessingAgreement` appears in `reference.html`; add a Data Processing Agreement section to `foundation.html` or a new compliance page showing the controller/processor/lawful-basis pattern
 
 #### Success Criteria
-- [ ] `cr:DataProcessingAgreement` exists with four required properties
-- [ ] SHACL shape enforces all required fields
-- [ ] Conformant example validates cleanly
-- [ ] SPARQL query "list all DPAs for a given study" returns the example DPA
+- [x] `cr:DataProcessingAgreement` exists with four required properties
+- [x] SHACL shape enforces all required fields
+- [x] Conformant example validates cleanly
+- [x] SPARQL query "list all DPAs for a given study" returns the example DPA
 
 ---
 
@@ -696,10 +696,10 @@
 - T-600-004-010: Rebuild docs; verify `cr:RetentionPolicy` and `cr:DataSubjectRequest` appear in `reference.html`; update `participant.html` to explain the data subject rights model and show the overdue-DSAR query
 
 #### Success Criteria
-- [ ] `cr:RetentionPolicy` and `cr:DataSubjectRequest` exist with all declared properties
-- [ ] `gdpr_data_map.rq` returns all transitively linked entities for a given person IRI in the participant example
-- [ ] `overdue_dsar.rq` correctly identifies overdue requests in a fixture
-- [ ] `dsrType` constrained to four coded values via `sh:in`
+- [x] `cr:RetentionPolicy` and `cr:DataSubjectRequest` exist with all declared properties
+- [x] `gdpr_data_map.rq` returns all transitively linked entities for a given person IRI in the participant example
+- [x] `overdue_dsar.rq` correctly identifies overdue requests in a fixture
+- [x] `dsrType` constrained to four coded values via `sh:in`
 
 ---
 
@@ -726,11 +726,11 @@
 - T-700-001-008: Rebuild dist; update `interop.html` to show the USDM coverage gap table and the expanded mapping count
 
 #### Success Criteria
-- [ ] `cx:targetSchemaVersion` declared on the crosswalk file
-- [ ] At least 5 new mapping entries added
-- [ ] Gap table comment lists all USDM classes with status: mapped/partial/out-of-scope/future
-- [ ] SSSOM export query output reflects the new mappings
-- [ ] `registry.md` coverage percentage updated
+- [x] `cx:targetSchemaVersion` declared on the crosswalk file
+- [x] At least 5 new mapping entries added
+- [x] Gap table comment lists all USDM classes with status: mapped/partial/out-of-scope/future
+- [x] SSSOM export query output reflects the new mappings
+- [x] `registry.md` coverage percentage updated
 
 ---
 
@@ -751,11 +751,11 @@
 - T-700-002-008: Rebuild dist; add a MedDRA section to `interop.html` (or `safety.html`) explaining the licensing constraint, the IRI-pattern-only approach, and the annual version-pin update process
 
 #### Success Criteria
-- [ ] `cr-to-meddra.ttl` exists with NOTICE block and at least 5 mapping entries
-- [ ] `cx:targetSchemaVersion "26.0"` declared
-- [ ] Licensing notice present and accurate
-- [ ] SSSOM export query includes MedDRA mappings in output
-- [ ] `registry.md` updated with MedDRA entry and licensing note
+- [x] `cr-to-meddra.ttl` exists with NOTICE block and at least 5 mapping entries
+- [x] `cx:targetSchemaVersion "26.0"` declared
+- [x] Licensing notice present and accurate
+- [x] SSSOM export query includes MedDRA mappings in output
+- [x] `registry.md` updated with MedDRA entry and licensing note
 
 ---
 
@@ -776,11 +776,11 @@
 - T-700-003-008: Rebuild dist; add an SDTM section to `interop.html` showing the domain-level mapping table and cross-referencing the corresponding SPARQL projections
 
 #### Success Criteria
-- [ ] `cr-to-sdtm.ttl` exists with domain-level and variable-level mappings
-- [ ] At least 4 SDTM domain mappings (AE, DM, EX, SV)
-- [ ] Each domain mapping notes the corresponding SPARQL projection file
-- [ ] SSSOM export includes SDTM mappings
-- [ ] `cx:targetSchemaVersion` declared
+- [x] `cr-to-sdtm.ttl` exists with domain-level and variable-level mappings
+- [x] At least 4 SDTM domain mappings (AE, DM, EX, SV)
+- [x] Each domain mapping notes the corresponding SPARQL projection file
+- [x] SSSOM export includes SDTM mappings
+- [x] `cx:targetSchemaVersion` declared
 
 ---
 
@@ -798,10 +798,10 @@
 - T-700-004-005: Update `registry.md` docs to include the full versioning governance section; add a crosswalk maintenance callout to `interop.html` explaining the review-on-schema-update policy
 
 #### Success Criteria
-- [ ] All crosswalk files have `cx:targetSchemaVersion` and `cx:targetSchemaIRI` declared
-- [ ] `crosswalk_check.py` runs without error and reports HTTP status for each target IRI
-- [ ] Policy section added to `registry.md`
-- [ ] Running `crosswalk_check.py` on the existing files returns 200 for all resolvable IRIs
+- [x] All crosswalk files have `cx:targetSchemaVersion` and `cx:targetSchemaIRI` declared
+- [x] `crosswalk_check.py` runs without error and reports HTTP status for each target IRI
+- [x] Policy section added to `registry.md`
+- [x] Running `crosswalk_check.py` on the existing files returns 200 for all resolvable IRIs
 
 ---
 
@@ -827,10 +827,10 @@
 - T-800-001-007: Rebuild docs; update `foundation.html` AI/provenance section to show the `top:Conclusion` reproducibility properties and the `top:AutonomousAgent` model identity pattern
 
 #### Success Criteria
-- [ ] `top:Conclusion` has `top:promptTemplate`, `top:sourceContext`, `top:modelVersion` as declared properties
-- [ ] `top:AutonomousAgent` has `top:modelVersion`
-- [ ] SHACL Warning fires when an LLM-generated conclusion (detected by `cx:inferredBy`) lacks `top:promptTemplate`
-- [ ] Example conclusion entity includes all three new properties
+- [x] `top:Conclusion` has `top:promptTemplate`, `top:sourceContext`, `top:modelVersion` as declared properties
+- [x] `top:AutonomousAgent` has `top:modelVersion`
+- [x] SHACL Warning fires when an LLM-generated conclusion (detected by `cx:inferredBy`) lacks `top:promptTemplate`
+- [x] Example conclusion entity includes all three new properties
 
 ---
 
@@ -849,10 +849,10 @@
 - T-800-002-006: Rebuild docs; add the human-in-the-loop constraint to `reference.html` under the crosswalk shapes section; update `interop.html` to explain the `cx:inferredBy` / `cx:confirmedBy` promotion gate
 
 #### Success Criteria
-- [ ] A `cx:Mapping` with `reviewStatus "confirmed"` but no `cx:confirmedBy` produces a SHACL Violation
-- [ ] A `cx:Mapping` with `cx:inferredBy` but `reviewStatus "confirmed"` and no `cx:confirmedBy` produces a Violation
-- [ ] Violation example validates as expected under pyshacl
-- [ ] Existing `crosswalk-mapping-violation.ttl` example is not broken by the new shapes
+- [x] A `cx:Mapping` with `reviewStatus "confirmed"` but no `cx:confirmedBy` produces a SHACL Violation
+- [x] A `cx:Mapping` with `cx:inferredBy` but `reviewStatus "confirmed"` and no `cx:confirmedBy` produces a Violation
+- [x] Violation example validates as expected under pyshacl
+- [x] Existing `crosswalk-mapping-violation.ttl` example is not broken by the new shapes
 
 ---
 
@@ -872,10 +872,10 @@
 - T-800-003-007: Add a new `ai.html` page (or `graphrag.html`) via `build_docs.py` surfacing the recipe; link from the main nav under Cross-cutting; ensure `foundation.html` references the AI/provenance model page
 
 #### Success Criteria
-- [ ] Recipe document exists with all five sections (retrieval, vector step, LLM template, output schema, code sketch)
-- [ ] SPARQL query in the recipe runs against the LY900018 EligibilityCriterion fixture
-- [ ] Output schema references `top:Conclusion` with `top:promptTemplate`, `top:confidence`, and `top:rationale`
-- [ ] Document is referenced from `AI-900` section of documentation site
+- [x] Recipe document exists with all five sections (retrieval, vector step, LLM template, output schema, code sketch)
+- [x] SPARQL query in the recipe runs against the LY900018 EligibilityCriterion fixture
+- [x] Output schema references `top:Conclusion` with `top:promptTemplate`, `top:confidence`, and `top:rationale`
+- [x] Document is referenced from `AI-900` section of documentation site
 
 ---
 
@@ -901,10 +901,10 @@
 - T-900-001-007: Update `cr-domain/README.md` to include a Testing section with `python3 tests/run_shacl.py` as the primary validation command and a description of the manifest format
 
 #### Success Criteria
-- [ ] `run_shacl.py` runs against all 98 examples with zero unexpected failures on current codebase
-- [ ] `manifest.json` has an entry for every example file
-- [ ] Script exits 0 on the current codebase; exits non-zero when a violation example produces no violation (regression test)
-- [ ] README documents `python3 tests/run_shacl.py` as the test command
+- [x] `run_shacl.py` runs against all 98 examples with zero unexpected failures on current codebase
+- [x] `manifest.json` has an entry for every example file
+- [x] Script exits 0 on the current codebase; exits non-zero when a violation example produces no violation (regression test)
+- [x] README documents `python3 tests/run_shacl.py` as the test command
 
 ---
 
@@ -923,10 +923,10 @@
 - T-900-002-006: Update `cr-domain/README.md` Testing section to include `python3 tests/run_projections.py` and document how to update `expectations.json` after adding new fixture data
 
 #### Success Criteria
-- [ ] All 21 projections run without SPARQL syntax errors
-- [ ] Every projection returns at least the expected minimum row count against LY900018 fixture
-- [ ] `expectations.json` fully populated
-- [ ] Script exits 0 on current codebase
+- [x] All 21 projections run without SPARQL syntax errors
+- [x] Every projection returns at least the expected minimum row count against LY900018 fixture
+- [x] `expectations.json` fully populated
+- [x] Script exits 0 on current codebase
 
 ---
 
@@ -944,9 +944,9 @@
 - T-900-003-005: Update `ingestion.html` to include a validation step in the LY900018 worked example showing the SHACL conformance result and any triaged warnings
 
 #### Success Criteria
-- [ ] Transformer output for LY900018 produces zero SHACL violations
-- [ ] Any warnings are documented and triaged
-- [ ] Validation runs automatically after `build_dist.py` in the test sequence
+- [x] Transformer output for LY900018 produces zero SHACL violations
+- [x] Any warnings are documented and triaged
+- [x] Validation runs automatically after `build_dist.py` in the test sequence
 
 ---
 
@@ -966,10 +966,10 @@
 - T-900-004-007: Update `foundation.html` to include the semantic versioning policy (MAJOR/MINOR/PATCH definitions), the deprecation pattern, and a link to `CHANGELOG.md`
 
 #### Success Criteria
-- [ ] `CHANGELOG.md` exists with `v1.0.0` entry listing current capabilities
-- [ ] `owl:versionIRI` present in dist bundle
-- [ ] Versioning policy documented in Foundation page
-- [ ] Deprecation pattern example present in documentation
+- [x] `CHANGELOG.md` exists with `v1.0.0` entry listing current capabilities
+- [x] `owl:versionIRI` present in dist bundle
+- [x] Versioning policy documented in Foundation page
+- [x] Deprecation pattern example present in documentation
 
 ---
 
@@ -989,10 +989,10 @@
 - T-900-005-007: Update `foundation.html` and `implementation.html` with the canonical context URL, hosting options comparison, the fallback pattern, and a live/not-yet-live status indicator
 
 #### Success Criteria
-- [ ] Context URL hosting plan documented in Foundation page
-- [ ] Fallback pattern implemented in the USDM transformer
-- [ ] `check_context_url.py` correctly distinguishes live URL from 404
-- [ ] Build pipeline warns (not errors) when context URL is not yet live
+- [x] Context URL hosting plan documented in Foundation page
+- [x] Fallback pattern implemented in the USDM transformer
+- [x] `check_context_url.py` correctly distinguishes live URL from 404
+- [x] Build pipeline warns (not errors) when context URL is not yet live
 
 ---
 
