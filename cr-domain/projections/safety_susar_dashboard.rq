@@ -1,0 +1,15 @@
+# safety_susar_dashboard.rq — Open SUSARs with deadline and submission status (US-300-005).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?susar ?sponsorAwareAt ?reportingDeadline ?submissionDate
+       (IF(BOUND(?submissionDate), "submitted", "open") AS ?status)
+       (IF(BOUND(?submissionDate) && ?submissionDate > xsd:date(?reportingDeadline), "LATE", "ok") AS ?timeliness)
+WHERE {
+  ?susar a cr:SUSAR ;
+         cr:sponsorAwareAt ?sponsorAwareAt ;
+         cr:reportingDeadline ?reportingDeadline .
+  OPTIONAL { ?susar cr:submissionDate ?submissionDate . }
+}
+ORDER BY ?reportingDeadline

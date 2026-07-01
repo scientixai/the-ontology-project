@@ -1,0 +1,17 @@
+# safety_dlt_by_cohort.rq — DLTs per cohort/dose level with CTCAE grade (US-300-005).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?cohort ?doseLevel ?ctcaeTerm ?ctcaeGrade (COUNT(?dlt) AS ?dltCount)
+WHERE {
+  ?dlt a cr:DoseLimitingToxicity ;
+       cr:ctcaeGrade ?ctcaeGrade .
+  FILTER ( ?ctcaeGrade >= 3 )
+  OPTIONAL { ?dlt cr:ctcaeTerm ?ctcaeTerm . }
+  OPTIONAL { ?dlt cr:forSubject ?subject .
+             ?subject cr:inCohort ?cohort .
+             ?cohort cr:atDoseLevel ?doseLevel . }
+}
+GROUP BY ?cohort ?doseLevel ?ctcaeTerm ?ctcaeGrade
+ORDER BY ?doseLevel DESC(?ctcaeGrade)

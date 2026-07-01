@@ -1,0 +1,21 @@
+# analysis_population_membership.rq — Subjects in a named analysis population at the data cut (US-400-004).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?population ?populationType ?cut ?cutDate ?subject
+WHERE {
+  ?population a cr:AnalysisPopulation ;
+              cr:populationType ?populationType ;
+              cr:populationForCut ?cut .
+  ?cut cr:cutDate ?cutDate .
+  ?enrollment a cr:Enrollment ;
+              cr:asSubject ?subject ;
+              top:validFrom ?validFrom .
+  FILTER ( ?validFrom <= ?cutDate )
+  FILTER NOT EXISTS {
+    ?enrollment top:validUntil ?validUntil .
+    FILTER ( ?validUntil <= ?cutDate )
+  }
+}
+ORDER BY ?population ?subject

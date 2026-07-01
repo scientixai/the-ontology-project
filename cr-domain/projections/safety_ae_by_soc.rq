@@ -1,0 +1,14 @@
+# safety_ae_by_soc.rq — Adverse events grouped by MedDRA SOC and PT with subject counts (US-300-005).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?soc ?pt (COUNT(DISTINCT ?subject) AS ?subjectCount) (COUNT(?ae) AS ?aeCount)
+WHERE {
+  ?ae a cr:AdverseEvent ;
+      cr:meddraSystemOrganClass ?soc ;
+      cr:meddraPreferredTerm ?pt .
+  OPTIONAL { ?ae cr:forSubject ?subject . }
+}
+GROUP BY ?soc ?pt
+ORDER BY ?soc ?pt

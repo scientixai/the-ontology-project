@@ -212,5 +212,26 @@
         "budStatus": "complete"
       }
     ]
+  },
+  {
+    "query": "projections/safety_ae_by_soc.rq",
+    "desc": "AEs grouped by MedDRA SOC and PT with subject counts",
+    "source": "examples/safety-sae.ttl",
+    "expect_min_rows": 1,
+    "expect_vars": ["soc", "pt", "subjectCount", "aeCount"]
+  },
+  {
+    "query": "projections/safety_susar_dashboard.rq",
+    "desc": "SUSAR dashboard with deadline and submission timeliness",
+    "source": "examples/safety-sae.ttl",
+    "expect_min_rows": 0,
+    "expect_vars": ["susar", "sponsorAwareAt", "reportingDeadline", "submissionDate", "status", "timeliness"]
+  },
+  {
+    "query": "projections/safety_dlt_by_cohort.rq",
+    "desc": "DLTs per cohort/dose level filtered to CTCAE grade >= 3",
+    "source": "examples/safety-sae.ttl",
+    "expect_min_rows": 0,
+    "expect_vars": ["cohort", "doseLevel", "ctcaeTerm", "ctcaeGrade", "dltCount"]
   }
 ]
