@@ -1,0 +1,124 @@
+@prefix ex:     <https://top.scientix.ai/examples/> .
+@prefix cx:     <https://top.scientix.ai/crosswalk/v1#> .
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix top:    <https://top.scientix.ai/v1#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix sdtm:   <https://www.cdisc.org/standards/foundational/sdtm/v3.4/> .
+@prefix loinc:  <https://loinc.org/> .
+@prefix qudt:   <http://qudt.org/vocab/unit/> .
+
+# OWNED crosswalk: TOP DTA/DTS module <-> external standards.
+# The SDTM target is a PROJECTION, never a stored authoring target — these
+# mappings are what the projection ruleset renders through, not a hand map a
+# sponsor fills in. Every mapping passes the hardened curation gate
+# (shapes/crosswalk.ttl): controlled predicate + semapv justification +
+# confidence + date + author + verification status + transaction time + PROV.
+#
+# Target IRIs:
+#   * loinc:2951-2 — verified against HL7 FHIR official package data
+#     (Observation-serum-sodium: "Sodium [Moles/volume] in Serum or Plasma").
+#   * qudt:MilliMOL-PER-L — QUDT unit (dereferenceable) for the UCUM code
+#     "mmol/L" (UCUM milli = m, 1e-3; verified against ucum-org/ucum essence).
+#   * sdtm:* — CDISC SDTM v3.4 LB domain variables.
+
+ex:curator-dta a prov:Agent ; rdfs:label "TOP DTA curation WG" .
+
+####################################################################
+# Concept binding — the ~80-90% of central-lab analytes LOINC covers.
+# Resolve, don't map: seed the resolver with the canonical anchor.
+####################################################################
+ex:map-sodium-loinc a cx:Mapping ;
+    cx:subjectId   ex:concept-sodium ;
+    cx:predicateId skos:exactMatch ;
+    cx:objectId    loinc:2951-2 ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.98"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-02"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "HL7 FHIR fhir.argonaut.r2 Observation-serum-sodium.json (raw.githubusercontent.com/FHIR/packages)" ;
+    rdfs:comment "The Sodium BiomedicalConcept binds to LOINC 2951-2 (Serum/Plasma, Moles/volume). Concept-first: SDTM LBTESTCD=SODIUM is then a projection of this binding." ;
+    top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+####################################################################
+# Unit — UCUM handled by canonical conversion, not per-DTA notes.
+####################################################################
+ex:map-unit-mmoll a cx:Mapping ;
+    cx:subjectId   cr:declaredUnitConcept ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    qudt:MilliMOL-PER-L ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.95"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-02"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "UCUM essence v2.2 (ucum-org/ucum): milli=m 1e-3; unit code 'mmol/L'" ;
+    rdfs:comment "Declared units resolve to UCUM (QUDT IRI for the UCUM code mmol/L). mEq/L->mmol/L etc. is canonical conversion, not a per-DTA note." ;
+    top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+####################################################################
+# DataElementSpecification -> SDTM LB variables (projection target only).
+# Seeded from the CDISC LAB v2.0 / SDTM LB transfer variable list.
+####################################################################
+ex:map-element-lbtestcd a cx:Mapping ;
+    cx:subjectId   cr:DataElementSpecification ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:LBTESTCD ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.90"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-02"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4 (LB domain)" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "A DataElementSpecification's bound concept projects to SDTM LBTESTCD (the test short name)." ;
+    top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+ex:map-element-lborres a cx:Mapping ;
+    cx:subjectId   cr:DataElementSpecification ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:LBORRES ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.90"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-02"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4 (LB domain)" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "The transferred value projects to SDTM LBORRES (original result)." ;
+    top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+ex:map-element-lborresu a cx:Mapping ;
+    cx:subjectId   cr:declaredUnitConcept ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:LBORRESU ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.90"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-02"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4 (LB domain)" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "The UCUM-canonical unit projects to SDTM LBORRESU." ;
+    top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+####################################################################
+# Encounter alias -> canonical visit projects to SDTM VISITNUM.
+####################################################################
+ex:map-encounter-visitnum a cx:Mapping ;
+    cx:subjectId   cr:aliasResolvesTo ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:VISITNUM ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-02"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4 (SV/VISITNUM)" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "A vendor visit label resolved to a canonical cr:Visit projects to SDTM VISITNUM — the alias corpus, not a per-DTA ENCOUNTER_MAPPING row." ;
+    top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .

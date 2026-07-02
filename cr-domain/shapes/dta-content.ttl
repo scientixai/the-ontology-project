@@ -1,0 +1,49 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# DTS content conformance (§6). These are the "Data Validation & Quality" rows the
+# DTA MVP Inventory marked "too complex — not included." Here they are executable.
+# All shapes target DTA classes only, so they are inert against non-DTA graphs.
+
+# ── DataElementSpecification: concept-first binding is mandatory ──────────────
+cr:DataElementConceptBoundShape a sh:NodeShape ;
+    rdfs:label "Every data element must bind to a canonical concept (hard)" ;
+    sh:targetClass cr:DataElementSpecification ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:boundConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A DataElementSpecification with no bound BiomedicalConcept is non-conformant: the SDTM target is a projection of the concept binding, so an unbound element can never be rendered." ;
+    ] ;
+    sh:property [
+        sh:path cr:declaredUnitConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A DataElementSpecification must declare its unit as a dereferenceable UCUM IRI (cr:declaredUnitConcept). A unit that does not resolve to UCUM is non-conformant — canonical conversion depends on it." ;
+    ] .
+
+# ── BiomedicalConcept: must carry at least one dereferenceable code ───────────
+cr:BiomedicalConceptCodedShape a sh:NodeShape ;
+    rdfs:label "A BiomedicalConcept must carry a dereferenceable code (hard)" ;
+    sh:targetClass cr:BiomedicalConcept ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:codedAs ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A BiomedicalConcept must be coded (cr:codedAs) to at least one dereferenceable terminology URI (LOINC/NCIt/SNOMED). Codes are Relationships to URIs, never string Properties." ;
+    ] .
+
+# ── Value-range coherence (soft) ─────────────────────────────────────────────
+cr:DataElementRangeShape a sh:NodeShape ;
+    rdfs:label "Value range low <= high (warning)" ;
+    sh:targetClass cr:DataElementSpecification ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "DataElementSpecification value range is inverted (cr:valueRangeLow > cr:valueRangeHigh)." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:valueRangeLow ?lo ; cr:valueRangeHigh ?hi .
+              FILTER ( ?lo > ?hi )
+            }
+        """ ;
+    ] .

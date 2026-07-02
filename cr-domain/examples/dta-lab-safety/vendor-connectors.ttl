@@ -1,0 +1,63 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Vendor connector catalog — TransferProfile defaults pre-populated from each
+# vendor's VERIFIED public documentation, so onboarding a vendor starts from a
+# catalog default rather than a blank DTA (answers open Q2: connectors modeled
+# under the TransferProfile placement — Scope declaration + Constraint shapes).
+# Every value is CT-valid, so all four validate cleanly against dta-profile.ttl.
+# Sources are the public API/export surfaces confirmed during research; see
+# docs/dta-design-notes.md for the full citation table.
+
+ex:connector-castor a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:castor-edc" ; top:status "active" ;
+    rdfs:label "Castor EDC connector" ;
+    cr:fileFormat "CSV" ;
+    cr:transmissionMethod "API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-demand" ;
+    cr:vendorApiStyle "OAuth2-REST" ;
+    cr:vendorDocumentation "https://data.castoredc.com/api"^^xsd:anyURI .
+    # OAuth2 client-credentials REST; /study/{id}/visit|form|field metadata;
+    # /export/data + /export/structure; audit-trail date_from/date_to incremental.
+
+ex:connector-veeva a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:veeva-cdms" ; top:status "active" ;
+    rdfs:label "Veeva Vault CDMS (EDC) connector" ;
+    cr:fileFormat "SAS-XPT" ;
+    cr:transmissionMethod "SFTP" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "daily" ;
+    cr:vendorApiStyle "REST-SDE-job" ;
+    cr:vendorDocumentation "https://developer-cdms.veevavault.com/api/25.2/"^^xsd:anyURI .
+    # Study Data Extract (SDE) async job -> ZIP of CSV/SAS/XPT + SYS_* datasets;
+    # FTP push option; CDB incremental SFF extracts; visit surface SYS_EVT.
+
+ex:connector-medidata a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:medidata-rws" ; top:status "active" ;
+    rdfs:label "Medidata Rave (RWS) connector" ;
+    cr:fileFormat "ODM-XML" ;
+    cr:transmissionMethod "API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "daily" ;
+    cr:vendorApiStyle "RWS-ODM" ;
+    cr:vendorDocumentation "https://learn.medidata.com/en-US/bundle/rave-web-services/page/get_started_with_rave_web_services.html"^^xsd:anyURI .
+    # RWS returns CDISC ODM 1.3; datasets/regular|raw with ?start= incremental;
+    # ClinicalAuditRecords.odm startid cursor; StudyEventDef mdsol:TargetDays/
+    # StartWinDays/EndWinDays give visit windows for canonical-schedule mapping.
+
+ex:connector-oracle a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:oracle-clinical-one" ; top:status "active" ;
+    rdfs:label "Oracle Clinical One connector" ;
+    cr:fileFormat "ODM-XML" ;
+    cr:transmissionMethod "API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-demand" ;
+    cr:vendorApiStyle "OAuth2-REST" ;
+    cr:vendorDocumentation "https://docs.oracle.com/en/industries/life-sciences/clinical-one/coapi/"^^xsd:anyURI .
+    # ODM-XML extract API (Data Hub), Snapshot vs Transactional (incremental,
+    # default Transactional); IntegrationVisit visitRefname/visitTitle for
+    # visit-label mapping; also CSV/SAS-XPT Subject Data Extract.

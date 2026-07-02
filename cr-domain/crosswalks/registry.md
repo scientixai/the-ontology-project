@@ -59,6 +59,22 @@ boundary. These are deliberately re-graded or rejected here:
 - **`InformedConsent` → `cr:InformedConsent` rejected:** no `InformedConsent` class exists in
   USDM v4.0.0 (verified against the pinned spec).
 
+## DTA/DTS crosswalks (`crosswalks/dta-to-external.ttl` + `dta-encounter-alias.sssom.tsv`)
+Bind the DTA/DTS content layer to external standards; SDTM is a **projection target**, not a
+stored authoring target. Verified anchors:
+
+| subject | predicate | external target (verified IRI) | conf | source |
+|---|---|---|---|---|
+| `ex:concept-sodium` (BiomedicalConcept) | exactMatch | `loinc:2951-2` "Sodium [Moles/volume] in Serum or Plasma" | 0.98 | HL7 FHIR `fhir.argonaut.r2` Observation-serum-sodium |
+| `cr:declaredUnitConcept` | closeMatch | `qudt:MilliMOL-PER-L` (UCUM `mmol/L`) | 0.95 | `ucum-org/ucum` essence v2.2 (milli=m, 1e-3) |
+| `cr:DataElementSpecification` | relatedMatch | `sdtm:LBTESTCD`, `sdtm:LBORRES` | 0.90 | CDISC SDTM v3.4 LB domain |
+| `cr:declaredUnitConcept` | relatedMatch | `sdtm:LBORRESU` | 0.90 | CDISC SDTM v3.4 LB domain |
+| `cr:aliasResolvesTo` | relatedMatch | `sdtm:VISITNUM` | 0.85 | CDISC SDTM v3.4 SV |
+
+`dta-encounter-alias.sssom.tsv` is the compounding vendor-visit alias corpus — the DTA group's
+per-DTA `ENCOUNTER_MAPPING` re-modeled as resolve-once. Low-confidence rows (< 0.85) route to
+attestation. See `docs/dta-design-notes.md`.
+
 ## Not mapped (honest gaps)
 - **CTO (Clinical Trial Ontology):** its core defines registry-identifier terms, not a clean
   "clinical trial" class (the concept is imported) — no defensible target, mapping dropped.

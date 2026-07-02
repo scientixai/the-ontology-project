@@ -1,0 +1,69 @@
+@prefix ex:    <https://top.scientix.ai/examples/> .
+@prefix cr:    <https://top.scientix.ai/cr/v1#> .
+@prefix hcls:  <https://top.scientix.ai/hcls/v1#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+# DELIBERATELY BROKEN counterpart of sodium-conformant.ttl — proves the DTA
+# shapes bite. Each defect below is a documented Violation the DTA MVP working
+# group deferred as "too complex for MVP"; here they are caught at ingestion.
+#
+#   1. DataElementSpecification with NO bound concept and NO unit  (dta-content)
+#   2. TransferProfile.fileFormat outside controlled terminology   (dta-profile)
+#   3. VendorAlias neither resolved nor attested                   (dta-resolution)
+#   4. DataTransferAgreement ratified by an Attestation with no
+#      backing Credential                                          (dta-agreement)
+#   5. TransferAmendment that names no affected specification       (dta-agreement)
+
+ex:vendor-b a hcls:Organization ;
+    top:identifier "urn:org:VendorB" ; top:status "active" .
+
+# (4) signatory attestation with NO cr:backedByCredential
+ex:attest-bad a cr:Attestation ;
+    top:identifier "urn:attest:bad" ; top:status "active" ;
+    top:observedAt "2026-02-01T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T09:00:05Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-b .
+
+# (1) data element with no cr:boundConcept and no cr:declaredUnitConcept
+ex:de-bad a cr:DataElementSpecification ;
+    top:identifier "urn:de:bad" ;
+    rdfs:label "Unbound element (no concept, no unit)" .
+
+ex:dts-bad a cr:TransferSpecification ;
+    top:identifier "urn:dts:bad" ; top:status "active" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-b ;
+    cr:hasDataElement ex:de-bad .
+
+# (2) profile with a fileFormat outside CT + non-CT transmission fields
+ex:profile-bad a cr:TransferProfile ;
+    top:identifier "urn:profile:bad" ; top:status "active" ;
+    cr:fileFormat "ProprietaryBlob" ;
+    cr:transmissionMethod "carrier-pigeon" ;
+    cr:transmissionType "whenever" .
+
+# (3) vendor alias that neither resolves nor is attested
+ex:alias-bad a cr:VendorAlias ;
+    top:identifier "urn:alias:bad" ; top:status "active" ;
+    cr:vendorTerm "NA_MYSTERY_COLUMN" .
+
+ex:dta-bad a cr:DataTransferAgreement ;
+    top:identifier "urn:dta:bad" ; top:status "active" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-b ;
+    cr:packagesSpecification ex:dts-bad ;
+    cr:referencesProfile ex:profile-bad ;
+    cr:ratifiedBy ex:attest-bad .
+
+# (5) amendment that names no affected specification
+ex:amend-bad a cr:TransferAmendment ;
+    top:identifier "urn:amend:bad" ; top:status "active" ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-b ;
+    cr:effectiveFrom "2026-03-15T00:00:00Z"^^xsd:dateTime .

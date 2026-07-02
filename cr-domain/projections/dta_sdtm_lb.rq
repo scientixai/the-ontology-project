@@ -1,0 +1,41 @@
+# CDISC SDTM — LB (Laboratory) domain, projected from the native transfer graph.
+# The SDTM target is a VIEW rendered from the concept binding + crosswalk, never
+# a stored authoring target (§7, tier T2: structural automation complete; the
+# study-specific tail — LBTESTCD short-name choice — is an attestation step).
+#
+# Column mapping:
+#   DOMAIN   = "LB" (literal)
+#   USUBJID  ← StudySubject.subjectId
+#   LBLOINC  ← BiomedicalConcept.codedAs (the LOINC anchor; LBTESTCD/LBTEST are
+#              rendered from this via the dta-concept crosswalk at projection)
+#   LBORRES  ← AssayResult rdf:value (original result as delivered)
+#   LBORRESU ← DataElementSpecification.declaredUnitConcept (UCUM-canonical unit)
+#   VISIT    ← the canonical cr:Visit the vendor visit-label resolved to
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?USUBJID ("LB" AS ?DOMAIN) ?LBLOINC ?LBORRES ?LBORRESU ?VISIT
+WHERE {
+  ?r a cr:AssayResult ;
+     cr:forSubject ?subj ;
+     rdf:value ?LBORRES .
+  ?subj cr:subjectId ?USUBJID .
+
+  # concept binding: result -> vendor alias -> canonical concept -> LOINC code
+  ?r cr:resolvedFrom ?colAlias .
+  ?colAlias cr:aliasResolvesTo ?concept .
+  ?concept a cr:BiomedicalConcept ; cr:codedAs ?LBLOINC .
+
+  # unit: from the data element that binds the same concept
+  ?de a cr:DataElementSpecification ;
+      cr:boundConcept ?concept ;
+      cr:declaredUnitConcept ?LBORRESU .
+
+  # visit: result -> visit alias -> canonical cr:Visit
+  ?r cr:resolvedFrom ?visitAlias .
+  ?visitAlias cr:aliasResolvesTo ?visit .
+  ?visit a cr:Visit ; rdfs:label ?VISIT .
+}
+ORDER BY ?USUBJID ?LBLOINC

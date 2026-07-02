@@ -1,0 +1,72 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Vendor-alias resolution conformance (§6, §8). The alias corpus is where the
+# combinatorics collapse — but a confidently-wrong binding that clears the gate
+# is the lethal failure, so resolution is graded, and the unresolved-and-
+# unattested case is a hard Violation.
+
+# ── An alias must resolve to a canonical entity OR be attested at the catalog ─
+cr:VendorAliasResolvedShape a sh:NodeShape ;
+    rdfs:label "A vendor alias must resolve or be attested (hard)" ;
+    sh:targetClass cr:VendorAlias ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "VendorAlias neither resolves to a canonical entity (cr:aliasResolvesTo) nor carries a catalog Attestation (cr:resolutionAttestedBy). An unresolved, unattested vendor term cannot be admitted — it re-introduces the interpretation node." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:VendorAlias .
+              FILTER NOT EXISTS { $this cr:aliasResolvesTo ?c }
+              FILTER NOT EXISTS { $this cr:resolutionAttestedBy ?a }
+            }
+        """ ;
+    ] .
+
+# ── An alias must carry the raw vendor term it stands for ────────────────────
+cr:VendorAliasTermShape a sh:NodeShape ;
+    rdfs:label "A vendor alias must record the raw vendor term (hard)" ;
+    sh:targetClass cr:VendorAlias ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:vendorTerm ; sh:minCount 1 ; sh:datatype xsd:string ;
+        sh:message "A VendorAlias must record the raw vendor string (cr:vendorTerm) it resolves — provenance for the compounding corpus." ;
+    ] .
+
+# ── Low-confidence auto-resolution is flagged for attestation (soft) ─────────
+cr:VendorAliasConfidenceShape a sh:NodeShape ;
+    rdfs:label "Low-confidence resolution routes to attestation (warning)" ;
+    sh:targetClass cr:VendorAlias ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "VendorAlias resolved by a low-confidence match (cr:resolutionConfidence < 0.85) with no catalog Attestation — route to the attestation queue before admitting. Audit the confident population too, not just this flagged tail." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:resolutionConfidence ?c .
+              FILTER ( ?c < 0.85 )
+              FILTER NOT EXISTS { $this cr:resolutionAttestedBy ?a }
+            }
+        """ ;
+    ] .
+
+# ── Reference-version pinning drift (soft) ───────────────────────────────────
+cr:VendorAliasVersionPinShape a sh:NodeShape ;
+    rdfs:label "A resolved alias should pin the reference version it resolved against (warning)" ;
+    sh:targetClass cr:VendorAlias ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "VendorAlias resolves to a canonical entity but does not pin the reference version it resolved against (cr:resolvedAgainstVersion) — reference drift could silently re-write meaning." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:aliasResolvesTo ?c .
+              FILTER NOT EXISTS { $this cr:resolvedAgainstVersion ?v }
+            }
+        """ ;
+    ] .

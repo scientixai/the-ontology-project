@@ -27,21 +27,21 @@
     "desc": "TMF binding map projects artifact type -> domain class it concerns",
     "source": "examples/deviation-conformant.ttl",
     "expect_min_rows": 0,
-    "note": "relaxed to 0 min rows — fixture not yet updated for this projection"
+    "note": "relaxed to 0 min rows \u2014 fixture not yet updated for this projection"
   },
   {
     "query": "projections/sdtm_dm.rq",
     "desc": "SDTM DM row projects from native enrollment",
     "source": "examples/oncology-fih-conformant.ttl",
     "expect_min_rows": 0,
-    "note": "relaxed to 0 min rows — fixture not yet updated for this projection"
+    "note": "relaxed to 0 min rows \u2014 fixture not yet updated for this projection"
   },
   {
     "query": "projections/sdtm_ae.rq",
     "desc": "SDTM AE row projects the DLT via subclass path",
     "source": "examples/oncology-fih-conformant.ttl",
     "expect_min_rows": 0,
-    "note": "relaxed to 0 min rows — fixture not yet updated for this projection"
+    "note": "relaxed to 0 min rows \u2014 fixture not yet updated for this projection"
   },
   {
     "query": "projections/usdm_study.rq",
@@ -186,7 +186,7 @@
     "source": "examples/startup-package-conformant.ttl",
     "expect_rows": [
       {
-        "site": "Site 701 — Denver",
+        "site": "Site 701 \u2014 Denver",
         "regStatus": "complete",
         "budStatus": "complete"
       }
@@ -203,7 +203,7 @@
       "subjectCount",
       "aeCount"
     ],
-    "note": "relaxed to 0 min rows — fixture not yet updated for this projection"
+    "note": "relaxed to 0 min rows \u2014 fixture not yet updated for this projection"
   },
   {
     "query": "projections/safety_susar_dashboard.rq",
@@ -230,6 +230,36 @@
       "ctcaeTerm",
       "ctcaeGrade",
       "dltCount"
+    ]
+  },
+  {
+    "query": "projections/dta_sdtm_lb.rq",
+    "desc": "SDTM LB row projects from the native transfer graph (concept binding + UCUM unit + resolved visit)",
+    "source": "examples/dta-lab-safety/sodium-conformant.ttl",
+    "expect_rows": [
+      {
+        "USUBJID": "S-001",
+        "DOMAIN": "LB",
+        "LBORRES": "140",
+        "LBLOINC": "https://loinc.org/2951-2",
+        "LBORRESU": "http://qudt.org/vocab/unit/MilliMOL-PER-L",
+        "VISIT": "Visit 3 (Week 4 / Day 29)"
+      }
+    ]
+  },
+  {
+    "query": "projections/dta_document.rq",
+    "desc": "Human-readable DTA document rendered from the fact graph (parties + operational envelope + spec)",
+    "source": "examples/dta-lab-safety/sodium-conformant.ttl",
+    "expect_rows": [
+      {
+        "dtaId": "urn:dta:acme-labsafety-v1",
+        "fileFormat": "SAS-XPT",
+        "method": "SFTP",
+        "type": "incremental",
+        "blinding": "none",
+        "signedBy": "Vendor QA lead (authorized signatory)"
+      }
     ]
   }
 ]

@@ -1,0 +1,186 @@
+@prefix ex:    <https://top.scientix.ai/examples/> .
+@prefix cr:    <https://top.scientix.ai/cr/v1#> .
+@prefix hcls:  <https://top.scientix.ai/hcls/v1#> .
+@prefix top:   <https://top.scientix.ai/v1#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix loinc: <https://loinc.org/> .
+@prefix qudt:  <http://qudt.org/vocab/unit/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE (§9) — one central-lab safety analyte, Sodium, end to end.
+# Mirrors the Interchange demo's Systolic-BP trace, in the vendor-transfer
+# context. CONFORMANT: passes every baseline shape + every dta-*.ttl shape.
+#
+#   Vendor delivers: column SODIUM, unit mEq/L, visit label "V3 D29", value 140.
+#   Resolve: SODIUM -> BiomedicalConcept(Sodium)=LOINC 2951-2 (high conf);
+#            mEq/L -> UCUM/QUDT mmol/L; "V3 D29" -> canonical cr:Visit 3.
+#   Graph: cr:AssayResult with DNA + full transfer bitemporal timeline + PROV.
+#   Validate: shapes confirm concept bound, unit resolvable, encounter
+#            resolved, signatory Credential-backed, amendment propagated.
+#   Project: same entity -> SDTM LB row, Dataset-JSON, Define-XML, DTA doc.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Parties ──────────────────────────────────────────────────────────────────
+ex:vendor-centrallab a hcls:Organization ;
+    top:identifier "urn:org:AcmeCentralLab" ; top:status "active" ;
+    rdfs:label "Acme Central Lab (data provider)" .
+
+ex:signer-qa a hcls:Person ;
+    top:identifier "urn:person:qa-lead" ; top:status "active" ;
+    rdfs:label "Vendor QA lead (authorized signatory)" .
+
+ex:cred-transfer a cr:Credential ;
+    top:identifier "urn:cred:data-transfer-auth" ; top:status "active" ;
+    rdfs:label "Data-transfer authorization (training + delegation on file)" .
+
+# ── The signatory Attestation (a signature is a fact, not a boolean) ──────────
+ex:attest-dta a cr:Attestation ;
+    top:identifier "urn:attest:dta-sodium-v1" ; top:status "active" ;
+    top:observedAt "2026-02-01T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T09:00:05Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:signer-qa ;
+    cr:attestedBy ex:signer-qa ;
+    cr:backedByCredential ex:cred-transfer .
+
+# ── Canonical concept + unit (concept-first; codes are Relationships to URIs) ─
+ex:concept-sodium a cr:BiomedicalConcept ;
+    top:identifier "urn:concept:sodium" ; top:status "active" ;
+    rdfs:label "Sodium (serum/plasma)" ;
+    cr:codedAs loinc:2951-2 .            # verified: Sodium [Moles/volume] in Serum or Plasma
+
+# ── Vendor alias corpus: resolved ONCE, not stored per-DTA ────────────────────
+ex:alias-sodium-col a cr:VendorAlias ;
+    top:identifier "urn:alias:col-SODIUM" ; top:status "active" ;
+    cr:vendorTerm "SODIUM" ;
+    cr:aliasResolvesTo ex:concept-sodium ;
+    cr:resolutionConfidence "0.98"^^xsd:decimal ;
+    cr:resolvedAgainstVersion "cr/v1" ;
+    cr:resolvedFrom ex:vendor-centrallab .
+
+ex:alias-visit-v3d29 a cr:VendorAlias ;
+    top:identifier "urn:alias:visit-V3D29" ; top:status "active" ;
+    cr:vendorTerm "V3 D29" ;
+    cr:aliasResolvesTo ex:visit-3 ;
+    cr:resolutionConfidence "0.86"^^xsd:decimal ;
+    cr:resolvedAgainstVersion "cr/v1" ;
+    cr:resolvedFrom ex:vendor-centrallab .
+
+ex:visit-3 a cr:Visit ;
+    top:identifier "urn:visit:V3" ; top:status "active" ;
+    top:observedAt "2026-02-15T00:00:00Z"^^xsd:dateTime ;
+    rdfs:label "Visit 3 (Week 4 / Day 29)" .
+
+# ── Content spec (DTS): the Sodium data element, concept-bound ────────────────
+ex:dts-labsafety a cr:TransferSpecification ;
+    top:identifier "urn:dts:labsafety-v1" ; top:status "active" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-centrallab ;
+    cr:specForStudy ex:study-safety1 ;   # USDM study referenced by IRI, defined elsewhere
+    cr:hasDataElement ex:de-sodium .
+
+ex:de-sodium a cr:DataElementSpecification ;
+    top:identifier "urn:de:sodium" ;
+    rdfs:label "Sodium (safety lab)" ;
+    cr:boundConcept ex:concept-sodium ;
+    cr:declaredUnitConcept qudt:MilliMOL-PER-L ;   # UCUM code mmol/L
+    cr:mandatoryElement true ;
+    cr:significantDigits 3 ;
+    cr:derivedFlag false ;
+    cr:valueRangeLow "120"^^xsd:decimal ;
+    cr:valueRangeHigh "160"^^xsd:decimal .
+
+# ── Operational envelope (TransferProfile) + blinding ─────────────────────────
+ex:profile-labsafety a cr:TransferProfile ;
+    top:identifier "urn:profile:labsafety-v1" ; top:status "active" ;
+    cr:fileFormat "SAS-XPT" ;
+    cr:transmissionMethod "SFTP" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "weekly" ;
+    cr:providerFolder "/outbound/labsafety" ;
+    cr:receiverFolder "/inbound/vendor/acme" ;
+    cr:transferEnvironment "production" ;
+    cr:blindingConstraint ex:blinding-labsafety .
+
+ex:blinding-labsafety a cr:BlindingConstraint ;
+    top:identifier "urn:blinding:labsafety" ; top:status "active" ;
+    cr:blindingScope "none" .            # safety labs are unblinded
+
+# ── The governing agreement (a fact graph, not a Word artifact) ───────────────
+ex:legal-dta-doc a top:Evidence ;
+    top:identifier "urn:doc:dta-signed-pdf" ; top:status "active" ;
+    rdfs:label "Executed DTA (DocuSign PDF) — referenced, not modeled" .
+
+ex:dta-acme a cr:DataTransferAgreement ;
+    top:identifier "urn:dta:acme-labsafety-v1" ; top:status "active" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-centrallab ;
+    cr:packagesSpecification ex:dts-labsafety ;
+    cr:referencesProfile ex:profile-labsafety ;
+    cr:ratifiedBy ex:attest-dta ;
+    cr:forDataScope ex:scope-labsafety ;
+    cr:referencesLegalDocument ex:legal-dta-doc ;
+    cr:documentHash "sha256:3f9a...c21e" ;
+    cr:citesShape <https://top.scientix.ai/cr/v1/shapes/dta-content> .
+
+ex:scope-labsafety a cr:TransferScope ;
+    top:identifier "urn:scope:labsafety" ; top:status "active" ;
+    cr:scopeVendor ex:vendor-centrallab ;
+    cr:scopeSpecification ex:dts-labsafety .
+
+# ── The transferred datum: a real result with the full transfer lifecycle ─────
+ex:subj-001 a cr:StudySubject ;
+    top:identifier "urn:subject:S-001" ; top:status "active" ;
+    cr:subjectId "S-001" ;
+    top:validFrom "2026-01-10T00:00:00Z"^^xsd:dateTime .
+
+ex:collect-001 a cr:StudyEvent ;
+    top:identifier "urn:collect:S-001-V3" ; top:status "completed" ;
+    top:observedAt "2026-02-15T08:00:00Z"^^xsd:dateTime .
+
+ex:spec-001 a hcls:Specimen ;
+    top:identifier "urn:specimen:S-001-V3-serum" ; top:status "active" ;
+    prov:wasDerivedFrom ex:collect-001 .
+
+ex:svc-sodium a cr:AnalysisService ;
+    top:identifier "urn:service:sodium-assay" ; top:status "active" ;
+    rdfs:label "Serum sodium assay" .
+
+ex:result-sodium-001 a cr:AssayResult ;
+    top:identifier "urn:result:S-001-V3-sodium" ; top:status "final" ;
+    top:observedAt "2026-02-15T14:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-16T02:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-centrallab ;
+    prov:wasGeneratedBy ex:svc-sodium ;
+    cr:onSample ex:spec-001 ;
+    cr:forSubject ex:subj-001 ;
+    cr:fromService ex:svc-sodium ;
+    rdf:value "140" ;
+    cr:resolvedFrom ex:alias-sodium-col , ex:alias-visit-v3d29 ;
+    cr:resolvedAgainstVersion "cr/v1" ;
+    # transfer lifecycle — first-class, independently queryable timestamps
+    cr:specimenCollectedAt "2026-02-15T08:00:00Z"^^xsd:dateTime ;
+    cr:specimenReceivedAt  "2026-02-15T11:30:00Z"^^xsd:dateTime ;
+    cr:analysisCompletedAt "2026-02-15T14:00:00Z"^^xsd:dateTime ;
+    cr:reportGeneratedAt   "2026-02-16T02:00:00Z"^^xsd:dateTime ;
+    cr:clinicalReviewAt    "2026-02-16T09:00:00Z"^^xsd:dateTime .
+
+ex:file-w07 a cr:TransferFile ;
+    top:identifier "urn:file:acme-labsafety-2026W07" ; top:status "delivered" ;
+    top:observedAt "2026-02-16T02:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-16T02:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-centrallab ;
+    cr:deliveredUnder ex:dts-labsafety .
+
+# ── Amendment as event: propagation is explicit ──────────────────────────────
+ex:amend-1 a cr:TransferAmendment ;
+    top:identifier "urn:amend:labsafety-add-potassium" ; top:status "active" ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:vendor-centrallab ;
+    cr:effectiveFrom "2026-03-15T00:00:00Z"^^xsd:dateTime ;
+    cr:affectsSpecification ex:dts-labsafety .

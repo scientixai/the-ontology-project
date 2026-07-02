@@ -1,0 +1,68 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# DataTransferAgreement structural + authorization conformance (§6), and the
+# cross-entity amendment-propagation integrity rule.
+
+cr:DataTransferAgreementShape a sh:NodeShape ;
+    rdfs:label "A DTA must package content, reference a profile, and be ratified (hard)" ;
+    sh:targetClass cr:DataTransferAgreement ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:packagesSpecification ; sh:minCount 1 ; sh:class cr:TransferSpecification ;
+        sh:message "A DataTransferAgreement must package >=1 TransferSpecification (the content it governs)." ;
+    ] ;
+    sh:property [
+        sh:path cr:referencesProfile ; sh:minCount 1 ; sh:class cr:TransferProfile ;
+        sh:message "A DataTransferAgreement must reference >=1 TransferProfile (the operational envelope)." ;
+    ] ;
+    sh:property [
+        sh:path cr:ratifiedBy ; sh:minCount 1 ; sh:class cr:Attestation ;
+        sh:message "A DataTransferAgreement must be ratified by >=1 signatory Attestation (a signature is a fact, not a boolean)." ;
+    ] .
+
+# ── Authorization gate: a ratifying signatory must be credential-backed ───────
+cr:DTASignatoryAuthorizedShape a sh:NodeShape ;
+    rdfs:label "A ratifying signatory must be authorized by a Credential (hard)" ;
+    sh:targetClass cr:DataTransferAgreement ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "A DataTransferAgreement is ratified by an Attestation that is not backed by a valid Credential (cr:backedByCredential). 'Was this party authorized to make this transfer?' must be answerable from the graph." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:ratifiedBy ?att .
+              FILTER NOT EXISTS { ?att cr:backedByCredential ?cred . ?cred a cr:Credential . }
+            }
+        """ ;
+    ] .
+
+# ── Cross-entity integrity: an amendment must name the specs it affects ──────
+cr:TransferAmendmentPropagationShape a sh:NodeShape ;
+    rdfs:label "An amendment must reference the specifications it affects (hard)" ;
+    sh:targetClass cr:TransferAmendment ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:affectsSpecification ; sh:minCount 1 ; sh:class cr:TransferSpecification ;
+        sh:message "A TransferAmendment must reference >=1 affected TransferSpecification — propagation is a graph update + re-validation, made explicit, not N silent manual re-authorings." ;
+    ] .
+
+# ── Legal-by-reference: a referenced legal document must be pinned by hash ────
+cr:DTALegalReferenceShape a sh:NodeShape ;
+    rdfs:label "A referenced legal document should be pinned by hash (warning)" ;
+    sh:targetClass cr:DataTransferAgreement ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "A DataTransferAgreement references a legal document but does not pin it by content hash (cr:documentHash). The binding legal contract stays prose/DocuSign; the DTA references it by URI + hash + version so the reference cannot silently drift." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:referencesLegalDocument ?doc .
+              FILTER NOT EXISTS { $this cr:documentHash ?h }
+            }
+        """ ;
+    ] .

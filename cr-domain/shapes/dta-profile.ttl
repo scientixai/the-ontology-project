@@ -1,0 +1,49 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# TransferProfile operational conformance (§6). Scope carries the declaration;
+# these Constraint shapes enforce its validity (open Q2 decision). CT value sets
+# are grounded in the DTA MVP Inventory §5 lists and the verified vendor export
+# surfaces (Castor/Veeva/Medidata/Oracle Clinical One).
+
+cr:TransferProfileMandatoryShape a sh:NodeShape ;
+    rdfs:label "TransferProfile mandatory operational attributes (hard)" ;
+    sh:targetClass cr:TransferProfile ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:fileFormat ; sh:minCount 1 ;
+        sh:in ( "SAS-XPT" "CSV" "Dataset-JSON" "ODM-XML" "Define-XML" "Excel" "PDF" "FHIR" "JSON" ) ;
+        sh:message "TransferProfile.fileFormat is mandatory and must be in controlled terminology (SAS-XPT | CSV | Dataset-JSON | ODM-XML | Define-XML | Excel | PDF | FHIR | JSON)." ;
+    ] ;
+    sh:property [
+        sh:path cr:transmissionMethod ; sh:minCount 1 ;
+        sh:in ( "SFTP" "FTP" "API" "Snowflake-share" "BigQuery-direct" "Manual-upload" ) ;
+        sh:message "TransferProfile.transmissionMethod is mandatory and must be in controlled terminology (SFTP | FTP | API | Snowflake-share | BigQuery-direct | Manual-upload)." ;
+    ] ;
+    sh:property [
+        sh:path cr:transmissionType ; sh:minCount 1 ;
+        sh:in ( "cumulative" "incremental" ) ;
+        sh:message "TransferProfile.transmissionType is mandatory and must be 'cumulative' or 'incremental'." ;
+    ] .
+
+# ── Blinding scope should be explicit (soft) ─────────────────────────────────
+cr:BlindingConstraintScopeShape a sh:NodeShape ;
+    rdfs:label "Blinding constraint scope should be specified (warning)" ;
+    sh:targetClass cr:BlindingConstraint ;
+    sh:property [
+        sh:path cr:blindingScope ; sh:minCount 1 ; sh:datatype xsd:string ;
+        sh:severity sh:Warning ;
+        sh:message "A BlindingConstraint should specify its cr:blindingScope (what is blinded, to whom) — an unspecified scope cannot drive routing." ;
+    ] .
+
+# ── Transfer schedule is a nice-to-have (info) ───────────────────────────────
+cr:TransferScheduleShape a sh:NodeShape ;
+    rdfs:label "Transfer schedule present (info)" ;
+    sh:targetClass cr:TransferProfile ;
+    sh:property [
+        sh:path cr:transferSchedule ; sh:minCount 1 ;
+        sh:severity sh:Info ;
+        sh:message "TransferProfile has no cr:transferSchedule. USDM does not model transfer frequency/timing; declaring it here makes cadence queryable (nice-to-have)." ;
+    ] .

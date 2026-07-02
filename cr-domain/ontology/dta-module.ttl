@@ -1,0 +1,416 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DTA / DTS module — Data Transfer Agreement & Data Transfer Specification.
+#
+# Governed, additive extension of TOP Core for the transfer of non-CRF data
+# (lab, ECG, imaging, eCOA/ePRO, DHT, genomics) from external vendors to a
+# sponsor/CRO. Every class below subclasses an existing Core/CR leaf; NOTHING
+# in Core changes.
+#
+# Design thesis (see docs/dta-design-notes.md): the DTA working group models a
+# *better document* — a machine-readable DTA/DTS a human still re-authors per
+# sponsor × vendor × data type × amendment, terminating in a hand-built SDTM
+# map. This module designs the interpretation node OUT:
+#   * vendor terms are ALIASES resolved once (cr:resolvedFrom) against a
+#     canonical concept/encounter, never stored per-DTA rows;
+#   * data content binds to a canonical cr:BiomedicalConcept — SDTM is a
+#     projection, never a stored target;
+#   * conformance is executable SHACL (shapes/dta-*.ttl), not a human process;
+#   * signatures are cr:Attestation, blinding is a cr:BlindingConstraint,
+#     amendment is a cr:TransferAmendment — all provenanced & bitemporal.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:dtaModule a owl:Ontology ;
+    rdfs:label "TOP CR — DTA/DTS module" ;
+    rdfs:comment "Data Transfer Agreement / Specification extension: vendor non-CRF data transfer as a fact graph. Additive over TOP Core; grounded in the CDISC DDF5a DTA working-group corpus (Scoping Report v54, MVP Inventory, MVP Information Model, LAB Model v2.0)." .
+
+# ───────────────────────────────────────────────────────────────────────────
+# 1. New leaves (§3.2 of the handoff)
+# ───────────────────────────────────────────────────────────────────────────
+
+cr:DataTransferAgreement a owl:Class ;
+    rdfs:label "Data Transfer Agreement" ;
+    skos:definition "The governing artifact for a vendor-to-sponsor transfer relationship. Packages one or more TransferSpecifications, references a TransferProfile, is ratified by Attestations, and cites the conformance shapes it must satisfy. Versioned (DNA status + bitemporal)." ;
+    rdfs:comment "Grounded in the DTA MVP Information Model DTA entity and MVP Inventory §3 (Version, Version Date, Version Change Rationale). Not a Word/PDF artifact with fields — a fact graph." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:TransferSpecification a owl:Class ;
+    rdfs:label "Transfer Specification" ;
+    skos:definition "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act." ;
+    rdfs:comment "Grounded in the info-model TRANSFER_SPECIFICATION entity and CDISC LAB Model v2.0 content. Placed under top:Scope (a specification/plan), bitemporal so amendments supersede cleanly." ;
+    rdfs:subClassOf top:Scope,
+        top:Versioned .
+
+cr:DataElementSpecification a owl:Class ;
+    rdfs:label "Data Element Specification" ;
+    skos:definition "One expected data element in a TransferSpecification: it binds to a canonical BiomedicalConcept, declares its unit, value range, controlled terminology, mandatory-ness, significant digits and derived flag. The universal content pattern — one shape covers lab, ECG, imaging analytes; data-type specifics are typed extensions, not parallel hierarchies." ;
+    rdfs:comment "Grounded in MVP Inventory content rows and the LAB v2.0 LB variable list. The SDTM target is NEVER a stored attribute here — it is a crosswalk edge rendered on projection." ;
+    rdfs:subClassOf top:Scope .
+
+cr:TransferProfile a owl:Class ;
+    rdfs:label "Transfer Profile" ;
+    skos:definition "The operational envelope of a transfer: file format, delimiter, encoding, transmission method, transmission type (cumulative vs incremental), schedule, provider/receiver folder, environment. A declaration (top:Scope); its validity is enforced by cr:TransferProfile* SHACL shapes (open Q2: Scope for declaration + Constraint shapes for enforcement)." ;
+    rdfs:comment "Grounded in MVP Inventory §5 'File Transfer Information'. Specialized per vendor as cr:VendorConnectorProfile instances grounded in each vendor's public API/export surface." ;
+    rdfs:subClassOf top:Scope .
+
+cr:VendorConnectorProfile a owl:Class ;
+    rdfs:label "Vendor Connector Profile" ;
+    skos:definition "A TransferProfile pre-populated from a named vendor's documented data-export surface (API/format/terminology), so a sponsor onboarding that vendor starts from a catalog default rather than a blank DTA. The operational counterpart to the compounding alias corpus." ;
+    rdfs:comment "Instances grounded in verified public documentation: Castor EDC (OAuth2 REST + CDISC ODM export), Veeva Vault CDMS/CDB (SDE CSV/SAS/XPT + incremental SFF), Medidata Rave (RWS + ODM + audit-ID incremental), Oracle Clinical One (ODM-XML extract, Snapshot/Transactional). See examples/dta-lab-safety/vendor-connectors.ttl." ;
+    rdfs:subClassOf cr:TransferProfile .
+
+cr:BiomedicalConcept a owl:Class ;
+    rdfs:label "Biomedical Concept" ;
+    skos:definition "A canonical, sponsor-agnostic concept a data element binds to (e.g. Sodium). Codes to external terminologies (LOINC, NCIt, SNOMED) are attached as Relationships to dereferenceable URIs via cr:codedAs — never as string Properties." ;
+    rdfs:comment "Reuses CDISC Biomedical Concept anchors as an INPUT (crosswalk targets), not a rival. The concept-first pivot: bind once to the concept; every standard (SDTM/Define/FHIR) is then a projection." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:VendorAlias a owl:Class ;
+    rdfs:label "Vendor Alias" ;
+    skos:definition "A vendor's term (column name, visit label, unit string) captured ONLY as a resolution edge into the canonical corpus: cr:vendorTerm (the raw string) + cr:aliasResolvesTo (the canonical concept/encounter/unit) + cr:resolutionConfidence + cr:resolvedFrom provenance. Deliberately NOT a stored per-DTA row — the DTA group's ENCOUNTER_MAPPING re-modeled as resolution so the corpus compounds." ;
+    rdfs:comment "The exemplar of the whole thesis. Resolve once; the next sponsor with the same vendor term auto-resolves. Grounded in the info-model ENCOUNTER_MAPPING / Data-Provider-Visit fields — deliberately re-modeled." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:BlindingConstraint a owl:Class ;
+    rdfs:label "Blinding Constraint" ;
+    skos:definition "The scope and provenance of what is blinded in a transfer, and to whom — a constraint that drives routing, not a boolean. Replaces the MVP's boolean 'Transfer Blinding'." ;
+    rdfs:comment "Grounded in MVP Inventory §5 blinding. A cr:blindingScope value (e.g. 'treatment-assignment', 'unblinded-pk') plus provenance." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:TransferScope a owl:Class ;
+    rdfs:label "Transfer Scope" ;
+    skos:definition "A mediator that lets one DataTransferAgreement cover multiple vendor/data-type scopes without repeating the agreement. Each TransferScope binds a data type, a vendor Organization and its TransferSpecification(s). Modeling scope explicitly from the start is where the DTA group's combinatorics are made visible rather than hidden (open Q1)." ;
+    rdfs:comment "Grounded in DTA MVP Information Model open Q1 (multi-vendor / multi-scope DTA). Recommend modeling scope explicitly — the single-vendor simplification is exactly where the exponential hides." ;
+    rdfs:subClassOf top:Scope .
+
+cr:TransferAmendment a owl:Class ;
+    rdfs:label "Transfer Amendment" ;
+    skos:definition "A status change on a protocol/spec version that carries effectiveFrom/To and MUST reference the TransferSpecifications it affects. Propagation is a graph update + re-validation, not N manual DTA re-authorings." ;
+    rdfs:comment "Amendment as event (Outcome:StatusChange). Bitemporal; drives the cross-entity shape that forces amendment propagation to be explicit." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
+
+cr:TransferFile a owl:Class ;
+    rdfs:label "Transfer File" ;
+    skos:definition "An actual delivered file instance (as distinct from its TransferSpecification). Carries its own transfer lifecycle timestamps and PROV attribution to the vendor org." ;
+    rdfs:comment "Grounded in the info-model TRANSFER_FILE entity. The specification is the plan; the file is the Outcome:Artifact." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
+
+# ───────────────────────────────────────────────────────────────────────────
+# 2. Structural relationships (all Additive per ADR-0019)
+# ───────────────────────────────────────────────────────────────────────────
+
+cr:packagesSpecification a owl:ObjectProperty ;
+    rdfs:label "packages specification" ;
+    rdfs:comment "A DataTransferAgreement packages one or more TransferSpecifications." ;
+    rdfs:domain cr:DataTransferAgreement ;
+    rdfs:range cr:TransferSpecification ;
+    top:flavor "Additive" .
+
+cr:referencesProfile a owl:ObjectProperty ;
+    rdfs:label "references profile" ;
+    rdfs:comment "A DataTransferAgreement references the operational TransferProfile that governs its files." ;
+    rdfs:domain cr:DataTransferAgreement ;
+    rdfs:range cr:TransferProfile ;
+    top:flavor "Additive" .
+
+cr:ratifiedBy a owl:ObjectProperty ;
+    rdfs:label "ratified by" ;
+    rdfs:comment "A signatory Attestation that ratifies a DataTransferAgreement (facts over flags: a signature is an Attestation, not a boolean)." ;
+    rdfs:domain cr:DataTransferAgreement ;
+    rdfs:range cr:Attestation ;
+    top:flavor "Additive" .
+
+cr:citesShape a owl:ObjectProperty ;
+    rdfs:label "cites conformance shape" ;
+    rdfs:comment "The conformance shape (IRI) a DataTransferAgreement declares its files must satisfy — the contract carries its own executable conformance." ;
+    rdfs:domain cr:DataTransferAgreement ;
+    top:flavor "Additive" .
+
+cr:forDataScope a owl:ObjectProperty ;
+    rdfs:label "for data scope" ;
+    rdfs:comment "Binds a DataTransferAgreement to a TransferScope mediator (multi-vendor / multi-data-type)." ;
+    rdfs:domain cr:DataTransferAgreement ;
+    rdfs:range cr:TransferScope ;
+    top:flavor "Additive" .
+
+cr:scopeVendor a owl:ObjectProperty ;
+    rdfs:label "scope vendor" ;
+    rdfs:comment "The vendor Organization responsible for a TransferScope." ;
+    rdfs:domain cr:TransferScope ;
+    rdfs:range hcls:Organization ;
+    top:flavor "Additive" .
+
+cr:scopeSpecification a owl:ObjectProperty ;
+    rdfs:label "scope specification" ;
+    rdfs:comment "The TransferSpecification delivered under a TransferScope." ;
+    rdfs:domain cr:TransferScope ;
+    rdfs:range cr:TransferSpecification ;
+    top:flavor "Additive" .
+
+cr:hasDataElement a owl:ObjectProperty ;
+    rdfs:label "has data element" ;
+    rdfs:comment "A TransferSpecification declares its DataElementSpecifications." ;
+    rdfs:domain cr:TransferSpecification ;
+    rdfs:range cr:DataElementSpecification ;
+    top:flavor "Additive" .
+
+cr:specForStudy a owl:ObjectProperty ;
+    rdfs:label "specification for study" ;
+    rdfs:comment "Anchors a TransferSpecification to the USDM/protocol cr:Study it serves (everything is anchored around a USDM protocol). Intended range is cr:Study, but the range is left open deliberately: the study's full definition lives in the USDM/protocol graph and is referenced by IRI here, not re-authored inside the DTS." ;
+    rdfs:domain cr:TransferSpecification ;
+    top:flavor "Additive" .
+
+cr:boundConcept a owl:ObjectProperty ;
+    rdfs:label "bound concept" ;
+    rdfs:comment "The canonical BiomedicalConcept a DataElementSpecification binds to (concept-first). The presence/absence of this binding — not a Y/N cell — is what 'is mapped' means." ;
+    rdfs:domain cr:DataElementSpecification ;
+    rdfs:range cr:BiomedicalConcept ;
+    top:flavor "Additive" .
+
+cr:codedAs a owl:ObjectProperty ;
+    rdfs:label "coded as" ;
+    rdfs:comment "A Relationship from a BiomedicalConcept to a dereferenceable external terminology URI (LOINC/NCIt/SNOMED). Codes are Relationships to URIs, never string Properties (naming convention)." ;
+    rdfs:domain cr:BiomedicalConcept ;
+    top:flavor "Additive" .
+
+cr:declaredUnitConcept a owl:ObjectProperty ;
+    rdfs:label "declared unit (UCUM)" ;
+    rdfs:comment "The declared unit of a DataElementSpecification as a dereferenceable UCUM URI. Unit conversion (mg/dL↔mmol/L) is canonical, not per-DTA prose." ;
+    rdfs:domain cr:DataElementSpecification ;
+    top:flavor "Additive" .
+
+cr:aliasResolvesTo a owl:ObjectProperty ;
+    rdfs:label "alias resolves to" ;
+    rdfs:comment "The canonical entity (BiomedicalConcept, cr:Visit/Encounter, or unit URI) a VendorAlias resolves to." ;
+    rdfs:domain cr:VendorAlias ;
+    top:flavor "Additive" .
+
+cr:resolvedFrom a owl:ObjectProperty ;
+    rdfs:label "resolved from" ;
+    rdfs:comment "Binding provenance: the VendorAlias (or source corpus entry) a resolved binding was derived from. A kind of prov:wasDerivedFrom, so lineage queries traverse it natively." ;
+    rdfs:subPropertyOf prov:wasDerivedFrom ;
+    top:flavor "Additive" .
+
+cr:affectsSpecification a owl:ObjectProperty ;
+    rdfs:label "affects specification" ;
+    rdfs:comment "A TransferAmendment must reference each TransferSpecification it affects (forces amendment propagation to be explicit)." ;
+    rdfs:domain cr:TransferAmendment ;
+    rdfs:range cr:TransferSpecification ;
+    top:flavor "Additive" .
+
+cr:deliveredUnder a owl:ObjectProperty ;
+    rdfs:label "delivered under" ;
+    rdfs:comment "The TransferSpecification a TransferFile was delivered under." ;
+    rdfs:domain cr:TransferFile ;
+    rdfs:range cr:TransferSpecification ;
+    top:flavor "Additive" .
+
+cr:blindingConstraint a owl:ObjectProperty ;
+    rdfs:label "blinding constraint" ;
+    rdfs:comment "The BlindingConstraint governing a TransferProfile (scope + provenance of what is blinded)." ;
+    rdfs:domain cr:TransferProfile ;
+    rdfs:range cr:BlindingConstraint ;
+    top:flavor "Additive" .
+
+cr:referencesLegalDocument a owl:ObjectProperty ;
+    rdfs:label "references legal document" ;
+    rdfs:comment "The binding legal contract stays a prose/DocuSign artifact (a top:Evidence document) that the machine-readable DataTransferAgreement references by URI + hash + version. We reference it; we do NOT model liability/indemnification (open Q5)." ;
+    rdfs:domain cr:DataTransferAgreement ;
+    rdfs:range top:Evidence ;
+    top:flavor "Additive" .
+
+cr:resolutionAttestedBy a owl:ObjectProperty ;
+    rdfs:label "resolution attested by" ;
+    rdfs:comment "For the uncovered tail (imaging/eCOA/DHT/genomics with no open identifier): the clinician/PI Attestation that certifies a binding at the catalog when it cannot be auto-resolved. Model the attestation path as first-class, not an exception (open Q6). E.g. imaging reviewed by the PI on receipt." ;
+    rdfs:domain cr:VendorAlias ;
+    rdfs:range cr:Attestation ;
+    top:flavor "Additive" .
+
+# ───────────────────────────────────────────────────────────────────────────
+# 3. Transfer-lifecycle bitemporal properties (§4 — facts over flags)
+#    Distinct timestamps modeled as first-class, independently queryable props.
+# ───────────────────────────────────────────────────────────────────────────
+
+cr:specimenCollectedAt a owl:DatatypeProperty ;
+    rdfs:label "specimen collected at" ;
+    rdfs:comment "Lab transfer lifecycle: when the specimen was collected." ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:specimenReceivedAt a owl:DatatypeProperty ;
+    rdfs:label "specimen received at" ;
+    rdfs:comment "Lab transfer lifecycle: when the central lab received the specimen." ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:analysisCompletedAt a owl:DatatypeProperty ;
+    rdfs:label "analysis completed at" ;
+    rdfs:comment "Lab transfer lifecycle: when the assay completed." ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:reportGeneratedAt a owl:DatatypeProperty ;
+    rdfs:label "report generated at" ;
+    rdfs:comment "Lab transfer lifecycle: when the vendor generated the result report/file." ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:clinicalReviewAt a owl:DatatypeProperty ;
+    rdfs:label "clinical review at" ;
+    rdfs:comment "Lab transfer lifecycle: when the result was clinically reviewed (e.g. PI review of imaging on receipt)." ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:resolvedAgainstVersion a owl:DatatypeProperty ;
+    rdfs:label "resolved against reference version" ;
+    rdfs:comment "The TOP cr/v1 reference version a binding resolved against, so reference drift never silently re-writes meaning (§4 reference-version pinning)." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:resolutionConfidence a owl:DatatypeProperty ;
+    rdfs:label "resolution confidence" ;
+    rdfs:comment "Confidence [0,1] of an automatic alias resolution. Below the threshold the binding is routed to the attestation queue, not auto-accepted." ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:vendorTerm a owl:DatatypeProperty ;
+    rdfs:label "vendor term" ;
+    rdfs:comment "The raw vendor string (column name, visit label, unit) captured on a VendorAlias resolution edge." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+# ── DataElementSpecification content attributes (LAB v2.0 / MVP Inventory) ──
+
+cr:mandatoryElement a owl:DatatypeProperty ;
+    rdfs:label "mandatory element" ;
+    rdfs:comment "Whether this data element is mandatory in the transfer." ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:boolean ;
+    top:flavor "Additive" .
+
+cr:significantDigits a owl:DatatypeProperty ;
+    rdfs:label "significant digits" ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:derivedFlag a owl:DatatypeProperty ;
+    rdfs:label "derived flag" ;
+    rdfs:comment "Whether the element is derived (vs directly measured)." ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:boolean ;
+    top:flavor "Additive" .
+
+cr:valueRangeLow a owl:DatatypeProperty ;
+    rdfs:label "value range low" ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:valueRangeHigh a owl:DatatypeProperty ;
+    rdfs:label "value range high" ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+# ── TransferProfile operational attributes (MVP Inventory §5) ──
+# Controlled-terminology values are enforced by shapes/dta-profile.ttl.
+
+cr:fileFormat a owl:DatatypeProperty ;
+    rdfs:label "file format" ;
+    rdfs:comment "Delivered file format (e.g. SAS-XPT, CSV, Dataset-JSON, ODM-XML). CT-enforced." ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:delimiter a owl:DatatypeProperty ;
+    rdfs:label "delimiter" ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:encoding a owl:DatatypeProperty ;
+    rdfs:label "encoding" ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:transmissionMethod a owl:DatatypeProperty ;
+    rdfs:label "transmission method" ;
+    rdfs:comment "How the file is transmitted (e.g. SFTP, API, Snowflake-share). CT-enforced." ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:transmissionType a owl:DatatypeProperty ;
+    rdfs:label "transmission type" ;
+    rdfs:comment "Cumulative vs incremental delivery. CT-enforced." ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:transferSchedule a owl:DatatypeProperty ;
+    rdfs:label "transfer schedule" ;
+    rdfs:comment "Delivery frequency/cadence (e.g. 'weekly', 'daily', 'near-real-time'). USDM does NOT model transfer frequency/timing — this is genuinely new and lives here (open Q4). Temporal is native to TOP, so cadence and windows are first-class, not prose." ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:providerFolder a owl:DatatypeProperty ;
+    rdfs:label "provider folder" ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:receiverFolder a owl:DatatypeProperty ;
+    rdfs:label "receiver folder" ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:transferEnvironment a owl:DatatypeProperty ;
+    rdfs:label "transfer environment" ;
+    rdfs:comment "Test vs production environment for the transfer." ;
+    rdfs:domain cr:TransferProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:blindingScope a owl:DatatypeProperty ;
+    rdfs:label "blinding scope" ;
+    rdfs:comment "What is blinded (e.g. 'treatment-assignment', 'unblinded-pk', 'none') — the scope a BlindingConstraint carries." ;
+    rdfs:domain cr:BlindingConstraint ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:vendorApiStyle a owl:DatatypeProperty ;
+    rdfs:label "vendor API style" ;
+    rdfs:comment "The documented integration style of a VendorConnectorProfile (e.g. 'OAuth2-REST', 'RWS-ODM', 'Snowflake-share', 'BigQuery-direct', 'SFTP'). Descriptive; grounded in public vendor docs." ;
+    rdfs:domain cr:VendorConnectorProfile ; rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:vendorDocumentation a owl:DatatypeProperty ;
+    rdfs:label "vendor documentation" ;
+    rdfs:comment "URL of the public documentation a VendorConnectorProfile was grounded in (provenance for the connector default)." ;
+    rdfs:domain cr:VendorConnectorProfile ; rdfs:range xsd:anyURI ;
+    top:flavor "Additive" .
+
+cr:effectiveFrom a owl:DatatypeProperty ;
+    rdfs:label "effective from" ;
+    rdfs:comment "Start of the valid-time window a TransferAmendment takes effect." ;
+    rdfs:domain cr:TransferAmendment ; rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:effectiveTo a owl:DatatypeProperty ;
+    rdfs:label "effective to" ;
+    rdfs:comment "End of the valid-time window a TransferAmendment applies (open if unbounded)." ;
+    rdfs:domain cr:TransferAmendment ; rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:documentHash a owl:DatatypeProperty ;
+    rdfs:label "document hash" ;
+    rdfs:comment "Content hash of a referenced legal document, so the DTA pins the exact prose it references (URI + hash + version)." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:backedByCredential a owl:ObjectProperty ;
+    rdfs:label "backed by credential" ;
+    rdfs:comment "The Credential/delegation that authorized a signatory Attestation to ratify a transfer. Enables the 'was this party authorized to make this transfer?' gate — a ratifying Attestation with no backing Credential is a Violation." ;
+    rdfs:domain cr:Attestation ;
+    rdfs:range cr:Credential ;
+    top:flavor "Additive" .

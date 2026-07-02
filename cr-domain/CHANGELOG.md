@@ -23,6 +23,47 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ---
 
+## [Unreleased]
+
+### Added — DTA / DTS reference-ontology extension (non-CRF vendor data transfer)
+
+An additive, governed extension for Data Transfer Agreements / Specifications.
+Nothing in Core or existing CR classes changes. Grounded in the CDISC DDF5a DTA
+working-group corpus; models the transfer as a fact graph rather than a document.
+
+- **`ontology/dta-module.ttl`** — new leaves, each subclassing a Core leaf:
+  `cr:DataTransferAgreement`, `cr:TransferSpecification`,
+  `cr:DataElementSpecification`, `cr:TransferProfile`,
+  `cr:VendorConnectorProfile`, `cr:BiomedicalConcept`, `cr:VendorAlias`,
+  `cr:BlindingConstraint`, `cr:TransferScope`, `cr:TransferAmendment`,
+  `cr:TransferFile`; transfer-lifecycle bitemporal properties; `cr:resolvedFrom`
+  binding provenance; `cr:backedByCredential` authorization edge.
+- **`shapes/dta-content.ttl`, `dta-resolution.ttl`, `dta-profile.ttl`,
+  `dta-agreement.ttl`** — the "Data Validation & Quality" layer the DTA MVP
+  deferred, as executable SHACL graded Violation / Warning / Info (concept-bound
+  + UCUM unit, alias resolved-or-attested, CT-enforced operational attrs,
+  credential-backed signatory gate, explicit amendment propagation).
+- **`crosswalks/dta-to-external.ttl`** — LOINC 2951-2, QUDT/UCUM `mmol/L`, and
+  SDTM LB variable mappings; gate-validated (`shapes/crosswalk.ttl`).
+- **`crosswalks/dta-encounter-alias.sssom.tsv`** — the compounding vendor-visit
+  alias corpus (resolve once, next sponsor auto-resolves).
+- **`projections/dta_sdtm_lb.rq`, `dta_document.rq`** — SDTM LB row and the
+  human-readable DTA document, rendered from the graph (never authored).
+- **`examples/dta-lab-safety/`** — the Sodium worked example (conformant),
+  its deliberately-broken counterpart, a graded-warning fixture, and a
+  vendor-connector catalog (Castor, Veeva, Medidata, Oracle Clinical One).
+- **`docs/dta-design-notes.md`** — answers to the six open modeling questions,
+  the vendor-API research grounding, and honest T1/T2 tiering.
+
+### Fixed
+
+- Repaired the test harness (`tests/run_tests.py`) and unified the TOP Core
+  namespace (`https://top.scientix.ai/v1#`) across examples, projections, and
+  tools, which had drifted to a parallel `/core/v1#` namespace and split the
+  shapes from the example vocabulary. Full suite green.
+
+---
+
 ## [v1.0.0] — 2025-11-15
 
 ### Overview

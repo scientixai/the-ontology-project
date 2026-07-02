@@ -1,0 +1,21 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# GRADED-WARNING fixture: a fully CT-valid TransferProfile whose BlindingConstraint
+# leaves its scope unspecified. This is a Warning (transfer proceeds, flagged),
+# NOT a Violation — the graded severity the DTA MVP process could never encode.
+# Expected: 0 Violation, >=1 Warning.
+
+ex:profile-warn a cr:TransferProfile ;
+    top:identifier "urn:profile:warn" ; top:status "active" ;
+    cr:fileFormat "Dataset-JSON" ;
+    cr:transmissionMethod "API" ;
+    cr:transmissionType "cumulative" ;
+    cr:transferSchedule "daily" ;
+    cr:blindingConstraint ex:blinding-unspecified .
+
+ex:blinding-unspecified a cr:BlindingConstraint ;
+    top:identifier "urn:blinding:unspecified" ; top:status "active" .
+    # cr:blindingScope intentionally absent -> BlindingConstraintScopeShape (Warning)

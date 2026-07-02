@@ -1,0 +1,28 @@
+# Human-readable DTA document — rendered from the fact graph, never authored
+# (§7, tier T1/T2). Produces the sponsor-agnostic DTA shell (parties + operational
+# envelope + governing spec) the working group's DTA_Template hand-fills today.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?dtaId ?vendor ?fileFormat ?method ?type ?schedule ?blinding ?spec ?signedBy
+WHERE {
+  ?dta a cr:DataTransferAgreement ;
+       top:identifier ?dtaId ;
+       cr:referencesProfile ?profile ;
+       cr:packagesSpecification ?specNode ;
+       cr:forDataScope ?scope ;
+       cr:ratifiedBy ?att .
+  ?scope cr:scopeVendor ?vendorOrg .
+  ?vendorOrg rdfs:label ?vendor .
+
+  ?profile cr:fileFormat ?fileFormat ;
+           cr:transmissionMethod ?method ;
+           cr:transmissionType ?type .
+  OPTIONAL { ?profile cr:transferSchedule ?schedule . }
+  OPTIONAL { ?profile cr:blindingConstraint ?bc . ?bc cr:blindingScope ?blinding . }
+
+  ?specNode top:identifier ?spec .
+  ?att cr:attestedBy ?signer .
+  ?signer rdfs:label ?signedBy .
+}

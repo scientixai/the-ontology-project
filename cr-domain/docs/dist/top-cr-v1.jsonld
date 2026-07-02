@@ -22,6 +22,9 @@
     "http://purl.org/dc/terms/description": [
       {
         "@value": "An inheritable, provenance-native, bitemporal reference knowledge graph for the clinical-research lifecycle (Pre-IND through End-of-Phase-2, plus site operations). The founding domain of TOP (The Ontology Project)."
+      },
+      {
+        "@value": "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate."
       }
     ],
     "http://purl.org/dc/terms/issued": [
@@ -47,6 +50,9 @@
     ],
     "http://purl.org/dc/terms/title": [
       {
+        "@value": "CR-core ontology \u2014 participant & consent module"
+      },
+      {
         "@value": "TOP \u2014 Clinical Research Reference Graph"
       }
     ],
@@ -61,6 +67,9 @@
       }
     ],
     "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.4"
+      },
       {
         "@value": "v1"
       }
@@ -475,30 +484,6 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulation",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "A named, versioned population definition (ITT, mITT, PP, safety) anchored to a data cut."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Analysis Population"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#Scope"
       },
       {
         "@id": "https://top.scientix.ai/v1#Versioned"
@@ -1046,6 +1031,58 @@
     "http://www.w3.org/2004/02/skos/core#definition": [
       {
         "@value": "Secure, computer- or paper-generated documentation that allows reconstruction of the course of events around a record (paraphrased, ICH E6(R3)). In TOP, the bitemporal + PROV envelope realizes this by construction."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#BiomedicalConcept",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Reuses CDISC Biomedical Concept anchors as an INPUT (crosswalk targets), not a rival. The concept-first pivot: bind once to the concept; every standard (SDTM/Define/FHIR) is then a projection."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Biomedical Concept"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A canonical, sponsor-agnostic concept a data element binds to (e.g. Sodium). Codes to external terminologies (LOINC, NCIt, SNOMED) are attached as Relationships to dereferenceable URIs via cr:codedAs \u2014 never as string Properties."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#BlindingConstraint",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in MVP Inventory \u00a75 blinding. A cr:blindingScope value (e.g. 'treatment-assignment', 'unblinded-pk') plus provenance."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Blinding Constraint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The scope and provenance of what is blinded in a transfer, and to whom \u2014 a constraint that drives routing, not a boolean. Replaces the MVP's boolean 'Transfer Blinding'."
       }
     ]
   },
@@ -3320,30 +3357,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#DataCut",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "A database lock event defining the analysis-eligible data for a study."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Data Cut"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#Temporal"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#DataElementDef",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -3361,6 +3374,32 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in MVP Inventory content rows and the LAB v2.0 LB variable list. The SDTM target is NEVER a stored attribute here \u2014 it is a crosswalk edge rendered on projection."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Data Element Specification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Scope"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "One expected data element in a TransferSpecification: it binds to a canonical BiomedicalConcept, declares its unit, value range, controlled terminology, mandatory-ness, significant digits and derived flag. The universal content pattern \u2014 one shape covers lab, ECG, imaging analytes; data-type specifics are typed extensions, not parallel hierarchies."
       }
     ]
   },
@@ -3427,6 +3466,35 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Temporal"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in the DTA MVP Information Model DTA entity and MVP Inventory \u00a73 (Version, Version Date, Version Change Rationale). Not a Word/PDF artifact with fields \u2014 a fact graph."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Data Transfer Agreement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The governing artifact for a vendor-to-sponsor transfer relationship. Packages one or more TransferSpecifications, references a TransferProfile, is ratified by Attestations, and cites the conformance shapes it must satisfy. Versioned (DNA status + bitemporal)."
       }
     ]
   },
@@ -3765,6 +3833,9 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
+        "@value": "An inclusion or exclusion criterion for study participation."
+      },
+      {
         "@value": "An inclusion/exclusion rule defining who may enroll."
       }
     ],
@@ -3858,6 +3929,9 @@
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
         "@value": "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study."
+      },
+      {
+        "@value": "The formal registration of a subject into a study arm."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -3867,29 +3941,8 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
-        "@id": "https://top.scientix.ai/v1#Temporal"
+        "@id": "https://top.scientix.ai/v1#BitemporalEntity"
       },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#EnrollmentRecord",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The enrollment event \u2014 eligibility confirmed, subject formally on the trial. SDTM DS: DSDECOD=ENROLLED. FHIR: ResearchSubject.status=on-study."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Enrollment Record"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Temporal"
       },
@@ -4573,6 +4626,9 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
+        "@value": "A participant's documented agreement to take part in a study, including version, form IRI, witness, and optional withdrawal."
+      },
+      {
         "@value": "The act of obtaining a subject's informed consent."
       }
     ],
@@ -4583,34 +4639,18 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
+        "@id": "https://top.scientix.ai/v1#BitemporalEntity"
+      },
+      {
         "@id": "https://top.scientix.ai/v1#Temporal"
       },
       {
         "@id": "https://top.scientix.ai/v1#Versioned"
       }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#InformedConsentAct",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
     ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
+    "http://www.w3.org/2004/02/skos/core#definition": [
       {
-        "@value": "One consent event (ICH E6(R3) \u00a72.4 GCP-required). Supports re-consent after protocol amendment or ICF version change. SDTM DS: DSDECOD=INFORMED CONSENT OBTAINED. FHIR: ResearchSubject.progress entry with subjectState=pending-on-study."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Informed Consent Act"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#Temporal"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
+        "@value": "The act and record of a study participant voluntarily agreeing to participate after being informed of all relevant aspects of the study."
       }
     ]
   },
@@ -5632,30 +5672,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#Participant",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "A human subject enrolled in a clinical trial at a specific StudySite for a specific Study. One entity per Study participation; multi-Study = separate Participant records. FHIR R5: ResearchSubject. SDTM projection: DM domain (demographics) + DS domain (disposition events)."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Participant"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "http://www.w3.org/ns/prov#Agent"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Agent"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#ParticipantSchedule",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -6326,27 +6342,6 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ScreeningRecord"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#Recruit",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "A human in the recruitment realm, pre-consent. Separate entity from Participant (recruiter is a distinct operator role; data is lighter; PHI boundary differs). Transitions to Participant when consent is obtained. Fuels twin-for-enrollment analytics."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Recruit"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#Agent"
       }
     ]
   },
@@ -7492,30 +7487,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#ScreeningRecord",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "One eligibility-screening attempt (ICH E6(R3) \u00a72.5). Re-screening = additional ScreeningRecord. SDTM DS: DSDECOD=SCREEN FAILURE / ENROLLED. SDTM IE: failed criteria."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Screening Record"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#Temporal"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#SelectSiteForStudy",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -8172,9 +8143,6 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
       }
     ]
   },
@@ -8290,6 +8258,9 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
+        "@value": "A person enrolled in or being considered for a study."
+      },
+      {
         "@value": "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII."
       }
     ],
@@ -8301,6 +8272,9 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Agent"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#BitemporalEntity"
       }
     ]
   },
@@ -8478,6 +8452,145 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TransferAmendment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Amendment as event (Outcome:StatusChange). Bitemporal; drives the cross-entity shape that forces amendment propagation to be explicit."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Transfer Amendment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Outcome"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A status change on a protocol/spec version that carries effectiveFrom/To and MUST reference the TransferSpecifications it affects. Propagation is a graph update + re-validation, not N manual DTA re-authorings."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TransferFile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in the info-model TRANSFER_FILE entity. The specification is the plan; the file is the Outcome:Artifact."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Transfer File"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Outcome"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "An actual delivered file instance (as distinct from its TransferSpecification). Carries its own transfer lifecycle timestamps and PROV attribution to the vendor org."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TransferProfile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in MVP Inventory \u00a75 'File Transfer Information'. Specialized per vendor as cr:VendorConnectorProfile instances grounded in each vendor's public API/export surface."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Transfer Profile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Scope"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The operational envelope of a transfer: file format, delimiter, encoding, transmission method, transmission type (cumulative vs incremental), schedule, provider/receiver folder, environment. A declaration (top:Scope); its validity is enforced by cr:TransferProfile* SHACL shapes (open Q2: Scope for declaration + Constraint shapes for enforcement)."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TransferScope",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in DTA MVP Information Model open Q1 (multi-vendor / multi-scope DTA). Recommend modeling scope explicitly \u2014 the single-vendor simplification is exactly where the exponential hides."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Transfer Scope"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Scope"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A mediator that lets one DataTransferAgreement cover multiple vendor/data-type scopes without repeating the agreement. Each TransferScope binds a data type, a vendor Organization and its TransferSpecification(s). Modeling scope explicitly from the start is where the DTA group's combinatorics are made visible rather than hidden (open Q1)."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TransferSpecification",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Grounded in the info-model TRANSFER_SPECIFICATION entity and CDISC LAB Model v2.0 content. Placed under top:Scope (a specification/plan), bitemporal so amendments supersede cleanly."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Transfer Specification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Scope"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act."
       }
     ]
   },
@@ -9060,6 +9173,58 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#VendorAlias",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The exemplar of the whole thesis. Resolve once; the next sponsor with the same vendor term auto-resolves. Grounded in the info-model ENCOUNTER_MAPPING / Data-Provider-Visit fields \u2014 deliberately re-modeled."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Vendor Alias"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A vendor's term (column name, visit label, unit string) captured ONLY as a resolution edge into the canonical corpus: cr:vendorTerm (the raw string) + cr:aliasResolvesTo (the canonical concept/encounter/unit) + cr:resolutionConfidence + cr:resolvedFrom provenance. Deliberately NOT a stored per-DTA row \u2014 the DTA group's ENCOUNTER_MAPPING re-modeled as resolution so the corpus compounds."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#VendorConnectorProfile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Instances grounded in verified public documentation: Castor EDC (OAuth2 REST + CDISC ODM export), Veeva Vault CDMS/CDB (SDE CSV/SAS/XPT + incremental SFF), Medidata Rave (RWS + ODM + audit-ID incremental), Oracle Clinical One (ODM-XML extract, Snapshot/Transactional). See examples/dta-lab-safety/vendor-connectors.ttl."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Vendor Connector Profile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A TransferProfile pre-populated from a named vendor's documented data-export surface (API/format/terminology), so a sponsor onboarding that vendor starts from a catalog default rather than a blank DTA. The operational counterpart to the compounding alias corpus."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#VerifyCAPAEffectiveness",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -9302,30 +9467,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#WithdrawalRecord",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#Class"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "One withdrawal or discontinuation event. WITHDRAWN = subject-initiated (CONSENT_WITHDRAWN); DISCONTINUED = investigator-initiated. Distinction is operator-meaningful and preserved in the substrate. SDTM DS: DSDECOD=WITHDRAWAL OF CONSENT / DISCONTINUED / LOST TO FOLLOW-UP."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Withdrawal Record"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#Temporal"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#WorkStream",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -9451,6 +9592,63 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#affectsSpecification",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A TransferAmendment must reference each TransferSpecification it affects (forces amendment propagation to be explicit)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferAmendment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "affects specification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferSpecification"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#aliasResolvesTo",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The canonical entity (BiomedicalConcept, cr:Visit/Encounter, or unit URI) a VendorAlias resolves to."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VendorAlias"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "alias resolves to"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#aliquotOf",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -9487,28 +9685,23 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#analysisBasis",
+    "@id": "https://top.scientix.ai/cr/v1#analysisCompletedAt",
     "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "The analysis population this endpoint result was computed in."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#EndpointResult"
+        "@value": "Lab transfer lifecycle: when the assay completed."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "analysis basis"
+        "@value": "analysis completed at"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulation"
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -9959,6 +10152,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#backedByCredential",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The Credential/delegation that authorized a signatory Attestation to ratify a transfer. Enables the 'was this party authorized to make this transfer?' gate \u2014 a ratifying Attestation with no backing Credential is a Violation."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Attestation"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "backed by credential"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Credential"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#basedOnDoseOptimization",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -9976,6 +10200,99 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/v1#Temporal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#blindingConstraint",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The BlindingConstraint governing a TransferProfile (scope + provenance of what is blinded)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "blinding constraint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#BlindingConstraint"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#blindingScope",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "What is blinded (e.g. 'treatment-assignment', 'unblinded-pk', 'none') \u2014 the scope a BlindingConstraint carries."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#BlindingConstraint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "blinding scope"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#boundConcept",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The canonical BiomedicalConcept a DataElementSpecification binds to (concept-first). The presence/absence of this binding \u2014 not a Y/N cell \u2014 is what 'is mapped' means."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "bound concept"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#BiomedicalConcept"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -10120,6 +10437,58 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#citesShape",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The conformance shape (IRI) a DataTransferAgreement declares its files must satisfy \u2014 the contract carries its own executable conformance."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "cites conformance shape"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#clinicalReviewAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Lab transfer lifecycle: when the result was clinically reviewed (e.g. PI review of imaging on receipt)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "clinical review at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#closesConsent",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -10142,6 +10511,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#InformedConsent"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#codedAs",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A Relationship from a BiomedicalConcept to a dereferenceable external terminology URI (LOINC/NCIt/SNOMED). Codes are Relationships to URIs, never string Properties (naming convention)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#BiomedicalConcept"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "coded as"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -10229,13 +10624,39 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#consentFormIRI",
+    "@id": "https://top.scientix.ai/cr/v1#consentDate",
     "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "IRI reference to the consented document in the TMF (e-ICD or scanned ICF)."
+        "@value": "Calendar date on which consent was obtained."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InformedConsent"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "consent date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#consentFormIRI",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Dereferenceable IRI to the consent form document."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
@@ -10248,9 +10669,35 @@
         "@value": "consent form IRI"
       }
     ],
-    "https://top.scientix.ai/v1#flavor": [
+    "http://www.w3.org/2000/01/rdf-schema#range": [
       {
-        "@value": "Additive"
+        "@id": "http://www.w3.org/2001/XMLSchema#anyURI"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#consentStatus",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Workflow status of the consent (e.g. active, withdrawn, expired)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InformedConsent"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "consent status"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ]
   },
@@ -10261,7 +10708,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Version of the ICF used (e.g. 'v3.0', 'v3.1-amendment-2')."
+        "@value": "Version identifier of the consent form (e.g. 'v2.1')."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
@@ -10277,11 +10724,6 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
       }
     ]
   },
@@ -10374,68 +10816,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#convertedFromRecruit",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "0..1. Operational-funnel trace. Empty for direct walk-ins."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "converted from recruit"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Recruit"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#convertedToParticipant",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "0..1. Inverse of Participant.convertedFromRecruit. Mandatory when recruitStatus=CONVERTED_TO_PARTICIPANT (SHACL hard)."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Recruit"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "converted to participant"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#credentialOf",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -10453,6 +10833,53 @@
     "https://top.scientix.ai/v1#flavor": [
       {
         "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#criterionText",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EligibilityCriterion"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "criterion text"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#criterionType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "'inclusion' or 'exclusion'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EligibilityCriterion"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "criterion type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ]
   },
@@ -10552,99 +10979,6 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "CTCAE version"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#string"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#cutDate",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#DatatypeProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The database lock date for this data cut."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DataCut"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "cut date"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#date"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#cutForStudy",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The study this data cut applies to."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DataCut"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "cut for study"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#cutType",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#DatatypeProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "Coded type: primary, interim, or safety-review."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DataCut"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "cut type"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
@@ -10881,6 +11215,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#declaredUnitConcept",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The declared unit of a DataElementSpecification as a dereferenceable UCUM URI. Unit conversion (mg/dL\u2194mmol/L) is canonical, not per-DTA prose."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "declared unit (UCUM)"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#definedBy",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -10989,6 +11349,94 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#delimiter",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "delimiter"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#deliveredUnder",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The TransferSpecification a TransferFile was delivered under."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferFile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "delivered under"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferSpecification"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#derivedFlag",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Whether the element is derived (vs directly measured)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "derived flag"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#boolean"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#derivedFromCollection",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11042,6 +11490,32 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "deviation category"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#documentHash",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Content hash of a referenced legal document, so the DTA pins the exact prose it references (URI + hash + version)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "document hash"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -11206,6 +11680,22 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#dtaModule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Data Transfer Agreement / Specification extension: vendor non-CRF data transfer as a fact graph. Additive over TOP Core; grounded in the CDISC DDF5a DTA working-group corpus (Scoping Report v54, MVP Inventory, MVP Information Model, LAB Model v2.0)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TOP CR \u2014 DTA/DTS module"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#eCRF",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -11226,6 +11716,94 @@
       },
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#effectiveFrom",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Start of the valid-time window a TransferAmendment takes effect."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferAmendment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "effective from"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#effectiveTo",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "End of the valid-time window a TransferAmendment applies (open if unbounded)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferAmendment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "effective to"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#encoding",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "encoding"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
       }
     ]
   },
@@ -11323,6 +11901,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#enrolledInArm",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Enrollment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "enrolled in arm"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#enrolledPerson",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11340,6 +11939,27 @@
     "https://top.scientix.ai/v1#flavor": [
       {
         "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#enrollmentDate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Enrollment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "enrollment date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#date"
       }
     ]
   },
@@ -11375,63 +11995,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#estimandPopulation",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The analysis population to which the estimand applies."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Estimand"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "estimand population"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#estimandVariable",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The endpoint variable the estimand is defined on."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Estimand"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "estimand variable"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Endpoint"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#exercisesCapability",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11449,6 +12012,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Capability"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#fileFormat",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Delivered file format (e.g. SAS-XPT, CSV, Dataset-JSON, ODM-XML). CT-enforced."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "file format"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -11525,6 +12119,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#forDataScope",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Binds a DataTransferAgreement to a TransferScope mediator (multi-vendor / multi-data-type)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "for data scope"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferScope"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#forParticipant",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11556,85 +12181,13 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#forStudyRecruit",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "1..1. Recruits are scoped per-Study."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Recruit"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "for study (recruit)"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#forStudySite",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
     ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "1..1. The StudySite where enrollment happened. Per OOUX correction: NOT Site directly."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "for study site"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#forStudySiteRecruit",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "0..1. May not be set when site assignment is finalized centrally."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Recruit"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "for study site (recruit)"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
@@ -11977,12 +12530,18 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
+        "@value": "Links a study subject to their informed consent record."
+      },
+      {
         "@value": "The informed consent under which a participant-facing act was performed."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudyEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -12038,6 +12597,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#hasDataElement",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A TransferSpecification declares its DataElementSpecifications."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "has data element"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#hasEligibilityCriterion",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -12080,28 +12670,28 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#hasEnrollmentRecord",
+    "@id": "https://top.scientix.ai/cr/v1#hasEnrollment",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
     ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links a study subject to their enrollment record."
+      }
+    ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "has enrollment record"
+        "@value": "has enrollment"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#EnrollmentRecord"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
+        "@id": "https://top.scientix.ai/cr/v1#Enrollment"
       }
     ]
   },
@@ -12387,32 +12977,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#hasScreeningRecord",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "has screening record"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ScreeningRecord"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#hasVisitDefinition",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -12435,63 +12999,6 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#VisitDefinition"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#hasVisitOccurrence",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "0..N. Per-Participant visit records; resolved when cr-core-visit-execution.ttl lifts."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "has visit occurrence"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#hasWithdrawalRecord",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "has withdrawal record"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#WithdrawalRecord"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -12662,37 +13169,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#intercurrentEventStrategy",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#DatatypeProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "ICH E9(R1) strategy for handling intercurrent events: treatment-policy, hypothetical, composite, while-on-treatment, or principal-stratum."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Estimand"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "intercurrent event strategy"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#string"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#intoStudy",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -12757,6 +13233,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#mandatoryElement",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Whether this data element is mandatory in the transfer."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "mandatory element"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#boolean"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -13441,6 +13948,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#packagesSpecification",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A DataTransferAgreement packages one or more TransferSpecifications."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "packages specification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferSpecification"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#perEstimand",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -13578,130 +14116,6 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#integer"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#populationCriteria",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The eligibility criterion or rule defining membership in this analysis population."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulation"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "population criteria"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#EligibilityCriterion"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#populationForCut",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The data cut that anchors this analysis population definition."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulation"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "population for cut"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DataCut"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#populationLevelSummary",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#DatatypeProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The statistical estimand statement (e.g. 'difference in means at week 26 in the ITT population')."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Estimand"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "population level summary"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#string"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#populationType",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#DatatypeProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "Coded population type: ITT, mITT, PP, safety, or other."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisPopulation"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "population type"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14053,6 +14467,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#providerFolder",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "provider folder"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#queryOn",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14110,6 +14550,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ratifiedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A signatory Attestation that ratifies a DataTransferAgreement (facts over flags: a signature is an Attestation, not a boolean)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "ratified by"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Attestation"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#realizes",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14122,6 +14593,32 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "realizes"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#receiverFolder",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "receiver folder"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14157,28 +14654,59 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#recruitedBy",
+    "@id": "https://top.scientix.ai/cr/v1#referencesLegalDocument",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "0..1. The recruitment coordinator (Person) handling this Recruit."
+        "@value": "The binding legal contract stays a prose/DocuSign artifact (a top:Evidence document) that the machine-readable DataTransferAgreement references by URI + hash + version. We reference it; we do NOT model liability/indemnification (open Q5)."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#Recruit"
+        "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "recruited by"
+        "@value": "references legal document"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
-        "@id": "https://top.scientix.ai/hcls/v1#Person"
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#referencesProfile",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A DataTransferAgreement references the operational TransferProfile that governs its files."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataTransferAgreement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "references profile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14292,6 +14820,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#reportGeneratedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Lab transfer lifecycle: when the vendor generated the result report/file."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "report generated at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#reportingDeadline",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -14386,6 +14940,63 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#resolutionAttestedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "For the uncovered tail (imaging/eCOA/DHT/genomics with no open identifier): the clinician/PI Attestation that certifies a binding at the catalog when it cannot be auto-resolved. Model the attestation path as first-class, not an exception (open Q6). E.g. imaging reviewed by the PI on receipt."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VendorAlias"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "resolution attested by"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Attestation"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#resolutionConfidence",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Confidence [0,1] of an automatic alias resolution. Below the threshold the binding is routed to the attestation queue, not auto-accepted."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "resolution confidence"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#resolutionStatus",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -14398,6 +15009,58 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "resolution status"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#resolvedAgainstVersion",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The TOP cr/v1 reference version a binding resolved against, so reference drift never silently re-writes meaning (\u00a74 reference-version pinning)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "resolved against reference version"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#resolvedFrom",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Binding provenance: the VendorAlias (or source corpus entry) a resolved binding was derived from. A kind of prov:wasDerivedFrom, so lineage queries traverse it natively."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "resolved from"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14542,99 +15205,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#sapAmends",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The prior version of the SAP that this document amends."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "SAP amends"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#sapGovernsStudy",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "The study this statistical analysis plan governs."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "SAP governs study"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#sapVersion",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#DatatypeProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "Version identifier for this SAP (e.g. 'v1.0', 'v2.1-amendment')."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "SAP version"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#string"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#scheduleForSubject",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14652,6 +15222,68 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#scopeSpecification",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The TransferSpecification delivered under a TransferScope."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferScope"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "scope specification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferSpecification"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#scopeVendor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The vendor Organization responsible for a TransferScope."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferScope"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "scope vendor"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Organization"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14760,6 +15392,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#significantDigits",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "significant digits"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#siv",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14781,6 +15439,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#specForStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Anchors a TransferSpecification to the USDM/protocol cr:Study it serves (everything is anchored around a USDM protocol). Intended range is cr:Study, but the range is left open deliberately: the study's full definition lives in the USDM/protocol graph and is referenced by IRI here, not re-authored inside the DTS."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "specification for study"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#specimen",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14793,6 +15477,58 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Specimen"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#specimenCollectedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Lab transfer lifecycle: when the specimen was collected."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "specimen collected at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#specimenReceivedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Lab transfer lifecycle: when the central lab received the specimen."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "specimen received at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14928,6 +15664,32 @@
     "https://top.scientix.ai/v1#flavor": [
       {
         "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#subjectId",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Site-assigned identifier for the study subject."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "subject identifier"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ]
   },
@@ -15378,6 +16140,130 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#transferEnvironment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Test vs production environment for the transfer."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "transfer environment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#transferSchedule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Delivery frequency/cadence (e.g. 'weekly', 'daily', 'near-real-time'). USDM does NOT model transfer frequency/timing \u2014 this is genuinely new and lives here (open Q4). Temporal is native to TOP, so cadence and windows are first-class, not prose."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "transfer schedule"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#transmissionMethod",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "How the file is transmitted (e.g. SFTP, API, Snowflake-share). CT-enforced."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "transmission method"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#transmissionType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Cumulative vs incremental delivery. CT-enforced."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "transmission type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#triggers",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -15426,6 +16312,146 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Delegation"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#valueRangeHigh",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "value range high"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#valueRangeLow",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "value range low"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#vendorApiStyle",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The documented integration style of a VendorConnectorProfile (e.g. 'OAuth2-REST', 'RWS-ODM', 'Snowflake-share', 'BigQuery-direct', 'SFTP'). Descriptive; grounded in public vendor docs."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VendorConnectorProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "vendor API style"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#vendorDocumentation",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "URL of the public documentation a VendorConnectorProfile was grounded in (provenance for the connector default)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VendorConnectorProfile"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "vendor documentation"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#anyURI"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#vendorTerm",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The raw vendor string (column name, visit label, unit) captured on a VendorAlias resolution edge."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "vendor term"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -15597,7 +16623,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "The date consent was withdrawn; sets the top:validUntil close event for this consent."
+        "@value": "Calendar date on which consent was withdrawn, if applicable."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
@@ -15613,11 +16639,6 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#date"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
       }
     ]
   },
@@ -15659,7 +16680,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "The impartial witness present when the subject signed (required when subject cannot read)."
+        "@value": "The person who witnessed the consent signing."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
@@ -15675,11 +16696,6 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
       }
     ]
   },
@@ -15858,6 +16874,14 @@
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
         "@value": "The human agent (or committee) that reviewed and confirmed a proposed mapping. Required for promotion from 'under_review' to 'confirmed'."
+      },
+      {
+        "@value": "The human curator (prov:Person IRI) who reviewed and approved an LLM-inferred mapping. Required before verificationStatus may be set to 'verified'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/crosswalk/v1#Mapping"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -15878,7 +16902,15 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
+        "@value": "The LLM agent (prov:SoftwareAgent IRI) that produced this mapping candidate. Presence triggers the SHACL HITL gate."
+      },
+      {
         "@value": "The top:AutonomousAgent instance that proposed this mapping via LLM inference. Enables provenance tracing back to the agent model and prompt version."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/crosswalk/v1#Mapping"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -15941,12 +16973,25 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
+        "@value": "Free-text tag describing how the mapping was produced. Controlled values: 'ManualCuration', 'LLMInference', 'LexicalMatching', 'LogicalReasoning'."
+      },
+      {
         "@value": "How the mapping was produced: ManualCuration | LLMInference | RuleBasedExtraction | HybridReview. Drives downstream trust and routing."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/crosswalk/v1#Mapping"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "mapping method"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -17635,6 +18680,84 @@
     "https://top.scientix.ai/v1#flavor": [
       {
         "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#modelVersion",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Identifier of the LLM (name + version/hash) that produced this conclusion, e.g. 'gpt-4o-2024-05-13'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#Conclusion"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "model version"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#promptTemplate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The prompt template used to elicit the LLM inference, with slot markers. Stored verbatim for reproducibility."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#Conclusion"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "prompt template"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#sourceContext",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The retrieved context passages (e.g. SPARQL results, vector-search snippets) injected into the prompt. Stored verbatim."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#Conclusion"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "source context"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ]
   }
