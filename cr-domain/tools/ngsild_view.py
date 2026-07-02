@@ -29,7 +29,7 @@ from rdflib import Graph, RDF, RDFS, URIRef, Literal
 from rdflib.namespace import SH
 
 CR = "https://top.scientix.ai/cr/v1#"
-TOP = "https://top.scientix.ai/core/v1#"
+TOP = "https://top.scientix.ai/v1#"
 RDFVAL = "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
 E = "https://top.scientix.ai/examples/"
 

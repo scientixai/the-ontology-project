@@ -53,7 +53,7 @@ def main():
     L = []
     w = L.append
     for p in ("ex|https://top.scientix.ai/examples/", "cr|https://top.scientix.ai/cr/v1#",
-              "hcls|https://top.scientix.ai/hcls/v1#", "top|https://top.scientix.ai/core/v1#",
+              "hcls|https://top.scientix.ai/hcls/v1#", "top|https://top.scientix.ai/v1#",
               "prov|http://www.w3.org/ns/prov#", "rdfs|http://www.w3.org/2000/01/rdf-schema#",
               "xsd|http://www.w3.org/2001/XMLSchema#"):
         pre, ns = p.split("|")

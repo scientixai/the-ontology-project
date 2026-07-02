@@ -1,14 +1,16 @@
 @prefix ex:   <https://top.scientix.ai/examples/> .
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
-@prefix top:  <https://top.scientix.ai/core/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 # Bitemporal integrity fixtures (exercised by the harness's SPARQL detective tests).
 
-ex:subj-bt   a cr:StudySubject .
+ex:subj-bt   a cr:StudySubject ;
+    cr:subjectId "BT-001" ;
+    top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
 ex:agent-lab a top:Agent, prov:Agent .
 
 # A lab value for valid-date 2026-02-14, first recorded 02-16 as 4.2 ...

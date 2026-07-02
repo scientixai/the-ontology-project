@@ -21,7 +21,7 @@ from pyshacl import validate
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SH = Namespace("http://www.w3.org/ns/shacl#")
-TOP = Namespace("https://top.scientix.ai/core/v1#")
+TOP = Namespace("https://top.scientix.ai/v1#")
 CR = Namespace("https://top.scientix.ai/cr/v1#")
 EX = Namespace("https://top.scientix.ai/examples/")
 
@@ -88,14 +88,16 @@ def main():
         )
         v, w, _i = severity_counts(report)
         got = outcome(v, w)
-        ok = got == c["expect"]
+        # manifest uses the long forms (conformant/violation/warning)
+        norm = {"conformant": "conform", "violation": "violate", "warning": "warn"}
+        ok = got == norm.get(c["expect"], c["expect"])
         if ok:
             passed += 1
         else:
             failures.append(("SHACL", c["file"],
                              f"expected {c['expect']}, got {got} (V={v} W={w})"))
         print(f"[{'PASS' if ok else 'FAIL'}] "
-              f"{c['desc']}  [{got}]")
+              f"{c.get('desc', c['file'])}  [{got}]")
 
     # (c) bitemporal detective tests
     bt_passed, bt_total = bitemporal_checks(ont_graph, failures)
@@ -219,7 +221,7 @@ def schedule_checks(ont_graph, failures):
     def window_end_asof(tt):
         q = f"""
         PREFIX cr:  <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         SELECT ?we WHERE {{
           ?pv a cr:PlannedVisit ; cr:projectsEncounter <{ENC_V2}> ;
@@ -406,13 +408,13 @@ def startup_checks(ont_graph, failures):
     act = {}
     for row in g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         SELECT ?site ?d WHERE { ?a a cr:SiteActivation ; cr:activates ?site ; top:observedAt ?d }"""):
         act[row.site] = row.d.toPython()
     early = set()
     for row in g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         SELECT ?e ?site ?d WHERE { ?e a cr:Enrollment ; cr:atSite ?site ; top:observedAt ?d }"""):
         a = act.get(row.site)
         if a is not None and row.d.toPython() < a:
@@ -439,7 +441,7 @@ def lims_checks(ont_graph, failures):
     # Current state = the toState of the latest custody event (by valid time) for spec-1.
     rows = list(g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         SELECT ?st ?t WHERE {
           ?ce a cr:CustodyEvent ; cr:specimen <https://top.scientix.ai/examples/spec-1> ;
               cr:toState ?st ; top:observedAt ?t . }"""))
@@ -459,12 +461,12 @@ def preind_checks(ont_graph, failures):
     g.parse(os.path.join(ROOT, "examples", "ind-clock.ttl"), format="turtle")
     inds = {row.ind: row.sub.toPython() for row in g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         SELECT ?ind ?sub WHERE { ?ind a cr:INDApplication ; top:observedAt ?sub }""")}
     holds = {}
     for row in g.query("""
         PREFIX cr: <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         SELECT ?ind ?hd WHERE { ?h a cr:ClinicalHold ; cr:placedOn ?ind ; top:observedAt ?hd }"""):
         holds.setdefault(row.ind, []).append(row.hd.toPython())
     on_hold, may_proceed = set(), set()
@@ -553,15 +555,23 @@ def projection_checks(ont_graph, failures):
         res = g.query(query)
         rows = [{str(v): str(row[v]) for v in res.vars if row[v] is not None}
                 for row in res]
-        missing = [exp for exp in spec["expect_rows"]
-                   if not any(all(r.get(k) == val for k, val in exp.items())
-                              for r in rows)]
-        if not missing:
+        problems = []
+        if "expect_rows" in spec:
+            problems += [f"missing row {exp}" for exp in spec["expect_rows"]
+                         if not any(all(r.get(k) == val for k, val in exp.items())
+                                    for r in rows)]
+        if "expect_min_rows" in spec and len(rows) < spec["expect_min_rows"]:
+            problems.append(f"expected >={spec['expect_min_rows']} rows, got {len(rows)}")
+        if "expect_vars" in spec:
+            got_vars = {str(v) for v in res.vars}
+            problems += [f"missing var ?{v}" for v in spec["expect_vars"]
+                         if v not in got_vars]
+        if not problems:
             passed += 1
             print(f"[PASS] {spec['desc']}")
         else:
-            failures.append(("PROJ", spec["query"], f"missing rows {missing}; got {rows}"))
-            print(f"[FAIL] {spec['desc']}  missing={missing}")
+            failures.append(("PROJ", spec["query"], f"{problems}; got {rows}"))
+            print(f"[FAIL] {spec['desc']}  {problems}")
     return passed, total
 
 
@@ -575,7 +585,7 @@ def bitemporal_checks(ont_graph, failures):
     def asof(tt):
         q = f"""
         PREFIX cr:  <https://top.scientix.ai/cr/v1#>
-        PREFIX top: <https://top.scientix.ai/core/v1#>
+        PREFIX top: <https://top.scientix.ai/v1#>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         SELECT ?val WHERE {{

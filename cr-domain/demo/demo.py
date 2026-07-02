@@ -2,6 +2,7 @@
 """Integration demo. Two flagship views from one native graph, plus a
 regulator question answered as a query. Run: python3 cr-domain/demo/demo.py
 """
+import glob
 import os
 from rdflib import Graph
 
@@ -11,8 +12,8 @@ EXAMPLE = os.path.join(ROOT, "examples", "oncology-fih-conformant.ttl")
 
 def _graph():
     g = Graph()
-    for f in ("ontology/top-core.ttl", "ontology/hcls-core.ttl", "ontology/cr-core.ttl"):
-        g.parse(os.path.join(ROOT, f), format="turtle")
+    for f in sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl"))):
+        g.parse(f, format="turtle")
     g.parse(EXAMPLE, format="turtle")
     return g
 
