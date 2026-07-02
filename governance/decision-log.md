@@ -27,8 +27,9 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0017](#adr-0017-monorepo-with-directory-scoped-ownership) | 2026-05-12 | Monorepo with directory-scoped ownership | Accepted |
 | [ADR-0018](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline) | 2026-05-13 | Adopt the six-stage ontology pipeline as TOP's build discipline | Accepted |
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
-| [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Accepted (resolves ADR-0018 forward-looking note) |
+| [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Superseded by ADR-0022 |
 | [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
+| [ADR-0022](#adr-0022-agency-is-a-role-not-a-kind-tighten-agent-add-the-subject-binding-keep-biological-kinds-in-domains) | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Proposed (supersedes ADR-0020) |
 
 ---
 
@@ -845,7 +846,9 @@ Accepted. The flavor annotations land in `core/v1/shapes.ttl` alongside this ADR
 
 ## ADR-0020: Add `top:Organism` as the fifth Agent leaf
 
-**Date:** 2026-05-13 · **Status:** Accepted · **Refs:** [taxonomy.md § L2 — The twenty-nine leaves](../taxonomy.md), [taxonomy/taxonomy.ttl](../taxonomy/taxonomy.ttl), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [ADR-0018 forward-looking note](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline)
+**Date:** 2026-05-13 · **Status:** Superseded by [ADR-0022](#adr-0022-agency-is-a-role-not-a-kind-tighten-agent-add-the-subject-binding-keep-biological-kinds-in-domains) · **Refs:** [taxonomy.md § L2 — The twenty-nine leaves](../taxonomy.md), [taxonomy/taxonomy.ttl](../taxonomy/taxonomy.ttl), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [ADR-0018 forward-looking note](#adr-0018-adopt-the-six-stage-ontology-pipeline-as-tops-build-discipline)
+
+> **Superseded 2026-07-02 by [ADR-0022](#adr-0022-agency-is-a-role-not-a-kind-tighten-agent-add-the-subject-binding-keep-biological-kinds-in-domains).** Placing `top:Organism` under `top:Agent` gave a living non-human the authority wiring (`signedBy` / `ownedBy` / `enforcedBy` / `hasCredential`) it cannot bear — agency is a role, not a kind. ADR-0022 removes the Core class, keeps the shared "Organism" vocabulary anchor in `taxonomy/taxonomy.ttl`, and adds `top:hasSubject` so the Subject role attaches by binding. The real need this ADR met (homes for lab animals, livestock, plants, microbes) is preserved via domain kinds under `top:CommonEntity`. The body below is retained as the reasoning of record.
 
 ### Context
 
@@ -1071,6 +1074,116 @@ All four questions accepted as recommended:
 ### Status
 
 Accepted 2026-06-20. The bitemporal vocabulary (`top:validFrom`, `top:validUntil`, `top:Versioned`), `top:BitemporalShape`, and the Tier-1 enforcement shapes land in `core/v1/shapes.ttl` alongside this acceptance, with a versioned walkthrough under `core/v1/walkthroughs/`. The first-principles § 4 "(Proposed)" marker is removed. Out of scope here (follow-on work): Tier-2 propagation and the Tier-3 linter rule, the temporal query layer, and the Broker ingestion lift.
+
+---
+
+## ADR-0022: Agency is a role, not a kind (tighten Agent, add the Subject binding, keep biological kinds in domains)
+
+**Date:** 2026-07-02 · **Status:** Proposed · **PR:** _TBD_ · **Refs:** [core/v1/shapes.ttl](../core/v1/shapes.ttl), [ADR-0002](#adr-0002-universal-foundation-posture-no-specialized-entity-types-for-cross-cutting-shapes), [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof), [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), W3C Holon CG thread "After the Inaugural" (Jun to Jul 2026) · **Status note:** Supersedes [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf).
+
+### Context
+
+`top:Agent` is defined as "the entity with capacity to act, hold authority, or carry responsibility," and its wiring is authority-only: an Agent is the range of `top:signedBy`, `top:ownedBy`, `top:enforcedBy`, and carries `top:hasCredential`, `top:memberOf`, `top:authorizedBy`. The category gloss enumerates four members (Persons, Organizations, Groups, Autonomous Agents). ADR-0020 then added a fifth leaf, `top:Organism`, to house laboratory animals, livestock, plants, and microbial cultures.
+
+That placement is wrong, and the file already half-admits it. ADR-0020 aligned Organism to PROV as `skos:closeMatch prov:Agent` ("close match, not exact ... the non-human-living subset") while `core/v1/shapes.ttl` hard-wires `top:Organism rdfs:subClassOf top:Agent, prov:Agent`. The doubt was recorded, then overridden. The section header still reads "Agent leaves (4)"; there are five.
+
+The consequence is an entailment TOP does not mean. Because `top:Organism rdfs:subClassOf top:Agent`, a microbial culture inherits `hasCredential`, can be the range of `signedBy` and `ownedBy`, and can `enforce` a Constraint. A fermentation culture that signs a record and holds a license. The defect sits on the accountability spine the whole Core exists to protect.
+
+The same defect hits the entity TOP cares most about. `top:Person rdfs:subClassOf top:Agent`, so every human is typed as an authority-bearer, but a trial participant is the *subject* of the study, not an actor in it. The graph cannot separate who acted from who was studied for a human, which is exactly what regulated provenance requires (and the promise behind "the model is not bound by perjury; the human is").
+
+The forcing function was external. In the W3C Holon CG thread on what to call a tracked entity, the failure was named from two sides:
+
+> "A holon (person, dog, cell, code, etc) could have agency and therefore be an agent, or not have agency. ... A teacup is not an agent, unless it is an animated character in a Disney movie."
+> (John Clements, W3C Holon CG, 1 July 2026)
+
+and sharpened by biomedicine: a SARS-CoV-2 virion has causal agency (it infects, invades) but bears no accountability; an in-silico drug candidate is a molecule with a binding disposition, denoted by a sequence, whose affinity claim is attributable to a research team, not to the molecule. One superclass cannot carry a party that answers under oath, a virion that acts but cannot be held to account, and a patient who is studied rather than acting.
+
+Root cause, and it decides the fix. The L2 partition is **functional**: Agent (who acts), Resource (what is used), Evidence (what proves), Outcome (what is produced), Scope (why), Temporal (when), Location (where), Constraint (what bounds). It has no role for **who or what the operation is performed upon**, the Subject. With no Subject role available, a studied organism had nowhere functional to go, and the loosest gloss in the set ("capacity to act") absorbed it. Two of your own ADRs then constrain the repair. ADR-0002 commits TOP to specializing by *role binding, not type minting*. ADR-0012 gives every leaf exactly one home, a functional category. There is no honest functional category for a biological *kind*, so a living-thing leaf cannot sit in Core without either borrowing a role category it does not fit (the ADR-0020 mistake) or minting one (the mistake ADR-0002 forbids). The kind belongs in a domain; only the role belongs in Core.
+
+### Decision
+
+Fix the accountability defect in Core with the minimum that is structurally universal, and push the biological kinds down to the domains where ADR-0009 already lets them specialize `top:CommonEntity` freely. Four changes to `core/v1/shapes.ttl`; three things explicitly kept out of Core.
+
+**1. Tighten `top:Agent`, remove the causal-capacity disjunct.**
+
+```turtle
+top:Agent a owl:Class ;
+    rdfs:label "Agent"@en ;
+    rdfs:subClassOf top:CommonEntity, prov:Agent, bfo:IndependentContinuant ;
+    rdfs:comment "The entity that holds authority or bears responsibility for what is done: it signs, owns, authorizes, enforces, and can be attributed an action. Persons, Organizations, Groups, Autonomous Agents (software with delegated authority). Capacity to act is not sufficient. A thing that merely acts causally (a pathogen, a compound, a river) is not an Agent unless it can be held to account."@en .
+```
+
+**2. Delete `top:Organism` from Core.** Remove the class and its `rdfs:subClassOf top:Agent, prov:Agent`. Agent returns to four leaves; the "Agent leaves (4)" comment becomes correct. Organism relocates to the domains (see below).
+
+**3. Add `top:hasSubject`, Subject as a binding.** Per ADR-0002, the "who or what is this about" role attaches by relation, not by class. No PROV-O peer: `prov:used` denotes a tool or consumed entity, not the subject of care (declared absence, following ADR-0021's precedent for valid time). Agent-side roles-in-activities continue to use `prov:hadRole` / `prov:qualifiedAssociation`, native since ADR-0001.
+
+```turtle
+top:hasSubject a owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:CommonEntity ;   # typically a Scope (a study) or a Temporal (a procedure)
+    rdfs:range top:CommonEntity ;    # the entity the work is about (a Person, or a domain living/molecular kind)
+    rdfs:comment "Binds an operation (a Scope such as a study, or a Temporal such as a procedure) to the entity it is performed upon, cares for, or studies: its subject. A role binding, not a type. The same Person is an Agent when they consent and a subject when they are observed; the same virion is a subject in the sequencing lab and a causal participant in an infection. No PROV-O peer (prov:used denotes a tool or consumed entity, not the subject-of-care)."@en .
+```
+
+This is the patient fix. A participant stays `top:Person` (unchanged, still a rights-bearing individual, still `prov:Person`); the study `top:hasSubject` that Person. Who acted and who was studied are now separable for humans without reclassifying anyone. PROV permits a node to be both `prov:Agent` and `prov:Entity`, so a Person bound as a subject carries no contradiction.
+
+**4. Add `top:denotes`, representation to referent.** The one addition that is a judgment call, not forced by the defect. Kept in Core because representation-of is cross-cutting (identifiers, records, digital twins, sequences) and sits near `prov:specializationOf`. Veto it into a domain if you would rather Core stay at the three essential moves. [Likely it belongs in Core]
+
+```turtle
+top:denotes a owl:ObjectProperty ;
+    rdfs:label "denotes"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:CommonEntity ;   # an information artifact: a Document / Observation
+    rdfs:range top:CommonEntity ;    # the entity it stands for
+    rdfs:comment "Links a representation (a sequence record, a SMILES string, an identifier) to the entity it stands for. A SMILES string (a top:Document) denotes a molecular entity; the string is data, the molecule is the referent. Semiotic relation, no PROV-O peer (declared absence)."@en .
+```
+
+**Kept out of Core, on purpose.** `top:Bioentity`, `top:MolecularEntity`, and `top:targets` are not added. `Bioentity` and `MolecularEntity` are kinds with no honest L2 category (per Context); `targets` is a mechanism relation, not a universal. All three live in the domains.
+
+### Where the kinds live now (domain extension)
+
+Per ADR-0009, a workflow specializes `top:CommonEntity` directly and binds the Core roles. No Core change is needed to add a living or molecular kind to any domain.
+
+```turtle
+# clinical-research (topcr:), animal-care (topvet:), agriculture (topag:), energy (topen:), pharma (toppharm:)
+topcr:StudyAnimal      rdfs:subClassOf top:CommonEntity .   # a lab animal under study
+topen:RemediationMicrobe rdfs:subClassOf top:CommonEntity . # a microbe cleaning a spill
+toppharm:Candidate     rdfs:subClassOf top:CommonEntity .   # an in-silico or bench compound
+toppharm:inhibits      rdfs:subClassOf ...  ;               # domain mechanism relation (was top:targets)
+    rdfs:domain toppharm:Candidate ; rdfs:range top:CommonEntity .
+```
+
+Each binds into the operation via Core: a study `top:hasSubject` a `topcr:StudyAnimal`; a sequence (`top:Document`) `top:denotes` a `toppharm:Candidate`; the candidate `toppharm:inhibits` the target. Composition across workflows (ADR-0004) is served by the shared *role* (`hasSubject`), not by a shared kind: two workflows binding the same living node bind it through `hasSubject`, and the kind can be a shared domain class or plain `top:CommonEntity`.
+
+### Vocabulary anchor (taxonomy.ttl)
+
+To keep the commons alias corpus from fragmenting (the creed), retain a shared `skos:Concept` for "Organism" (and, if useful, "Molecular Entity") in `taxonomy/taxonomy.ttl` as an alignment anchor that domain kinds map to. Fix its crosswalk: drop `skos:closeMatch prov:Agent` and the Agent-branch placement (it was never an agent); align to `prov:Entity` or leave the PROV crosswalk absent. The anchor gives ag, energy, vet, and pharma one term to align their aliases to, without a Core OWL class asserting a shared shape that does not exist.
+
+### Worked example: in-silico screen (the case this closes)
+
+A sequence (`top:Document`) `top:denotes` a `toppharm:Candidate`. The discovery study (`top:Scope`) `top:hasSubject` that candidate. The candidate `toppharm:inhibits` the disease target. The docking run is a `top:Temporal` (Activity) that used the model, recorded as a `top:AutonomousAgent`. The predicted affinity is a `top:Conclusion` (`top:Outcome`), `top:signedBy` (subproperty of `prov:wasAttributedTo`) the research team (`top:Person` / `top:Organization`). Model generates; human attests. The molecule is never the accountable party, which is the point. Every class touched is Core except the two domain kinds, and the accountability chain runs entirely on Core roles.
+
+### Rationale
+
+- **The test is the shared shape, not the domain count.** A concept earns a Core seat when it answers a question the eight categories cannot, structurally, or carries a shared Core shape or SHACL. Recurrence across industries is how you notice a gap, not why it qualifies. The universal thing here is the Subject role (`hasSubject`), which every domain needs; the biological kind is not. Living things' candidate shared shapes each already have a home: viability narrows `top:status`; custody is `top:Material` with `ownedBy`; biosafety is a `top:Constraint`; molecular referent is `top:denotes`. None requires a `Bioentity` superclass.
+- **ADR-0012 forbids the kind in Core.** Every leaf needs a functional category; none is honest for "living non-human." So the kind cannot live in Core without borrowing a role it does not fit or minting one ADR-0002 forbids. Domains carry it.
+- **ADR-0020's real need is met, its placement corrected.** Lab animals, livestock, plants, and microbes still have homes (domain kinds plus a SHARED SKOS anchor); the homes are simply not the authority category, and the false `prov:Agent` edge is gone.
+- **The false entailments die.** A domain living kind is a `top:CommonEntity`, not an Agent: it cannot be the range of `signedBy` / `ownedBy` / `enforcedBy` and does not inherit `hasCredential`.
+- **The "Subject homonym" from ADR-0020 dissolves.** It was never a homonym needing CV-layer routing to Person-or-Organism; it was one role (Subject) borne by different kinds. The routing workaround retires.
+
+### Consequences
+
+- **Core shrinks and simplifies.** Categories stay 8. Leaves drop 29 to 28 (Organism removed; nothing added). Two Core properties added (`hasSubject`, `denotes`). The BFO note updates: 15 leaves inherit a category peer (Agent 4 + Location 3 + Temporal 4 + Evidence 4), 13 declare at leaf; every leaf still resolves to one BFO superclass. Fix the "Agent leaves (4)" header (now correct).
+- **One breaking change, superseding ADR-0020:** `top:Organism` leaves Core OWL. Any instance asserting `hasCredential`, `signedBy`, `ownedBy`, or `enforcedBy` on a `top:Organism`, or subclassing it under Agent, becomes invalid (the intent). ADR-0020 landed 2026-05-13, so exposure is small. Migration: repoint `top:Organism` instances to a domain kind (`topcr:StudyAnimal`, `topen:RemediationMicrobe`, and so on) subclassing `top:CommonEntity`; identity and Universal DNA are unchanged. The SKOS "Organism" concept remains as the alias anchor.
+- **`denotes` is the open call.** Keep in Core (recommended) or push to a domain. Everything else in this ADR is forced; this one is a preference.
+- **Deferred, each to its own ADR, with reason:**
+  - *Full disposition model.* "Ability to bind" is a BFO realizable entity realized in a process; the domain `inhibits` / `remediates` relations are the interim. The realizable-entity model is more than the accountability fix needs, and the attribution anchor (Conclusion to team) already works. Deferred.
+  - *L2 kind/role re-partition (v2).* The rigorous end-state pulls Person / Organization / Group off Agent entirely and makes Agent / Subject / Resource pure roles bound to kinds. This ADR stops short of it. **Named cost:** a seam remains, a human is modeled by role (bound under Agent) while a domain living kind is modeled by kind (under CommonEntity), so a modeler still cannot uniformly ask "what kind is this, and what role is it playing?" without the split. Deferred because v1.1 must ship for the 3 July CG discussion and the re-partition is a breaking, major-version change not required to fix the defect. It is the only honest way to give living things a *shared Core home*, if that is ever judged worth the cost.
+
+### Status
+
+Proposed 2026-07-02, ahead of the 3 July W3C Holon CG discussion. The four `core/v1/shapes.ttl` changes (tighten `top:Agent`, remove `top:Organism`, add `top:hasSubject`, add `top:denotes`) and the `taxonomy/taxonomy.ttl` anchor fix land on the feature branch alongside this proposal; `top:denotes` lands in Core per the recommendation, subject to the open-call veto. Count references (README.md, taxonomy.md, governance/extension-contract.md, core/v1/index.html) move from 29 to 28. ADR-0020 is marked Superseded. Deferred to their own ADRs: the full disposition model and the v2 kind/role re-partition.
 
 ---
 
