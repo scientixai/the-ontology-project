@@ -108,6 +108,63 @@ and the radiologist's notes, and any image entering the clinic is **reviewed by
 the PI** — so the clinician attestation genuinely exists and is captured as the
 `cr:Attestation`, rather than being invented to satisfy the model.
 
+## Central-lab & the FHIR lab-resource model (the corrected vendor tier)
+
+The first vendor-research pass profiled **EDC** vendors (Castor, Veeva, Medidata,
+Oracle). That is the *surrounding* context, not the DTA MVP target. The MVP
+primary use case — central-lab **safety labs** — is a **HL7 FHIR R4** problem,
+and the right vendor tier is the megalabs, the QHIN/aggregator middleware, and
+the developer-first EHRs. This section corrects that framing, grounded in the
+"Lab Vendor API Specs for CDISC" analysis, and it independently **validates the
+whole design**: the CDISC 360i Digital DTA is itself "a machine-readable config,
+generated from USDM, that runs CORE conformance + Dataset-JSON validation *at the
+point of ingestion*" — i.e. exactly this module's SHACL-at-ingestion thesis, and
+exactly the "Data Validation & Quality" layer the MVP inventory deferred.
+
+### The FHIR request-report triad → TOP classes → SDTM LB
+FHIR R4 normalizes lab data as a four-resource graph; the deterministic mapping
+into SDTM LB is what the Digital DTA's "core mechanism" encodes
+(`crosswalks/dta-to-external.ttl`):
+
+| FHIR R4 resource | TOP class | SDTM LB projection |
+|---|---|---|
+| `ServiceRequest` (the order) | `cr:AnalysisRequest` | order → result traceability (`DiagnosticReport.basedOn`) |
+| `Specimen` (the sample) | `cr:onSample` → `hcls:Specimen` | matrix type (`LBSPEC`) |
+| `Observation` (atomic result) | `cr:AssayResult` | `Observation.code` → `LBLOINC`; `valueQuantity.value` → `LBSTRESN`; unit → `LBSTRESU`; interpretation flag → `LBNRIND` |
+| `DiagnosticReport` (wrapper) | the transfer file / report | report status, effective time |
+
+This maps 1:1 onto the Sodium worked example: the `cr:AssayResult` is the FHIR
+`Observation`, its bound `cr:BiomedicalConcept` carries the LOINC code, and the
+UCUM-canonical unit is `LBSTRESU`/`LBSTRESN` (standard units) vs the delivered
+`LBORRES` (original) — the SI conversion the DTA has always had to enforce by
+hand, here canonical.
+
+### Vendor matrix (grounded; `examples/dta-lab-safety/fhir-lab-connectors.ttl`)
+
+| Vendor | Tier | Surface | Delivery | Notes for the DTA |
+|---|---|---|---|---|
+| **Labcorp** | Megalab | FHIR R4 (`ServiceRequest`/`DiagnosticReport`/`Observation`/`Specimen`) + legacy EDI | FHIR-API; SFTP/HL7 v2 ORU | a Digital DTA can auto-generate the legacy EDI spec file too |
+| **Quest (Quanum)** | Megalab | FHIR R4, OAuth2 auth-code + refresh | FHIR-API | replaces legacy SFTP batch; 21 CFR 11 / HIPAA |
+| **Health Gorilla** | TEFCA QHIN | FHIR R4, OAuth2 bearer, resource-scoped scopes | FHIR-API, subscription | `OperationOutcome` errors → conformance handling; Lab Subscription = 2yr history + 72h updates (RWD) |
+| **Redox** | Aggregator | Normalized "Results" JSON model | Webhook (New/NewUnsolicited/Query) | one model over 50+ EHRs; OAuth JWT |
+| **Particle Health** | Aggregator | FHIR R4 + C-CDA + Delta | FHIR-API | `_include`/`_revinclude` bundles report + observations in one call |
+| **Canvas Medical** | Dev-first EHR | FHIR R4 US Core, `$create-lab-report` | FHIR-API | date modifiers `ge`/`le` = **visit-window checking at the query layer**; DocumentReference superseded/current = audit trail |
+| **Medplum** | Dev-first EHR (OSS) | FHIR R4 | FHIR-API | `basedOn`/`subject` linkage = SDTM traceability; ideal open "living lab" |
+| **Akute Health** | Dev-first EHR | REST + webhooks | Webhook (201/202/400) | `interpretation_code` HH/LL flags; 5 concurrent-request cap → DTA must encode backoff |
+| **Elation Health** | Dev-first EHR | FHIR R4 + HL7 ORM/ORU | FHIR-API | OAuth2 client-credentials; bi-directional |
+
+Two of these produced concrete conformance-shape ideas worth a follow-up
+(additive, not yet built): capturing the **abnormal-result flag** (HH/LL/H/L/
+critical → SDTM `LBNRIND`) as a first-class property with a shape that routes
+criticals, and encoding **API constraints** (Akute's 5-concurrent cap, Health
+Gorilla's `OperationOutcome`) as part of the `cr:TransferProfile` so the pipeline
+self-limits. Both extend the "conformance is executable" thesis onto the wire
+protocol itself.
+
+### CT addition
+`cr:transmissionMethod` now includes `FHIR-API` and `Webhook` (the event-driven
+delivery Akute/Redox/athenahealth/DrChrono use), alongside the file-drop methods.
+
 ## Deliverables map
 
 | Path | Contents |

@@ -70,6 +70,14 @@ stored authoring target. Verified anchors:
 | `cr:DataElementSpecification` | relatedMatch | `sdtm:LBTESTCD`, `sdtm:LBORRES` | 0.90 | CDISC SDTM v3.4 LB domain |
 | `cr:declaredUnitConcept` | relatedMatch | `sdtm:LBORRESU` | 0.90 | CDISC SDTM v3.4 LB domain |
 | `cr:aliasResolvesTo` | relatedMatch | `sdtm:VISITNUM` | 0.85 | CDISC SDTM v3.4 SV |
+| `cr:AssayResult` | closeMatch | `fhir:Observation` | 0.90 | HL7 FHIR R4 (Labcorp/Quest/Health Gorilla) |
+| `cr:AssayResult` | relatedMatch | `sdtm:LBSTRESN` | 0.88 | FHIR `Observation.valueQuantity` → SDTM LB |
+| `cr:onSample` | relatedMatch | `fhir:Specimen` | 0.85 | FHIR R4 Specimen → SDTM `LBSPEC` matrix |
+| `cr:AnalysisRequest` | closeMatch | `fhir:ServiceRequest` | 0.85 | FHIR R4 (the lab order) |
+
+The FHIR row set encodes the CDISC 360i Digital DTA "core mechanism": parse the FHIR
+request-report triad (`ServiceRequest`→`Specimen`→`Observation`→`DiagnosticReport`) into SDTM LB
+deterministically. Grounds the central-lab MVP tier (`examples/dta-lab-safety/fhir-lab-connectors.ttl`).
 
 `dta-encounter-alias.sssom.tsv` is the compounding vendor-visit alias corpus — the DTA group's
 per-DTA `ENCOUNTER_MAPPING` re-modeled as resolve-once. Low-confidence rows (< 0.85) route to

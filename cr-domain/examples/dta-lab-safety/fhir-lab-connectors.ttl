@@ -1,0 +1,133 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# FHIR central-lab connector catalog — the CORRECT vendor tier for the DTA MVP.
+# The DTA primary use case is central-lab SAFETY LABS, which is a FHIR R4 problem:
+# the megalabs (Labcorp, Quest), the TEFCA QHIN / aggregator middleware (Health
+# Gorilla, Redox, Particle Health), and the developer-first EHRs (Canvas, Medplum,
+# Akute, Elation) all expose the FHIR request-report triad
+# ServiceRequest -> Specimen -> Observation -> DiagnosticReport. These are the
+# TransferProfile defaults an onboarding sponsor starts from; the FHIR->SDTM LB
+# mapping is in crosswalks/dta-to-external.ttl. Every value is CT-valid, so all
+# validate cleanly against dta-profile.ttl.
+#
+# Grounded in the uploaded "Lab Vendor API Specs for CDISC" analysis; each
+# vendorDocumentation URL is the cited primary source.
+
+# ── Megalabs (the central labs themselves) ───────────────────────────────────
+ex:connector-labcorp a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:labcorp" ; top:status "active" ;
+    rdfs:label "Labcorp connector (FHIR R4 + legacy EDI)" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-result" ;
+    cr:vendorApiStyle "FHIR-R4" ;
+    cr:vendorDocumentation "https://providers.apis.io/providers/laboratory-corp-of-america/"^^xsd:anyURI .
+    # FHIR: ServiceRequest, DiagnosticReport, Observation, Patient, Practitioner,
+    # Specimen, Organization. Legacy path: SFTP/FTPS + HL7 v2 OML/ORU, pipe-delim.
+
+ex:connector-quest a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:quest-quanum" ; top:status "active" ;
+    rdfs:label "Quest Diagnostics (Quanum) connector" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-result" ;
+    cr:vendorApiStyle "FHIR-R4-OAuth2-authcode" ;
+    cr:vendorDocumentation "https://www.capminds.com/blog/how-to-enable-automated-lab-orders-and-results-in-openemr-using-quest-apis/"^^xsd:anyURI .
+    # FHIR R4; OAuth2 authorization-code grant + refresh tokens (21 CFR Part 11 /
+    # HIPAA); Observation + DiagnosticReport; replaces legacy SFTP batch.
+
+# ── QHIN / aggregator middleware ("write once, connect anywhere") ─────────────
+ex:connector-healthgorilla a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:health-gorilla" ; top:status "active" ;
+    rdfs:label "Health Gorilla (TEFCA QHIN) connector" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "subscription-72h" ;
+    cr:vendorApiStyle "FHIR-R4-OAuth2-bearer" ;
+    cr:vendorDocumentation "https://developer.healthgorilla.com/reference/r4-overview"^^xsd:anyURI .
+    # OAuth2 bearer, resource-scoped scopes (servicerequest.read/write);
+    # RequestGroup/ServiceRequest/Specimen/DiagnosticReport/Observation;
+    # OperationOutcome error payloads; Lab Subscription = 2yr history + 72h updates.
+
+ex:connector-redox a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:redox" ; top:status "active" ;
+    rdfs:label "Redox connector (normalized Results model)" ;
+    cr:fileFormat "JSON" ;
+    cr:transmissionMethod "Webhook" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-event" ;
+    cr:vendorApiStyle "Redox-Results-OAuth-JWT" ;
+    cr:vendorDocumentation "https://developer.redoxengine.com/data-models/Results.html"^^xsd:anyURI .
+    # Normalized "Results" JSON data model; event types New / NewUnsolicited /
+    # Query-QueryResponse; OAuth JWT; 50+ EHR vendor connections behind one model.
+
+ex:connector-particle a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:particle-health" ; top:status "active" ;
+    rdfs:label "Particle Health connector" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "cumulative" ;
+    cr:transferSchedule "on-query" ;
+    cr:vendorApiStyle "FHIR-R4-CCDA-Delta" ;
+    cr:vendorDocumentation "https://particlehealth.com/"^^xsd:anyURI .
+    # FHIR R4 + legacy C-CDA + Delta; _include/_revinclude bundles a
+    # DiagnosticReport with all referenced Observations in one response.
+
+# ── Developer-first EHRs (eSource at the investigator site) ───────────────────
+ex:connector-canvas a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:canvas-medical" ; top:status "active" ;
+    rdfs:label "Canvas Medical connector" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-query" ;
+    cr:vendorApiStyle "FHIR-R4-USCore" ;
+    cr:vendorDocumentation "https://docs.canvasmedical.com/api/diagnosticreport/"^^xsd:anyURI .
+    # US Core DiagnosticReport; $create-lab-report single-request POST; date
+    # modifiers ge/le enable visit-window compliance checking at the query layer;
+    # DocumentReference superseded/current = built-in audit trail.
+
+ex:connector-medplum a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:medplum" ; top:status "active" ;
+    rdfs:label "Medplum connector (open-source FHIR)" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-query" ;
+    cr:vendorApiStyle "FHIR-R4-open-source" ;
+    cr:vendorDocumentation "https://www.medplum.com/docs/labs-imaging"^^xsd:anyURI .
+    # Batch Patient+ServiceRequest with conditionals; DiagnosticReport.basedOn ->
+    # ServiceRequest, subject -> Patient — the relational traceability SDTM needs.
+    # Ideal open "living lab" for testing Digital DTA mappings.
+
+ex:connector-akute a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:akute-health" ; top:status "active" ;
+    rdfs:label "Akute Health connector" ;
+    cr:fileFormat "JSON" ;
+    cr:transmissionMethod "Webhook" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-event" ;
+    cr:vendorApiStyle "REST-webhook" ;
+    cr:vendorDocumentation "https://docs.akutehealth.com/"^^xsd:anyURI .
+    # GET /v1/procedures (Labcorp/Quest codes) -> POST /v1/orders -> webhook
+    # (201/202/400); Observation interpretation_code HH/LL flags; 5 concurrent
+    # request cap (a Digital DTA must encode the backoff).
+
+ex:connector-elation a cr:VendorConnectorProfile ;
+    top:identifier "urn:connector:elation-health" ; top:status "active" ;
+    rdfs:label "Elation Health connector" ;
+    cr:fileFormat "FHIR" ;
+    cr:transmissionMethod "FHIR-API" ;
+    cr:transmissionType "incremental" ;
+    cr:transferSchedule "on-result" ;
+    cr:vendorApiStyle "FHIR-R4-OAuth2-clientcreds" ;
+    cr:vendorDocumentation "https://docs.elationhealth.com/"^^xsd:anyURI .
+    # REST + FHIR R4 + legacy HL7 ORM/ORU; OAuth2 client-credentials;
+    # lab_orders / imaging_orders / reports; bi-directional lab delivery.

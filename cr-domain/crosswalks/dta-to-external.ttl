@@ -10,6 +10,7 @@
 @prefix sdtm:   <https://www.cdisc.org/standards/foundational/sdtm/v3.4/> .
 @prefix loinc:  <https://loinc.org/> .
 @prefix qudt:   <http://qudt.org/vocab/unit/> .
+@prefix fhir:   <http://hl7.org/fhir/StructureDefinition/> .
 
 # OWNED crosswalk: TOP DTA/DTS module <-> external standards.
 # The SDTM target is a PROJECTION, never a stored authoring target — these
@@ -122,3 +123,65 @@ ex:map-encounter-visitnum a cx:Mapping ;
     cx:targetSchemaVersion "3.4" ;
     rdfs:comment "A vendor visit label resolved to a canonical cr:Visit projects to SDTM VISITNUM — the alias corpus, not a per-DTA ENCOUNTER_MAPPING row." ;
     top:recordedAt "2026-07-02T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+####################################################################
+# FHIR R4 lab request-report triad -> TOP DTA classes -> SDTM LB.
+# The CDISC 360i Digital DTA's "core mechanism": parse the FHIR
+# DiagnosticReport/Observation payload and populate SDTM LB deterministically.
+# The DTA MVP primary use case (central-lab safety labs) is a FHIR problem —
+# Labcorp, Quest, Health Gorilla et al. all expose this triad (see
+# examples/dta-lab-safety/fhir-lab-connectors.ttl and docs/dta-design-notes.md).
+# FHIR resource IRIs are canonical (hl7.org/fhir/StructureDefinition/*).
+####################################################################
+ex:map-fhir-observation a cx:Mapping ;
+    cx:subjectId   cr:AssayResult ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    fhir:Observation ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.90"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "HL7 FHIR R4 (hl7.org/fhir/observation.html); Labcorp/Quest/Health Gorilla FHIR surfaces" ;
+    rdfs:comment "A transferred lab result is a FHIR Observation; Observation.code -> LBLOINC, Observation.valueQuantity.value -> LBSTRESN, unit -> LBSTRESU." ;
+    top:recordedAt "2026-07-03T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+ex:map-fhir-obs-stresn a cx:Mapping ;
+    cx:subjectId   cr:AssayResult ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    sdtm:LBSTRESN ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.88"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4 (LB); FHIR Observation.valueQuantity" ;
+    cx:targetSchemaVersion "3.4" ;
+    rdfs:comment "FHIR Observation.valueQuantity.value (SI-canonical) -> SDTM LBSTRESN (numeric result in standard units); the UCUM conversion is canonical, not per-DTA prose." ;
+    top:recordedAt "2026-07-03T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+ex:map-fhir-specimen a cx:Mapping ;
+    cx:subjectId   cr:onSample ;
+    cx:predicateId skos:relatedMatch ;
+    cx:objectId    fhir:Specimen ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "HL7 FHIR R4 Specimen (hl7.org/fhir/specimen.html); defines SDTM LB matrix (LBSPEC)" ;
+    rdfs:comment "FHIR Specimen (referenced by ServiceRequest + DiagnosticReport) defines the SDTM matrix type (LBSPEC)." ;
+    top:recordedAt "2026-07-03T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .
+
+ex:map-fhir-servicerequest a cx:Mapping ;
+    cx:subjectId   cr:AnalysisRequest ;
+    cx:predicateId skos:closeMatch ;
+    cx:objectId    fhir:ServiceRequest ;
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence  "0.85"^^xsd:decimal ;
+    cx:author      ex:curator-dta ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:verificationStatus "verified" ;
+    cx:retrievedFrom "HL7 FHIR R4 ServiceRequest (hl7.org/fhir/servicerequest.html)" ;
+    rdfs:comment "The lab order (cr:AnalysisRequest) is a FHIR ServiceRequest; DiagnosticReport.basedOn references it, preserving order->result traceability." ;
+    top:recordedAt "2026-07-03T00:00:00Z"^^xsd:dateTime ; prov:wasAttributedTo ex:curator-dta .

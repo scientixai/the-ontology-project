@@ -54,6 +54,13 @@ working-group corpus; models the transfer as a fact graph rather than a document
   vendor-connector catalog (Castor, Veeva, Medidata, Oracle Clinical One).
 - **`docs/dta-design-notes.md`** — answers to the six open modeling questions,
   the vendor-API research grounding, and honest T1/T2 tiering.
+- **`examples/dta-lab-safety/fhir-lab-connectors.ttl`** — the corrected vendor
+  tier for the central-lab safety-lab MVP: FHIR R4 megalabs (Labcorp, Quest),
+  QHIN/aggregators (Health Gorilla, Redox, Particle), and developer-first EHRs
+  (Canvas, Medplum, Akute, Elation), grounded in the CDISC 360i lab-API analysis.
+- FHIR R4 lab request-report triad → SDTM LB crosswalk rows (`Observation` →
+  `LBSTRESN`/`LBLOINC`, `Specimen` → `LBSPEC`, `ServiceRequest`); `FHIR-API` and
+  `Webhook` added to the `cr:transmissionMethod` controlled terminology.
 
 ### Fixed
 

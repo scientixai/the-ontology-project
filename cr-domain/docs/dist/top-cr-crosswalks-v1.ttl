@@ -304,6 +304,63 @@
     cx:verificationStatus "verified" ;
     top:recordedAt "2026-07-01T00:00:00+00:00"^^xsd:dateTime .
 
+<https://top.scientix.ai/examples/map-fhir-obs-stresn> a cx:Mapping ;
+    rdfs:comment "FHIR Observation.valueQuantity.value (SI-canonical) -> SDTM LBSTRESN (numeric result in standard units); the UCUM conversion is canonical, not per-DTA prose." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-dta> ;
+    cx:author <https://top.scientix.ai/examples/curator-dta> ;
+    cx:confidence 0.88 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:objectId <https://www.cdisc.org/standards/foundational/sdtm/v3.4/LBSTRESN> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "cdisc.org/standards/foundational/sdtm @v3.4 (LB); FHIR Observation.valueQuantity" ;
+    cx:subjectId cr:AssayResult ;
+    cx:targetSchemaVersion "3.4" ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-03T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-fhir-observation> a cx:Mapping ;
+    rdfs:comment "A transferred lab result is a FHIR Observation; Observation.code -> LBLOINC, Observation.valueQuantity.value -> LBSTRESN, unit -> LBSTRESU." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-dta> ;
+    cx:author <https://top.scientix.ai/examples/curator-dta> ;
+    cx:confidence 0.90 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:objectId <http://hl7.org/fhir/StructureDefinition/Observation> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "HL7 FHIR R4 (hl7.org/fhir/observation.html); Labcorp/Quest/Health Gorilla FHIR surfaces" ;
+    cx:subjectId cr:AssayResult ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-03T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-fhir-servicerequest> a cx:Mapping ;
+    rdfs:comment "The lab order (cr:AnalysisRequest) is a FHIR ServiceRequest; DiagnosticReport.basedOn references it, preserving order->result traceability." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-dta> ;
+    cx:author <https://top.scientix.ai/examples/curator-dta> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:objectId <http://hl7.org/fhir/StructureDefinition/ServiceRequest> ;
+    cx:predicateId skos:closeMatch ;
+    cx:retrievedFrom "HL7 FHIR R4 ServiceRequest (hl7.org/fhir/servicerequest.html)" ;
+    cx:subjectId cr:AnalysisRequest ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-03T00:00:00+00:00"^^xsd:dateTime .
+
+<https://top.scientix.ai/examples/map-fhir-specimen> a cx:Mapping ;
+    rdfs:comment "FHIR Specimen (referenced by ServiceRequest + DiagnosticReport) defines the SDTM matrix type (LBSPEC)." ;
+    prov:wasAttributedTo <https://top.scientix.ai/examples/curator-dta> ;
+    cx:author <https://top.scientix.ai/examples/curator-dta> ;
+    cx:confidence 0.85 ;
+    cx:justification <https://w3id.org/semapv/vocab/ManualMappingCuration> ;
+    cx:mappingDate "2026-07-03"^^xsd:date ;
+    cx:objectId <http://hl7.org/fhir/StructureDefinition/Specimen> ;
+    cx:predicateId skos:relatedMatch ;
+    cx:retrievedFrom "HL7 FHIR R4 Specimen (hl7.org/fhir/specimen.html); defines SDTM LB matrix (LBSPEC)" ;
+    cx:subjectId cr:onSample ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-07-03T00:00:00+00:00"^^xsd:dateTime .
+
 <https://top.scientix.ai/examples/map-observation-fhir> a cx:Mapping ;
     prov:wasAttributedTo <https://top.scientix.ai/examples/curator-wg> ;
     cx:author <https://top.scientix.ai/examples/curator-wg> ;
