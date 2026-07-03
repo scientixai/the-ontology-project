@@ -115,24 +115,56 @@ FLOWS = [
                    "EligibilityCriterion", "StoppingRule", "InvestigationalProduct",
                    "Sponsor", "CRO", "StudySite", "RegulatoryInteraction"],
          shapes=["cr:StudyShape", "cr:ProtocolEligibilityShape", "cr:SiteActivationShape"],
-         proj=["usdm_study.rq", "site_activation_tracker.rq"], screens=["Site activation"]),
+         proj=["usdm_study.rq", "site_activation_tracker.rq"], screens=["Site activation"],
+         claim="The moment a site&rsquo;s last gate clears, one screen shows it&rsquo;s ready &mdash; local IRB approval, an executed CTA, and a completed Site Initiation Visit &mdash; and enrollment is <b>blocked</b> until all three are green.",
+         stops=[
+             dict(name="Feasibility &amp; selection", time="2025-11", who="sponsor / CRO", state="done", checks=[("ok", "site qualified; confidentiality agreement executed")]),
+             dict(name="IRB / IEC approval", time="2026-01-15", who="site", state="done", checks=[("ok", "local ethics approval on file")]),
+             dict(name="CTA executed", time="2026-01-20", who="sponsor + site", state="done", checks=[("ok", "budget &amp; clinical-trial agreement signed")]),
+             dict(name="Site Initiation Visit", time="2026-02-01", who="CRA", state="done", checks=[("ok", "staff trained; site ready to enroll")]),
+             dict(name="Site activated", time="2026-02-01", who="sponsor", state="done", checks=[("ok", "all three gates green &rarr; green-lit")]),
+             dict(name="First patient in", time="2026-02-05", who="site", state="done", checks=[("ok", "enrollment after activation &mdash; enforced by shape")]),
+         ]),
     dict(id="startup-package", title="Study start-up package",
          blurb="A site is awarded a study and receives a start-up package &mdash; not one file, but a set of typed documents (often downloaded one-by-one from a portal). The site's response splits into three work streams &mdash; regulatory, budget &amp; contracting, clinical operations &mdash; each consuming package documents and producing site-specific outputs (customized ICF, the DoA log, a signed CTA). Regulatory + budget completion gates the SIV and activation.",
          onto=["cr-core-startup-package.ttl"],
          shapes=["cr:StartupArtifactTypeShape", "cr:WorkStreamShape",
                  "cr:ActivationReadinessShape", "cr:OutputLineageShape"],
          proj=["startup_package_status.rq", "doa_log.rq"], screens=["Study start-up"],
+         claim="One award fans out into three parallel work streams from a single package of typed documents &mdash; regulatory, budget &amp; contracting, clinical operations &mdash; and the SIV <b>can&rsquo;t happen</b> until regulatory and budget are both complete.",
+         stops=[
+             dict(name="Award &amp; package received", time="2026-01-05", who="site", state="done", checks=[("ok", "6 typed documents downloaded from the portal")]),
+             dict(name="Regulatory stream", time="2026-01-18", who="site regulatory", state="done", checks=[("ok", "IRB submission; ICF customized to the site")]),
+             dict(name="Budget &amp; contracting", time="2026-01-20", who="site finance", state="done", checks=[("ok", "CTA negotiated and signed")]),
+             dict(name="ClinOps stream", time="2026-01-25", who="site coordinator", state="warn", checks=[("warn", "DoA log still being assembled")]),
+             dict(name="SIV gate", time="2026-02-01", who="CRA", state="done", checks=[("ok", "regulatory + budget complete &rarr; SIV allowed")]),
+         ],
          note="Documents are typed via the existing TMF artifact-type scheme; every produced output traces (<code>prov:wasDerivedFrom</code>) to the document it was built from &mdash; the data trail from package to site-specific output. The site-operations companion to the sponsor-side protocol model."),
     dict(id="delegation", title="Delegation &amp; attestation",
          blurb="The PI delegates each task to credentialed staff by attestation &mdash; and the delegation-of-authority log is a <i>projection</i> of those acts, not a maintained spreadsheet.",
          entities=["Delegation", "Capability", "Credential", "Attestation"],
          shapes=["cr:DelegationShape", "cr:CapabilityDelegationShape", "cr:DelegationTimingShape"],
-         proj=["doa_log.rq"], screens=["Delegation"]),
+         proj=["doa_log.rq"], screens=["Delegation"],
+         claim="The PI delegates each task to credentialed staff by a signed attestation &mdash; and the delegation-of-authority log is a <b>view</b> of those acts, not a spreadsheet anyone maintains.",
+         stops=[
+             dict(name="Capability defined", who="protocol", state="done", checks=[("ok", "&lsquo;obtain informed consent&rsquo; is a delegable task")]),
+             dict(name="Credential verified", time="2026-01-08", who="site", state="done", checks=[("ok", "GCP + protocol training current, on file")]),
+             dict(name="PI delegates", time="2026-01-10", who="principal investigator", state="done", checks=[("ok", "capability granted to the coordinator")]),
+             dict(name="Attestation signed", time="2026-01-10", who="principal investigator", state="done", checks=[("ok", "non-repudiable, dated, gated by the credential")]),
+             dict(name="DoA log", time="live", who="&mdash;", state="done", checks=[("ok", "rendered from the delegation acts on request")]),
+         ]),
     dict(id="enrollment", title="Enrollment &amp; consent",
          blurb="Bind a real person to a pseudonymous study subject (the only legal PII bridge), and obtain consent under a valid delegation.",
          entities=["Enrollment", "StudySubject", "InformedConsent", "Visit"],
          shapes=["cr:EnrollmentShape", "cr:InformedConsentShape"],
-         proj=["fhir_research_subject.rq", "sdtm_dm.rq"], screens=["Enrollment", "Informed consent"]),
+         proj=["fhir_research_subject.rq", "sdtm_dm.rq"], screens=["Enrollment", "Informed consent"],
+         claim="One attested act binds a real person to a pseudonymous study subject &mdash; the <b>only</b> legal PII bridge &mdash; and consent must be obtained under a valid delegation before any data is captured.",
+         stops=[
+             dict(name="Consent obtained", time="2026-02-04", who="coordinator", state="done", checks=[("ok", "under a valid delegation; version + date recorded")]),
+             dict(name="Identity bridge", time="2026-02-05", who="enroller", state="done", checks=[("ok", "Person &harr; pseudonymous Subject, attested (the only bridge)")]),
+             dict(name="Arm assignment", time="2026-02-07", who="system", state="done", checks=[("ok", "randomized to arm A")]),
+             dict(name="Downstream data", time="live", who="&mdash;", state="done", checks=[("ok", "everything attaches to the Subject, never the Person")]),
+         ]),
     dict(id="schedule", title="Schedule of Activities",
          blurb="The visit schedule most systems flatten into a 2D table with the timing buried in footnotes &mdash; modeled as a timeline: a planned template (windows, relative timing, ordering, repeats), projected onto a participant once the anchor is known, then reconciled against what actually happened.",
          onto=["cr-core-schedule.ttl"],
@@ -161,6 +193,13 @@ FLOWS = [
          blurb="Adverse events and serious adverse events, with the expedited 15-day reporting clock measured bitemporally (awareness &rarr; submission).",
          onto=["cr-core-safety.ttl"], entities=["AdverseEvent", "DoseLimitingToxicity"],
          shapes=[], proj=[], screens=["Adverse event"],
+         claim="An event&rsquo;s seriousness and the sponsor&rsquo;s <b>awareness date</b> start a 15-day expedited clock &mdash; measured on the timeline, so a late report is a query that fires, not a surprise at inspection.",
+         stops=[
+             dict(name="AE onset", time="2026-02-09", who="subject / site", state="done", checks=[("ok", "recorded with onset date/time")]),
+             dict(name="Seriousness assessed", time="2026-02-09", who="investigator", state="warn", checks=[("warn", "meets a serious criterion &rarr; becomes an SAE")]),
+             dict(name="Sponsor aware", time="2026-02-10", who="sponsor PV", state="done", checks=[("ok", "awareness date starts the 15-day clock")]),
+             dict(name="Expedited report", time="2026-02-18", who="sponsor", state="done", checks=[("ok", "submitted on day 8 &mdash; within the window")]),
+         ],
          note="The 15-day SAE reporting clock is a bitemporal compliance check (a detective query over awareness vs submission), not a structural shape &mdash; the structure stays valid; the timeline is the signal."),
     dict(id="rbqm", title="Risk-based monitoring (RBQM)",
          blurb="Target monitoring by risk: a high-risk critical-to-quality factor must be mitigated; 100% SDV on a low-risk factor is flagged as over-monitoring.",
@@ -172,29 +211,67 @@ FLOWS = [
          onto=["cr-core-deviation.ttl"],
          shapes=["cr:DeviationEventShape", "cr:SignificantDeviationCAPAShape", "cr:UncapturedAntecedentShape"],
          proj=["deviation_lineage.rq"], screens=["Deviation &amp; CAPA"],
+         claim="The chain most models skip: a latent condition (the <b>antecedent</b>) threatens a quality factor, surfaces as a deviation, and triggers a CAPA &mdash; so a significant deviation with no CAPA is <b>caught</b>, not quietly filed.",
+         stops=[
+             dict(name="CtQ factor", who="protocol", state="done", checks=[("ok", "visit-schedule adherence is critical-to-quality")]),
+             dict(name="Antecedent (the missing middle)", time="2026-03-01", who="RBQM", state="warn", checks=[("warn", "visit window too tight for site staffing")]),
+             dict(name="Deviation event", time="2026-03-12", who="site", state="danger", checks=[("danger", "subject seen out of window (major)")]),
+             dict(name="CAPA opened", time="2026-03-14", who="site + sponsor", state="done", checks=[("ok", "root cause + corrective action recorded")]),
+             dict(name="Effectiveness check", time="2026-04-15", who="sponsor", state="pend", checks=[("pend", "verify the fix held")]),
+         ],
          note="A leading <code>cr:RiskSignal</code> can flag an antecedent before it manifests, and the RBQM risk assessment can identify it &mdash; so the deviation becomes foreseeable, and a CAPA traces back to the quality factor it ultimately protects."),
     dict(id="preind", title="Pre-IND gate",
          blurb="The front bracket: an IND-enabling narrative where every animal toxicity is addressed by a clinical safety assessment, plus the 30-day review clock.",
          onto=["cr-core-preind.ttl"],
          shapes=["cr:INDNarrativeShape", "cr:VagueQuestionShape", "cr:PreINDReadinessShape"],
          proj=[], screens=[],
+         claim="An IND-enabling narrative where <b>every</b> animal toxicity is answered by a clinical safety assessment &mdash; and the 30-day review clock tells you may-proceed vs on-hold.",
+         stops=[
+             dict(name="Nonclinical package", time="2025-12", who="sponsor", state="done", checks=[("ok", "tox findings catalogued")]),
+             dict(name="IND-enabling narrative", time="2026-01", who="sponsor", state="done", checks=[("ok", "each tox finding &rarr; a clinical mitigation (no orphans)")]),
+             dict(name="IND submitted", time="2026-02-01", who="sponsor", state="done", checks=[("ok", "30-day review clock starts")]),
+             dict(name="FDA review window", time="2026-03-03", who="FDA", state="done", checks=[("ok", "no clinical hold placed within 30 days")]),
+             dict(name="May proceed", time="2026-03-03", who="&mdash;", state="done", checks=[("ok", "first-in-human authorized")]),
+         ],
          note="The IND 30-day review clock (may-proceed vs on-hold) is a bitemporal detective check."),
     dict(id="eop2", title="EOP2 &amp; analysis",
          blurb="The back bracket: efficacy results that trace to their estimand and SAP (overstatement guard), the EOP2 readiness gate, and ADaM analysis traceable to native source.",
          onto=["cr-core-eop2.ttl", "cr-core-adam.ttl"],
          shapes=["cr:EndpointResultTraceShape", "cr:EOP2ReadinessShape", "cr:ADaMTraceabilityShape"],
-         proj=["adam_traceability.rq"], screens=["EOP2 gate"]),
+         proj=["adam_traceability.rq"], screens=["EOP2 gate"],
+         claim="Efficacy results that trace to their estimand and SAP (the overstatement guard), a readiness gate before the End-of-Phase-2 meeting, and a Phase 3 design that carries the dose-optimization decision.",
+         stops=[
+             dict(name="Data cut", time="2026-05", who="sponsor", state="done", checks=[("ok", "locked snapshot for the analysis")]),
+             dict(name="Endpoint result", time="2026-05", who="biostatistics", state="done", checks=[("ok", "ORR traces to its estimand + SAP")]),
+             dict(name="EOP2 readiness", time="2026-06", who="sponsor", state="done", checks=[("ok", "overstatement guard passes")]),
+             dict(name="EOP2 meeting", time="2026-06", who="sponsor + FDA", state="done", checks=[("ok", "alignment on endpoint + dose")]),
+             dict(name="Phase 3 design", time="2026-07", who="sponsor", state="done", checks=[("ok", "carries the dose-optimization decision")]),
+         ]),
     dict(id="gcp", title="GCP &amp; essential records",
          blurb="The ICH E6(R3) governance vocabulary no existing ontology owns &mdash; essential records, source data/documents, audit trail, certified copy, plus the institutional actors &mdash; cited to E6(R3), defined descriptively (the obligations live in the shapes, not the classes).",
          onto=["cr-core-gcp.ttl"],
          shapes=["cr:CertifiedCopyShape", "cr:SourceDataAuditTrailShape"],
          proj=["certified_copy_register.rq"], screens=["Essential records"],
+         claim="The ICH E6(R3) record lifecycle no ontology owns &mdash; source data, its audit trail, a certified copy, the TMF filing &mdash; with the obligations in the shapes: a certified copy that doesn&rsquo;t reference its source is <b>caught</b>.",
+         stops=[
+             dict(name="Source data created", time="2026-02-15", who="site", state="done", checks=[("ok", "original worksheet; ALCOA++ by construction")]),
+             dict(name="Audit trail", time="live", who="system", state="done", checks=[("ok", "every change carries who / when / why")]),
+             dict(name="Certified copy", time="2026-02-16", who="coordinator", state="done", checks=[("ok", "references its source document &mdash; enforced by shape")]),
+             dict(name="TMF filing", time="2026-02-17", who="site", state="done", checks=[("ok", "classified to its artifact type; content bound to the domain class")]),
+         ],
          note="Descriptive vs deontic: we encode what E6(R3) <i>defines</i> (entities, terms) as classes/SKOS with <code>rdfs:isDefinedBy</code>; what it <i>requires</i> (“should/shall”) becomes graded shapes. ALCOA++ is realized by the bitemporal + PROV envelope; an explicit <code>cr:AuditTrail</code> is the stronger auditor-facing assertion."),
     dict(id="tmf", title="TMF document binding",
          blurb="Classify a document to its artifact type (a SKOS scheme aligned to the DIA TMF Reference Model), then bind what its facts <i>mean</i> to the domain class &mdash; the comprehension layer the eTMF world omits.",
          onto=["tmf-reference.ttl"],
          shapes=["tmf:ContentBindingShape"],
          proj=["tmf_binding_map.rq"], screens=[],
+         claim="Filing a document isn&rsquo;t the same as understanding it: TMF classifies a document to its artifact type, then binds what its facts <b>mean</b> to the domain class &mdash; the comprehension layer the eTMF world omits.",
+         stops=[
+             dict(name="Document received", time="2026-02-17", who="site / sponsor", state="done", checks=[("ok", "e.g. a Protocol Deviation Log")]),
+             dict(name="Classified to artifact type", time="2026-02-17", who="system", state="done", checks=[("ok", "DIA TMF Reference Model type")]),
+             dict(name="Content bound", time="live", who="commons", state="done", checks=[("ok", "its facts mean <code>cr:DeviationEvent</code> &mdash; not just a filing label")]),
+             dict(name="Filed &amp; findable", time="live", who="&mdash;", state="warn", checks=[("warn", "classified but unbound = filing label without comprehension")]),
+         ],
          note="Two bindings, kept distinct: document-type (&#8220;this is a Protocol Deviation Log&#8221;) and content (&#8220;its facts mean <code>cr:DeviationEvent</code>&#8221;). The commons owns the map (align + build); the consuming system classifies, extracts, and asserts <code>prov:wasDerivedFrom</code> at runtime &mdash; that seam is deliberate, and the runtime is out of scope."),
     dict(id="roles", title="Roles, phases &amp; actions",
          blurb="Who can do what, when &mdash; the operator-grounding layer that turns the reference graph into a system of record for authorization, delegation, and Jobs to Be Done.",
@@ -700,10 +777,39 @@ def foundation_body():
     )
 
 
+_CK = {"ok": "&#10003;", "warn": "!", "danger": "&#10007;", "pend": "&#9675;"}
+
+
+def render_vtl(stops):
+    """Render a vertical train-stop timeline (the operator-flow device the edc/rbqm/
+    dta pages use) from a list of stop dicts: {name, time?, who?, state, checks:[(mark,text)]}.
+    Same markup/classes as the hand-authored pages, so every flow page tells its story
+    the same way."""
+    n = len(stops)
+    rows = []
+    for i, st in enumerate(stops):
+        state = st.get("state", "done")
+        line = "" if i == n - 1 else '<div class="vtl-line"></div>'
+        checks = "".join(
+            f'<li><span class="ck-{m}">{_CK.get(m, "&#10003;")}</span> {t}</li>'
+            for m, t in st.get("checks", []))
+        time = f'<span class="vtl-time">{st["time"]}</span>' if st.get("time") else ""
+        who = f'<span class="vtl-who">{st["who"]}</span>' if st.get("who") else ""
+        rows.append(
+            f'<div class="vtl-stop {state}"><div class="vtl-num">{i + 1}</div>{line}'
+            f'<div class="vtl-body"><div class="vtl-head"><span class="vtl-name">{st["name"]}</span>'
+            f'{time}{who}</div><ul class="vtl-checks">{checks}</ul></div></div>')
+    return f'<div class="vtl">{"".join(rows)}</div>'
+
+
 def flow_body(flow):
     parts = [f"<h1>{flow['title']}</h1><p class='lead'>{flow['blurb']}</p>"]
+    if flow.get("claim"):
+        parts.append(f'<div class="impossible-claim">{flow["claim"]}</div>')
     for name in flow.get("screens", []):
         parts.append(f"<h2>Operator screen &mdash; {name}</h2>" + render_stop(ROOT, name))
+    if flow.get("stops"):
+        parts.append("<h2>How the flow runs &mdash; step by step</h2>" + render_vtl(flow["stops"]))
     if flow.get("note"):
         parts.append(f"<p class='note'>{flow['note']}</p>")
     ents = flow_entities(flow)
