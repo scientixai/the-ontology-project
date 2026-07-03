@@ -1,0 +1,452 @@
+<h1>Biospecimen &amp; LIMS custody</h1><p class='lead'>Track a specimen&#8217;s chain of custody as a bitemporal state machine, its aliquot lineage, and assays &mdash; so any result traces back to the blood draw.</p><h2>Operator screen &mdash; Blood draw admissibility (OPP-101)</h2>
+<p class="impossible-claim"><b>The impossible screen.</b> A CRA reviewing the blood draw chain for Subject 423-MU07-018 at Visit 04 sees consent status, phlebotomist credentials, delegation log entry, protocol training record, vial specification, centrifuge calibration, chain-of-custody data logger, and carrier trace &mdash; all on one screen. Today each of these lives in a different point solution (CTMS, eTMF, LMS, LIMS, cold-chain logger, courier portal). One screen like this represents weeks of manual assembly. With TOP: one graph traversal.</p>
+<div class="screen"><div class="scr-head">Specimen &mdash; admissibility at the bench<span class="badge">LIMS</span><div class="scr-sub">Subject BD-S-001 &middot; one entity, fully expanded</div></div><div class="chk-intro">Every check reads a field of the <b>single object</b> on the right (its <code>reads</code> path) &mdash; the UI issues one query, never a recursive lookup.</div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Participant verified &amp; consent current</b><span class="who">Tom Nguyen, RN</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Subject</td><td>BD-S-001 (pseudonymous)</td></tr><tr><td>Consent for</td><td><code>consent.forSubject == urn:bd-subj</code></td></tr><tr><td>Consent current</td><td><code>consent.status == &quot;active&quot;</code></td></tr><tr><td>reads (from the one object)</td><td><code>consent.entity</code></td></tr><tr><td>gated by</td><td><code>cr:InformedConsentShape (bitemporal)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Phlebotomist authorized for venipuncture</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Delegate</td><td><code>authority.delegate == urn:bd-phleb</code></td></tr><tr><td>Capability</td><td><code>authority.capability == urn:bd-cap-venip</code></td></tr><tr><td>Credential</td><td><code>authority.credential == urn:bd-cred-phleb</code></td></tr><tr><td>reads (from the one object)</td><td><code>authority.entity</code></td></tr><tr><td>gated by</td><td><code>cr:CapabilityDelegationShape (hard)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Drawn after the ECG (ordering held)</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>ECG act</td><td><code>afterAct.observedAt == 2026-03-02T09:00</code></td></tr><tr><td>Draw</td><td><code>observedAt == 2026-03-02T11:00</code></td></tr><tr><td>Order</td><td>&#10003; 09:00 &lt; 11:00</td></tr><tr><td>reads (from the one object)</td><td><code>afterAct.entity + (root).observedAt</code></td></tr><tr><td>gated by</td><td><code>cr:ActivityOrderingShape</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Specimen collected &amp; custody opened</b><span class="who">Mary Smith, Phlebotomist</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Primary specimen</td><td><code>specimen.id == urn:bd-spec</code></td></tr><tr><td>Collected (valid)</td><td><code>(root).observedAt</code></td></tr><tr><td>Recorded (txn)</td><td><code>(root).recordedAt</code></td></tr><tr><td>reads (from the one object)</td><td><code>specimen.entity + (root)</code></td></tr><tr><td>gated by</td><td><code>cr:SpecimenOriginShape + cr:CustodyEventShape</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Custody current-state = Published</b><span class="who">Raj Patel, Lab Technician</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Chain</td><td>Received &rarr; Verified &rarr; Published</td></tr><tr><td>Current</td><td><code>specimen.custodyChain[*].toState</code> &#8715; <span class='pill ok'>Published</span></td></tr><tr><td>reads (from the one object)</td><td><code>specimen.custodyChain</code></td></tr><tr><td>gated by</td><td><code>bitemporal custody current-state derivation</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Aliquot &amp; result trace to the draw</b><span class="who">Raj Patel, Lab Technician</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Aliquot</td><td><code>specimen.aliquot == urn:bd-aliquot</code></td></tr><tr><td>Result</td><td><code>result.value == &quot;1:320&quot;</code></td></tr><tr><td>Lineage</td><td>result &rarr; derivedFromCollection &rarr; this draw</td></tr><tr><td>reads (from the one object)</td><td><code>specimen.aliquot + result.entity</code></td></tr><tr><td>gated by</td><td><code>prov:wasDerivedFrom* (cr:derivedFromCollection)</code></td></tr></table></details></div><div class="chk"><div class="chk-head"><span class="ck">&#10003;</span><b>Audit trail present (ALCOA++)</b><span class="who">System of record</span></div><details><summary>why it&rsquo;s green</summary><table class="prov"><tr><td>Every inlined entity carries</td><td><code>observedAt + createdAt + status</code></td></tr><tr><td>Reconstructable</td><td>&#10003; as-of any date, from this one object</td></tr><tr><td>reads (from the one object)</td><td><code>(every entity in the object)</code></td></tr><tr><td>gated by</td><td><code>top:BitemporalProvShape</code></td></tr></table></details></div></div></div><div><div class="jsoncap">the <b>one</b> query the screen issues</div><pre class="json q">GET /ngsi-ld/v1/entities/urn:bd-coll?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:BloodDrawAdmissibilityView is the attribute projection (the `pick` the screen reads).</pre><div class="jsoncap">the <b>single object</b> it returns &mdash; related entities inlined per the shape (ETSI GS CIM 009 <code>join=inline</code>), <b>zero recursive lookups</b></div><pre class="json">{
+  &quot;id&quot;: &quot;urn:bd-coll&quot;,
+  &quot;type&quot;: &quot;StudyEvent&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;Blood draw \u2014 Cycle 1 Day 1, BD-S-001&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:bd-coll&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-03-02T11:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-03-02T11:05:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;forSubject&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-subj&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-subj&quot;,
+      &quot;type&quot;: &quot;StudySubject&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;BD-S-001&quot;
+      }
+    }
+  },
+  &quot;performedBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-phleb&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-phleb&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Mary Smith, Phlebotomist&quot;
+      }
+    }
+  },
+  &quot;consent&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-consent&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-consent&quot;,
+      &quot;type&quot;: &quot;InformedConsent&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Informed consent \u2014 BD-S-001&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:bd-consent&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-02-05T09:45:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-02-05T09:50:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;forSubject&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-subj&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-subj&quot;,
+          &quot;type&quot;: &quot;StudySubject&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;BD-S-001&quot;
+          }
+        }
+      },
+      &quot;obtainedBy&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-nurse&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-nurse&quot;,
+          &quot;type&quot;: &quot;Practitioner&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Tom Nguyen, RN&quot;
+          }
+        }
+      },
+      &quot;authority&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-deleg-consent&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-deleg-consent&quot;,
+          &quot;type&quot;: &quot;Delegation&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Delegation: consent -&gt; Nguyen&quot;
+          },
+          &quot;identifier&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;urn:bd-deleg-consent&quot;
+          },
+          &quot;observedAt&quot;: &quot;2026-02-03T08:30:00+00:00&quot;,
+          &quot;recordedAt&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;2026-02-03T08:31:00+00:00&quot;
+          },
+          &quot;status&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;active&quot;
+          }
+        }
+      }
+    }
+  },
+  &quot;authority&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-deleg-venip&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-deleg-venip&quot;,
+      &quot;type&quot;: &quot;Delegation&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Delegation: venipuncture -&gt; Smith&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:bd-deleg-venip&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-01-28T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-28T09:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;delegate&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-phleb&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-phleb&quot;,
+          &quot;type&quot;: &quot;Practitioner&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Mary Smith, Phlebotomist&quot;
+          }
+        }
+      },
+      &quot;delegator&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-pi&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-pi&quot;,
+          &quot;type&quot;: &quot;Practitioner&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Dr. Ana Rivera, PI&quot;
+          }
+        }
+      },
+      &quot;capability&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-cap-venip&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-cap-venip&quot;,
+          &quot;type&quot;: &quot;Capability&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Venipuncture / specimen collection&quot;
+          }
+        }
+      },
+      &quot;credential&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-cred-phleb&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-cred-phleb&quot;,
+          &quot;type&quot;: &quot;Credential&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Phlebotomy certification + GCP \u2014 Smith&quot;
+          }
+        }
+      }
+    }
+  },
+  &quot;afterAct&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-ecg-act&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-ecg-act&quot;,
+      &quot;type&quot;: &quot;Assessment&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;ECG performed&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-03-02T09:00:00+00:00&quot;
+    }
+  },
+  &quot;atVisit&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-visit&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-visit&quot;,
+      &quot;type&quot;: &quot;Visit&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Cycle 1 Day 1 visit&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-03-02T09:00:00+00:00&quot;
+    }
+  },
+  &quot;specimen&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-spec&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-spec&quot;,
+      &quot;type&quot;: &quot;Specimen&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Whole blood (primary)&quot;
+      },
+      &quot;custodyChain&quot;: [
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:bd-ce-pub&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:bd-ce-pub&quot;,
+            &quot;type&quot;: &quot;CustodyEvent&quot;,
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:bd-ce-pub&quot;
+            },
+            &quot;observedAt&quot;: &quot;2026-03-04T09:00:00+00:00&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-03-04T09:01:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;active&quot;
+            },
+            &quot;fromState&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Verified&quot;
+            },
+            &quot;toState&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Published&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:bd-ce-recv&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:bd-ce-recv&quot;,
+            &quot;type&quot;: &quot;CustodyEvent&quot;,
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:bd-ce-recv&quot;
+            },
+            &quot;observedAt&quot;: &quot;2026-03-02T11:30:00+00:00&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-03-02T11:31:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;superseded&quot;
+            },
+            &quot;fromState&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;SampleDue&quot;
+            },
+            &quot;toState&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Received&quot;
+            }
+          }
+        },
+        {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:bd-ce-verif&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:bd-ce-verif&quot;,
+            &quot;type&quot;: &quot;CustodyEvent&quot;,
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:bd-ce-verif&quot;
+            },
+            &quot;observedAt&quot;: &quot;2026-03-03T10:00:00+00:00&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-03-03T10:01:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;superseded&quot;
+            },
+            &quot;fromState&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;ToBeVerified&quot;
+            },
+            &quot;toState&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Verified&quot;
+            }
+          }
+        }
+      ],
+      &quot;aliquot&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:bd-aliquot&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:bd-aliquot&quot;,
+          &quot;type&quot;: &quot;Specimen&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Serum aliquot -P01&quot;
+          }
+        }
+      }
+    }
+  },
+  &quot;result&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:bd-result&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:bd-result&quot;,
+      &quot;type&quot;: &quot;AssayResult&quot;,
+      &quot;value&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;1:320&quot;
+      },
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;NAb titer = 1:320&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:bd-result&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-03-04T12:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-03-04T14:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  }
+}</pre></div></div>
+<div class="mt-5 rounded-lg border border-[#d6d6cf] overflow-hidden">
+  <div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]">
+    <button role="tab" aria-selected="true" aria-controls="lims-req"
+      class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">
+      API Request
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="lims-res"
+      class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">
+      API Response
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="lims-design"
+      class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">
+      How it works
+    </button>
+  </div>
+  <div role="tabpanel" id="lims-req" class="p-4 bg-white">
+    <p class="jsoncap">One traversal retrieves the collection event with consent, delegation, training, equipment, and cold-chain all inline.</p><pre class="json q">GET /ngsi-ld/v1/entities/urn:ngsi-ld:SpecimenCollection:ONCO423-MU07-018-V04-BD
+  ?join=inline&amp;joinLevel=5
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1.ngsi-context.jsonld&gt;;
+      rel="http://www.w3.org/ns/json-ld#context"
+
+<span style="color:#888"># joinLevel=5 reaches:
+#   SpecimenCollection
+#     → InformedConsent (CTMS)
+#       → StudySubject (pseudonymous)
+#     → CapabilityDelegation (eTMF / delegation log)
+#       → TrainingRecord (LMS)
+#     → hcls:Specimen (LIMS)
+#       → CustodyEvent chain (cold-chain logger)
+#         → CarrierShipment (courier portal)</span></pre>
+  </div>
+  <div role="tabpanel" id="lims-res" class="p-4 bg-white" hidden>
+    <p class="jsoncap">SpecimenCollection entity &mdash; with inline chain-of-custody from draw to published.</p><pre class="json q">{
+  "@type": "cr:SpecimenCollection",
+  "@id": "urn:ngsi-ld:SpecimenCollection:ONCO423-MU07-018-V04-BD",
+  "collectedAt":    { "value": "2026-03-02T11:00:00Z" },
+  "collectedBy":    { "object": "urn:person:mary-smith" },
+  "forSubject":     { "object": "urn:ngsi-ld:StudySubject:ONCO423-MU07-018" },
+  "consent": {
+    "object": "urn:ngsi-ld:InformedConsent:ONCO423-MU07-018-ICF1",
+    "entity": {
+      "@type": "cr:InformedConsent",
+      "status":      { "value": "active" },
+      "signedDate":  { "value": "2026-01-15" }
+    }
+  },
+  "authority": {
+    "object": "urn:ngsi-ld:CapabilityDelegation:DG-2026-0047",
+    "entity": {
+      "@type": "cr:CapabilityDelegation",
+      "delegate":    { "object": "urn:person:mary-smith" },
+      "capability":  { "object": "urn:cap:venipuncture" },
+      "credential":  { "object": "urn:cred:phleb-cert-2025" },
+      "training": {
+        "object": "urn:ngsi-ld:TrainingRecord:TR-2026-0088",
+        "entity": {
+          "@type": "cr:TrainingRecord",
+          "completedAt": { "value": "2026-01-08" },
+          "status":      { "value": "current" }
+        }
+      }
+    }
+  },
+  "specimen": {
+    "object": "urn:ngsi-ld:Specimen:ONCO423-MU07-018-V04-BD-01",
+    "entity": {
+      "@type": "hcls:Specimen",
+      "custodyChain": [
+        { "fromState": "SampleDue",   "toState": "Received",  "at": "2026-03-02T11:05:00Z" },
+        { "fromState": "Received",    "toState": "Verified",  "at": "2026-03-02T14:00:00Z" },
+        { "fromState": "Verified",    "toState": "Published", "at": "2026-03-02T16:00:00Z" }
+      ]
+    }
+  }
+}</pre>
+  </div>
+  <div role="tabpanel" id="lims-design" class="p-4 bg-white" hidden>
+    <p><b>Five point solutions, one screen.</b> The blood draw admissibility view assembles data from: CTMS (consent status and subject enrollment), eTMF (delegation log entry), LMS (protocol and GCP training records), LIMS (vial specification, specimen receipt, centrifuge calibration), and the cold-chain logger and courier portal (chain-of-custody events from collection to lab receipt). Today a CRA manually collects these across five system logins; reconciliation for a single subject visit takes hours.</p><p><b>What TOP does differently.</b> Every entity in this chain is a first-class node in the TOP graph. <code>cr:CapabilityDelegation</code> links the phlebotomist to their credential and training record. <code>cr:InformedConsent</code> is linked to the subject. The <code>hcls:Specimen</code> carries its <code>custodyChain</code> as a sequence of <code>cr:CustodyEvent</code> state transitions. A single <code>join=inline&amp;joinLevel=5</code> call traverses the entire graph and returns it in one response.</p><p><b>The innovation tax.</b> Building this view from five point-solution APIs requires weeks of integration work per sponsor. The mapping is bespoke, brittle, and must be rebuilt every time a system is replaced. TOP makes the graph the integration layer &mdash; point solutions remain, but the connective tissue is standardized. A query that represents weeks of manual effort becomes a sub-200&thinsp;ms broker call.</p>
+  </div>
+</div>
+<h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:AnalysisRequest</code></td><td>Analysis Request</td><td class='clo'>Temporal</td><td>Binds an AnalysisService to a Specimen (the order).</td></tr><tr><td><code>cr:AnalysisService</code></td><td>Analysis Service</td><td class='clo'>Evidence</td><td>Catalog definition of a test/assay (e.g. a biomarker assay).</td></tr><tr><td><code>cr:AssayResult</code></td><td>Assay Result</td><td class='clo'>Evidence</td><td>A measured laboratory result on a Specimen, joined to the StudySubject.</td></tr><tr><td><code>cr:CustodyEvent</code></td><td>Custody Event</td><td class='clo'>Temporal</td><td>A specimen state transition (SampleDue-&gt;Received-&gt;ToBeVerified-&gt;Verified-&gt;Published) — chain of custody.</td></tr><tr><td><code>hcls:Specimen</code></td><td>Specimen</td><td class='clo'>Resource</td><td>A biospecimen collected from a Person.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:SpecimenOriginShape</code></td><td><code>hcls:Specimen</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Specimen must have an origin: a collection event (cr:collectedAt) or a parent (prov:wasDerivedFrom).</li></ul></td></tr><tr><td><code>cr:CustodyEventShape</code></td><td><code>cr:CustodyEvent</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Custody event must reference its specimen.</li><li>Custody event toState must be a valid lifecycle state.</li></ul></td></tr><tr><td><code>cr:AssayResultShape</code></td><td><code>cr:AssayResult</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Assay result must join to the (pseudonymous) StudySubject.</li><li>Assay result must reference the analysis service that produced it.</li><li>Assay result must reference the sample analyzed.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>specimen_lineage.rq</code></td><td>Blood-draw traceback — an assay result -&gt; sample -&gt; (aliquot/derivation)* -&gt; primary specimen -&gt; the collection event. &quot;Trace this result to the draw&quot; is a query.</td></tr></table>
