@@ -272,6 +272,31 @@ cr:clinicalReviewAt a owl:DatatypeProperty ;
     rdfs:range xsd:dateTime ;
     top:flavor "Additive" .
 
+cr:sourceUri a owl:DatatypeProperty ;
+    rdfs:label "source URI" ;
+    rdfs:comment "Dereferenceable link to the ORIGINAL source record a resolved/normalized value was transformed from (e.g. the vendor's FHIR Observation). The original is retained so a transformed value can always be traced back to it — this module is about provenance." ;
+    rdfs:range xsd:anyURI ;
+    top:flavor "Additive" .
+
+cr:sourceSystem a owl:DatatypeProperty ;
+    rdfs:label "source system" ;
+    rdfs:comment "Human-readable label of the system a source record came from (e.g. 'Acme Central Lab / FHIR R4')." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:agentModel a owl:DatatypeProperty ;
+    rdfs:label "agent model" ;
+    rdfs:comment "The model/version identifier of the autonomous agent that produced an automatic resolution (e.g. 'PNE resolver 1.4.0'). Provenance for the machine transformation." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:resolvedBy a owl:ObjectProperty ;
+    rdfs:label "resolved by" ;
+    rdfs:comment "The top:AutonomousAgent that produced an automatic resolution. A kind of prov:wasAttributedTo, so the transforming agent is queryable as provenance. When a human reconciles, a second attribution is appended — the machine step is never overwritten." ;
+    rdfs:subPropertyOf prov:wasAttributedTo ;
+    rdfs:range top:AutonomousAgent ;
+    top:flavor "Additive" .
+
 cr:resolvedAgainstVersion a owl:DatatypeProperty ;
     rdfs:label "resolved against reference version" ;
     rdfs:comment "The TOP cr/v1 reference version a binding resolved against, so reference drift never silently re-writes meaning (§4 reference-version pinning)." ;

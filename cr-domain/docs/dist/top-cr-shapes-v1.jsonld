@@ -1353,6 +1353,24 @@
     ]
   },
   {
+    "@id": "_:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "VendorAlias was auto-resolved (has cr:resolutionConfidence) but is missing provenance: it must record prov:wasDerivedFrom (the retained source it was transformed from \u2014 e.g. the original FHIR resource) AND an attributed agent (cr:resolvedBy / prov:wasAttributedTo). A transformed value with no traceable source or author is not admissible."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr:   <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            SELECT $this WHERE {\n              $this cr:resolutionConfidence ?c .\n              FILTER ( NOT EXISTS { $this prov:wasDerivedFrom ?src }\n                       || NOT EXISTS { $this prov:wasAttributedTo ?ag } )\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb21db7922ef20c7f5696a5491858c7225a70208db7d90ae733c0ff2767df168cdc",
     "http://www.w3.org/ns/shacl#in": [
       {
@@ -4608,6 +4626,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteraction"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ResolutionProvenanceShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "An automatic resolution must be provenanced to its agent and source (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VendorAlias"
       }
     ]
   },

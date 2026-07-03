@@ -51,14 +51,34 @@ ex:concept-sodium a cr:BiomedicalConcept ;
     rdfs:label "Sodium (serum/plasma)" ;
     cr:codedAs loinc:2951-2 .            # verified: Sodium [Moles/volume] in Serum or Plasma
 
+# ── Provenance of the transformation (this is NOT the source) ─────────────────
+# The original FHIR resource is retained and dereferenceable, so any resolved
+# value can be traced back to it; the autonomous agent that resolved it is
+# recorded with its model — the whole point is provenance.
+ex:fhir-obs-sodium a prov:Entity ;
+    cr:sourceSystem "Acme Central Lab / FHIR R4" ;
+    cr:sourceUri "https://fhir.acme.example/Observation/obs-88213"^^xsd:anyURI .
+
+ex:fhir-obs-visit a prov:Entity ;
+    cr:sourceSystem "Acme Central Lab / FHIR R4" ;
+    cr:sourceUri "https://fhir.acme.example/Encounter/enc-4471"^^xsd:anyURI .
+
+ex:pne-resolver a top:AutonomousAgent ;
+    rdfs:label "PNE resolver 1.4.0" ;
+    cr:agentModel "PNE resolver 1.4.0" .
+
 # ── Vendor alias corpus: resolved ONCE, not stored per-DTA ────────────────────
+# Each auto-resolution carries prov:wasDerivedFrom (the retained FHIR source) and
+# cr:resolvedBy (the autonomous agent) — enforced by cr:ResolutionProvenanceShape.
 ex:alias-sodium-col a cr:VendorAlias ;
     top:identifier "urn:alias:col-SODIUM" ; top:status "active" ;
     cr:vendorTerm "SODIUM" ;
     cr:aliasResolvesTo ex:concept-sodium ;
     cr:resolutionConfidence "0.98"^^xsd:decimal ;
     cr:resolvedAgainstVersion "cr/v1" ;
-    cr:resolvedFrom ex:vendor-centrallab .
+    cr:resolvedFrom ex:vendor-centrallab ;
+    prov:wasDerivedFrom ex:fhir-obs-sodium ;
+    cr:resolvedBy ex:pne-resolver .
 
 ex:alias-visit-v3d29 a cr:VendorAlias ;
     top:identifier "urn:alias:visit-V3D29" ; top:status "active" ;
@@ -66,7 +86,9 @@ ex:alias-visit-v3d29 a cr:VendorAlias ;
     cr:aliasResolvesTo ex:visit-3 ;
     cr:resolutionConfidence "0.86"^^xsd:decimal ;
     cr:resolvedAgainstVersion "cr/v1" ;
-    cr:resolvedFrom ex:vendor-centrallab .
+    cr:resolvedFrom ex:vendor-centrallab ;
+    prov:wasDerivedFrom ex:fhir-obs-visit ;
+    cr:resolvedBy ex:pne-resolver .
 
 ex:visit-3 a cr:Visit ;
     top:identifier "urn:visit:V3" ; top:status "active" ;

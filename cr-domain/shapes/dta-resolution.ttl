@@ -54,6 +54,29 @@ cr:VendorAliasConfidenceShape a sh:NodeShape ;
         """ ;
     ] .
 
+# ── Provenance of an automatic resolution (hard) ─────────────────────────────
+# The whole module is about provenance: a normalized/resolved value is a
+# TRANSFORMATION, not the source, so it must record where it came from and who
+# produced it. An auto-resolution (carries a confidence) with no derivation and
+# no attributed agent cannot be traced back, and is not admissible.
+cr:ResolutionProvenanceShape a sh:NodeShape ;
+    rdfs:label "An automatic resolution must be provenanced to its agent and source (hard)" ;
+    sh:targetClass cr:VendorAlias ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "VendorAlias was auto-resolved (has cr:resolutionConfidence) but is missing provenance: it must record prov:wasDerivedFrom (the retained source it was transformed from — e.g. the original FHIR resource) AND an attributed agent (cr:resolvedBy / prov:wasAttributedTo). A transformed value with no traceable source or author is not admissible." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            SELECT $this WHERE {
+              $this cr:resolutionConfidence ?c .
+              FILTER ( NOT EXISTS { $this prov:wasDerivedFrom ?src }
+                       || NOT EXISTS { $this prov:wasAttributedTo ?ag } )
+            }
+        """ ;
+    ] .
+
 # ── Reference-version pinning drift (soft) ───────────────────────────────────
 cr:VendorAliasVersionPinShape a sh:NodeShape ;
     rdfs:label "A resolved alias should pin the reference version it resolved against (warning)" ;

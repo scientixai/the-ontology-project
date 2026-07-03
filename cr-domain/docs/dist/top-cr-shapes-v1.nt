@@ -258,6 +258,11 @@
 <https://top.scientix.ai/cr/v1#RegulatoryInteractionRequiredShape> <http://www.w3.org/ns/shacl#property> _:cb1753a5c21b33fe07f8e8c48a2c7eee87a8305e9b3308c98fad53483a036d84068 .
 <https://top.scientix.ai/cr/v1#RegulatoryInteractionRequiredShape> <http://www.w3.org/ns/shacl#severity> <http://www.w3.org/ns/shacl#Violation> .
 <https://top.scientix.ai/cr/v1#RegulatoryInteractionRequiredShape> <http://www.w3.org/ns/shacl#targetClass> <https://top.scientix.ai/cr/v1#RegulatoryInteraction> .
+<https://top.scientix.ai/cr/v1#ResolutionProvenanceShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<https://top.scientix.ai/cr/v1#ResolutionProvenanceShape> <http://www.w3.org/2000/01/rdf-schema#label> "An automatic resolution must be provenanced to its agent and source (hard)" .
+<https://top.scientix.ai/cr/v1#ResolutionProvenanceShape> <http://www.w3.org/ns/shacl#severity> <http://www.w3.org/ns/shacl#Violation> .
+<https://top.scientix.ai/cr/v1#ResolutionProvenanceShape> <http://www.w3.org/ns/shacl#sparql> _:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713 .
+<https://top.scientix.ai/cr/v1#ResolutionProvenanceShape> <http://www.w3.org/ns/shacl#targetClass> <https://top.scientix.ai/cr/v1#VendorAlias> .
 <https://top.scientix.ai/cr/v1#RiskAssessmentShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 <https://top.scientix.ai/cr/v1#RiskAssessmentShape> <http://www.w3.org/ns/shacl#property> _:cb188312394ea2562a79cdbe68bf29a49024482b30c94a1fcccda3f876733bac61d .
 <https://top.scientix.ai/cr/v1#RiskAssessmentShape> <http://www.w3.org/ns/shacl#property> _:cb1e5b19abc5df7cf6ac7bf001761f093d436640701a7021115b541f0927b800469 .
@@ -664,6 +669,9 @@ _:cb2165182e0ae310de0b4d6122217dbdaed931ed6d2bbe8b699e585dbe3f64eaaf6 <http://ww
 _:cb2165182e0ae310de0b4d6122217dbdaed931ed6d2bbe8b699e585dbe3f64eaaf6 <http://www.w3.org/ns/shacl#message> "Delegation must grant a Capability." .
 _:cb2165182e0ae310de0b4d6122217dbdaed931ed6d2bbe8b699e585dbe3f64eaaf6 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2165182e0ae310de0b4d6122217dbdaed931ed6d2bbe8b699e585dbe3f64eaaf6 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#delegatedCapability> .
+_:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713 <http://www.w3.org/ns/shacl#message> "VendorAlias was auto-resolved (has cr:resolutionConfidence) but is missing provenance: it must record prov:wasDerivedFrom (the retained source it was transformed from — e.g. the original FHIR resource) AND an attributed agent (cr:resolvedBy / prov:wasAttributedTo). A transformed value with no traceable source or author is not admissible." .
+_:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713 <http://www.w3.org/ns/shacl#prefixes> <https://top.scientix.ai/cr/v1#> .
+_:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713 <http://www.w3.org/ns/shacl#select> "\n            PREFIX cr:   <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            SELECT $this WHERE {\n              $this cr:resolutionConfidence ?c .\n              FILTER ( NOT EXISTS { $this prov:wasDerivedFrom ?src }\n                       || NOT EXISTS { $this prov:wasAttributedTo ?ag } )\n            }\n        " .
 _:cb21db7922ef20c7f5696a5491858c7225a70208db7d90ae733c0ff2767df168cdc <http://www.w3.org/ns/shacl#in> _:cbe7cecdb881fa10d202f550f4ec7308432a07a9aecf6e4cfb1a0b5c7c66057838 .
 _:cb21db7922ef20c7f5696a5491858c7225a70208db7d90ae733c0ff2767df168cdc <http://www.w3.org/ns/shacl#message> "TransferProfile.transmissionType is mandatory and must be 'cumulative' or 'incremental'." .
 _:cb21db7922ef20c7f5696a5491858c7225a70208db7d90ae733c0ff2767df168cdc <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .

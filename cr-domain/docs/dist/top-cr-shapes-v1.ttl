@@ -699,6 +699,22 @@ cr:RegulatoryInteractionRequiredShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:RegulatoryInteraction .
 
+cr:ResolutionProvenanceShape a sh:NodeShape ;
+    rdfs:label "An automatic resolution must be provenanced to its agent and source (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "VendorAlias was auto-resolved (has cr:resolutionConfidence) but is missing provenance: it must record prov:wasDerivedFrom (the retained source it was transformed from — e.g. the original FHIR resource) AND an attributed agent (cr:resolvedBy / prov:wasAttributedTo). A transformed value with no traceable source or author is not admissible." ;
+            sh:prefixes cr: ;
+            sh:select """
+            PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            SELECT $this WHERE {
+              $this cr:resolutionConfidence ?c .
+              FILTER ( NOT EXISTS { $this prov:wasDerivedFrom ?src }
+                       || NOT EXISTS { $this prov:wasAttributedTo ?ag } )
+            }
+        """ ] ;
+    sh:targetClass cr:VendorAlias .
+
 cr:RiskAssessmentShape a sh:NodeShape ;
     sh:property [ sh:in ( "low" "medium" "high" ) ;
             sh:message "Risk assessment must carry a risk level (low/medium/high)." ;

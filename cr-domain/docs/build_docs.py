@@ -882,231 +882,6 @@ def ingestion_body():
     )
 
 
-def dta_connectors():
-    """Load the vendor connector catalog from the worked-example instance files,
-    so the operator-facing DTA page lists the real profiles and never drifts."""
-    CRN = "https://top.scientix.ai/cr/v1#"
-    g = Graph()
-    for f in ("examples/dta-lab-safety/fhir-lab-connectors.ttl",
-              "examples/dta-lab-safety/vendor-connectors.ttl"):
-        p = os.path.join(ROOT, f)
-        if os.path.exists(p):
-            g.parse(p, format="turtle")
-    prof = URIRef(CRN + "VendorConnectorProfile")
-    out = []
-    for s in g.subjects(RDF.type, prof):
-        val = lambda t: (g.value(s, URIRef(CRN + t)) or "")
-        out.append(dict(
-            label=str(g.value(s, RDFS.label) or qn(s)),
-            style=str(val("vendorApiStyle")),
-            fmt=str(val("fileFormat")),
-            method=str(val("transmissionMethod")),
-            type=str(val("transmissionType")),
-            sched=str(val("transferSchedule")),
-            doc=str(val("vendorDocumentation")),
-        ))
-    return sorted(out, key=lambda d: d["label"])
-
-
-def dta_hero():
-    """A concrete 'see it work' hero in the operator-screen split style (like EDC/
-    RBQM): left = the operator's view of the feed; right = what the lab actually
-    sends (a FHIR Observation) and what it lands as (an SDTM LB row) with no
-    mapping step in between."""
-    screen = (
-        '<div class="screen"><div class="scr-head">External lab feed &mdash; Acme Central Lab'
-        '<span class="badge">DTA</span>'
-        '<div class="scr-sub">Study GLP1-TRIAL-27 &middot; safety chemistry</div></div>'
-        '<div class="scr-row"><span>Data provider</span><b>Acme Central Lab (FHIR)</b></div>'
-        '<div class="scr-row"><span>Feed</span><b>weekly &middot; incremental</b></div>'
-        '<div class="scr-row"><span>Analyte</span><b>Sodium &middot; Visit 3</b></div>'
-        '<div class="scr-row"><span>Blinding</span><b>none (safety labs)</b></div>'
-        '<div class="scr-row"><span>Status</span><b><span class="pill ok">conformant &mdash; admitted</span></b></div>'
-        '</div>')
-    fhir_in = """{
-  "resourceType": "Observation",
-  "status": "final",
-  "code": { "coding": [{
-      "system":  "http://loinc.org",
-      "code":    "2951-2",
-      "display": "Sodium [Moles/volume] in Serum or Plasma" }] },
-  "subject":   { "reference": "Patient/S-001" },
-  "encounter": { "display": "V3 D29" },          // the vendor's visit label
-  "effectiveDateTime": "2026-02-15T14:00:00Z",
-  "specimen":  { "reference": "Specimen/serum" },
-  "valueQuantity": { "value": 140, "unit": "mEq/L",
-      "system": "http://unitsofmeasure.org", "code": "meq/L" }
-}"""
-    sdtm_out = """{
-  "DOMAIN":   "LB",
-  "USUBJID":  "GLP1-TRIAL-27-S-001",
-  "LBTESTCD": "SODIUM",          // matched via LOINC 2951-2
-  "LBTEST":   "Sodium",
-  "LBLOINC":  "2951-2",
-  "LBSPEC":   "SERUM",           // from FHIR Specimen
-  "LBORRES":  "140",             // as reported
-  "LBORRESU": "mEq/L",
-  "LBSTRESN": 140,               // standardised
-  "LBSTRESU": "mmol/L",          // mEq/L -> UCUM mmol/L, done for you
-  "VISITNUM": 3,                 // "V3 D29" -> protocol Visit 3
-  "VISIT":    "Visit 3"
-}"""
-    right = (
-        '<div class="jsoncap">what the lab <b>sends</b> &mdash; a FHIR <code>Observation</code> '
-        '(the shape Labcorp / Quest / the health networks already speak)</div>'
-        f'<pre class="json q">{esc(fhir_in)}</pre>'
-        '<div class="jsoncap">what it <b>lands as</b> &mdash; an SDTM <code>LB</code> row, '
-        '<b>rendered</b> from the feed (no one authored a mapping)</div>'
-        f'<pre class="json">{esc(sdtm_out)}</pre>')
-    note = (
-        '<p class="note"><b>No mapping step ran in the middle.</b> The feed on the left becomes the '
-        'row on the right because the shared crosswalks already know that <code>SODIUM</code> is the '
-        'Sodium concept (LOINC&nbsp;2951-2), that <code>mEq/L</code> standardises to <code>mmol/L</code>, '
-        'and that the vendor&rsquo;s <code>V3&nbsp;D29</code> is your protocol&rsquo;s Visit&nbsp;3. Swap in a '
-        'different lab and <b>only the left panel changes</b> &mdash; the SDTM output, the Dataset-JSON and '
-        'the DTA document all render the same way.</p>')
-    return (
-        '<div class="splitstop"><div class="split">'
-        f'<div>{screen}</div><div>{right}</div></div></div>{note}')
-
-
-def dta_body():
-    conns = dta_connectors()
-    # plain-English gloss for the machine-readable transmission methods
-    method_gloss = {
-        "FHIR-API": "modern lab API (FHIR)", "API": "REST API", "Webhook": "push / event feed",
-        "SFTP": "secure file drop (SFTP)", "FTP": "file drop (FTP)",
-        "Snowflake-share": "data-warehouse share", "BigQuery-direct": "data-warehouse query",
-        "Manual-upload": "manual upload", "REST-SDE-job": "extract job (API)", "RWS-ODM": "ODM API",
-    }
-    conn_rows = ""
-    for c in conns:
-        how = method_gloss.get(c["method"], c["method"] or "&mdash;")
-        cadence = c["sched"] or "&mdash;"
-        doc = (f'<a href="{esc(c["doc"])}">docs</a>' if c["doc"] else "")
-        conn_rows += (
-            f"<tr><td><b>{esc(c['label'].replace(' connector','').replace(' (FHIR R4 + legacy EDI)','').replace(' (normalized Results model)','').replace(' (TEFCA QHIN)','').replace(' (open-source FHIR)',''))}</b></td>"
-            f"<td>{esc(how)}</td><td>{esc(c['fmt'] or '&mdash;')}</td>"
-            f"<td>{esc(cadence)}</td><td style='font-size:12px'>{doc}</td></tr>")
-    conn_table = (
-        "<table><tr><th>Lab / system</th><th>How it sends data</th><th>Format</th>"
-        f"<th>Cadence</th><th></th></tr>{conn_rows}</table>")
-
-    return (
-        "<h1>External lab data transfer (DTA / DTS)</h1>"
-        "<p class='lead'>Most of a modern trial&rsquo;s data &mdash; safety labs, ECG, imaging, "
-        "eCOA &mdash; is generated by <b>outside vendors</b>, not on your CRFs. Getting it from the "
-        "vendor into your study database is governed by a <b>Data Transfer Agreement (DTA)</b> and its "
-        "<b>Data Transfer Specification (DTS)</b>. This page explains, in plain terms, how this reference "
-        "makes that transfer <b>set up once and reused</b> &mdash; instead of hand-built per vendor, per "
-        "data type, per study, and re-touched at every amendment.</p>"
-
-        # ── Concrete hero: one result, in and out ──
-        "<h2>See it work &mdash; one lab result, in and out</h2>"
-        "<p>A single Sodium result arriving from a central lab, and the SDTM row it becomes "
-        "&mdash; with nothing hand-mapped in between:</p>"
-        f"{dta_hero()}"
-
-        # ── The problem, in the language both crowds feel ──
-        "<h2>The problem it removes</h2>"
-        "<p>Today a DTA/DTS is a Word or Excel document. For every study, someone re-writes it for each "
-        "vendor, and a programmer hand-maps that vendor&rsquo;s columns to SDTM (LB, EG, VS&hellip;). The "
-        "sponsor then <i>assumes</i> every one of those hand-built maps agrees &mdash; and every place they "
-        "quietly disagree becomes a <b>reconciliation query</b> that surfaces late, near database lock.</p>"
-        "<div class='cards'>"
-        "<div class='card'><h4>For the study team / site manager</h4><p>You stop rebuilding the same lab "
-        "mapping every study. The vendor&rsquo;s test names, units and visit labels are matched to your "
-        "protocol <b>once</b>; the next study on the same vendor is already matched. Problems (a wrong unit, "
-        "a visit label that doesn&rsquo;t line up) are caught <b>when the file arrives</b>, not months later.</p></div>"
-        "<div class='card'><h4>The CDISC 360i vision</h4><p>This is the CDISC 360i Digital DTA goal made "
-        "concrete: the DTS becomes a machine-readable contract generated from the USDM protocol, not prose. "
-        "SDTM is <b>rendered</b> from it &mdash; never a stored target a human fills in. The &ldquo;data "
-        "validation &amp; quality&rdquo; work usually cut from an MVP (conformance, unit checks, visit "
-        "reconciliation) is built in and runs at ingestion &mdash; the CORE / Dataset-JSON conformance the "
-        "360i roadmap calls for.</p></div>"
-        "</div>"
-
-        # ── What the crosswalks actually do, plain ──
-        "<h2>What the crosswalks do &mdash; three jobs</h2>"
-        "<p>A &ldquo;crosswalk&rdquo; here is just a <b>matching table the whole industry shares and keeps "
-        "adding to</b>. It does three jobs so a human doesn&rsquo;t have to re-do them each study:</p>"
-        "<div class='step'><span class='num'>1</span><div><h4>Match the vendor&rsquo;s test to the standard concept</h4>"
-        "<p>The lab calls it <code>SODIUM</code>; the standard concept is <b>Sodium</b>, identified by its "
-        "<b>LOINC</b> code (2951-2). Match it once and it stays matched &mdash; and because the match is shared, "
-        "the <b>next sponsor</b> using that same vendor term gets it for free. This is what replaces the "
-        "per-study &ldquo;encounter mapping&rdquo; table that today is re-typed and stored inside every DTA.</p></div></div>"
-        "<div class='step'><span class='num'>2</span><div><h4>Put units and visit labels on a common footing</h4>"
-        "<p>The vendor sends <code>mEq/L</code>; the standard unit is <code>mmol/L</code> (UCUM), and the "
-        "conversion is done for you, the same way every time &mdash; not a note in a spec. The vendor&rsquo;s "
-        "visit label <code>V3 D29</code> is matched to your protocol&rsquo;s <b>Visit 3</b>. Match a label "
-        "once; every study that reuses it inherits the match.</p></div></div>"
-        "<div class='step'><span class='num'>3</span><div><h4>Render the standard deliverables as output</h4>"
-        "<p>Once a result is matched to its concept, unit and visit, the <b>SDTM LB row</b>, the "
-        "Dataset-JSON, the Define-XML and the human-readable DTA document all come out as <b>views</b>. "
-        "Nobody authors SDTM by hand; it is a rendering of the matched data.</p></div></div>"
-
-        # ── The worked example, told operationally ──
-        "<h2>One result, end to end (Sodium)</h2>"
-        "<p>Read this as what happens when a file lands &mdash; no mapping step in the middle:</p>"
-        "<table class='map'>"
-        "<tr><th>The vendor sends&hellip;</th><th>&hellip;it lands as</th></tr>"
-        "<tr><td>column <code>SODIUM</code></td><td>the <b>Sodium</b> concept &rarr; SDTM <code>LBTESTCD = SODIUM</code> (via its LOINC code)</td></tr>"
-        "<tr><td>value <code>140</code></td><td><code>LBORRES = 140</code> (original) and <code>LBSTRESN</code> in standard units</td></tr>"
-        "<tr><td>unit <code>mEq/L</code></td><td>standardised to <code>mmol/L</code> (<code>LBORRESU</code>/<code>LBSTRESU</code>) &mdash; conversion done for you</td></tr>"
-        "<tr><td>visit label <code>V3 D29</code></td><td>your protocol&rsquo;s <b>Visit 3</b> &rarr; <code>VISITNUM = 3</code></td></tr>"
-        "</table>"
-        "<p class='muted'>Same result also renders as a FHIR <code>Observation</code> &mdash; the shape the "
-        "central labs (Labcorp, Quest) and the health-data networks already speak.</p>"
-
-        # ── What gets checked, in operator terms (the graded shapes) ──
-        "<h2>What&rsquo;s checked before the data lands</h2>"
-        "<p>These checks run automatically at ingestion. This is the &ldquo;quality&rdquo; layer that a manual "
-        "DTA leaves to a late human reconciliation pass:</p>"
-        "<table>"
-        "<tr><th>Situation</th><th>What happens</th></tr>"
-        "<tr><td>A test that isn&rsquo;t matched to a standard concept</td><td><span class='sev violation'>Blocked</span> &mdash; it can&rsquo;t be rendered to SDTM, so it isn&rsquo;t admitted</td></tr>"
-        "<tr><td>A unit that isn&rsquo;t a known standard unit</td><td><span class='sev violation'>Blocked</span> &mdash; no safe conversion</td></tr>"
-        "<tr><td>A visit label that matches nothing and no one has confirmed</td><td><span class='sev violation'>Blocked</span></td></tr>"
-        "<tr><td>A file format or transfer method outside the agreed list</td><td><span class='sev violation'>Blocked</span></td></tr>"
-        "<tr><td>The person who signed off the transfer isn&rsquo;t authorised</td><td><span class='sev violation'>Blocked</span></td></tr>"
-        "<tr><td>A match the system is only <i>somewhat</i> sure of</td><td><span class='sev warning'>Flagged</span> for a person to confirm once &mdash; then it joins the shared library</td></tr>"
-        "<tr><td>Blinding scope not stated</td><td><span class='sev warning'>Flagged</span></td></tr>"
-        "</table>"
-        "<p class='note'>The point of grading: a genuinely unusable transfer is <b>stopped</b>; a "
-        "&ldquo;probably fine, please confirm&rdquo; is <b>flagged</b>, not stopped. A manual process can only "
-        "do this with people and time; here it is built into the contract and runs on every file.</p>"
-
-        # ── Vendors profiled (live from the connector files) ──
-        "<h2>Vendors &amp; systems profiled</h2>"
-        "<p>Ready-made <b>connector profiles</b> so onboarding a vendor starts from a sensible default rather "
-        "than a blank DTA. Central labs and health-data networks speak modern FHIR APIs; the big EDC platforms "
-        "deliver via extract jobs and files. Each profile records how that vendor sends data and the cadence.</p>"
-        f"{conn_table}"
-        "<p class='muted'>Profiles are grounded in each vendor&rsquo;s public documentation; treat them as "
-        "starting defaults to confirm during study set-up, not contractual guarantees.</p>"
-
-        # ── Who does what ──
-        "<h2>Who does what</h2>"
-        "<ul>"
-        "<li><b>DTA working group / standards owner</b> &mdash; defines the DTS once (which data elements, "
-        "which concepts, which units) and curates the shared matching library. New vendor terms get confirmed "
-        "once and then compound.</li>"
-        "<li><b>Study team / data management</b> &mdash; reuse the matched library; confirm the occasional "
-        "unmatched term flagged at ingestion; read the SDTM / Dataset-JSON / DTA document as views.</li>"
-        "<li><b>Site manager</b> &mdash; when a vendor&rsquo;s visit label or unit doesn&rsquo;t line up, it "
-        "surfaces immediately as a flag to confirm &mdash; not as a query weeks later.</li>"
-        "<li><b>Imaging / eCOA and other &lsquo;no standard code&rsquo; data</b> &mdash; where there is no LOINC "
-        "to match to, a clinician (e.g. the PI reviewing imaging on receipt) confirms the binding once; that "
-        "attestation is a first-class part of the record, not an exception.</li>"
-        "</ul>"
-
-        "<p class='muted' style='margin-top:22px'>The machine-readable detail behind this page &mdash; the "
-        "exact concept, unit and SDTM mappings, the conformance rules, and the worked example &mdash; lives in "
-        "the <a href='interop.html'>Interoperability</a> page and in "
-        "<code>docs/dta-design-notes.md</code>.</p>"
-    )
-
-
 def reference_body():
     parts = ["<h1>Full reference</h1><p class='muted'>Every entity, constraint, and projection &mdash; auto-generated from the model.</p><h2>Entities by module</h2>"]
     for fname, iris in PER_FILE.items():
@@ -1410,7 +1185,23 @@ def roles_body():  # noqa: C901
     )
 
 
-def build():
+# Pages whose COMMITTED HTML is hand-authored/enriched beyond anything this
+# generator can emit (rich heroes, tabs, timelines, popovers). There is no
+# faithful generator source for them, so build_docs.py must NEVER regenerate
+# them — doing so replaces the rich page with a much thinner one. That is how
+# edc.html / rbqm.html were clobbered before. Edit these directly; the committed
+# HTML is the source of truth.
+HAND_MAINTAINED = {
+    "edc.html", "rbqm.html", "schedule.html", "tmf.html", "lims.html", "dta.html",
+}
+
+
+def build(force=False):
+    """Regeneration guard (protects hand-maintained docs):
+      * HAND_MAINTAINED pages are never written.
+      * Other pages are written only if MISSING, unless force=True.
+    So a plain run scaffolds new pages and touches nothing existing; pass
+    --force to deliberately regenerate the generator-owned pages from the model."""
     n_cls = len([1 for iris in PER_FILE.values() for i in iris
                  if not (str(i).startswith(TOP) and str(i).split("#")[-1] in CLOS)])
     man = json.load(open(os.path.join(ROOT, "tests", "manifest.json")))
@@ -1420,16 +1211,28 @@ def build():
              "foundation.html": ("Foundation", "foundation", foundation_body()),
              "implementation.html": ("Implementation guide", "implementation", implementation_body()),
              "ingestion.html": ("Ingestion example", "ingestion", ingestion_body()),
-             "dta.html": ("External lab data transfer (DTA)", "dta", dta_body()),
              "reference.html": ("Full reference", "reference", reference_body())}
     for fl in FLOWS:
+        if f"{fl['id']}.html" in HAND_MAINTAINED:
+            continue  # hand-enriched flow page; no faithful generator source
         body = roles_body() if fl["id"] == "roles" else flow_body(fl)
         pages[f"{fl['id']}.html"] = (fl["title"], fl["id"], body)
+    written, preserved = [], []
     for fname, (title, active, body) in pages.items():
-        open(os.path.join(out, fname), "w").write(shell(title, active, body))
-    print(f"Wrote {len(pages)} pages to {out}/")
-    print("  " + ", ".join(sorted(pages)))
+        path = os.path.join(out, fname)
+        if os.path.exists(path) and not force:
+            preserved.append(fname)
+            continue
+        open(path, "w").write(shell(title, active, body))
+        written.append(fname)
+    print(f"Wrote {len(written)} page(s) to {out}/" + (" [--force]" if force else ""))
+    if written:
+        print("  " + ", ".join(sorted(written)))
+    if preserved:
+        print(f"Preserved {len(preserved)} existing generator page(s) (use --force to regenerate): "
+              + ", ".join(sorted(preserved)))
+    print(f"Never-regenerated hand-maintained page(s): " + ", ".join(sorted(HAND_MAINTAINED)))
 
 
 if __name__ == "__main__":
-    build()
+    build(force="--force" in sys.argv)
