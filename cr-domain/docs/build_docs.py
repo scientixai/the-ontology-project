@@ -908,6 +908,68 @@ def dta_connectors():
     return sorted(out, key=lambda d: d["label"])
 
 
+def dta_hero():
+    """A concrete 'see it work' hero in the operator-screen split style (like EDC/
+    RBQM): left = the operator's view of the feed; right = what the lab actually
+    sends (a FHIR Observation) and what it lands as (an SDTM LB row) with no
+    mapping step in between."""
+    screen = (
+        '<div class="screen"><div class="scr-head">External lab feed &mdash; Acme Central Lab'
+        '<span class="badge">DTA</span>'
+        '<div class="scr-sub">Study GLP1-TRIAL-27 &middot; safety chemistry</div></div>'
+        '<div class="scr-row"><span>Data provider</span><b>Acme Central Lab (FHIR)</b></div>'
+        '<div class="scr-row"><span>Feed</span><b>weekly &middot; incremental</b></div>'
+        '<div class="scr-row"><span>Analyte</span><b>Sodium &middot; Visit 3</b></div>'
+        '<div class="scr-row"><span>Blinding</span><b>none (safety labs)</b></div>'
+        '<div class="scr-row"><span>Status</span><b><span class="pill ok">conformant &mdash; admitted</span></b></div>'
+        '</div>')
+    fhir_in = """{
+  "resourceType": "Observation",
+  "status": "final",
+  "code": { "coding": [{
+      "system":  "http://loinc.org",
+      "code":    "2951-2",
+      "display": "Sodium [Moles/volume] in Serum or Plasma" }] },
+  "subject":   { "reference": "Patient/S-001" },
+  "encounter": { "display": "V3 D29" },          // the vendor's visit label
+  "effectiveDateTime": "2026-02-15T14:00:00Z",
+  "specimen":  { "reference": "Specimen/serum" },
+  "valueQuantity": { "value": 140, "unit": "mEq/L",
+      "system": "http://unitsofmeasure.org", "code": "meq/L" }
+}"""
+    sdtm_out = """{
+  "DOMAIN":   "LB",
+  "USUBJID":  "GLP1-TRIAL-27-S-001",
+  "LBTESTCD": "SODIUM",          // matched via LOINC 2951-2
+  "LBTEST":   "Sodium",
+  "LBLOINC":  "2951-2",
+  "LBSPEC":   "SERUM",           // from FHIR Specimen
+  "LBORRES":  "140",             // as reported
+  "LBORRESU": "mEq/L",
+  "LBSTRESN": 140,               // standardised
+  "LBSTRESU": "mmol/L",          // mEq/L -> UCUM mmol/L, done for you
+  "VISITNUM": 3,                 // "V3 D29" -> protocol Visit 3
+  "VISIT":    "Visit 3"
+}"""
+    right = (
+        '<div class="jsoncap">what the lab <b>sends</b> &mdash; a FHIR <code>Observation</code> '
+        '(the shape Labcorp / Quest / the health networks already speak)</div>'
+        f'<pre class="json q">{esc(fhir_in)}</pre>'
+        '<div class="jsoncap">what it <b>lands as</b> &mdash; an SDTM <code>LB</code> row, '
+        '<b>rendered</b> from the feed (no one authored a mapping)</div>'
+        f'<pre class="json">{esc(sdtm_out)}</pre>')
+    note = (
+        '<p class="note"><b>No mapping step ran in the middle.</b> The feed on the left becomes the '
+        'row on the right because the shared crosswalks already know that <code>SODIUM</code> is the '
+        'Sodium concept (LOINC&nbsp;2951-2), that <code>mEq/L</code> standardises to <code>mmol/L</code>, '
+        'and that the vendor&rsquo;s <code>V3&nbsp;D29</code> is your protocol&rsquo;s Visit&nbsp;3. Swap in a '
+        'different lab and <b>only the left panel changes</b> &mdash; the SDTM output, the Dataset-JSON and '
+        'the DTA document all render the same way.</p>')
+    return (
+        '<div class="splitstop"><div class="split">'
+        f'<div>{screen}</div><div>{right}</div></div></div>{note}')
+
+
 def dta_body():
     conns = dta_connectors()
     # plain-English gloss for the machine-readable transmission methods
@@ -939,6 +1001,12 @@ def dta_body():
         "makes that transfer <b>set up once and reused</b> &mdash; instead of hand-built per vendor, per "
         "data type, per study, and re-touched at every amendment.</p>"
 
+        # ── Concrete hero: one result, in and out ──
+        "<h2>See it work &mdash; one lab result, in and out</h2>"
+        "<p>A single Sodium result arriving from a central lab, and the SDTM row it becomes "
+        "&mdash; with nothing hand-mapped in between:</p>"
+        f"{dta_hero()}"
+
         # ── The problem, in the language both crowds feel ──
         "<h2>The problem it removes</h2>"
         "<p>Today a DTA/DTS is a Word or Excel document. For every study, someone re-writes it for each "
@@ -950,10 +1018,12 @@ def dta_body():
         "mapping every study. The vendor&rsquo;s test names, units and visit labels are matched to your "
         "protocol <b>once</b>; the next study on the same vendor is already matched. Problems (a wrong unit, "
         "a visit label that doesn&rsquo;t line up) are caught <b>when the file arrives</b>, not months later.</p></div>"
-        "<div class='card'><h4>For the DTA working group</h4><p>The DTS becomes a machine-readable contract, "
-        "not prose. SDTM is <b>rendered</b> from it &mdash; never a stored target a human fills in. The "
-        "&ldquo;data validation &amp; quality&rdquo; work usually cut from an MVP (conformance, unit checks, "
-        "visit reconciliation) is built in and runs at ingestion.</p></div>"
+        "<div class='card'><h4>The CDISC 360i vision</h4><p>This is the CDISC 360i Digital DTA goal made "
+        "concrete: the DTS becomes a machine-readable contract generated from the USDM protocol, not prose. "
+        "SDTM is <b>rendered</b> from it &mdash; never a stored target a human fills in. The &ldquo;data "
+        "validation &amp; quality&rdquo; work usually cut from an MVP (conformance, unit checks, visit "
+        "reconciliation) is built in and runs at ingestion &mdash; the CORE / Dataset-JSON conformance the "
+        "360i roadmap calls for.</p></div>"
         "</div>"
 
         # ── What the crosswalks actually do, plain ──
