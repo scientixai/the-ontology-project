@@ -1363,6 +1363,10 @@ cr:clinicalReviewAt a owl:DatatypeProperty ;
     rdfs:range xsd:dateTime ;
     top:flavor "Additive" .
 
+cr:closeoutModule a owl:Ontology ;
+    rdfs:label "TOP CR — Closeout core (A1: database lock & follow-up)" ;
+    rdfs:comment "Database lock, LPLV, post-lock control, and long-term follow-up — the first closeout slice, heavily reusing Visit / ClinicalObservation / Study." .
+
 cr:closesConsent a owl:ObjectProperty ;
     rdfs:label "closes consent" ;
     rdfs:comment "Links the withdrawal event to the cr:InformedConsent it terminates." ;
@@ -1530,13 +1534,9 @@ cr:declaredUnitConcept a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:definedBy a owl:ObjectProperty ;
-    rdfs:label "defined by" ;
-    rdfs:comment "0..1. The protocol template this occurrence instantiates. Absent for unscheduled visits.",
-        "The value's variable definition (aboutness); decouples value from definition." ;
-    rdfs:domain cr:ClinicalObservation,
-        cr:VisitOccurrence ;
-    rdfs:range cr:DataElementDef,
-        cr:VisitDefinition ;
+    rdfs:comment "The value's variable definition (aboutness); decouples value from definition." ;
+    rdfs:domain cr:ClinicalObservation ;
+    rdfs:range cr:DataElementDef ;
     top:flavor "Additive" .
 
 cr:delegate a owl:ObjectProperty ;
@@ -1708,6 +1708,20 @@ cr:flaggedBy a owl:ObjectProperty ;
     rdfs:domain cr:DeviationAntecedent ;
     rdfs:range cr:RiskSignal ;
     owl:inverseOf cr:flags ;
+    top:flavor "Additive" .
+
+cr:followUpType a owl:DatatypeProperty ;
+    rdfs:label "follow-up type" ;
+    rdfs:comment "Purpose of a follow-up visit: 'safety' | 'efficacy' | 'qol'." ;
+    rdfs:domain cr:FollowUpVisit ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:followsUp a owl:ObjectProperty ;
+    rdfs:label "follows up" ;
+    rdfs:comment "The LongTermFollowUp programme a FollowUpVisit belongs to." ;
+    rdfs:domain cr:FollowUpVisit ;
+    rdfs:range cr:LongTermFollowUp ;
     top:flavor "Additive" .
 
 cr:forDataScope a owl:ObjectProperty ;
@@ -1969,6 +1983,25 @@ cr:lawfulBasisDescription a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
+cr:lockType a owl:DatatypeProperty ;
+    rdfs:label "lock type" ;
+    rdfs:comment "Controlled: 'soft' (reversible, for review) or 'hard' (for analysis)." ;
+    rdfs:domain cr:DatabaseLock ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:locksStudy a owl:ObjectProperty ;
+    rdfs:label "locks study" ;
+    rdfs:comment "The cr:Study a DatabaseLock freezes (intended range cr:Study; left open so a closeout graph can reference the study defined in the set-up graph by IRI, not re-author it)." ;
+    rdfs:domain cr:DatabaseLock ;
+    top:flavor "Additive" .
+
+cr:lplvForStudy a owl:ObjectProperty ;
+    rdfs:label "LPLV for study" ;
+    rdfs:comment "The cr:Study a LastPatientLastVisit milestone belongs to (intended range cr:Study; left open so a closeout graph can reference the study by IRI without re-typing it — avoids RDFS target cascade)." ;
+    rdfs:domain cr:LastPatientLastVisit ;
+    top:flavor "Additive" .
+
 cr:mandatoryElement a owl:DatatypeProperty ;
     rdfs:label "mandatory element" ;
     rdfs:comment "Whether this data element is mandatory in the transfer." ;
@@ -2123,6 +2156,13 @@ cr:packagesSpecification a owl:ObjectProperty ;
 cr:perEstimand a owl:ObjectProperty ;
     rdfs:domain cr:EndpointResult ;
     rdfs:range cr:Estimand ;
+    top:flavor "Additive" .
+
+cr:perVisitDefinition a owl:ObjectProperty ;
+    rdfs:label "per visit definition" ;
+    rdfs:comment "0..1. The protocol VisitDefinition this occurrence instantiates. Absent for unscheduled visits. (Distinct from cr:definedBy, which links a ClinicalObservation to its DataElementDef — the two were formerly conflated under one IRI, which cross-typed every observation as a VisitOccurrence.)" ;
+    rdfs:domain cr:VisitOccurrence ;
+    rdfs:range cr:VisitDefinition ;
     top:flavor "Additive" .
 
 cr:performedBy a owl:ObjectProperty ;
@@ -2280,6 +2320,13 @@ cr:relativeTo a owl:ObjectProperty ;
     rdfs:label "relative to" ;
     rdfs:comment "The anchor the offset is measured from: another planned node, or an anchor-event type (e.g. the enrollment act)." ;
     rdfs:domain cr:Timing ;
+    top:flavor "Additive" .
+
+cr:reopens a owl:ObjectProperty ;
+    rdfs:label "reopens" ;
+    rdfs:comment "The DatabaseLock a DatabaseUnlock reopens." ;
+    rdfs:domain cr:DatabaseUnlock ;
+    rdfs:range cr:DatabaseLock ;
     top:flavor "Additive" .
 
 cr:repeatIntervalDays a owl:DatatypeProperty ;
@@ -2657,6 +2704,19 @@ cr:underDelegation a owl:ObjectProperty ;
     rdfs:label "under delegation" ;
     rdfs:comment "Links a performed act to the delegation authorizing it (delegation invariant)." ;
     rdfs:range cr:Delegation ;
+    top:flavor "Additive" .
+
+cr:underUnlock a owl:ObjectProperty ;
+    rdfs:label "under unlock" ;
+    rdfs:comment "Links a post-lock clinical value (an observation changed/added after a hard lock) to the DatabaseUnlock that authorized it. Its presence is what makes a post-lock change legitimate." ;
+    rdfs:range cr:DatabaseUnlock ;
+    top:flavor "Additive" .
+
+cr:unlockReason a owl:DatatypeProperty ;
+    rdfs:label "unlock reason" ;
+    rdfs:comment "The documented reason a locked database was reopened." ;
+    rdfs:domain cr:DatabaseUnlock ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:valueRangeHigh a owl:DatatypeProperty ;
@@ -3364,6 +3424,12 @@ cr:IssueSitePayment a hcls:Action ;
     hcls:occursIn cr:ConductPhase ;
     hcls:operatesOn cr:StudySite .
 
+cr:LastPatientLastVisit a owl:Class ;
+    rdfs:label "Last Patient Last Visit (LPLV)" ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned ;
+    skos:definition "The study-level milestone marking the last protocol visit of the last active participant — the event that opens closeout and starts the clock toward database lock." .
+
 cr:LockBudget a hcls:Action ;
     rdfs:label "Lock Budget" ;
     hcls:authorizedAgentType cr:FinanceStaff ;
@@ -3381,6 +3447,11 @@ cr:LogCommunication a hcls:Action ;
     hcls:authorizedAgentType cr:SiteCoordinator ;
     hcls:occursIn cr:ConductPhase ;
     hcls:operatesOn cr:Study .
+
+cr:LongTermFollowUp a owl:Class ;
+    rdfs:label "Long-term Follow-up" ;
+    rdfs:subClassOf top:Scope ;
+    skos:definition "A planned long-term follow-up programme for a study (e.g. survival follow-up, long-term safety), spanning follow-up visits beyond the treatment period." .
 
 cr:ObtainParticipantConsent a hcls:Action ;
     rdfs:label "Obtain Participant Consent" ;
@@ -3779,6 +3850,12 @@ cr:Estimand a owl:Class ;
     rdfs:comment "The precise treatment-effect definition a result must trace to (overstatement guard)." ;
     rdfs:subClassOf top:Scope .
 
+cr:FollowUpVisit a owl:Class ;
+    rdfs:label "Follow-up Visit" ;
+    rdfs:comment "A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy." ;
+    rdfs:subClassOf cr:Visit ;
+    skos:definition "A visit that occurs after the treatment period — long-term safety, efficacy, or QoL follow-up. May continue after database lock, captured under an addendum/unlock." .
+
 cr:GLPToxReport a owl:Class ;
     rdfs:label "GLP Toxicology Report" ;
     rdfs:comment "A GLP toxicology study report supporting safe human dosing." ;
@@ -3895,6 +3972,19 @@ cr:ConductMonitoringVisit a hcls:Action ;
     hcls:occursIn cr:OversightSubPhase ;
     hcls:operatesOn cr:VisitOccurrence .
 
+cr:DatabaseLock a owl:Class ;
+    rdfs:label "Database Lock" ;
+    rdfs:comment "Bitemporal: the lock's valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "The act of freezing the study database. A SOFT lock freezes it for review and is reversible; a HARD lock freezes it for analysis. After a hard lock, no clinical value may change without a recorded DatabaseUnlock." .
+
+cr:DatabaseUnlock a owl:Class ;
+    rdfs:label "Database Unlock" ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "A controlled, reasoned reopening of a locked database (e.g. a late data correction). It references the DatabaseLock it reopens and records a reason — the audit gate that makes post-lock change legitimate rather than silent." .
+
 cr:PlannedEncounter a owl:Class ;
     rdfs:label "Planned Encounter" ;
     rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." ;
@@ -3940,12 +4030,6 @@ cr:TransferScope a owl:Class ;
     rdfs:comment "Grounded in DTA MVP Information Model open Q1 (multi-vendor / multi-scope DTA). Recommend modeling scope explicitly — the single-vendor simplification is exactly where the exponential hides." ;
     rdfs:subClassOf top:Scope ;
     skos:definition "A mediator that lets one DataTransferAgreement cover multiple vendor/data-type scopes without repeating the agreement. Each TransferScope binds a data type, a vendor Organization and its TransferSpecification(s). Modeling scope explicitly from the start is where the DTA group's combinatorics are made visible rather than hidden (open Q1)." .
-
-cr:Visit a owl:Class ;
-    rdfs:label "Trial Visit" ;
-    rdfs:comment "A protocol visit — a kind of study event." ;
-    rdfs:subClassOf cr:StudyEvent,
-        top:Temporal .
 
 cr:VisitDefinition a owl:Class ;
     rdfs:label "Visit Definition" ;
@@ -4051,6 +4135,12 @@ cr:StudyStartupPackage a owl:Class ;
     rdfs:label "Study Start-up Package" ;
     rdfs:comment "The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals." ;
     rdfs:subClassOf top:Evidence .
+
+cr:Visit a owl:Class ;
+    rdfs:label "Trial Visit" ;
+    rdfs:comment "A protocol visit — a kind of study event." ;
+    rdfs:subClassOf cr:StudyEvent,
+        top:Temporal .
 
 cr:CloseoutPhase a hcls:Phase ;
     rdfs:label "Closeout" ;

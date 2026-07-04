@@ -248,6 +248,22 @@ FLOWS = [
              dict(name="EOP2 meeting", time="2026-06", who="sponsor + FDA", state="done", checks=[("ok", "alignment on endpoint + dose")]),
              dict(name="Phase 3 design", time="2026-07", who="sponsor", state="done", checks=[("ok", "carries the dose-optimization decision")]),
          ]),
+    dict(id="dblock", title="Database lock &amp; follow-up",
+         blurb="The pivot of closeout: last-patient-last-visit opens the window, the data is cleaned and <b>soft</b>-locked for review then <b>hard</b>-locked for analysis, and after the hard lock nothing changes silently &mdash; a late value is only legitimate under a recorded database unlock. Long-term follow-up continues beyond the treatment period.",
+         onto=["cr-core-closeout.ttl"],
+         shapes=["cr:DatabaseLockShape", "cr:PostLockDataShape",
+                 "cr:DatabaseUnlockShape", "cr:FollowUpVisitTypeShape"],
+         proj=[], screens=[],
+         claim="After a hard lock, no clinical value changes silently &mdash; a late safety follow-up value is legitimate only under a recorded database <b>unlock</b>, and a silent post-lock edit is <b>caught</b>, not quietly absorbed.",
+         stops=[
+             dict(name="Last patient, last visit", time="2026-06-01", who="site / sponsor", state="done", checks=[("ok", "LPLV milestone &mdash; the clock to lock starts")]),
+             dict(name="Data cleaning &amp; query close-out", time="2026-06-15", who="data management", state="done", checks=[("ok", "open queries resolved; discrepancies reconciled")]),
+             dict(name="Soft lock", time="2026-06-20", who="sponsor DM", state="done", checks=[("ok", "frozen for final review &mdash; reversible")]),
+             dict(name="Hard lock", time="2026-07-01", who="sponsor DM", state="done", checks=[("ok", "frozen for primary analysis")]),
+             dict(name="Late follow-up value", time="2026-07-12", who="site", state="warn", checks=[("warn", "arrives post-lock &mdash; admissible only under a recorded unlock"), ("ok", "captured under cr:DatabaseUnlock &rarr; audited, not silent")]),
+             dict(name="Long-term follow-up", time="ongoing", who="site", state="pend", checks=[("pend", "safety / survival follow-up beyond the treatment period")]),
+         ],
+         note="The closeout invariant is a shape, not a policy PDF: <code>cr:PostLockDataShape</code> flags any clinical value dated after a HARD lock that isn&rsquo;t covered by a <code>cr:DatabaseUnlock</code>. A lock you can bypass isn&rsquo;t a lock &mdash; so post-lock change is modeled as an audited event (unlock + reason), never a rewrite. Scope note: TOP-CR runs the trial through to regulatory submission (eCTD); the unit of analysis stays the study."),
     dict(id="gcp", title="GCP &amp; essential records",
          blurb="The ICH E6(R3) governance vocabulary no existing ontology owns &mdash; essential records, source data/documents, audit trail, certified copy, plus the institutional actors &mdash; cited to E6(R3), defined descriptively (the obligations live in the shapes, not the classes).",
          onto=["cr-core-gcp.ttl"],
@@ -411,7 +427,8 @@ def nav(active):
             ("rbqm.html",           "Risk-based monitoring", "rbqm"),
             ("deviation.html",      "Deviations &amp; CAPA", "deviation"),
         ]),
-        ("Closeout", [
+        ("Closeout &amp; submission", [
+            ("dblock.html",         "Database lock &amp; follow-up", "dblock"),
             ("eop2.html",           "EOP2 &amp; analysis",   "eop2"),
         ]),
         ("Governance", [

@@ -1,4 +1,4 @@
-<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Study &amp; site set-up</title><script src="https://cdn.tailwindcss.com"></script><style>
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Database lock &amp; follow-up</title><script src="https://cdn.tailwindcss.com"></script><style>
 :root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
@@ -217,7 +217,7 @@ select.rm-field{cursor:pointer}
 <a class="" href="implementation.html">Implementation guide</a>
 <b>Start-up</b>
 <a class="" href="preind.html">Pre-IND gate</a>
-<a class="on" href="setup.html">Study &amp; site set-up</a>
+<a class="" href="setup.html">Study &amp; site set-up</a>
 <a class="" href="startup-package.html">Start-up package</a>
 <a class="" href="delegation.html">Delegation &amp; DoA</a>
 <b>Conduct</b>
@@ -230,7 +230,7 @@ select.rm-field{cursor:pointer}
 <a class="" href="rbqm.html">Risk-based monitoring</a>
 <a class="" href="deviation.html">Deviations &amp; CAPA</a>
 <b>Closeout &amp; submission</b>
-<a class="" href="dblock.html">Database lock &amp; follow-up</a>
+<a class="on" href="dblock.html">Database lock &amp; follow-up</a>
 <a class="" href="eop2.html">EOP2 &amp; analysis</a>
 <b>Governance</b>
 <a class="" href="roles.html">Roles, phases &amp; actions</a>
@@ -240,130 +240,7 @@ select.rm-field{cursor:pointer}
 <a class="" href="interop.html">Interoperability</a>
 <a class="" href="ingestion.html">Ingestion example</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Study &amp; site set-up</h1><p class='lead'>Define the study and bring a site from feasibility to first-patient-in &mdash; with activation gated on its essential documents, and enrollment that can&#8217;t precede activation.</p><div class="impossible-claim">The moment a site&rsquo;s last gate clears, one screen shows it&rsquo;s ready &mdash; local IRB approval, an executed CTA, and a completed Site Initiation Visit &mdash; and enrollment is <b>blocked</b> until all three are green.</div><h2>Operator screen &mdash; Site activation</h2><div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]"><button role="tab" aria-selected="true" aria-controls="siteactivation-how" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">How it works</button><button role="tab" aria-selected="false" aria-controls="siteactivation-req" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Request</button><button role="tab" aria-selected="false" aria-controls="siteactivation-res" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Response</button></div><div role="tabpanel" id="siteactivation-how" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none"><div class="screen"><div class="scr-head">Site activation &mdash; green light<span class="badge">CTMS</span><div class="scr-sub">Denver Cancer Center</div></div><div class="scr-row"><span>Site</span><b>Denver Cancer Center</b></div><div class="scr-row"><span>IRB/IEC approval</span><b>&#10003; 2026-01-15</b></div><div class="scr-row"><span>CTA</span><b>&#10003; executed 2026-01-20</b></div><div class="scr-row"><span>Site initiation visit</span><b>&#10003; 2026-02-01</b></div><div class="scr-row"><span>Activated</span><b><span class='pill ok'>2026-02-05</span></b></div><div class="scr-row"><span>Target accrual</span><b>20 subjects</b></div></div><p class="jsoncap" style="margin-top:12px">The screen is one NGSI-LD read &mdash; the query and the single object it returns are in the next two tabs.</p></div><div role="tabpanel" id="siteactivation-req" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">One NGSI-LD query assembles the screen &mdash; <code>join=inline</code> follows the relationships forward, so the whole object returns in a single read.</p><pre class="json q">GET /ngsi-ld/v1/entities/urn:act1?join=inline&amp;joinLevel=3
-Accept: application/ld+json
-Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
-
-# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
-# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
-# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
-# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
-# lookups. cr:SiteActivationView is the attribute projection (the `pick` the screen reads).</pre></div><div role="tabpanel" id="siteactivation-res" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">The single self-contained object the query returns &mdash; related entities inlined, zero recursive lookups.</p><pre class="json">{
-  &quot;id&quot;: &quot;urn:act1&quot;,
-  &quot;type&quot;: &quot;SiteActivation&quot;,
-  &quot;name&quot;: {
-    &quot;type&quot;: &quot;Property&quot;,
-    &quot;value&quot;: &quot;Denver site activated&quot;
-  },
-  &quot;identifier&quot;: {
-    &quot;type&quot;: &quot;Property&quot;,
-    &quot;value&quot;: &quot;urn:act1&quot;
-  },
-  &quot;observedAt&quot;: &quot;2026-02-05T00:00:00+00:00&quot;,
-  &quot;recordedAt&quot;: {
-    &quot;type&quot;: &quot;Property&quot;,
-    &quot;value&quot;: &quot;2026-02-05T09:00:00+00:00&quot;
-  },
-  &quot;status&quot;: {
-    &quot;type&quot;: &quot;Property&quot;,
-    &quot;value&quot;: &quot;active&quot;
-  },
-  &quot;site&quot;: {
-    &quot;type&quot;: &quot;Relationship&quot;,
-    &quot;object&quot;: &quot;urn:site-act&quot;,
-    &quot;entity&quot;: {
-      &quot;id&quot;: &quot;urn:site-act&quot;,
-      &quot;type&quot;: &quot;StudySite&quot;,
-      &quot;name&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;Denver Cancer Center&quot;
-      },
-      &quot;targetAccrual&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;20&quot;
-      }
-    }
-  },
-  &quot;irb&quot;: {
-    &quot;type&quot;: &quot;Relationship&quot;,
-    &quot;object&quot;: &quot;urn:irb1&quot;,
-    &quot;entity&quot;: {
-      &quot;id&quot;: &quot;urn:irb1&quot;,
-      &quot;type&quot;: &quot;IRBApproval&quot;,
-      &quot;identifier&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;urn:irb1&quot;
-      },
-      &quot;observedAt&quot;: &quot;2026-01-15T00:00:00+00:00&quot;,
-      &quot;recordedAt&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;2026-01-15T12:00:00+00:00&quot;
-      },
-      &quot;status&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;active&quot;
-      }
-    }
-  },
-  &quot;cta&quot;: {
-    &quot;type&quot;: &quot;Relationship&quot;,
-    &quot;object&quot;: &quot;urn:cta1&quot;,
-    &quot;entity&quot;: {
-      &quot;id&quot;: &quot;urn:cta1&quot;,
-      &quot;type&quot;: &quot;ClinicalTrialAgreement&quot;,
-      &quot;name&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;Executed CTA&quot;
-      },
-      &quot;identifier&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;urn:cta1&quot;
-      },
-      &quot;observedAt&quot;: &quot;2026-01-20T00:00:00+00:00&quot;,
-      &quot;recordedAt&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;2026-01-20T12:00:00+00:00&quot;
-      },
-      &quot;status&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;active&quot;
-      }
-    }
-  },
-  &quot;siv&quot;: {
-    &quot;type&quot;: &quot;Relationship&quot;,
-    &quot;object&quot;: &quot;urn:siv1&quot;,
-    &quot;entity&quot;: {
-      &quot;id&quot;: &quot;urn:siv1&quot;,
-      &quot;type&quot;: &quot;SiteInitiationVisit&quot;,
-      &quot;identifier&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;urn:siv1&quot;
-      },
-      &quot;observedAt&quot;: &quot;2026-02-01T00:00:00+00:00&quot;,
-      &quot;recordedAt&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;2026-02-01T16:00:00+00:00&quot;
-      },
-      &quot;status&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;active&quot;
-      }
-    }
-  },
-  &quot;activatedBy&quot;: {
-    &quot;type&quot;: &quot;Relationship&quot;,
-    &quot;object&quot;: &quot;urn:su-mgr&quot;,
-    &quot;entity&quot;: {
-      &quot;id&quot;: &quot;urn:su-mgr&quot;,
-      &quot;type&quot;: &quot;Practitioner&quot;,
-      &quot;name&quot;: {
-        &quot;type&quot;: &quot;Property&quot;,
-        &quot;value&quot;: &quot;Start-up manager&quot;
-      }
-    }
-  }
-}</pre></div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Feasibility &amp; selection</span><span class="vtl-time">2025-11</span><span class="vtl-who">sponsor / CRO</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> site qualified; confidentiality agreement executed</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">IRB / IEC approval</span><span class="vtl-time">2026-01-15</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> local ethics approval on file</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">CTA executed</span><span class="vtl-time">2026-01-20</span><span class="vtl-who">sponsor + site</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> budget &amp; clinical-trial agreement signed</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Site Initiation Visit</span><span class="vtl-time">2026-02-01</span><span class="vtl-who">CRA</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> staff trained; site ready to enroll</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">5</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Site activated</span><span class="vtl-time">2026-02-01</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> all three gates green &rarr; green-lit</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">6</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">First patient in</span><span class="vtl-time">2026-02-05</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> enrollment after activation &mdash; enforced by shape</li></ul></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:Arm</code></td><td>Arm</td><td class='clo'>Scope</td><td>A treatment arm of the study.</td></tr><tr><td><code>cr:CRO</code></td><td>CRO</td><td class='clo'>Agent</td><td>A contract research organization the sponsor delegates trial conduct to.</td></tr><tr><td><code>cr:ClinicalTrialAgreement</code></td><td>Clinical Trial Agreement (CTA)</td><td class='clo'>Evidence</td><td>Executed site contract (observedAt = execution date).</td></tr><tr><td><code>cr:Cohort</code></td><td>Cohort</td><td class='clo'>Scope</td><td>A group of subjects sharing a dosing or treatment assignment.</td></tr><tr><td><code>cr:CoverageAnalysis</code></td><td>Coverage Analysis (MCA)</td><td class='clo'>Evidence</td><td>A Medicare/insurance coverage analysis for study procedures.</td></tr><tr><td><code>cr:DoseLevel</code></td><td>Dose Level</td><td class='clo'>Scope</td><td>A dose level in a dose-escalation design.</td></tr><tr><td><code>cr:EligibilityCriterion</code></td><td>Eligibility Criterion</td><td class='clo'>Constraint</td><td>An inclusion or exclusion criterion for study participation.</td></tr><tr><td><code>cr:Endpoint</code></td><td>Endpoint</td><td class='clo'>Scope</td><td>A defined outcome measure the study evaluates.</td></tr><tr><td><code>cr:IRBApproval</code></td><td>IRB/IEC Approval</td><td class='clo'>Temporal</td><td>Local IRB/IEC approval (observedAt = approval date).</td></tr><tr><td><code>cr:InvestigationalProduct</code></td><td>Investigational Product</td><td class='clo'>Resource</td><td>The investigational drug or biologic being studied.</td></tr><tr><td><code>cr:ProtocolVersion</code></td><td>Protocol Version</td><td class='clo'>Evidence</td><td>An effective-dated protocol version (bitemporal): which version was valid for a given visit.</td></tr><tr><td><code>cr:RegulatoryInteraction</code></td><td>Regulatory Interaction</td><td class='clo'>Temporal</td><td>Pre-IND / EOP2 meeting.</td></tr><tr><td><code>cr:SiteActivation</code></td><td>Site Activation</td><td class='clo'>Temporal</td><td>The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV.</td></tr><tr><td><code>cr:SiteInitiationVisit</code></td><td>Site Initiation Visit (SIV)</td><td class='clo'>Temporal</td><td>The visit that prepares and activates a site for enrollment.</td></tr><tr><td><code>cr:Sponsor</code></td><td>Sponsor</td><td class='clo'>Agent</td><td>The organization that initiates and is accountable for the trial.</td></tr><tr><td><code>cr:StoppingRule</code></td><td>Stopping Rule</td><td class='clo'>Constraint</td><td>A safety rule that halts dosing or enrollment when triggered.</td></tr><tr><td><code>cr:Study</code></td><td>Study</td><td class='clo'>Scope</td><td>A clinical study — the unit of investigation the protocol defines.</td></tr><tr><td><code>cr:StudySite</code></td><td>Study Site</td><td class='clo'>Agent</td><td>An investigative site conducting the study (an organization at a facility).</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:StudyShape</code></td><td><code>cr:Study</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A Study must be conducted at &gt;=1 StudySite.</li><li>A Study must have &gt;=1 ProtocolVersion.</li><li>A Study must have a Sponsor.</li></ul></td></tr><tr><td><code>cr:ProtocolEligibilityShape</code></td><td><code>cr:ProtocolVersion</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>ProtocolVersion declares no eligibility criteria (design-quality warning).</li></ul></td></tr><tr><td><code>cr:SiteActivationShape</code></td><td><code>cr:SiteActivation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Activation must name the site it activates.</li><li>Activation requires a completed Site Initiation Visit.</li><li>Activation requires an executed Clinical Trial Agreement.</li><li>Activation requires local IRB/IEC approval.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>usdm_study.rq</code></td><td>USDM-style study definition, projected from the native graph (the keystone view).</td></tr><tr><td><code>site_activation_tracker.rq</code></td><td>Start-up tracker — the activation timeline per site (IRB -&gt; CTA -&gt; SIV -&gt; activated), projected from the milestone graph.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Database lock &amp; follow-up</h1><p class='lead'>The pivot of closeout: last-patient-last-visit opens the window, the data is cleaned and <b>soft</b>-locked for review then <b>hard</b>-locked for analysis, and after the hard lock nothing changes silently &mdash; a late value is only legitimate under a recorded database unlock. Long-term follow-up continues beyond the treatment period.</p><div class="impossible-claim">After a hard lock, no clinical value changes silently &mdash; a late safety follow-up value is legitimate only under a recorded database <b>unlock</b>, and a silent post-lock edit is <b>caught</b>, not quietly absorbed.</div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Last patient, last visit</span><span class="vtl-time">2026-06-01</span><span class="vtl-who">site / sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> LPLV milestone &mdash; the clock to lock starts</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Data cleaning &amp; query close-out</span><span class="vtl-time">2026-06-15</span><span class="vtl-who">data management</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> open queries resolved; discrepancies reconciled</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Soft lock</span><span class="vtl-time">2026-06-20</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> frozen for final review &mdash; reversible</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Hard lock</span><span class="vtl-time">2026-07-01</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> frozen for primary analysis</li></ul></div></div><div class="vtl-stop warn"><div class="vtl-num">5</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Late follow-up value</span><span class="vtl-time">2026-07-12</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-warn">!</span> arrives post-lock &mdash; admissible only under a recorded unlock</li><li><span class="ck-ok">&#10003;</span> captured under cr:DatabaseUnlock &rarr; audited, not silent</li></ul></div></div><div class="vtl-stop pend"><div class="vtl-num">6</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Long-term follow-up</span><span class="vtl-time">ongoing</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-pend">&#9675;</span> safety / survival follow-up beyond the treatment period</li></ul></div></div></div><p class='note'>The closeout invariant is a shape, not a policy PDF: <code>cr:PostLockDataShape</code> flags any clinical value dated after a HARD lock that isn&rsquo;t covered by a <code>cr:DatabaseUnlock</code>. A lock you can bypass isn&rsquo;t a lock &mdash; so post-lock change is modeled as an audited event (unlock + reason), never a rewrite. Scope note: TOP-CR runs the trial through to regulatory submission (eCTD); the unit of analysis stays the study.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:DatabaseLock</code></td><td>Database Lock</td><td class='clo'>Evidence</td><td>Bitemporal: the lock&#x27;s valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites.</td></tr><tr><td><code>cr:DatabaseUnlock</code></td><td>Database Unlock</td><td class='clo'>Evidence</td><td></td></tr><tr><td><code>cr:FollowUpVisit</code></td><td>Follow-up Visit</td><td class='clo'>Temporal</td><td>A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy.</td></tr><tr><td><code>cr:LastPatientLastVisit</code></td><td>Last Patient Last Visit (LPLV)</td><td class='clo'>Outcome</td><td></td></tr><tr><td><code>cr:LongTermFollowUp</code></td><td>Long-term Follow-up</td><td class='clo'>Scope</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:DatabaseLockShape</code></td><td><code>cr:DatabaseLock</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DatabaseLock must reference (by IRI) the cr:Study it freezes.</li><li>DatabaseLock.lockType must be &#x27;soft&#x27; (reversible, for review) or &#x27;hard&#x27; (for analysis).</li></ul></td></tr><tr><td><code>cr:PostLockDataShape</code></td><td><code>cr:ClinicalObservation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent.</li></ul></td></tr><tr><td><code>cr:DatabaseUnlockShape</code></td><td><code>cr:DatabaseUnlock</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DatabaseUnlock must record a documented cr:unlockReason.</li><li>A DatabaseUnlock must reference (cr:reopens) the DatabaseLock it reopens.</li></ul></td></tr><tr><td><code>cr:FollowUpVisitTypeShape</code></td><td><code>cr:FollowUpVisit</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol).</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

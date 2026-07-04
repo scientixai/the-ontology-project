@@ -1,0 +1,106 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Closeout core (A1) — the pivot of closeout: last-patient-last-visit, the
+# soft/hard database lock, post-lock control, and long-term follow-up.
+#
+# Scope note: TOP-CR runs trial -> regulatory submission (eCTD). The unit of
+# analysis stays the STUDY. Product-lifecycle (label, REMS, PSUR) and
+# commercialization (HTA, market access) are deliberately OUT — sibling domains.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:closeoutModule a owl:Ontology ;
+    rdfs:label "TOP CR — Closeout core (A1: database lock & follow-up)" ;
+    rdfs:comment "Database lock, LPLV, post-lock control, and long-term follow-up — the first closeout slice, heavily reusing Visit / ClinicalObservation / Study." .
+
+cr:LastPatientLastVisit a owl:Class ;
+    rdfs:label "Last Patient Last Visit (LPLV)" ;
+    skos:definition "The study-level milestone marking the last protocol visit of the last active participant — the event that opens closeout and starts the clock toward database lock." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
+
+cr:DatabaseLock a owl:Class ;
+    rdfs:label "Database Lock" ;
+    skos:definition "The act of freezing the study database. A SOFT lock freezes it for review and is reversible; a HARD lock freezes it for analysis. After a hard lock, no clinical value may change without a recorded DatabaseUnlock." ;
+    rdfs:comment "Bitemporal: the lock's valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:DatabaseUnlock a owl:Class ;
+    rdfs:label "Database Unlock" ;
+    skos:definition "A controlled, reasoned reopening of a locked database (e.g. a late data correction). It references the DatabaseLock it reopens and records a reason — the audit gate that makes post-lock change legitimate rather than silent." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:FollowUpVisit a owl:Class ;
+    rdfs:label "Follow-up Visit" ;
+    skos:definition "A visit that occurs after the treatment period — long-term safety, efficacy, or QoL follow-up. May continue after database lock, captured under an addendum/unlock." ;
+    rdfs:comment "A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy." ;
+    rdfs:subClassOf cr:Visit .
+
+cr:LongTermFollowUp a owl:Class ;
+    rdfs:label "Long-term Follow-up" ;
+    skos:definition "A planned long-term follow-up programme for a study (e.g. survival follow-up, long-term safety), spanning follow-up visits beyond the treatment period." ;
+    rdfs:subClassOf top:Scope .
+
+# ── Properties (all Additive per ADR-0019) ───────────────────────────────────
+
+cr:locksStudy a owl:ObjectProperty ;
+    rdfs:label "locks study" ;
+    rdfs:comment "The cr:Study a DatabaseLock freezes (intended range cr:Study; left open so a closeout graph can reference the study defined in the set-up graph by IRI, not re-author it)." ;
+    rdfs:domain cr:DatabaseLock ;
+    top:flavor "Additive" .
+
+cr:lockType a owl:DatatypeProperty ;
+    rdfs:label "lock type" ;
+    rdfs:comment "Controlled: 'soft' (reversible, for review) or 'hard' (for analysis)." ;
+    rdfs:domain cr:DatabaseLock ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:reopens a owl:ObjectProperty ;
+    rdfs:label "reopens" ;
+    rdfs:comment "The DatabaseLock a DatabaseUnlock reopens." ;
+    rdfs:domain cr:DatabaseUnlock ;
+    rdfs:range cr:DatabaseLock ;
+    top:flavor "Additive" .
+
+cr:unlockReason a owl:DatatypeProperty ;
+    rdfs:label "unlock reason" ;
+    rdfs:comment "The documented reason a locked database was reopened." ;
+    rdfs:domain cr:DatabaseUnlock ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:underUnlock a owl:ObjectProperty ;
+    rdfs:label "under unlock" ;
+    rdfs:comment "Links a post-lock clinical value (an observation changed/added after a hard lock) to the DatabaseUnlock that authorized it. Its presence is what makes a post-lock change legitimate." ;
+    rdfs:range cr:DatabaseUnlock ;
+    top:flavor "Additive" .
+
+cr:lplvForStudy a owl:ObjectProperty ;
+    rdfs:label "LPLV for study" ;
+    rdfs:comment "The cr:Study a LastPatientLastVisit milestone belongs to (intended range cr:Study; left open so a closeout graph can reference the study by IRI without re-typing it — avoids RDFS target cascade)." ;
+    rdfs:domain cr:LastPatientLastVisit ;
+    top:flavor "Additive" .
+
+cr:followUpType a owl:DatatypeProperty ;
+    rdfs:label "follow-up type" ;
+    rdfs:comment "Purpose of a follow-up visit: 'safety' | 'efficacy' | 'qol'." ;
+    rdfs:domain cr:FollowUpVisit ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:followsUp a owl:ObjectProperty ;
+    rdfs:label "follows up" ;
+    rdfs:comment "The LongTermFollowUp programme a FollowUpVisit belongs to." ;
+    rdfs:domain cr:FollowUpVisit ;
+    rdfs:range cr:LongTermFollowUp ;
+    top:flavor "Additive" .

@@ -537,6 +537,45 @@
     ]
   },
   {
+    "@id": "_:cb197d63efd5d86d77353d1141eb21517c8e3a71486640ab8c115288ad948346123",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "efficacy"
+          },
+          {
+            "@value": "qol"
+          },
+          {
+            "@value": "safety"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#followUpType"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb19c606734300bc9522eea904839da358903257c9fe5e22dfefeca19571c8ad1d4",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1139,6 +1178,30 @@
     ]
   },
   {
+    "@id": "_:cb1f78639ae4550bffabd0da5071b7bf4fd2f7b606d290d8e3c6dc34696e0da7006",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A DatabaseLock must reference (by IRI) the cr:Study it freezes."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#locksStudy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1f7c15113a081d0d731ae8b96d42887693a5edceafdb800d09fab3d08091aad4b",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -1460,6 +1523,24 @@
     ]
   },
   {
+    "@id": "_:cb2235e5cb31a16d51f75740428f8a63e1c9b4da335a0783887ddc3a03d0d4a0eb2",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr:  <https://top.scientix.ai/cr/v1#>\n            PREFIX top: <https://top.scientix.ai/v1#>\n            SELECT $this WHERE {\n              $this a cr:ClinicalObservation ; top:observedAt ?od .\n              ?lk a cr:DatabaseLock ; cr:lockType \"hard\" ; top:observedAt ?ld .\n              FILTER ( ?od > ?ld )\n              FILTER NOT EXISTS { $this cr:underUnlock ?u }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb227055b0b53f2fd4d64c3b0d1e84e1764433d8e52f01574007b000cffa7e8ebe2",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1685,6 +1766,37 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#hasProtocolVersion"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb241385ba5d1cf19e965b7a4d98b31bbf90917bd36f918a597cbe471eff553e897",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "hard"
+          },
+          {
+            "@value": "soft"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "DatabaseLock.lockType must be 'soft' (reversible, for review) or 'hard' (for analysis)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#lockType"
       }
     ]
   },
@@ -2936,6 +3048,30 @@
     ]
   },
   {
+    "@id": "_:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A DatabaseUnlock must record a documented cr:unlockReason."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#unlockReason"
+      }
+    ]
+  },
+  {
     "@id": "_:cb31402137456d696cd62043361ae58af7f92380469eee8be2f26884c81e975560c",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -3159,6 +3295,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#enrolledInArm"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb3ca81f669fd157455526f8a5a530916c08a34178857c74a0e60b4db8c8034b10d",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A DatabaseUnlock must reference (cr:reopens) the DatabaseLock it reopens."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#reopens"
       }
     ]
   },
@@ -3970,6 +4130,64 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#DatabaseLockShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A database lock must be well-formed (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1f78639ae4550bffabd0da5071b7bf4fd2f7b606d290d8e3c6dc34696e0da7006"
+      },
+      {
+        "@id": "_:cb241385ba5d1cf19e965b7a4d98b31bbf90917bd36f918a597cbe471eff553e897"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DatabaseUnlockShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A database unlock must cite the lock it reopens and a reason (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173"
+      },
+      {
+        "@id": "_:cb3ca81f669fd157455526f8a5a530916c08a34178857c74a0e60b4db8c8034b10d"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseUnlock"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#DelegationShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -4136,6 +4354,27 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Enrollment"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#FollowUpVisitTypeShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A follow-up visit should declare its type (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb197d63efd5d86d77353d1141eb21517c8e3a71486640ab8c115288ad948346123"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FollowUpVisit"
       }
     ]
   },
@@ -4505,6 +4744,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#PlannedVisit"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#PostLockDataShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Clinical data after a hard lock needs a recorded unlock (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb2235e5cb31a16d51f75740428f8a63e1c9b4da335a0783887ddc3a03d0d4a0eb2"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalObservation"
       }
     ]
   },

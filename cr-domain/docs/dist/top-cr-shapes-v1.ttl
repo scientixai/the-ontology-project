@@ -315,6 +315,32 @@ cr:DataTransferAgreementShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:DataTransferAgreement .
 
+cr:DatabaseLockShape a sh:NodeShape ;
+    rdfs:label "A database lock must be well-formed (hard)" ;
+    sh:property [ sh:message "A DatabaseLock must reference (by IRI) the cr:Study it freezes." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cr:locksStudy ],
+        [ sh:in ( "soft" "hard" ) ;
+            sh:message "DatabaseLock.lockType must be 'soft' (reversible, for review) or 'hard' (for analysis)." ;
+            sh:minCount 1 ;
+            sh:path cr:lockType ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DatabaseLock .
+
+cr:DatabaseUnlockShape a sh:NodeShape ;
+    rdfs:label "A database unlock must cite the lock it reopens and a reason (hard)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "A DatabaseUnlock must record a documented cr:unlockReason." ;
+            sh:minCount 1 ;
+            sh:path cr:unlockReason ],
+        [ sh:class cr:DatabaseLock ;
+            sh:message "A DatabaseUnlock must reference (cr:reopens) the DatabaseLock it reopens." ;
+            sh:minCount 1 ;
+            sh:path cr:reopens ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:DatabaseUnlock .
+
 cr:DelegationShape a sh:NodeShape ;
     sh:property [ sh:class hcls:Person ;
             sh:message "Delegation must name the responsible delegator (PI)." ;
@@ -428,6 +454,15 @@ cr:EnrollmentShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path cr:enrolledInArm ] ;
     sh:targetClass cr:Enrollment .
+
+cr:FollowUpVisitTypeShape a sh:NodeShape ;
+    rdfs:label "A follow-up visit should declare its type (warning)" ;
+    sh:property [ sh:in ( "safety" "efficacy" "qol" ) ;
+            sh:message "A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol)." ;
+            sh:minCount 1 ;
+            sh:path cr:followUpType ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:FollowUpVisit .
 
 cr:HighRiskMitigationShape a sh:NodeShape ;
     sh:severity sh:Violation ;
@@ -640,6 +675,23 @@ cr:PlannedVisitWindowShape a sh:NodeShape ;
             sh:path cr:targetDate ;
             sh:severity sh:Violation ] ;
     sh:targetClass cr:PlannedVisit .
+
+cr:PostLockDataShape a sh:NodeShape ;
+    rdfs:label "Clinical data after a hard lock needs a recorded unlock (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent." ;
+            sh:prefixes cr: ;
+            sh:select """
+            PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+            PREFIX top: <https://top.scientix.ai/v1#>
+            SELECT $this WHERE {
+              $this a cr:ClinicalObservation ; top:observedAt ?od .
+              ?lk a cr:DatabaseLock ; cr:lockType "hard" ; top:observedAt ?ld .
+              FILTER ( ?od > ?ld )
+              FILTER NOT EXISTS { $this cr:underUnlock ?u }
+            }
+        """ ] ;
+    sh:targetClass cr:ClinicalObservation .
 
 cr:PostWithdrawalObservationShape a sh:NodeShape ;
     rdfs:label "Observation recorded after consent withdrawal" ;

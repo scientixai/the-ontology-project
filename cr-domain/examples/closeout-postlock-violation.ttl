@@ -1,0 +1,57 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DELIBERATELY BROKEN counterpart of closeout-dblock-conformant.ttl — proves
+# cr:PostLockDataShape bites. The observation is otherwise perfectly formed;
+# the ONE defect is that it lands AFTER a HARD lock with NO cr:DatabaseUnlock.
+#
+#   Defect: a clinical value changed/added post-hard-lock, unaudited (Violation).
+#           This is exactly the silent post-lock edit closeout governance exists
+#           to prevent — a database lock that can be bypassed is not a lock.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:sponsor a hcls:Organization ;
+    top:identifier "urn:org:sponsor" ; top:status "active" ;
+    rdfs:label "Sponsor data-management" .
+
+ex:hardlock a cr:DatabaseLock ;
+    top:identifier "urn:dblock:hard-2" ; top:status "active" ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-07-01T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sponsor ;
+    cr:locksStudy ex:study-closeout2 ;
+    cr:lockType "hard" ;
+    rdfs:label "Hard lock — database frozen for primary analysis" .
+
+ex:subj a cr:StudySubject ;
+    top:identifier "urn:subject:S-208" ; top:status "active" ;
+    cr:subjectId "S-208" ;
+    top:validFrom "2026-01-10T00:00:00Z"^^xsd:dateTime .
+
+ex:de-ae a cr:DataElementDef ;
+    rdfs:label "Late finding (unaudited)" ;
+    cr:phiClassification "NotPHI" .
+
+ex:ev a cr:StudyEvent ;
+    top:observedAt "2026-07-12T00:00:00Z"^^xsd:dateTime ;
+    rdfs:label "Post-lock capture event" .
+
+# The offending value — well-formed as an observation, but recorded after the
+# hard lock with NO cr:underUnlock -> cr:PostLockDataShape (Violation).
+ex:postlock-obs a cr:ClinicalObservation ; rdf:value "grade 2 rash" ;
+    top:identifier "urn:obs:S-208-unaudited" ; top:status "active" ;
+    cr:definedBy ex:de-ae ;
+    cr:forSubject ex:subj ;
+    cr:observationForSubject ex:subj ;
+    cr:capturedDuring ex:ev ;
+    top:observedAt "2026-07-12T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-07-12T08:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sponsor .
+    # no cr:underUnlock -> silent post-lock change -> Violation

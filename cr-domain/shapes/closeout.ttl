@@ -1,0 +1,68 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Closeout core (A1) conformance. All shapes target closeout classes only, so
+# they are inert against graphs with no database lock.
+
+# ── A DatabaseLock must name its study, a controlled type, and a lock date ────
+cr:DatabaseLockShape a sh:NodeShape ;
+    rdfs:label "A database lock must be well-formed (hard)" ;
+    sh:targetClass cr:DatabaseLock ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:locksStudy ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A DatabaseLock must reference (by IRI) the cr:Study it freezes." ;
+    ] ;
+    sh:property [
+        sh:path cr:lockType ; sh:minCount 1 ;
+        sh:in ( "soft" "hard" ) ;
+        sh:message "DatabaseLock.lockType must be 'soft' (reversible, for review) or 'hard' (for analysis)." ;
+    ] .
+
+# ── The pivotal closeout invariant: no clinical value after a hard lock
+#    without a recorded database unlock (Violation) ─────────────────────────────
+cr:PostLockDataShape a sh:NodeShape ;
+    rdfs:label "Clinical data after a hard lock needs a recorded unlock (hard)" ;
+    sh:targetClass cr:ClinicalObservation ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent." ;
+        sh:prefixes cr: ;
+        sh:select """
+            PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+            PREFIX top: <https://top.scientix.ai/v1#>
+            SELECT $this WHERE {
+              $this a cr:ClinicalObservation ; top:observedAt ?od .
+              ?lk a cr:DatabaseLock ; cr:lockType "hard" ; top:observedAt ?ld .
+              FILTER ( ?od > ?ld )
+              FILTER NOT EXISTS { $this cr:underUnlock ?u }
+            }
+        """ ;
+    ] .
+
+# ── A DatabaseUnlock must reference the lock it reopens + a reason ────────────
+cr:DatabaseUnlockShape a sh:NodeShape ;
+    rdfs:label "A database unlock must cite the lock it reopens and a reason (hard)" ;
+    sh:targetClass cr:DatabaseUnlock ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:reopens ; sh:minCount 1 ; sh:class cr:DatabaseLock ;
+        sh:message "A DatabaseUnlock must reference (cr:reopens) the DatabaseLock it reopens." ;
+    ] ;
+    sh:property [
+        sh:path cr:unlockReason ; sh:minCount 1 ; sh:datatype xsd:string ;
+        sh:message "A DatabaseUnlock must record a documented cr:unlockReason." ;
+    ] .
+
+# ── A follow-up visit should declare its purpose (soft) ───────────────────────
+cr:FollowUpVisitTypeShape a sh:NodeShape ;
+    rdfs:label "A follow-up visit should declare its type (warning)" ;
+    sh:targetClass cr:FollowUpVisit ;
+    sh:property [
+        sh:path cr:followUpType ; sh:minCount 1 ;
+        sh:in ( "safety" "efficacy" "qol" ) ;
+        sh:severity sh:Warning ;
+        sh:message "A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol)." ;
+    ] .

@@ -3499,6 +3499,59 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#DatabaseLock",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Bitemporal: the lock's valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Database Lock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The act of freezing the study database. A SOFT lock freezes it for review and is reversible; a HARD lock freezes it for analysis. After a hard lock, no clinical value may change without a recorded DatabaseUnlock."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DatabaseUnlock",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Database Unlock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A controlled, reasoned reopening of a locked database (e.g. a late data correction). It references the DatabaseLock it reopens and records a reason \u2014 the audit gate that makes post-lock change legitimate rather than silent."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#DefineRegion",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -4284,6 +4337,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#FollowUpVisit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Follow-up Visit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Visit"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A visit that occurs after the treatment period \u2014 long-term safety, efficacy, or QoL follow-up. May continue after database lock, captured under an addendum/unlock."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#GDPR_Art6_1_a",
     "@type": [
       "http://www.w3.org/2002/07/owl#NamedIndividual",
@@ -4796,6 +4875,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#LastPatientLastVisit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Last Patient Last Visit (LPLV)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Outcome"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The study-level milestone marking the last protocol visit of the last active participant \u2014 the event that opens closeout and starts the clock toward database lock."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#LawfulBasis",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -4891,6 +4994,27 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#LongTermFollowUp",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Long-term Follow-up"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Scope"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A planned long-term follow-up programme for a study (e.g. survival follow-up, long-term safety), spanning follow-up visits beyond the treatment period."
       }
     ]
   },
@@ -10515,6 +10639,22 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#closeoutModule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Database lock, LPLV, post-lock control, and long-term follow-up \u2014 the first closeout slice, heavily reusing Visit / ClinicalObservation / Study."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TOP CR \u2014 Closeout core (A1: database lock & follow-up)"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#closesConsent",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11273,31 +11413,17 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "0..1. The protocol template this occurrence instantiates. Absent for unscheduled visits."
-      },
-      {
         "@value": "The value's variable definition (aboutness); decouples value from definition."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ClinicalObservation"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "defined by"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#DataElementDef"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitDefinition"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -12136,6 +12262,68 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#DeviationAntecedent"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#followUpType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Purpose of a follow-up visit: 'safety' | 'efficacy' | 'qol'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FollowUpVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "follow-up type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#followsUp",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The LongTermFollowUp programme a FollowUpVisit belongs to."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FollowUpVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "follows up"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LongTermFollowUp"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -13268,6 +13456,89 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#lockType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Controlled: 'soft' (reversible, for review) or 'hard' (for analysis)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "lock type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#locksStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The cr:Study a DatabaseLock freezes (intended range cr:Study; left open so a closeout graph can reference the study defined in the set-up graph by IRI, not re-author it)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "locks study"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#lplvForStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The cr:Study a LastPatientLastVisit milestone belongs to (intended range cr:Study; left open so a closeout graph can reference the study by IRI without re-typing it \u2014 avoids RDFS target cascade)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LastPatientLastVisit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "LPLV for study"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#mandatoryElement",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -14026,6 +14297,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#perVisitDefinition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "0..1. The protocol VisitDefinition this occurrence instantiates. Absent for unscheduled visits. (Distinct from cr:definedBy, which links a ClinicalObservation to its DataElementDef \u2014 the two were formerly conflated under one IRI, which cross-typed every observation as a VisitOccurrence.)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "per visit definition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VisitDefinition"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#performedBy",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14759,6 +15061,37 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "relative to"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#reopens",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The DatabaseLock a DatabaseUnlock reopens."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseUnlock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "reopens"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -16421,6 +16754,63 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Delegation"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#underUnlock",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links a post-lock clinical value (an observation changed/added after a hard lock) to the DatabaseUnlock that authorized it. Its presence is what makes a post-lock change legitimate."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "under unlock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseUnlock"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#unlockReason",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The documented reason a locked database was reopened."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseUnlock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "unlock reason"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
