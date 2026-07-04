@@ -414,10 +414,12 @@ def nav(active):
         ("Closeout", [
             ("eop2.html",           "EOP2 &amp; analysis",   "eop2"),
         ]),
-        ("Cross-cutting", [
+        ("Governance", [
             ("roles.html",          "Roles, phases &amp; actions", "roles"),
             ("gcp.html",            "GCP &amp; essential records", "gcp"),
             ("tmf.html",            "TMF document binding",  "tmf"),
+        ]),
+        ("Build &amp; interop", [
             ("interop.html",        "Interoperability",      "interop"),
             ("ingestion.html",      "Ingestion example",     "ingestion"),
         ]),
