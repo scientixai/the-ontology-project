@@ -15,6 +15,7 @@ from rdflib import Graph, RDF, RDFS, OWL, URIRef, Literal
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_screens import render_stop, SCREEN_CSS  # noqa: E402
+import build_screens as BS  # noqa: E402  (SPEC_BY_NAME / SCREEN_VIEW / _view_mod / _screen)
 from build_dist import MAST  # noqa: E402  (masthead: single source of truth for version/license/authorship)
 
 TOP = "https://top.scientix.ai/v1#"
@@ -802,12 +803,53 @@ def render_vtl(stops):
     return f'<div class="vtl">{"".join(rows)}</div>'
 
 
+_TABBTN = ('class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] '
+           'cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent '
+           'aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white"')
+_TABPANEL = 'class="p-5 bg-white" style="border:1px solid var(--line);border-top:none"'
+
+
+def render_screen_tabs(name):
+    """Reshape an operator screen into How it works / API Request / API Response tabs
+    (the flagship pattern): the screen card, the one NGSI-LD query that assembles it,
+    and the single self-contained object it returns — so every screen tells the same
+    query->object story. Falls back to the split view if the screen has no view."""
+    spec = BS.SPEC_BY_NAME.get(name)
+    vkey = BS.SCREEN_VIEW.get(name)
+    if not spec or not vkey:
+        return render_stop(ROOT, name)
+    if name == "Blood draw":                       # bespoke provenance screen; keep the split
+        return render_stop(ROOT, name)
+    _n, _f, title, sub, badge, rows, _ids = spec
+    left = BS._screen(title, sub, rows, badge)
+    mod = BS._view_mod(ROOT)
+    query = esc(mod.query_for(vkey))
+    obj = esc(json.dumps(mod.build_view(vkey), indent=2))
+    t = "".join(ch for ch in name.lower() if ch.isalnum())
+    return (
+        '<div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]">'
+        f'<button role="tab" aria-selected="true" aria-controls="{t}-how" {_TABBTN}>How it works</button>'
+        f'<button role="tab" aria-selected="false" aria-controls="{t}-req" {_TABBTN}>API Request</button>'
+        f'<button role="tab" aria-selected="false" aria-controls="{t}-res" {_TABBTN}>API Response</button></div>'
+        f'<div role="tabpanel" id="{t}-how" {_TABPANEL}>{left}'
+        '<p class="jsoncap" style="margin-top:12px">The screen is one NGSI-LD read &mdash; the query and '
+        'the single object it returns are in the next two tabs.</p></div>'
+        f'<div role="tabpanel" id="{t}-req" {_TABPANEL} hidden>'
+        '<p class="jsoncap">One NGSI-LD query assembles the screen &mdash; <code>join=inline</code> follows '
+        'the relationships forward, so the whole object returns in a single read.</p>'
+        f'<pre class="json q">{query}</pre></div>'
+        f'<div role="tabpanel" id="{t}-res" {_TABPANEL} hidden>'
+        '<p class="jsoncap">The single self-contained object the query returns &mdash; related entities '
+        'inlined, zero recursive lookups.</p>'
+        f'<pre class="json">{obj}</pre></div>')
+
+
 def flow_body(flow):
     parts = [f"<h1>{flow['title']}</h1><p class='lead'>{flow['blurb']}</p>"]
     if flow.get("claim"):
         parts.append(f'<div class="impossible-claim">{flow["claim"]}</div>')
     for name in flow.get("screens", []):
-        parts.append(f"<h2>Operator screen &mdash; {name}</h2>" + render_stop(ROOT, name))
+        parts.append(f"<h2>Operator screen &mdash; {name}</h2>" + render_screen_tabs(name))
     if flow.get("stops"):
         parts.append("<h2>How the flow runs &mdash; step by step</h2>" + render_vtl(flow["stops"]))
     if flow.get("note"):
