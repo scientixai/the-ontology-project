@@ -47,16 +47,47 @@ compose; they are not additions to `cr:`.
 |--------------------------------|------------------------------------------------------------------|------------------|
 | **`product-lifecycle`**        | Label / USPI, REMS, PSUR/PBRER, post-marketing commitments, safety signal management post-approval | the **product** |
 | **`commercialization`**        | HTA / market-access dossiers, payer evidence, pricing & reimbursement | the **market** |
-| **`devices-clinical-research`** | Device trials: IDE vs IND, 510(k)/PMA vs NDA/BLA, UDI, device-deficiency/malfunction safety model | the **device study** |
 
-### Devices — the recommendation
+Both genuinely change the **unit of analysis** (to the product / the market) and both sit
+*outside* USDM's scope — so a sibling domain is the right shape.
 
-**A separate `devices-clinical-research` domain, not additions to `cr:`.** Device trials
-share the *spine* (sites, subjects, consent, AEs, submission) but diverge hard on the parts
-that carry the regulatory weight: IDE vs IND, 510(k)/PMA vs NDA/BLA, MDR/technical-file
-vaults, UDI, and a device-deficiency / malfunction safety model that is not the drug PV
-model. A sibling domain that **reuses** TOP Core + the shared CR spine keeps both the drug
-and device semantics clean, and mirrors the boundary already drawn for commercialization.
+### Devices — stay in-model, aligned with USDM (decision reversed)
+
+**Devices are modeled as first-class nodes WITHIN `cr:`, not a separate domain.** An earlier
+draft of this file recommended a `devices-clinical-research` sibling; that was wrong, and the
+vendored USDM is the reason.
+
+USDM v4.0 (`ontology/vendor/usdm/usdm-v4.ttl`) does **not** bifurcate devices — it keeps them
+in the one study model:
+
+- `usdm:MedicalDevice` is a first-class class (EU MDR 2017/745), with `hardwareVersion`,
+  `softwareVersion`, `embeddedProductId`, `sourcing`, `identifiers`.
+- `usdm:MedicalDeviceIdentifier` carries a type value set including **UDI**.
+- `usdm:StudyVersion‑medicalDevices` — the top study container **owns** the devices directly.
+- `usdm:StudyIntervention` is defined as *"Any agent, **device**, or procedure…"* — the
+  intervention concept already spans devices; device-ness is a role/type, not a parallel class.
+- `usdm:Administration‑medicalDeviceId` weaves device usage into the same dosing node.
+
+Because we **crosswalk `cr:` → USDM**, a separate device domain would fracture that mapping: a
+USDM `StudyVersion` carrying both a drug and a device intervention could not map to two disjoint
+domains. **Combination products** (autoinjector, drug-eluting stent) are the clincher — they are
+one study with both a drug and a device intervention, which is exactly why USDM keeps devices
+in-model; a bifurcated domain makes them unrepresentable without cross-domain surgery.
+
+The divergence that *is* real — IDE vs IND, 510(k)/PMA vs NDA/BLA, MDR technical file, device
+deficiency/malfunction reporting — is **depth within the lifecycle, not breadth across a separate
+spine.** It is handled as **leaf specializations on the shared spine**, the pattern the domain
+already uses everywhere:
+
+| Layer | Divergence | How it's modeled (in-domain) |
+|-------|------------|------------------------------|
+| Product | device vs drug | `cr:MedicalDevice` (sibling of `cr:InvestigationalProduct`) + `cr:DeviceIdentifier` (UDI), crosswalked 1:1 to `usdm:MedicalDevice` |
+| Regulatory front | IDE vs IND | generalize `cr:INDApplication` to admit an IDE pathway |
+| Submission | 510(k) / PMA / De Novo vs NDA/BLA | extend the `cr:submissionType` enum; a `cr:eCTDSubmission` sibling only if the manifest shape genuinely differs |
+| Safety | malfunction / device deficiency | `cr:DeviceDeficiency` alongside `cr:AdverseEvent` |
+
+Rule of thumb: **if USDM models it in the one study model, so do we** — divergence rides on the
+shared spine as subtypes, enum values, and graded shapes, never a fork.
 
 ## How the boundary is enforced in the model
 

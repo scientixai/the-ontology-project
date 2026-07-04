@@ -8,8 +8,9 @@ operator-perspective worked examples and a regression-gated test suite:
 **the full suite must stay green before new work lands.**
 
 **Scope:** TOP-CR runs the trial from pre-IND to **regulatory submission (eCTD)**; the unit of analysis is
-the study. Product-lifecycle (label/REMS/PSUR), commercialization (HTA/market access), and devices are
-**sibling domains**, out of scope — see [`BOUNDARIES.md`](BOUNDARIES.md).
+the study. Product-lifecycle (label/REMS/PSUR) and commercialization (HTA/market access) are **sibling
+domains**, out of scope. **Devices stay in-model** (aligned with USDM, which does not bifurcate them) — see
+[`BOUNDARIES.md`](BOUNDARIES.md).
 
 ## Layout
 ```
