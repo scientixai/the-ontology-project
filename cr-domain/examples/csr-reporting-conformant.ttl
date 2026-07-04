@@ -1,0 +1,81 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — Reporting (A3): the CSR as connected traceability.
+#
+# The efficacy-results section (ICH E3 §11.4) doesn't just assert ORR = 0.42 —
+# it PRESENTS the pre-specified Table 14.3.1 and REPORTS the endpoint result,
+# each of which is reproducible to its ADaM source. "On what does this
+# conclusion rest?" is a graph walk from the section to the leaf fact.
+#
+# CONFORMANT: 0 violations, 0 warnings across every baseline + A3 shape.
+# Study referenced by IRI (defined in the set-up graph, not re-typed).
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:biostat-a3 a hcls:Practitioner ; rdfs:label "Lead Biostatistician" .
+ex:medwriter a hcls:Practitioner ; rdfs:label "Medical Writer" .
+
+# ── Native source + ADaM dataset (reproducible-to-source) ─────────────────────
+ex:native-a3 a prov:Entity ;
+    cr:sourceSystem "EDC / native clinical facts" ;
+    rdfs:label "Native efficacy source facts" .
+
+ex:adeff-a3 a cr:AnalysisDataset ; rdfs:label "ADEFF (efficacy analysis dataset)" ;
+    top:identifier "urn:adam:ADEFF-a3" ; top:status "active" ;
+    prov:wasDerivedFrom ex:native-a3 ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a3 .
+
+# ── Endpoint + estimand + SAP + the reproducible endpoint result ──────────────
+ex:ep-orr-a3 a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
+ex:est-orr-a3 a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed, RECIST 1.1)" .
+ex:sap-a3 a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+
+ex:res-orr-a3 a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
+    top:identifier "urn:result:orr-a3" ; top:status "active" ;
+    cr:measuresEndpoint ex:ep-orr-a3 ;
+    cr:perEstimand ex:est-orr-a3 ;
+    cr:analyzedUnder ex:sap-a3 ;
+    prov:wasDerivedFrom ex:adeff-a3 ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a3 .
+
+# ── The pre-specified TLF the section presents ────────────────────────────────
+ex:tlf-1431-a3 a cr:TableListingFigure ; rdfs:label "Table 14.3.1 — ORR by treatment arm" ;
+    top:identifier "urn:tlf:14.3.1-a3" ; top:status "active" ;
+    cr:tlfType "table" ;
+    prov:wasDerivedFrom ex:adeff-a3 ;
+    cr:prespecifiedIn ex:sap-a3 ;
+    cr:presentsResult ex:res-orr-a3 ;
+    top:observedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a3 .
+
+# ── The Clinical Study Report + its sections ──────────────────────────────────
+ex:csr-opp201 a cr:ClinicalStudyReport ; rdfs:label "OPP-201 Clinical Study Report (ICH E3)" ;
+    top:identifier "urn:csr:OPP-201" ; top:status "active" ;
+    cr:csrForStudy ex:study-opp201 ;            # study referenced by IRI
+    cr:hasSection ex:csr-sec-synopsis , ex:csr-sec-efficacy ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:medwriter .
+
+# Synopsis — narrative, nothing to trace (exempt).
+ex:csr-sec-synopsis a cr:CSRSection ; rdfs:label "Synopsis" ;
+    cr:sectionNumber "2" ; cr:sectionTitle "Synopsis" ; cr:sectionKind "synopsis" .
+
+# Efficacy results (§11.4) — presents the TLF AND reports the result it concludes from.
+ex:csr-sec-efficacy a cr:CSRSection ; rdfs:label "Efficacy Results" ;
+    cr:sectionNumber "11.4" ; cr:sectionTitle "Efficacy Results" ;
+    cr:sectionKind "efficacy-results" ;
+    cr:presentsTLF ex:tlf-1431-a3 ;
+    cr:reportsResult ex:res-orr-a3 .

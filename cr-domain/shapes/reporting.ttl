@@ -1,0 +1,54 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Reporting core (A3) conformance. Shapes target A3 classes only, so they are
+# inert against graphs with no CSR.
+
+# ── A CSR must name its study and have at least one section ───────────────────
+cr:ClinicalStudyReportShape a sh:NodeShape ;
+    rdfs:label "A CSR must name its study and have sections (hard)" ;
+    sh:targetClass cr:ClinicalStudyReport ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:csrForStudy ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A ClinicalStudyReport must reference (by IRI) the cr:Study it reports on." ;
+    ] ;
+    sh:property [
+        sh:path cr:hasSection ; sh:minCount 1 ; sh:class cr:CSRSection ;
+        sh:message "A ClinicalStudyReport must have at least one cr:CSRSection." ;
+    ] .
+
+# ── A results section must trace to the outputs it reports ────────────────────
+# The connected-traceability guard: an efficacy/safety RESULTS section must
+# present a TLF and/or report an EndpointResult — a conclusion with no backing
+# analysis output is inadmissible. Narrative/synopsis/administrative sections
+# are exempt (nothing to trace).
+cr:CSRResultsSectionTraceShape a sh:NodeShape ;
+    rdfs:label "A results section must trace to a TLF / result (hard)" ;
+    sh:targetClass cr:CSRSection ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "A CSR results section (sectionKind efficacy-results / safety-results) must cr:presentsTLF and/or cr:reportsResult the analysis output it draws its conclusion from. A results conclusion with no backing output is inadmissible." ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:CSRSection ; cr:sectionKind ?k .
+              FILTER ( ?k IN ( "efficacy-results", "safety-results" ) )
+              FILTER NOT EXISTS { $this cr:presentsTLF ?t }
+              FILTER NOT EXISTS { $this cr:reportsResult ?r }
+            }
+        """ ;
+    ] .
+
+# ── A section should declare a controlled kind (soft) ─────────────────────────
+cr:CSRSectionKindShape a sh:NodeShape ;
+    rdfs:label "A CSR section should declare its kind (warning)" ;
+    sh:targetClass cr:CSRSection ;
+    sh:property [
+        sh:path cr:sectionKind ; sh:minCount 1 ;
+        sh:in ( "efficacy-results" "safety-results" "synopsis" "narrative" "administrative" ) ;
+        sh:severity sh:Warning ;
+        sh:message "A CSRSection should declare cr:sectionKind (efficacy-results | safety-results | synopsis | narrative | administrative)." ;
+    ] .

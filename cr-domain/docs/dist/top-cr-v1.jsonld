@@ -1850,6 +1850,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#CSRSection",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The sectionKind qualifier (efficacy-results | safety-results | synopsis | narrative | administrative) selects which sections must carry analysis traceability, without a parallel hierarchy."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "CSR Section"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A section of a Clinical Study Report, keyed to its ICH E3 number (e.g. 11.4 Efficacy Results, 12.2 Adverse Events). A results section presents the TLFs and reports the results it draws its conclusions from."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#CalibrateEquipment",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -2164,6 +2190,30 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Clinical Study Report (CSR)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The ICH E3 integrated report of a single study \u2014 the narrative document the submission (eCTD Module 5.3.5) carries. Modeled as a fact graph of its sections, not an opaque file, so its results sections trace to the analysis outputs they present."
       }
     ]
   },
@@ -3382,6 +3432,27 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "Data Collection"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DataDefinition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Data Definition (Define-XML)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The CDISC Define-XML metadata that describes the submitted datasets (variable-level metadata, value-level metadata, controlled terminology, computational method traceability). The map a reviewer uses to read the datasets."
       }
     ]
   },
@@ -10526,6 +10597,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#builtOnLock",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The DatabaseLock the submission content is built on. Ties B1 back to A1: a submission must rest on a HARD lock \u2014 reversible (soft-locked) data cannot ground a filing."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "built on lock"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#capaStatus",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -11120,6 +11222,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#csrForStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The cr:Study this CSR reports on (intended range cr:Study; left open so a reporting graph can reference the study by IRI without re-typing it \u2014 avoids the RDFS target cascade)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "CSR for study"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
       }
     ]
   },
@@ -12009,6 +12137,35 @@
       },
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock \u2014 submitting on reversible (soft-locked) data is inadmissible."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "eCTD Submission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "An electronic Common Technical Document submission to a regulator (e.g. NDA / BLA / MAA). Modeled as a manifest that references the locked, already-produced content \u2014 the Clinical Study Report, the analysis datasets, and the Define-XML \u2014 not a re-authored copy of any of it."
       }
     ]
   },
@@ -13332,6 +13489,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#hasSection",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A CSR is composed of its sections."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "has section"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#hasVisitDefinition",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -13484,6 +13672,99 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StartupArtifact"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#includesDataset",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "An analysis (ADaM) dataset the submission carries (eCTD Module 5.3.x)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "includes dataset"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDataset"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#includesDefine",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The Define-XML data definition that describes the submitted datasets."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "includes define"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataDefinition"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#includesReport",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The Clinical Study Report the submission carries (eCTD Module 5.3.5)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "includes report"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -14687,6 +14968,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#presentsTLF",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The TableListingFigure a CSR section presents \u2014 the clinical\u2192CSR traceability hop."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "presents TLF"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TableListingFigure"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#prespecifiedIn",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -15439,6 +15751,22 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#reportingModule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "ICH E3 Clinical Study Report and its sections, with results sections that trace to the TableListingFigure / EndpointResult evidence they present. Reuses TableListingFigure / EndpointResult / Study."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TOP CR \u2014 Reporting core (A3: the Clinical Study Report)"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#reportsEvent",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -15451,6 +15779,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#SeriousAdverseEvent"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#reportsResult",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The EndpointResult a CSR section reports (a conclusion must have a backing result)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "reports result"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EndpointResult"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -15990,6 +16349,94 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#sectionKind",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Controlled: 'efficacy-results' | 'safety-results' | 'synopsis' | 'narrative' | 'administrative'. Results kinds must carry analysis traceability."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "section kind"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#sectionNumber",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The ICH E3 section number, e.g. '11.4.2'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "section number"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#sectionTitle",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "section title"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#severity",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -16387,6 +16834,79 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#submissionForStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The cr:Study this submission concerns (intended range cr:Study; left open so a submission graph can reference the study by IRI without re-typing it \u2014 avoids the RDFS target cascade)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "submission for study"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#submissionModule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The eCTD submission as a manifest referencing the locked CSR + analysis datasets + Define \u2014 the terminal projection of the trial. Reuses ClinicalStudyReport / AnalysisDataset / DatabaseLock / Study."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TOP CR \u2014 Submission core (B1: the eCTD terminal manifest)"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#submissionType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The regulatory submission type, e.g. 'NDA' | 'BLA' | 'MAA' | 'supplement'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "submission type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [

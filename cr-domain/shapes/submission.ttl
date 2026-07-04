@@ -1,0 +1,60 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Submission core (B1) conformance. Shapes target B1 classes only, so they are
+# inert against graphs with no submission.
+
+# ── A submission must name its study, carry a CSR, and rest on a lock ─────────
+cr:eCTDSubmissionShape a sh:NodeShape ;
+    rdfs:label "An eCTD submission must be well-formed (hard)" ;
+    sh:targetClass cr:eCTDSubmission ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:submissionForStudy ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "An eCTDSubmission must reference (by IRI) the cr:Study it concerns." ;
+    ] ;
+    sh:property [
+        sh:path cr:includesReport ; sh:minCount 1 ; sh:class cr:ClinicalStudyReport ;
+        sh:message "An eCTDSubmission (Module 5) must include a cr:ClinicalStudyReport." ;
+    ] ;
+    sh:property [
+        sh:path cr:builtOnLock ; sh:minCount 1 ; sh:class cr:DatabaseLock ;
+        sh:message "An eCTDSubmission must declare the cr:DatabaseLock its content is built on." ;
+    ] .
+
+# ── The terminal invariant: a submission must rest on a HARD lock ─────────────
+# Ties B1 back to A1. Submitting on reversible (soft-locked) data is inadmissible
+# — a soft lock is for review, not for a filing that a regulator will act on.
+cr:SubmissionLockHardShape a sh:NodeShape ;
+    rdfs:label "A submission must be built on a hard database lock (hard)" ;
+    sh:targetClass cr:eCTDSubmission ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "An eCTDSubmission is built on a database lock that is not a HARD lock. Reversible (soft-locked) data cannot ground a regulatory filing." ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:eCTDSubmission ; cr:builtOnLock ?lk .
+              FILTER NOT EXISTS { ?lk cr:lockType "hard" }
+            }
+        """ ;
+    ] .
+
+# ── A submission should carry the datasets and Define it references (soft) ────
+cr:SubmissionCompletenessShape a sh:NodeShape ;
+    rdfs:label "A submission should carry its datasets + Define (warning)" ;
+    sh:targetClass cr:eCTDSubmission ;
+    sh:sparql [
+        sh:severity sh:Warning ;
+        sh:message "An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against." ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:eCTDSubmission .
+              FILTER ( NOT EXISTS { $this cr:includesDataset ?d }
+                       || NOT EXISTS { $this cr:includesDefine ?x } )
+            }
+        """ ;
+    ] .

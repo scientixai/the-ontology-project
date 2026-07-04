@@ -1,0 +1,34 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DELIBERATELY BROKEN counterpart of csr-reporting-conformant.ttl — proves the
+# reporting shapes bite.
+#
+#   Defect: an efficacy-RESULTS section that presents no TLF and reports no
+#           result — a conclusion floating free of any analysis output
+#           (cr:CSRResultsSectionTraceShape, Violation). This is exactly the
+#           overstatement-by-narrative the connected-traceability guard exists
+#           to prevent.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:medwriter-bad a hcls:Practitioner ; rdfs:label "Medical Writer" .
+
+ex:csr-bad a cr:ClinicalStudyReport ; rdfs:label "CSR (untraceable efficacy claim)" ;
+    top:identifier "urn:csr:bad" ; top:status "active" ;
+    cr:csrForStudy ex:study-bad ;
+    cr:hasSection ex:csr-sec-bad ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:medwriter-bad .
+
+# Efficacy-results section that asserts a conclusion but traces to nothing.
+ex:csr-sec-bad a cr:CSRSection ; rdfs:label "Efficacy Results (unbacked)" ;
+    cr:sectionNumber "11.4" ; cr:sectionTitle "Efficacy Results" ;
+    cr:sectionKind "efficacy-results" .
+    # no cr:presentsTLF, no cr:reportsResult -> cr:CSRResultsSectionTraceShape (Violation)

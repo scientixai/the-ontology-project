@@ -1,0 +1,67 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DELIBERATELY BROKEN counterpart of submission-ectd-conformant.ttl — proves
+# the terminal invariant bites.
+#
+#   Defect: the submission is built on a SOFT (reversible) database lock, not a
+#           hard one (cr:SubmissionLockHardShape, Violation). Everything else is
+#           well-formed — a filing on data that can still change is exactly what
+#           the ties-back-to-A1 invariant exists to prevent.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:sponsor-bad a hcls:Organization ;
+    top:identifier "urn:org:sponsor-bad" ; top:status "active" ;
+    rdfs:label "Sponsor regulatory affairs" .
+ex:biostat-bad a hcls:Practitioner ; rdfs:label "Biostatistician" .
+
+# A SOFT lock — for review, reversible. Not a basis for a filing.
+ex:softlock-bad a cr:DatabaseLock ;
+    top:identifier "urn:dblock:soft-bad" ; top:status "active" ;
+    top:observedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-20T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sponsor-bad ;
+    cr:locksStudy ex:study-bad ;
+    cr:lockType "soft" ;
+    rdfs:label "Soft lock — reversible, for review only" .
+
+ex:native-bad a prov:Entity ;
+    cr:sourceSystem "EDC / native clinical facts" ; rdfs:label "Native source facts" .
+ex:adsl-bad a cr:AnalysisDataset ; rdfs:label "ADSL" ;
+    top:identifier "urn:adam:ADSL-bad" ; top:status "active" ;
+    prov:wasDerivedFrom ex:native-bad ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-bad .
+
+ex:csr-bad-b1 a cr:ClinicalStudyReport ; rdfs:label "CSR" ;
+    top:identifier "urn:csr:bad-b1" ; top:status "active" ;
+    cr:csrForStudy ex:study-bad ;
+    cr:hasSection ex:csr-bad-syn ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sponsor-bad .
+ex:csr-bad-syn a cr:CSRSection ; rdfs:label "Synopsis" ;
+    cr:sectionNumber "2" ; cr:sectionTitle "Synopsis" ; cr:sectionKind "synopsis" .
+
+ex:define-bad a cr:DataDefinition ;
+    top:identifier "urn:define:bad" ; top:status "active" ; rdfs:label "Define-XML v2.1" .
+
+# The submission — well-formed except that it rests on a soft lock.
+ex:ectd-bad a cr:eCTDSubmission ; rdfs:label "NDA built on soft-locked data" ;
+    top:identifier "urn:ectd:bad-NDA" ; top:status "active" ;
+    cr:submissionType "NDA" ;
+    cr:submissionForStudy ex:study-bad ;
+    cr:builtOnLock ex:softlock-bad ;             # SOFT lock -> cr:SubmissionLockHardShape (Violation)
+    cr:includesReport ex:csr-bad-b1 ;
+    cr:includesDataset ex:adsl-bad ;
+    cr:includesDefine ex:define-bad ;
+    top:observedAt "2026-10-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-10-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sponsor-bad .

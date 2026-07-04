@@ -51,12 +51,6 @@ cr:Administration a owl:Class ;
     rdfs:subClassOf top:Temporal,
         top:Versioned .
 
-cr:AnalysisDataset a owl:Class ;
-    rdfs:label "Analysis Dataset (ADaM)" ;
-    rdfs:comment "An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned .
-
 cr:ApproveAmendment a hcls:Action ;
     rdfs:label "Approve Amendment" ;
     hcls:authorizedAgentType cr:SponsorOperationsStaff ;
@@ -1331,6 +1325,13 @@ cr:boundConcept a owl:ObjectProperty ;
     rdfs:range cr:BiomedicalConcept ;
     top:flavor "Additive" .
 
+cr:builtOnLock a owl:ObjectProperty ;
+    rdfs:label "built on lock" ;
+    rdfs:comment "The DatabaseLock the submission content is built on. Ties B1 back to A1: a submission must rest on a HARD lock — reversible (soft-locked) data cannot ground a filing." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:DatabaseLock ;
+    top:flavor "Additive" .
+
 cr:capaStatus a owl:DatatypeProperty ;
     rdfs:label "CAPA status" ;
     rdfs:comment "open | in-progress | closed." ;
@@ -1455,6 +1456,12 @@ cr:criterionType a owl:DatatypeProperty ;
     rdfs:comment "'inclusion' or 'exclusion'." ;
     rdfs:domain cr:EligibilityCriterion ;
     rdfs:range xsd:string .
+
+cr:csrForStudy a owl:ObjectProperty ;
+    rdfs:label "CSR for study" ;
+    rdfs:comment "The cr:Study this CSR reports on (intended range cr:Study; left open so a reporting graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:ClinicalStudyReport ;
+    top:flavor "Additive" .
 
 cr:cta a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
@@ -1943,6 +1950,13 @@ cr:hasRiskRegister a owl:ObjectProperty ;
     rdfs:range cr:RiskRegister ;
     top:flavor "Additive" .
 
+cr:hasSection a owl:ObjectProperty ;
+    rdfs:label "has section" ;
+    rdfs:comment "A CSR is composed of its sections." ;
+    rdfs:domain cr:ClinicalStudyReport ;
+    rdfs:range cr:CSRSection ;
+    top:flavor "Additive" .
+
 cr:hasVisitDefinition a owl:ObjectProperty ;
     rdfs:label "has visit definition" ;
     rdfs:comment "Links a Study to its protocol visit templates (via the SOA / ScheduleTimeline chain)." ;
@@ -1978,6 +1992,27 @@ cr:includesArtifact a owl:ObjectProperty ;
     rdfs:label "includes artifact" ;
     rdfs:domain cr:StudyStartupPackage ;
     rdfs:range cr:StartupArtifact ;
+    top:flavor "Additive" .
+
+cr:includesDataset a owl:ObjectProperty ;
+    rdfs:label "includes dataset" ;
+    rdfs:comment "An analysis (ADaM) dataset the submission carries (eCTD Module 5.3.x)." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:AnalysisDataset ;
+    top:flavor "Additive" .
+
+cr:includesDefine a owl:ObjectProperty ;
+    rdfs:label "includes define" ;
+    rdfs:comment "The Define-XML data definition that describes the submitted datasets." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:DataDefinition ;
+    top:flavor "Additive" .
+
+cr:includesReport a owl:ObjectProperty ;
+    rdfs:label "includes report" ;
+    rdfs:comment "The Clinical Study Report the submission carries (eCTD Module 5.3.5)." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:ClinicalStudyReport ;
     top:flavor "Additive" .
 
 cr:instantiatesTemplate a owl:ObjectProperty ;
@@ -2236,6 +2271,13 @@ cr:presentsResult a owl:ObjectProperty ;
     rdfs:range cr:EndpointResult ;
     top:flavor "Additive" .
 
+cr:presentsTLF a owl:ObjectProperty ;
+    rdfs:label "presents TLF" ;
+    rdfs:comment "The TableListingFigure a CSR section presents — the clinical→CSR traceability hop." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range cr:TableListingFigure ;
+    top:flavor "Additive" .
+
 cr:prespecifiedIn a owl:ObjectProperty ;
     rdfs:label "pre-specified in" ;
     rdfs:comment "The StatisticalAnalysisPlan that pre-specified this output. Its presence is what separates a pivotal TLF from a post-hoc one." ;
@@ -2395,9 +2437,20 @@ cr:reportingDeadline a owl:DatatypeProperty ;
     rdfs:range xsd:dateTime ;
     top:flavor "Additive" .
 
+cr:reportingModule a owl:Ontology ;
+    rdfs:label "TOP CR — Reporting core (A3: the Clinical Study Report)" ;
+    rdfs:comment "ICH E3 Clinical Study Report and its sections, with results sections that trace to the TableListingFigure / EndpointResult evidence they present. Reuses TableListingFigure / EndpointResult / Study." .
+
 cr:reportsEvent a owl:ObjectProperty ;
     rdfs:domain cr:SafetyReport ;
     rdfs:range cr:SeriousAdverseEvent ;
+    top:flavor "Additive" .
+
+cr:reportsResult a owl:ObjectProperty ;
+    rdfs:label "reports result" ;
+    rdfs:comment "The EndpointResult a CSR section reports (a conclusion must have a backing result)." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range cr:EndpointResult ;
     top:flavor "Additive" .
 
 cr:requestsService a owl:ObjectProperty ;
@@ -2522,6 +2575,26 @@ cr:sdvStatus a owl:DatatypeProperty ;
     rdfs:domain cr:ClinicalObservation ;
     top:flavor "Additive" .
 
+cr:sectionKind a owl:DatatypeProperty ;
+    rdfs:label "section kind" ;
+    rdfs:comment "Controlled: 'efficacy-results' | 'safety-results' | 'synopsis' | 'narrative' | 'administrative'. Results kinds must carry analysis traceability." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:sectionNumber a owl:DatatypeProperty ;
+    rdfs:label "section number" ;
+    rdfs:comment "The ICH E3 section number, e.g. '11.4.2'." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:sectionTitle a owl:DatatypeProperty ;
+    rdfs:label "section title" ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:severity a owl:DatatypeProperty ;
     rdfs:label "severity" ;
     rdfs:domain cr:Query ;
@@ -2609,6 +2682,23 @@ cr:submissionDate a owl:DatatypeProperty ;
     rdfs:comment "Date the SUSAR was submitted to the regulator." ;
     rdfs:domain cr:SUSAR ;
     rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
+cr:submissionForStudy a owl:ObjectProperty ;
+    rdfs:label "submission for study" ;
+    rdfs:comment "The cr:Study this submission concerns (intended range cr:Study; left open so a submission graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:eCTDSubmission ;
+    top:flavor "Additive" .
+
+cr:submissionModule a owl:Ontology ;
+    rdfs:label "TOP CR — Submission core (B1: the eCTD terminal manifest)" ;
+    rdfs:comment "The eCTD submission as a manifest referencing the locked CSR + analysis datasets + Define — the terminal projection of the trial. Reuses ClinicalStudyReport / AnalysisDataset / DatabaseLock / Study." .
+
+cr:submissionType a owl:DatatypeProperty ;
+    rdfs:label "submission type" ;
+    rdfs:comment "The regulatory submission type, e.g. 'NDA' | 'BLA' | 'MAA' | 'supplement'." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:submittedAt a owl:DatatypeProperty ;
@@ -3278,6 +3368,12 @@ cr:AddLogEntry a hcls:Action ;
     hcls:occursIn cr:ConductPhase ;
     hcls:operatesOn cr:StudySite .
 
+cr:AnalysisDataset a owl:Class ;
+    rdfs:label "Analysis Dataset (ADaM)" ;
+    rdfs:comment "An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
 cr:AnalysisRequest a owl:Class ;
     rdfs:label "Analysis Request" ;
     rdfs:comment "Binds an AnalysisService to a Specimen (the order)." ;
@@ -3432,6 +3528,11 @@ cr:CreateStudy a hcls:Action ;
     hcls:authorizedAgentType cr:SponsorProjectManager ;
     hcls:occursIn cr:DesignSubPhase ;
     hcls:operatesOn cr:Study .
+
+cr:DataDefinition a owl:Class ;
+    rdfs:label "Data Definition (Define-XML)" ;
+    rdfs:subClassOf top:Evidence ;
+    skos:definition "The CDISC Define-XML metadata that describes the submitted datasets (variable-level metadata, value-level metadata, controlled terminology, computational method traceability). The map a reviewer uses to read the datasets." .
 
 cr:EnrollParticipant a hcls:Action ;
     rdfs:label "Enroll Participant" ;
@@ -4016,18 +4117,17 @@ cr:CaseReportForm a owl:Class ;
     rdfs:comment "A case report form — a collection of item groups capturing a visit's data." ;
     rdfs:subClassOf top:Evidence .
 
+cr:ClinicalStudyReport a owl:Class ;
+    rdfs:label "Clinical Study Report (CSR)" ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "The ICH E3 integrated report of a single study — the narrative document the submission (eCTD Module 5.3.5) carries. Modeled as a fact graph of its sections, not an opaque file, so its results sections trace to the analysis outputs they present." .
+
 cr:ConductMonitoringVisit a hcls:Action ;
     rdfs:label "Conduct Monitoring Visit" ;
     hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
     hcls:occursIn cr:OversightSubPhase ;
     hcls:operatesOn cr:VisitOccurrence .
-
-cr:DatabaseLock a owl:Class ;
-    rdfs:label "Database Lock" ;
-    rdfs:comment "Bitemporal: the lock's valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
-    skos:definition "The act of freezing the study database. A SOFT lock freezes it for review and is reversible; a HARD lock freezes it for analysis. After a hard lock, no clinical value may change without a recorded DatabaseUnlock." .
 
 cr:DatabaseUnlock a owl:Class ;
     rdfs:label "Database Unlock" ;
@@ -4072,13 +4172,6 @@ cr:SubmitMonitoringReport a hcls:Action ;
     hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
     hcls:occursIn cr:OversightSubPhase ;
     hcls:operatesOn cr:VisitOccurrence .
-
-cr:TableListingFigure a owl:Class ;
-    rdfs:label "Table / Listing / Figure (TLF)" ;
-    rdfs:comment "The tlfType qualifier (table | listing | figure) distinguishes the kind without a parallel hierarchy. A TLF that is not pre-specified is a post-hoc analysis — legitimate as exploratory, inadmissible when presented as pivotal." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
-    skos:definition "A pre-specified analysis output — a table, a listing, or a figure — built from an ADaM analysis dataset. The unit the CSR and the submission actually present. Must be reproducible to source (prov:wasDerivedFrom an AnalysisDataset) and grounded in the SAP that pre-specified it." .
 
 cr:TransferAmendment a owl:Class ;
     rdfs:label "Transfer Amendment" ;
@@ -4149,6 +4242,13 @@ cr:DataSubjectRequest a owl:Class ;
     rdfs:comment "A GDPR data subject right exercise: access, erasure, rectification, or portability." ;
     rdfs:subClassOf top:Temporal .
 
+cr:DatabaseLock a owl:Class ;
+    rdfs:label "Database Lock" ;
+    rdfs:comment "Bitemporal: the lock's valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "The act of freezing the study database. A SOFT lock freezes it for review and is reversible; a HARD lock freezes it for analysis. After a hard lock, no clinical value may change without a recorded DatabaseUnlock." .
+
 cr:EligibilityCriterion a owl:Class ;
     rdfs:label "Eligibility Criterion" ;
     rdfs:comment "An inclusion or exclusion criterion for study participation.",
@@ -4192,6 +4292,13 @@ cr:StudyStartupPackage a owl:Class ;
     rdfs:comment "The bundle of document artifacts a site receives on being awarded a study. Not a singular item — a set of typed artifacts; in practice fetched one-by-one from sponsor portals." ;
     rdfs:subClassOf top:Evidence .
 
+cr:TableListingFigure a owl:Class ;
+    rdfs:label "Table / Listing / Figure (TLF)" ;
+    rdfs:comment "The tlfType qualifier (table | listing | figure) distinguishes the kind without a parallel hierarchy. A TLF that is not pre-specified is a post-hoc analysis — legitimate as exploratory, inadmissible when presented as pivotal." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "A pre-specified analysis output — a table, a listing, or a figure — built from an ADaM analysis dataset. The unit the CSR and the submission actually present. Must be reproducible to source (prov:wasDerivedFrom an AnalysisDataset) and grounded in the SAP that pre-specified it." .
+
 cr:Visit a owl:Class ;
     rdfs:label "Trial Visit" ;
     rdfs:comment "A protocol visit — a kind of study event." ;
@@ -4228,12 +4335,6 @@ cr:E6R3Glossary a skos:ConceptScheme ;
     rdfs:label "ICH E6(R3) glossary (selected terms)" ;
     rdfs:comment "Definitional concepts cited to ICH E6(R3); related to the cr: class/relation that realizes each, where one exists." .
 
-cr:EndpointResult a owl:Class ;
-    rdfs:label "Endpoint Result" ;
-    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned .
-
 cr:LawfulBasis a owl:Class ;
     rdfs:label "Lawful Basis" ;
     rdfs:comment "A GDPR lawful basis for processing personal data (Articles 6 and 9)." ;
@@ -4263,6 +4364,12 @@ cr:ArchivalSubPhase a hcls:Phase ;
     rdfs:label "Archival" ;
     rdfs:comment "Site close-out visits, eTMF finalization, study archival, storage period compliance per country regulations." .
 
+cr:CSRSection a owl:Class ;
+    rdfs:label "CSR Section" ;
+    rdfs:comment "The sectionKind qualifier (efficacy-results | safety-results | synopsis | narrative | administrative) selects which sections must carry analysis traceability, without a parallel hierarchy." ;
+    rdfs:subClassOf top:Evidence ;
+    skos:definition "A section of a Clinical Study Report, keyed to its ICH E3 number (e.g. 11.4 Efficacy Results, 12.2 Adverse Events). A results section presents the TLFs and reports the results it draws its conclusions from." .
+
 cr:DataTransferAgreement a owl:Class ;
     rdfs:label "Data Transfer Agreement" ;
     rdfs:comment "Grounded in the DTA MVP Information Model DTA entity and MVP Inventory §3 (Version, Version Date, Version Change Rationale). Not a Word/PDF artifact with fields — a fact graph." ;
@@ -4274,6 +4381,12 @@ cr:DeviationAntecedent a owl:Class ;
     rdfs:label "Deviation Antecedent" ;
     rdfs:comment "A latent operational condition that predisposes a deviation (e.g. a visit window too tight for the site's staffing). The missing middle between a critical-to-quality factor and the deviation event it manifests as; bitemporal (it exists, and is detected, over time)." ;
     rdfs:subClassOf top:Constraint,
+        top:Versioned .
+
+cr:EndpointResult a owl:Class ;
+    rdfs:label "Endpoint Result" ;
+    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
+    rdfs:subClassOf top:Outcome,
         top:Versioned .
 
 cr:Query a owl:Class ;
@@ -4308,6 +4421,13 @@ cr:TransferSpecification a owl:Class ;
     rdfs:subClassOf top:Scope,
         top:Versioned ;
     skos:definition "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act." .
+
+cr:eCTDSubmission a owl:Class ;
+    rdfs:label "eCTD Submission" ;
+    rdfs:comment "Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock — submitting on reversible (soft-locked) data is inadmissible." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "An electronic Common Technical Document submission to a regulator (e.g. NDA / BLA / MAA). Modeled as a manifest that references the locked, already-produced content — the Clinical Study Report, the analysis datasets, and the Define-XML — not a re-authored copy of any of it." .
 
 cr:CSR a owl:Class ;
     rdfs:label "Clinical Study Report" ;

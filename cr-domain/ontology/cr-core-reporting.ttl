@@ -1,0 +1,84 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Reporting core (A3) — the Clinical Study Report (ICH E3) as a fact graph.
+#
+# The spine continues:
+#   ... TLF -> EndpointResult -> CSR section -> Clinical Study Report -> (eCTD)
+#
+# The CSR is the narrative the submission carries. Its value here is CONNECTED
+# traceability: a results section is not free prose — it presents the TLFs and
+# reports the results it was built from, so a conclusion always has a backing
+# output. A results section that traces to nothing is caught.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:reportingModule a owl:Ontology ;
+    rdfs:label "TOP CR — Reporting core (A3: the Clinical Study Report)" ;
+    rdfs:comment "ICH E3 Clinical Study Report and its sections, with results sections that trace to the TableListingFigure / EndpointResult evidence they present. Reuses TableListingFigure / EndpointResult / Study." .
+
+cr:ClinicalStudyReport a owl:Class ;
+    rdfs:label "Clinical Study Report (CSR)" ;
+    skos:definition "The ICH E3 integrated report of a single study — the narrative document the submission (eCTD Module 5.3.5) carries. Modeled as a fact graph of its sections, not an opaque file, so its results sections trace to the analysis outputs they present." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:CSRSection a owl:Class ;
+    rdfs:label "CSR Section" ;
+    skos:definition "A section of a Clinical Study Report, keyed to its ICH E3 number (e.g. 11.4 Efficacy Results, 12.2 Adverse Events). A results section presents the TLFs and reports the results it draws its conclusions from." ;
+    rdfs:comment "The sectionKind qualifier (efficacy-results | safety-results | synopsis | narrative | administrative) selects which sections must carry analysis traceability, without a parallel hierarchy." ;
+    rdfs:subClassOf top:Evidence .
+
+# ── Properties (all Additive per ADR-0019) ───────────────────────────────────
+
+cr:hasSection a owl:ObjectProperty ;
+    rdfs:label "has section" ;
+    rdfs:comment "A CSR is composed of its sections." ;
+    rdfs:domain cr:ClinicalStudyReport ;
+    rdfs:range cr:CSRSection ;
+    top:flavor "Additive" .
+
+cr:csrForStudy a owl:ObjectProperty ;
+    rdfs:label "CSR for study" ;
+    rdfs:comment "The cr:Study this CSR reports on (intended range cr:Study; left open so a reporting graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:ClinicalStudyReport ;
+    top:flavor "Additive" .
+
+cr:sectionNumber a owl:DatatypeProperty ;
+    rdfs:label "section number" ;
+    rdfs:comment "The ICH E3 section number, e.g. '11.4.2'." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:sectionTitle a owl:DatatypeProperty ;
+    rdfs:label "section title" ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:sectionKind a owl:DatatypeProperty ;
+    rdfs:label "section kind" ;
+    rdfs:comment "Controlled: 'efficacy-results' | 'safety-results' | 'synopsis' | 'narrative' | 'administrative'. Results kinds must carry analysis traceability." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:presentsTLF a owl:ObjectProperty ;
+    rdfs:label "presents TLF" ;
+    rdfs:comment "The TableListingFigure a CSR section presents — the clinical→CSR traceability hop." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range cr:TableListingFigure ;
+    top:flavor "Additive" .
+
+cr:reportsResult a owl:ObjectProperty ;
+    rdfs:label "reports result" ;
+    rdfs:comment "The EndpointResult a CSR section reports (a conclusion must have a backing result)." ;
+    rdfs:domain cr:CSRSection ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .

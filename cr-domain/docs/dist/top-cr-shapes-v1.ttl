@@ -124,6 +124,30 @@ cr:BlindingConstraintScopeShape a sh:NodeShape ;
             sh:severity sh:Warning ] ;
     sh:targetClass cr:BlindingConstraint .
 
+cr:CSRResultsSectionTraceShape a sh:NodeShape ;
+    rdfs:label "A results section must trace to a TLF / result (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "A CSR results section (sectionKind efficacy-results / safety-results) must cr:presentsTLF and/or cr:reportsResult the analysis output it draws its conclusion from. A results conclusion with no backing output is inadmissible." ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:CSRSection ; cr:sectionKind ?k .
+              FILTER ( ?k IN ( "efficacy-results", "safety-results" ) )
+              FILTER NOT EXISTS { $this cr:presentsTLF ?t }
+              FILTER NOT EXISTS { $this cr:reportsResult ?r }
+            }
+        """ ] ;
+    sh:targetClass cr:CSRSection .
+
+cr:CSRSectionKindShape a sh:NodeShape ;
+    rdfs:label "A CSR section should declare its kind (warning)" ;
+    sh:property [ sh:in ( "efficacy-results" "safety-results" "synopsis" "narrative" "administrative" ) ;
+            sh:message "A CSRSection should declare cr:sectionKind (efficacy-results | safety-results | synopsis | narrative | administrative)." ;
+            sh:minCount 1 ;
+            sh:path cr:sectionKind ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:CSRSection .
+
 cr:CTCAEGradeRangeShape a sh:NodeShape ;
     rdfs:label "CTCAE grade must be 1–5" ;
     sh:severity sh:Violation ;
@@ -185,6 +209,19 @@ cr:ClinicalObservationShape a sh:NodeShape ;
             sh:path cr:forSubject ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:ClinicalObservation .
+
+cr:ClinicalStudyReportShape a sh:NodeShape ;
+    rdfs:label "A CSR must name its study and have sections (hard)" ;
+    sh:property [ sh:class cr:CSRSection ;
+            sh:message "A ClinicalStudyReport must have at least one cr:CSRSection." ;
+            sh:minCount 1 ;
+            sh:path cr:hasSection ],
+        [ sh:message "A ClinicalStudyReport must reference (by IRI) the cr:Study it reports on." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cr:csrForStudy ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:ClinicalStudyReport .
 
 cr:CompletedVisitShouldHaveEndDateShape a sh:NodeShape ;
     rdfs:label "COMPLETED VisitOccurrence should have actualEndDate (warning)" ;
@@ -942,6 +979,33 @@ cr:StudySubjectShape a sh:NodeShape ;
             sh:path top:validFrom ] ;
     sh:targetClass cr:StudySubject .
 
+cr:SubmissionCompletenessShape a sh:NodeShape ;
+    rdfs:label "A submission should carry its datasets + Define (warning)" ;
+    sh:sparql [ sh:message "An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against." ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:eCTDSubmission .
+              FILTER ( NOT EXISTS { $this cr:includesDataset ?d }
+                       || NOT EXISTS { $this cr:includesDefine ?x } )
+            }
+        """ ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:eCTDSubmission .
+
+cr:SubmissionLockHardShape a sh:NodeShape ;
+    rdfs:label "A submission must be built on a hard database lock (hard)" ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "An eCTDSubmission is built on a database lock that is not a HARD lock. Reversible (soft-locked) data cannot ground a regulatory filing." ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this a cr:eCTDSubmission ; cr:builtOnLock ?lk .
+              FILTER NOT EXISTS { ?lk cr:lockType "hard" }
+            }
+        """ ] ;
+    sh:targetClass cr:eCTDSubmission .
+
 cr:TLFTraceabilityShape a sh:NodeShape ;
     rdfs:label "A TLF must trace to its ADaM source and its SAP (hard)" ;
     sh:property [ sh:in ( "table" "listing" "figure" ) ;
@@ -1143,6 +1207,23 @@ cr:WorkStreamShape a sh:NodeShape ;
             sh:path cr:streamForSite ;
             sh:severity sh:Violation ] ;
     sh:targetClass cr:WorkStream .
+
+cr:eCTDSubmissionShape a sh:NodeShape ;
+    rdfs:label "An eCTD submission must be well-formed (hard)" ;
+    sh:property [ sh:class cr:ClinicalStudyReport ;
+            sh:message "An eCTDSubmission (Module 5) must include a cr:ClinicalStudyReport." ;
+            sh:minCount 1 ;
+            sh:path cr:includesReport ],
+        [ sh:message "An eCTDSubmission must reference (by IRI) the cr:Study it concerns." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cr:submissionForStudy ],
+        [ sh:class cr:DatabaseLock ;
+            sh:message "An eCTDSubmission must declare the cr:DatabaseLock its content is built on." ;
+            sh:minCount 1 ;
+            sh:path cr:builtOnLock ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:eCTDSubmission .
 
 cx:MappingShape a sh:NodeShape ;
     sh:property [ sh:in ( <https://w3id.org/semapv/vocab/ManualMappingCuration> <https://w3id.org/semapv/vocab/LexicalMatching> <https://w3id.org/semapv/vocab/LogicalReasoning> ) ;

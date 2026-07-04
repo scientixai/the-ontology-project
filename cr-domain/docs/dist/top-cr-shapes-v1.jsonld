@@ -206,6 +206,24 @@
     ]
   },
   {
+    "@id": "_:cb172c1aef25a2c9c5c00053ab5015ec0f9493e2a8a7b6eae90c06b0751474b051b",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this a cr:eCTDSubmission .\n              FILTER ( NOT EXISTS { $this cr:includesDataset ?d }\n                       || NOT EXISTS { $this cr:includesDefine ?x } )\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb173a5627d86c02d46a6be82dfe16240a6999ea7b997b338da1572f3d85c3fbdcd",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -352,6 +370,19 @@
     "http://www.w3.org/ns/shacl#severity": [
       {
         "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1855ea02bea5d08fabba4cce973bca1d012cca7dc2940793e19c8d28acb439a33",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An eCTDSubmission is built on a database lock that is not a HARD lock. Reversible (soft-locked) data cannot ground a regulatory filing."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this a cr:eCTDSubmission ; cr:builtOnLock ?lk .\n              FILTER NOT EXISTS { ?lk cr:lockType \"hard\" }\n            }\n        "
       }
     ]
   },
@@ -969,6 +1000,30 @@
     ]
   },
   {
+    "@id": "_:cb1d447ac2cc73ac94e982b24687cb7c7492eb387786eafc32f851a225f2179e641",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An eCTDSubmission (Module 5) must include a cr:ClinicalStudyReport."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#includesReport"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1d5c87f9e95fd3b602cfbc8500c5d9e3655f18ffbe1cdb7de812447d95bd7f597",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -984,6 +1039,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ctcaeGrade"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1d948be1b6b276e2c85bc8da22828c1cc89f3cf155f4ac24a604824dc93411fd5",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A CSR results section (sectionKind efficacy-results / safety-results) must cr:presentsTLF and/or cr:reportsResult the analysis output it draws its conclusion from. A results conclusion with no backing output is inadmissible."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this a cr:CSRSection ; cr:sectionKind ?k .\n              FILTER ( ?k IN ( \"efficacy-results\", \"safety-results\" ) )\n              FILTER NOT EXISTS { $this cr:presentsTLF ?t }\n              FILTER NOT EXISTS { $this cr:reportsResult ?r }\n            }\n        "
       }
     ]
   },
@@ -1483,6 +1551,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#consentVersion"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb20bf3f237b06a1c4a05e3e3b560058c702b794225a58370d933019d883874ac46",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A ClinicalStudyReport must have at least one cr:CSRSection."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#hasSection"
       }
     ]
   },
@@ -2180,6 +2272,51 @@
     ]
   },
   {
+    "@id": "_:cb26129be86877c00d19bdc86e89c80d9f5734d4ae1e1d7646e4c772fec96af133f",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "administrative"
+          },
+          {
+            "@value": "efficacy-results"
+          },
+          {
+            "@value": "narrative"
+          },
+          {
+            "@value": "safety-results"
+          },
+          {
+            "@value": "synopsis"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A CSRSection should declare cr:sectionKind (efficacy-results | safety-results | synopsis | narrative | administrative)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#sectionKind"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb261cc8c74501ef0aadc08edaf016dd5c8d897d03476311d6a79d06537c94c5650",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2654,6 +2791,30 @@
     ]
   },
   {
+    "@id": "_:cb2a9c97b4c54b7302f094a3e4c8a600118b0d786a1de1d745136936f86ea9fd70f",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An eCTDSubmission must reference (by IRI) the cr:Study it concerns."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#submissionForStudy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2af2637de685661c62d653398ef5778a295f6825425f80631c5ea71a190664228",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2722,6 +2883,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#conductedAt"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2b5bb668f064b8e03c5687f6b391cbf8e6c6efe0c0b331353bfb0d29fdc8fc305",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A ClinicalStudyReport must reference (by IRI) the cr:Study it reports on."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#csrForStudy"
       }
     ]
   },
@@ -3057,6 +3242,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#vendorTerm"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb30092eedb3109794f46c55af225439c1194b336728f2cd58bbd39c47c4476b414",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DatabaseLock"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An eCTDSubmission must declare the cr:DatabaseLock its content is built on."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#builtOnLock"
       }
     ]
   },
@@ -3900,6 +4109,53 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#CSRResultsSectionTraceShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A results section must trace to a TLF / result (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1d948be1b6b276e2c85bc8da22828c1cc89f3cf155f4ac24a604824dc93411fd5"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#CSRSectionKindShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A CSR section should declare its kind (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb26129be86877c00d19bdc86e89c80d9f5734d4ae1e1d7646e4c772fec96af133f"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#CTCAEGradeRangeShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -4022,6 +4278,35 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ClinicalObservation"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReportShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A CSR must name its study and have sections (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb20bf3f237b06a1c4a05e3e3b560058c702b794225a58370d933019d883874ac46"
+      },
+      {
+        "@id": "_:cb2b5bb668f064b8e03c5687f6b391cbf8e6c6efe0c0b331353bfb0d29fdc8fc305"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
       }
     ]
   },
@@ -5431,6 +5716,53 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#SubmissionCompletenessShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A submission should carry its datasets + Define (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb172c1aef25a2c9c5c00053ab5015ec0f9493e2a8a7b6eae90c06b0751474b051b"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SubmissionLockHardShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A submission must be built on a hard database lock (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1855ea02bea5d08fabba4cce973bca1d012cca7dc2940793e19c8d28acb439a33"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#TLFTraceabilityShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -5859,6 +6191,38 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#WorkStream"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#eCTDSubmissionShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "An eCTD submission must be well-formed (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1d447ac2cc73ac94e982b24687cb7c7492eb387786eafc32f851a225f2179e641"
+      },
+      {
+        "@id": "_:cb2a9c97b4c54b7302f094a3e4c8a600118b0d786a1de1d745136936f86ea9fd70f"
+      },
+      {
+        "@id": "_:cb30092eedb3109794f46c55af225439c1194b336728f2cd58bbd39c47c4476b414"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCTDSubmission"
       }
     ]
   },

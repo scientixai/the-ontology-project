@@ -1,0 +1,79 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Submission core (B1) — the TERMINAL node: the eCTD submission.
+#
+# This is where TOP-CR ends. The submission is not a new source of truth — it
+# is a MANIFEST projection that references what the trial already produced:
+#   built on a HARD database lock (A1); carries the Clinical Study Report (A3),
+#   the ADaM analysis datasets (A2), and the Define-XML data definition.
+#
+# Scope boundary: TOP-CR runs trial -> regulatory submission (eCTD). Product-
+# lifecycle (label, REMS, PSUR) and commercialization (HTA, market access) are
+# deliberately OUT — sibling domains. The unit of analysis stays the STUDY.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:submissionModule a owl:Ontology ;
+    rdfs:label "TOP CR — Submission core (B1: the eCTD terminal manifest)" ;
+    rdfs:comment "The eCTD submission as a manifest referencing the locked CSR + analysis datasets + Define — the terminal projection of the trial. Reuses ClinicalStudyReport / AnalysisDataset / DatabaseLock / Study." .
+
+cr:eCTDSubmission a owl:Class ;
+    rdfs:label "eCTD Submission" ;
+    skos:definition "An electronic Common Technical Document submission to a regulator (e.g. NDA / BLA / MAA). Modeled as a manifest that references the locked, already-produced content — the Clinical Study Report, the analysis datasets, and the Define-XML — not a re-authored copy of any of it." ;
+    rdfs:comment "Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock — submitting on reversible (soft-locked) data is inadmissible." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+cr:DataDefinition a owl:Class ;
+    rdfs:label "Data Definition (Define-XML)" ;
+    skos:definition "The CDISC Define-XML metadata that describes the submitted datasets (variable-level metadata, value-level metadata, controlled terminology, computational method traceability). The map a reviewer uses to read the datasets." ;
+    rdfs:subClassOf top:Evidence .
+
+# ── Properties (all Additive per ADR-0019) ───────────────────────────────────
+
+cr:submissionForStudy a owl:ObjectProperty ;
+    rdfs:label "submission for study" ;
+    rdfs:comment "The cr:Study this submission concerns (intended range cr:Study; left open so a submission graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:eCTDSubmission ;
+    top:flavor "Additive" .
+
+cr:submissionType a owl:DatatypeProperty ;
+    rdfs:label "submission type" ;
+    rdfs:comment "The regulatory submission type, e.g. 'NDA' | 'BLA' | 'MAA' | 'supplement'." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:includesReport a owl:ObjectProperty ;
+    rdfs:label "includes report" ;
+    rdfs:comment "The Clinical Study Report the submission carries (eCTD Module 5.3.5)." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:ClinicalStudyReport ;
+    top:flavor "Additive" .
+
+cr:includesDataset a owl:ObjectProperty ;
+    rdfs:label "includes dataset" ;
+    rdfs:comment "An analysis (ADaM) dataset the submission carries (eCTD Module 5.3.x)." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:AnalysisDataset ;
+    top:flavor "Additive" .
+
+cr:includesDefine a owl:ObjectProperty ;
+    rdfs:label "includes define" ;
+    rdfs:comment "The Define-XML data definition that describes the submitted datasets." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:DataDefinition ;
+    top:flavor "Additive" .
+
+cr:builtOnLock a owl:ObjectProperty ;
+    rdfs:label "built on lock" ;
+    rdfs:comment "The DatabaseLock the submission content is built on. Ties B1 back to A1: a submission must rest on a HARD lock — reversible (soft-locked) data cannot ground a filing." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:DatabaseLock ;
+    top:flavor "Additive" .
