@@ -1,0 +1,94 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — Analysis (A2): the full traceability spine, done correctly.
+#
+#   native fact (AE) -> ADAE (analysis dataset) -> Table 14.3.1 (TLF) ->
+#   ORR endpoint result -> EOP2 decision (go) -> proposed Phase 3 design
+#
+# Every hop is prov:wasDerivedFrom, so "reproduce this table" and "on what did
+# the go-decision rest" are graph walks, not archaeology. The study is referenced
+# by IRI (defined in the set-up graph, not re-typed).
+#
+# CONFORMANT: 0 violations, 0 warnings across every baseline + A2 shape.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Native source fact (the leaf of the lineage) ──────────────────────────────
+ex:src-orr a cr:AdverseEvent ; rdfs:label "Confirmed response (source record)" ;
+    top:identifier "urn:src:orr-a2" ; top:status "active" ;
+    cr:forSubject ex:subj-a2 ;
+    top:observedAt "2026-05-15T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-05-15T12:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:inv-a2 .
+ex:subj-a2 a cr:StudySubject ;
+    top:identifier "urn:subject:A2-001" ; top:status "active" ;
+    cr:subjectId "A2-001" ;
+    top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
+ex:inv-a2 a hcls:Practitioner ; rdfs:label "Investigator" .
+ex:biostat-a2 a hcls:Practitioner ; rdfs:label "Lead Biostatistician" .
+
+# ── ADaM analysis dataset, derived from the native source ─────────────────────
+ex:adeff a cr:AnalysisDataset ; rdfs:label "ADEFF (efficacy analysis dataset)" ;
+    top:identifier "urn:adam:ADEFF" ; top:status "active" ;
+    prov:wasDerivedFrom ex:src-orr ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a2 .
+
+# ── The pre-specified statistical plan + endpoint + estimand ──────────────────
+ex:ep-orr-a2 a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
+ex:est-orr-a2 a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed responses, RECIST 1.1)" .
+ex:sap-a2 a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+
+# ── The endpoint result, reproducible to the ADaM dataset ─────────────────────
+ex:res-orr-a2 a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
+    top:identifier "urn:result:orr-a2" ; top:status "active" ;
+    cr:measuresEndpoint ex:ep-orr-a2 ;
+    cr:perEstimand ex:est-orr-a2 ;
+    cr:analyzedUnder ex:sap-a2 ;
+    prov:wasDerivedFrom ex:adeff ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a2 .
+
+# ── The TLF: pre-specified, reproducible-to-source, presents the result ───────
+ex:tlf-1431 a cr:TableListingFigure ; rdfs:label "Table 14.3.1 — ORR by treatment arm" ;
+    top:identifier "urn:tlf:14.3.1" ; top:status "active" ;
+    cr:tlfType "table" ;
+    prov:wasDerivedFrom ex:adeff ;         # reproducible to the ADaM dataset
+    cr:prespecifiedIn ex:sap-a2 ;          # grounded in the SAP (not post-hoc)
+    cr:presentsResult ex:res-orr-a2 ;
+    top:observedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a2 .
+
+# ── The EOP2 gate (meeting) — required fields + agreement + risk register ─────
+ex:agree-a2 a cr:RegulatoryAgreement ; rdfs:label "FDA agreement: primary endpoint = OS" .
+ex:rr-a2 a cr:RiskRegister ; rdfs:label "EOP2 risk register" .
+ex:eop2-a2 a cr:RegulatoryInteraction ; rdfs:label "End-of-Phase-2 meeting" ;
+    cr:meetingType "EOP2" ;
+    cr:meetingDate "2026-09-15"^^xsd:date ;
+    cr:producedAgreement ex:agree-a2 ;
+    cr:hasRiskRegister ex:rr-a2 .
+
+# ── The Phase 3 design the go-decision yields (RP2D, dose-optimized per Optimus) ─
+ex:p3design-a2 a cr:Phase3Design ; rdfs:label "Proposed Phase 3 design (RP2D, dose-optimized)" .
+
+# ── The decision node: a coded verdict resting on the TLF evidence ────────────
+ex:eop2-decision a cr:AnalysisDecision ; rdfs:label "EOP2 decision — GO to Phase 3" ;
+    top:identifier "urn:decision:eop2" ; top:status "active" ;
+    cr:decisionOutcome "go" ;
+    cr:restsOn ex:tlf-1431 , ex:res-orr-a2 ;
+    cr:decisionAtGate ex:eop2-a2 ;
+    cr:decidesStudy ex:study-opp201 ;      # study referenced by IRI
+    cr:yieldsDesign ex:p3design-a2 ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-15T16:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-a2 .

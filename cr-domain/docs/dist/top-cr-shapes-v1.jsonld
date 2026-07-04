@@ -644,6 +644,43 @@
     ]
   },
   {
+    "@id": "_:cb1a41a705d47ea0cd35232376fac7b503c03b3a12cd38df7d255589a8d083d0879",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "dose-selection"
+          },
+          {
+            "@value": "go"
+          },
+          {
+            "@value": "go-with-modification"
+          },
+          {
+            "@value": "no-go"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "AnalysisDecision.decisionOutcome must be 'go', 'no-go', 'go-with-modification', or 'dose-selection'."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#decisionOutcome"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1aad94d929e849c00e513de37760752bbbd86db6c671402a9fcfffde2c03b4219",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -683,6 +720,24 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#hasAuditTrail"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1b2b6ccb9e33cf980eb5ee20d72852149d3bfe9495552c3bd0bca8021f8c534e9",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A 'go' / 'go-with-modification' decision does not yield a Phase 3 design (cr:yieldsDesign). A go with no forward design is a decision without a consequence."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#decisionOutcome> ?o .\n              FILTER ( ?o IN ( \"go\", \"go-with-modification\" ) )\n              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#yieldsDesign> ?d }\n            }\n        "
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -797,6 +852,40 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#declaredUnitConcept"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1c7cbc419462e756ba4aa219c3fdd6f16e655e0f40cfbb43b7f26e6054b480d3a",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "figure"
+          },
+          {
+            "@value": "listing"
+          },
+          {
+            "@value": "table"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "TableListingFigure.tlfType must be 'table', 'listing', or 'figure'."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#tlfType"
       }
     ]
   },
@@ -1014,6 +1103,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/v1#status"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1e490ea782fbd65ee331a72cf6498a56ea9efc941964540af95e0f6a1ef74f4ba",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A TableListingFigure must be cr:prespecifiedIn a StatisticalAnalysisPlan. A table with no SAP grounding is post-hoc \u2014 inadmissible when presented as pivotal."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#prespecifiedIn"
       }
     ]
   },
@@ -2708,6 +2821,54 @@
     ]
   },
   {
+    "@id": "_:cb2ca8bae84db84cf9285f6621a79412630e9dcdfd7452d4a6e2003e5ef2282169a",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An AnalysisDecision must cr:restsOn at least one piece of analysis evidence (a TLF or an EndpointResult). A decision resting on nothing is a decision by assertion."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#restsOn"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2cd08e71d712f7d80a2238df8d18686868e5280a12ea783d7106610fac24d3760",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A TableListingFigure must declare prov:wasDerivedFrom an analysis dataset (reproducible to source)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2d032aae26c1c9b4942f0ea6fd012a6e302e7bc4d84459cfb76bed3cdfa8ed223",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -3581,6 +3742,35 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#AnalysisDecisionShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A gate decision must be coded and evidenced (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1a41a705d47ea0cd35232376fac7b503c03b3a12cd38df7d255589a8d083d0879"
+      },
+      {
+        "@id": "_:cb2ca8bae84db84cf9285f6621a79412630e9dcdfd7452d4a6e2003e5ef2282169a"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#AssayResultShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -4375,6 +4565,27 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#FollowUpVisit"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#GoDecisionDesignShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A go decision should yield a Phase 3 design (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1b2b6ccb9e33cf980eb5ee20d72852149d3bfe9495552c3bd0bca8021f8c534e9"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
       }
     ]
   },
@@ -5216,6 +5427,38 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TLFTraceabilityShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A TLF must trace to its ADaM source and its SAP (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1c7cbc419462e756ba4aa219c3fdd6f16e655e0f40cfbb43b7f26e6054b480d3a"
+      },
+      {
+        "@id": "_:cb1e490ea782fbd65ee331a72cf6498a56ea9efc941964540af95e0f6a1ef74f4ba"
+      },
+      {
+        "@id": "_:cb2cd08e71d712f7d80a2238df8d18686868e5280a12ea783d7106610fac24d3760"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TableListingFigure"
       }
     ]
   },

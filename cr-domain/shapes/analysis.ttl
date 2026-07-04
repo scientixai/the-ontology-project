@@ -1,0 +1,63 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Analysis core (A2) conformance. Shapes target A2 classes only, so they are
+# inert against graphs with no TLF and no gate decision.
+
+# ── A TLF must be reproducible-to-source AND pre-specified in the SAP ─────────
+# The analysis analog of the EndpointResult overstatement guard: a table
+# presented as pivotal must trace to an ADaM dataset (reproducible) and to the
+# SAP that pre-specified it (not post-hoc).
+cr:TLFTraceabilityShape a sh:NodeShape ;
+    rdfs:label "A TLF must trace to its ADaM source and its SAP (hard)" ;
+    sh:targetClass cr:TableListingFigure ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A TableListingFigure must declare prov:wasDerivedFrom an analysis dataset (reproducible to source)." ;
+    ] ;
+    sh:property [
+        sh:path cr:prespecifiedIn ; sh:minCount 1 ; sh:class cr:StatisticalAnalysisPlan ;
+        sh:message "A TableListingFigure must be cr:prespecifiedIn a StatisticalAnalysisPlan. A table with no SAP grounding is post-hoc — inadmissible when presented as pivotal." ;
+    ] ;
+    sh:property [
+        sh:path cr:tlfType ; sh:minCount 1 ;
+        sh:in ( "table" "listing" "figure" ) ;
+        sh:message "TableListingFigure.tlfType must be 'table', 'listing', or 'figure'." ;
+    ] .
+
+# ── A gate decision must be coded and must rest on evidence ───────────────────
+# The 'decision by assertion' guard: the EOP2 verdict is a coded value that
+# rests on at least one analysis output — not a free-text meeting note.
+cr:AnalysisDecisionShape a sh:NodeShape ;
+    rdfs:label "A gate decision must be coded and evidenced (hard)" ;
+    sh:targetClass cr:AnalysisDecision ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:decisionOutcome ; sh:minCount 1 ;
+        sh:in ( "go" "no-go" "go-with-modification" "dose-selection" ) ;
+        sh:message "AnalysisDecision.decisionOutcome must be 'go', 'no-go', 'go-with-modification', or 'dose-selection'." ;
+    ] ;
+    sh:property [
+        sh:path cr:restsOn ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "An AnalysisDecision must cr:restsOn at least one piece of analysis evidence (a TLF or an EndpointResult). A decision resting on nothing is a decision by assertion." ;
+    ] .
+
+# ── A 'go' decision should yield a Phase 3 design (soft) ──────────────────────
+cr:GoDecisionDesignShape a sh:NodeShape ;
+    rdfs:label "A go decision should yield a Phase 3 design (warning)" ;
+    sh:targetClass cr:AnalysisDecision ;
+    sh:sparql [
+        sh:severity sh:Warning ;
+        sh:message "A 'go' / 'go-with-modification' decision does not yield a Phase 3 design (cr:yieldsDesign). A go with no forward design is a decision without a consequence." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#decisionOutcome> ?o .
+              FILTER ( ?o IN ( "go", "go-with-modification" ) )
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#yieldsDesign> ?d }
+            }
+        """ ;
+    ] .

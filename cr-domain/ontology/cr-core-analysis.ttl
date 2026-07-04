@@ -1,0 +1,99 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Analysis core (A2) — the analysis OUTPUT and the DECISION it feeds.
+#
+# The traceability spine closeout completes:
+#   native facts -> ADaM dataset -> Table/Listing/Figure -> EndpointResult
+#                -> EOP2 decision -> Phase 3 design
+#
+# Two additions on top of the existing EOP2/ADaM layer:
+#   1. cr:TableListingFigure — the pre-specified analysis output (T/L/F), which
+#      must be reproducible-to-source AND grounded in the SAP (no post-hoc table
+#      presented as pivotal).
+#   2. cr:AnalysisDecision — the gate decision (EOP2 is the canonical instance)
+#      as a first-class, EVIDENCED node: a coded verdict resting on the analysis
+#      outputs, not a free-text "meetingOutcome" string.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:analysisModule a owl:Ontology ;
+    rdfs:label "TOP CR — Analysis core (A2: TLF outputs & the EOP2 decision node)" ;
+    rdfs:comment "Table/Listing/Figure as a pre-specified, reproducible-to-source output, and the study-gate decision as an evidenced first-class node. Reuses AnalysisDataset / EndpointResult / StatisticalAnalysisPlan / RegulatoryInteraction / Phase3Design." .
+
+# ── The analysis output (T/L/F) ──────────────────────────────────────────────
+cr:TableListingFigure a owl:Class ;
+    rdfs:label "Table / Listing / Figure (TLF)" ;
+    skos:definition "A pre-specified analysis output — a table, a listing, or a figure — built from an ADaM analysis dataset. The unit the CSR and the submission actually present. Must be reproducible to source (prov:wasDerivedFrom an AnalysisDataset) and grounded in the SAP that pre-specified it." ;
+    rdfs:comment "The tlfType qualifier (table | listing | figure) distinguishes the kind without a parallel hierarchy. A TLF that is not pre-specified is a post-hoc analysis — legitimate as exploratory, inadmissible when presented as pivotal." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned .
+
+# ── The gate decision (EOP2 is the canonical instance) ───────────────────────
+cr:AnalysisDecision a owl:Class ;
+    rdfs:label "Analysis Decision (gate)" ;
+    skos:definition "A determinate go / no-go (or modify) decision taken at a study gate on the basis of analysis outputs. The End-of-Phase-2 decision is the canonical instance: a coded verdict that rests on the evidence (TLFs / endpoint results) and yields a consequence (a proposed Phase 3 design, or a stop)." ;
+    rdfs:comment "Makes the decision a first-class, evidenced node rather than a free-text cr:meetingOutcome. The decision is bitemporal: superseding a decision (e.g. a later reversal) is a new assertion, never a rewrite." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
+
+# ── Properties (all Additive per ADR-0019) ───────────────────────────────────
+
+cr:tlfType a owl:DatatypeProperty ;
+    rdfs:label "TLF type" ;
+    rdfs:comment "Controlled: 'table' | 'listing' | 'figure'." ;
+    rdfs:domain cr:TableListingFigure ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:prespecifiedIn a owl:ObjectProperty ;
+    rdfs:label "pre-specified in" ;
+    rdfs:comment "The StatisticalAnalysisPlan that pre-specified this output. Its presence is what separates a pivotal TLF from a post-hoc one." ;
+    rdfs:domain cr:TableListingFigure ;
+    rdfs:range cr:StatisticalAnalysisPlan ;
+    top:flavor "Additive" .
+
+cr:presentsResult a owl:ObjectProperty ;
+    rdfs:label "presents result" ;
+    rdfs:comment "The EndpointResult this TLF displays (forward edge, for single-pull retrieval)." ;
+    rdfs:domain cr:TableListingFigure ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .
+
+cr:decisionOutcome a owl:DatatypeProperty ;
+    rdfs:label "decision outcome" ;
+    rdfs:comment "Controlled verdict: 'go' | 'no-go' | 'go-with-modification' | 'dose-selection'." ;
+    rdfs:domain cr:AnalysisDecision ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:restsOn a owl:ObjectProperty ;
+    rdfs:label "rests on" ;
+    rdfs:comment "The analysis evidence a decision rests on — a TableListingFigure and/or an EndpointResult. A decision that rests on nothing is a decision by assertion; its presence is required. (Range left open: both TLF (Evidence) and EndpointResult (Outcome) are valid analysis evidence.)" ;
+    rdfs:domain cr:AnalysisDecision ;
+    top:flavor "Additive" .
+
+cr:decisionAtGate a owl:ObjectProperty ;
+    rdfs:label "decision at gate" ;
+    rdfs:comment "The RegulatoryInteraction (the meeting/gate) at which this decision was taken — e.g. the EOP2 meeting." ;
+    rdfs:domain cr:AnalysisDecision ;
+    rdfs:range cr:RegulatoryInteraction ;
+    top:flavor "Additive" .
+
+cr:decidesStudy a owl:ObjectProperty ;
+    rdfs:label "decides study" ;
+    rdfs:comment "The cr:Study this gate decision concerns (intended range cr:Study; left open so a decision graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:AnalysisDecision ;
+    top:flavor "Additive" .
+
+cr:yieldsDesign a owl:ObjectProperty ;
+    rdfs:label "yields design" ;
+    rdfs:comment "The Phase3Design a 'go' (or 'go-with-modification') decision produces — the consequence edge that makes a go-decision actionable." ;
+    rdfs:domain cr:AnalysisDecision ;
+    rdfs:range cr:Phase3Design ;
+    top:flavor "Additive" .

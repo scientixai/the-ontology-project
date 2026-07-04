@@ -54,6 +54,19 @@ cr:ActivityOrderingShape a sh:NodeShape ;
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
 
+cr:AnalysisDecisionShape a sh:NodeShape ;
+    rdfs:label "A gate decision must be coded and evidenced (hard)" ;
+    sh:property [ sh:in ( "go" "no-go" "go-with-modification" "dose-selection" ) ;
+            sh:message "AnalysisDecision.decisionOutcome must be 'go', 'no-go', 'go-with-modification', or 'dose-selection'." ;
+            sh:minCount 1 ;
+            sh:path cr:decisionOutcome ],
+        [ sh:message "An AnalysisDecision must cr:restsOn at least one piece of analysis evidence (a TLF or an EndpointResult). A decision resting on nothing is a decision by assertion." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cr:restsOn ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:AnalysisDecision .
+
 cr:AssayResultShape a sh:NodeShape ;
     sh:property [ sh:class cr:AnalysisService ;
             sh:message "Assay result must reference the analysis service that produced it." ;
@@ -463,6 +476,19 @@ cr:FollowUpVisitTypeShape a sh:NodeShape ;
             sh:path cr:followUpType ;
             sh:severity sh:Warning ] ;
     sh:targetClass cr:FollowUpVisit .
+
+cr:GoDecisionDesignShape a sh:NodeShape ;
+    rdfs:label "A go decision should yield a Phase 3 design (warning)" ;
+    sh:sparql [ sh:message "A 'go' / 'go-with-modification' decision does not yield a Phase 3 design (cr:yieldsDesign). A go with no forward design is a decision without a consequence." ;
+            sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#decisionOutcome> ?o .
+              FILTER ( ?o IN ( "go", "go-with-modification" ) )
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#yieldsDesign> ?d }
+            }
+        """ ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:AnalysisDecision .
 
 cr:HighRiskMitigationShape a sh:NodeShape ;
     sh:severity sh:Violation ;
@@ -915,6 +941,23 @@ cr:StudySubjectShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path top:validFrom ] ;
     sh:targetClass cr:StudySubject .
+
+cr:TLFTraceabilityShape a sh:NodeShape ;
+    rdfs:label "A TLF must trace to its ADaM source and its SAP (hard)" ;
+    sh:property [ sh:in ( "table" "listing" "figure" ) ;
+            sh:message "TableListingFigure.tlfType must be 'table', 'listing', or 'figure'." ;
+            sh:minCount 1 ;
+            sh:path cr:tlfType ],
+        [ sh:class cr:StatisticalAnalysisPlan ;
+            sh:message "A TableListingFigure must be cr:prespecifiedIn a StatisticalAnalysisPlan. A table with no SAP grounding is post-hoc — inadmissible when presented as pivotal." ;
+            sh:minCount 1 ;
+            sh:path cr:prespecifiedIn ],
+        [ sh:message "A TableListingFigure must declare prov:wasDerivedFrom an analysis dataset (reproducible to source)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path prov:wasDerivedFrom ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass cr:TableListingFigure .
 
 cr:TransferAmendmentPropagationShape a sh:NodeShape ;
     rdfs:label "An amendment must reference the specifications it affects (hard)" ;

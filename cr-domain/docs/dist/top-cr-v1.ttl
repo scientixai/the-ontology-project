@@ -1204,6 +1204,10 @@ cr:analysisMethod a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
+cr:analysisModule a owl:Ontology ;
+    rdfs:label "TOP CR — Analysis core (A2: TLF outputs & the EOP2 decision node)" ;
+    rdfs:comment "Table/Listing/Figure as a pre-specified, reproducible-to-source output, and the study-gate decision as an evidenced first-class node. Reuses AnalysisDataset / EndpointResult / StatisticalAnalysisPlan / RegulatoryInteraction / Phase3Design." .
+
 cr:analyzedUnder a owl:ObjectProperty ;
     rdfs:domain cr:EndpointResult ;
     rdfs:range cr:StatisticalAnalysisPlan ;
@@ -1491,6 +1495,19 @@ cr:daysToQueryResolution a owl:DatatypeProperty ;
     rdfs:range xsd:decimal ;
     top:flavor "Additive" .
 
+cr:decidesStudy a owl:ObjectProperty ;
+    rdfs:label "decides study" ;
+    rdfs:comment "The cr:Study this gate decision concerns (intended range cr:Study; left open so a decision graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:AnalysisDecision ;
+    top:flavor "Additive" .
+
+cr:decisionAtGate a owl:ObjectProperty ;
+    rdfs:label "decision at gate" ;
+    rdfs:comment "The RegulatoryInteraction (the meeting/gate) at which this decision was taken — e.g. the EOP2 meeting." ;
+    rdfs:domain cr:AnalysisDecision ;
+    rdfs:range cr:RegulatoryInteraction ;
+    top:flavor "Additive" .
+
 cr:decisionMadeBy a owl:ObjectProperty ;
     rdfs:label "decision made by" ;
     rdfs:comment "The person (sponsor PM, CRO lead) who recorded this decision." ;
@@ -1499,11 +1516,15 @@ cr:decisionMadeBy a owl:ObjectProperty ;
     rdfs:subPropertyOf prov:wasAttributedTo ;
     top:flavor "Additive" .
 
-cr:decisionOutcome a owl:ObjectProperty ;
+cr:decisionOutcome a owl:DatatypeProperty,
+        owl:ObjectProperty ;
     rdfs:label "decision outcome" ;
-    rdfs:comment "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." ;
-    rdfs:domain cr:SiteSelectionDecision ;
-    rdfs:range owl:NamedIndividual ;
+    rdfs:comment "Controlled verdict: 'go' | 'no-go' | 'go-with-modification' | 'dose-selection'.",
+        "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." ;
+    rdfs:domain cr:AnalysisDecision,
+        cr:SiteSelectionDecision ;
+    rdfs:range xsd:string,
+        owl:NamedIndividual ;
     top:flavor "Additive" .
 
 cr:decisionRationale a owl:DatatypeProperty ;
@@ -2208,6 +2229,20 @@ cr:precedes a owl:ObjectProperty ;
     rdfs:range cr:PlannedActivity ;
     top:flavor "Additive" .
 
+cr:presentsResult a owl:ObjectProperty ;
+    rdfs:label "presents result" ;
+    rdfs:comment "The EndpointResult this TLF displays (forward edge, for single-pull retrieval)." ;
+    rdfs:domain cr:TableListingFigure ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .
+
+cr:prespecifiedIn a owl:ObjectProperty ;
+    rdfs:label "pre-specified in" ;
+    rdfs:comment "The StatisticalAnalysisPlan that pre-specified this output. Its presence is what separates a pivotal TLF from a post-hoc one." ;
+    rdfs:domain cr:TableListingFigure ;
+    rdfs:range cr:StatisticalAnalysisPlan ;
+    top:flavor "Additive" .
+
 cr:processingPurposes a owl:ObjectProperty ;
     rdfs:label "processing purposes" ;
     rdfs:comment "The lawful basis under which processing is authorised by this DPA." ;
@@ -2410,6 +2445,12 @@ cr:resolvedFrom a owl:ObjectProperty ;
     rdfs:label "resolved from" ;
     rdfs:comment "Binding provenance: the VendorAlias (or source corpus entry) a resolved binding was derived from. A kind of prov:wasDerivedFrom, so lineage queries traverse it natively." ;
     rdfs:subPropertyOf prov:wasDerivedFrom ;
+    top:flavor "Additive" .
+
+cr:restsOn a owl:ObjectProperty ;
+    rdfs:label "rests on" ;
+    rdfs:comment "The analysis evidence a decision rests on — a TableListingFigure and/or an EndpointResult. A decision that rests on nothing is a decision by assertion; its presence is required. (Range left open: both TLF (Evidence) and EndpointResult (Outcome) are valid analysis evidence.)" ;
+    rdfs:domain cr:AnalysisDecision ;
     top:flavor "Additive" .
 
 cr:retentionBasis a owl:ObjectProperty ;
@@ -2655,6 +2696,13 @@ cr:timingType a owl:DatatypeProperty ;
     rdfs:domain cr:Timing ;
     top:flavor "Additive" .
 
+cr:tlfType a owl:DatatypeProperty ;
+    rdfs:label "TLF type" ;
+    rdfs:comment "Controlled: 'table' | 'listing' | 'figure'." ;
+    rdfs:domain cr:TableListingFigure ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:toState a owl:DatatypeProperty ;
     rdfs:label "to state" ;
     rdfs:domain cr:CustodyEvent ;
@@ -2805,6 +2853,13 @@ cr:witnessedBy a owl:ObjectProperty ;
     rdfs:comment "The person who witnessed the consent signing." ;
     rdfs:domain cr:InformedConsent ;
     rdfs:range hcls:Person .
+
+cr:yieldsDesign a owl:ObjectProperty ;
+    rdfs:label "yields design" ;
+    rdfs:comment "The Phase3Design a 'go' (or 'go-with-modification') decision produces — the consequence edge that makes a go-decision actionable." ;
+    rdfs:domain cr:AnalysisDecision ;
+    rdfs:range cr:Phase3Design ;
+    top:flavor "Additive" .
 
 cr:yieldsResult a owl:ObjectProperty ;
     rdfs:label "yields result" ;
@@ -3586,11 +3641,6 @@ cr:StartVisit a hcls:Action ;
     hcls:occursIn cr:VisitExecutionSubPhase ;
     hcls:operatesOn cr:VisitOccurrence .
 
-cr:StatisticalAnalysisPlan a owl:Class ;
-    rdfs:label "Statistical Analysis Plan" ;
-    rdfs:comment "The pre-specified plan for analyzing the study's data." ;
-    rdfs:subClassOf top:Evidence .
-
 cr:SubmitExpeditedReport a hcls:Action ;
     rdfs:label "Submit Expedited Report" ;
     hcls:authorizedAgentType cr:PharmacovigilianceSpecialist ;
@@ -3883,11 +3933,6 @@ cr:NonclinicalFinding a owl:Class ;
     rdfs:comment "An observed animal toxicity/finding that the clinical protocol must address." ;
     rdfs:subClassOf top:Outcome .
 
-cr:Phase3Design a owl:Class ;
-    rdfs:label "Proposed Phase 3 Design" ;
-    rdfs:comment "A proposed Phase 3 trial design taken to the EOP2 meeting." ;
-    rdfs:subClassOf top:Scope .
-
 cr:RecordFinding a hcls:Action ;
     rdfs:label "Record Finding" ;
     hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
@@ -3914,6 +3959,11 @@ cr:RiskSignal a owl:Class ;
     rdfs:comment "A leading indicator (a trend or metric) that flags a deviation antecedent before it manifests — the signal a provenance-native graph can hold as low-trust, provenance-tagged evidence." ;
     rdfs:subClassOf top:Evidence,
         top:Versioned .
+
+cr:StatisticalAnalysisPlan a owl:Class ;
+    rdfs:label "Statistical Analysis Plan" ;
+    rdfs:comment "The pre-specified plan for analyzing the study's data." ;
+    rdfs:subClassOf top:Evidence .
 
 cr:UpdateCRF a hcls:Action ;
     rdfs:label "Update CRF" ;
@@ -3985,6 +4035,11 @@ cr:DatabaseUnlock a owl:Class ;
         top:Versioned ;
     skos:definition "A controlled, reasoned reopening of a locked database (e.g. a late data correction). It references the DatabaseLock it reopens and records a reason — the audit gate that makes post-lock change legitimate rather than silent." .
 
+cr:Phase3Design a owl:Class ;
+    rdfs:label "Proposed Phase 3 Design" ;
+    rdfs:comment "A proposed Phase 3 trial design taken to the EOP2 meeting." ;
+    rdfs:subClassOf top:Scope .
+
 cr:PlannedEncounter a owl:Class ;
     rdfs:label "Planned Encounter" ;
     rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." ;
@@ -4017,6 +4072,13 @@ cr:SubmitMonitoringReport a hcls:Action ;
     hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
     hcls:occursIn cr:OversightSubPhase ;
     hcls:operatesOn cr:VisitOccurrence .
+
+cr:TableListingFigure a owl:Class ;
+    rdfs:label "Table / Listing / Figure (TLF)" ;
+    rdfs:comment "The tlfType qualifier (table | listing | figure) distinguishes the kind without a parallel hierarchy. A TLF that is not pre-specified is a post-hoc analysis — legitimate as exploratory, inadmissible when presented as pivotal." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:definition "A pre-specified analysis output — a table, a listing, or a figure — built from an ADaM analysis dataset. The unit the CSR and the submission actually present. Must be reproducible to source (prov:wasDerivedFrom an AnalysisDataset) and grounded in the SAP that pre-specified it." .
 
 cr:TransferAmendment a owl:Class ;
     rdfs:label "Transfer Amendment" ;
@@ -4093,12 +4155,6 @@ cr:EligibilityCriterion a owl:Class ;
         "An inclusion/exclusion rule defining who may enroll." ;
     rdfs:subClassOf top:Constraint .
 
-cr:EndpointResult a owl:Class ;
-    rdfs:label "Endpoint Result" ;
-    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned .
-
 cr:ItemGroup a owl:Class ;
     rdfs:label "Item Group" ;
     rdfs:comment "A logical clustering of items (ItemGroupOID)." ;
@@ -4142,6 +4198,13 @@ cr:Visit a owl:Class ;
     rdfs:subClassOf cr:StudyEvent,
         top:Temporal .
 
+cr:AnalysisDecision a owl:Class ;
+    rdfs:label "Analysis Decision (gate)" ;
+    rdfs:comment "Makes the decision a first-class, evidenced node rather than a free-text cr:meetingOutcome. The decision is bitemporal: superseding a decision (e.g. a later reversal) is a new assertion, never a rewrite." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned ;
+    skos:definition "A determinate go / no-go (or modify) decision taken at a study gate on the basis of analysis outputs. The End-of-Phase-2 decision is the canonical instance: a coded verdict that rests on the evidence (TLFs / endpoint results) and yields a consequence (a proposed Phase 3 design, or a stop)." .
+
 cr:CloseoutPhase a hcls:Phase ;
     rdfs:label "Closeout" ;
     rdfs:comment "From last patient last visit (LPLV) through regulatory submission and study archival. Includes database lock, CSR, and eTMF finalization." ;
@@ -4164,6 +4227,12 @@ cr:DeviationEvent a owl:Class ;
 cr:E6R3Glossary a skos:ConceptScheme ;
     rdfs:label "ICH E6(R3) glossary (selected terms)" ;
     rdfs:comment "Definitional concepts cited to ICH E6(R3); related to the cr: class/relation that realizes each, where one exists." .
+
+cr:EndpointResult a owl:Class ;
+    rdfs:label "Endpoint Result" ;
+    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned .
 
 cr:LawfulBasis a owl:Class ;
     rdfs:label "Lawful Basis" ;
@@ -4422,15 +4491,15 @@ cr:DataManager a owl:Class ;
     rdfs:comment "Creates and locks CRFs, manages queries, reconciles lab and date data, and manages data transfers. Dual-lens: sees CRF as data source for analysis (sponsor perspective)." ;
     rdfs:subClassOf hcls:Person .
 
-cr:RegulatoryInteraction a owl:Class ;
-    rdfs:label "Regulatory Interaction" ;
-    rdfs:comment "Pre-IND / EOP2 meeting." ;
-    rdfs:subClassOf top:Temporal .
-
 cr:SponsorQualityStaff a owl:Class ;
     rdfs:label "Sponsor Quality" ;
     rdfs:comment "Classifies, approves, and closes deviations. Conducts audits and risk assessments; manages CAPAs. OOUX persona aliases: Sponsor Quality, Quality, Auditor." ;
     rdfs:subClassOf hcls:Person .
+
+cr:RegulatoryInteraction a owl:Class ;
+    rdfs:label "Regulatory Interaction" ;
+    rdfs:comment "Pre-IND / EOP2 meeting." ;
+    rdfs:subClassOf top:Temporal .
 
 cr:SponsorOperationsStaff a owl:Class ;
     rdfs:label "Sponsor Operations" ;

@@ -1,0 +1,49 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DELIBERATELY BROKEN counterpart of analysis-tlf-conformant.ttl — proves the
+# A2 shapes bite. Two defects, each a documented Violation:
+#
+#   1. A TLF derived from an ADaM dataset but with NO cr:prespecifiedIn — a
+#      post-hoc table presented as if pivotal        (cr:TLFTraceabilityShape)
+#   2. An EOP2 decision with a coded outcome but cr:restsOn NOTHING — a
+#      decision by assertion                          (cr:AnalysisDecisionShape)
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:biostat-bad a hcls:Practitioner ; rdfs:label "Biostatistician" .
+
+ex:adhoc-src a cr:AnalysisDataset ; rdfs:label "ADHOC (analysis dataset)" ;
+    top:identifier "urn:adam:ADHOC" ; top:status "active" ;
+    prov:wasDerivedFrom ex:some-native-fact ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-bad .
+
+# (1) post-hoc TLF: reproducible to a dataset, but NOT pre-specified in any SAP
+ex:tlf-posthoc a cr:TableListingFigure ; rdfs:label "Table 99 — favorable subgroup (post-hoc)" ;
+    top:identifier "urn:tlf:99" ; top:status "active" ;
+    cr:tlfType "table" ;
+    prov:wasDerivedFrom ex:adhoc-src ;
+    top:observedAt "2026-08-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-20T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-bad .
+    # no cr:prespecifiedIn -> cr:TLFTraceabilityShape (Violation)
+
+# (2) decision by assertion: a coded 'go' that rests on no evidence
+ex:decision-vibes a cr:AnalysisDecision ; rdfs:label "EOP2 decision — GO (unevidenced)" ;
+    top:identifier "urn:decision:vibes" ; top:status "active" ;
+    cr:decisionOutcome "go" ;
+    cr:yieldsDesign ex:p3design-bad ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-15T16:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:biostat-bad .
+    # no cr:restsOn -> cr:AnalysisDecisionShape (Violation)
+
+ex:p3design-bad a cr:Phase3Design ; rdfs:label "Proposed Phase 3 design" .

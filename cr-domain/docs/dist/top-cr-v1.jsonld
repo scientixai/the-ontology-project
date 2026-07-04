@@ -491,6 +491,35 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Makes the decision a first-class, evidenced node rather than a free-text cr:meetingOutcome. The decision is bitemporal: superseding a decision (e.g. a later reversal) is a new assertion, never a rewrite."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Analysis Decision (gate)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Outcome"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A determinate go / no-go (or modify) decision taken at a study gate on the basis of analysis outputs. The End-of-Phase-2 decision is the canonical instance: a coded verdict that rests on the evidence (TLFs / endpoint results) and yields a consequence (a proposed Phase 3 design, or a stop)."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#AnalysisRequest",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -8533,6 +8562,35 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#TableListingFigure",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The tlfType qualifier (table | listing | figure) distinguishes the kind without a parallel hierarchy. A TLF that is not pre-specified is a post-hoc analysis \u2014 legitimate as exploratory, inadmissible when presented as pivotal."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Table / Listing / Figure (TLF)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A pre-specified analysis output \u2014 a table, a listing, or a figure \u2014 built from an ADaM analysis dataset. The unit the CSR and the submission actually present. Must be reproducible to source (prov:wasDerivedFrom an AnalysisDataset) and grounded in the SAP that pre-specified it."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#TerminateStartupPackage",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -9892,6 +9950,22 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#analysisModule",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Table/Listing/Figure as a pre-specified, reproducible-to-source output, and the study-gate decision as an evidenced first-class node. Reuses AnalysisDataset / EndpointResult / StatisticalAnalysisPlan / RegulatoryInteraction / Phase3Design."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TOP CR \u2014 Analysis core (A2: TLF outputs & the EOP2 decision node)"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#analyzedUnder",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11221,6 +11295,63 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#decidesStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The cr:Study this gate decision concerns (intended range cr:Study; left open so a decision graph can reference the study by IRI without re-typing it \u2014 avoids the RDFS target cascade)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decides study"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#decisionAtGate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The RegulatoryInteraction (the meeting/gate) at which this decision was taken \u2014 e.g. the EOP2 meeting."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "decision at gate"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RegulatoryInteraction"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#decisionMadeBy",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -11259,14 +11390,21 @@
   {
     "@id": "https://top.scientix.ai/cr/v1#decisionOutcome",
     "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty",
       "http://www.w3.org/2002/07/owl#ObjectProperty"
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Controlled verdict: 'go' | 'no-go' | 'go-with-modification' | 'dose-selection'."
+      },
       {
         "@value": "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      },
       {
         "@id": "https://top.scientix.ai/cr/v1#SiteSelectionDecision"
       }
@@ -11277,6 +11415,9 @@
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      },
       {
         "@id": "http://www.w3.org/2002/07/owl#NamedIndividual"
       }
@@ -14515,6 +14656,68 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#presentsResult",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The EndpointResult this TLF displays (forward edge, for single-pull retrieval)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TableListingFigure"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "presents result"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EndpointResult"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#prespecifiedIn",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The StatisticalAnalysisPlan that pre-specified this output. Its presence is what separates a pivotal TLF from a post-hoc one."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TableListingFigure"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "pre-specified in"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StatisticalAnalysisPlan"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#principalInvestigator",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -15451,6 +15654,32 @@
     "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
       {
         "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#restsOn",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The analysis evidence a decision rests on \u2014 a TableListingFigure and/or an EndpointResult. A decision that rests on nothing is a decision by assertion; its presence is required. (Range left open: both TLF (Evidence) and EndpointResult (Outcome) are valid analysis evidence.)"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "rests on"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -16540,6 +16769,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#tlfType",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Controlled: 'table' | 'listing' | 'figure'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TableListingFigure"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "TLF type"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#toState",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -17195,6 +17455,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#yieldsDesign",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The Phase3Design a 'go' (or 'go-with-modification') decision produces \u2014 the consequence edge that makes a go-decision actionable."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "yields design"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Phase3Design"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
       }
     ]
   },
