@@ -89,6 +89,35 @@ already uses everywhere:
 Rule of thumb: **if USDM models it in the one study model, so do we** — divergence rides on the
 shared spine as subtypes, enum values, and graded shapes, never a fork.
 
+### The narrative test (Two Worlds)
+
+The Scientix "Two Worlds" narrative is the reference case for this whole boundary, and it turns
+on a **combination product**: a subcutaneous auto-injector delivering a partial dose. That single
+event is at once an adverse event (clinical), a plunger-performance observation (device), a
+tooling/silicone root cause (CMC), a lot→batch trace (supply chain), and a DSMB/MDR interaction
+(regulatory).
+
+- **Company A** loses because those readings live in **separate systems joined after the fact** —
+  22 days of email chains, ServiceNow tickets, and a 47-page PDF to rebuild the provenance. That
+  cross-silo reconstruction *is* a domain boundary expressed as org chart.
+- **Company B** wins because "the graph already contains the relationships": the device observation
+  and the clinical AE are **nodes in one graph**, so the lot trace is one query, not three weeks.
+
+The lesson has **two levels**, and the boundary honors both:
+
+1. **Substrate — genuinely one.** TOP Core + W3C PROV + open standards (NGSI-LD, CDISC, IDMP, GS1)
+   are the shared "nervous system." Sibling domains are **not** Company-A silos — they federate
+   through that shared provenance/identity fabric. "Already a single graph" is substrate-unity, not
+   a monolithic module.
+2. **Within `cr:` — devices are not a sibling.** The auto-injector is the *same study, same product,
+   same signal* as the clinical event, so `cr:DeviceDeficiency` sits next to `cr:AdverseEvent` in one
+   safety model. Bifurcate them and the DSMB can no longer see one subject-level safety picture — you
+   have rebuilt Company A *inside* one domain.
+
+A separate `devices:` domain with a hand-maintained `cr:` ↔ `devices:` crosswalk would be exactly the
+"point-to-point, brittle, expensive" integration the narrative indicts. **Non-bifurcation is the
+thesis, not a detail.**
+
 ## How the boundary is enforced in the model
 
 - The study is referenced **by IRI** across closeout graphs (`cr:decidesStudy`,
