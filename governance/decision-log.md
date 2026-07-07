@@ -29,6 +29,8 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
 | [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Accepted (resolves ADR-0018 forward-looking note) |
 | [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
+| ADR-0022 | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Proposed (on `main`; this branch forked before it landed — see `main` for the full text) |
+| [ADR-0023](#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo) | 2026-07-07 | Hub-and-spoke domains — Core owns the contract and the registry; each domain owns its repo | Proposed (invokes ADR-0017's reassessment trigger) |
 
 ---
 
@@ -1071,6 +1073,55 @@ All four questions accepted as recommended:
 ### Status
 
 Accepted 2026-06-20. The bitemporal vocabulary (`top:validFrom`, `top:validUntil`, `top:Versioned`), `top:BitemporalShape`, and the Tier-1 enforcement shapes land in `core/v1/shapes.ttl` alongside this acceptance, with a versioned walkthrough under `core/v1/walkthroughs/`. The first-principles § 4 "(Proposed)" marker is removed. Out of scope here (follow-on work): Tier-2 propagation and the Tier-3 linter rule, the temporal query layer, and the Broker ingestion lift.
+
+---
+
+## ADR-0023: Hub-and-spoke domains — Core owns the contract and the registry; each domain owns its repo
+
+**Date:** 2026-07-07 · **Status:** Proposed (invokes the reassessment trigger documented in [ADR-0017](#adr-0017-monorepo-with-directory-scoped-ownership); supersedes ADR-0017's monorepo answer for *domains* while keeping its governance machinery) · **Refs:** [`governance/extension-contract.md`](extension-contract.md), [`governance/working-groups.md`](working-groups.md), [`cr-domain/`](../cr-domain/) (the forcing case), [`cr-domain/BOUNDARIES.md`](../cr-domain/BOUNDARIES.md)
+
+### Context
+
+ADR-0017 chose a monorepo with directory-scoped ownership, and explicitly documented its own escape hatch: *"If a specific WG's pace of change overwhelms the monorepo's PR queue, or if a working group requires repository-level autonomy that CODEOWNERS cannot deliver, a new ADR proposes spinning that WG out."*
+
+The first fully built-out domain — clinical research (`cr-domain/`, 53 commits over one sprint) — is that case. Built on a branch "for expediency and ease," it never merged to `main`, and the reason is structural, not neglect. The convener's framing:
+
+> "Imagine if you had 20 different domains feeding into the top, all in a single repo. That would be chaotic and non-functional. … We have a hard decision to make as to how we go forward in a democratized manner, in a decentralized way where domain ownership could be outside of the top core repo."
+
+The evidence from the one domain that exists: `cr-domain/` is a complete project embedded in another project — its own `LICENSE`, `NOTICE`, `CHANGELOG.md`, `README.md`, test harness, build scripts, docs site, and release cadence. It shares nothing *mechanical* with Core (no `owl:imports`, no pinned Core version; its `top:` references resolve by namespace string alone). At 20 domains this becomes one merge queue, one permissions model, and CODEOWNERS as the only ownership boundary — a bottleneck, not a commons. And the ownership TOP actually wants — a pharma consortium or standards-adjacent group *owning* a domain — will never be accepted when ownership is expressed as write access to someone else's repository.
+
+The prior art is the OBO Foundry pattern: a hub that owns the upper ontology, a conformance contract, and a registry; spokes (domain ontologies) that live in independently owned repositories and conform to the contract. ADR-0017 already rejected git submodules ("operationally cursed") and reserved deployment-time assembly as the polyrepo path — this ADR takes that reserved path.
+
+### Decision
+
+**TOP adopts a hub-and-spoke topology for domains.** The core repository (`scientixai/the-ontology-project`) owns exactly three things:
+
+1. **The upper ontology** — `core/v1/` (Universal DNA, the eight CLOs, Core shapes), published as a versioned, checksummed, consumable artifact that domain repos pin against.
+2. **The extension contract, made executable** — `governance/extension-contract.md` graduates from prose to a CI template a domain repo adopts. Conformance is mechanical, not social: (a) imports/pins Core at a stated version; (b) every entity class satisfies the Universal DNA shapes; (c) the domain's own SHACL suite passes with negative tests proving shapes bite; (d) dist artifacts are byte-reproducible with published checksums; (e) namespace and IRI scheme follow Core conventions.
+3. **The domain registry** — a plain registry file in the core repo: domain name, owning organization/working group, repo URL, namespace, pinned Core version, contract-conformance status. Discoverability without coupling. The public site (`top.scientix.ai`) is assembled at deploy time from Core plus registered domains — the "deployment topology decoupled from source topology" option ADR-0017 explicitly held open.
+
+**Each domain lives in its own repository**, owned, versioned, licensed, and released by whoever governs it. Domain working groups get repository-level autonomy; Core's authority over them is the contract, nothing more.
+
+**Clinical research extracts at its V1 milestone.** `cr-domain/` finishes V1 on its current branch (the consistency fixes, docs completion, and release discipline are prerequisites regardless of topology). The V1 release event *is* the extraction: cut the CR v1 tag, `git subtree split` the `cr-domain/` directory into its own repository (full history preserved), register it as the first registry entry, and stand up the executable-contract CI as part of the move. CR becomes the reference implementation of the contract.
+
+**Explicitly rejected:** (a) git submodules — re-affirming ADR-0017's rejection; the registry gives the same discoverability without the coupling; (b) merging `cr-domain/` to `main` first and extracting later — that would build monorepo CI plumbing only to discard it, and would publish a topology this ADR immediately deprecates.
+
+### Consequences
+
+- **Democratized ownership becomes real.** A domain can be owned by an external organization from day one; joining TOP means conforming to the contract and registering, not being granted write access.
+- **The Core seam must become a real interface — this is now blocking.** Decentralization is impossible while domains reference `top:` classes by namespace string with no import closure, no pinned Core artifact, and non-resolving IRIs. Publishing Core as a versioned consumable (checksummed dist, resolvable or w3id IRIs, one canonical `top:UniversalDNAShape`) is the prerequisite work, and the known Core↔CR conflicts (duplicate shape IRI with divergent targets, dangling upper-class references) must be resolved before the contract can be enforced on anyone.
+- **Cross-cutting changes lose atomicity.** A Core rename is no longer one commit across all domains — it is a Core release plus per-domain upgrade PRs against pinned versions. This is the deliberate price of autonomy; the contract's version pin makes the upgrade explicit rather than implicit.
+- **CI lands in the right place once.** No workflow automation is built in the monorepo for domains; the executable contract template is built once and adopted per domain repo, starting with CR.
+- **ADR-0017's machinery survives where it applies.** CODEOWNERS, RFCs, branch protection, and working-group lifecycle continue to govern the core repo itself. What ADR-0017 called "per-directory versioning" for future domains becomes per-repository versioning.
+- **The site stays unified.** `top.scientix.ai` remains one front door; the deploy pipeline assembles Core pages plus each registered domain's published docs (e.g. `/cr/`).
+
+### What this changes vs. earlier ADRs
+
+Supersedes ADR-0017's answer for *domain* topology by invoking its own documented reassessment trigger; retains ADR-0017's governance scaffolding for the core repo. Consistent with ADR-0004 (domains as composable extensions of Core, not sibling reference graphs — this ADR changes where extensions *live*, not what they *are*) and ADR-0019 (Open Core, constrained extension — the executable contract is that constraint, enforced by CI).
+
+### Status
+
+Proposed. Sequencing: (1) finish CR V1 on its branch; (2) publish Core as a versioned artifact and resolve the Core↔CR seam conflicts; (3) build the executable-contract CI template; (4) tag CR v1, subtree-split to its own repo, register it; (5) wire the deploy-time site assembly. Acceptance lands when the convener ratifies and step 4 completes with CR as the first registered domain.
 
 ---
 
