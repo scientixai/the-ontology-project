@@ -25,6 +25,33 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Added — Operator thesaurus & vocabulary discipline (ADR-0024)
+
+The Pipeline layer-1/layer-4 build: operator dialects through the pipeline.
+
+- **`ontology/cr-thesaurus.ttl`** — the dialect layer: `skos:prefLabel`/`altLabel`/
+  `hiddenLabel` for ~60 concepts (acronyms, spelling variants, workplace shorthand;
+  standards jargon and lay terms routed as hidden labels, never promoted), with
+  SKOS-XL reified labels carrying `dct:source` where provenance is load-bearing.
+  Seeded from the Clinical Trial Operating Model practitioner document (2026-07).
+- **`cr:AmbiguousTermsWatchList`** — the ADR-0024 gate: six high-ambiguity terms
+  (agent, subject, monitor, arm, site, screen), each with an anti-synonym /
+  context-routing scope note; new labels matching a member require one.
+- **"Participant" is the preferred label** for `cr:StudySubject` (ADR-0024;
+  first-principles P2). IRI unchanged; "patient" routed, not promoted; the PII
+  boundary held by homonym routing (`hcls:Person` scope note).
+- **ADR-0024 known deviations recorded in-file**: `cr:SeriousAdverseEvent`,
+  `cr:DoseLimitingToxicity`, `cr:SUSAR` are classifications-as-subclasses,
+  slated for a promote-to-fact refactor in a dedicated safety-module pass.
+- **`conventions.md`** — vocabulary conventions (cover dialects generously; route
+  borrowed registers; gate only the watch-list; provenance where it matters) +
+  the one-question class-creation gate + BFO-carried-at-Core policy.
+- **Harness `vocab` gate (4 checks)** — labels attach only to defined terms;
+  prefLabel unique per concept and unshared; watch-list members carry routing
+  notes; no `bfo:` IRIs leak into domain modules.
+- **Docs** — glossary gains an "also known as" column rendered live from the
+  thesaurus.
+
 ### Changed — V1 hardening: Core↔CR seam, coherence gates, docs parity
 
 Consistency and interface work toward a credible v1 (ADR-0023). No breaking IRI

@@ -144,6 +144,9 @@ def main():
     # (n) competency questions — the reusable business queries answer as documented
     cq_passed, cq_total = competency_checks(ont_graph, failures)
 
+    # (o) vocabulary — the thesaurus layer holds its ADR-0024 contract
+    vb_passed, vb_total = vocab_checks(ont_graph, failures)
+
     _report([
         ("coherence", co_passed, co_total),
         ("seam", sm_passed, sm_total),
@@ -160,7 +163,95 @@ def main():
         ("ncit", nv_passed, nv_total),
         ("view", vw_passed, vw_total),
         ("competency", cq_passed, cq_total),
+        ("vocab", vb_passed, vb_total),
     ], failures)
+
+
+def vocab_checks(ont_graph, failures):
+    """The thesaurus layer (ontology/cr-thesaurus.ttl) holds its ADR-0024 contract:
+    (1) every subject carrying a SKOS label is a term defined in the ontology (or a
+        reified skosxl:Label / the watch-list collection) — no labels on phantom IRIs;
+    (2) skos:prefLabel is unique per concept and no two concepts share one;
+    (3) every watch-list member carries an anti-synonym / routing skos:scopeNote;
+    (4) no BFO IRIs leak into domain modules (alignment is carried at Core — ADR-0024)."""
+    from rdflib import Namespace, OWL
+    SKOS_NS = Namespace("http://www.w3.org/2004/02/skos/core#")
+    SKOSXL = Namespace("http://www.w3.org/2008/05/skos-xl#")
+    path = os.path.join(ROOT, "ontology", "cr-thesaurus.ttl")
+    if not os.path.exists(path):
+        return 0, 0
+    th = Graph(); th.parse(path, format="turtle")
+    defined = set(ont_graph.subjects(RDF.type, OWL.Class)) | \
+        set(ont_graph.subjects(RDF.type, OWL.ObjectProperty)) | \
+        set(ont_graph.subjects(RDF.type, OWL.DatatypeProperty))
+    xl_labels = set(th.subjects(RDF.type, SKOSXL.Label))
+    collections = set(th.subjects(RDF.type, SKOS_NS.Collection))
+    ontologies = set(th.subjects(RDF.type, OWL.Ontology))
+    total = passed = 0
+
+    # (1) labels attach only to defined terms
+    total += 1
+    labeled = set()
+    for p in (SKOS_NS.prefLabel, SKOS_NS.altLabel, SKOS_NS.hiddenLabel,
+              SKOS_NS.scopeNote, SKOSXL.altLabel):
+        labeled |= set(th.subjects(p, None))
+    phantoms = sorted(str(s) for s in labeled
+                      if s not in defined and s not in xl_labels
+                      and s not in collections and s not in ontologies)
+    if not phantoms:
+        passed += 1; print(f"[PASS] vocab: all {len(labeled)} labeled subjects are defined terms")
+    else:
+        failures.append(("VOCAB", "phantom-labels", str(phantoms)))
+        print(f"[FAIL] vocab: labels on undefined terms: {phantoms}")
+
+    # (2) prefLabel unique per concept, and no two concepts share one
+    total += 1
+    problems = []
+    seen = {}
+    for s in set(th.subjects(SKOS_NS.prefLabel, None)):
+        prefs = list(th.objects(s, SKOS_NS.prefLabel))
+        if len(prefs) > 1:
+            problems.append(f"{s} has {len(prefs)} prefLabels")
+        for pl in prefs:
+            key = str(pl).lower()
+            if key in seen and seen[key] != s:
+                problems.append(f"prefLabel '{pl}' shared by {seen[key]} and {s}")
+            seen[key] = s
+    if not problems:
+        passed += 1; print(f"[PASS] vocab: {len(seen)} prefLabels, one per concept, none shared")
+    else:
+        failures.append(("VOCAB", "prefLabel", str(problems)))
+        print(f"[FAIL] vocab: prefLabel problems: {problems}")
+
+    # (3) watch-list members carry routing scope notes
+    total += 1
+    wl = URIRef(str(CR) + "AmbiguousTermsWatchList")
+    members = list(th.objects(wl, SKOS_NS.member))
+    unnoted = sorted(str(m) for m in members if th.value(m, SKOS_NS.scopeNote) is None)
+    if members and not unnoted:
+        passed += 1; print(f"[PASS] vocab: watch-list has {len(members)} gated terms, all with routing notes")
+    else:
+        failures.append(("VOCAB", "watch-list", f"members={len(members)} unnoted={unnoted}"))
+        print(f"[FAIL] vocab: watch-list unnoted members: {unnoted}")
+
+    # (4) BFO stays at Core — no bfo: IRIs in domain modules
+    total += 1
+    leaks = []
+    for f in sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl"))):
+        g = Graph(); g.parse(f, format="turtle")
+        for s, p, o in g:
+            for term in (s, p, o):
+                if isinstance(term, URIRef) and "purl.obolibrary.org/obo/bfo" in str(term):
+                    leaks.append(os.path.basename(f))
+                    break
+    leaks = sorted(set(leaks))
+    if not leaks:
+        passed += 1; print("[PASS] vocab: no bfo: IRIs in domain modules (alignment carried at Core, ADR-0024)")
+    else:
+        failures.append(("VOCAB", "bfo-leak", str(leaks)))
+        print(f"[FAIL] vocab: bfo: IRIs leaked into domain modules: {leaks}")
+
+    return passed, total
 
 
 def competency_checks(ont_graph, failures):

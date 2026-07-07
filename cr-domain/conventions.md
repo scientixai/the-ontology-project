@@ -60,3 +60,35 @@ but controlled (adverse-event follow-up, emergency unblinding). Under GDPR it re
   reference encodes the *invariant* (containment); the *mechanism* is runtime/IP, out of scope.
 - **Limit:** validation catches structural leaks, not PII smuggled into free-text labels/values —
   that is an upstream redaction responsibility.
+
+## Vocabulary — operator dialects through the pipeline (ADR-0024)
+
+The operator names the entity; the pipeline makes it rigorous (manifesto; first-principles P1/P2/P7).
+The dialect layer lives in `ontology/cr-thesaurus.ttl` and follows four rules:
+
+1. **Cover dialects generously.** Every known practitioner term for a modeled concept lands as a
+   `skos:altLabel` (acronyms, spelling variants, workplace shorthand). Coverage is the point —
+   findability in the operator's own words. `skos:prefLabel` equals `rdfs:label` (one preferred
+   name; "Participant" for `cr:StudySubject` per ADR-0024).
+2. **Route, don't promote, the borrowed registers.** Standards jargon (`ResearchSubject`,
+   `ItemData`, `Encounter`) and lay terms ("side effect") are `skos:hiddenLabel`s — searchable,
+   never displayed. Standards vocabulary belongs to the projection layer.
+3. **Gate the watch-list, nothing else.** Terms with high ambiguity or high cross-pattern
+   matching (`agent`, `subject`, `monitor`, `arm`, `site`, `screen`) live in
+   `cr:AmbiguousTermsWatchList` as SKOS-XL labels; each carries an anti-synonym / context-routing
+   `skos:scopeNote`, and **no new label matching a watch-list term lands without one**. Calls are
+   made per term; there is deliberately no general restriction rule.
+4. **Provenance where it matters.** A label whose origin is load-bearing (who says this, which
+   document) is reified as a `skosxl:Label` with `dct:source`. The first seeding source is the
+   Clinical Trial Operating Model practitioner document (2026-07).
+
+**Class-creation gate (P5/P6, ADR-0024).** Before minting a class, ask one question: *is this a
+distinct thing, or a classification of a thing?* A real workflow boundary or distinct structure
+earns a class (`cr:InformedConsent`, `cr:DatabaseLock`). A judgment-against-criteria is a
+**promoted fact** with the "type" derived as a view — never a subclass. Known deviations
+(recorded, not yet refactored): `cr:SeriousAdverseEvent`, `cr:DoseLimitingToxicity`, `cr:SUSAR`.
+
+**BFO (ADR-0024).** Full alignment, carried at the Core layer: the CLO→BFO bridge lives in
+`core/v1` (CLO-level where the category is BFO-homogeneous, leaf-level where it is not). Domain
+modules align to Core only and inherit BFO transitively — a `bfo:` IRI in a `cr:` module is a
+review-time defect.

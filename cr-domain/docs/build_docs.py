@@ -775,7 +775,8 @@ def glossary_body():
         ("USDM", "Unified Study Definition Model (CDISC DDF) &mdash; the design-time study model this domain crosswalks to; devices stay in-model per USDM."),
     ]
     arows = "".join(f"<tr><td><b>{esc(t)}</b></td><td>{d}</td></tr>" for t, d in acronyms)
-    # Live from the model: every cr: class with a label + definition/comment.
+    # Live from the model: every cr: class with a label + definition/comment,
+    # plus its operator dialects from the thesaurus (ADR-0024 layer 1/4).
     seen, model_rows = set(), []
     for s in sorted(MERGED.subjects(RDF.type, OWL.Class), key=lambda x: str(MERGED.value(x, RDFS.label) or x)):
         if not str(s).startswith(MAST["namespace"]):
@@ -787,9 +788,12 @@ def glossary_body():
         defn = MERGED.value(s, SKOS.definition) or MERGED.value(s, RDFS.comment)
         if defn is None:
             continue
+        alts = sorted(str(a) for a in MERGED.objects(s, SKOS.altLabel))
+        aka = ", ".join(esc(a) for a in alts) if alts else "&mdash;"
         model_rows.append(f"<tr><td><code>{esc(qn(s))}</code></td><td>{esc(label)}</td>"
+                          f"<td class='muted' style='font-size:12px'>{aka}</td>"
                           f"<td>{esc(defn)}</td></tr>")
-    model_tbl = ("<table class='ref'><tr><th>IRI</th><th>term</th><th>definition</th></tr>"
+    model_tbl = ("<table class='ref'><tr><th>IRI</th><th>term</th><th>also known as</th><th>definition</th></tr>"
                  + "".join(model_rows) + "</table>")
     return (
         "<h1>Glossary</h1>"

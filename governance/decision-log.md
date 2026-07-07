@@ -31,6 +31,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
 | ADR-0022 | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Proposed (on `main`; this branch forked before it landed — see `main` for the full text) |
 | [ADR-0023](#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo) | 2026-07-07 | Hub-and-spoke domains — Core owns the contract and the registry; each domain owns its repo | Proposed (invokes ADR-0017's reassessment trigger) |
+| [ADR-0024](#adr-0024-operator-vocabulary-through-the-pipeline-bfo-at-core-participant-preflabel-promote-dont-subclass) | 2026-07-07 | Operator vocabulary through the pipeline — BFO-at-Core, Participant prefLabel, promote-don't-subclass | Accepted |
 
 ---
 
@@ -1122,6 +1123,94 @@ Supersedes ADR-0017's answer for *domain* topology by invoking its own documente
 ### Status
 
 Proposed. Sequencing: (1) finish CR V1 on its branch; (2) publish Core as a versioned artifact and resolve the Core↔CR seam conflicts; (3) build the executable-contract CI template; (4) tag CR v1, subtree-split to its own repo, register it; (5) wire the deploy-time site assembly. Acceptance lands when the convener ratifies and step 4 completes with CR as the first registered domain.
+
+---
+
+## ADR-0024: Operator vocabulary through the pipeline — BFO-at-Core, Participant prefLabel, promote-don't-subclass
+
+**Date:** 2026-07-07 · **Status:** Accepted · **Refs:** [first-principles.md](../first-principles.md) (P1, P2, P5, P6, P7), [manifesto](../manifesto.html) ("The operator names the entity. The pipeline makes it rigorous."), [`cr-domain/conventions.md`](../cr-domain/conventions.md), ADR-0019 (flavors), ADR-0021 (bitemporal)
+
+### Context
+
+The CR domain's V1 gap analysis surfaced a plain-language practitioner vocabulary (the Clinical
+Trial Operating Model document) that the reference must answer to, and a first-principles audit
+found Pipeline layers 1 and 4 (controlled vocabulary, thesaurus) essentially absent: no SKOS-XL,
+no anti-synonyms, no homonym routing, sourced definitions in one module. Before building that
+layer, three foundational tensions between operator language (P1/P2) and ontology rigor (P7)
+needed adjudication. The convener ruled on all three:
+
+> "I want to be careful that we don't become dogmatic about BFO because it has many sharp edges."
+> "'Participant' is definitely the preferred label … for clinical research."
+> "If we have known dialects of terms and can cover them, why not? … terms with high ambiguity or
+> high cross-pattern matching could be problematic. We might have to make calls on certain terms,
+> but to create a general rule, I'm not sure we need to do that."
+
+### Decision
+
+**1. BFO alignment is full, and carried at the Core layer — never in domains.**
+TOP Core *is* the project's abstraction of BFO. The bridge is asserted at the **most honest
+level**: on a Category-Level Object when the whole category maps to one BFO parent (Agent →
+`bfo:IndependentContinuant`, Location → `bfo:Site`, Temporal → `bfo:Process`, Evidence →
+`bfo:GenericallyDependentContinuant`), and on the **leaves** when the category is BFO-heterogeneous
+(Resource spans `bfo:MaterialEntity`/GDC; Outcome spans GDC/`bfo:ProcessBoundary`/`bfo:MaterialEntity`;
+Constraint spans `bfo:Quality`/GDC). `core/v1/modules/` already implements this pattern; this ADR
+codifies it as policy. Domain modules (`cr:` and successors) align to Core only and inherit BFO
+**transitively**; a `bfo:` IRI appearing in a domain module is a review-time defect. Where BFO's
+sharper distinctions (role vs. disposition vs. quality; RO relation strictness) would force
+artificial choices, alignment deliberately **stops at the Core layer** — full where honest, silent
+where sharp, dogmatic nowhere.
+
+**2. "Participant" is the preferred label for the in-study identity.**
+Per P2 (entity names come from operator vocabulary — the principle's own example: "Yes:
+`Participant`. No: `ResearchSubject`"). The IRI stays `cr:StudySubject` (IRIs are stable;
+labels are the operator surface); `rdfs:label` and `skos:prefLabel` become "Participant", with
+"study subject", "subject", and "patient" as `skos:altLabel`s (the industry drift toward
+"patient" is noted, not adopted). The **PII boundary is preserved by homonym routing, not by the
+label**: "Participant" names the pseudonymous in-study identity; the identifiable human remains
+`hcls:Person`; the only bridge remains the attested `cr:Enrollment`. This also retires the
+undefined `cr:Participant`/`cr:Recruit` fossil classes found in legacy examples.
+
+**3. Vocabulary posture: cover dialects generously; gate case-by-case; no rigid general rule.**
+Two axes, two instruments — neither a bureaucracy:
+
+- **Synonyms (Pipeline layer 1/4).** Every known practitioner dialect of a term is covered
+  (`skos:altLabel`, with SKOS-XL labels carrying provenance for who-says-it). Coverage is the
+  point — the difference between 70% and 80% findability. The only gate is a **watch-list of
+  high-ambiguity / high-cross-pattern terms** (e.g. *agent, subject, monitor, arm, site, screen*)
+  which require an anti-synonym note and context routing before their labels land. Calls are made
+  per term, not by general rule.
+- **Entity types (P5).** One question gates class creation: **"Is this a distinct thing, or a
+  classification of a thing?"** A distinct workflow boundary or distinct structure earns a class
+  (`cr:InformedConsent`, `cr:DatabaseLock`). A judgment-against-criteria is a **promoted fact**
+  (P6) with the "type" derived as a view — never a subclass.
+
+**Known deviations, recorded not refactored (v1):** `cr:SeriousAdverseEvent`,
+`cr:DoseLimitingToxicity`, and `cr:SUSAR` are classifications-as-subclasses that predate this
+rule (seriousness is a judgment against criteria, exactly like causality — which the model
+already promotes as `cr:CausalityAssessment`). They stay as-is in v1 because the SAE expedited-
+reporting shapes and worked examples depend on them; they are marked in-file as ADR-0024
+deviations and are refactored to promoted facts + derived views in a **dedicated safety-module
+pass**, not opportunistically.
+
+### Consequences
+
+- The layer-1/layer-4 vocabulary build is unblocked and has a settled shape: a thesaurus module
+  per domain (SKOS + SKOS-XL with provenance), seeded from practitioner sources (the Clinical
+  Trial Operating Model document is the first), with the watch-list as a first-class artifact.
+- The domain never pays BFO's complexity tax directly; ontologist-facing rigor is answered at the
+  Core seam ("full alignment, carried at Core").
+- Docs surfaces (glossary, reference) render the alias layer so plain-language search works.
+- The class-creation gate becomes part of review discipline (and is candidate for a future
+  coherence check); the three recorded deviations are the test cases for the promote-to-fact
+  refactor.
+- `hcls:Person` vs Participant routing is documented wherever "participant" appears — the label
+  concession never weakens the PII containment invariant.
+
+### Status
+
+Accepted 2026-07-07. Ships with: `cr-domain/ontology/cr-thesaurus.ttl` (dialect + watch-list
+layer), the Participant relabel, ADR-deviation notes in `cr-core-safety.ttl` / `cr-core.ttl`,
+vocabulary conventions in `cr-domain/conventions.md`, and a harness gate for the thesaurus.
 
 ---
 

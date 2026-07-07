@@ -30,7 +30,7 @@ cr:SafetyReport a owl:Class ;
 
 cr:SeriousAdverseEvent a owl:Class ;
     rdfs:label "Serious Adverse Event" ;
-    rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting)." ;
+    rdfs:comment "An adverse event meeting seriousness criteria (expedited reporting). ADR-0024 known deviation: seriousness is a judgment against ICH E2A criteria — the same shape as cr:CausalityAssessment, which the model already promotes to a fact. Slated to become a promoted seriousness assessment with 'SAE' derived as a view, in a dedicated safety-module pass (the expedited-reporting shapes and worked examples currently depend on this class)." ;
     rdfs:subClassOf cr:AdverseEvent .
 
 # MedDRA properties on AdverseEvent (US-300-001)
@@ -79,7 +79,7 @@ cr:ctcaeVersion a owl:DatatypeProperty ;
 # SUSAR class and reporting clock (US-300-003)
 cr:SUSAR a owl:Class ;
     rdfs:label "SUSAR" ;
-    rdfs:comment "Suspected Unexpected Serious Adverse Reaction — requires expedited regulatory reporting (7 days fatal/life-threatening, 15 days other)." ;
+    rdfs:comment "Suspected Unexpected Serious Adverse Reaction — requires expedited regulatory reporting (7 days fatal/life-threatening, 15 days other). ADR-0024 known deviation: 'suspected' (causality) and 'unexpected' (vs. reference safety information) are judgments against criteria; refactors together with cr:SeriousAdverseEvent in the dedicated safety-module pass." ;
     rdfs:subClassOf cr:SeriousAdverseEvent .
 
 cr:reportingDeadline a owl:DatatypeProperty ;

@@ -1,0 +1,378 @@
+@prefix cr:     <https://top.scientix.ai/cr/v1#> .
+@prefix hcls:   <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix skosxl: <http://www.w3.org/2008/05/skos-xl#> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+
+#
+# TOP CR — Thesaurus (Pipeline layers 1 & 4, per ADR-0024)
+#
+# The dialect layer: every known practitioner term for a modeled concept, so an
+# operator (or an agent) searching in their own vocabulary finds the formal term.
+# Posture (ADR-0024): cover dialects GENEROUSLY; gate only the high-ambiguity /
+# high-cross-pattern terms on the watch-list at the end of this file, each of
+# which carries an anti-synonym / context-routing note.
+#
+# Conventions:
+#   skos:prefLabel  — the one preferred (operator) name; equals rdfs:label.
+#   skos:altLabel   — practitioner dialects, acronyms, spelling variants.
+#   skos:hiddenLabel— terms we ROUTE but do not promote: standards jargon
+#                     (ResearchSubject, ItemData) and lay terms (side effect).
+#   skosxl:altLabel — reified labels where provenance matters (who says this),
+#                     carrying dct:source; used for the watch-list and for terms
+#                     sourced from practitioner documents.
+#
+# Primary practitioner source for this seeding:
+#   "Clinical Trial Operating Model" (operator source document, 2026-07),
+#   abbreviated OPMODEL in dct:source below. Role aliases come from the OOUX
+#   persona aliases already recorded in cr-core-roles.ttl (ROLES).
+#
+
+<https://top.scientix.ai/cr/v1/thesaurus> a owl:Ontology ;
+    dct:title "TOP CR — operator thesaurus (dialects, acronyms, routing)" ;
+    owl:versionInfo "1.0" ;
+    rdfs:comment "Controlled-vocabulary + thesaurus layer for the CR domain (ADR-0024; first-principles P7 layers 1 and 4). Labels only — no classes or properties are defined here." .
+
+# ── The participant (the ADR-0024 headline ruling) ───────────────────────────
+
+cr:StudySubject
+    skos:prefLabel "Participant"@en ;
+    skos:altLabel "study participant"@en , "study subject"@en , "subject"@en ;
+    skos:hiddenLabel "ResearchSubject"@en , "patient"@en ;
+    skos:scopeNote "ADR-0024: 'Participant' is the preferred operator label for the pseudonymous in-study identity (IRI stays cr:StudySubject for stability). 'Patient' is routed but not promoted — industry drift toward 'patient' is noted; in clinical research the person is a participant, patient only in care contexts. The identifiable human is hcls:Person, never this class; the only bridge is the attested cr:Enrollment."@en ;
+    skosxl:altLabel cr:xl-participant-patient .
+
+cr:xl-participant-patient a skosxl:Label ;
+    skosxl:literalForm "patient"@en ;
+    dct:source "Industry drift observed by convener, 2026-07 (ADR-0024): 'There are indications that the industry is moving to patient, but for clinical research, participant should be the preferred label.'" ;
+    skos:scopeNote "Routed to cr:StudySubject in study context; routed to hcls:Person in care-delivery context."@en .
+
+hcls:Person
+    skos:scopeNote "The identifiable human — PII, boundary-only. When an operator says 'participant' or 'patient' about in-study data, route to cr:StudySubject; this class is only for the site-sovereign identity behind the enrollment bridge."@en .
+
+# ── Safety ───────────────────────────────────────────────────────────────────
+
+cr:AdverseEvent
+    skos:prefLabel "Adverse Event"@en ;
+    skos:altLabel "AE"@en , "adverse experience"@en , "safety event"@en ;
+    skos:hiddenLabel "side effect"@en , "adverse reaction"@en ;
+    skos:scopeNote "'Side effect' (lay) and 'adverse reaction' (implies causality) are routed here but not promoted: an AE makes no causality claim — that is cr:CausalityAssessment."@en .
+
+cr:SeriousAdverseEvent
+    skos:prefLabel "Serious Adverse Event"@en ;
+    skos:altLabel "SAE"@en .
+
+cr:SUSAR
+    skos:prefLabel "SUSAR"@en ;
+    skos:altLabel "suspected unexpected serious adverse reaction"@en .
+
+cr:SafetyReport
+    skos:prefLabel "Safety Report"@en ;
+    skos:altLabel "expedited report"@en , "15-day report"@en , "IND safety report"@en .
+
+cr:CausalityAssessment
+    skos:prefLabel "Causality Assessment"@en ;
+    skos:altLabel "causality"@en , "relatedness"@en , "attribution"@en .
+
+cr:DoseLimitingToxicity
+    skos:prefLabel "Dose-Limiting Toxicity"@en ;
+    skos:altLabel "DLT"@en .
+
+# ── Participant-facing conduct ───────────────────────────────────────────────
+
+cr:InformedConsent
+    skos:prefLabel "Informed Consent"@en ;
+    skos:altLabel "consent"@en , "eConsent"@en , "consenting"@en ;
+    skos:hiddenLabel "ICF"@en ;
+    skos:scopeNote "'ICF' (the form) is routed here but names the document; this class is the ACT of consenting. The customized consent form itself is a startup artifact typed via the TMF scheme."@en .
+
+cr:ConsentWithdrawal
+    skos:prefLabel "Consent Withdrawal"@en ;
+    skos:altLabel "withdrawal of consent"@en , "revoked consent"@en .
+
+cr:Enrollment
+    skos:prefLabel "Enrollment"@en ;
+    skos:altLabel "enrolment"@en , "study entry"@en , "onboarding"@en ,
+        "registration"@en .
+
+cr:EligibilityCriterion
+    skos:prefLabel "Eligibility Criterion"@en ;
+    skos:altLabel "inclusion criterion"@en , "exclusion criterion"@en ,
+        "I/E criteria"@en , "entry criteria"@en .
+
+cr:VisitOccurrence
+    skos:prefLabel "Visit Occurrence"@en ;
+    skos:altLabel "visit"@en , "study visit"@en , "patient visit"@en ,
+        "encounter"@en ;
+    skos:hiddenLabel "Encounter"@en ;
+    skos:scopeNote "FHIR/USDM 'Encounter' is the standards term (projection layer); the operator word is 'visit'."@en .
+
+cr:ActivityOccurrence
+    skos:prefLabel "Activity Occurrence"@en ;
+    skos:altLabel "procedure"@en , "assessment performed"@en , "study task"@en ;
+    skos:scopeNote "The universal performed-activity node (first-principles P5): blood draw, ECG, MRI, ePRO completion are all this class, specialized by biomedical-concept code — never by subclass."@en .
+
+# ── Study design & startup ───────────────────────────────────────────────────
+
+cr:Study
+    skos:prefLabel "Study"@en ;
+    skos:altLabel "trial"@en , "clinical trial"@en , "clinical study"@en , "protocol"@en ;
+    skos:scopeNote "'Protocol' is routed here when the speaker means the study itself ('this protocol is enrolling'); the versioned protocol document is cr:ProtocolVersion."@en .
+
+cr:ProtocolVersion
+    skos:prefLabel "Protocol Version"@en ;
+    skos:altLabel "protocol"@en , "protocol amendment"@en , "amendment"@en .
+
+cr:Arm
+    skos:prefLabel "Arm"@en ;
+    skos:altLabel "treatment arm"@en , "study arm"@en , "treatment group"@en ;
+    skosxl:altLabel cr:xl-arm .
+
+cr:Endpoint
+    skos:prefLabel "Endpoint"@en ;
+    skos:altLabel "outcome measure"@en , "efficacy endpoint"@en .
+
+cr:Estimand
+    skos:prefLabel "Estimand"@en .
+
+cr:StoppingRule
+    skos:prefLabel "Stopping Rule"@en ;
+    skos:altLabel "futility rule"@en , "safety stopping boundary"@en .
+
+cr:InvestigationalProduct
+    skos:prefLabel "Investigational Product"@en ;
+    skos:altLabel "IP"@en , "IMP"@en , "study drug"@en ,
+        "investigational medicinal product"@en , "test article"@en .
+
+cr:StudySite
+    skos:prefLabel "Study Site"@en ;
+    skos:altLabel "site"@en , "clinical site"@en , "investigative site"@en ,
+        "research site"@en ;
+    skosxl:altLabel cr:xl-site .
+
+cr:ClinicalTrialAgreement
+    skos:prefLabel "Clinical Trial Agreement (CTA)"@en ;
+    skos:altLabel "CTA"@en , "site contract"@en , "contract"@en ,
+        "clinical trial agreement"@en .
+
+cr:SiteActivation
+    skos:prefLabel "Site Activation"@en ;
+    skos:altLabel "activation"@en , "green light"@en , "site ready"@en .
+
+cr:SiteInitiationVisit
+    skos:prefLabel "Site Initiation Visit"@en ;
+    skos:altLabel "SIV"@en , "initiation visit"@en .
+
+cr:StudyStartupPackage
+    skos:prefLabel "Study Startup Package"@en ;
+    skos:altLabel "startup package"@en , "site package"@en , "award package"@en .
+
+cr:IRBApproval
+    skos:prefLabel "IRB Approval"@en ;
+    skos:altLabel "ethics approval"@en , "IEC approval"@en , "EC approval"@en .
+
+# ── Data capture & management ────────────────────────────────────────────────
+
+cr:ClinicalObservation
+    skos:prefLabel "Clinical Observation"@en ;
+    skos:altLabel "captured value"@en , "data point"@en , "CRF value"@en ;
+    skos:hiddenLabel "ItemData"@en ;
+    skos:scopeNote "'ItemData' is the CDISC ODM term (projection layer); operators say 'the value' or 'the data point'."@en .
+
+cr:Query
+    skos:prefLabel "Query"@en ;
+    skos:altLabel "data query"@en , "discrepancy"@en , "data clarification"@en ,
+        "DCF"@en .
+
+cr:CaseReportForm
+    skos:prefLabel "Case Report Form"@en ;
+    skos:altLabel "CRF"@en .
+
+cr:eCRF
+    skos:prefLabel "eCRF"@en ;
+    skos:altLabel "electronic case report form"@en , "electronic CRF"@en .
+
+cr:SourceDocument
+    skos:prefLabel "Source Document"@en ;
+    skos:altLabel "source doc"@en , "source"@en , "worksheet"@en .
+
+cr:SourceData
+    skos:prefLabel "Source Data"@en ;
+    skos:altLabel "original data"@en .
+
+cr:DataTransferAgreement
+    skos:prefLabel "Data Transfer Agreement"@en ;
+    skos:altLabel "DTA"@en , "data transfer spec"@en , "DTS"@en ,
+        "vendor data agreement"@en .
+
+cr:DatabaseLock
+    skos:prefLabel "Database Lock"@en ;
+    skos:altLabel "DB lock"@en , "hard lock"@en , "soft lock"@en , "data lock"@en ;
+    skos:scopeNote "Operators say 'the finish line'; soft vs hard is carried by cr:lockType, not by separate classes (ADR-0024 one-question gate: a classification, not a kind)."@en .
+
+cr:DatabaseUnlock
+    skos:prefLabel "Database Unlock"@en ;
+    skos:altLabel "unlock"@en , "database reopen"@en .
+
+# ── Oversight & quality ──────────────────────────────────────────────────────
+
+cr:RiskAssessment
+    skos:prefLabel "Risk Assessment"@en ;
+    skos:altLabel "risk review"@en , "RACT entry"@en .
+
+cr:CriticalToQualityFactor
+    skos:prefLabel "Critical-to-Quality Factor"@en ;
+    skos:altLabel "CtQ"@en , "CtQ factor"@en , "critical data and processes"@en .
+
+cr:RiskSignal
+    skos:prefLabel "Risk Signal"@en ;
+    skos:altLabel "KRI signal"@en , "key risk indicator"@en , "KRI"@en .
+
+cr:DeviationEvent
+    skos:prefLabel "Deviation Event"@en ;
+    skos:altLabel "protocol deviation"@en , "deviation"@en , "PD"@en ,
+        "protocol violation"@en .
+
+cr:CAPA
+    skos:prefLabel "CAPA"@en ;
+    skos:altLabel "corrective and preventive action"@en , "corrective action"@en .
+
+cr:Delegation
+    skos:prefLabel "Delegation"@en ;
+    skos:altLabel "delegation of authority"@en , "DoA"@en , "task delegation"@en .
+
+cr:Attestation
+    skos:prefLabel "Attestation"@en ;
+    skos:altLabel "sign-off"@en , "signature"@en , "signed statement"@en .
+
+cr:Credential
+    skos:prefLabel "Credential"@en ;
+    skos:altLabel "training record"@en , "certification"@en , "qualification"@en .
+
+cr:Capability
+    skos:prefLabel "Capability"@en ;
+    skos:altLabel "delegable task"@en , "authorized task"@en .
+
+cr:AuditTrail
+    skos:prefLabel "Audit Trail"@en ;
+    skos:altLabel "audit log"@en , "change history"@en .
+
+cr:TrialMasterFile
+    skos:prefLabel "Trial Master File"@en ;
+    skos:altLabel "TMF"@en , "eTMF"@en .
+
+cr:EssentialRecord
+    skos:prefLabel "Essential Record"@en ;
+    skos:altLabel "essential document"@en .
+
+# ── Roles (persona aliases, promoted from cr-core-roles comments) ─────────────
+
+cr:Investigator
+    skos:prefLabel "Investigator"@en ;
+    skos:altLabel "PI"@en , "principal investigator"@en , "doctor"@en ;
+    skos:scopeNote "ROLES: OOUX persona aliases."@en .
+
+cr:SiteCoordinator
+    skos:prefLabel "Site Coordinator"@en ;
+    skos:altLabel "CRC"@en , "study coordinator"@en , "coordinator"@en ,
+        "research coordinator"@en ;
+    skos:scopeNote "ROLES: OOUX persona aliases."@en .
+
+cr:ClinicalResearchAssociate
+    skos:prefLabel "Clinical Research Associate"@en ;
+    skos:altLabel "CRA"@en , "site monitor"@en ;
+    skos:hiddenLabel "monitor"@en ;
+    skos:scopeNote "ROLES: OOUX persona aliases. 'Monitor' is on the watch-list: the person (CRA), the activity (monitoring visit), and central/medical monitoring are different things."@en ;
+    skosxl:altLabel cr:xl-monitor .
+
+cr:PharmacovigilianceSpecialist
+    skos:prefLabel "Pharmacovigilance Specialist"@en ;
+    skos:altLabel "PV"@en , "safety specialist"@en , "drug safety"@en .
+
+cr:DataManager
+    skos:prefLabel "Data Manager"@en ;
+    skos:altLabel "DM"@en , "clinical data manager"@en , "CDM"@en .
+
+# ── Biospecimen & analysis ───────────────────────────────────────────────────
+
+hcls:Specimen
+    skos:prefLabel "Specimen"@en ;
+    skos:altLabel "sample"@en , "biospecimen"@en , "aliquot"@en ,
+        "blood sample"@en .
+
+cr:AssayResult
+    skos:prefLabel "Assay Result"@en ;
+    skos:altLabel "lab result"@en , "lab value"@en , "test result"@en .
+
+cr:AnalysisDataset
+    skos:prefLabel "Analysis Dataset"@en ;
+    skos:altLabel "ADaM dataset"@en , "analysis data"@en .
+
+cr:StatisticalAnalysisPlan
+    skos:prefLabel "Statistical Analysis Plan"@en ;
+    skos:altLabel "SAP"@en .
+
+cr:TableListingFigure
+    skos:prefLabel "Table, Listing or Figure"@en ;
+    skos:altLabel "TLF"@en , "TFL"@en , "output"@en , "display"@en .
+
+cr:EndpointResult
+    skos:prefLabel "Endpoint Result"@en ;
+    skos:altLabel "result"@en , "primary result"@en , "topline result"@en .
+
+cr:ClinicalStudyReport
+    skos:prefLabel "Clinical Study Report"@en ;
+    skos:altLabel "CSR"@en , "study report"@en .
+
+cr:eCTDSubmission
+    skos:prefLabel "eCTD Submission"@en ;
+    skos:altLabel "submission"@en , "filing"@en , "NDA"@en , "BLA"@en ,
+        "marketing application"@en .
+
+cr:AnalysisDecision
+    skos:prefLabel "Analysis Decision"@en ;
+    skos:altLabel "go/no-go"@en , "gate decision"@en , "go decision"@en .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WATCH-LIST — high-ambiguity / high-cross-pattern terms (ADR-0024 gate).
+# Each entry is a reified SKOS-XL label with an anti-synonym / routing note.
+# A new label matching one of these terms must NOT land without a routing note.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:AmbiguousTermsWatchList a skos:Collection ;
+    skos:prefLabel "Ambiguous-terms watch-list"@en ;
+    skos:definition "Terms with high ambiguity or high cross-pattern matching (ADR-0024). Coverage elsewhere is generous; THESE are gated: any label whose literal form matches a member requires an explicit anti-synonym / context-routing scope note before it lands."@en ;
+    skos:member cr:xl-agent , cr:xl-subject , cr:xl-monitor , cr:xl-arm ,
+        cr:xl-site , cr:xl-screen .
+
+cr:xl-agent a skosxl:Label ;
+    skosxl:literalForm "agent"@en ;
+    dct:source "First-principles P7 CV-obligations (anti-synonym example)" ;
+    skos:scopeNote "ANTI-SYNONYM: pharmacological 'agent' (the drug/substance) is NOT top:Agent (an actor bearing responsibility). Route drug-sense to cr:InvestigationalProduct / hcls:Substance; actor-sense to top:Agent."@en .
+
+cr:xl-subject a skosxl:Label ;
+    skosxl:literalForm "subject"@en ;
+    dct:source "First-principles P7 CV-obligations (homonym-routing example); OPMODEL" ;
+    skos:scopeNote "HOMONYM: human-research 'subject' routes to cr:StudySubject (prefLabel Participant, ADR-0024); animal-research 'subject' is out of this domain; grammatical/email 'subject' is noise. Never route to hcls:Person."@en .
+
+cr:xl-monitor a skosxl:Label ;
+    skosxl:literalForm "monitor"@en ;
+    dct:source "OPMODEL §2.5 Oversight; ROLES persona aliases" ;
+    skos:scopeNote "HOMONYM: the person (cr:ClinicalResearchAssociate), the visit (monitoring visit), the discipline (risk-based / central / medical monitoring — distinct capabilities), and the verb. Default routing: the CRA role; qualify otherwise."@en .
+
+cr:xl-arm a skosxl:Label ;
+    skosxl:literalForm "arm"@en ;
+    dct:source "OPMODEL §1.1 Study Design" ;
+    skos:scopeNote "HOMONYM: treatment arm (cr:Arm) vs the anatomical arm (blood-draw laterality, injection site). Study-design context routes to cr:Arm; clinical-procedure context is anatomical."@en .
+
+cr:xl-site a skosxl:Label ;
+    skosxl:literalForm "site"@en ;
+    dct:source "OPMODEL §1.4 Site Selection" ;
+    skos:scopeNote "HOMONYM: the investigative site (cr:StudySite, an organization) vs bfo:Site / top:Location (a place) vs injection/body site vs website. Default routing in this domain: cr:StudySite."@en .
+
+cr:xl-screen a skosxl:Label ;
+    skosxl:literalForm "screen"@en ;
+    dct:source "OPMODEL §2.2 Recruitment" ;
+    skos:scopeNote "HOMONYM: eligibility screening (the recruitment-funnel activity — vocabulary lands with the funnel model, a declared V1 deferral) vs screen failure vs the UI screen. No default routing; qualify."@en .
