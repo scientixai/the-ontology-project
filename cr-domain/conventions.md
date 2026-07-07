@@ -7,7 +7,7 @@ Category-Level Objects). Every TOP entity carries **three strands of Universal D
 - **time** — `top:observedAt` (valid-time instant; the canonical NGSI-LD term);
 - **lifecycle** — `top:status` (e.g. `active`, `superseded`, `retired`).
 
-`top:UniversalDNAShape` enforces identity + lifecycle; the bitemporal envelope below
+`cr:UniversalDNAShape` (the domain application of core's `top:UniversalDNAShape`) enforces identity + lifecycle; the bitemporal envelope below
 enforces the time strand (`observedAt`) plus transaction time and provenance.
 
 Every assertion that a regulator could ever ask about carries **two time axes** and

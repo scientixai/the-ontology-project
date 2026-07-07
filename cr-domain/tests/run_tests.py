@@ -71,6 +71,15 @@ def main():
     shapes_graph = load_graph(shape_files) if shape_files else Graph()
     ont_graph = load_graph(ont_files) if ont_files else Graph()
 
+    # (a2) T-box coherence: no duplicate class definitions across modules,
+    # no dangling top:/cr:/hcls: references. Catches the participant-module
+    # class of drift (dangling upper class, re-defined classes) mechanically.
+    co_passed, co_total = coherence_checks(ont_files, ont_graph, failures)
+
+    # (a3) Core seam: the local top-core stub must stay aligned with the PINNED
+    # TOP Core artifact (upstream-pin.json), modulo the documented divergences.
+    sm_passed, sm_total = seam_checks(failures)
+
     # (b) SHACL cases (severity-aware)
     cases = json.load(open(os.path.join(ROOT, "tests", "manifest.json")))
     passed = 0
@@ -133,6 +142,8 @@ def main():
     vw_passed, vw_total = view_checks(failures)
 
     _report([
+        ("coherence", co_passed, co_total),
+        ("seam", sm_passed, sm_total),
         ("SHACL", passed, len(cases)),
         ("bitemporal", bt_passed, bt_total),
         ("projections", pj_passed, pj_total),
@@ -146,6 +157,118 @@ def main():
         ("ncit", nv_passed, nv_total),
         ("view", vw_passed, vw_total),
     ], failures)
+
+
+def coherence_checks(ont_files, ont_graph, failures):
+    """T-box coherence across the module set (vendor/ excluded by the glob):
+
+    (1) A class is defined (typed owl:Class) in at most ONE module file —
+        duplicate definitions merge into contradictory superclass sets.
+    (2) Every top:/cr:/hcls: IRI used as a superclass, domain, or range in a
+        module resolves to a class defined somewhere in the merged set — no
+        dangling upper references (the top-core.ttl stub closes the top: terms).
+    (3) No two module files claim the same owl:Ontology IRI.
+    """
+    from rdflib import OWL, RDFS
+    owned = ("https://top.scientix.ai/v1#",
+             "https://top.scientix.ai/cr/v1#",
+             "https://top.scientix.ai/hcls/v1#")
+    total = passed = 0
+
+    # (1) duplicate class definitions
+    total += 1
+    defined_in = {}
+    for f in ont_files:
+        g = Graph(); g.parse(f, format="turtle")
+        for c in set(g.subjects(RDF.type, OWL.Class)):
+            defined_in.setdefault(c, []).append(os.path.basename(f))
+    dups = {c: fs for c, fs in defined_in.items() if len(fs) > 1}
+    if not dups:
+        passed += 1; print(f"[PASS] coherence: {len(defined_in)} classes, each defined in exactly one module")
+    else:
+        for c, fs in sorted(dups.items()):
+            failures.append(("COHERENCE", "duplicate-class", f"{c} defined in {fs}"))
+        print(f"[FAIL] coherence: {len(dups)} classes defined in more than one module: "
+              f"{ {str(c): fs for c, fs in dups.items()} }")
+
+    # (2) dangling superclass / domain / range references in owned namespaces
+    total += 1
+    defined = set(defined_in)
+    dangling = set()
+    for pred in (RDFS.subClassOf, RDFS.domain, RDFS.range):
+        for o in set(ont_graph.objects(None, pred)):
+            if isinstance(o, URIRef) and str(o).startswith(owned) and o not in defined:
+                dangling.add(o)
+    if not dangling:
+        passed += 1; print("[PASS] coherence: no dangling top:/cr:/hcls: superclass, domain, or range references")
+    else:
+        for d in sorted(dangling):
+            failures.append(("COHERENCE", "dangling-ref", str(d)))
+        print(f"[FAIL] coherence: dangling references: {sorted(str(d) for d in dangling)}")
+
+    # (3) unique owl:Ontology IRIs per module file
+    total += 1
+    ont_iris = {}
+    for f in ont_files:
+        g = Graph(); g.parse(f, format="turtle")
+        for oi in set(g.subjects(RDF.type, OWL.Ontology)):
+            ont_iris.setdefault(oi, []).append(os.path.basename(f))
+    oidups = {oi: fs for oi, fs in ont_iris.items() if len(fs) > 1}
+    if not oidups:
+        passed += 1; print(f"[PASS] coherence: {len(ont_iris)} owl:Ontology headers, no IRI claimed twice")
+    else:
+        for oi, fs in sorted(oidups.items()):
+            failures.append(("COHERENCE", "duplicate-ontology-iri", f"{oi} in {fs}"))
+        print(f"[FAIL] coherence: ontology IRI claimed by multiple files: "
+              f"{ {str(o): fs for o, fs in oidups.items()} }")
+
+    return passed, total
+
+
+def seam_checks(failures):
+    """Core↔domain seam (ADR-0023): verify (1) the pinned Core artifact's checksum,
+    and (2) that every top: term in the local stub (ontology/top-core.ttl) exists in
+    that pinned artifact — except the divergences upstream-pin.json documents.
+    Skips silently when the pin file or Core artifact is absent (post-extraction,
+    the pin will point at a fetched release instead of a sibling directory)."""
+    import hashlib
+    pin_path = os.path.join(ROOT, "upstream-pin.json")
+    if not os.path.exists(pin_path):
+        return 0, 0
+    pin = json.load(open(pin_path))
+    core_path = os.path.join(os.path.dirname(ROOT), pin["artifact"])
+    if not os.path.exists(core_path):
+        print("[SKIP] seam: pinned Core artifact not present (extracted repo?)")
+        return 0, 0
+    total = passed = 0
+
+    total += 1
+    sha = hashlib.sha256(open(core_path, "rb").read()).hexdigest()
+    if sha == pin["sha256"]:
+        passed += 1; print(f"[PASS] seam: Core artifact matches pin ({sha[:12]}…)")
+    else:
+        failures.append(("SEAM", "pin", f"expected {pin['sha256']}, got {sha} — "
+                         "Core changed; re-review the stub, then update upstream-pin.json deliberately"))
+        print("[FAIL] seam: Core artifact does not match upstream-pin.json")
+
+    total += 1
+    from rdflib import OWL
+    core = Graph(); core.parse(core_path, format="turtle")
+    core_terms = {s for s in core.subjects(None, None) if isinstance(s, URIRef)}
+    stub = Graph(); stub.parse(os.path.join(ROOT, pin["stub"]), format="turtle")
+    allowed = set(pin["documented_divergences"]["classes"]) | \
+        set(pin["documented_divergences"]["properties"])
+    top_ns = "https://top.scientix.ai/v1#"
+    undocumented = sorted(
+        str(s) for s in stub.subjects(RDF.type, None)
+        if isinstance(s, URIRef) and str(s).startswith(top_ns)
+        and s not in core_terms and str(s) not in allowed)
+    if not undocumented:
+        passed += 1; print("[PASS] seam: every stub top: term exists in pinned Core (divergences documented)")
+    else:
+        failures.append(("SEAM", "stub-alignment", f"stub terms missing from Core and undocumented: {undocumented}"))
+        print(f"[FAIL] seam: undocumented stub divergences: {undocumented}")
+    return passed, total
 
 
 def ncit_verification_checks(failures):

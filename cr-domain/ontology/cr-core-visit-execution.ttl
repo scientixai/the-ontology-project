@@ -20,9 +20,9 @@ cr:perVisitDefinition a owl:ObjectProperty ;
 
 cr:forParticipant a owl:ObjectProperty ;
     rdfs:label "for participant" ;
-    rdfs:comment "1..1. Whose visit this is." ;
+    rdfs:comment "1..1. Whose visit this is — the pseudonymous in-study identity (cr:StudySubject; the legacy cr:Participant class was retired in favor of it)." ;
     rdfs:domain cr:VisitOccurrence ;
-    rdfs:range cr:Participant ;
+    rdfs:range cr:StudySubject ;
     top:flavor "Additive" .
 
 cr:hasActivityOccurrence a owl:ObjectProperty ;
@@ -75,12 +75,11 @@ cr:ActivityTemplate a owl:Class ;
     rdfs:comment "The protocol-defined activity template: the procedure to perform at a visit. USDM-ingest-derivable from StudyDesign.activities[]. Carries the biomedical-concept code that determines what kind of data the activity collects. USDM: Activity." ;
     rdfs:subClassOf top:Scope .
 
-cr:ClinicalObservation a owl:Class ;
-    rdfs:label "Clinical Observation" ;
-    rdfs:comment "A structured result attached to an ActivityOccurrence. Carries the measured value, unit, reference range, interpretation, and derivedFrom provenance. FHIR R5: Observation. SDTM: one row in the domain matching the parent activity type." ;
-    rdfs:subClassOf prov:Entity,
-        top:Evidence,
-        top:Versioned .
+# cr:ClinicalObservation is defined once, in cr-core-edc.ttl (subClassOf
+# hcls:Observation, top:Versioned; hcls:Observation is itself top:Evidence).
+# In this module it appears as the range of activity-result edges: a structured
+# result attached to an ActivityOccurrence (FHIR R5: Observation; SDTM: one row
+# in the domain matching the parent activity type).
 
 cr:VisitDefinition a owl:Class ;
     rdfs:label "Visit Definition" ;

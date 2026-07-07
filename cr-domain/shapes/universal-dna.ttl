@@ -1,10 +1,18 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix top:  <https://top.scientix.ai/v1#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
 
 # TOP Core's Universal DNA: every entity carries identity, time, and lifecycle state.
 # observedAt (the time strand) is enforced by top:BitemporalProvShape; this shape
 # enforces the other two strands — identifier and status — on the same entities.
-top:UniversalDNAShape a sh:NodeShape ;
+#
+# This is the CR domain's GRADED APPLICATION of the Universal DNA contract, so it
+# carries a cr: IRI. The authoritative top:UniversalDNAShape lives in
+# core/v1/shapes.ttl and targets top:CommonEntity enforcing all three strands at
+# once; this domain shape targets top:Versioned (the bitemporally-opted-in
+# entities) and delegates the time strand to top:BitemporalProvShape. One IRI per
+# contract: the two shapes must never share the top:UniversalDNAShape name.
+cr:UniversalDNAShape a sh:NodeShape ;
     sh:targetClass top:Versioned ;
     sh:severity sh:Violation ;
     sh:property [

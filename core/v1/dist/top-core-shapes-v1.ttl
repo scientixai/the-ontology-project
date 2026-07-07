@@ -1,0 +1,194 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix top: <https://top.scientix.ai/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/core/v1> a owl:Ontology ;
+    dcterms:created "2026-05-10"^^xsd:date ;
+    dcterms:description "OWL/SHACL view of the SKOS taxonomy at taxonomy/taxonomy.ttl. Defines the root top:CommonEntity, the eight L2 categories, the 29 L3 leaves, the Universal DNA properties, the category relational extensions, and the SHACL UniversalDNAShape that enforces the three required practitioner-grounded properties on every TOP entity."@en ;
+    dcterms:license "Apache-2.0" ;
+    dcterms:title "TOP Core — OWL classes and SHACL contract"@en ;
+    rdfs:seeAlso <https://top.scientix.ai/core/v1/index.html>,
+        <https://top.scientix.ai/governance/decision-log.md>,
+        top:TaxonomyV1 ;
+    owl:imports <https://top.scientix.ai/core/v1/modules/top-agent>,
+        <https://top.scientix.ai/core/v1/modules/top-bitemporal>,
+        <https://top.scientix.ai/core/v1/modules/top-constraint>,
+        <https://top.scientix.ai/core/v1/modules/top-evidence>,
+        <https://top.scientix.ai/core/v1/modules/top-location>,
+        <https://top.scientix.ai/core/v1/modules/top-outcome>,
+        <https://top.scientix.ai/core/v1/modules/top-resource>,
+        <https://top.scientix.ai/core/v1/modules/top-root>,
+        <https://top.scientix.ai/core/v1/modules/top-scope>,
+        <https://top.scientix.ai/core/v1/modules/top-temporal> .
+
+top:AgentNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Agent .
+
+top:AgentNotEvidenceShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Evidence disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Evidence (L2 categories are mutually disjoint)." ;
+    sh:not [ sh:class top:Evidence ] ;
+    sh:targetClass top:Agent .
+
+top:AgentNotLocationShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Location disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Location." ;
+    sh:not [ sh:class top:Location ] ;
+    sh:targetClass top:Agent .
+
+top:AgentNotOutcomeShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Outcome disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Outcome." ;
+    sh:not [ sh:class top:Outcome ] ;
+    sh:targetClass top:Agent .
+
+top:AgentNotResourceShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Resource disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Resource." ;
+    sh:not [ sh:class top:Resource ] ;
+    sh:targetClass top:Agent .
+
+top:AgentNotScopeShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Scope disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Scope." ;
+    sh:not [ sh:class top:Scope ] ;
+    sh:targetClass top:Agent .
+
+top:AgentNotTemporalShape a sh:NodeShape ;
+    rdfs:label "Agent ⊓ Temporal disjointness"@en ;
+    sh:message "An entity typed top:Agent must not also be typed top:Temporal." ;
+    sh:not [ sh:class top:Temporal ] ;
+    sh:targetClass top:Agent .
+
+top:EvidenceNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Evidence ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Evidence must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Evidence .
+
+top:EvidenceNotLocationShape a sh:NodeShape ;
+    rdfs:label "Evidence ⊓ Location disjointness"@en ;
+    sh:message "An entity typed top:Evidence must not also be typed top:Location." ;
+    sh:not [ sh:class top:Location ] ;
+    sh:targetClass top:Evidence .
+
+top:EvidenceNotOutcomeShape a sh:NodeShape ;
+    rdfs:label "Evidence ⊓ Outcome disjointness"@en ;
+    sh:message "An entity typed top:Evidence must not also be typed top:Outcome." ;
+    sh:not [ sh:class top:Outcome ] ;
+    sh:targetClass top:Evidence .
+
+top:EvidenceNotResourceShape a sh:NodeShape ;
+    rdfs:label "Evidence ⊓ Resource disjointness"@en ;
+    sh:message "An entity typed top:Evidence must not also be typed top:Resource." ;
+    sh:not [ sh:class top:Resource ] ;
+    sh:targetClass top:Evidence .
+
+top:EvidenceNotScopeShape a sh:NodeShape ;
+    rdfs:label "Evidence ⊓ Scope disjointness"@en ;
+    sh:message "An entity typed top:Evidence must not also be typed top:Scope." ;
+    sh:not [ sh:class top:Scope ] ;
+    sh:targetClass top:Evidence .
+
+top:EvidenceNotTemporalShape a sh:NodeShape ;
+    rdfs:label "Evidence ⊓ Temporal disjointness"@en ;
+    sh:message "An entity typed top:Evidence must not also be typed top:Temporal." ;
+    sh:not [ sh:class top:Temporal ] ;
+    sh:targetClass top:Evidence .
+
+top:LocationNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Location ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Location must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Location .
+
+top:LocationNotOutcomeShape a sh:NodeShape ;
+    rdfs:label "Location ⊓ Outcome disjointness"@en ;
+    sh:message "An entity typed top:Location must not also be typed top:Outcome." ;
+    sh:not [ sh:class top:Outcome ] ;
+    sh:targetClass top:Location .
+
+top:LocationNotResourceShape a sh:NodeShape ;
+    rdfs:label "Location ⊓ Resource disjointness"@en ;
+    sh:message "An entity typed top:Location must not also be typed top:Resource." ;
+    sh:not [ sh:class top:Resource ] ;
+    sh:targetClass top:Location .
+
+top:LocationNotScopeShape a sh:NodeShape ;
+    rdfs:label "Location ⊓ Scope disjointness"@en ;
+    sh:message "An entity typed top:Location must not also be typed top:Scope." ;
+    sh:not [ sh:class top:Scope ] ;
+    sh:targetClass top:Location .
+
+top:LocationNotTemporalShape a sh:NodeShape ;
+    rdfs:label "Location ⊓ Temporal disjointness"@en ;
+    sh:message "An entity typed top:Location must not also be typed top:Temporal." ;
+    sh:not [ sh:class top:Temporal ] ;
+    sh:targetClass top:Location .
+
+top:OutcomeNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Outcome ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Outcome must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Outcome .
+
+top:OutcomeNotResourceShape a sh:NodeShape ;
+    rdfs:label "Outcome ⊓ Resource disjointness"@en ;
+    sh:message "An entity typed top:Outcome must not also be typed top:Resource." ;
+    sh:not [ sh:class top:Resource ] ;
+    sh:targetClass top:Outcome .
+
+top:OutcomeNotScopeShape a sh:NodeShape ;
+    rdfs:label "Outcome ⊓ Scope disjointness"@en ;
+    sh:message "An entity typed top:Outcome must not also be typed top:Scope." ;
+    sh:not [ sh:class top:Scope ] ;
+    sh:targetClass top:Outcome .
+
+top:OutcomeNotTemporalShape a sh:NodeShape ;
+    rdfs:label "Outcome ⊓ Temporal disjointness"@en ;
+    sh:message "An entity typed top:Outcome must not also be typed top:Temporal." ;
+    sh:not [ sh:class top:Temporal ] ;
+    sh:targetClass top:Outcome .
+
+top:ResourceNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Resource ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Resource must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Resource .
+
+top:ResourceNotScopeShape a sh:NodeShape ;
+    rdfs:label "Resource ⊓ Scope disjointness"@en ;
+    sh:message "An entity typed top:Resource must not also be typed top:Scope." ;
+    sh:not [ sh:class top:Scope ] ;
+    sh:targetClass top:Resource .
+
+top:ResourceNotTemporalShape a sh:NodeShape ;
+    rdfs:label "Resource ⊓ Temporal disjointness"@en ;
+    sh:message "An entity typed top:Resource must not also be typed top:Temporal." ;
+    sh:not [ sh:class top:Temporal ] ;
+    sh:targetClass top:Resource .
+
+top:ScopeNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Scope ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Scope must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Scope .
+
+top:ScopeNotTemporalShape a sh:NodeShape ;
+    rdfs:label "Scope ⊓ Temporal disjointness"@en ;
+    sh:message "An entity typed top:Scope must not also be typed top:Temporal." ;
+    sh:not [ sh:class top:Temporal ] ;
+    sh:targetClass top:Scope .
+
+top:TemporalNotConstraintShape a sh:NodeShape ;
+    rdfs:label "Temporal ⊓ Constraint disjointness"@en ;
+    sh:message "An entity typed top:Temporal must not also be typed top:Constraint." ;
+    sh:not [ sh:class top:Constraint ] ;
+    sh:targetClass top:Temporal .
+

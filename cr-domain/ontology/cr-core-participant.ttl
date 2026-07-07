@@ -9,19 +9,15 @@
 @prefix top: <https://top.scientix.ai/v1#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
-<https://top.scientix.ai/cr/v1> a owl:Ontology ;
-    owl:versionInfo "1.4" ;
+<https://top.scientix.ai/cr/v1/participant> a owl:Ontology ;
+    owl:versionInfo "1.5" ;
     dct:title "CR-core ontology — participant & consent module" ;
-    dct:description "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate." .
+    dct:description "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate. Property-only module: the classes these properties describe (cr:InformedConsent, cr:StudySubject, cr:Enrollment, cr:EligibilityCriterion) are defined once, in cr-core.ttl." .
 
 #
-# ── InformedConsent (enriched, US-500-003) ───────────────────────────────────
+# ── InformedConsent enrichment (US-500-003) ──────────────────────────────────
+# cr:InformedConsent is defined in cr-core.ttl (subClassOf top:Temporal, top:Versioned).
 #
-cr:InformedConsent a owl:Class ;
-    rdfs:label "Informed Consent" ;
-    rdfs:comment "A participant's documented agreement to take part in a study, including version, form IRI, witness, and optional withdrawal." ;
-    rdfs:subClassOf top:BitemporalEntity ;
-    skos:definition "The act and record of a study participant voluntarily agreeing to participate after being informed of all relevant aspects of the study." .
 
 # — core properties (pre-existing) ——————————————————————————————————————————
 cr:consentDate a owl:DatatypeProperty ;
@@ -62,24 +58,17 @@ cr:withdrawalDate a owl:DatatypeProperty ;
     rdfs:comment "Calendar date on which consent was withdrawn, if applicable." .
 
 #
-# ── StudySubject ─────────────────────────────────────────────────────────────
+# ── StudySubject properties ──────────────────────────────────────────────────
+# cr:StudySubject is defined in cr-core.ttl (subClassOf top:Agent).
 #
-cr:StudySubject a owl:Class ;
-    rdfs:label   "Study Subject" ;
-    rdfs:comment "A person enrolled in or being considered for a study." ;
-    rdfs:subClassOf top:BitemporalEntity .
-
 cr:subjectId a owl:DatatypeProperty ;
     rdfs:domain cr:StudySubject ;
     rdfs:range  xsd:string ;
     rdfs:label  "subject identifier" ;
     rdfs:comment "Site-assigned identifier for the study subject." .
 
-cr:hasConsent a owl:ObjectProperty ;
-    rdfs:domain cr:StudySubject ;
-    rdfs:range  cr:InformedConsent ;
-    rdfs:label  "has consent" ;
-    rdfs:comment "Links a study subject to their informed consent record." .
+# cr:hasConsent is defined in cr-core-lims.ttl (the single-pull retrieval edge);
+# it also applies from cr:StudySubject to cr:InformedConsent (see shapes/participant.ttl).
 
 cr:hasEnrollment a owl:ObjectProperty ;
     rdfs:domain cr:StudySubject ;
@@ -88,13 +77,9 @@ cr:hasEnrollment a owl:ObjectProperty ;
     rdfs:comment "Links a study subject to their enrollment record." .
 
 #
-# ── Enrollment ───────────────────────────────────────────────────────────────
+# ── Enrollment properties ────────────────────────────────────────────────────
+# cr:Enrollment is defined in cr-core.ttl (subClassOf top:Temporal, top:Versioned).
 #
-cr:Enrollment a owl:Class ;
-    rdfs:label   "Enrollment" ;
-    rdfs:comment "The formal registration of a subject into a study arm." ;
-    rdfs:subClassOf top:BitemporalEntity .
-
 cr:enrollmentDate a owl:DatatypeProperty ;
     rdfs:domain cr:Enrollment ;
     rdfs:range  xsd:date ;
@@ -106,12 +91,9 @@ cr:enrolledInArm a owl:ObjectProperty ;
     rdfs:label  "enrolled in arm" .
 
 #
-# ── EligibilityCriterion ─────────────────────────────────────────────────────
+# ── EligibilityCriterion properties ──────────────────────────────────────────
+# cr:EligibilityCriterion is defined in cr-core.ttl (subClassOf top:Constraint).
 #
-cr:EligibilityCriterion a owl:Class ;
-    rdfs:label   "Eligibility Criterion" ;
-    rdfs:comment "An inclusion or exclusion criterion for study participation." .
-
 cr:criterionType a owl:DatatypeProperty ;
     rdfs:domain cr:EligibilityCriterion ;
     rdfs:range  xsd:string ;

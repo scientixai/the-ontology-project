@@ -793,7 +793,7 @@ def foundation_body():
         "relevant codelist (e.g. <code>cr:SiteStatusActive</code>). "
         "Referenced by IRI so SHACL and OWL rules can reason over it, not just filter strings.</li>"
         "</ul>"
-        "<p><code>top:UniversalDNAShape</code> enforces all three on every entity. "
+        "<p><code>cr:UniversalDNAShape</code> (the domain application of core's <code>top:UniversalDNAShape</code>) enforces all three on every entity. "
         "This is what makes any two TOP graphs line up by construction &mdash; "
         "before any domain-specific alignment.</p>"
         "<p><b>Bitemporality (opt-in via <code>top:Versioned</code>):</b> entities that record "
