@@ -643,6 +643,19 @@ def hub_body(stats):
         "Instead of every organization re-inventing how to represent studies, subjects, visits, samples, consent and safety data, <b>you inherit a model the industry can share, and your own data plugs into it.</b></p>"
         "<p>Because it captures <i>who did what, when, and on what evidence</i> &mdash; and remembers every version of the truth over time &mdash; the documents you already owe (SDTM, USDM, a delegation log, an analysis dataset) come out as <b>views</b>, and a regulator&rsquo;s question becomes a <b>query</b>.</p>"
 
+        "<div class='note' style='margin-top:14px'>"
+        "<b>Reference graph, not a runtime.</b> This is a <b>reference</b> you read, cite, and build your "
+        "own institutional graph against &mdash; the shared model, its constraints, its crosswalks, and worked "
+        "examples. It is <b>not</b> a system you download and operate: it ships no broker, no pipeline, and no "
+        "agents. "
+        "<ul style='margin:8px 0 0'>"
+        "<li><b>What lives here:</b> the layered ontology (TOP&nbsp;Core &rarr; HCLS &rarr; CR), graded SHACL "
+        "constraints, projection definitions, SSSOM crosswalks, and operator worked examples &mdash; the grounding.</li>"
+        "<li><b>What lives elsewhere:</b> instantiating a real study and serving it as a running NGSI-LD graph "
+        "is done by a separate engine (the Providence Neural Engine, community edition) &mdash; that is what powers "
+        "the live CDISC demo. This site documents the model that engine consumes; the runtime is out of scope here.</li>"
+        "</ul></div>"
+
         "<h2 id='hero'>Why bitemporality is hard &mdash; a real example</h2>"
         f"{hero}"
 
@@ -669,7 +682,7 @@ def hub_body(stats):
 
 def download_badges(base, label):
     """A row of format pills linking to the serializations in dist/."""
-    fmts = [("ttl", "Turtle"), ("owl", "RDF/XML"), ("jsonld", "JSON-LD"), ("nt", "N-Triples")]
+    fmts = [("ttl", "Turtle"), ("jsonld", "JSON-LD"), ("nt", "N-Triples")]
     pills = "".join(f'<a class="fmt" href="dist/{base}.{ext}" download>{name}</a>' for ext, name in fmts)
     return f'<div class="dlrow"><span class="dllabel">{label}</span>{pills}</div>'
 
@@ -899,6 +912,34 @@ def render_screen_tabs(name):
         f'<pre class="json">{obj}</pre></div>')
 
 
+def flow_model_tables(flow):
+    """The model-derived tables every flow page carries: Entities, What it
+    validates, Views it emits. Returned as (heading, html) pairs so a scenario
+    page can be checked for parity and have only the missing ones appended."""
+    out = []
+    ents = flow_entities(flow)
+    if ents:
+        out.append(("Entities", "<h2>Entities</h2>" + entities_table(ents)))
+    ct = constraints_table(flow.get("shapes", []))
+    if ct:
+        out.append(("What it validates", "<h2>What it validates</h2>" + ct))
+    pt = projections_table(flow.get("proj", []))
+    if pt:
+        out.append(("Views it emits", "<h2>Views it emits</h2>" + pt))
+    return out
+
+
+def scenario_parity_tables(flow, body):
+    """Append the model tables a hand-authored scenario body doesn't already
+    carry — so a scenario page can never silently drop below the generated bar
+    (the dta.html regression). Presence is detected by the exact section
+    heading (`<h2>Entities</h2>` etc.), not the bare word, so prose that merely
+    mentions 'entities' doesn't suppress the table."""
+    missing = "".join(html for heading, html in flow_model_tables(flow)
+                       if f"<h2>{heading}</h2>" not in body)
+    return missing
+
+
 def flow_body(flow):
     parts = [f"<h1>{flow['title']}</h1><p class='lead'>{flow['blurb']}</p>"]
     if flow.get("claim"):
@@ -909,15 +950,8 @@ def flow_body(flow):
         parts.append("<h2>How the flow runs &mdash; step by step</h2>" + render_vtl(flow["stops"]))
     if flow.get("note"):
         parts.append(f"<p class='note'>{flow['note']}</p>")
-    ents = flow_entities(flow)
-    if ents:
-        parts.append("<h2>Entities</h2>" + entities_table(ents))
-    ct = constraints_table(flow.get("shapes", []))
-    if ct:
-        parts.append("<h2>What it validates</h2>" + ct)
-    pt = projections_table(flow.get("proj", []))
-    if pt:
-        parts.append("<h2>Views it emits</h2>" + pt)
+    for _heading, html in flow_model_tables(flow):
+        parts.append(html)
     return "".join(parts)
 
 
@@ -927,7 +961,7 @@ def ingestion_body():
   "type": "cr:Study",
   "@context": [
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
-    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+    "https://top.scientix.ai/cr/v1/ngsi-context.jsonld"
   ],
   "identifier":  { "type": "Property",      "value": "LY900018" },
   "status":      { "type": "Property",      "value": "active" },
@@ -939,7 +973,7 @@ def ingestion_body():
   "type": "cr:ProtocolVersion",
   "@context": [
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
-    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+    "https://top.scientix.ai/cr/v1/ngsi-context.jsonld"
   ],
   "identifier":        { "type": "Property",     "value": "1" },
   "status":            { "type": "Property",     "value": "active" },
@@ -960,7 +994,7 @@ def ingestion_body():
   "type": "cr:EligibilityCriterion",
   "@context": [
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
-    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+    "https://top.scientix.ai/cr/v1/ngsi-context.jsonld"
   ],
   "identifier":      { "type": "Property", "value": "INC1" },
   "status":          { "type": "Property", "value": "active" },
@@ -977,7 +1011,7 @@ def ingestion_body():
   "type": "cr:Visit",
   "@context": [
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
-    "https://top.scientix.ai/cr/v1.ngsi-context.jsonld"
+    "https://top.scientix.ai/cr/v1/ngsi-context.jsonld"
   ],
   "identifier":           { "type": "Property",    "value": "SCREENING" },
   "status":               { "type": "Property",    "value": "active" },
@@ -1440,12 +1474,23 @@ def build():
         body = scenario(fl["id"])
         if body is None:
             body = roles_body() if fl["id"] == "roles" else flow_body(fl)
+        else:
+            # scenario override: keep the hand-authored body, but guarantee the
+            # model tables (Entities / What it validates / Views) are present —
+            # append any the author didn't include, so no scenario drifts below
+            # the generated bar.
+            body += scenario_parity_tables(fl, body)
         pages[f"{fl['id']}.html"] = (fl["title"], fl["id"], body)
-    # base pages may also be overridden by a scenario, uniformly
+    # base pages may also be overridden by a scenario, uniformly. For flow pages
+    # keep model-table parity (a scenario body can't silently drop below the bar).
+    flow_by_id = {fl["id"]: fl for fl in FLOWS}
     for fname in list(pages):
         sc = scenario(fname[:-5])
         if sc is not None:
             title, active, _ = pages[fname]
+            fl = flow_by_id.get(fname[:-5])
+            if fl is not None:
+                sc = sc + scenario_parity_tables(fl, sc)
             pages[fname] = (title, active, sc)
     for fname, (title, active, body) in pages.items():
         open(os.path.join(out, fname), "w").write(shell(title, active, body))

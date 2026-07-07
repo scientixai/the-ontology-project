@@ -273,7 +273,7 @@ select.rm-field{cursor:pointer}
         data-conf="0.78 (auto-accept threshold is 0.85)"
         data-why="The vendor abbreviation &lsquo;TCO2&rsquo; resolves to Bicarbonate, but below the confidence at which the system will accept it on its own."
         data-after="The alias TCO2 &rarr; Bicarbonate joins the shared library, so the next study on this vendor auto-resolves it &mdash; no one re-maps it."
-        data-record="urn:top:VendorAlias:acme:TCO2"
+        data-record="urn:ngsi-ld:top-cr:VendorAlias:acme:TCO2"
         data-cta="Confirm mapping"
         data-hint="Pick the best match or type the correct concept, then confirm once."
         data-concept-cell="rc-tco2"
@@ -287,7 +287,7 @@ select.rm-field{cursor:pointer}
         data-conf="n/a"
         data-why="A study-specific biomarker with no LOINC or open identifier; it cannot be resolved automatically against any public vocabulary."
         data-after="The clinician-confirmed binding becomes a first-class record (who, when, evidence) and is reused at the catalogue &mdash; bind once, not per study."
-        data-record="urn:top:Attestation:acme:ACME-BMK-17"
+        data-record="urn:ngsi-ld:top-cr:Attestation:acme:ACME-BMK-17"
         data-cta="Bind &amp; confirm (clinician)"
         data-hint="No public code exists &mdash; pick a study catalogue entry or type the biomarker name, then a clinician confirms once."
         data-concept-cell="rc-bmk"
@@ -320,7 +320,7 @@ select.rm-field{cursor:pointer}
   <p class="jsoncap">One NGSI-LD query to the broker assembles this screen &mdash; the normalised lab-file entity with every data element and its resolution status inlined. <b>This hits the store, not the vendor&rsquo;s FHIR API</b> (that already came through and was normalised on ingest).</p>
 <pre><span class="k">GET</span> /ngsi-ld/v1/entities?
   <span class="n">type</span>=cr:TransferFile
-  &amp;<span class="n">id</span>=urn:top:TransferFile:GLP1-TRIAL-27:acme:2026W07
+  &amp;<span class="n">id</span>=urn:ngsi-ld:top-cr:TransferFile:GLP1-TRIAL-27:acme:2026W07
   &amp;<span class="n">join</span>=inline
   &amp;<span class="n">joinLevel</span>=2
   &amp;<span class="n">attrs</span>=cr:forSubject,cr:atVisit,cr:hasDataElement,
@@ -328,7 +328,7 @@ select.rm-field{cursor:pointer}
          prov:wasDerivedFrom,prov:wasGeneratedBy,prov:wasAttributedTo
 
 <span class="k">Accept</span>: application/ld+json
-<span class="k">Link</span>: &lt;https://ontology.top/cr/v1/context.jsonld&gt;;
+<span class="k">Link</span>: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;;
       rel=<span class="s">"http://www.w3.org/ns/json-ld#context"</span>
 
 <span class="c"># joinLevel=2 inlines, per data element:
@@ -344,22 +344,22 @@ select.rm-field{cursor:pointer}
 <pre>{
   <span class="s">"@context"</span>: [
     <span class="s">"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"</span>,
-    <span class="s">"https://ontology.top/cr/v1/context.jsonld"</span>,        <span class="c">// the CR domain (cr:)</span>
+    <span class="s">"https://top.scientix.ai/cr/v1/ngsi-context.jsonld"</span>,        <span class="c">// the CR domain (cr:)</span>
     <span class="s">"https://www.w3.org/ns/prov.jsonld"</span>,                 <span class="c">// W3C PROV (prov:)</span>
     { <span class="s">"cr"</span>:  <span class="s">"https://top.scientix.ai/cr/v1#"</span>,
       <span class="s">"top"</span>: <span class="s">"https://top.scientix.ai/v1#"</span>,          <span class="c">// TOP core (autonomous agent)</span>
       <span class="s">"prov"</span>:<span class="s">"http://www.w3.org/ns/prov#"</span> }
   ],
-  <span class="s">"id"</span>:   <span class="s">"urn:top:TransferFile:GLP1-TRIAL-27:acme:2026W07"</span>,
+  <span class="s">"id"</span>:   <span class="s">"urn:ngsi-ld:top-cr:TransferFile:GLP1-TRIAL-27:acme:2026W07"</span>,
   <span class="s">"type"</span>: <span class="s">"cr:TransferFile"</span>,
   <span class="s">"observedAt"</span>: <span class="s">"2026-02-16T02:30:00Z"</span>,
-  <span class="s">"cr:forSubject"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:StudySubject:GLP1-TRIAL-27:S-001"</span> },
-  <span class="s">"cr:atVisit"</span>:    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Visit:GLP1-TRIAL-27:V03"</span> },
+  <span class="s">"cr:forSubject"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:StudySubject:GLP1-TRIAL-27:S-001"</span> },
+  <span class="s">"cr:atVisit"</span>:    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:Visit:GLP1-TRIAL-27:V03"</span> },
 
   <span class="s">"cr:hasDataElement"</span>: [
 
     <span class="c">// (1) resolved automatically &mdash; and provenanced back to the source FHIR</span>
-    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:DataElement:...:SODIUM"</span>,
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:DataElement:...:SODIUM"</span>,
       <span class="s">"entity"</span>: {
         <span class="s">"type"</span>: <span class="s">"cr:DataElement"</span>,
         <span class="s">"cr:vendorTerm"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"SODIUM"</span> },
@@ -373,30 +373,30 @@ select.rm-field{cursor:pointer}
           <span class="s">"entity"</span>: { <span class="s">"cr:sourceSystem"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"Acme Central Lab &middot; FHIR R4"</span> },
                      <span class="s">"cr:sourceUri"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"https://fhir.acme.example/Observation/obs-88213"</span> } } },
         <span class="s">"prov:wasGeneratedBy"</span>: {          <span class="c">// the resolution activity</span>
-          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Activity:resolve:obs-88213"</span>,
+          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:Activity:resolve:obs-88213"</span>,
           <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"prov:Activity"</span>, <span class="s">"prov:endedAtTime"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-02-16T02:30:11Z"</span> } } },
         <span class="s">"prov:wasAttributedTo"</span>: {         <span class="c">// the autonomous agent + its confidence</span>
-          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:AutonomousAgent:pne-resolver@1.4.0"</span>,
+          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:AutonomousAgent:pne-resolver@1.4.0"</span>,
           <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"top:AutonomousAgent"</span>,
                      <span class="s">"cr:agentModel"</span>:           { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"PNE resolver 1.4.0"</span> },
                      <span class="s">"cr:resolutionConfidence"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 0.99 } } }
       } },
 
     <span class="c">// (2) low-confidence &mdash; same provenance chain; agent confidence 0.78 -&gt; human reconcile</span>
-    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:DataElement:...:TCO2"</span>,
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:DataElement:...:TCO2"</span>,
       <span class="s">"entity"</span>: {
         <span class="s">"type"</span>: <span class="s">"cr:DataElement"</span>,
         <span class="s">"cr:vendorTerm"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"TCO2"</span> },
         <span class="s">"cr:resolutionStatus"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"to_confirm"</span> },
         <span class="s">"cr:candidateConcept"</span>:  { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"https://loinc.org/1963-8"</span> },
         <span class="s">"prov:wasDerivedFrom"</span>:  { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:fhir:Observation:acme:obs-88217"</span> },
-        <span class="s">"prov:wasAttributedTo"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:AutonomousAgent:pne-resolver@1.4.0"</span>,
+        <span class="s">"prov:wasAttributedTo"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:AutonomousAgent:pne-resolver@1.4.0"</span>,
           <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"top:AutonomousAgent"</span>, <span class="s">"cr:resolutionConfidence"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 0.78 } } }
         <span class="c">// on reconcile, a second prov:wasAttributedTo (the human) is appended &mdash; never overwritten</span>
       } },
 
     <span class="c">// (3) no public code &mdash; still provenanced to its source FHIR; awaits a clinician attestation</span>
-    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:DataElement:...:ACME-BMK-17"</span>,
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:DataElement:...:ACME-BMK-17"</span>,
       <span class="s">"entity"</span>: {
         <span class="s">"type"</span>: <span class="s">"cr:DataElement"</span>,
         <span class="s">"cr:vendorTerm"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"ACME-BMK-17"</span> },
@@ -500,7 +500,7 @@ select.rm-field{cursor:pointer}
       <span id="sm-title">SDTM LB &mdash; projected on request</span>
       <div class="sub">generated now from the stored data &mdash; nothing is kept as SDTM</div></div>
     <div class="modal-body">
-<pre><span class="c">// GET .../projections/sdtm/LB?file=urn:top:TransferFile:...:2026W07  (rendered live)</span>
+<pre><span class="c">// GET .../projections/sdtm/LB?file=urn:ngsi-ld:top-cr:TransferFile:...:2026W07  (rendered live)</span>
 USUBJID              LBTESTCD  LBORRES LBORRESU  LBSTRESN LBSTRESU  LBLOINC  VISITNUM
 GLP1-TRIAL-27-S-001  SODIUM    140     mEq/L     140      mmol/L    2951-2   3
 GLP1-TRIAL-27-S-001  GLUC      92      mg/dL     5.1      mmol/L    2345-7   3
@@ -512,7 +512,7 @@ GLP1-TRIAL-27-S-001  BICARB    25      mEq/L     25       mmol/L    1963-8   3  
     <div class="modal-cta"><button class="btn-ghost" data-close>Close</button>
       <span class="muted" style="font-size:12px">Projection, not storage.</span></div>
   </div>
-</div><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+</div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:BiomedicalConcept</code></td><td>Biomedical Concept</td><td class='clo'>Evidence</td><td>Reuses CDISC Biomedical Concept anchors as an INPUT (crosswalk targets), not a rival. The concept-first pivot: bind once to the concept; every standard (SDTM/Define/FHIR) is then a projection.</td></tr><tr><td><code>cr:BlindingConstraint</code></td><td>Blinding Constraint</td><td class='clo'>Constraint</td><td>Grounded in MVP Inventory §5 blinding. A cr:blindingScope value (e.g. &#x27;treatment-assignment&#x27;, &#x27;unblinded-pk&#x27;) plus provenance.</td></tr><tr><td><code>cr:DataElementSpecification</code></td><td>Data Element Specification</td><td class='clo'>Scope</td><td>Grounded in MVP Inventory content rows and the LAB v2.0 LB variable list. The SDTM target is NEVER a stored attribute here — it is a crosswalk edge rendered on projection.</td></tr><tr><td><code>cr:DataTransferAgreement</code></td><td>Data Transfer Agreement</td><td class='clo'>Evidence</td><td>Grounded in the DTA MVP Information Model DTA entity and MVP Inventory §3 (Version, Version Date, Version Change Rationale). Not a Word/PDF artifact with fields — a fact graph.</td></tr><tr><td><code>cr:TransferAmendment</code></td><td>Transfer Amendment</td><td class='clo'>Outcome</td><td>Amendment as event (Outcome:StatusChange). Bitemporal; drives the cross-entity shape that forces amendment propagation to be explicit.</td></tr><tr><td><code>cr:TransferFile</code></td><td>Transfer File</td><td class='clo'>Outcome</td><td>Grounded in the info-model TRANSFER_FILE entity. The specification is the plan; the file is the Outcome:Artifact.</td></tr><tr><td><code>cr:TransferProfile</code></td><td>Transfer Profile</td><td class='clo'>Scope</td><td>Grounded in MVP Inventory §5 &#x27;File Transfer Information&#x27;. Specialized per vendor as cr:VendorConnectorProfile instances grounded in each vendor&#x27;s public API/export surface.</td></tr><tr><td><code>cr:TransferScope</code></td><td>Transfer Scope</td><td class='clo'>Scope</td><td>Grounded in DTA MVP Information Model open Q1 (multi-vendor / multi-scope DTA). Recommend modeling scope explicitly — the single-vendor simplification is exactly where the exponential hides.</td></tr><tr><td><code>cr:TransferSpecification</code></td><td>Transfer Specification</td><td class='clo'>Scope</td><td>Grounded in the info-model TRANSFER_SPECIFICATION entity and CDISC LAB Model v2.0 content. Placed under top:Scope (a specification/plan), bitemporal so amendments supersede cleanly.</td></tr><tr><td><code>cr:VendorAlias</code></td><td>Vendor Alias</td><td class='clo'>Evidence</td><td>The exemplar of the whole thesis. Resolve once; the next sponsor with the same vendor term auto-resolves. Grounded in the info-model ENCOUNTER_MAPPING / Data-Provider-Visit fields — deliberately re-modeled.</td></tr><tr><td><code>cr:VendorConnectorProfile</code></td><td>Vendor Connector Profile</td><td class='clo'>Scope</td><td>Instances grounded in verified public documentation: Castor EDC (OAuth2 REST + CDISC ODM export), Veeva Vault CDMS/CDB (SDE CSV/SAS/XPT + incremental SFF), Medidata Rave (RWS + ODM + audit-ID incremental), Oracle Clinical One (ODM-XML extract, Snapshot/Transactional). See examples/dta-lab-safety/vendor-connectors.ttl.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:DataElementConceptBoundShape</code></td><td><code>cr:DataElementSpecification</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DataElementSpecification must declare its unit as a dereferenceable UCUM IRI (cr:declaredUnitConcept). A unit that does not resolve to UCUM is non-conformant — canonical conversion depends on it.</li><li>A DataElementSpecification with no bound BiomedicalConcept is non-conformant: the SDTM target is a projection of the concept binding, so an unbound element can never be rendered.</li></ul></td></tr><tr><td><code>cr:VendorAliasResolvedShape</code></td><td><code>cr:VendorAlias</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>VendorAlias neither resolves to a canonical entity (cr:aliasResolvesTo) nor carries a catalog Attestation (cr:resolutionAttestedBy). An unresolved, unattested vendor term cannot be admitted — it re-introduces the interpretation node.</li></ul></td></tr><tr><td><code>cr:ResolutionProvenanceShape</code></td><td><code>cr:VendorAlias</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>VendorAlias was auto-resolved (has cr:resolutionConfidence) but is missing provenance: it must record prov:wasDerivedFrom (the retained source it was transformed from — e.g. the original FHIR resource) AND an attributed agent (cr:resolvedBy / prov:wasAttributedTo). A transformed value with no traceable source or author is not admissible.</li></ul></td></tr><tr><td><code>cr:TransferProfileMandatoryShape</code></td><td><code>cr:TransferProfile</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>TransferProfile.fileFormat is mandatory and must be in controlled terminology (SAS-XPT | CSV | Dataset-JSON | ODM-XML | Define-XML | Excel | PDF | FHIR | JSON).</li><li>TransferProfile.transmissionMethod is mandatory and must be in controlled terminology (SFTP | FTP | API | FHIR-API | Webhook | Snowflake-share | BigQuery-direct | Manual-upload).</li><li>TransferProfile.transmissionType is mandatory and must be &#x27;cumulative&#x27; or &#x27;incremental&#x27;.</li></ul></td></tr><tr><td><code>cr:DataTransferAgreementShape</code></td><td><code>cr:DataTransferAgreement</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DataTransferAgreement must be ratified by &gt;=1 signatory Attestation (a signature is a fact, not a boolean).</li><li>A DataTransferAgreement must package &gt;=1 TransferSpecification (the content it governs).</li><li>A DataTransferAgreement must reference &gt;=1 TransferProfile (the operational envelope).</li></ul></td></tr><tr><td><code>cr:TransferAmendmentPropagationShape</code></td><td><code>cr:TransferAmendment</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A TransferAmendment must reference &gt;=1 affected TransferSpecification — propagation is a graph update + re-validation, made explicit, not N silent manual re-authorings.</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>dta_sdtm_lb.rq</code></td><td>CDISC SDTM — LB (Laboratory) domain, projected from the native transfer graph. The SDTM target is a VIEW rendered from the concept binding + crosswalk, never a stored authoring target (§7, tier T2: structural automation complete; the study-specific tail — LBTESTCD short-name choice — is an attestation step).  Column mapping: DOMAIN   = &quot;LB&quot; (literal) USUBJID  ← StudySubject.subjectId LBLOINC  ← BiomedicalConcept.codedAs (the LOINC anchor; LBTESTCD/LBTEST are rendered from this via the dta-concept crosswalk at projection) LBORRES  ← AssayResult rdf:value (original result as delivered) LBORRESU ← DataElementSpecification.declaredUnitConcept (UCUM-canonical unit) VISIT    ← the canonical cr:Visit the vendor visit-label resolved to</td></tr><tr><td><code>dta_document.rq</code></td><td>Human-readable DTA document — rendered from the fact graph, never authored (§7, tier T1/T2). Produces the sponsor-agnostic DTA shell (parties + operational envelope + governing spec) the working group&#x27;s DTA_Template hand-fills today.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

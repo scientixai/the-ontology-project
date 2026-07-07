@@ -29,7 +29,7 @@
         data-conf="0.78 (auto-accept threshold is 0.85)"
         data-why="The vendor abbreviation &lsquo;TCO2&rsquo; resolves to Bicarbonate, but below the confidence at which the system will accept it on its own."
         data-after="The alias TCO2 &rarr; Bicarbonate joins the shared library, so the next study on this vendor auto-resolves it &mdash; no one re-maps it."
-        data-record="urn:top:VendorAlias:acme:TCO2"
+        data-record="urn:ngsi-ld:top-cr:VendorAlias:acme:TCO2"
         data-cta="Confirm mapping"
         data-hint="Pick the best match or type the correct concept, then confirm once."
         data-concept-cell="rc-tco2"
@@ -43,7 +43,7 @@
         data-conf="n/a"
         data-why="A study-specific biomarker with no LOINC or open identifier; it cannot be resolved automatically against any public vocabulary."
         data-after="The clinician-confirmed binding becomes a first-class record (who, when, evidence) and is reused at the catalogue &mdash; bind once, not per study."
-        data-record="urn:top:Attestation:acme:ACME-BMK-17"
+        data-record="urn:ngsi-ld:top-cr:Attestation:acme:ACME-BMK-17"
         data-cta="Bind &amp; confirm (clinician)"
         data-hint="No public code exists &mdash; pick a study catalogue entry or type the biomarker name, then a clinician confirms once."
         data-concept-cell="rc-bmk"
@@ -76,7 +76,7 @@
   <p class="jsoncap">One NGSI-LD query to the broker assembles this screen &mdash; the normalised lab-file entity with every data element and its resolution status inlined. <b>This hits the store, not the vendor&rsquo;s FHIR API</b> (that already came through and was normalised on ingest).</p>
 <pre><span class="k">GET</span> /ngsi-ld/v1/entities?
   <span class="n">type</span>=cr:TransferFile
-  &amp;<span class="n">id</span>=urn:top:TransferFile:GLP1-TRIAL-27:acme:2026W07
+  &amp;<span class="n">id</span>=urn:ngsi-ld:top-cr:TransferFile:GLP1-TRIAL-27:acme:2026W07
   &amp;<span class="n">join</span>=inline
   &amp;<span class="n">joinLevel</span>=2
   &amp;<span class="n">attrs</span>=cr:forSubject,cr:atVisit,cr:hasDataElement,
@@ -84,7 +84,7 @@
          prov:wasDerivedFrom,prov:wasGeneratedBy,prov:wasAttributedTo
 
 <span class="k">Accept</span>: application/ld+json
-<span class="k">Link</span>: &lt;https://ontology.top/cr/v1/context.jsonld&gt;;
+<span class="k">Link</span>: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;;
       rel=<span class="s">"http://www.w3.org/ns/json-ld#context"</span>
 
 <span class="c"># joinLevel=2 inlines, per data element:
@@ -100,22 +100,22 @@
 <pre>{
   <span class="s">"@context"</span>: [
     <span class="s">"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"</span>,
-    <span class="s">"https://ontology.top/cr/v1/context.jsonld"</span>,        <span class="c">// the CR domain (cr:)</span>
+    <span class="s">"https://top.scientix.ai/cr/v1/ngsi-context.jsonld"</span>,        <span class="c">// the CR domain (cr:)</span>
     <span class="s">"https://www.w3.org/ns/prov.jsonld"</span>,                 <span class="c">// W3C PROV (prov:)</span>
     { <span class="s">"cr"</span>:  <span class="s">"https://top.scientix.ai/cr/v1#"</span>,
       <span class="s">"top"</span>: <span class="s">"https://top.scientix.ai/v1#"</span>,          <span class="c">// TOP core (autonomous agent)</span>
       <span class="s">"prov"</span>:<span class="s">"http://www.w3.org/ns/prov#"</span> }
   ],
-  <span class="s">"id"</span>:   <span class="s">"urn:top:TransferFile:GLP1-TRIAL-27:acme:2026W07"</span>,
+  <span class="s">"id"</span>:   <span class="s">"urn:ngsi-ld:top-cr:TransferFile:GLP1-TRIAL-27:acme:2026W07"</span>,
   <span class="s">"type"</span>: <span class="s">"cr:TransferFile"</span>,
   <span class="s">"observedAt"</span>: <span class="s">"2026-02-16T02:30:00Z"</span>,
-  <span class="s">"cr:forSubject"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:StudySubject:GLP1-TRIAL-27:S-001"</span> },
-  <span class="s">"cr:atVisit"</span>:    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Visit:GLP1-TRIAL-27:V03"</span> },
+  <span class="s">"cr:forSubject"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:StudySubject:GLP1-TRIAL-27:S-001"</span> },
+  <span class="s">"cr:atVisit"</span>:    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:Visit:GLP1-TRIAL-27:V03"</span> },
 
   <span class="s">"cr:hasDataElement"</span>: [
 
     <span class="c">// (1) resolved automatically &mdash; and provenanced back to the source FHIR</span>
-    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:DataElement:...:SODIUM"</span>,
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:DataElement:...:SODIUM"</span>,
       <span class="s">"entity"</span>: {
         <span class="s">"type"</span>: <span class="s">"cr:DataElement"</span>,
         <span class="s">"cr:vendorTerm"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"SODIUM"</span> },
@@ -129,30 +129,30 @@
           <span class="s">"entity"</span>: { <span class="s">"cr:sourceSystem"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"Acme Central Lab &middot; FHIR R4"</span> },
                      <span class="s">"cr:sourceUri"</span>:    { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"https://fhir.acme.example/Observation/obs-88213"</span> } } },
         <span class="s">"prov:wasGeneratedBy"</span>: {          <span class="c">// the resolution activity</span>
-          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:Activity:resolve:obs-88213"</span>,
+          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:Activity:resolve:obs-88213"</span>,
           <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"prov:Activity"</span>, <span class="s">"prov:endedAtTime"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"2026-02-16T02:30:11Z"</span> } } },
         <span class="s">"prov:wasAttributedTo"</span>: {         <span class="c">// the autonomous agent + its confidence</span>
-          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:AutonomousAgent:pne-resolver@1.4.0"</span>,
+          <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:AutonomousAgent:pne-resolver@1.4.0"</span>,
           <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"top:AutonomousAgent"</span>,
                      <span class="s">"cr:agentModel"</span>:           { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"PNE resolver 1.4.0"</span> },
                      <span class="s">"cr:resolutionConfidence"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 0.99 } } }
       } },
 
     <span class="c">// (2) low-confidence &mdash; same provenance chain; agent confidence 0.78 -&gt; human reconcile</span>
-    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:DataElement:...:TCO2"</span>,
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:DataElement:...:TCO2"</span>,
       <span class="s">"entity"</span>: {
         <span class="s">"type"</span>: <span class="s">"cr:DataElement"</span>,
         <span class="s">"cr:vendorTerm"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"TCO2"</span> },
         <span class="s">"cr:resolutionStatus"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"to_confirm"</span> },
         <span class="s">"cr:candidateConcept"</span>:  { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"https://loinc.org/1963-8"</span> },
         <span class="s">"prov:wasDerivedFrom"</span>:  { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:fhir:Observation:acme:obs-88217"</span> },
-        <span class="s">"prov:wasAttributedTo"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:AutonomousAgent:pne-resolver@1.4.0"</span>,
+        <span class="s">"prov:wasAttributedTo"</span>: { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:AutonomousAgent:pne-resolver@1.4.0"</span>,
           <span class="s">"entity"</span>: { <span class="s">"type"</span>: <span class="s">"top:AutonomousAgent"</span>, <span class="s">"cr:resolutionConfidence"</span>: { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: 0.78 } } }
         <span class="c">// on reconcile, a second prov:wasAttributedTo (the human) is appended &mdash; never overwritten</span>
       } },
 
     <span class="c">// (3) no public code &mdash; still provenanced to its source FHIR; awaits a clinician attestation</span>
-    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:top:DataElement:...:ACME-BMK-17"</span>,
+    { <span class="s">"type"</span>: <span class="s">"Relationship"</span>, <span class="s">"object"</span>: <span class="s">"urn:ngsi-ld:top-cr:DataElement:...:ACME-BMK-17"</span>,
       <span class="s">"entity"</span>: {
         <span class="s">"type"</span>: <span class="s">"cr:DataElement"</span>,
         <span class="s">"cr:vendorTerm"</span>:       { <span class="s">"type"</span>: <span class="s">"Property"</span>, <span class="s">"value"</span>: <span class="s">"ACME-BMK-17"</span> },
@@ -256,7 +256,7 @@
       <span id="sm-title">SDTM LB &mdash; projected on request</span>
       <div class="sub">generated now from the stored data &mdash; nothing is kept as SDTM</div></div>
     <div class="modal-body">
-<pre><span class="c">// GET .../projections/sdtm/LB?file=urn:top:TransferFile:...:2026W07  (rendered live)</span>
+<pre><span class="c">// GET .../projections/sdtm/LB?file=urn:ngsi-ld:top-cr:TransferFile:...:2026W07  (rendered live)</span>
 USUBJID              LBTESTCD  LBORRES LBORRESU  LBSTRESN LBSTRESU  LBLOINC  VISITNUM
 GLP1-TRIAL-27-S-001  SODIUM    140     mEq/L     140      mmol/L    2951-2   3
 GLP1-TRIAL-27-S-001  GLUC      92      mg/dL     5.1      mmol/L    2345-7   3
