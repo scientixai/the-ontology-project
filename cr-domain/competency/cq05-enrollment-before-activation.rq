@@ -1,0 +1,10 @@
+# CQ-05 — "Did any subject enrol at a site before that site was activated?"
+# A preventive integrity question: enrollment valid-time earlier than the site's
+# activation valid-time. The bitemporal spine makes it a filter, not an audit.
+PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+PREFIX top: <https://top.scientix.ai/v1#>
+SELECT ?enrolledAt ?activatedAt WHERE {
+  ?a a cr:SiteActivation ; cr:activates ?site ; top:observedAt ?activatedAt .
+  ?e a cr:Enrollment ; cr:atSite ?site ; top:observedAt ?enrolledAt .
+  FILTER(?enrolledAt < ?activatedAt)
+}

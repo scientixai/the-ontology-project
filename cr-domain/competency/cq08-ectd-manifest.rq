@@ -1,0 +1,12 @@
+# CQ-08 — "What locked content does the eCTD submission reference, and on which
+# lock does it rest?" The terminal manifest: every arrow points back at already
+# -produced, HARD-locked content (cr:builtOnLock + includes*).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?lockType ?report ?dataset ?define WHERE {
+  ?sub a cr:eCTDSubmission ; cr:builtOnLock ?lock .
+  ?lock cr:lockType ?lockType .
+  OPTIONAL { ?sub cr:includesReport ?rep . ?rep rdfs:label ?report }
+  OPTIONAL { ?sub cr:includesDataset ?ds . ?ds rdfs:label ?dataset }
+  OPTIONAL { ?sub cr:includesDefine ?df . ?df rdfs:label ?define }
+}

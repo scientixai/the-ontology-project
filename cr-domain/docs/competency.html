@@ -1,4 +1,4 @@
-<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Schedule of Activities</title><script src="https://cdn.tailwindcss.com"></script><style>
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>[DRAFT] Competency questions</title><script src="https://cdn.tailwindcss.com"></script><style>
 :root{--ink:#111;--sec:#2a2a2a;--mut:#777;--acc:#0e7490;--accent:#0e7490;--bg:#fafaf6;--card:#fff;--line:#d6d6cf;--line2:#c8c8c0;--ok:#1e8e6f;--warn:#c08410;--danger:#b23a48;--pale:#eef0ed}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
@@ -224,7 +224,7 @@ select.rm-field{cursor:pointer}
 <a class="" href="delegation.html">Delegation &amp; DoA</a>
 <b>Conduct</b>
 <a class="" href="enrollment.html">Enrollment &amp; consent</a>
-<a class="on" href="schedule.html">Schedule of Activities</a>
+<a class="" href="schedule.html">Schedule of Activities</a>
 <a class="" href="edc.html">Data capture (EDC)</a>
 <a class="" href="lims.html">Biospecimen &amp; LIMS</a>
 <a class="" href="dta.html">External lab data (DTA)</a>
@@ -243,70 +243,88 @@ select.rm-field{cursor:pointer}
 <b>Build &amp; interop</b>
 <a class="" href="interop.html">Interoperability</a>
 <a class="" href="ingestion.html">Ingestion example</a>
-<a class="" href="competency.html">Competency questions</a>
+<a class="on" href="competency.html">Competency questions</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Schedule of Activities</h1><p class='lead'>The visit schedule most systems flatten into a 2D table with the timing buried in footnotes &mdash; modeled as a timeline: a planned template (windows, relative timing, ordering, repeats), projected onto a participant once the anchor is known, then reconciled against what actually happened.</p><p class='note'>The bitemporal payoff a static SoA can&#8217;t give: the planned schedule is reconstructable <i>as-of</i> any protocol amendment, and a missed (planned-but-unrealized) visit is a detective query. Out-of-window is a Warning (deviation candidate); broken hard ordering is a Violation.</p>
-
-<h2>Operator screen &mdash; Schedule of Activities (OPP-101)</h2>
-<p class="impossible-claim"><b>The impossible screen.</b> A CRC at Denver Cancer Center opens the SoA view for S-042. They see planned dates with protocol-resolved visit windows, actuals from EDC, out-of-window flags computed automatically, and the system knows which protocol version governed each visit. Today this requires exporting from CTMS, EDC, and the protocol PDF and cross-referencing by hand. With TOP: one broker query, sub-200&thinsp;ms.</p>
-<div class="screen"><div class="scr-head">OPP-101 Schedule of Activities &mdash; S-042<span class="badge">CTMS</span><div class="scr-sub">Planned vs actual &middot; 4 visits &middot; 5 activity types &middot; Protocol v1.0 governing 2026-01-10 &rarr;</div></div><div style="overflow:auto"><table style="font-size:12px;margin:0;background:#fff;min-width:700px"><thead><tr><th style="min-width:140px">Activity</th><th style="min-width:110px">V0 Screening<br><span style="font-weight:400;color:#777">Target 2026-01-18<br>Window &plusmn;3&thinsp;d</span></th><th style="min-width:110px">V1 C1D1<br><span style="font-weight:400;color:#777">Target 2026-02-03<br>Window &plusmn;2&thinsp;d</span></th><th style="min-width:110px">V2 C2D1<br><span style="font-weight:400;color:#777">Target 2026-03-03<br>Window &plusmn;2&thinsp;d</span></th><th style="min-width:110px">V3 End of Tx<br><span style="font-weight:400;color:#777">Target TBD</span></th></tr></thead><tbody><tr><td>Vital signs</td><td><span class="pill ok">&#10003; 2026-01-20</span><div style="font-size:11px;color:#777;margin-top:2px">+2&thinsp;d &middot; IN_WINDOW</div></td><td><span class="pill ok">&#10003; 2026-02-03</span><div style="font-size:11px;color:#777;margin-top:2px">on target &middot; IN_WINDOW</div></td><td><span class="pill warn">2026-03-15 &#8593;</span><div style="font-size:11px;color:#c08410;margin-top:2px">+12&thinsp;d &middot; OUT_OF_WINDOW</div></td><td style="color:#aaa">&mdash;</td></tr><tr><td>Blood draw (PK)</td><td><span class="pill ok">&#10003; 2026-01-20</span><div style="font-size:11px;color:#777;margin-top:2px">+2&thinsp;d &middot; IN_WINDOW</div></td><td><span class="pill ok">&#10003; 2026-02-03</span><div style="font-size:11px;color:#777;margin-top:2px">on target &middot; IN_WINDOW</div></td><td><span class="pill warn">2026-03-15 &#8593;</span><div style="font-size:11px;color:#c08410;margin-top:2px">+12&thinsp;d &middot; OUT_OF_WINDOW</div></td><td style="color:#aaa">&mdash;</td></tr><tr><td>Tumor assessment</td><td><span class="pill ok">&#10003; 2026-01-22</span><div style="font-size:11px;color:#777;margin-top:2px">+4&thinsp;d &middot; IN_WINDOW</div></td><td style="color:#aaa">&mdash;</td><td><span class="pill warn">2026-03-15 &#8593;</span><div style="font-size:11px;color:#c08410;margin-top:2px">+12&thinsp;d &middot; OUT_OF_WINDOW</div></td><td style="color:#aaa">TBD</td></tr><tr><td>Study drug dosing</td><td style="color:#aaa">&mdash;</td><td><span class="pill ok">&#10003; 2026-02-03</span><div style="font-size:11px;color:#777;margin-top:2px">on target &middot; IN_WINDOW</div></td><td><span class="pill warn">2026-03-15 &#8593;</span><div style="font-size:11px;color:#c08410;margin-top:2px">+12&thinsp;d &middot; OUT_OF_WINDOW</div></td><td style="color:#aaa">TBD</td></tr><tr><td>AE review</td><td style="color:#aaa">&mdash;</td><td><span class="pill ok">&#10003; 2026-02-03</span><div style="font-size:11px;color:#777;margin-top:2px">on target &middot; IN_WINDOW</div></td><td><span class="pill warn">2026-03-15 &#8593;</span><div style="font-size:11px;color:#c08410;margin-top:2px">+12&thinsp;d &middot; OUT_OF_WINDOW</div></td><td style="color:#aaa">TBD</td></tr></tbody></table></div><div class="scr-row" style="background:#fff8e6"><span style="color:#c08410;font-weight:600">&#9888; V2 deviation candidate</span><b>All V2 activities out of window by 12 days &mdash; protocol deviation report required</b></div><div class="scr-row"><span>V0 &amp; V1 status</span><b><span class="pill ok">Completed &middot; all in window</span></b></div><div class="scr-row"><span>V2 status</span><b><span class="pill warn">Completed 2026-03-15 &middot; OUT_OF_WINDOW</span></b></div><div class="scr-row"><span>V3 status</span><b><span class="pill" style="background:#f0f0f0;color:#777">Future &mdash; TBD</span></b></div><div class="scr-row"><span>Governing protocol version</span><b>OPP-101 v1.0 &middot; approved 2026-01-10</b></div></div>
-<div class="mt-5 rounded-lg border border-[#d6d6cf] overflow-hidden">
-  <div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]">
-    <button role="tab" aria-selected="true" aria-controls="soa-req"
-      class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">
-      API Request
-    </button>
-    <button role="tab" aria-selected="false" aria-controls="soa-res"
-      class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">
-      API Response
-    </button>
-    <button role="tab" aria-selected="false" aria-controls="soa-design"
-      class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">
-      How it works
-    </button>
-  </div>
-  <div role="tabpanel" id="soa-req" class="p-4 bg-white">
-    <p class="jsoncap">One NGSI-LD query assembles planned windows, actuals, and out-of-window flags for all visits.</p><pre class="json q">GET /ngsi-ld/v1/entities?type=PlannedVisit
-  &amp;q=forParticipant=="urn:ngsi-ld:Participant:OPP101-S042"
-  &amp;join=inline&amp;joinLevel=2
-Accept: application/ld+json
-Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;;
-      rel="http://www.w3.org/ns/json-ld#context"
-
-<span style="color:#888"># Returns 4 PlannedVisit entities for S-042, each carrying
-# windowStart / windowEnd / actualDate / windowStatus.
-# The governing ScheduleTimeline is inlined at joinLevel=2.</span></pre>
-  </div>
-  <div role="tabpanel" id="soa-res" class="p-4 bg-white" hidden>
-    <p class="jsoncap">V2 PlannedVisit entity &mdash; OUT_OF_WINDOW computed at ingestion, not derived at query time.</p><pre class="json q">{
-  "@type": "cr:PlannedVisit",
-  "@id": "urn:ngsi-ld:PlannedVisit:OPP101-S042-V2",
-  "visitName":    { "value": "Cycle 2 Day 1" },
-  "visitNumber":  { "value": 3 },
-  "plannedDate":  { "value": "2026-03-03" },
-  "windowStart":  { "value": "2026-03-01" },
-  "windowEnd":    { "value": "2026-03-05" },
-  "actualDate":   { "value": "2026-03-15" },
-  "windowStatus": { "value": "OUT_OF_WINDOW" },
-  "governedBy": {
-    "object": "urn:ngsi-ld:ScheduleTimeline:OPP101-v1.0",
-    "entity": {
-      "@type": "cr:ScheduleTimeline",
-      "validFrom":  { "value": "2026-01-10" },
-      "validUntil": { "value": null }
-    }
-  },
-  "forParticipant": {
-    "object": "urn:ngsi-ld:Participant:OPP101-S042"
-  }
-}</pre>
-  </div>
-  <div role="tabpanel" id="soa-design" class="p-4 bg-white" hidden>
-    <p><b>Why this view is impossible today.</b> A CRC assembles this by hand: open the protocol PDF for windows, query CTMS for actuals, subtract dates, flag deviations. For 149 participants across 30 sites that is weeks of reconciliation work.</p><p><b>What TOP does differently.</b> The <code>cr:ScheduleTimeline</code> carries the planned template &mdash; windows, ordering, repeats. When a participant&rsquo;s anchor date (enrollment) is known, <code>cr:PlannedVisit</code> entities are projected per participant with resolved target dates and windows. The <code>windowStatus</code> flag is written at ingestion time by the transformer when the actual visit date arrives &mdash; so this query is a lookup, not a computation.</p><p><b>Bitemporality payoff.</b> When OPP-101 issues Amendment 1, a new <code>cr:ScheduleTimeline</code> with a later <code>validFrom</code> is ingested. Participants enrolled before the amendment remain governed by v1.0; new enrollees get amended windows. Which version governed which visit is a query &mdash; not an audit trail dig.</p><p><b>Data sources unified in this view.</b> CTMS (actual visit dates), EDC (activity completion status), Protocol design system (windows, ordering). Three separate point solutions; one broker call.</p>
-  </div>
-</div>
-
-<h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Planned template</span><span class="vtl-time">protocol v1</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> windows, relative timing, ordering, repeats</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Projected to participant</span><span class="vtl-time">at enrollment</span><span class="vtl-who">system</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> windows resolved off the anchor date</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Visit executed</span><span class="vtl-time">Visit 3</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> within the planned window</li></ul></div></div><div class="vtl-stop warn"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Protocol amendment</span><span class="vtl-time">v2</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-warn">!</span> V2 widened the window &mdash; schedule re-projected, both kept</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">5</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">As-of reconstruction</span><span class="vtl-time">live</span><span class="vtl-who">&mdash;</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> the planned schedule as-of any date; a missed visit is a query</li></ul></div></div></div><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:ParticipantSchedule</code></td><td>Participant Schedule</td><td class='clo'>Evidence</td><td>The schedule projected for a specific subject from a ScheduleTimeline once an anchor date (e.g. enrollment) is known. Bitemporal: re-projected when the governing protocol version changes.</td></tr><tr><td><code>cr:PlannedActivity</code></td><td>Planned Activity</td><td class='clo'>Constraint</td><td>A planned activity within an encounter (USDM ScheduledActivityInstance) — e.g. ECG, blood draw, PRO. Positioned by a cr:Timing and/or an ordering edge (cr:precedes).</td></tr><tr><td><code>cr:PlannedEncounter</code></td><td>Planned Encounter</td><td class='clo'>Constraint</td><td>A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it.</td></tr><tr><td><code>cr:PlannedVisit</code></td><td>Planned Visit</td><td class='clo'>Constraint</td><td>A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled.</td></tr><tr><td><code>cr:RepeatingPlannedActivity</code></td><td>Repeating Planned Activity</td><td class='clo'>Constraint</td><td>A planned activity that recurs on an interval until a stop condition (e.g. a daily participant diary until Day N; dosing every 7 days).</td></tr><tr><td><code>cr:ScheduleTimeline</code></td><td>Schedule Timeline</td><td class='clo'>Evidence</td><td>The planned Schedule of Activities for a protocol version, as a timeline of planned encounters and activities. Bitemporal: a protocol amendment supersedes it, so the schedule is reconstructable as-of any date.</td></tr><tr><td><code>cr:Timing</code></td><td>Timing</td><td class='clo'>Constraint</td><td>A relative-timing rule: an offset (days or hours) from an anchor — another node, or an anchor event such as enrollment — with an allowed window. The footnote logic, made explicit.</td></tr><tr><td><code>cr:Window</code></td><td>Window</td><td class='clo'>Constraint</td><td>An allowed tolerance around a planned time: a lower and an upper offset in days (e.g. [-2 days, +2 days]).</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:PlannedEncounterTimingShape</code></td><td><code>cr:PlannedEncounter</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>PlannedEncounter has no cr:timing (an encounter must be positioned on the timeline).</li></ul></td></tr><tr><td><code>cr:PlannedActivityPositionShape</code></td><td><code>cr:PlannedActivity</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>PlannedActivity has neither a cr:timing nor an ordering edge (cr:precedes); it is unpositioned.</li></ul></td></tr><tr><td><code>cr:PlannedVisitWindowShape</code></td><td><code>cr:PlannedVisit</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>PlannedVisit has no cr:targetDate.</li><li>PlannedVisit has no cr:windowEnd.</li><li>PlannedVisit has no cr:windowStart.</li></ul></td></tr><tr><td><code>cr:VisitWindowShape</code></td><td><code>cr:realizes</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Actual visit&#x27;s observedAt falls outside the planned window of the visit it realizes (out-of-window) — review materiality.</li></ul></td></tr><tr><td><code>cr:ActivityOrderingShape</code></td><td><code>cr:realizes</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>Acts executed out of the order their planned activities require (cr:precedes violated).</li></ul></td></tr></table><h2>Views it emits</h2><table><tr><th>projection</th><th>produces</th></tr><tr><td><code>soa_table.rq</code></td><td>Schedule of Activities — the classic table is just a VIEW of the timeline. Projects each participant&#x27;s planned visits back into the familiar visit x date grid. The timeline is the truth; this table is one read of it (no footnotes — the timing logic is in the windows).</td></tr><tr><td><code>planned_vs_actual.rq</code></td><td>Planned-vs-actual reconciliation — the join a static SoA cannot express. For each realized visit, the planned target and resolved window beside what actually happened, so out-of-window adherence is a projection, not a manual review.</td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Competency questions</h1><p class='lead'>The questions the reference graph is built to answer &mdash; each as ready-to-run SPARQL, grounded in a worked example and <b>verified by the test suite</b>, so it runs exactly as written. Copy one, point it at your own graph, and adapt.</p><p class='note'>These double as an acceptance test for the model: a competency question is the ontology-engineering way of stating &lsquo;the graph must be able to answer this.&rsquo; The suite runs every one of them against a conformant example on each build.</p><h2>CQ-01 &mdash; Which critical-to-quality factors are high-risk but have no mitigation?</h2><pre># CQ-01 — &quot;Which critical-to-quality factors are high-risk but have no mitigation?&quot;
+# The RBQM safety question: an unmitigated high-risk CtQ factor is exactly what
+# cr:HighRiskMitigationShape flags as a Violation. Here it is as a plain query.
+PREFIX cr:   &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?factor ?riskLevel WHERE {
+  ?ra a cr:RiskAssessment ; cr:assessesFactor ?f ; cr:riskLevel ?riskLevel .
+  ?f rdfs:label ?factor .
+  FILTER(?riskLevel = &quot;high&quot;)
+  FILTER NOT EXISTS { ?mp cr:mitigates ?ra }
+}
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/rbqm-unmitigated-high-risk-violation.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-02 &mdash; On what evidence does the EOP2 go/no-go decision rest?</h2><pre># CQ-02 — &quot;On what evidence does the EOP2 go/no-go decision rest?&quot;
+# The decision is a first-class node (cr:AnalysisDecision), not a meeting note:
+# cr:restsOn walks from the coded verdict to each analysis output it depends on.
+PREFIX cr:   &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?verdict ?restsOn WHERE {
+  ?d a cr:AnalysisDecision ; cr:decisionOutcome ?verdict ; cr:restsOn ?e .
+  ?e rdfs:label ?restsOn .
+} ORDER BY ?restsOn
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/analysis-tlf-conformant.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-03 &mdash; For each SAE report, when did the sponsor become aware and when was it submitted (the 15-day clock)?</h2><pre># CQ-03 — &quot;For each SAE report, when did the sponsor become aware and when was it
+# submitted?&quot; The 15-day expedited clock is awareness -&gt; submission; a consumer
+# filters the gap. Bitemporal by construction (both timestamps are first-class).
+PREFIX cr:   &lt;https://top.scientix.ai/cr/v1#&gt;
+SELECT ?awareAt ?submittedAt WHERE {
+  ?rep a cr:SafetyReport ; cr:submittedAt ?submittedAt ; cr:reportsEvent ?sae .
+  ?sae cr:sponsorAwareAt ?awareAt .
+} ORDER BY ?awareAt
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/safety-sae.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-04 &mdash; Trace an analysis result back to its native source (ADaM lineage).</h2><pre># CQ-04 — &quot;Trace an analysis result back to its native source (ADaM lineage).&quot;
+# reproducible-to-source: result -&gt; ADaM dataset -&gt; native facts, all via prov.
+PREFIX cr:   &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?result ?dataset ?source WHERE {
+  ?r a cr:EndpointResult ; rdfs:label ?result ; prov:wasDerivedFrom ?ds .
+  ?ds rdfs:label ?dataset ; prov:wasDerivedFrom ?src .
+  ?src rdfs:label ?source .
+}
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/adam-conformant.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-05 &mdash; Did any subject enrol at a site before that site was activated?</h2><pre># CQ-05 — &quot;Did any subject enrol at a site before that site was activated?&quot;
+# A preventive integrity question: enrollment valid-time earlier than the site&#x27;s
+# activation valid-time. The bitemporal spine makes it a filter, not an audit.
+PREFIX cr:  &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX top: &lt;https://top.scientix.ai/v1#&gt;
+SELECT ?enrolledAt ?activatedAt WHERE {
+  ?a a cr:SiteActivation ; cr:activates ?site ; top:observedAt ?activatedAt .
+  ?e a cr:Enrollment ; cr:atSite ?site ; top:observedAt ?enrolledAt .
+  FILTER(?enrolledAt &lt; ?activatedAt)
+}
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/site-activation-enrollment-timing.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-06 &mdash; Which clinical values were recorded after the database lock, and under what recorded unlock?</h2><pre># CQ-06 — &quot;Which clinical values were recorded after the database lock, and under
+# what recorded unlock?&quot; After a HARD lock nothing changes silently: a late value
+# is legitimate only when it cites a cr:DatabaseUnlock (with a reason).
+PREFIX cr:  &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+SELECT ?value ?unlockReason WHERE {
+  ?obs a cr:ClinicalObservation ; rdf:value ?value ; cr:underUnlock ?u .
+  ?u cr:unlockReason ?unlockReason .
+}
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/closeout-dblock-conformant.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-07 &mdash; For a CSR efficacy-results section, what table does it present and what result does it report?</h2><pre># CQ-07 — &quot;For a CSR efficacy-results section, what table does it present and what
+# result does it report?&quot; &#x27;On what does this conclusion rest?&#x27; is a graph walk
+# from the section to the pre-specified TLF and the endpoint result.
+PREFIX cr:   &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?section ?tlf ?result WHERE {
+  ?s a cr:CSRSection ; cr:sectionKind &quot;efficacy-results&quot; ; cr:sectionTitle ?section .
+  OPTIONAL { ?s cr:presentsTLF ?t . ?t rdfs:label ?tlf }
+  OPTIONAL { ?s cr:reportsResult ?r . ?r rdfs:label ?result }
+}
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/csr-reporting-conformant.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><h2>CQ-08 &mdash; What locked content does the eCTD submission reference, and on which lock does it rest?</h2><pre># CQ-08 — &quot;What locked content does the eCTD submission reference, and on which
+# lock does it rest?&quot; The terminal manifest: every arrow points back at already
+# -produced, HARD-locked content (cr:builtOnLock + includes*).
+PREFIX cr:   &lt;https://top.scientix.ai/cr/v1#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?lockType ?report ?dataset ?define WHERE {
+  ?sub a cr:eCTDSubmission ; cr:builtOnLock ?lock .
+  ?lock cr:lockType ?lockType .
+  OPTIONAL { ?sub cr:includesReport ?rep . ?rep rdfs:label ?report }
+  OPTIONAL { ?sub cr:includesDataset ?ds . ?ds rdfs:label ?dataset }
+  OPTIONAL { ?sub cr:includesDefine ?df . ?df rdfs:label ?define }
+}
+</pre><p class='muted' style='font-size:12px'>Grounded in <code>examples/submission-ectd-conformant.ttl</code> &middot; verified by <code>tests/run_tests.py</code> (competency 8/8).</p><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

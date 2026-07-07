@@ -141,6 +141,9 @@ def main():
     # (m) single-pull retrieval view — one entity carries every green-check fact (no recursive lookups)
     vw_passed, vw_total = view_checks(failures)
 
+    # (n) competency questions — the reusable business queries answer as documented
+    cq_passed, cq_total = competency_checks(ont_graph, failures)
+
     _report([
         ("coherence", co_passed, co_total),
         ("seam", sm_passed, sm_total),
@@ -156,7 +159,49 @@ def main():
         ("usdm", uv_passed, uv_total),
         ("ncit", nv_passed, nv_total),
         ("view", vw_passed, vw_total),
+        ("competency", cq_passed, cq_total),
     ], failures)
+
+
+def competency_checks(ont_graph, failures):
+    """The curated competency-question library (competency/*.rq + competency.json)
+    must answer as documented — so the reusable business queries a consumer copies
+    are guaranteed to run and return the stated result, not decorative snippets."""
+    manifest = os.path.join(ROOT, "competency", "competency.json")
+    if not os.path.exists(manifest):
+        return 0, 0
+    cqs = json.load(open(manifest))
+    total = passed = 0
+
+    def rows_for(source, query_path):
+        g = Graph()
+        for t in ont_graph:
+            g.add(t)
+        g.parse(os.path.join(ROOT, source), format="turtle")
+        q = open(os.path.join(ROOT, query_path)).read()
+        res = g.query(q)
+        return [{str(v): str(r[v]) for v in res.vars if r[v] is not None} for r in res]
+
+    for cq in cqs:
+        total += 1
+        rows = rows_for(cq["source"], cq["query"])
+        problems = []
+        for exp in cq.get("expect_rows", []):
+            if not any(all(r.get(k) == v for k, v in exp.items()) for r in rows):
+                problems.append(f"missing row {exp}")
+        if "expect_min_rows" in cq and len(rows) < cq["expect_min_rows"]:
+            problems.append(f"expected >={cq['expect_min_rows']} rows, got {len(rows)}")
+        # a discriminating CQ must return NOTHING on its conformant counterpart
+        if cq.get("also_empty_on"):
+            if rows_for(cq["also_empty_on"], cq["query"]):
+                problems.append(f"expected empty on {cq['also_empty_on']}")
+        if not problems:
+            passed += 1
+            print(f"[PASS] competency {cq['id']}: {cq['question'][:64]}")
+        else:
+            failures.append(("CQ", cq["id"], f"{problems}; got {rows}"))
+            print(f"[FAIL] competency {cq['id']}: {problems}")
+    return passed, total
 
 
 def coherence_checks(ont_files, ont_graph, failures):

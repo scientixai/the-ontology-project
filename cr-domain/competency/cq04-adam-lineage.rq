@@ -1,0 +1,10 @@
+# CQ-04 — "Trace an analysis result back to its native source (ADaM lineage)."
+# reproducible-to-source: result -> ADaM dataset -> native facts, all via prov.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?result ?dataset ?source WHERE {
+  ?r a cr:EndpointResult ; rdfs:label ?result ; prov:wasDerivedFrom ?ds .
+  ?ds rdfs:label ?dataset ; prov:wasDerivedFrom ?src .
+  ?src rdfs:label ?source .
+}

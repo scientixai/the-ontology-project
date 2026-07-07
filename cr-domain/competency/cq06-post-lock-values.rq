@@ -1,0 +1,9 @@
+# CQ-06 — "Which clinical values were recorded after the database lock, and under
+# what recorded unlock?" After a HARD lock nothing changes silently: a late value
+# is legitimate only when it cites a cr:DatabaseUnlock (with a reason).
+PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?value ?unlockReason WHERE {
+  ?obs a cr:ClinicalObservation ; rdf:value ?value ; cr:underUnlock ?u .
+  ?u cr:unlockReason ?unlockReason .
+}

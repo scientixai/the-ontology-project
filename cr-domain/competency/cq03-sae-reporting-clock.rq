@@ -1,0 +1,8 @@
+# CQ-03 — "For each SAE report, when did the sponsor become aware and when was it
+# submitted?" The 15-day expedited clock is awareness -> submission; a consumer
+# filters the gap. Bitemporal by construction (both timestamps are first-class).
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+SELECT ?awareAt ?submittedAt WHERE {
+  ?rep a cr:SafetyReport ; cr:submittedAt ?submittedAt ; cr:reportsEvent ?sae .
+  ?sae cr:sponsorAwareAt ?awareAt .
+} ORDER BY ?awareAt

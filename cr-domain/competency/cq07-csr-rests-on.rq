@@ -1,0 +1,10 @@
+# CQ-07 — "For a CSR efficacy-results section, what table does it present and what
+# result does it report?" 'On what does this conclusion rest?' is a graph walk
+# from the section to the pre-specified TLF and the endpoint result.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?section ?tlf ?result WHERE {
+  ?s a cr:CSRSection ; cr:sectionKind "efficacy-results" ; cr:sectionTitle ?section .
+  OPTIONAL { ?s cr:presentsTLF ?t . ?t rdfs:label ?tlf }
+  OPTIONAL { ?s cr:reportsResult ?r . ?r rdfs:label ?result }
+}

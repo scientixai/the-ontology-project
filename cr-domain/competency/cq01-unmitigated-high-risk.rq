@@ -1,0 +1,11 @@
+# CQ-01 — "Which critical-to-quality factors are high-risk but have no mitigation?"
+# The RBQM safety question: an unmitigated high-risk CtQ factor is exactly what
+# cr:HighRiskMitigationShape flags as a Violation. Here it is as a plain query.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?factor ?riskLevel WHERE {
+  ?ra a cr:RiskAssessment ; cr:assessesFactor ?f ; cr:riskLevel ?riskLevel .
+  ?f rdfs:label ?factor .
+  FILTER(?riskLevel = "high")
+  FILTER NOT EXISTS { ?mp cr:mitigates ?ra }
+}

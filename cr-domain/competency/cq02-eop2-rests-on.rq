@@ -1,0 +1,9 @@
+# CQ-02 — "On what evidence does the EOP2 go/no-go decision rest?"
+# The decision is a first-class node (cr:AnalysisDecision), not a meeting note:
+# cr:restsOn walks from the coded verdict to each analysis output it depends on.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?verdict ?restsOn WHERE {
+  ?d a cr:AnalysisDecision ; cr:decisionOutcome ?verdict ; cr:restsOn ?e .
+  ?e rdfs:label ?restsOn .
+} ORDER BY ?restsOn

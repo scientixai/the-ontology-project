@@ -1,0 +1,62 @@
+[
+  {
+    "id": "CQ-01",
+    "question": "Which critical-to-quality factors are high-risk but have no mitigation?",
+    "query": "competency/cq01-unmitigated-high-risk.rq",
+    "source": "examples/rbqm-unmitigated-high-risk-violation.ttl",
+    "expect_rows": [{"factor": "SAE reporting timeliness", "riskLevel": "high"}],
+    "also_empty_on": "examples/rbqm-conformant.ttl"
+  },
+  {
+    "id": "CQ-02",
+    "question": "On what evidence does the EOP2 go/no-go decision rest?",
+    "query": "competency/cq02-eop2-rests-on.rq",
+    "source": "examples/analysis-tlf-conformant.ttl",
+    "expect_rows": [
+      {"verdict": "go", "restsOn": "ORR = 0.42"},
+      {"verdict": "go", "restsOn": "Table 14.3.1 — ORR by treatment arm"}
+    ]
+  },
+  {
+    "id": "CQ-03",
+    "question": "For each SAE report, when did the sponsor become aware and when was it submitted (the 15-day clock)?",
+    "query": "competency/cq03-sae-reporting-clock.rq",
+    "source": "examples/safety-sae.ttl",
+    "expect_min_rows": 2
+  },
+  {
+    "id": "CQ-04",
+    "question": "Trace an analysis result back to its native source (ADaM lineage).",
+    "query": "competency/cq04-adam-lineage.rq",
+    "source": "examples/adam-conformant.ttl",
+    "expect_rows": [{"dataset": "ADAE", "source": "Grade 2 rash (source)"}]
+  },
+  {
+    "id": "CQ-05",
+    "question": "Did any subject enrol at a site before that site was activated?",
+    "query": "competency/cq05-enrollment-before-activation.rq",
+    "source": "examples/site-activation-enrollment-timing.ttl",
+    "expect_min_rows": 1
+  },
+  {
+    "id": "CQ-06",
+    "question": "Which clinical values were recorded after the database lock, and under what recorded unlock?",
+    "query": "competency/cq06-post-lock-values.rq",
+    "source": "examples/closeout-dblock-conformant.ttl",
+    "expect_rows": [{"value": "grade 1 rash (resolved)"}]
+  },
+  {
+    "id": "CQ-07",
+    "question": "For a CSR efficacy-results section, what table does it present and what result does it report?",
+    "query": "competency/cq07-csr-rests-on.rq",
+    "source": "examples/csr-reporting-conformant.ttl",
+    "expect_rows": [{"section": "Efficacy Results", "tlf": "Table 14.3.1 — ORR by treatment arm", "result": "ORR = 0.42"}]
+  },
+  {
+    "id": "CQ-08",
+    "question": "What locked content does the eCTD submission reference, and on which lock does it rest?",
+    "query": "competency/cq08-ectd-manifest.rq",
+    "source": "examples/submission-ectd-conformant.ttl",
+    "expect_rows": [{"lockType": "hard"}]
+  }
+]

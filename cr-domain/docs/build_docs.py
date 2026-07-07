@@ -11,6 +11,7 @@ import os
 import sys
 
 from rdflib import Graph, RDF, RDFS, OWL, URIRef, Literal
+from rdflib.namespace import SKOS
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -442,7 +443,9 @@ def nav(active):
     NAV = [
         ("", [
             ("index.html",          "Overview",              "hub"),
+            ("getting-started.html","Getting started",       "getting-started"),
             ("foundation.html",     "Foundation",            "foundation"),
+            ("glossary.html",       "Glossary",              "glossary"),
             ("implementation.html", "Implementation guide",  "implementation"),
         ]),
         ("Start-up", [
@@ -475,6 +478,7 @@ def nav(active):
         ("Build &amp; interop", [
             ("interop.html",        "Interoperability",      "interop"),
             ("ingestion.html",      "Ingestion example",     "ingestion"),
+            ("competency.html",     "Competency questions",  "competency"),
         ]),
     ]
     out = []
@@ -678,6 +682,154 @@ def hub_body(stats):
 
         "<h2 id='limits'>Honest limits</h2>"
         f"{limits}")
+
+
+def getting_started_body():
+    """The reader on-ramp: routes the three audiences (newcomer, operator,
+    implementer) and gives a concrete clone->load->validate->query path."""
+    audiences = [
+        ("I'm new to this", "Start with <a href='index.html'>Overview</a> (what it is, and the "
+         "&lsquo;reference graph, not a runtime&rsquo; frame), then <a href='foundation.html'>Foundation</a> "
+         "(the 8-category model, Universal DNA, the bitemporal + PROV spine). Keep the "
+         "<a href='glossary.html'>Glossary</a> open in a tab."),
+        ("I run trials (operator)", "Read the flow pages in trial order &mdash; each has an operator screen, "
+         "the one query that assembles it, and the constraints it enforces. Follow the train line on the "
+         "<a href='index.html'>Overview</a>: set-up &rarr; enrollment &rarr; conduct &rarr; closeout."),
+        ("I'm building a graph (implementer)", "Go to <a href='implementation.html'>Implementation guide</a> "
+         "and the five steps below, then <a href='competency.html'>Competency questions</a> for reusable "
+         "SPARQL, <a href='interop.html'>Interoperability</a> for the crosswalks, and "
+         "<a href='ingestion.html'>Ingestion</a> for a worked USDM&rarr;graph example."),
+    ]
+    cards = "".join(f"<div class='card'><h4>{t}</h4><p>{d}</p></div>" for t, d in audiences)
+    steps = """
+<div class="step"><span class="num">1</span><div><h4>Clone &amp; load the model</h4>
+<p>Load the merged artifact into any triple store (Jena, GraphDB, Neptune, rdflib):
+<code>dist/top-cr-v1.ttl</code> (Turtle), or <code>.jsonld</code> / <code>.nt</code>. Pin by checksum with
+<code>sha256sum -c SHA256SUMS</code> in <code>dist/</code>. The shapes and crosswalks are separate bundles
+(<code>top-cr-shapes-v1.ttl</code>, <code>top-cr-crosswalks-v1.ttl</code>).</p></div></div>
+<div class="step"><span class="num">2</span><div><h4>Load a worked example</h4>
+<p>Every sub-domain ships a conformant example under <code>examples/</code> (and a deliberately-broken
+counterpart). Load one &mdash; e.g. <code>examples/rbqm-conformant.ttl</code> &mdash; alongside the model.</p></div></div>
+<div class="step"><span class="num">3</span><div><h4>Validate with SHACL</h4>
+<p>Run the shapes over your data (<code>pyshacl -s top-cr-shapes-v1.ttl your-data.ttl</code>). Constraints are
+graded: a Violation is a hard invariant (PII leak, undelegated act, unmitigated high risk); a Warning is
+risk-proportionate. The negative examples prove the shapes bite.</p></div></div>
+<div class="step"><span class="num">4</span><div><h4>Ask a competency question</h4>
+<p>The <a href="competency.html">Competency questions</a> are ready-to-run SPARQL for real business questions
+(&ldquo;unmitigated high-risk factors?&rdquo;, &ldquo;what does this EOP2 decision rest on?&rdquo;). Each is
+verified against a worked example, so it runs as written.</p></div></div>
+<div class="step"><span class="num">5</span><div><h4>Instantiate your own study</h4>
+<p>Model your study by pattern-matching the examples: reuse the <code>cr:</code> classes, carry the Universal DNA
+(<code>identifier</code> / <code>observedAt</code> / <code>status</code>) and the bitemporal + PROV envelope, and
+reference entities by IRI across sub-domains. Extend into a new area with an additive
+<code>top:flavor&nbsp;&quot;Additive&quot;</code> leaf (the <a href="dta.html">DTA module</a> is the worked precedent).
+Serving that graph as a live NGSI-LD runtime is a separate engine&rsquo;s job &mdash; see the
+&lsquo;reference graph, not a runtime&rsquo; note on the <a href="index.html">Overview</a>.</p></div></div>"""
+    return (
+        "<h1>Getting started</h1>"
+        "<p class='lead'>This is a <b>reference graph</b>: you read it, cite it, and build your own graph "
+        "against it &mdash; it is not a system you download and run. Pick your path, then follow the five steps "
+        "to go from clone to your own validated study graph.</p>"
+        "<h2>Pick your path</h2>"
+        f"<div class='cards'>{cards}</div>"
+        "<h2>Five steps: clone &rarr; your own graph</h2>"
+        f"{steps}"
+        "<p class='note'>Prerequisite tooling for the examples: Python with <code>rdflib</code> + "
+        "<code>pyshacl</code>, or any RDF triple store and SHACL processor. MedDRA and full CDISC "
+        "controlled terminology are bring-your-own-license; the model references them by IRI.</p>")
+
+
+def glossary_body():
+    """An A-Z the outsider needs: the acronyms/terms of art the model uses,
+    plus the model's own defined classes (label + definition) pulled live from
+    the ontology so the glossary never drifts from the terms it documents."""
+    acronyms = [
+        ("ALCOA++", "Attributable, Legible, Contemporaneous, Original, Accurate (+ Complete, Consistent, Enduring, Available) &mdash; the data-integrity properties GCP expects of source data."),
+        ("CAPA", "Corrective And Preventive Action &mdash; the response opened when a significant deviation occurs."),
+        ("CtQ", "Critical-to-Quality factor &mdash; an aspect of the trial whose integrity is essential; the unit RBQM assesses risk against."),
+        ("CSR", "Clinical Study Report (ICH E3) &mdash; the definitive narrative of a study's conduct and results."),
+        ("CTA", "Clinical Trial Agreement &mdash; the executed contract between sponsor and site; a gate for activation."),
+        ("DoA / DOA", "Delegation of Authority log &mdash; who the PI delegated which task to; here a <i>projection</i> of attestation acts, not a maintained spreadsheet."),
+        ("DTA / DTS", "Data Transfer Agreement / Specification &mdash; governs non-CRF vendor data (labs, ECG, imaging, eCOA)."),
+        ("eCTD", "electronic Common Technical Document &mdash; the submission format; Module 5 carries the clinical study content. The terminal node of this domain."),
+        ("EDC", "Electronic Data Capture &mdash; the system CRF data is entered into; modeled here as CDISC ODM EAV capture."),
+        ("EOP2", "End of Phase 2 &mdash; the go/no-go decision gate that yields a Phase 3 design."),
+        ("estimand", "A precise description of the treatment effect a trial estimates (ICH E9(R1)): population, variable, intercurrent-event strategy, summary."),
+        ("IND / IDE", "Investigational New Drug / Investigational Device Exemption &mdash; the FDA applications that authorize first-in-human study."),
+        ("IxRS / RTSM", "Interactive Response System / Randomization & Trial Supply Management &mdash; randomization and drug-supply logistics (a deferred sub-domain)."),
+        ("KRI", "Key Risk Indicator &mdash; a monitored metric that signals emerging risk in RBQM."),
+        ("LPLV", "Last Patient Last Visit &mdash; the milestone that opens database closeout."),
+        ("MedDRA / WHODrug", "Medical Dictionary for Regulatory Activities / WHO Drug Dictionary &mdash; the coding terminologies for adverse events and medications."),
+        ("NGSI-LD", "ETSI GS CIM 009 &mdash; the JSON-LD-over-RDF entity API and preferred runtime substrate; <code>observedAt</code> is native."),
+        ("PROV", "W3C PROV-O &mdash; the provenance vocabulary (<code>wasAttributedTo</code>, <code>wasDerivedFrom</code>) the model uses for attestation and lineage."),
+        ("RBQM", "Risk-Based Quality Management &mdash; targeting monitoring effort by risk rather than blanket 100% SDV."),
+        ("SAE / SUSAR", "Serious Adverse Event / Suspected Unexpected Serious Adverse Reaction &mdash; the safety events on the expedited reporting clock."),
+        ("SAP", "Statistical Analysis Plan &mdash; pre-specifies the analyses; a TLF is legitimate only if grounded in it."),
+        ("SDTM / ADaM", "Study Data Tabulation Model / Analysis Data Model &mdash; CDISC submission datasets; here they are <i>projections</i> (views) of the native graph, not the source of truth."),
+        ("SDV", "Source Data Verification &mdash; checking CRF values against source; intensity is risk-targeted in RBQM."),
+        ("SIV", "Site Initiation Visit &mdash; the readiness gate before a site may enrol."),
+        ("SoA", "Schedule of Activities &mdash; the visit-and-assessment schedule; modeled as a bitemporal timeline, not a flat 2D table."),
+        ("SSSOM", "Simple Standard for Sharing Ontological Mappings &mdash; the format the external crosswalks follow (predicate, justification, confidence, provenance)."),
+        ("TLF / TFL", "Tables, Listings and Figures &mdash; the analysis outputs; each must be reproducible-to-source and pre-specified in the SAP."),
+        ("TMF / eTMF", "Trial Master File &mdash; the regulated document store; artifact types align by name to the DIA TMF Reference Model."),
+        ("USDM", "Unified Study Definition Model (CDISC DDF) &mdash; the design-time study model this domain crosswalks to; devices stay in-model per USDM."),
+    ]
+    arows = "".join(f"<tr><td><b>{esc(t)}</b></td><td>{d}</td></tr>" for t, d in acronyms)
+    # Live from the model: every cr: class with a label + definition/comment.
+    seen, model_rows = set(), []
+    for s in sorted(MERGED.subjects(RDF.type, OWL.Class), key=lambda x: str(MERGED.value(x, RDFS.label) or x)):
+        if not str(s).startswith(MAST["namespace"]):
+            continue
+        label = MERGED.value(s, RDFS.label)
+        if label is None or str(label) in seen:
+            continue
+        seen.add(str(label))
+        defn = MERGED.value(s, SKOS.definition) or MERGED.value(s, RDFS.comment)
+        if defn is None:
+            continue
+        model_rows.append(f"<tr><td><code>{esc(qn(s))}</code></td><td>{esc(label)}</td>"
+                          f"<td>{esc(defn)}</td></tr>")
+    model_tbl = ("<table class='ref'><tr><th>IRI</th><th>term</th><th>definition</th></tr>"
+                 + "".join(model_rows) + "</table>")
+    return (
+        "<h1>Glossary</h1>"
+        "<p class='lead'>Two glossaries in one: the <b>terms of art</b> an outsider needs to read clinical "
+        "research, and the <b>model's own vocabulary</b> (pulled live from the ontology, so it never drifts).</p>"
+        "<h2>Clinical-research terms &amp; acronyms</h2>"
+        f"<table><tr><th>term</th><th>meaning</th></tr>{arows}</table>"
+        "<h2>Model vocabulary (defined classes)</h2>"
+        "<p class='muted' style='font-size:13px'>Every <code>cr:</code> class that carries a definition, "
+        "generated from the ontology. The full property-level reference is on the "
+        "<a href='reference.html'>Full reference</a> page.</p>"
+        f"{model_tbl}")
+
+
+def competency_body():
+    """The verified competency-question library: each business question, the
+    SPARQL that answers it, and where it's grounded — pulled from competency.json
+    so the page always matches the harness-verified queries."""
+    manifest = os.path.join(ROOT, "competency", "competency.json")
+    if not os.path.exists(manifest):
+        return "<h1>Competency questions</h1><p class='muted'>&mdash;</p>"
+    cqs = json.load(open(manifest))
+    blocks = []
+    for cq in cqs:
+        query = esc(open(os.path.join(ROOT, cq["query"])).read())
+        src = esc(cq["source"])
+        blocks.append(
+            f"<h2>{esc(cq['id'])} &mdash; {esc(cq['question'])}</h2>"
+            f"<pre>{query}</pre>"
+            f"<p class='muted' style='font-size:12px'>Grounded in <code>{src}</code> &middot; "
+            f"verified by <code>tests/run_tests.py</code> (competency {len(cqs)}/{len(cqs)}).</p>")
+    return (
+        "<h1>Competency questions</h1>"
+        "<p class='lead'>The questions the reference graph is built to answer &mdash; each as ready-to-run "
+        "SPARQL, grounded in a worked example and <b>verified by the test suite</b>, so it runs exactly as "
+        "written. Copy one, point it at your own graph, and adapt.</p>"
+        "<p class='note'>These double as an acceptance test for the model: a competency question is the "
+        "ontology-engineering way of stating &lsquo;the graph must be able to answer this.&rsquo; The suite "
+        "runs every one of them against a conformant example on each build.</p>"
+        + "".join(blocks))
 
 
 def download_badges(base, label):
@@ -1465,9 +1617,12 @@ def build():
     stats = dict(c=n_cls, s=len(SHAPES), p=len(PROJ), e=len(glob.glob(os.path.join(ROOT, "examples", "*.ttl"))), t=len(man))
     out = os.path.join(ROOT, "docs")
     pages = {"index.html": ("TOP CR &mdash; Overview", "hub", hub_body(stats)),
+             "getting-started.html": ("Getting started", "getting-started", getting_started_body()),
              "foundation.html": ("Foundation", "foundation", foundation_body()),
+             "glossary.html": ("Glossary", "glossary", glossary_body()),
              "implementation.html": ("Implementation guide", "implementation", implementation_body()),
              "ingestion.html": ("Ingestion example", "ingestion", ingestion_body()),
+             "competency.html": ("Competency questions", "competency", competency_body()),
              "reference.html": ("Full reference", "reference", reference_body())}
     for fl in FLOWS:
         # a scenario override skips generation; otherwise generate the rich default
