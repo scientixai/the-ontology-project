@@ -116,9 +116,15 @@ in-model; a bifurcated domain makes them unrepresentable without cross-domain su
 The divergence that *is* real — IDE vs IND, 510(k)/PMA vs NDA/BLA, MDR technical file, device
 deficiency/malfunction reporting — is **depth within the lifecycle, not breadth across a separate
 spine.** It is handled as **leaf specializations on the shared spine**, the pattern the domain
-already uses everywhere:
+already uses everywhere.
 
-| Layer | Divergence | How it's modeled (in-domain) |
+> **Status — decided design, not yet built (v1).** The device classes below are the *committed
+> plan* for how device depth is added when it is added; they are **not present in the v1 ontology**.
+> This table records the decision (in-model, per USDM), not shipped code. Tracked as a deferral in
+> "Deferred within scope" below; when implemented, each row lands as an additive leaf, and the
+> coherence gate (`tests/run_tests.py`) will hold it to a single non-duplicate definition.
+
+| Layer | Divergence | How it will be modeled (in-domain, when built) |
 |-------|------------|------------------------------|
 | Product | device vs drug | `cr:MedicalDevice` (sibling of `cr:InvestigationalProduct`) + `cr:DeviceIdentifier` (UDI), crosswalked 1:1 to `usdm:MedicalDevice` |
 | Regulatory front | IDE vs IND | generalize `cr:INDApplication` to admit an IDE pathway |
@@ -158,6 +164,29 @@ The lesson has **two levels**, and the boundary honors both:
 
 **Non-bifurcation is the thesis, not a detail** — at the customer-graph level always, and at the
 reference-authoring level wherever a standard we crosswalk to (here, USDM) already keeps it whole.
+
+## Deferred within scope (decided, not yet modeled)
+
+The boundaries above say what lives in a **sibling** module (a different unit of analysis). This
+section is different: it lists sub-domains that are **squarely in scope** — same unit of analysis,
+the study — but **not yet modeled in v1**. They are recorded here as first-class **decisions**, so
+an outside reader sees a deliberate deferral, not an oversight. Each is additive: it lands on the
+shared spine the same way every shipped sub-domain did, gated green before it merges.
+
+| Deferred sub-domain | What it covers | Why deferred / entry point when built |
+|---------------------|----------------|----------------------------------------|
+| **Randomization / IxRS·RTSM** | randomization events, kit/IMP assignment, stratification, emergency unblinding | design carries `cr:randomizationRatio` today; the *events* (assignment, dispensing) are the increment — a `cr:RandomizationEvent` on the enrollment/visit spine |
+| **Drug supply & IMP accountability** | depot→site resupply, dispensing/return/destruction logs, DEA reconciliation, temperature excursions | a supply-chain leaf under the LIMS custody pattern (state machine + bitemporal custody already exist) |
+| **Medical coding (MedDRA/WHODrug)** | the coding *workflow* — autocoder, medical-coding review, coding queries; WHODrug entirely | today `crosswalks/cr-to-meddra.ttl` maps AE→MedDRA by IRI (a term crosswalk, not a workflow); the increment is `cr:CodingActivity` + WHODrug crosswalk |
+| **eCOA / ePRO, imaging, DHT as domains** | instrument definitions, ePRO item libraries, imaging read workflows (BICR), wearable signal | present today only as DTA *transfer profiles* (vendor data sources); first-class instrument/read models are the increment |
+| **Query management depth** | SAE↔EDC reconciliation, cross-vendor reconciliation, query aging/escalation | EDC query/discrepancy + SDV exist; reconciliation across sources is the increment |
+| **Decentralized trials (DCT)** | televisit, remote consent, home nursing, direct-to-patient supply | the visit/consent spine generalizes; DCT-specific modes are the increment |
+| **Real-world evidence (RWD/RWE)** | external comparator, registry linkage, RWD source provenance | out of the interventional core today; a decision to model (or declare a sibling) is itself deferred |
+
+These are **not** promises for v1; they are the map of where the reference goes next, kept honest and
+visible. A consumer building their own graph today extends the model into any of these using the same
+additive `top:flavor "Additive"` leaf pattern the shipped sub-domains use — the `dta-module` is the
+worked precedent for a governed in-scope extension.
 
 ## How the boundary is enforced in the model
 

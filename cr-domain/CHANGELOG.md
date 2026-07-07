@@ -25,6 +25,45 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Changed — V1 hardening: Core↔CR seam, coherence gates, docs parity
+
+Consistency and interface work toward a credible v1 (ADR-0023). No breaking IRI
+changes; all additive or corrective.
+
+- **`ontology/top-core.ttl`** — the local TOP Core stub the README always
+  described now exists: `top:CommonEntity` root + 8 CLOs + Universal DNA + the
+  cr-conventions bitemporal envelope, with divergences from `core/v1` documented
+  in-file. Closes every dangling `top:` reference in the merged graph.
+- **`ontology/cr-core-participant.ttl`** — reduced to a property-only module;
+  the duplicate class definitions (`cr:InformedConsent`, `cr:StudySubject`,
+  `cr:Enrollment`, `cr:EligibilityCriterion`) that diverged from `cr-core.ttl`
+  (and subclassed the undefined `top:BitemporalEntity`) are removed. Single
+  authoritative definition per class.
+- **`ontology/cr-core-visit-execution.ttl`** — removed the duplicate
+  `cr:ClinicalObservation` (authoritative in `cr-core-edc.ttl`); `cr:forParticipant`
+  now ranges over `cr:StudySubject` (the retired `cr:Participant` is gone).
+- **`shapes/universal-dna.ttl`** — renamed the domain shape to
+  `cr:UniversalDNAShape` so it no longer collides with `core/v1`'s
+  `top:UniversalDNAShape` (which targets a different class with a different contract).
+- **`core/v1/build_core_dist.py` + `cr-domain/upstream-pin.json`** — TOP Core is
+  now a versioned, byte-reproducible, checksummed artifact, and the CR domain
+  pins it. New harness **seam** gate verifies the pin + stub↔Core alignment.
+- **`tests/run_tests.py`** — new **coherence** gate (no duplicate class defs, no
+  dangling `top:/cr:/hcls:` refs, unique ontology-IRI headers) and **seam** gate;
+  single-pull **view** guard grown 13→17 (preind, csr, dblock, submission).
+- **Docs** — `preind`/`csr`/`dblock`/`submission` brought to the operator-screen
+  + API-tab bar with real retrieval views; `@context` IRI unified to
+  `https://top.scientix.ai/cr/v1/ngsi-context.jsonld`; entity URNs unified to the
+  ETSI `urn:ngsi-ld:top-cr:` convention; broken RDF/XML download removed; scenario
+  pages get model-table parity; orphan `participant.html`/`visit.html` deleted;
+  hub gains a "reference graph, not a runtime" frame (Providence Neural Engine
+  pointer for the operational path).
+- **`BOUNDARIES.md`** — device modeling reframed as decided-but-not-yet-built
+  (v1 status), plus a new "Deferred within scope" register (randomization/IxRS,
+  drug supply/IMP accountability, medical coding/WHODrug, eCOA/imaging/DHT
+  domains, query reconciliation, DCT, RWE) so in-scope omissions read as
+  decisions, not gaps.
+
 ### Added — DTA / DTS reference-ontology extension (non-CRF vendor data transfer)
 
 An additive, governed extension for Data Transfer Agreements / Specifications.
