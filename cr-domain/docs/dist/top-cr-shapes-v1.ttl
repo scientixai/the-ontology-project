@@ -1067,6 +1067,16 @@ cr:UncapturedAntecedentShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:DeviationEvent .
 
+cr:UniversalDNAShape a sh:NodeShape ;
+    sh:property [ sh:message "Universal DNA: every entity must carry a top:identifier." ;
+            sh:minCount 1 ;
+            sh:path top:identifier ],
+        [ sh:message "Universal DNA: every entity must carry a top:status." ;
+            sh:minCount 1 ;
+            sh:path top:status ] ;
+    sh:severity sh:Violation ;
+    sh:targetClass top:Versioned .
+
 cr:UnscheduledVisitShouldHaveReasonShape a sh:NodeShape ;
     rdfs:label "Unscheduled VisitOccurrence should have unscheduledReason (warning)" ;
     sh:severity sh:Warning ;
@@ -1295,16 +1305,6 @@ top:BitemporalProvShape a sh:NodeShape ;
             sh:message "Must have exactly one valid-time start (top:observedAt)." ;
             sh:minCount 1 ;
             sh:path top:observedAt ] ;
-    sh:severity sh:Violation ;
-    sh:targetClass top:Versioned .
-
-top:UniversalDNAShape a sh:NodeShape ;
-    sh:property [ sh:message "Universal DNA: every entity must carry a top:identifier." ;
-            sh:minCount 1 ;
-            sh:path top:identifier ],
-        [ sh:message "Universal DNA: every entity must carry a top:status." ;
-            sh:minCount 1 ;
-            sh:path top:status ] ;
     sh:severity sh:Violation ;
     sh:targetClass top:Versioned .
 

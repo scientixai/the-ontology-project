@@ -50,6 +50,10 @@ VIEWS = {
     "rbqm":            ("rbqm-conformant.ttl", "ra-pe", "RBQMView"),
     "deviation":       ("deviation-conformant.ttl", "dev-1", "DeviationView"),
     "gcp":             ("gcp-essential-records-conformant.ttl", "doc-001", "GCPRecordView"),
+    "preind":          ("preind-conformant.ttl", "preind", "PreINDGateView"),
+    "csr":             ("csr-reporting-conformant.ttl", "csr-opp201", "CSRReportView"),
+    "dblock":          ("closeout-dblock-conformant.ttl", "postlock-obs", "PostLockValueView"),
+    "submission":      ("submission-ectd-conformant.ttl", "ectd-b1", "eCTDSubmissionView"),
 }
 
 # NGSI-LD system/core terms that render bare; everything else literal -> Property.

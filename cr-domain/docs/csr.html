@@ -242,7 +242,204 @@ select.rm-field{cursor:pointer}
 <a class="" href="interop.html">Interoperability</a>
 <a class="" href="ingestion.html">Ingestion example</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Reporting &mdash; the CSR</h1><p class='lead'>The Clinical Study Report (ICH E3) as a fact graph, not an opaque file: a results section doesn&rsquo;t just assert a conclusion, it <b>presents</b> the pre-specified table and <b>reports</b> the endpoint result it draws from &mdash; each reproducible to its ADaM source. &lsquo;On what does this conclusion rest?&rsquo; is a graph walk from the section to the leaf fact.</p><div class="impossible-claim">A CSR results section is not free prose: an efficacy/safety-results section that presents no table and reports no result is <b>caught</b> &mdash; a conclusion must always have a backing analysis output, all the way down to the native fact.</div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Analysis outputs ready</span><span class="vtl-time">2026-08-03</span><span class="vtl-who">biostatistics</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> pre-specified TLFs + endpoint results, reproducible to source</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Medical writing</span><span class="vtl-time">2026-08-20</span><span class="vtl-who">medical writer</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> each results section drafted against its TLF</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Results sections trace</span><span class="vtl-time">2026-08-25</span><span class="vtl-who">system</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> §11.4 presents Table 14.3.1 <b>and</b> reports the ORR result</li><li><span class="ck-warn">!</span> a results section that traces to nothing is caught</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Synopsis &amp; narrative</span><span class="vtl-time">2026-08-28</span><span class="vtl-who">medical writer</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> narrative sections exempt &mdash; nothing to trace</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">5</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">CSR finalized</span><span class="vtl-time">2026-09-01</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> integrated ICH E3 report &mdash; the narrative the submission carries</li></ul></div></div></div><p class='note'>The CSR reuses the analysis spine: <code>cr:CSRSection cr:presentsTLF</code> a <code>cr:TableListingFigure</code> and <code>cr:reportsResult</code> an <code>cr:EndpointResult</code>. Only <code>efficacy-results</code> / <code>safety-results</code> sections must trace; synopsis / narrative / administrative sections are exempt by <code>cr:sectionKind</code>.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:CSRSection</code></td><td>CSR Section</td><td class='clo'>Evidence</td><td>The sectionKind qualifier (efficacy-results | safety-results | synopsis | narrative | administrative) selects which sections must carry analysis traceability, without a parallel hierarchy.</td></tr><tr><td><code>cr:ClinicalStudyReport</code></td><td>Clinical Study Report (CSR)</td><td class='clo'>Evidence</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:ClinicalStudyReportShape</code></td><td><code>cr:ClinicalStudyReport</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A ClinicalStudyReport must have at least one cr:CSRSection.</li><li>A ClinicalStudyReport must reference (by IRI) the cr:Study it reports on.</li></ul></td></tr><tr><td><code>cr:CSRResultsSectionTraceShape</code></td><td><code>cr:CSRSection</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A CSR results section (sectionKind efficacy-results / safety-results) must cr:presentsTLF and/or cr:reportsResult the analysis output it draws its conclusion from. A results conclusion with no backing output is inadmissible.</li></ul></td></tr><tr><td><code>cr:CSRSectionKindShape</code></td><td><code>cr:CSRSection</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A CSRSection should declare cr:sectionKind (efficacy-results | safety-results | synopsis | narrative | administrative).</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Reporting &mdash; the CSR</h1><p class='lead'>The Clinical Study Report (ICH E3) as a fact graph, not an opaque file: a results section doesn&rsquo;t just assert a conclusion, it <b>presents</b> the pre-specified table and <b>reports</b> the endpoint result it draws from &mdash; each reproducible to its ADaM source. &lsquo;On what does this conclusion rest?&rsquo; is a graph walk from the section to the leaf fact.</p><div class="impossible-claim">A CSR results section is not free prose: an efficacy/safety-results section that presents no table and reports no result is <b>caught</b> &mdash; a conclusion must always have a backing analysis output, all the way down to the native fact.</div><h2>Operator screen &mdash; Reporting &mdash; CSR</h2><div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]"><button role="tab" aria-selected="true" aria-controls="reportingmdashcsr-how" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">How it works</button><button role="tab" aria-selected="false" aria-controls="reportingmdashcsr-req" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Request</button><button role="tab" aria-selected="false" aria-controls="reportingmdashcsr-res" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Response</button></div><div role="tabpanel" id="reportingmdashcsr-how" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none"><div class="screen"><div class="scr-head">CSR &mdash; results traceability<span class="badge">Medical writing</span><div class="scr-sub">OPP-201 CSR (ICH E3)</div></div><div class="scr-row"><span>Report</span><b>OPP-201 Clinical Study Report</b></div><div class="scr-row"><span>&sect;11.4 Efficacy results</span><b><span class='pill ok'>presents Table 14.3.1</span></b></div><div class="scr-row"><span>Reports result</span><b>ORR = 0.42 <span class='muted'>(reproducible to ADaM)</span></b></div><div class="scr-row"><span>Pre-specified in</span><b><span class='pill ok'>&#10003; SAP v1.0</span></b></div><div class="scr-row"><span>Synopsis</span><b><span class='pill ok'>narrative &mdash; exempt</span></b></div><div class="scr-row"><span>Rests on</span><b>the leaf fact, by graph walk</b></div></div><p class="jsoncap" style="margin-top:12px">The screen is one NGSI-LD read &mdash; the query and the single object it returns are in the next two tabs.</p></div><div role="tabpanel" id="reportingmdashcsr-req" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">One NGSI-LD query assembles the screen &mdash; <code>join=inline</code> follows the relationships forward, so the whole object returns in a single read.</p><pre class="json q">GET /ngsi-ld/v1/entities/urn:csr-opp201?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:CSRReportView is the attribute projection (the `pick` the screen reads).</pre></div><div role="tabpanel" id="reportingmdashcsr-res" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">The single self-contained object the query returns &mdash; related entities inlined, zero recursive lookups.</p><pre class="json">{
+  &quot;id&quot;: &quot;urn:csr-opp201&quot;,
+  &quot;type&quot;: &quot;ClinicalStudyReport&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;OPP-201 Clinical Study Report (ICH E3)&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:csr:OPP-201&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-09-01T00:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-09-01T00:00:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;study&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:study-opp201&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:study-opp201&quot;,
+      &quot;type&quot;: &quot;Entity&quot;
+    }
+  },
+  &quot;sections&quot;: [
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:csr-sec-efficacy&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:csr-sec-efficacy&quot;,
+        &quot;type&quot;: &quot;CSRSection&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Efficacy Results&quot;
+        },
+        &quot;sectionKind&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;efficacy-results&quot;
+        },
+        &quot;sectionNumber&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;11.4&quot;
+        },
+        &quot;sectionTitle&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Efficacy Results&quot;
+        },
+        &quot;presentsTLF&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:tlf-1431-a3&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:tlf-1431-a3&quot;,
+            &quot;type&quot;: &quot;TableListingFigure&quot;,
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;Table 14.3.1 \u2014 ORR by treatment arm&quot;
+            },
+            &quot;tlfType&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;table&quot;
+            },
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:tlf:14.3.1-a3&quot;
+            },
+            &quot;observedAt&quot;: &quot;2026-08-03T00:00:00+00:00&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-08-03T00:00:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;active&quot;
+            },
+            &quot;prespecifiedIn&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:sap-a3&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:sap-a3&quot;,
+                &quot;type&quot;: &quot;StatisticalAnalysisPlan&quot;,
+                &quot;name&quot;: {
+                  &quot;type&quot;: &quot;Property&quot;,
+                  &quot;value&quot;: &quot;OPP-201 SAP v1.0&quot;
+                }
+              }
+            },
+            &quot;presentsResult&quot;: {
+              &quot;type&quot;: &quot;Relationship&quot;,
+              &quot;object&quot;: &quot;urn:res-orr-a3&quot;,
+              &quot;entity&quot;: {
+                &quot;id&quot;: &quot;urn:res-orr-a3&quot;,
+                &quot;type&quot;: &quot;EndpointResult&quot;,
+                &quot;value&quot;: {
+                  &quot;type&quot;: &quot;Property&quot;,
+                  &quot;value&quot;: &quot;0.42&quot;
+                },
+                &quot;name&quot;: {
+                  &quot;type&quot;: &quot;Property&quot;,
+                  &quot;value&quot;: &quot;ORR = 0.42&quot;
+                },
+                &quot;identifier&quot;: {
+                  &quot;type&quot;: &quot;Property&quot;,
+                  &quot;value&quot;: &quot;urn:result:orr-a3&quot;
+                },
+                &quot;observedAt&quot;: &quot;2026-08-02T00:00:00+00:00&quot;,
+                &quot;recordedAt&quot;: {
+                  &quot;type&quot;: &quot;Property&quot;,
+                  &quot;value&quot;: &quot;2026-08-02T00:00:00+00:00&quot;
+                },
+                &quot;status&quot;: {
+                  &quot;type&quot;: &quot;Property&quot;,
+                  &quot;value&quot;: &quot;active&quot;
+                }
+              }
+            }
+          }
+        },
+        &quot;reportsResult&quot;: {
+          &quot;type&quot;: &quot;Relationship&quot;,
+          &quot;object&quot;: &quot;urn:res-orr-a3&quot;,
+          &quot;entity&quot;: {
+            &quot;id&quot;: &quot;urn:res-orr-a3&quot;,
+            &quot;type&quot;: &quot;EndpointResult&quot;,
+            &quot;value&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;0.42&quot;
+            },
+            &quot;name&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;ORR = 0.42&quot;
+            },
+            &quot;identifier&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;urn:result:orr-a3&quot;
+            },
+            &quot;observedAt&quot;: &quot;2026-08-02T00:00:00+00:00&quot;,
+            &quot;recordedAt&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;2026-08-02T00:00:00+00:00&quot;
+            },
+            &quot;status&quot;: {
+              &quot;type&quot;: &quot;Property&quot;,
+              &quot;value&quot;: &quot;active&quot;
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;type&quot;: &quot;Relationship&quot;,
+      &quot;object&quot;: &quot;urn:csr-sec-synopsis&quot;,
+      &quot;entity&quot;: {
+        &quot;id&quot;: &quot;urn:csr-sec-synopsis&quot;,
+        &quot;type&quot;: &quot;CSRSection&quot;,
+        &quot;name&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Synopsis&quot;
+        },
+        &quot;sectionKind&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;synopsis&quot;
+        },
+        &quot;sectionNumber&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;2&quot;
+        },
+        &quot;sectionTitle&quot;: {
+          &quot;type&quot;: &quot;Property&quot;,
+          &quot;value&quot;: &quot;Synopsis&quot;
+        }
+      }
+    }
+  ],
+  &quot;authoredBy&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:medwriter&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:medwriter&quot;,
+      &quot;type&quot;: &quot;Practitioner&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Medical Writer&quot;
+      }
+    }
+  }
+}</pre></div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Analysis outputs ready</span><span class="vtl-time">2026-08-03</span><span class="vtl-who">biostatistics</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> pre-specified TLFs + endpoint results, reproducible to source</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Medical writing</span><span class="vtl-time">2026-08-20</span><span class="vtl-who">medical writer</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> each results section drafted against its TLF</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Results sections trace</span><span class="vtl-time">2026-08-25</span><span class="vtl-who">system</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> §11.4 presents Table 14.3.1 <b>and</b> reports the ORR result</li><li><span class="ck-warn">!</span> a results section that traces to nothing is caught</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Synopsis &amp; narrative</span><span class="vtl-time">2026-08-28</span><span class="vtl-who">medical writer</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> narrative sections exempt &mdash; nothing to trace</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">5</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">CSR finalized</span><span class="vtl-time">2026-09-01</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> integrated ICH E3 report &mdash; the narrative the submission carries</li></ul></div></div></div><p class='note'>The CSR reuses the analysis spine: <code>cr:CSRSection cr:presentsTLF</code> a <code>cr:TableListingFigure</code> and <code>cr:reportsResult</code> an <code>cr:EndpointResult</code>. Only <code>efficacy-results</code> / <code>safety-results</code> sections must trace; synopsis / narrative / administrative sections are exempt by <code>cr:sectionKind</code>.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:CSRSection</code></td><td>CSR Section</td><td class='clo'>Evidence</td><td>The sectionKind qualifier (efficacy-results | safety-results | synopsis | narrative | administrative) selects which sections must carry analysis traceability, without a parallel hierarchy.</td></tr><tr><td><code>cr:ClinicalStudyReport</code></td><td>Clinical Study Report (CSR)</td><td class='clo'>Evidence</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:ClinicalStudyReportShape</code></td><td><code>cr:ClinicalStudyReport</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A ClinicalStudyReport must have at least one cr:CSRSection.</li><li>A ClinicalStudyReport must reference (by IRI) the cr:Study it reports on.</li></ul></td></tr><tr><td><code>cr:CSRResultsSectionTraceShape</code></td><td><code>cr:CSRSection</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A CSR results section (sectionKind efficacy-results / safety-results) must cr:presentsTLF and/or cr:reportsResult the analysis output it draws its conclusion from. A results conclusion with no backing output is inadmissible.</li></ul></td></tr><tr><td><code>cr:CSRSectionKindShape</code></td><td><code>cr:CSRSection</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A CSRSection should declare cr:sectionKind (efficacy-results | safety-results | synopsis | narrative | administrative).</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

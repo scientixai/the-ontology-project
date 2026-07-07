@@ -520,6 +520,37 @@ def view_checks(failures):
           and gc["tmf"]["object"] == "urn:tmf-001"
           and gc["certifiedCopy"]["object"] == "urn:cc-001")
 
+    # Pre-IND gate — briefing book + the question carrying its proposed position
+    pi = mod.build_view("preind")
+    check("preind: briefing book + question with proposed position inlined",
+          lambda: pi["briefingBook"]["object"] == "urn:bb"
+          and pi["question"]["object"] == "urn:q1"
+          and val(pi["question"]["entity"], "proposedPosition").startswith("Propose 10 mg"))
+
+    # CSR (A3) — the efficacy section presents the pre-specified TLF AND reports the result
+    cs = mod.build_view("csr")
+    eff = next(s["entity"] for s in cs["sections"]
+               if val(s["entity"], "sectionKind") == "efficacy-results")
+    check("csr: efficacy section presents pre-specified TLF + reports its result inlined",
+          lambda: eff["presentsTLF"]["entity"]["prespecifiedIn"]["object"] == "urn:sap-a3"
+          and val(eff["presentsTLF"]["entity"]["presentsResult"]["entity"], "value") == "0.42"
+          and eff["reportsResult"]["object"] == "urn:res-orr-a3")
+
+    # Database lock (A1) — the post-lock value legitimized by a recorded unlock -> the HARD lock
+    db = mod.build_view("dblock")
+    check("dblock: post-lock value + unlock reopening the hard lock inlined",
+          lambda: db["subject"]["object"] == "urn:subj"
+          and val(db["underUnlock"]["entity"], "unlockReason").startswith("Late-arriving")
+          and val(db["underUnlock"]["entity"]["reopens"]["entity"], "lockType") == "hard")
+
+    # Submission (B1) — the manifest: HARD lock + report + dataset + Define, all inlined
+    sb = mod.build_view("submission")
+    check("submission: eCTD manifest rests on HARD lock + report + dataset + Define inlined",
+          lambda: val(sb["builtOnLock"]["entity"], "lockType") == "hard"
+          and sb["includesReport"]["object"] == "urn:csr-b1"
+          and sb["includesDataset"]["object"] == "urn:adsl-b1"
+          and sb["includesDefine"]["object"] == "urn:define-b1")
+
     return passed, total
 
 

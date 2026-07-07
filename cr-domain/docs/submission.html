@@ -242,7 +242,146 @@ select.rm-field{cursor:pointer}
 <a class="" href="interop.html">Interoperability</a>
 <a class="" href="ingestion.html">Ingestion example</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Submission &mdash; eCTD</h1><p class='lead'>The terminal node: the eCTD submission as a <b>manifest</b>, not a new source of truth. It references the hard-locked database (A1), the Clinical Study Report (A3), the ADaM datasets (A2), and the Define-XML &mdash; every arrow points back at already-produced, locked content. This is where TOP-CR ends.</p><div class="impossible-claim">A filing rests on frozen data or it isn&rsquo;t a filing: an eCTD submission built on a <b>soft</b> (reversible) lock is <b>caught</b> &mdash; the terminal invariant ties Module 5 back to the hard database lock the whole trial converged on.</div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Hard database lock</span><span class="vtl-time">2026-07-01</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> the frozen basis &mdash; a soft lock can&rsquo;t ground a filing (enforced)</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">CSR + datasets + Define</span><span class="vtl-time">2026-09</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> the report, the ADaM datasets, and the map to read them</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">eCTD assembled</span><span class="vtl-time">2026-10-01</span><span class="vtl-who">regulatory affairs</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> Module 5 manifest references locked content &mdash; nothing re-authored</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Submitted to regulator</span><span class="vtl-time">2026-10-01</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> NDA / BLA &mdash; the terminal projection of the trial</li></ul></div></div><div class="vtl-stop pend"><div class="vtl-num">5</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Beyond eCTD</span><span class="vtl-time">&mdash;</span><span class="vtl-who">&mdash;</span></div><ul class="vtl-checks"><li><span class="ck-pend">&#9675;</span> label / REMS / HTA are sibling domains &mdash; deliberately out of scope</li></ul></div></div></div><p class='note'>Scope boundary, made explicit: TOP-CR runs trial &rarr; regulatory submission (eCTD Module 5). Product-lifecycle (label, REMS, PSUR) and commercialization (HTA, market access) are sibling domains, out of scope; the unit of analysis stays the study. <code>cr:builtOnLock</code> is the seam that ties B1 back to A1 &mdash; the submission must rest on a HARD <code>cr:DatabaseLock</code>.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:DataDefinition</code></td><td>Data Definition (Define-XML)</td><td class='clo'>Evidence</td><td></td></tr><tr><td><code>cr:eCTDSubmission</code></td><td>eCTD Submission</td><td class='clo'>Evidence</td><td>Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock — submitting on reversible (soft-locked) data is inadmissible.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:eCTDSubmissionShape</code></td><td><code>cr:eCTDSubmission</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>An eCTDSubmission (Module 5) must include a cr:ClinicalStudyReport.</li><li>An eCTDSubmission must declare the cr:DatabaseLock its content is built on.</li><li>An eCTDSubmission must reference (by IRI) the cr:Study it concerns.</li></ul></td></tr><tr><td><code>cr:SubmissionLockHardShape</code></td><td><code>cr:eCTDSubmission</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>An eCTDSubmission is built on a database lock that is not a HARD lock. Reversible (soft-locked) data cannot ground a regulatory filing.</li></ul></td></tr><tr><td><code>cr:SubmissionCompletenessShape</code></td><td><code>cr:eCTDSubmission</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against.</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Submission &mdash; eCTD</h1><p class='lead'>The terminal node: the eCTD submission as a <b>manifest</b>, not a new source of truth. It references the hard-locked database (A1), the Clinical Study Report (A3), the ADaM datasets (A2), and the Define-XML &mdash; every arrow points back at already-produced, locked content. This is where TOP-CR ends.</p><div class="impossible-claim">A filing rests on frozen data or it isn&rsquo;t a filing: an eCTD submission built on a <b>soft</b> (reversible) lock is <b>caught</b> &mdash; the terminal invariant ties Module 5 back to the hard database lock the whole trial converged on.</div><h2>Operator screen &mdash; Submission &mdash; eCTD</h2><div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]"><button role="tab" aria-selected="true" aria-controls="submissionmdashectd-how" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">How it works</button><button role="tab" aria-selected="false" aria-controls="submissionmdashectd-req" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Request</button><button role="tab" aria-selected="false" aria-controls="submissionmdashectd-res" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Response</button></div><div role="tabpanel" id="submissionmdashectd-how" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none"><div class="screen"><div class="scr-head">eCTD Module 5 &mdash; the manifest<span class="badge">Regulatory affairs</span><div class="scr-sub">OPP-201 NDA</div></div><div class="scr-row"><span>Submission</span><b>NDA (eCTD Module 5)</b></div><div class="scr-row"><span>Built on lock</span><b><span class='pill ok'>&#10003; HARD lock</span> &mdash; a soft lock is caught</b></div><div class="scr-row"><span>Includes report</span><b>OPP-201 CSR</b></div><div class="scr-row"><span>Includes dataset</span><b>ADSL (ADaM)</b></div><div class="scr-row"><span>Includes Define</span><b>Define-XML v2.1</b></div><div class="scr-row"><span>New source of truth?</span><b><span class='pill ok'>none &mdash; every arrow points at locked content</span></b></div></div><p class="jsoncap" style="margin-top:12px">The screen is one NGSI-LD read &mdash; the query and the single object it returns are in the next two tabs.</p></div><div role="tabpanel" id="submissionmdashectd-req" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">One NGSI-LD query assembles the screen &mdash; <code>join=inline</code> follows the relationships forward, so the whole object returns in a single read.</p><pre class="json q">GET /ngsi-ld/v1/entities/urn:ectd-b1?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:eCTDSubmissionView is the attribute projection (the `pick` the screen reads).</pre></div><div role="tabpanel" id="submissionmdashectd-res" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">The single self-contained object the query returns &mdash; related entities inlined, zero recursive lookups.</p><pre class="json">{
+  &quot;id&quot;: &quot;urn:ectd-b1&quot;,
+  &quot;type&quot;: &quot;eCTDSubmission&quot;,
+  &quot;name&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;OPP-201 NDA (eCTD Module 5)&quot;
+  },
+  &quot;submissionType&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;NDA&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:ectd:OPP-201-NDA&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-10-01T00:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-10-01T00:00:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;study&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:study-opp201&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:study-opp201&quot;,
+      &quot;type&quot;: &quot;Entity&quot;
+    }
+  },
+  &quot;builtOnLock&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:hardlock-b1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:hardlock-b1&quot;,
+      &quot;type&quot;: &quot;DatabaseLock&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Hard lock \u2014 database frozen for the submission analysis&quot;
+      },
+      &quot;lockType&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;hard&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:dblock:hard-b1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-07-01T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-07-01T09:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;includesReport&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:csr-b1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:csr-b1&quot;,
+      &quot;type&quot;: &quot;ClinicalStudyReport&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;OPP-201 Clinical Study Report&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:csr:OPP-201-b1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-09-01T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-09-01T00:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;includesDataset&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:adsl-b1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:adsl-b1&quot;,
+      &quot;type&quot;: &quot;AnalysisDataset&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;ADSL (subject-level analysis dataset)&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:adam:ADSL-b1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-08-01T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-08-01T00:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  },
+  &quot;includesDefine&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:define-b1&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:define-b1&quot;,
+      &quot;type&quot;: &quot;DataDefinition&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Define-XML v2.1 (ADaM data definition)&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:define:OPP-201&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      }
+    }
+  }
+}</pre></div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Hard database lock</span><span class="vtl-time">2026-07-01</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> the frozen basis &mdash; a soft lock can&rsquo;t ground a filing (enforced)</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">CSR + datasets + Define</span><span class="vtl-time">2026-09</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> the report, the ADaM datasets, and the map to read them</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">eCTD assembled</span><span class="vtl-time">2026-10-01</span><span class="vtl-who">regulatory affairs</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> Module 5 manifest references locked content &mdash; nothing re-authored</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Submitted to regulator</span><span class="vtl-time">2026-10-01</span><span class="vtl-who">sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> NDA / BLA &mdash; the terminal projection of the trial</li></ul></div></div><div class="vtl-stop pend"><div class="vtl-num">5</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Beyond eCTD</span><span class="vtl-time">&mdash;</span><span class="vtl-who">&mdash;</span></div><ul class="vtl-checks"><li><span class="ck-pend">&#9675;</span> label / REMS / HTA are sibling domains &mdash; deliberately out of scope</li></ul></div></div></div><p class='note'>Scope boundary, made explicit: TOP-CR runs trial &rarr; regulatory submission (eCTD Module 5). Product-lifecycle (label, REMS, PSUR) and commercialization (HTA, market access) are sibling domains, out of scope; the unit of analysis stays the study. <code>cr:builtOnLock</code> is the seam that ties B1 back to A1 &mdash; the submission must rest on a HARD <code>cr:DatabaseLock</code>.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:DataDefinition</code></td><td>Data Definition (Define-XML)</td><td class='clo'>Evidence</td><td></td></tr><tr><td><code>cr:eCTDSubmission</code></td><td>eCTD Submission</td><td class='clo'>Evidence</td><td>Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock — submitting on reversible (soft-locked) data is inadmissible.</td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:eCTDSubmissionShape</code></td><td><code>cr:eCTDSubmission</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>An eCTDSubmission (Module 5) must include a cr:ClinicalStudyReport.</li><li>An eCTDSubmission must declare the cr:DatabaseLock its content is built on.</li><li>An eCTDSubmission must reference (by IRI) the cr:Study it concerns.</li></ul></td></tr><tr><td><code>cr:SubmissionLockHardShape</code></td><td><code>cr:eCTDSubmission</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>An eCTDSubmission is built on a database lock that is not a HARD lock. Reversible (soft-locked) data cannot ground a regulatory filing.</li></ul></td></tr><tr><td><code>cr:SubmissionCompletenessShape</code></td><td><code>cr:eCTDSubmission</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against.</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

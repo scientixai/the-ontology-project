@@ -225,7 +225,7 @@ FLOWS = [
          blurb="The front bracket: an IND-enabling narrative where every animal toxicity is addressed by a clinical safety assessment, plus the 30-day review clock.",
          onto=["cr-core-preind.ttl"],
          shapes=["cr:INDNarrativeShape", "cr:VagueQuestionShape", "cr:PreINDReadinessShape"],
-         proj=[], screens=[],
+         proj=[], screens=["Pre-IND gate"],
          claim="An IND-enabling narrative where <b>every</b> animal toxicity is answered by a clinical safety assessment &mdash; and the 30-day review clock tells you may-proceed vs on-hold.",
          stops=[
              dict(name="Nonclinical package", time="2025-12", who="sponsor", state="done", checks=[("ok", "tox findings catalogued")]),
@@ -257,7 +257,7 @@ FLOWS = [
          onto=["cr-core-reporting.ttl"],
          shapes=["cr:ClinicalStudyReportShape", "cr:CSRResultsSectionTraceShape",
                  "cr:CSRSectionKindShape"],
-         proj=[], screens=[],
+         proj=[], screens=["Reporting &mdash; CSR"],
          claim="A CSR results section is not free prose: an efficacy/safety-results section that presents no table and reports no result is <b>caught</b> &mdash; a conclusion must always have a backing analysis output, all the way down to the native fact.",
          stops=[
              dict(name="Analysis outputs ready", time="2026-08-03", who="biostatistics", state="done", checks=[("ok", "pre-specified TLFs + endpoint results, reproducible to source")]),
@@ -272,7 +272,7 @@ FLOWS = [
          onto=["cr-core-submission.ttl"],
          shapes=["cr:eCTDSubmissionShape", "cr:SubmissionLockHardShape",
                  "cr:SubmissionCompletenessShape"],
-         proj=[], screens=[],
+         proj=[], screens=["Submission &mdash; eCTD"],
          claim="A filing rests on frozen data or it isn&rsquo;t a filing: an eCTD submission built on a <b>soft</b> (reversible) lock is <b>caught</b> &mdash; the terminal invariant ties Module 5 back to the hard database lock the whole trial converged on.",
          stops=[
              dict(name="Hard database lock", time="2026-07-01", who="sponsor DM", state="done", checks=[("ok", "the frozen basis &mdash; a soft lock can&rsquo;t ground a filing (enforced)")]),
@@ -287,7 +287,7 @@ FLOWS = [
          onto=["cr-core-closeout.ttl"],
          shapes=["cr:DatabaseLockShape", "cr:PostLockDataShape",
                  "cr:DatabaseUnlockShape", "cr:FollowUpVisitTypeShape"],
-         proj=[], screens=[],
+         proj=[], screens=["Database lock"],
          claim="After a hard lock, no clinical value changes silently &mdash; a late safety follow-up value is legitimate only under a recorded database <b>unlock</b>, and a silent post-lock edit is <b>caught</b>, not quietly absorbed.",
          stops=[
              dict(name="Last patient, last visit", time="2026-06-01", who="site / sponsor", state="done", checks=[("ok", "LPLV milestone &mdash; the clock to lock starts")]),

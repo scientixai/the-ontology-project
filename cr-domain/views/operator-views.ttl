@@ -130,7 +130,62 @@ cr:GCPRecordView a sh:NodeShape ;
 cr:SourceDataView a sh:NodeShape ;
     sh:property [ sh:path cr:hasAuditTrail ;      sh:name "auditTrail" ;     sh:node cr:AuditLeaf ] .
 
+# --- Pre-IND gate: the meeting -> its briefing book + the question (with the
+#     proposed position), and the IND that traces to the nonclinical package ---
+cr:PreINDGateView a sh:NodeShape ;
+    sh:targetClass cr:RegulatoryInteraction ;
+    sh:property [ sh:path cr:hasBriefingBook ;    sh:name "briefingBook" ; sh:node cr:BriefingBookLeaf ] ;
+    sh:property [ sh:path cr:hasQuestion ;        sh:name "question" ;     sh:node cr:QuestionLeaf ] .
+
+# --- CSR (A3): the report -> its study + sections; the efficacy section
+#     PRESENTS the pre-specified table and REPORTS the endpoint result it rests on
+cr:CSRReportView a sh:NodeShape ;
+    sh:targetClass cr:ClinicalStudyReport ;
+    sh:property [ sh:path cr:csrForStudy ;        sh:name "study" ;        sh:node cr:StudyLeaf ] ;
+    sh:property [ sh:path cr:hasSection ;         sh:name "sections" ;     sh:node cr:CSRSectionView ] ;
+    sh:property [ sh:path prov:wasAttributedTo ;  sh:name "authoredBy" ;   sh:node cr:PersonLeaf ] .
+
+cr:CSRSectionView a sh:NodeShape ;
+    sh:property [ sh:path cr:presentsTLF ;        sh:name "presentsTLF" ;  sh:node cr:TLFView ] ;
+    sh:property [ sh:path cr:reportsResult ;      sh:name "reportsResult" ; sh:node cr:ResultLeaf ] .
+
+cr:TLFView a sh:NodeShape ;
+    sh:property [ sh:path cr:prespecifiedIn ;     sh:name "prespecifiedIn" ; sh:node cr:SAPLeaf ] ;
+    sh:property [ sh:path cr:presentsResult ;     sh:name "presentsResult" ; sh:node cr:ResultLeaf ] .
+
+# --- Database lock (A1): the post-lock value -> the subject, the definition,
+#     the follow-up visit, and the recorded UNLOCK that legitimizes it ---------
+cr:PostLockValueView a sh:NodeShape ;
+    sh:targetClass cr:ClinicalObservation ;
+    sh:property [ sh:path cr:forSubject ;         sh:name "subject" ;      sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:definedBy ;          sh:name "item" ;         sh:node cr:DataElemLeaf ] ;
+    sh:property [ sh:path cr:capturedDuring ;     sh:name "followUpVisit" ; sh:node cr:FollowUpView ] ;
+    sh:property [ sh:path cr:underUnlock ;        sh:name "underUnlock" ;  sh:node cr:UnlockView ] .
+
+cr:FollowUpView a sh:NodeShape ;
+    sh:property [ sh:path cr:followsUp ;          sh:name "programme" ;    sh:node cr:LTFULeaf ] .
+
+cr:UnlockView a sh:NodeShape ;
+    sh:property [ sh:path cr:reopens ;            sh:name "reopens" ;      sh:node cr:LockLeaf ] .
+
+# --- Submission (B1): the eCTD manifest -> the study, the HARD lock it rests
+#     on, and the report / dataset / Define it references (all locked content) --
+cr:eCTDSubmissionView a sh:NodeShape ;
+    sh:targetClass cr:eCTDSubmission ;
+    sh:property [ sh:path cr:submissionForStudy ; sh:name "study" ;        sh:node cr:StudyLeaf ] ;
+    sh:property [ sh:path cr:builtOnLock ;        sh:name "builtOnLock" ;  sh:node cr:LockLeaf ] ;
+    sh:property [ sh:path cr:includesReport ;     sh:name "includesReport" ; sh:node cr:ReportLeaf ] ;
+    sh:property [ sh:path cr:includesDataset ;    sh:name "includesDataset" ; sh:node cr:DatasetLeaf ] ;
+    sh:property [ sh:path cr:includesDefine ;     sh:name "includesDefine" ; sh:node cr:DefineLeaf ] .
+
 # --- Leaf shapes (inline scalar facts only; no further relationship-following)-
+cr:BriefingBookLeaf a sh:NodeShape .
+cr:QuestionLeaf   a sh:NodeShape .
+cr:LTFULeaf       a sh:NodeShape .
+cr:LockLeaf       a sh:NodeShape .
+cr:ReportLeaf     a sh:NodeShape .
+cr:DatasetLeaf    a sh:NodeShape .
+cr:DefineLeaf     a sh:NodeShape .
 cr:SiteLeaf       a sh:NodeShape .
 cr:MilestoneLeaf  a sh:NodeShape .
 cr:StudyLeaf      a sh:NodeShape .

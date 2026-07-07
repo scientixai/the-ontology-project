@@ -26,7 +26,8 @@ UPPER_CAMEL = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 LOWER_CAMEL = re.compile(r"^[a-z][A-Za-z0-9]*$")
 
 # Industry-standard names where leading-lowercase is an established convention.
-UPPER_CAMEL_EXCEPTIONS = {"eCRF"}  # electronic Case Report Form
+UPPER_CAMEL_EXCEPTIONS = {"eCRF",           # electronic Case Report Form
+                          "eCTDSubmission"}  # electronic Common Technical Document
 
 
 def local_name(iri: str) -> str | None:

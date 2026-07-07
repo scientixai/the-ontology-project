@@ -242,7 +242,170 @@ select.rm-field{cursor:pointer}
 <a class="" href="interop.html">Interoperability</a>
 <a class="" href="ingestion.html">Ingestion example</a>
 <b>Detail</b>
-<a class="" href="reference.html">Full reference</a></nav><main><h1>Database lock &amp; follow-up</h1><p class='lead'>The pivot of closeout: last-patient-last-visit opens the window, the data is cleaned and <b>soft</b>-locked for review then <b>hard</b>-locked for analysis, and after the hard lock nothing changes silently &mdash; a late value is only legitimate under a recorded database unlock. Long-term follow-up continues beyond the treatment period.</p><div class="impossible-claim">After a hard lock, no clinical value changes silently &mdash; a late safety follow-up value is legitimate only under a recorded database <b>unlock</b>, and a silent post-lock edit is <b>caught</b>, not quietly absorbed.</div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Last patient, last visit</span><span class="vtl-time">2026-06-01</span><span class="vtl-who">site / sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> LPLV milestone &mdash; the clock to lock starts</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Data cleaning &amp; query close-out</span><span class="vtl-time">2026-06-15</span><span class="vtl-who">data management</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> open queries resolved; discrepancies reconciled</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Soft lock</span><span class="vtl-time">2026-06-20</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> frozen for final review &mdash; reversible</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Hard lock</span><span class="vtl-time">2026-07-01</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> frozen for primary analysis</li></ul></div></div><div class="vtl-stop warn"><div class="vtl-num">5</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Late follow-up value</span><span class="vtl-time">2026-07-12</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-warn">!</span> arrives post-lock &mdash; admissible only under a recorded unlock</li><li><span class="ck-ok">&#10003;</span> captured under cr:DatabaseUnlock &rarr; audited, not silent</li></ul></div></div><div class="vtl-stop pend"><div class="vtl-num">6</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Long-term follow-up</span><span class="vtl-time">ongoing</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-pend">&#9675;</span> safety / survival follow-up beyond the treatment period</li></ul></div></div></div><p class='note'>The closeout invariant is a shape, not a policy PDF: <code>cr:PostLockDataShape</code> flags any clinical value dated after a HARD lock that isn&rsquo;t covered by a <code>cr:DatabaseUnlock</code>. A lock you can bypass isn&rsquo;t a lock &mdash; so post-lock change is modeled as an audited event (unlock + reason), never a rewrite. Scope note: TOP-CR runs the trial through to regulatory submission (eCTD); the unit of analysis stays the study.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:DatabaseLock</code></td><td>Database Lock</td><td class='clo'>Evidence</td><td>Bitemporal: the lock&#x27;s valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites.</td></tr><tr><td><code>cr:DatabaseUnlock</code></td><td>Database Unlock</td><td class='clo'>Evidence</td><td></td></tr><tr><td><code>cr:FollowUpVisit</code></td><td>Follow-up Visit</td><td class='clo'>Temporal</td><td>A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy.</td></tr><tr><td><code>cr:LastPatientLastVisit</code></td><td>Last Patient Last Visit (LPLV)</td><td class='clo'>Outcome</td><td></td></tr><tr><td><code>cr:LongTermFollowUp</code></td><td>Long-term Follow-up</td><td class='clo'>Scope</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:DatabaseLockShape</code></td><td><code>cr:DatabaseLock</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DatabaseLock must reference (by IRI) the cr:Study it freezes.</li><li>DatabaseLock.lockType must be &#x27;soft&#x27; (reversible, for review) or &#x27;hard&#x27; (for analysis).</li></ul></td></tr><tr><td><code>cr:PostLockDataShape</code></td><td><code>cr:ClinicalObservation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent.</li></ul></td></tr><tr><td><code>cr:DatabaseUnlockShape</code></td><td><code>cr:DatabaseUnlock</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DatabaseUnlock must record a documented cr:unlockReason.</li><li>A DatabaseUnlock must reference (cr:reopens) the DatabaseLock it reopens.</li></ul></td></tr><tr><td><code>cr:FollowUpVisitTypeShape</code></td><td><code>cr:FollowUpVisit</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol).</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+<a class="" href="reference.html">Full reference</a></nav><main><h1>Database lock &amp; follow-up</h1><p class='lead'>The pivot of closeout: last-patient-last-visit opens the window, the data is cleaned and <b>soft</b>-locked for review then <b>hard</b>-locked for analysis, and after the hard lock nothing changes silently &mdash; a late value is only legitimate under a recorded database unlock. Long-term follow-up continues beyond the treatment period.</p><div class="impossible-claim">After a hard lock, no clinical value changes silently &mdash; a late safety follow-up value is legitimate only under a recorded database <b>unlock</b>, and a silent post-lock edit is <b>caught</b>, not quietly absorbed.</div><h2>Operator screen &mdash; Database lock</h2><div role="tablist" class="flex border-b border-[#d6d6cf] bg-[#eef0ed]"><button role="tab" aria-selected="true" aria-controls="databaselock-how" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">How it works</button><button role="tab" aria-selected="false" aria-controls="databaselock-req" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Request</button><button role="tab" aria-selected="false" aria-controls="databaselock-res" class="px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[.06em] cursor-pointer text-[#777] border-b-2 border-transparent -mb-px bg-transparent aria-selected:text-[#0e7490] aria-selected:border-[#0e7490] aria-selected:bg-white">API Response</button></div><div role="tabpanel" id="databaselock-how" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none"><div class="screen"><div class="scr-head">Post-lock value &mdash; why it&rsquo;s admissible<span class="badge">Data management</span><div class="scr-sub">Subject S-207 &middot; safety follow-up</div></div><div class="scr-row"><span>Late value</span><b>grade 1 rash (resolved)</b></div><div class="scr-row"><span>Captured</span><b>2026-07-12 &mdash; after the hard lock</b></div><div class="scr-row"><span>Hard lock</span><b><span class='pill ok'>2026-07-01</span></b></div><div class="scr-row"><span>Under unlock</span><b><span class='pill ok'>&#10003; recorded</span> &mdash; scoped, reasoned</b></div><div class="scr-row"><span>Follow-up</span><b>long-term safety programme</b></div><div class="scr-row"><span>Silent edit?</span><b><span class='pill ok'>impossible &mdash; audited, not a rewrite</span></b></div></div><p class="jsoncap" style="margin-top:12px">The screen is one NGSI-LD read &mdash; the query and the single object it returns are in the next two tabs.</p></div><div role="tabpanel" id="databaselock-req" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">One NGSI-LD query assembles the screen &mdash; <code>join=inline</code> follows the relationships forward, so the whole object returns in a single read.</p><pre class="json q">GET /ngsi-ld/v1/entities/urn:postlock-obs?join=inline&amp;joinLevel=3
+Accept: application/ld+json
+Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;
+
+# ETSI GS CIM 009 Linked Entity Retrieval: join=inline embeds each linked
+# Entity as the `entity` sub-attribute of its Relationship (clause 4.5.23.2);
+# joinLevel follows relationships FORWARD only (clause 4.5.23.1). Every fact
+# is forward-reachable from this entity -&gt; ONE stock-broker call, no recursive
+# lookups. cr:PostLockValueView is the attribute projection (the `pick` the screen reads).</pre></div><div role="tabpanel" id="databaselock-res" class="p-5 bg-white" style="border:1px solid var(--line);border-top:none" hidden><p class="jsoncap">The single self-contained object the query returns &mdash; related entities inlined, zero recursive lookups.</p><pre class="json">{
+  &quot;id&quot;: &quot;urn:postlock-obs&quot;,
+  &quot;type&quot;: &quot;ClinicalObservation&quot;,
+  &quot;value&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;grade 1 rash (resolved)&quot;
+  },
+  &quot;identifier&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;urn:obs:S-207-ltfu-safety&quot;
+  },
+  &quot;observedAt&quot;: &quot;2026-07-12T00:00:00+00:00&quot;,
+  &quot;recordedAt&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-07-12T08:00:00+00:00&quot;
+  },
+  &quot;status&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;active&quot;
+  },
+  &quot;subject&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:subj&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:subj&quot;,
+      &quot;type&quot;: &quot;StudySubject&quot;,
+      &quot;subjectId&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;S-207&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:subject:S-207&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;validFrom&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-01-10T00:00:00+00:00&quot;
+      }
+    }
+  },
+  &quot;item&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:de-ae&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:de-ae&quot;,
+      &quot;type&quot;: &quot;DataElementDef&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Late safety follow-up finding&quot;
+      },
+      &quot;phiClassification&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;NotPHI&quot;
+      }
+    }
+  },
+  &quot;followUpVisit&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:fuv&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:fuv&quot;,
+      &quot;type&quot;: &quot;FollowUpVisit&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Follow-up visit (safety) \u2014 beyond the treatment period&quot;
+      },
+      &quot;followUpType&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;safety&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-07-11T00:00:00+00:00&quot;,
+      &quot;programme&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:ltfu&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:ltfu&quot;,
+          &quot;type&quot;: &quot;LongTermFollowUp&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Long-term safety follow-up programme&quot;
+          },
+          &quot;identifier&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;urn:ltfu:survival&quot;
+          },
+          &quot;status&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;active&quot;
+          }
+        }
+      }
+    }
+  },
+  &quot;underUnlock&quot;: {
+    &quot;type&quot;: &quot;Relationship&quot;,
+    &quot;object&quot;: &quot;urn:unlock&quot;,
+    &quot;entity&quot;: {
+      &quot;id&quot;: &quot;urn:unlock&quot;,
+      &quot;type&quot;: &quot;DatabaseUnlock&quot;,
+      &quot;name&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Controlled unlock \u2014 scoped to the safety follow-up correction&quot;
+      },
+      &quot;unlockReason&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;Late-arriving long-term safety follow-up value; correction approved by DM lead per closeout SOP.&quot;
+      },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:dbunlock:1&quot;
+      },
+      &quot;observedAt&quot;: &quot;2026-07-10T00:00:00+00:00&quot;,
+      &quot;recordedAt&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;2026-07-10T09:00:00+00:00&quot;
+      },
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
+      &quot;reopens&quot;: {
+        &quot;type&quot;: &quot;Relationship&quot;,
+        &quot;object&quot;: &quot;urn:hardlock&quot;,
+        &quot;entity&quot;: {
+          &quot;id&quot;: &quot;urn:hardlock&quot;,
+          &quot;type&quot;: &quot;DatabaseLock&quot;,
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;Hard lock \u2014 database frozen for primary analysis&quot;
+          },
+          &quot;lockType&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;hard&quot;
+          },
+          &quot;identifier&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;urn:dblock:hard-1&quot;
+          },
+          &quot;observedAt&quot;: &quot;2026-07-01T00:00:00+00:00&quot;,
+          &quot;recordedAt&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;2026-07-01T09:00:00+00:00&quot;
+          },
+          &quot;status&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;active&quot;
+          }
+        }
+      }
+    }
+  }
+}</pre></div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Last patient, last visit</span><span class="vtl-time">2026-06-01</span><span class="vtl-who">site / sponsor</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> LPLV milestone &mdash; the clock to lock starts</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Data cleaning &amp; query close-out</span><span class="vtl-time">2026-06-15</span><span class="vtl-who">data management</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> open queries resolved; discrepancies reconciled</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Soft lock</span><span class="vtl-time">2026-06-20</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> frozen for final review &mdash; reversible</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Hard lock</span><span class="vtl-time">2026-07-01</span><span class="vtl-who">sponsor DM</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> frozen for primary analysis</li></ul></div></div><div class="vtl-stop warn"><div class="vtl-num">5</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Late follow-up value</span><span class="vtl-time">2026-07-12</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-warn">!</span> arrives post-lock &mdash; admissible only under a recorded unlock</li><li><span class="ck-ok">&#10003;</span> captured under cr:DatabaseUnlock &rarr; audited, not silent</li></ul></div></div><div class="vtl-stop pend"><div class="vtl-num">6</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Long-term follow-up</span><span class="vtl-time">ongoing</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-pend">&#9675;</span> safety / survival follow-up beyond the treatment period</li></ul></div></div></div><p class='note'>The closeout invariant is a shape, not a policy PDF: <code>cr:PostLockDataShape</code> flags any clinical value dated after a HARD lock that isn&rsquo;t covered by a <code>cr:DatabaseUnlock</code>. A lock you can bypass isn&rsquo;t a lock &mdash; so post-lock change is modeled as an audited event (unlock + reason), never a rewrite. Scope note: TOP-CR runs the trial through to regulatory submission (eCTD); the unit of analysis stays the study.</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:DatabaseLock</code></td><td>Database Lock</td><td class='clo'>Evidence</td><td>Bitemporal: the lock&#x27;s valid time (top:observedAt) is the lock date; corrections are new assertions, never rewrites.</td></tr><tr><td><code>cr:DatabaseUnlock</code></td><td>Database Unlock</td><td class='clo'>Evidence</td><td></td></tr><tr><td><code>cr:FollowUpVisit</code></td><td>Follow-up Visit</td><td class='clo'>Temporal</td><td>A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy.</td></tr><tr><td><code>cr:LastPatientLastVisit</code></td><td>Last Patient Last Visit (LPLV)</td><td class='clo'>Outcome</td><td></td></tr><tr><td><code>cr:LongTermFollowUp</code></td><td>Long-term Follow-up</td><td class='clo'>Scope</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:DatabaseLockShape</code></td><td><code>cr:DatabaseLock</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DatabaseLock must reference (by IRI) the cr:Study it freezes.</li><li>DatabaseLock.lockType must be &#x27;soft&#x27; (reversible, for review) or &#x27;hard&#x27; (for analysis).</li></ul></td></tr><tr><td><code>cr:PostLockDataShape</code></td><td><code>cr:ClinicalObservation</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent.</li></ul></td></tr><tr><td><code>cr:DatabaseUnlockShape</code></td><td><code>cr:DatabaseUnlock</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A DatabaseUnlock must record a documented cr:unlockReason.</li><li>A DatabaseUnlock must reference (cr:reopens) the DatabaseLock it reopens.</li></ul></td></tr><tr><td><code>cr:FollowUpVisitTypeShape</code></td><td><code>cr:FollowUpVisit</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol).</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

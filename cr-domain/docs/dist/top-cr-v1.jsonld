@@ -22,9 +22,6 @@
     "http://purl.org/dc/terms/description": [
       {
         "@value": "An inheritable, provenance-native, bitemporal reference knowledge graph for the clinical-research lifecycle (Pre-IND through End-of-Phase-2, plus site operations). The founding domain of TOP (The Ontology Project)."
-      },
-      {
-        "@value": "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate."
       }
     ],
     "http://purl.org/dc/terms/issued": [
@@ -50,9 +47,6 @@
     ],
     "http://purl.org/dc/terms/title": [
       {
-        "@value": "CR-core ontology \u2014 participant & consent module"
-      },
-      {
         "@value": "TOP \u2014 Clinical Research Reference Graph"
       }
     ],
@@ -67,9 +61,6 @@
       }
     ],
     "http://www.w3.org/2002/07/owl#versionInfo": [
-      {
-        "@value": "1.4"
-      },
       {
         "@value": "v1"
       }
@@ -2147,9 +2138,6 @@
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
         "@value": "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef."
-      },
-      {
-        "@value": "A structured result attached to an ActivityOccurrence. Carries the measured value, unit, reference range, interpretation, and derivedFrom provenance. FHIR R5: Observation. SDTM: one row in the domain matching the parent activity type."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -2159,13 +2147,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
-        "@id": "http://www.w3.org/ns/prov#Entity"
-      },
-      {
         "@id": "https://top.scientix.ai/hcls/v1#Observation"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Evidence"
       },
       {
         "@id": "https://top.scientix.ai/v1#Versioned"
@@ -3986,9 +3968,6 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "An inclusion or exclusion criterion for study participation."
-      },
-      {
         "@value": "An inclusion/exclusion rule defining who may enroll."
       }
     ],
@@ -4082,9 +4061,6 @@
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
         "@value": "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study."
-      },
-      {
-        "@value": "The formal registration of a subject into a study arm."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -4093,9 +4069,6 @@
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#BitemporalEntity"
-      },
       {
         "@id": "https://top.scientix.ai/v1#Temporal"
       },
@@ -4805,9 +4778,6 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "A participant's documented agreement to take part in a study, including version, form IRI, witness, and optional withdrawal."
-      },
-      {
         "@value": "The act of obtaining a subject's informed consent."
       }
     ],
@@ -4817,9 +4787,6 @@
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
-      {
-        "@id": "https://top.scientix.ai/v1#BitemporalEntity"
-      },
       {
         "@id": "https://top.scientix.ai/v1#Temporal"
       },
@@ -8482,9 +8449,6 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "A person enrolled in or being considered for a study."
-      },
-      {
         "@value": "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII."
       }
     ],
@@ -8496,9 +8460,6 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Agent"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#BitemporalEntity"
       }
     ]
   },
@@ -12668,7 +12629,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "1..1. Whose visit this is."
+        "@value": "1..1. Whose visit this is \u2014 the pseudonymous in-study identity (cr:StudySubject; the legacy cr:Participant class was retired in favor of it)."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
@@ -12683,7 +12644,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -13042,18 +13003,12 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Links a study subject to their informed consent record."
-      },
-      {
         "@value": "The informed consent under which a participant-facing act was performed."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudyEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -18072,6 +18027,53 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1/participant",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/description": [
+      {
+        "@value": "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate. Property-only module: the classes these properties describe (cr:InformedConsent, cr:StudySubject, cr:Enrollment, cr:EligibilityCriterion) are defined once, in cr-core.ttl."
+      }
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "CR-core ontology \u2014 participant & consent module"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.5"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1/top-core-stub",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "TOP Core \u2014 local working stub for the CR domain"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Non-authoritative re-export of the TOP Core terms the cr: domain references. Aligned to core/v1 (one top:CommonEntity root, eight Category-Level Objects, Universal DNA, ADR-0021 bitemporal vocabulary). Replaced by a pinned import at domain extraction (ADR-0023)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
+      {
+        "@id": "https://github.com/scientixai/the-ontology-project"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "stub-of-core-v1"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/crosswalk/v1#",
     "@type": [
       "http://www.w3.org/2002/07/owl#Ontology"
@@ -19994,6 +19996,400 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/v1#Agent",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: an actor that can bear responsibility \u2014 person, organization, group, system, organism."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Agent"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#AutonomousAgent",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A software agent acting with delegated autonomy (Agent leaf)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Autonomous Agent"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Agent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#CommonEntity",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The single root above the eight Category-Level Objects. Everything modeled is, ultimately, a kind of CommonEntity, and carries the Universal DNA: identifier, observedAt, status."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Common Entity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Conclusion",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A reasoned determination resting on evidence (Outcome leaf)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Conclusion"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Outcome"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Constraint",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: a rule that governs \u2014 regulatory law, physical limit, safety guardrail."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Constraint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Evidence",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: an information artifact that supports or records \u2014 document, observation, log, credential, attestation."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Evidence"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Location",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: a physical or virtual place."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Location"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Outcome",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: a result of activity \u2014 conclusion, status change, deliverable state."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Outcome"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#ProvenancedEntity",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "cr-conventions marker: anything carrying the bitemporal + PROV envelope (exactly one observedAt, exactly one recordedAt, >=1 prov:wasAttributedTo). Enforced by top:BitemporalProvShape. Not yet in core/v1 \u2014 documented divergence, see the header of this file."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Provenanced Entity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#RegulatoryLaw",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A legally-binding rule issued by a regulator (Constraint leaf)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Regulatory Law"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Resource",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: a consumable or usable asset \u2014 material, equipment, storage."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Resource"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Scope",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: a unit of intent that bounds work \u2014 program, project, plan element."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Scope"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Temporal",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "CLO: a time-anchored occurrence \u2014 activity, milestone, schedule, window."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Temporal"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#VersionSeries",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The stable identity root for a chain of top:Versioned snapshots (ADR-0021)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Version Series"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#Versioned",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Marker for an immutable, bitemporally-tracked value-version (ADR-0021). Applied where Tier-1 entailment fires or where a workflow opts an attribute in."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Versioned"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#appliesTo",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links a Constraint to what it constrains."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "applies to"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#flavor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#AnnotationProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Extension-contract annotation (ADR-0019): how a term extends Core \u2014 'Additive' (new term, no Core semantics changed), 'Specializing', or 'Constraining'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "flavor"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#governedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Links an entity to the Constraint that governs it."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "governed by"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#identifier",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Universal DNA (identity): a stable identifier."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "identifier"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/v1#modelVersion",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -20016,6 +20412,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#observedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Universal DNA (time): valid-time instant; the canonical NGSI-LD term."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "observed at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
       }
     ]
   },
@@ -20046,6 +20468,48 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/v1#rationale",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The recorded reasoning behind a decision or conclusion."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "rationale"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#recordedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Transaction time (append-only): when the system first knew the fact. cr-conventions extension not yet in core/v1 \u2014 documented divergence, see the header of this file."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "recorded at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/v1#sourceContext",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -20068,6 +20532,95 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#status",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Universal DNA (lifecycle): e.g. active, superseded, retired."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "status"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#supersededAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Transaction time (append-only): when a later assertion superseded this one. A correction is a NEW assertion; this timestamp is never rewritten. cr-conventions extension not yet in core/v1 \u2014 documented divergence, see the header of this file."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "superseded at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#validFrom",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Valid time: when the fact starts being true in the world (ADR-0021)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "valid from"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/v1#validTo",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Valid time: when the fact stops being true in the world. cr-conventions name; core/v1 (ADR-0021) spells this top:validUntil \u2014 documented divergence, see the header of this file."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "valid to"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
       }
     ]
   }
