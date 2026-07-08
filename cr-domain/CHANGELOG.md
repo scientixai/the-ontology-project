@@ -25,6 +25,28 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Changed — Trial phase vs. lifecycle stage disambiguation (convener sanity review)
+
+- **`cr-core-phases.ttl` rewritten**: the old file conflated two concepts under
+  one word. Now split: **Trial Phase** (`cr:TrialPhase` + `cr:trialPhase` on
+  `cr:Study`; individuals `cr:Phase1`–`cr:Phase4` and `cr:BESH`, each with
+  purpose/size/site comments and device-world altLabels — feasibility/pilot,
+  pivotal, post-market surveillance) classifies the study itself; **Lifecycle
+  Stage** (startup/conduct/closeout) is the position in the trial's execution.
+  Veterinary phases 1–3 noted as out of scope (separate domain).
+- **`hcls:Phase` → `hcls:LifecycleStage`** (deprecated equivalent-class alias
+  kept per policy); `hcls:contains`/`hcls:precedes`/`hcls:occursIn`
+  domains/ranges and comments now speak stage language.
+- **Stage individuals renamed** (`*Phase`/`*SubPhase` → `*Stage`):
+  `cr:StartupStage` (contains `cr:StudyDesignStage`, `cr:SiteSelectionStage`,
+  `cr:SiteRegulatoryStage`, `cr:SiteActivationStage`), `cr:ConductStage`
+  (Recruitment/VisitExecution/DataCollection/Safety/Oversight stages),
+  `cr:CloseoutStage` (FollowUp/DataAnalysis/Reporting/Archival stages).
+  All 78 action-catalog `hcls:occursIn` references updated.
+- **Watch-list**: `cr:xl-phase` added to the ambiguous-terms watch-list with
+  trial-phase vs. lifecycle-stage routing; roles docs page retitled
+  "Roles, stages &amp; actions".
+
 ### Changed — Convener sanity-review fixes, round 2 (P6 booleans + ambiguity)
 
 - **Boolean census + P6 promotions** (only 3 booleans existed repo-wide, all

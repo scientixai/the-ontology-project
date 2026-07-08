@@ -1620,7 +1620,7 @@ def roles_body():  # noqa: C901
                 f"<td style='font-size:12px'>{pills}</td></tr>"
             )
     action_table = (
-        "<table><tr><th>role</th><th>phase</th><th>authorized actions</th></tr>"
+        "<table><tr><th>role</th><th>stage</th><th>authorized actions</th></tr>"
         f"{action_rows}</table>"
     )
 
@@ -1650,15 +1650,15 @@ def roles_body():  # noqa: C901
     sparql = (
         "SELECT ?action ?label WHERE {\n"
         "  ?action hcls:authorizedAgentType cr:SiteCoordinator ;\n"
-        "          hcls:occursIn ?phase ;\n"
+        "          hcls:occursIn ?stage ;\n"
         "          rdfs:label ?label .\n"
-        "  # include sub-phases:\n"
-        "  cr:ConductPhase hcls:contains+ ?phase .\n"
+        "  # include sub-stages:\n"
+        "  cr:ConductStage hcls:contains+ ?stage .\n"
         "}"
     )
 
     return (
-        "<h1>Roles, phases &amp; actions</h1>"
+        "<h1>Roles, stages &amp; actions</h1>"
         "<p class='lead'>Who can do what, when &mdash; the operator-grounding layer. "
         "Authorization binds directly to OWL agent type classes; no separate Role intermediary. "
         "A real <code>hcls:Person</code> is typed as one of these classes; their contextual title "
@@ -1684,19 +1684,21 @@ def roles_body():  # noqa: C901
         "sponsor/CRO-boundary roles.</p>"
         f"{agent_table}"
 
-        "<h2>Trial lifecycle phases</h2>"
-        "<p>Three top-level phases (<code>cr:StartupPhase</code>, <code>cr:ConductPhase</code>, "
-        "<code>cr:CloseoutPhase</code>) form a containment tree and a precedence chain. "
-        "Actions bind to sub-phases via <code>hcls:occursIn</code>; the <code>hcls:contains+</code> "
-        "transitive closure lets you query all actions within a top-level phase.</p>"
+        "<h2>Trial lifecycle stages</h2>"
+        "<p>Three top-level stages (<code>cr:StartupStage</code>, <code>cr:ConductStage</code>, "
+        "<code>cr:CloseoutStage</code>) form a containment tree and a precedence chain. "
+        "Actions bind to sub-stages via <code>hcls:occursIn</code>; the <code>hcls:contains+</code> "
+        "transitive closure lets you query all actions within a top-level stage. "
+        "Not to be confused with the <b>trial phase</b> (<code>cr:TrialPhase</code>: Phase 1&ndash;4, BESH), "
+        "which classifies the study itself, not its position in execution.</p>"
         f"{phase_table}"
 
         "<h2>Authorization query pattern</h2>"
-        "<p>To answer <i>\"What am I authorized to do right now?\"</i> given an agent type and phase:</p>"
+        "<p>To answer <i>\"What am I authorized to do right now?\"</i> given an agent type and stage:</p>"
         f"<pre>{esc(sparql)}</pre>"
 
-        "<h2>Actions by role and phase</h2>"
-        "<p>All authorized actions from <code>cr-core-actions.ttl</code>, grouped by role and sub-phase. "
+        "<h2>Actions by role and stage</h2>"
+        "<p>All authorized actions from <code>cr-core-actions.ttl</code>, grouped by role and sub-stage. "
         "Multi-role actions appear in each authorized role&rsquo;s row.</p>"
         f"{action_table}"
 

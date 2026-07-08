@@ -70,9 +70,9 @@ hcls:consentSubject a owl:ObjectProperty ;
 
 hcls:contains a owl:ObjectProperty ;
     rdfs:label "contains" ;
-    rdfs:comment "Containment: a phase contains its named sub-phases. Transitive; used to derive the top-level phase for any sub-phase." ;
-    rdfs:domain hcls:Phase ;
-    rdfs:range hcls:Phase ;
+    rdfs:comment "Containment: a lifecycle stage contains its named sub-stages. Transitive; used to derive the top-level stage for any sub-stage." ;
+    rdfs:domain hcls:LifecycleStage ;
+    rdfs:range hcls:LifecycleStage ;
     top:flavor "Additive" .
 
 hcls:executesAction a owl:ObjectProperty ;
@@ -116,23 +116,23 @@ hcls:locatedAt a owl:ObjectProperty ;
 
 hcls:occursIn a owl:ObjectProperty ;
     rdfs:label "occurs in" ;
-    rdfs:comment "The lifecycle phase in which this Action is typically performed." ;
+    rdfs:comment "The lifecycle stage in which this Action is typically performed." ;
     rdfs:domain hcls:Action ;
-    rdfs:range hcls:Phase ;
+    rdfs:range hcls:LifecycleStage ;
     top:flavor "Additive" .
 
 hcls:operatesOn a owl:ObjectProperty ;
     rdfs:label "operates on" ;
-    rdfs:comment "The OWL class of the primary entity this Action targets. Enables querying: what Actions are available on a given entity type for a given agent type in a given phase?" ;
+    rdfs:comment "The OWL class of the primary entity this Action targets. Enables querying: what Actions are available on a given entity type for a given agent type in a given stage?" ;
     rdfs:domain hcls:Action ;
     rdfs:range owl:Class ;
     top:flavor "Additive" .
 
 hcls:precedes a owl:ObjectProperty ;
     rdfs:label "precedes" ;
-    rdfs:comment "Temporal sequencing: Phase A precedes Phase B means B cannot begin before A's gate conditions are met." ;
-    rdfs:domain hcls:Phase ;
-    rdfs:range hcls:Phase ;
+    rdfs:comment "Temporal sequencing: Stage A precedes Stage B means B cannot begin before A's gate conditions are met." ;
+    rdfs:domain hcls:LifecycleStage ;
+    rdfs:range hcls:LifecycleStage ;
     top:flavor "Additive" .
 
 hcls:realizationOf a owl:ObjectProperty ;
@@ -175,18 +175,24 @@ hcls:Organization a owl:Class ;
 
 hcls:Action a owl:Class ;
     rdfs:label "Action" ;
-    rdfs:comment "A named, authorized operation (Call To Action in OOUX terms) that an agent of a given type may perform in a given Phase. Actions are reference-graph archetypes (top:Constraint: they specify what is authorized). Realized occurrences in instance graphs are prov:Activity individuals linked back via hcls:realizationOf." ;
+    rdfs:comment "A named, authorized operation (Call To Action in OOUX terms) that an agent of a given type may perform in a given lifecycle stage. Actions are reference-graph archetypes (top:Constraint: they specify what is authorized). Realized occurrences in instance graphs are prov:Activity individuals linked back via hcls:realizationOf." ;
     rdfs:subClassOf top:Constraint .
 
 hcls:JobToBeDone a owl:Class ;
     rdfs:label "Job to Be Done" ;
-    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a Phase. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
+    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a lifecycle stage. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
+    rdfs:subClassOf top:Scope .
+
+hcls:LifecycleStage a owl:Class ;
+    rdfs:label "Lifecycle Stage" ;
+    rdfs:comment "A bounded, sequenced stage of a process lifecycle within an HCLS domain — the answer to 'where in its execution is this process?'. Stages form a containment tree (hcls:contains) and a precedence chain (hcls:precedes). Permutates to: cr:StartupStage/ConductStage/CloseoutStage (clinical research); Admission/Inpatient/Discharge (clinical care); Formulation/Fill-Finish/Release (manufacturing). Deliberately NOT called 'Phase': in clinical research, 'phase' names the regulatory classification of a trial (cr:TrialPhase, Phase 1..4) — a different concept. See cr-core-phases.ttl for the disambiguation." ;
     rdfs:subClassOf top:Scope .
 
 hcls:Phase a owl:Class ;
-    rdfs:label "Phase" ;
-    rdfs:comment "A bounded, sequenced stage of a process lifecycle within an HCLS domain. Phases form a containment tree (hcls:contains) and a precedence chain (hcls:precedes). Permutates to: cr:StartupPhase/ConductPhase/CloseoutPhase (clinical research); Admission/Inpatient/Discharge (clinical care); Formulation/Fill-Finish/Release (manufacturing)." ;
-    rdfs:subClassOf top:Scope .
+    owl:deprecated true ;
+    owl:equivalentClass hcls:LifecycleStage ;
+    rdfs:label "Phase (deprecated)" ;
+    rdfs:comment "DEPRECATED — renamed hcls:LifecycleStage (convener ruling, 2026-07): 'phase' collided with the clinical-trial regulatory phase (Phase 1..4), an ambiguous-terms watch-list hit. Kept as an equivalent-class alias for 2 MINOR versions per deprecation policy." .
 
 hcls:Person a owl:Class ;
     rdfs:label "Person" ;
