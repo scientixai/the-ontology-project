@@ -3,6 +3,7 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 
 # Universal DNA — conformant. A bare top:ProvenancedEntity that carries all three
 # strands: identity (top:identifier), time (top:observedAt), and lifecycle (top:status),
@@ -14,3 +15,6 @@ ex:dna-ok a top:ProvenancedEntity ;
     top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:agent-1 .
+
+# Provenance identity — attribution targets are identified agents, not bare roles.
+ex:agent-1 a hcls:Person ; rdfs:label "Iris Chen" ; top:identifier "person:iris-chen" ; hcls:actsAs "Site Coordinator" .

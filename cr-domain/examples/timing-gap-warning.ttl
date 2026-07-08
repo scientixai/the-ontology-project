@@ -4,12 +4,13 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # RISK-PROPORTIONATE (Warning, not Violation): consent obtained 2026-02-02, but the
 # nurse's delegation only became effective 2026-02-05. The capability and credential
 # DO exist — this is the user's "consented before delegated" case: reviewable, not fatal.
-ex:tg-pi    a hcls:Person .
-ex:tg-nurse a hcls:Person .
+ex:tg-pi    a hcls:Person, prov:Agent ; rdfs:label "Dr. Susan Hale" ; top:identifier "person:susan-hale" ; hcls:actsAs "Principal Investigator" .
+ex:tg-nurse a hcls:Person, prov:Agent ; rdfs:label "Mark Ellis" ; top:identifier "person:mark-ellis" ; hcls:actsAs "Research Nurse" .
 ex:tg-subj  a cr:StudySubject .
 ex:tg-cap   a cr:Capability .
 ex:tg-cred  a cr:Credential ; cr:credentialOf ex:tg-nurse .

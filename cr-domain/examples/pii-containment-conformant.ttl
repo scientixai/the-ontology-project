@@ -4,6 +4,7 @@
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # CONFORMANT: an act attached to a pseudonymous StudySubject — the normal, contained case.
 ex:pii-ok-ae a cr:AdverseEvent ;
@@ -18,3 +19,6 @@ ex:pii-inv a hcls:Practitioner .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/pii-ok-ae> top:identifier "urn:pii-ok-ae" ; top:status "active" .
+
+# Provenance identity — attribution targets are identified agents, not bare roles.
+ex:pii-inv rdfs:label "Dr. Ana Rivera" ; top:identifier "person:ana-rivera" ; hcls:actsAs "Principal Investigator" .

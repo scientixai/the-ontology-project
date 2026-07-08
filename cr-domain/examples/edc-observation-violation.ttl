@@ -5,6 +5,7 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE (Violation): an observation with no variable definition (orphan EAV value).
 # Envelope + subject + event present so the failure isolates to the missing definition.
@@ -16,7 +17,7 @@ ex:obs-bad a cr:ClinicalObservation ; rdf:value "99" ;
     prov:wasAttributedTo ex:crc-bad .
 ex:s-bad a cr:StudySubject .
 ex:se-bad a cr:StudyEvent .
-ex:crc-bad a hcls:Person, prov:Agent .
+ex:crc-bad a hcls:Person, prov:Agent ; rdfs:label "Tom Reyes" ; top:identifier "person:tom-reyes" ; hcls:actsAs "Site Coordinator" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/obs-bad> top:identifier "urn:obs-bad" ; top:status "active" .

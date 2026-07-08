@@ -31,8 +31,8 @@ ex:subj-a2 a cr:StudySubject ;
     top:identifier "urn:subject:A2-001" ; top:status "active" ;
     cr:subjectId "A2-001" ;
     top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
-ex:inv-a2 a hcls:Practitioner ; rdfs:label "Investigator" .
-ex:biostat-a2 a hcls:Practitioner ; rdfs:label "Lead Biostatistician" .
+ex:inv-a2 a hcls:Practitioner ; rdfs:label "Dr. Elena Petrova" ; hcls:actsAs "Investigator" .
+ex:biostat-a2 a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
 
 # ── ADaM analysis dataset, derived from the native source ─────────────────────
 ex:adeff a cr:AnalysisDataset ; rdfs:label "ADEFF (efficacy analysis dataset)" ;
@@ -92,3 +92,7 @@ ex:eop2-decision a cr:AnalysisDecision ; rdfs:label "EOP2 decision — GO to Pha
     top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-09-15T16:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:biostat-a2 .
+
+# Provenance identity — attribution targets are identified agents, not bare roles.
+ex:biostat-a2 top:identifier "person:femi-balogun" .
+ex:inv-a2 top:identifier "person:elena-petrova" .

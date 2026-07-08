@@ -4,6 +4,7 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE (Violation): a custody event with an invalid lifecycle state ("Lost").
 ex:cb-spec a hcls:Specimen ; cr:collectedAt ex:cb-ev .
@@ -11,7 +12,7 @@ ex:cb-ev a cr:StudyEvent .
 ex:ce-bad a cr:CustodyEvent ; cr:specimen ex:cb-spec ; cr:toState "Lost" ;
     top:observedAt "2026-03-10T13:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T13:02:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:cb-tech .
-ex:cb-tech a hcls:Person, prov:Agent .
+ex:cb-tech a hcls:Person, prov:Agent ; rdfs:label "Kenji Sato" ; top:identifier "person:kenji-sato" ; hcls:actsAs "Lab Technician" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/ce-bad> top:identifier "urn:ce-bad" ; top:status "active" .

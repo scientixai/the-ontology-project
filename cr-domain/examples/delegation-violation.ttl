@@ -4,6 +4,7 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE: a Delegation missing cr:requiresCredential (ungated delegation).
 # Envelope present so the failure isolates to DelegationShape.
@@ -15,8 +16,8 @@ ex:bad-deleg a cr:Delegation ;
     cr:delegate ex:nurse-x ;
     cr:delegatedCapability ex:cap-x .
 
-ex:pi-x a hcls:Person .
-ex:nurse-x a hcls:Person .
+ex:pi-x a hcls:Person, prov:Agent ; rdfs:label "Dr. Robert Vance" ; top:identifier "person:robert-vance" ; hcls:actsAs "Principal Investigator" .
+ex:nurse-x a hcls:Person, prov:Agent ; rdfs:label "Emma Larsen" ; top:identifier "person:emma-larsen" ; hcls:actsAs "Research Nurse" .
 ex:cap-x a cr:Capability .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---

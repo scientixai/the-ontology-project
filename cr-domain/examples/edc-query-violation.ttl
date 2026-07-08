@@ -4,6 +4,7 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE (Violation): a query with no anchor and no resolution status (orphan discrepancy).
 # Envelope present so the failure isolates to QueryShape.
@@ -11,7 +12,7 @@ ex:q-bad a cr:Query ;
     top:observedAt  "2026-03-12T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-12T08:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:cra-bad .
-ex:cra-bad a hcls:Person, prov:Agent .
+ex:cra-bad a hcls:Person, prov:Agent ; rdfs:label "Ingrid Bauer" ; top:identifier "person:ingrid-bauer" ; hcls:actsAs "Clinical Research Associate" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/q-bad> top:identifier "urn:q-bad" ; top:status "active" .

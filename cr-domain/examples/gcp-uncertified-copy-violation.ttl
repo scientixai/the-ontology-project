@@ -9,9 +9,12 @@
 # NEGATIVE — a certified copy that references no source document. A copy "certified" of
 # nothing is not a certified copy. cr:CertifiedCopyShape must bite.
 
-ex:coordinator a hcls:Practitioner ; rdfs:label "Study coordinator" .
+ex:coordinator a hcls:Practitioner ; rdfs:label "Tom Reyes" ; hcls:actsAs "Site Coordinator" .
 
 ex:cc-orphan a cr:CertifiedCopy ; rdfs:label "Scan with no source document linked" ;
     top:identifier "urn:cc-orphan" ; top:status "active" ;
     top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:coordinator .
+
+# Provenance identity — attribution targets are identified agents, not bare roles.
+ex:coordinator top:identifier "person:tom-reyes" .

@@ -3,6 +3,7 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 
 # Universal DNA — negative. This entity has identity, time, and the bitemporal/PROV
 # envelope, but is MISSING its lifecycle strand (top:status). cr:UniversalDNAShape (the domain application of core's top:UniversalDNAShape)
@@ -13,3 +14,6 @@ ex:dna-no-status a top:ProvenancedEntity ;
     top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:agent-1 .
+
+# Provenance identity — attribution targets are identified agents, not bare roles.
+ex:agent-1 a hcls:Person ; rdfs:label "Iris Chen" ; top:identifier "person:iris-chen" ; hcls:actsAs "Site Coordinator" .

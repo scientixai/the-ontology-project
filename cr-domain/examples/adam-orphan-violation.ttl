@@ -4,6 +4,7 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE (Violation): an ADaM dataset with no declared source — breaks
 # reproducibility-to-source. Envelope present so the failure isolates to traceability.
@@ -11,7 +12,7 @@ ex:orphan-adam a cr:AnalysisDataset ;
     top:observedAt  "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:b-adam .
-ex:b-adam a hcls:Person, prov:Agent .
+ex:b-adam a hcls:Person, prov:Agent ; rdfs:label "Alex Kim" ; top:identifier "person:alex-kim" ; hcls:actsAs "Statistical Programmer" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/orphan-adam> top:identifier "urn:orphan-adam" ; top:status "active" .

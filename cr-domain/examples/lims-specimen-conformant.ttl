@@ -19,7 +19,7 @@ ex:draw-event a cr:StudyEvent ; rdfs:label "Cycle 1 Day 1 visit (blood draw)" ;
 ex:spec-1 a hcls:Specimen ; rdfs:label "Whole blood (primary)" ;
     cr:forSubject ex:spec-subj ; cr:collectedAt ex:draw-event .
 
-ex:labtech a hcls:Practitioner ; rdfs:label "Lab technician" .
+ex:labtech a hcls:Practitioner ; rdfs:label "Kenji Sato" ; hcls:actsAs "Lab Technician" .
 
 # Chain of custody — each transition bitemporal + attested.
 ex:ce-recv a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "SampleDue" ; cr:toState "Received" ;
@@ -52,3 +52,6 @@ ex:res-nab a cr:AssayResult ; rdfs:label "NAb titer = 1:320" ; rdf:value "1:320"
 <https://top.scientix.ai/examples/ce-recv> top:identifier "urn:ce-recv" ; top:status "active" .
 <https://top.scientix.ai/examples/ce-verif> top:identifier "urn:ce-verif" ; top:status "active" .
 <https://top.scientix.ai/examples/res-nab> top:identifier "urn:res-nab" ; top:status "active" .
+
+# Provenance identity — attribution targets are identified agents, not bare roles.
+ex:labtech top:identifier "person:kenji-sato" .

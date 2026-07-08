@@ -25,6 +25,22 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Fixed — Provenance identity: attribution targets are people, not roles
+
+- **Convener finding**: example agents like `ex:sp-mgr rdfs:label "Start-up
+  manager"` attributed provenance to a *role*, not a person — non-conformant
+  (you don't know who the start-up manager was). All 60+ attribution targets
+  across the examples now carry a name (`rdfs:label`), a join key
+  (`top:identifier` — `person:`/`org:`/`system:`), and the role on
+  `hcls:actsAs`. Personas are consistent across related examples (the same
+  lead biostatistician through analysis → CSR → submission). System agents
+  (IxRS, USDM ingestion, LLM mapper) and sponsor organizations keep their
+  non-person identity with `system:`/`org:` identifiers; the mislabeled
+  "Scheduling system" `hcls:Person` became a `prov:SoftwareAgent`.
+- **New harness gate** (`provenance`): every `prov:wasAttributedTo` target in
+  every example must have `rdfs:label` + `top:identifier`; documented in
+  `conventions.md` under Provenance.
+
 ### Changed — Trial phase vs. lifecycle stage disambiguation (convener sanity review)
 
 - **`cr-core-phases.ttl` rewritten**: the old file conflated two concepts under

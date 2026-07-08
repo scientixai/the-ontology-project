@@ -150,6 +150,9 @@ def main():
     # (p) OWL DL well-formedness — sound "ingredients" for a consumer's reasoner
     ol_passed, ol_total = owl_lint_checks(failures)
 
+    # (q) provenance identity — attribution targets are identified agents, never bare roles
+    pv_passed, pv_total = provenance_identity_checks(failures)
+
     _report([
         ("coherence", co_passed, co_total),
         ("seam", sm_passed, sm_total),
@@ -168,7 +171,39 @@ def main():
         ("competency", cq_passed, cq_total),
         ("vocab", vb_passed, vb_total),
         ("owl-lint", ol_passed, ol_total),
+        ("provenance", pv_passed, pv_total),
     ], failures)
+
+
+def provenance_identity_checks(failures):
+    """Convener ruling (sanity review, 2026-07): a prov:wasAttributedTo target
+    labeled only with a role ('Start-up manager') is not provenance — you don't
+    know WHO the start-up manager was. Every attribution target in every example
+    must be an identified agent: rdfs:label (a person's name, an organization,
+    or a system) AND top:identifier (person:/org:/system: join key). Roles ride
+    on hcls:actsAs, never as the identity."""
+    import glob as _glob
+    from rdflib import Graph as _G, URIRef as _U
+    from rdflib.namespace import RDFS as _RDFS
+    ATTR = _U("http://www.w3.org/ns/prov#wasAttributedTo")
+    IDENT = _U("https://top.scientix.ai/v1#identifier")
+    gaps = []
+    n_targets = 0
+    for f in sorted(_glob.glob(os.path.join(ROOT, "examples", "**", "*.ttl"), recursive=True)):
+        g = _G()
+        g.parse(f)
+        for o in set(g.objects(None, ATTR)):
+            n_targets += 1
+            missing = [w for w, v in (("rdfs:label", g.value(o, _RDFS.label)),
+                                      ("top:identifier", g.value(o, IDENT))) if v is None]
+            if missing:
+                gaps.append(f"{os.path.basename(f)}: {o} lacks {' + '.join(missing)}")
+    if gaps:
+        failures.append(("PROV-ID", "examples", "; ".join(gaps)))
+        print(f"[FAIL] provenance identity: {len(gaps)} attribution target(s) are anonymous/role-only")
+        return 0, 1
+    print(f"[PASS] provenance identity: all {n_targets} attribution targets carry a name + identifier")
+    return 1, 1
 
 
 def owl_lint_checks(failures):

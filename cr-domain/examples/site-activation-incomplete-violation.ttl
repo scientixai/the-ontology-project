@@ -4,6 +4,7 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE (Violation): an activation with IRB + CTA but no SIV (premature green-light).
 ex:site-bad a cr:StudySite .
@@ -16,7 +17,7 @@ ex:cta-b a cr:ClinicalTrialAgreement ; cr:forStudySite ex:site-bad ;
 ex:act-bad a cr:SiteActivation ; cr:activates ex:site-bad ; cr:irbApproval ex:irb-b ; cr:cta ex:cta-b ;
     top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-05T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:su-b .
-ex:su-b a hcls:Person, prov:Agent .
+ex:su-b a hcls:Person, prov:Agent ; rdfs:label "Grace Lin" ; top:identifier "person:grace-lin" ; hcls:actsAs "Start-up Manager" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/act-bad> top:identifier "urn:act-bad" ; top:status "active" .

@@ -30,6 +30,12 @@ a correction is a *new* assertion with a later `recordedAt`, and the prior one g
 ## Provenance (W3C PROV)
 - `prov:wasAttributedTo` — the responsible/attesting agent (≥1, IRI).
 - `prov:wasGeneratedBy` / `prov:generatedAtTime` — the activity/act that produced it.
+- **The attribution target is an identified agent, never a bare role.** An agent
+  labeled only "Start-up manager" is not provenance — you don't know *who* the
+  start-up manager was. Every attribution target carries `rdfs:label` (a person's
+  name, an organization, or a named system) and `top:identifier`
+  (`person:`/`org:`/`system:` join key); the role rides on `hcls:actsAs`.
+  The harness `provenance` gate enforces this on every example.
 
 ## The marker class
 Anything carrying the envelope is typed `top:ProvenancedEntity`. The `top:BitemporalProvShape`

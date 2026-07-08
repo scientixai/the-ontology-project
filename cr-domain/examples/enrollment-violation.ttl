@@ -4,6 +4,7 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 # NEGATIVE: an Enrollment missing cr:asSubject (no pseudonymous bridge).
 # Envelope is present so the failure isolates to EnrollmentShape.
@@ -14,7 +15,7 @@ ex:bad-enroll a cr:Enrollment ;
     cr:enrolledPerson ex:p-x ;
     cr:intoStudy ex:s-x .
 
-ex:agent-x a top:Agent, prov:Agent .
+ex:agent-x a hcls:Person, prov:Agent ; rdfs:label "Lucia Ferreira" ; top:identifier "person:lucia-ferreira" ; hcls:actsAs "Site Coordinator" .
 ex:p-x a hcls:Person .
 ex:s-x a cr:Study .
 
