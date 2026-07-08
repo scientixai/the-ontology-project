@@ -88,6 +88,14 @@ earns a class (`cr:InformedConsent`, `cr:DatabaseLock`). A judgment-against-crit
 **promoted fact** with the "type" derived as a view — never a subclass. Known deviations
 (recorded, not yet refactored): `cr:SeriousAdverseEvent`, `cr:DoseLimitingToxicity`, `cr:SUSAR`.
 
+**`hasX` names a relationship, never a flag.** The sentence form is the point:
+`ex:bd-coll cr:hasConsent ex:bd-consent` reads subject–predicate–object — "the
+collection has consent consent-123." Booleans are banned outright (P6), so a
+`has*` value is always an entity reference; the linter fails any `has*`/`is*`
+property with a datatype range, making a flag-shaped `hasX` structurally
+impossible. Display layers strip the `has` (the retrieval views project
+`sh:name "consent"`), so operators see nouns while the graph keeps sentences.
+
 **BFO (ADR-0024).** Full alignment, carried at the Core layer: the CLO→BFO bridge lives in
 `core/v1` (CLO-level where the category is BFO-homogeneous, leaf-level where it is not). Domain
 modules align to Core only and inherit BFO transitively — a `bfo:` IRI in a `cr:` module is a

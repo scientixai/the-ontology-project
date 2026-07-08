@@ -73,6 +73,20 @@ def check_files(paths: list[str]) -> list[tuple[str, str, str]]:
     for s in g.subjects(RDF.type, OWL.AnnotationProperty):
         check(str(s), "property")
 
+    # has*/is* properties must be LINKS, never flags: a hasX/isX property with
+    # a datatype range would read as a boolean and violate P6's spirit (booleans
+    # are banned outright; the sentence form 'subject hasConsent consent-123'
+    # is only safe because the value is always an entity reference).
+    from rdflib import RDFS as _RDFS
+    XSD_NS = "http://www.w3.org/2001/XMLSchema#"
+    for prop_kind in (OWL.DatatypeProperty,):
+        for s_ in g.subjects(RDF.type, prop_kind):
+            local = local_name(str(s_))
+            if local is None:
+                continue
+            if re.match(r"^(has|is)[A-Z]", local):
+                violations.append((str(s_), "link-only (has*/is* must be an ObjectProperty — no flag-shaped names)", local))
+
     # Named individuals: no jargon-coded identifiers (first-principles P2 —
     # entity names come from operator vocabulary; codes like 'PI-J01' are
     # spreadsheet coordinates, not names — the OOUX coordinate belongs in
