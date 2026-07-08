@@ -37,12 +37,12 @@ ex:spec-aliquot a hcls:Specimen ; rdfs:label "Serum aliquot -P01" ;
     cr:forSubject ex:spec-subj ; cr:aliquotOf ex:spec-1 ; prov:wasDerivedFrom ex:spec-1 .
 
 # Analysis: catalog service, request on the aliquot, result joined to the subject.
-ex:svc-nab a cr:AnalysisService ; rdfs:label "TZM-bl Neutralization (NAb) assay" .
-ex:ar-1 a cr:AnalysisRequest ; cr:onSample ex:spec-aliquot ; cr:requestsService ex:svc-nab ;
+ex:svc-nab a cr:AssayDefinition ; rdfs:label "TZM-bl Neutralization (NAb) assay" .
+ex:ar-1 a cr:LabOrder ; cr:onSpecimen ex:spec-aliquot ; cr:ordersAssay ex:svc-nab ;
     top:observedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:labtech .
 ex:res-nab a cr:AssayResult ; rdfs:label "NAb titer = 1:320" ; rdf:value "1:320" ;
-    cr:onSample ex:spec-aliquot ; cr:forSubject ex:spec-subj ; cr:fromService ex:svc-nab ;
+    cr:onSpecimen ex:spec-aliquot ; cr:forSubject ex:spec-subj ; cr:resultOfAssay ex:svc-nab ;
     top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-13T14:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:labtech .
 

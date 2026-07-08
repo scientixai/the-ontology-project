@@ -582,6 +582,9 @@
         "@id": "https://top.scientix.ai/cr/v1#xl-agent"
       },
       {
+        "@id": "https://top.scientix.ai/cr/v1#xl-analysis"
+      },
+      {
         "@id": "https://top.scientix.ai/cr/v1#xl-arm"
       },
       {
@@ -589,6 +592,9 @@
       },
       {
         "@id": "https://top.scientix.ai/cr/v1#xl-screen"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#xl-service"
       },
       {
         "@id": "https://top.scientix.ai/cr/v1#xl-site"
@@ -705,20 +711,18 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Binds an AnalysisService to a Specimen (the order)."
+        "@value": "Deprecated: renamed cr:LabOrder ('analysis request' collides with non-lab analysis requests)."
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
+    "http://www.w3.org/2002/07/owl#deprecated": [
       {
-        "@value": "Analysis Request"
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+        "@value": true
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
       {
-        "@id": "https://top.scientix.ai/v1#Temporal"
-      },
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
+        "@id": "https://top.scientix.ai/cr/v1#LabOrder"
       }
     ]
   },
@@ -729,17 +733,18 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Catalog definition of a test/assay (e.g. a biomarker assay)."
+        "@value": "Deprecated: renamed cr:AssayDefinition ('service' collides with service-provider/API senses)."
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
+    "http://www.w3.org/2002/07/owl#deprecated": [
       {
-        "@value": "Analysis Service"
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+        "@value": true
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
       {
-        "@id": "https://top.scientix.ai/v1#Evidence"
+        "@id": "https://top.scientix.ai/cr/v1#AssayDefinition"
       }
     ]
   },
@@ -1075,6 +1080,67 @@
     "http://www.w3.org/2008/05/skos-xl#altLabel": [
       {
         "@id": "https://top.scientix.ai/cr/v1#xl-arm"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#AssayDefinition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Catalog definition of a laboratory test/assay (e.g. a biomarker assay) \u2014 the definitional pattern of cr:VisitDefinition and cr:DataElementDef applied to the lab. Renamed from cr:AnalysisService ('service' collides with service-provider and API senses)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Assay Definition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "assay"
+      },
+      {
+        "@language": "en",
+        "@value": "lab test"
+      },
+      {
+        "@language": "en",
+        "@value": "test definition"
+      },
+      {
+        "@language": "en",
+        "@value": "test panel"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#hiddenLabel": [
+      {
+        "@language": "en",
+        "@value": "AnalysisService"
+      },
+      {
+        "@language": "en",
+        "@value": "analysis service"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Assay Definition"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#scopeNote": [
+      {
+        "@language": "en",
+        "@value": "Renamed from cr:AnalysisService: 'service' collides with cr:ServiceProvider and API/runtime senses."
       }
     ]
   },
@@ -1776,17 +1842,18 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "The definitive summary of a study's results (CSR)."
+        "@value": "Deprecated (convener sanity review, 2026-07): duplicate of cr:ClinicalStudyReport (cr-core-reporting.ttl), which carries the section/traceability model. Unused by any example or shape; removed after 2 MINOR versions per the deprecation policy."
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
+    "http://www.w3.org/2002/07/owl#deprecated": [
       {
-        "@value": "Clinical Study Report"
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+        "@value": true
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
       {
-        "@id": "https://top.scientix.ai/v1#Evidence"
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
       }
     ]
   },
@@ -5134,6 +5201,49 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ExpectednessAssessment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The recorded judgment that a reaction is expected or unexpected against the current reference safety information (Investigator's Brochure / label) \u2014 the P6 promotion of the former susarUnexpected boolean. Same shape as cr:CausalityAssessment: a judgment with authority, time, and the document it was judged against."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Expectedness Assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Conclusion"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "expected/unexpected judgment"
+      },
+      {
+        "@language": "en",
+        "@value": "expectedness"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#hiddenLabel": [
+      {
+        "@language": "en",
+        "@value": "susarUnexpected"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Expectedness Assessment"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#FileExpeditedSAEReports",
     "@type": [
       "https://top.scientix.ai/hcls/v1#JobToBeDone"
@@ -6362,6 +6472,66 @@
       {
         "@language": "en",
         "@value": "IxRS / IWRS / IRT / RTSM name the SYSTEM that performs randomization and supply; its recorded acts are cr:RandomizationEvent and cr:KitAssignment."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#LabOrder",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The order binding an assay to a specimen \u2014 what the operator calls 'the order'. Renamed from cr:AnalysisRequest: 'analysis request' collides with every non-lab sense of analysis (e.g. a manager asking for a site-performance analysis) \u2014 first-principles P2, ADR-0024 ambiguity gate."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Lab Order"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Temporal"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "lab request"
+      },
+      {
+        "@language": "en",
+        "@value": "order"
+      },
+      {
+        "@language": "en",
+        "@value": "test order"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#hiddenLabel": [
+      {
+        "@language": "en",
+        "@value": "AnalysisRequest"
+      },
+      {
+        "@language": "en",
+        "@value": "analysis request"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Lab Order"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#scopeNote": [
+      {
+        "@language": "en",
+        "@value": "Renamed from cr:AnalysisRequest (ADR-0024 ambiguity gate): 'analysis request' collides with every non-lab sense \u2014 a manager requesting a site-performance analysis is not a lab order."
       }
     ]
   },
@@ -12655,6 +12825,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#assessedAgainstRSI",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The reference safety information (Investigator's Brochure version, label) the expectedness judgment was made against \u2014 the anchor that makes the verdict auditable."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ExpectednessAssessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "assessed against RSI"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#assessedAt",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -13840,6 +14036,11 @@
         "@id": "https://top.scientix.ai/hcls/v1#Specimen"
       }
     ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "collected at"
+      }
+    ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudyEvent"
@@ -14916,22 +15117,13 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Whether the element is derived (vs directly measured)."
+        "@value": "Deprecated (P6): use cr:elementOrigin ('collected' | 'derived')."
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
+    "http://www.w3.org/2002/07/owl#deprecated": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "derived flag"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#boolean"
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+        "@value": true
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -15540,6 +15732,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#elementOrigin",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Where the element's value comes from \u2014 controlled: 'collected' (directly measured/captured) | 'derived' (computed from other elements). Replaces the derivedFlag boolean (P6); mirrors the Define-XML origin discipline."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "element origin"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#encoding",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -15872,6 +16095,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#expectednessVerdict",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Controlled: 'expected' | 'unexpected' (ICH E2A)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ExpectednessAssessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "expectedness verdict"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#failedCriterion",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -16194,27 +16448,6 @@
     "http://www.w3.org/2002/07/owl#inverseOf": [
       {
         "@id": "https://top.scientix.ai/cr/v1#manifestsAs"
-      }
-    ],
-    "https://top.scientix.ai/v1#flavor": [
-      {
-        "@value": "Additive"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#fromService",
-    "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AssayResult"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisService"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -17610,22 +17843,13 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Whether this data element is mandatory in the transfer."
+        "@value": "Deprecated (P6): use cr:requirementLevel ('required' | 'expected' | 'permissible')."
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
+    "http://www.w3.org/2002/07/owl#deprecated": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "mandatory element"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#boolean"
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+        "@value": true
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -18206,18 +18430,54 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#onSample",
+    "@id": "https://top.scientix.ai/cr/v1#onSpecimen",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
     ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The specimen a lab order or assay result concerns. Renamed from cr:onSample for consistency with hcls:Specimen (operators say both; 'specimen' is the anchored term)."
+      }
+    ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "on sample"
+        "@value": "on specimen"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Specimen"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ordersAssay",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The assay this lab order requests. Renamed from cr:requestsService (P2/ambiguity)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LabOrder"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "orders assay"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AssayDefinition"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -20088,18 +20348,28 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#requestsService",
+    "@id": "https://top.scientix.ai/cr/v1#requirementLevel",
     "@type": [
-      "http://www.w3.org/2002/07/owl#ObjectProperty"
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "How strongly the transfer requires this element \u2014 controlled: 'required' (transfer invalid without it) | 'expected' (present unless justified) | 'permissible' (optional). Replaces the mandatoryElement boolean (P6); aligned with the SDTM core-designation discipline."
+      }
     ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisRequest"
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "requirement level"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#AnalysisService"
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -20339,6 +20609,37 @@
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "rests on"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#resultOfAssay",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The assay (catalog test definition) this laboratory result was produced by. Renamed from cr:fromService \u2014 'service' collides with non-lab concepts (first-principles P2 / ADR-0024 ambiguity gate)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AssayResult"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "result of assay"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AssayDefinition"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -21259,9 +21560,19 @@
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
     ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The specimen this custody transition concerns."
+      }
+    ],
     "http://www.w3.org/2000/01/rdf-schema#domain": [
       {
         "@id": "https://top.scientix.ai/cr/v1#CustodyEvent"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "specimen"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#range": [
@@ -21708,22 +22019,13 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Whether the reaction was unexpected per the current Investigator's Brochure."
+        "@value": "Deprecated (P6): use cr:ExpectednessAssessment \u2014 the judgment, with its authority and the reference safety information it was made against."
       }
     ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
+    "http://www.w3.org/2002/07/owl#deprecated": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#SUSAR"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "SUSAR unexpected"
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#range": [
-      {
-        "@id": "http://www.w3.org/2001/XMLSchema#boolean"
+        "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+        "@value": true
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -22990,6 +23292,29 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#xl-analysis",
+    "@type": [
+      "http://www.w3.org/2008/05/skos-xl#Label"
+    ],
+    "http://purl.org/dc/terms/source": [
+      {
+        "@value": "Convener sanity review, 2026-07 (cr-core-lims ambiguity finding)"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#scopeNote": [
+      {
+        "@language": "en",
+        "@value": "HOMONYM: a laboratory assay (cr:AssayDefinition / cr:LabOrder), the statistical analysis layer (cr:AnalysisDataset / cr:AnalysisDecision / SAP), and everyday operational analysis ('analyze the five worst sites'). Never route the bare word; qualify by context \u2014 lab context -> assay terms, biostatistics context -> analysis-layer terms, otherwise no routing."
+      }
+    ],
+    "http://www.w3.org/2008/05/skos-xl#literalForm": [
+      {
+        "@language": "en",
+        "@value": "analysis"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#xl-arm",
     "@type": [
       "http://www.w3.org/2008/05/skos-xl#Label"
@@ -23078,6 +23403,29 @@
       {
         "@language": "en",
         "@value": "screen"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#xl-service",
+    "@type": [
+      "http://www.w3.org/2008/05/skos-xl#Label"
+    ],
+    "http://purl.org/dc/terms/source": [
+      {
+        "@value": "Convener sanity review, 2026-07 (cr-core-lims ambiguity finding)"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#scopeNote": [
+      {
+        "@language": "en",
+        "@value": "HOMONYM: a catalog lab test (cr:AssayDefinition, formerly 'AnalysisService'), a vendor organization (cr:ServiceProvider), and the API/runtime sense. Default routing: none; qualify."
+      }
+    ],
+    "http://www.w3.org/2008/05/skos-xl#literalForm": [
+      {
+        "@language": "en",
+        "@value": "service"
       }
     ]
   },

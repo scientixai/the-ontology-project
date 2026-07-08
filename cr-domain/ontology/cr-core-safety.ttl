@@ -102,11 +102,30 @@ cr:submissionDate a owl:DatatypeProperty ;
     rdfs:range xsd:date ;
     top:flavor "Additive" .
 
+# cr:susarUnexpected (boolean) removed per first-principles P6 — "every 'is X'
+# flag is a claim in disguise". Expectedness is a JUDGMENT against the current
+# reference safety information, exactly like causality: promoted to a fact.
 cr:susarUnexpected a owl:DatatypeProperty ;
-    rdfs:label "SUSAR unexpected" ;
-    rdfs:comment "Whether the reaction was unexpected per the current Investigator's Brochure." ;
-    rdfs:domain cr:SUSAR ;
-    rdfs:range xsd:boolean ;
+    owl:deprecated true ;
+    rdfs:comment "Deprecated (P6): use cr:ExpectednessAssessment — the judgment, with its authority and the reference safety information it was made against." ;
+    top:flavor "Additive" .
+
+cr:ExpectednessAssessment a owl:Class ;
+    rdfs:label "Expectedness Assessment" ;
+    rdfs:comment "The recorded judgment that a reaction is expected or unexpected against the current reference safety information (Investigator's Brochure / label) — the P6 promotion of the former susarUnexpected boolean. Same shape as cr:CausalityAssessment: a judgment with authority, time, and the document it was judged against." ;
+    rdfs:subClassOf top:Conclusion .
+
+cr:expectednessVerdict a owl:DatatypeProperty ;
+    rdfs:label "expectedness verdict" ;
+    rdfs:comment "Controlled: 'expected' | 'unexpected' (ICH E2A)." ;
+    rdfs:domain cr:ExpectednessAssessment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assessedAgainstRSI a owl:ObjectProperty ;
+    rdfs:label "assessed against RSI" ;
+    rdfs:comment "The reference safety information (Investigator's Brochure version, label) the expectedness judgment was made against — the anchor that makes the verdict auditable." ;
+    rdfs:domain cr:ExpectednessAssessment ;
     top:flavor "Additive" .
 
 # CausalityAssessment as top:Conclusion (US-300-004)

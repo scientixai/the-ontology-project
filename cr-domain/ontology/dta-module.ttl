@@ -317,10 +317,17 @@ cr:vendorTerm a owl:DatatypeProperty ;
 
 # ── DataElementSpecification content attributes (LAB v2.0 / MVP Inventory) ──
 
+# cr:mandatoryElement (boolean) deprecated per first-principles P6: the flag
+# hid a three-valued requirement discipline (cf. SDTM core designations).
 cr:mandatoryElement a owl:DatatypeProperty ;
-    rdfs:label "mandatory element" ;
-    rdfs:comment "Whether this data element is mandatory in the transfer." ;
-    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:boolean ;
+    owl:deprecated true ;
+    rdfs:comment "Deprecated (P6): use cr:requirementLevel ('required' | 'expected' | 'permissible')." ;
+    top:flavor "Additive" .
+
+cr:requirementLevel a owl:DatatypeProperty ;
+    rdfs:label "requirement level" ;
+    rdfs:comment "How strongly the transfer requires this element — controlled: 'required' (transfer invalid without it) | 'expected' (present unless justified) | 'permissible' (optional). Replaces the mandatoryElement boolean (P6); aligned with the SDTM core-designation discipline." ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:significantDigits a owl:DatatypeProperty ;
@@ -328,10 +335,17 @@ cr:significantDigits a owl:DatatypeProperty ;
     rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:integer ;
     top:flavor "Additive" .
 
+# cr:derivedFlag (boolean) deprecated per first-principles P6: "derived" is a
+# statement about the element's ORIGIN, not a yes/no property of it.
 cr:derivedFlag a owl:DatatypeProperty ;
-    rdfs:label "derived flag" ;
-    rdfs:comment "Whether the element is derived (vs directly measured)." ;
-    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:boolean ;
+    owl:deprecated true ;
+    rdfs:comment "Deprecated (P6): use cr:elementOrigin ('collected' | 'derived')." ;
+    top:flavor "Additive" .
+
+cr:elementOrigin a owl:DatatypeProperty ;
+    rdfs:label "element origin" ;
+    rdfs:comment "Where the element's value comes from — controlled: 'collected' (directly measured/captured) | 'derived' (computed from other elements). Replaces the derivedFlag boolean (P6); mirrors the Define-XML origin discipline." ;
+    rdfs:domain cr:DataElementSpecification ; rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:valueRangeLow a owl:DatatypeProperty ;

@@ -66,12 +66,24 @@ cr:Administration a owl:Class ;
 cr:AmbiguousTermsWatchList a skos:Collection ;
     skos:definition "Terms with high ambiguity or high cross-pattern matching (ADR-0024). Coverage elsewhere is generous; THESE are gated: any label whose literal form matches a member requires an explicit anti-synonym / context-routing scope note before it lands."@en ;
     skos:member cr:xl-agent,
+        cr:xl-analysis,
         cr:xl-arm,
         cr:xl-monitor,
         cr:xl-screen,
+        cr:xl-service,
         cr:xl-site,
         cr:xl-subject ;
     skos:prefLabel "Ambiguous-terms watch-list"@en .
+
+cr:AnalysisRequest a owl:Class ;
+    rdfs:comment "Deprecated: renamed cr:LabOrder ('analysis request' collides with non-lab analysis requests)." ;
+    owl:deprecated true ;
+    owl:equivalentClass cr:LabOrder .
+
+cr:AnalysisService a owl:Class ;
+    rdfs:comment "Deprecated: renamed cr:AssayDefinition ('service' collides with service-provider/API senses)." ;
+    owl:deprecated true ;
+    owl:equivalentClass cr:AssayDefinition .
 
 cr:ApproveAmendment a hcls:Action ;
     rdfs:label "Approve Amendment" ;
@@ -1274,6 +1286,12 @@ cr:asSubject a owl:ObjectProperty ;
     rdfs:range cr:StudySubject ;
     top:flavor "Additive" .
 
+cr:assessedAgainstRSI a owl:ObjectProperty ;
+    rdfs:label "assessed against RSI" ;
+    rdfs:comment "The reference safety information (Investigator's Brochure version, label) the expectedness judgment was made against — the anchor that makes the verdict auditable." ;
+    rdfs:domain cr:ExpectednessAssessment ;
+    top:flavor "Additive" .
+
 cr:assessedAt a owl:ObjectProperty ;
     rdfs:label "assessed at" ;
     rdfs:comment "The study visit during which this assessment was performed." ;
@@ -1772,10 +1790,8 @@ cr:deliveredUnder a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:derivedFlag a owl:DatatypeProperty ;
-    rdfs:label "derived flag" ;
-    rdfs:comment "Whether the element is derived (vs directly measured)." ;
-    rdfs:domain cr:DataElementSpecification ;
-    rdfs:range xsd:boolean ;
+    rdfs:comment "Deprecated (P6): use cr:elementOrigin ('collected' | 'derived')." ;
+    owl:deprecated true ;
     top:flavor "Additive" .
 
 cr:destroysLot a owl:ObjectProperty ;
@@ -1884,6 +1900,13 @@ cr:effectiveTo a owl:DatatypeProperty ;
     rdfs:range xsd:dateTime ;
     top:flavor "Additive" .
 
+cr:elementOrigin a owl:DatatypeProperty ;
+    rdfs:label "element origin" ;
+    rdfs:comment "Where the element's value comes from — controlled: 'collected' (directly measured/captured) | 'derived' (computed from other elements). Replaces the derivedFlag boolean (P6); mirrors the Define-XML origin discipline." ;
+    rdfs:domain cr:DataElementSpecification ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:encoding a owl:DatatypeProperty ;
     rdfs:label "encoding" ;
     rdfs:domain cr:TransferProfile ;
@@ -1960,6 +1983,13 @@ cr:exercisesCapability a owl:ObjectProperty ;
     rdfs:range cr:Capability ;
     top:flavor "Additive" .
 
+cr:expectednessVerdict a owl:DatatypeProperty ;
+    rdfs:label "expectedness verdict" ;
+    rdfs:comment "Controlled: 'expected' | 'unexpected' (ICH E2A)." ;
+    rdfs:domain cr:ExpectednessAssessment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:failedCriterion a owl:ObjectProperty ;
     rdfs:label "failed criterion" ;
     rdfs:comment "The eligibility criterion a screen-failure failed against — the reason cited by IRI, not free text." ;
@@ -2026,11 +2056,6 @@ cr:fromAntecedent a owl:ObjectProperty ;
     rdfs:domain cr:DeviationEvent ;
     rdfs:range cr:DeviationAntecedent ;
     owl:inverseOf cr:manifestsAs ;
-    top:flavor "Additive" .
-
-cr:fromService a owl:ObjectProperty ;
-    rdfs:domain cr:AssayResult ;
-    rdfs:range cr:AnalysisService ;
     top:flavor "Additive" .
 
 cr:fromState a owl:DatatypeProperty ;
@@ -2350,10 +2375,8 @@ cr:lplvForStudy a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:mandatoryElement a owl:DatatypeProperty ;
-    rdfs:label "mandatory element" ;
-    rdfs:comment "Whether this data element is mandatory in the transfer." ;
-    rdfs:domain cr:DataElementSpecification ;
-    rdfs:range xsd:boolean ;
+    rdfs:comment "Deprecated (P6): use cr:requirementLevel ('required' | 'expected' | 'permissible')." ;
+    owl:deprecated true ;
     top:flavor "Additive" .
 
 cr:measures a owl:ObjectProperty ;
@@ -2469,9 +2492,17 @@ cr:onForm a owl:ObjectProperty ;
     rdfs:range cr:CaseReportForm ;
     top:flavor "Additive" .
 
-cr:onSample a owl:ObjectProperty ;
-    rdfs:label "on sample" ;
+cr:onSpecimen a owl:ObjectProperty ;
+    rdfs:label "on specimen" ;
+    rdfs:comment "The specimen a lab order or assay result concerns. Renamed from cr:onSample for consistency with hcls:Specimen (operators say both; 'specimen' is the anchored term)." ;
     rdfs:range hcls:Specimen ;
+    top:flavor "Additive" .
+
+cr:ordersAssay a owl:ObjectProperty ;
+    rdfs:label "orders assay" ;
+    rdfs:comment "The assay this lab order requests. Renamed from cr:requestsService (P2/ambiguity)." ;
+    rdfs:domain cr:LabOrder ;
+    rdfs:range cr:AssayDefinition ;
     top:flavor "Additive" .
 
 cr:overseesConductOf a owl:ObjectProperty ;
@@ -2886,9 +2917,11 @@ cr:reportsResult a owl:ObjectProperty ;
     rdfs:range cr:EndpointResult ;
     top:flavor "Additive" .
 
-cr:requestsService a owl:ObjectProperty ;
-    rdfs:domain cr:AnalysisRequest ;
-    rdfs:range cr:AnalysisService ;
+cr:requirementLevel a owl:DatatypeProperty ;
+    rdfs:label "requirement level" ;
+    rdfs:comment "How strongly the transfer requires this element — controlled: 'required' (transfer invalid without it) | 'expected' (present unless justified) | 'permissible' (optional). Replaces the mandatoryElement boolean (P6); aligned with the SDTM core-designation discipline." ;
+    rdfs:domain cr:DataElementSpecification ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:requiresCredential a owl:ObjectProperty ;
@@ -2944,6 +2977,13 @@ cr:restsOn a owl:ObjectProperty ;
     rdfs:label "rests on" ;
     rdfs:comment "The analysis evidence a decision rests on — a TableListingFigure and/or an EndpointResult. A decision that rests on nothing is a decision by assertion; its presence is required. (Range left open: both TLF (Evidence) and EndpointResult (Outcome) are valid analysis evidence.)" ;
     rdfs:domain cr:AnalysisDecision ;
+    top:flavor "Additive" .
+
+cr:resultOfAssay a owl:ObjectProperty ;
+    rdfs:label "result of assay" ;
+    rdfs:comment "The assay (catalog test definition) this laboratory result was produced by. Renamed from cr:fromService — 'service' collides with non-lab concepts (first-principles P2 / ADR-0024 ambiguity gate)." ;
+    rdfs:domain cr:AssayResult ;
+    rdfs:range cr:AssayDefinition ;
     top:flavor "Additive" .
 
 cr:resultsPostedAt a owl:DatatypeProperty ;
@@ -3245,10 +3285,8 @@ cr:summaryKind a owl:DatatypeProperty ;
     top:flavor "Additive" .
 
 cr:susarUnexpected a owl:DatatypeProperty ;
-    rdfs:label "SUSAR unexpected" ;
-    rdfs:comment "Whether the reaction was unexpected per the current Investigator's Brochure." ;
-    rdfs:domain cr:SUSAR ;
-    rdfs:range xsd:boolean ;
+    rdfs:comment "Deprecated (P6): use cr:ExpectednessAssessment — the judgment, with its authority and the reference safety information it was made against." ;
+    owl:deprecated true ;
     top:flavor "Additive" .
 
 cr:targetAccrual a owl:DatatypeProperty ;
@@ -4068,12 +4106,6 @@ cr:AddLogEntry a hcls:Action ;
     hcls:occursIn cr:ConductPhase ;
     hcls:operatesOn cr:StudySite .
 
-cr:AnalysisRequest a owl:Class ;
-    rdfs:label "Analysis Request" ;
-    rdfs:comment "Binds an AnalysisService to a Specimen (the order)." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
-
 cr:AnalysisVariable a owl:Class ;
     rdfs:label "Analysis Variable" ;
     rdfs:comment "The analysis analog of the EDC item definition: results cite the variable they were computed over, closing the result -> variable -> dataset -> source chain at variable grain." ;
@@ -4538,6 +4570,7 @@ cr:certifiedCopyOf a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:collectedAt a owl:ObjectProperty ;
+    rdfs:label "collected at" ;
     rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." ;
     rdfs:domain hcls:Specimen ;
     rdfs:range cr:StudyEvent ;
@@ -4597,6 +4630,8 @@ cr:screensRecruit a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:specimen a owl:ObjectProperty ;
+    rdfs:label "specimen" ;
+    rdfs:comment "The specimen this custody transition concerns." ;
     rdfs:domain cr:CustodyEvent ;
     rdfs:range hcls:Specimen ;
     top:flavor "Additive" .
@@ -4605,6 +4640,11 @@ cr:xl-agent a ns2:Label ;
     dcterms:source "First-principles P7 CV-obligations (anti-synonym example)" ;
     skos:scopeNote "ANTI-SYNONYM: pharmacological 'agent' (the drug/substance) is NOT top:Agent (an actor bearing responsibility). Route drug-sense to cr:InvestigationalProduct / hcls:Substance; actor-sense to top:Agent."@en ;
     ns2:literalForm "agent"@en .
+
+cr:xl-analysis a ns2:Label ;
+    dcterms:source "Convener sanity review, 2026-07 (cr-core-lims ambiguity finding)" ;
+    skos:scopeNote "HOMONYM: a laboratory assay (cr:AssayDefinition / cr:LabOrder), the statistical analysis layer (cr:AnalysisDataset / cr:AnalysisDecision / SAP), and everyday operational analysis ('analyze the five worst sites'). Never route the bare word; qualify by context — lab context -> assay terms, biostatistics context -> analysis-layer terms, otherwise no routing."@en ;
+    ns2:literalForm "analysis"@en .
 
 cr:xl-participant-patient a ns2:Label ;
     dcterms:source "Industry drift observed by convener, 2026-07 (ADR-0024): 'There are indications that the industry is moving to patient, but for clinical research, participant should be the preferred label.'" ;
@@ -4615,6 +4655,11 @@ cr:xl-screen a ns2:Label ;
     dcterms:source "OPMODEL §2.2 Recruitment" ;
     skos:scopeNote "HOMONYM: eligibility screening (the recruitment-funnel activity — vocabulary lands with the funnel model, a declared V1 deferral) vs screen failure vs the UI screen. No default routing; qualify."@en ;
     ns2:literalForm "screen"@en .
+
+cr:xl-service a ns2:Label ;
+    dcterms:source "Convener sanity review, 2026-07 (cr-core-lims ambiguity finding)" ;
+    skos:scopeNote "HOMONYM: a catalog lab test (cr:AssayDefinition, formerly 'AnalysisService'), a vendor organization (cr:ServiceProvider), and the API/runtime sense. Default routing: none; qualify."@en ;
+    ns2:literalForm "service"@en .
 
 cr:xl-subject a ns2:Label ;
     dcterms:source "First-principles P7 CV-obligations (homonym-routing example); OPMODEL" ;
@@ -4723,11 +4768,6 @@ cr:AddInvestigatorDelegation a hcls:Action ;
     hcls:authorizedAgentType cr:Investigator ;
     hcls:occursIn cr:ActivationSubPhase ;
     hcls:operatesOn cr:Delegation .
-
-cr:AnalysisService a owl:Class ;
-    rdfs:label "Analysis Service" ;
-    rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." ;
-    rdfs:subClassOf top:Evidence .
 
 cr:ArchivalEvent a owl:Class ;
     rdfs:label "Archival Event" ;
@@ -4838,6 +4878,15 @@ cr:Estimand a owl:Class ;
     rdfs:subClassOf top:Scope ;
     skos:prefLabel "Estimand"@en .
 
+cr:ExpectednessAssessment a owl:Class ;
+    rdfs:label "Expectedness Assessment" ;
+    rdfs:comment "The recorded judgment that a reaction is expected or unexpected against the current reference safety information (Investigator's Brochure / label) — the P6 promotion of the former susarUnexpected boolean. Same shape as cr:CausalityAssessment: a judgment with authority, time, and the document it was judged against." ;
+    rdfs:subClassOf top:Conclusion ;
+    skos:altLabel "expected/unexpected judgment"@en,
+        "expectedness"@en ;
+    skos:hiddenLabel "susarUnexpected"@en ;
+    skos:prefLabel "Expectedness Assessment"@en .
+
 cr:FollowUpVisit a owl:Class ;
     rdfs:label "Follow-up Visit" ;
     rdfs:comment "A kind of cr:Visit; the followUpType qualifier (safety | efficacy | qol) distinguishes the purpose without a parallel hierarchy." ;
@@ -4886,6 +4935,19 @@ cr:InvestigatorSiteFile a owl:Class ;
         "site file"@en ;
     skos:definition "The site's regulated file of essential records (the ISF / 'regulatory binder') — the site-held counterpart of the sponsor's Trial Master File." ;
     skos:prefLabel "Investigator Site File"@en .
+
+cr:LabOrder a owl:Class ;
+    rdfs:label "Lab Order" ;
+    rdfs:comment "The order binding an assay to a specimen — what the operator calls 'the order'. Renamed from cr:AnalysisRequest: 'analysis request' collides with every non-lab sense of analysis (e.g. a manager asking for a site-performance analysis) — first-principles P2, ADR-0024 ambiguity gate." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "lab request"@en,
+        "order"@en,
+        "test order"@en ;
+    skos:hiddenLabel "AnalysisRequest"@en,
+        "analysis request"@en ;
+    skos:prefLabel "Lab Order"@en ;
+    skos:scopeNote "Renamed from cr:AnalysisRequest (ADR-0024 ambiguity gate): 'analysis request' collides with every non-lab sense — a manager requesting a site-performance analysis is not a lab order."@en .
 
 cr:NonclinicalFinding a owl:Class ;
     rdfs:label "Nonclinical Finding" ;
@@ -5000,10 +5062,18 @@ hcls:Practitioner a owl:Class ;
     rdfs:comment "A healthcare professional." ;
     rdfs:subClassOf hcls:Person .
 
-top:Conclusion a owl:Class ;
-    rdfs:label "Conclusion" ;
-    rdfs:comment "A reasoned determination resting on evidence (Outcome leaf)." ;
-    rdfs:subClassOf top:Outcome .
+cr:AssayDefinition a owl:Class ;
+    rdfs:label "Assay Definition" ;
+    rdfs:comment "Catalog definition of a laboratory test/assay (e.g. a biomarker assay) — the definitional pattern of cr:VisitDefinition and cr:DataElementDef applied to the lab. Renamed from cr:AnalysisService ('service' collides with service-provider and API senses)." ;
+    rdfs:subClassOf top:Evidence ;
+    skos:altLabel "assay"@en,
+        "lab test"@en,
+        "test definition"@en,
+        "test panel"@en ;
+    skos:hiddenLabel "AnalysisService"@en,
+        "analysis service"@en ;
+    skos:prefLabel "Assay Definition"@en ;
+    skos:scopeNote "Renamed from cr:AnalysisService: 'service' collides with cr:ServiceProvider and API/runtime senses."@en .
 
 cr:AssayResult a owl:Class ;
     rdfs:label "Assay Result" ;
@@ -5031,15 +5101,6 @@ cr:CaseReportForm a owl:Class ;
     rdfs:subClassOf top:Evidence ;
     skos:altLabel "CRF"@en ;
     skos:prefLabel "Case Report Form"@en .
-
-cr:ClinicalStudyReport a owl:Class ;
-    rdfs:label "Clinical Study Report (CSR)" ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
-    skos:altLabel "CSR"@en,
-        "study report"@en ;
-    skos:definition "The ICH E3 integrated report of a single study — the narrative document the submission (eCTD Module 5.3.5) carries. Modeled as a fact graph of its sections, not an opaque file, so its results sections trace to the analysis outputs they present." ;
-    skos:prefLabel "Clinical Study Report"@en .
 
 cr:CloseOutVisit a owl:Class ;
     rdfs:label "Close-Out Visit" ;
@@ -5117,6 +5178,13 @@ cr:ReturnEvent a owl:Class ;
         "returned units"@en ;
     skos:definition "The return of unused or partially used investigational product from a participant or site back into custody, with the returned quantity." ;
     skos:prefLabel "Return Event"@en .
+
+cr:SUSAR a owl:Class ;
+    rdfs:label "SUSAR" ;
+    rdfs:comment "Suspected Unexpected Serious Adverse Reaction — requires expedited regulatory reporting (7 days fatal/life-threatening, 15 days other). ADR-0024 known deviation: 'suspected' (causality) and 'unexpected' (vs. reference safety information) are judgments against criteria; refactors together with cr:SeriousAdverseEvent in the dedicated safety-module pass." ;
+    rdfs:subClassOf cr:SeriousAdverseEvent ;
+    skos:altLabel "suspected unexpected serious adverse reaction"@en ;
+    skos:prefLabel "SUSAR"@en .
 
 cr:SafetyReport a owl:Class ;
     rdfs:label "Safety Report" ;
@@ -5232,6 +5300,11 @@ ns1:concerns a owl:ObjectProperty ;
     rdfs:range owl:Class ;
     top:flavor "Additive" .
 
+top:Conclusion a owl:Class ;
+    rdfs:label "Conclusion" ;
+    rdfs:comment "A reasoned determination resting on evidence (Outcome leaf)." ;
+    rdfs:subClassOf top:Outcome .
+
 cr:AnalysisDataset a owl:Class ;
     rdfs:label "Analysis Dataset (ADaM)" ;
     rdfs:comment "Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source. Its ADaM structure (ADSL/BDS/OCCDS) is cr:datasetStructure — a value, not a subclass (ADR-0024 one-question gate)." ;
@@ -5250,6 +5323,15 @@ cr:CAPA a owl:Class ;
     skos:altLabel "corrective action"@en,
         "corrective and preventive action"@en ;
     skos:prefLabel "CAPA"@en .
+
+cr:ClinicalStudyReport a owl:Class ;
+    rdfs:label "Clinical Study Report (CSR)" ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:altLabel "CSR"@en,
+        "study report"@en ;
+    skos:definition "The ICH E3 integrated report of a single study — the narrative document the submission (eCTD Module 5.3.5) carries. Modeled as a fact graph of its sections, not an opaque file, so its results sections trace to the analysis outputs they present." ;
+    skos:prefLabel "Clinical Study Report"@en .
 
 cr:CodingReview a owl:Class ;
     rdfs:label "Coding Review" ;
@@ -5353,13 +5435,6 @@ cr:Reconciliation a owl:Class ;
     skos:definition "The act of confirming that a site's records balance at closeout — investigational product counts, device counts, essential documents, or open queries. The scope (what is being reconciled) is cr:reconciliationScope, a value." ;
     skos:prefLabel "Reconciliation"@en ;
     skos:scopeNote "One act, four scopes (IMP/device/documents/queries) — the scope is a value, never four classes (ADR-0024)."@en .
-
-cr:SUSAR a owl:Class ;
-    rdfs:label "SUSAR" ;
-    rdfs:comment "Suspected Unexpected Serious Adverse Reaction — requires expedited regulatory reporting (7 days fatal/life-threatening, 15 days other). ADR-0024 known deviation: 'suspected' (causality) and 'unexpected' (vs. reference safety information) are judgments against criteria; refactors together with cr:SeriousAdverseEvent in the dedicated safety-module pass." ;
-    rdfs:subClassOf cr:SeriousAdverseEvent ;
-    skos:altLabel "suspected unexpected serious adverse reaction"@en ;
-    skos:prefLabel "SUSAR"@en .
 
 cr:ScheduleTimeline a owl:Class ;
     rdfs:label "Schedule Timeline" ;
@@ -5601,9 +5676,9 @@ cr:TransferSpecification a owl:Class ;
     skos:definition "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act." .
 
 cr:CSR a owl:Class ;
-    rdfs:label "Clinical Study Report" ;
-    rdfs:comment "The definitive summary of a study's results (CSR)." ;
-    rdfs:subClassOf top:Evidence .
+    rdfs:comment "Deprecated (convener sanity review, 2026-07): duplicate of cr:ClinicalStudyReport (cr-core-reporting.ttl), which carries the section/traceability model. Unused by any example or shape; removed after 2 MINOR versions per the deprecation policy." ;
+    owl:deprecated true ;
+    owl:equivalentClass cr:ClinicalStudyReport .
 
 cr:Endpoint a owl:Class ;
     rdfs:label "Endpoint" ;

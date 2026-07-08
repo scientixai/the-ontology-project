@@ -25,6 +25,29 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Changed — Convener sanity-review fixes, round 2 (P6 booleans + ambiguity)
+
+- **Boolean census + P6 promotions** (only 3 booleans existed repo-wide, all
+  claims-in-disguise): `cr:susarUnexpected` → `cr:ExpectednessAssessment`
+  (a judgment against the reference safety information, with
+  `cr:expectednessVerdict` + `cr:assessedAgainstRSI` — the CausalityAssessment
+  pattern); `cr:mandatoryElement` → `cr:requirementLevel`
+  ('required'|'expected'|'permissible', SDTM core-designation discipline);
+  `cr:derivedFlag` → `cr:elementOrigin` ('collected'|'derived', Define-XML
+  origin discipline). All three old properties deprecated per policy.
+- **LIMS ambiguity renames** (collision-prone names → operator vocabulary):
+  `cr:AnalysisRequest` → `cr:LabOrder`; `cr:AnalysisService` →
+  `cr:AssayDefinition`; `cr:fromService` → `cr:resultOfAssay`;
+  `cr:requestsService` → `cr:ordersAssay`; `cr:onSample` → `cr:onSpecimen`.
+  'Analysis request' collides with every non-lab sense (a manager requesting a
+  site-performance analysis is not a lab order); 'service' collides with
+  cr:ServiceProvider and API senses. Deprecated class aliases kept
+  (`owl:equivalentClass`); all shapes/examples/projections/crosswalks updated;
+  bare LIMS properties (specimen, collectedAt, ...) gained labels + comments.
+- **`cr:CSR` deprecated** — unused duplicate of `cr:ClinicalStudyReport`.
+- **Watch-list grows**: 'analysis' and 'service' join the ADR-0024
+  ambiguous-terms watch-list with context-routing notes.
+
 ### Changed — Convener sanity-review fixes, round 1 (first-principles P2)
 
 - **25 Jobs-to-Be-Done renamed** from jargon-coded IRIs (`cr:PI-J01`,

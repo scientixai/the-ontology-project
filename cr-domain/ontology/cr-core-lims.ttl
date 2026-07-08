@@ -5,9 +5,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix top: <https://top.scientix.ai/v1#> .
 
-cr:fromService a owl:ObjectProperty ;
+cr:resultOfAssay a owl:ObjectProperty ;
+    rdfs:label "result of assay" ;
+    rdfs:comment "The assay (catalog test definition) this laboratory result was produced by. Renamed from cr:fromService — 'service' collides with non-lab concepts (first-principles P2 / ADR-0024 ambiguity gate)." ;
     rdfs:domain cr:AssayResult ;
-    rdfs:range cr:AnalysisService ;
+    rdfs:range cr:AssayDefinition ;
     top:flavor "Additive" .
 
 cr:fromState a owl:DatatypeProperty ;
@@ -38,8 +40,9 @@ cr:hasCustodyEvent a owl:ObjectProperty ;
     owl:inverseOf cr:specimen ;
     top:flavor "Additive" .
 
-cr:onSample a owl:ObjectProperty ;
-    rdfs:label "on sample" ;
+cr:onSpecimen a owl:ObjectProperty ;
+    rdfs:label "on specimen" ;
+    rdfs:comment "The specimen a lab order or assay result concerns. Renamed from cr:onSample for consistency with hcls:Specimen (operators say both; 'specimen' is the anchored term)." ;
     rdfs:range hcls:Specimen ;
     top:flavor "Additive" .
 
@@ -58,9 +61,11 @@ cr:producesSpecimen a owl:ObjectProperty ;
     owl:inverseOf cr:collectedAt ;
     top:flavor "Additive" .
 
-cr:requestsService a owl:ObjectProperty ;
-    rdfs:domain cr:AnalysisRequest ;
-    rdfs:range cr:AnalysisService ;
+cr:ordersAssay a owl:ObjectProperty ;
+    rdfs:label "orders assay" ;
+    rdfs:comment "The assay this lab order requests. Renamed from cr:requestsService (P2/ambiguity)." ;
+    rdfs:domain cr:LabOrder ;
+    rdfs:range cr:AssayDefinition ;
     top:flavor "Additive" .
 
 cr:toState a owl:DatatypeProperty ;
@@ -76,9 +81,9 @@ cr:yieldsResult a owl:ObjectProperty ;
     owl:inverseOf cr:derivedFromCollection ;
     top:flavor "Additive" .
 
-cr:AnalysisRequest a owl:Class ;
-    rdfs:label "Analysis Request" ;
-    rdfs:comment "Binds an AnalysisService to a Specimen (the order)." ;
+cr:LabOrder a owl:Class ;
+    rdfs:label "Lab Order" ;
+    rdfs:comment "The order binding an assay to a specimen — what the operator calls 'the order'. Renamed from cr:AnalysisRequest: 'analysis request' collides with every non-lab sense of analysis (e.g. a manager asking for a site-performance analysis) — first-principles P2, ADR-0024 ambiguity gate." ;
     rdfs:subClassOf top:Temporal,
         top:Versioned .
 
@@ -91,6 +96,7 @@ cr:aliquotOf a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:collectedAt a owl:ObjectProperty ;
+    rdfs:label "collected at" ;
     rdfs:comment "The StudyEvent (e.g. blood draw) at which a primary specimen was collected." ;
     rdfs:domain hcls:Specimen ;
     rdfs:range cr:StudyEvent ;
@@ -105,13 +111,15 @@ cr:derivedFromCollection a owl:ObjectProperty ;
     top:flavor "Additive" .
 
 cr:specimen a owl:ObjectProperty ;
+    rdfs:label "specimen" ;
+    rdfs:comment "The specimen this custody transition concerns." ;
     rdfs:domain cr:CustodyEvent ;
     rdfs:range hcls:Specimen ;
     top:flavor "Additive" .
 
-cr:AnalysisService a owl:Class ;
-    rdfs:label "Analysis Service" ;
-    rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." ;
+cr:AssayDefinition a owl:Class ;
+    rdfs:label "Assay Definition" ;
+    rdfs:comment "Catalog definition of a laboratory test/assay (e.g. a biomarker assay) — the definitional pattern of cr:VisitDefinition and cr:DataElementDef applied to the lab. Renamed from cr:AnalysisService ('service' collides with service-provider and API senses)." ;
     rdfs:subClassOf top:Evidence .
 
 cr:AssayResult a owl:Class ;
@@ -126,3 +134,15 @@ cr:CustodyEvent a owl:Class ;
     rdfs:subClassOf top:Temporal,
         top:Versioned .
 
+
+# ── Deprecated aliases (renamed for ambiguity, ADR-0024; removed after 2 MINORs) ─
+
+cr:AnalysisRequest a owl:Class ;
+    owl:deprecated true ;
+    owl:equivalentClass cr:LabOrder ;
+    rdfs:comment "Deprecated: renamed cr:LabOrder ('analysis request' collides with non-lab analysis requests)." .
+
+cr:AnalysisService a owl:Class ;
+    owl:deprecated true ;
+    owl:equivalentClass cr:AssayDefinition ;
+    rdfs:comment "Deprecated: renamed cr:AssayDefinition ('service' collides with service-provider/API senses)." .

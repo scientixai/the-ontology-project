@@ -302,6 +302,23 @@ hcls:Specimen
     skos:altLabel "sample"@en , "biospecimen"@en , "aliquot"@en ,
         "blood sample"@en .
 
+cr:LabOrder
+    skos:prefLabel "Lab Order"@en ;
+    skos:altLabel "test order"@en , "order"@en , "lab request"@en ;
+    skos:hiddenLabel "analysis request"@en , "AnalysisRequest"@en ;
+    skos:scopeNote "Renamed from cr:AnalysisRequest (ADR-0024 ambiguity gate): 'analysis request' collides with every non-lab sense — a manager requesting a site-performance analysis is not a lab order."@en .
+
+cr:AssayDefinition
+    skos:prefLabel "Assay Definition"@en ;
+    skos:altLabel "assay"@en , "test definition"@en , "test panel"@en , "lab test"@en ;
+    skos:hiddenLabel "analysis service"@en , "AnalysisService"@en ;
+    skos:scopeNote "Renamed from cr:AnalysisService: 'service' collides with cr:ServiceProvider and API/runtime senses."@en .
+
+cr:ExpectednessAssessment
+    skos:prefLabel "Expectedness Assessment"@en ;
+    skos:altLabel "expectedness"@en , "expected/unexpected judgment"@en ;
+    skos:hiddenLabel "susarUnexpected"@en .
+
 cr:AssayResult
     skos:prefLabel "Assay Result"@en ;
     skos:altLabel "lab result"@en , "lab value"@en , "test result"@en .
@@ -462,7 +479,7 @@ cr:AmbiguousTermsWatchList a skos:Collection ;
     skos:prefLabel "Ambiguous-terms watch-list"@en ;
     skos:definition "Terms with high ambiguity or high cross-pattern matching (ADR-0024). Coverage elsewhere is generous; THESE are gated: any label whose literal form matches a member requires an explicit anti-synonym / context-routing scope note before it lands."@en ;
     skos:member cr:xl-agent , cr:xl-subject , cr:xl-monitor , cr:xl-arm ,
-        cr:xl-site , cr:xl-screen .
+        cr:xl-site , cr:xl-screen , cr:xl-analysis , cr:xl-service .
 
 cr:xl-agent a skosxl:Label ;
     skosxl:literalForm "agent"@en ;
@@ -488,6 +505,16 @@ cr:xl-site a skosxl:Label ;
     skosxl:literalForm "site"@en ;
     dct:source "OPMODEL §1.4 Site Selection" ;
     skos:scopeNote "HOMONYM: the investigative site (cr:StudySite, an organization) vs bfo:Site / top:Location (a place) vs injection/body site vs website. Default routing in this domain: cr:StudySite."@en .
+
+cr:xl-analysis a skosxl:Label ;
+    skosxl:literalForm "analysis"@en ;
+    dct:source "Convener sanity review, 2026-07 (cr-core-lims ambiguity finding)" ;
+    skos:scopeNote "HOMONYM: a laboratory assay (cr:AssayDefinition / cr:LabOrder), the statistical analysis layer (cr:AnalysisDataset / cr:AnalysisDecision / SAP), and everyday operational analysis ('analyze the five worst sites'). Never route the bare word; qualify by context — lab context -> assay terms, biostatistics context -> analysis-layer terms, otherwise no routing."@en .
+
+cr:xl-service a skosxl:Label ;
+    skosxl:literalForm "service"@en ;
+    dct:source "Convener sanity review, 2026-07 (cr-core-lims ambiguity finding)" ;
+    skos:scopeNote "HOMONYM: a catalog lab test (cr:AssayDefinition, formerly 'AnalysisService'), a vendor organization (cr:ServiceProvider), and the API/runtime sense. Default routing: none; qualify."@en .
 
 cr:xl-screen a skosxl:Label ;
     skosxl:literalForm "screen"@en ;
