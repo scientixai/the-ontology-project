@@ -1676,15 +1676,11 @@ cr:decisionMadeBy a owl:ObjectProperty ;
     rdfs:subPropertyOf prov:wasAttributedTo ;
     top:flavor "Additive" .
 
-cr:decisionOutcome a owl:DatatypeProperty,
-        owl:ObjectProperty ;
+cr:decisionOutcome a owl:DatatypeProperty ;
     rdfs:label "decision outcome" ;
-    rdfs:comment "Controlled verdict: 'go' | 'no-go' | 'go-with-modification' | 'dose-selection'.",
-        "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals)." ;
-    rdfs:domain cr:AnalysisDecision,
-        cr:SiteSelectionDecision ;
-    rdfs:range xsd:string,
-        owl:NamedIndividual ;
+    rdfs:comment "Controlled verdict: 'go' | 'no-go' | 'go-with-modification' | 'dose-selection'." ;
+    rdfs:domain cr:AnalysisDecision ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:decisionRationale a owl:DatatypeProperty ;
@@ -3094,6 +3090,13 @@ cr:significantDigits a owl:DatatypeProperty ;
     rdfs:range xsd:integer ;
     top:flavor "Additive" .
 
+cr:siteDecisionOutcome a owl:ObjectProperty ;
+    rdfs:label "site decision outcome" ;
+    rdfs:comment "The site lifecycle status resulting from this decision (one of the cr:SiteStatus* individuals). Renamed from cr:decisionOutcome, which illegally punned with the analysis-layer datatype property of the same name (caught by the OWL-DL well-formedness gate)." ;
+    rdfs:domain cr:SiteSelectionDecision ;
+    rdfs:range owl:NamedIndividual ;
+    top:flavor "Additive" .
+
 cr:siv a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:SiteInitiationVisit ;
@@ -3795,19 +3798,18 @@ ns1:CAPALog a ns1:TMFArtifactType ;
     skos:prefLabel "CAPA Log" ;
     ns1:records cr:CAPA .
 
-ns1:ClinicalTrialAgreementDoc a ns1:TMFArtifactType ;
-    rdfs:label "Clinical Trial Agreement (artifact)" ;
-    skos:broader ns1:Zone_SiteManagement ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "Clinical Trial Agreement" ;
-    ns1:documents cr:ClinicalTrialAgreement .
-
-ns1:CurriculumVitae a ns1:TMFArtifactType ;
-    rdfs:label "Curriculum Vitae" ;
-    skos:broader ns1:Zone_SiteManagement ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "Curriculum Vitae" ;
-    ns1:documents cr:Credential .
+ns1:CoreStartupProfile a ns1:CompletenessProfile ;
+    rdfs:label "Core site start-up essential-documents profile" ;
+    rdfs:comment "The TMF artifact types expected for a site at activation — the ICH E6 essential-documents-before-the-trial checklist, as reusable data. Aligned by name to the DIA TMF Reference Model; not transcribed from the licensed model." ;
+    ns1:recommendsArtifactType ns1:CurriculumVitae,
+        ns1:MonitoringPlan ;
+    ns1:requiresArtifactType ns1:ClinicalTrialAgreementDoc,
+        ns1:Form1572,
+        ns1:IRBApprovalLetter,
+        ns1:InformedConsentForm,
+        ns1:Protocol ;
+    top:identifier "tmf:profile/core-startup" ;
+    top:status "active" .
 
 ns1:DataManagementPlan a ns1:TMFArtifactType ;
     rdfs:label "Data Management Plan" ;
@@ -3830,50 +3832,12 @@ ns1:FinancialDisclosureForm a ns1:TMFArtifactType ;
     skos:prefLabel "Financial Disclosure Form" ;
     ns1:documents cr:StudySite .
 
-ns1:Form1572 a ns1:TMFArtifactType ;
-    rdfs:label "Form FDA 1572" ;
-    skos:broader ns1:Zone_SiteManagement ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "Form FDA 1572" ;
-    ns1:documents cr:StudySite .
-
-ns1:IRBApprovalLetter a ns1:TMFArtifactType ;
-    rdfs:label "IRB/IEC Approval Letter" ;
-    skos:broader ns1:Zone_SiteManagement ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "IRB/IEC Approval Letter" ;
-    ns1:documents cr:IRBApproval .
-
-ns1:InformedConsentForm a ns1:TMFArtifactType ;
-    rdfs:label "Informed Consent Form" ;
-    skos:broader ns1:Zone_SiteManagement ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "Informed Consent Form" ;
-    ns1:documents cr:InformedConsent .
-
 ns1:InvestigatorBrochure a ns1:TMFArtifactType ;
     rdfs:label "Investigator Brochure" ;
     skos:broader ns1:Zone_CentralTrialDocs ;
     skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Investigator Brochure" ;
     ns1:documents cr:InvestigationalProduct .
-
-ns1:MonitoringPlan a ns1:TMFArtifactType ;
-    rdfs:label "Monitoring Plan" ;
-    skos:broader ns1:Zone_TrialManagement ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "Monitoring Plan" ;
-    ns1:documents cr:MitigationPlan,
-        cr:RiskAssessment .
-
-ns1:Protocol a ns1:TMFArtifactType ;
-    rdfs:label "Protocol" ;
-    skos:broader ns1:Zone_CentralTrialDocs ;
-    skos:inScheme ns1:TMFReferenceModel ;
-    skos:prefLabel "Protocol" ;
-    ns1:defines cr:CriticalToQualityFactor,
-        cr:EligibilityCriterion,
-        cr:Endpoint .
 
 ns1:ProtocolDeviationLog a ns1:TMFArtifactType ;
     rdfs:label "Protocol Deviation Log" ;
@@ -3915,16 +3879,59 @@ ns1:documents a owl:ObjectProperty ;
     rdfs:subPropertyOf ns1:concerns ;
     top:flavor "Additive" .
 
+ns1:expiresAt a owl:DatatypeProperty ;
+    rdfs:label "expires at" ;
+    rdfs:comment "When this filed artifact ceases to be valid (e.g. an IRB approval's expiry). After it, the artifact should carry top:status \"expired\" and no longer satisfies a requirement." ;
+    rdfs:domain ns1:FiledArtifact ;
+    rdfs:range xsd:dateTime .
+
+ns1:followsProfile a owl:ObjectProperty ;
+    rdfs:label "follows profile" ;
+    rdfs:comment "The completeness profile this TMF is judged against." ;
+    rdfs:domain ns1:TrialMasterFile ;
+    rdfs:range ns1:CompletenessProfile .
+
+ns1:forStudy a owl:ObjectProperty ;
+    rdfs:label "for study" ;
+    rdfs:comment "The study this TMF evidences." ;
+    rdfs:domain ns1:TrialMasterFile ;
+    rdfs:range cr:Study .
+
+ns1:hasFiledArtifact a owl:ObjectProperty ;
+    rdfs:label "has filed artifact" ;
+    rdfs:comment "A document filed into this TMF (forward edge: the filed set)." ;
+    rdfs:domain ns1:TrialMasterFile ;
+    rdfs:range ns1:FiledArtifact .
+
+ns1:ofType a owl:ObjectProperty ;
+    rdfs:label "of type" ;
+    rdfs:comment "The artifact type this filed document is classified as — and thereby the domain class its facts mean (via the type's content binding)." ;
+    rdfs:domain ns1:FiledArtifact ;
+    rdfs:range ns1:TMFArtifactType .
+
+ns1:recommendsArtifactType a owl:ObjectProperty ;
+    rdfs:label "recommends artifact type" ;
+    rdfs:comment "A RECOMMENDED artifact type: its absence is a reviewable gap (Warning)." ;
+    rdfs:domain ns1:CompletenessProfile ;
+    rdfs:range ns1:TMFArtifactType .
+
 ns1:records a owl:ObjectProperty ;
     rdfs:label "records" ;
     rdfs:comment "The artifact is a running log of the entity's instances (e.g. a Deviation Log records deviation events)." ;
     rdfs:subPropertyOf ns1:concerns ;
     top:flavor "Additive" .
 
-top:ProvenancedEntity a owl:Class ;
-    rdfs:label "Provenanced Entity" ;
-    rdfs:comment "cr-conventions marker: anything carrying the bitemporal + PROV envelope (exactly one observedAt, exactly one recordedAt, >=1 prov:wasAttributedTo). Enforced by top:BitemporalProvShape. Not yet in core/v1 — documented divergence, see the header of this file." ;
-    rdfs:subClassOf top:CommonEntity .
+ns1:requiresArtifactType a owl:ObjectProperty ;
+    rdfs:label "requires artifact type" ;
+    rdfs:comment "An ESSENTIAL artifact type: its absence (no current filed artifact) is an inspection finding (Violation)." ;
+    rdfs:domain ns1:CompletenessProfile ;
+    rdfs:range ns1:TMFArtifactType .
+
+ns1:supersedes a owl:ObjectProperty ;
+    rdfs:label "supersedes" ;
+    rdfs:comment "A newer filed version supersedes an older one (the version chain); the superseded one carries top:status \"superseded\"." ;
+    rdfs:domain ns1:FiledArtifact ;
+    rdfs:range ns1:FiledArtifact .
 
 top:VersionSeries a owl:Class ;
     rdfs:label "Version Series" ;
@@ -4606,6 +4613,58 @@ hcls:MedicinalProduct a owl:Class ;
     rdfs:comment "A medicinal product (drug or biologic)." ;
     rdfs:subClassOf top:Resource .
 
+ns1:ClinicalTrialAgreementDoc a ns1:TMFArtifactType ;
+    rdfs:label "Clinical Trial Agreement (artifact)" ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "Clinical Trial Agreement" ;
+    ns1:documents cr:ClinicalTrialAgreement .
+
+ns1:CurriculumVitae a ns1:TMFArtifactType ;
+    rdfs:label "Curriculum Vitae" ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "Curriculum Vitae" ;
+    ns1:documents cr:Credential .
+
+ns1:Form1572 a ns1:TMFArtifactType ;
+    rdfs:label "Form FDA 1572" ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "Form FDA 1572" ;
+    ns1:documents cr:StudySite .
+
+ns1:IRBApprovalLetter a ns1:TMFArtifactType ;
+    rdfs:label "IRB/IEC Approval Letter" ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "IRB/IEC Approval Letter" ;
+    ns1:documents cr:IRBApproval .
+
+ns1:InformedConsentForm a ns1:TMFArtifactType ;
+    rdfs:label "Informed Consent Form" ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "Informed Consent Form" ;
+    ns1:documents cr:InformedConsent .
+
+ns1:MonitoringPlan a ns1:TMFArtifactType ;
+    rdfs:label "Monitoring Plan" ;
+    skos:broader ns1:Zone_TrialManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "Monitoring Plan" ;
+    ns1:documents cr:MitigationPlan,
+        cr:RiskAssessment .
+
+ns1:Protocol a ns1:TMFArtifactType ;
+    rdfs:label "Protocol" ;
+    skos:broader ns1:Zone_CentralTrialDocs ;
+    skos:inScheme ns1:TMFReferenceModel ;
+    skos:prefLabel "Protocol" ;
+    ns1:defines cr:CriticalToQualityFactor,
+        cr:EligibilityCriterion,
+        cr:Endpoint .
+
 ns1:Zone_SafetyReporting a skos:Concept ;
     skos:prefLabel "Safety Reporting" ;
     skos:topConceptOf ns1:TMFReferenceModel .
@@ -4618,6 +4677,11 @@ top:AutonomousAgent a owl:Class ;
 top:Location a owl:Class ;
     rdfs:label "Location" ;
     rdfs:comment "CLO: a physical or virtual place." ;
+    rdfs:subClassOf top:CommonEntity .
+
+top:ProvenancedEntity a owl:Class ;
+    rdfs:label "Provenanced Entity" ;
+    rdfs:comment "cr-conventions marker: anything carrying the bitemporal + PROV envelope (exactly one observedAt, exactly one recordedAt, >=1 prov:wasAttributedTo). Enforced by top:BitemporalProvShape. Not yet in core/v1 — documented divergence, see the header of this file." ;
     rdfs:subClassOf top:CommonEntity .
 
 cr:AchieveMilestone a hcls:Action ;
@@ -5124,6 +5188,11 @@ cx:Mapping a owl:Class ;
     rdfs:comment "A curated, provenanced correspondence from a TOP term to an external ontology term." ;
     rdfs:subClassOf top:Evidence .
 
+ns1:TrialMasterFile a owl:Class ;
+    rdfs:label "Trial Master File" ;
+    rdfs:comment "The assembled set of filed artifacts evidencing the conduct of one study (the cabinet). Carries the filed set and the completeness profile it is judged against." ;
+    rdfs:subClassOf top:Evidence .
+
 ns1:Zone_CentralTrialDocs a skos:Concept ;
     skos:prefLabel "Central Trial Documents" ;
     skos:topConceptOf ns1:TMFReferenceModel .
@@ -5314,6 +5383,11 @@ cr:Visit a owl:Class ;
     rdfs:subClassOf cr:StudyEvent,
         top:Temporal .
 
+ns1:CompletenessProfile a owl:Class ;
+    rdfs:label "TMF Completeness Profile" ;
+    rdfs:comment "An expected-artifact checklist a TMF is judged complete against: the artifact types it must (essential) and should (recommended) contain. The DIA/ICH essential-documents list as data, reusable across studies." ;
+    rdfs:subClassOf top:Constraint .
+
 top:Resource a owl:Class ;
     rdfs:label "Resource" ;
     rdfs:comment "CLO: a consumable or usable asset — material, equipment, storage." ;
@@ -5399,6 +5473,12 @@ hcls:Lot a owl:Class ;
     rdfs:label "Lot" ;
     rdfs:comment "A manufactured batch/lot; the primary join to the manufacturing domain." ;
     rdfs:subClassOf top:Resource .
+
+ns1:FiledArtifact a owl:Class ;
+    rdfs:label "Filed Artifact" ;
+    rdfs:comment "A single document instance filed into a TMF, classified to a tmf:TMFArtifactType (whence its content binding). Bitemporal + provenanced: when it became effective (observedAt), when filed (recordedAt), by whom (prov:wasAttributedTo), with lifecycle (top:status: current / superseded / expired)." ;
+    rdfs:subClassOf top:Evidence,
+        top:ProvenancedEntity .
 
 ns1:Zone_TrialManagement a skos:Concept ;
     skos:prefLabel "Trial Management" ;
@@ -5838,16 +5918,6 @@ cr:SponsorOperationsStaff a owl:Class ;
     rdfs:comment "Manages protocol amendments, site network structure, regions, country configuration, site activation mechanics, and system configuration. OOUX persona aliases: Sponsor Operations, Sponsor Ops, Site Activation Manager." ;
     rdfs:subClassOf hcls:Person .
 
-ns1:TMFArtifactType a owl:Class ;
-    rdfs:label "TMF Artifact Type" ;
-    rdfs:comment "A kind of trial-master-file document (the document-type binding target)." ;
-    rdfs:subClassOf skos:Concept .
-
-top:Constraint a owl:Class ;
-    rdfs:label "Constraint" ;
-    rdfs:comment "CLO: a rule that governs — regulatory law, physical limit, safety guardrail." ;
-    rdfs:subClassOf top:CommonEntity .
-
 cr:eCRF a owl:Class ;
     rdfs:label "eCRF" ;
     rdfs:comment "Electronic case report form — the data-collection instrument used at the site." ;
@@ -5860,6 +5930,16 @@ cr:eCRF a owl:Class ;
 ns1:TMFReferenceModel a skos:ConceptScheme ;
     rdfs:label "TOP TMF artifact-type scheme" ;
     rdfs:comment "A SKOS scheme of trial-master-file artifact types, aligned by name to the DIA TMF Reference Model; each artifact type carries content bridges to the domain classes it concerns." .
+
+top:Constraint a owl:Class ;
+    rdfs:label "Constraint" ;
+    rdfs:comment "CLO: a rule that governs — regulatory law, physical limit, safety guardrail." ;
+    rdfs:subClassOf top:CommonEntity .
+
+ns1:TMFArtifactType a owl:Class ;
+    rdfs:label "TMF Artifact Type" ;
+    rdfs:comment "A kind of trial-master-file document (the document-type binding target)." ;
+    rdfs:subClassOf skos:Concept .
 
 hcls:Phase a owl:Class ;
     rdfs:label "Phase" ;
@@ -5969,6 +6049,11 @@ top:Evidence a owl:Class ;
     rdfs:comment "CLO: an information artifact that supports or records — document, observation, log, credential, attestation." ;
     rdfs:subClassOf top:CommonEntity .
 
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned" ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version (ADR-0021). Applied where Tier-1 entailment fires or where a workflow opts an attribute in." ;
+    rdfs:subClassOf top:CommonEntity .
+
 cr:Study a owl:Class ;
     rdfs:label "Study" ;
     rdfs:comment "A clinical study — the unit of investigation the protocol defines." ;
@@ -5979,11 +6064,6 @@ cr:Study a owl:Class ;
         "trial"@en ;
     skos:prefLabel "Study"@en ;
     skos:scopeNote "'Protocol' is routed here when the speaker means the study itself ('this protocol is enrolling'); the versioned protocol document is cr:ProtocolVersion."@en .
-
-top:Versioned a owl:Class ;
-    rdfs:label "Versioned" ;
-    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version (ADR-0021). Applied where Tier-1 entailment fires or where a workflow opts an attribute in." ;
-    rdfs:subClassOf top:CommonEntity .
 
 hcls:Action a owl:Class ;
     rdfs:label "Action" ;

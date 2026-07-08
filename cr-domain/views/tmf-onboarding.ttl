@@ -1,0 +1,35 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix tmf:  <https://top.scientix.ai/tmf/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+###############################################################################
+# RETRIEVAL VIEW — the TMF onboarding dashboard (single pull).
+#
+# One ?join=inline pull of the Trial Master File returns BOTH halves the screen
+# needs to answer "is this TMF inspection-ready?":
+#   - the EXPECTED set  (followsProfile -> requires/recommends artifact types), and
+#   - the FILED set     (hasFiledArtifact -> each filed doc + its type + filer).
+# So the UI diffs expected-vs-filed in the ONE object — present/gap at the glass,
+# no second call. All paths forward (ETSI GS CIM 009 clause 4.5.23.1).
+# cr:StudyLeaf and cr:PersonLeaf are reused from blood-draw-admissibility.ttl.
+###############################################################################
+
+cr:TMFDashboardView a sh:NodeShape ;
+    sh:targetClass tmf:TrialMasterFile ;
+    sh:property [ sh:path tmf:forStudy ;       sh:name "study" ;    sh:node cr:StudyLeaf ] ;
+    sh:property [ sh:path tmf:followsProfile ; sh:name "profile" ;  sh:node cr:ProfileLeaf ] ;
+    sh:property [ sh:path tmf:hasFiledArtifact ; sh:name "filed" ;  sh:node cr:FiledArtifactLeaf ] .
+
+# The expected set: the essential + recommended artifact types the profile names.
+cr:ProfileLeaf a sh:NodeShape ;
+    sh:property [ sh:path tmf:requiresArtifactType ;   sh:name "requires" ;   sh:node cr:ArtifactTypeLeaf ] ;
+    sh:property [ sh:path tmf:recommendsArtifactType ; sh:name "recommends" ; sh:node cr:ArtifactTypeLeaf ] .
+
+# Each filed document: its classification (type, whence the content binding) + who filed it.
+cr:FiledArtifactLeaf a sh:NodeShape ;
+    sh:property [ sh:path tmf:ofType ;           sh:name "ofType" ;   sh:node cr:ArtifactTypeLeaf ] ;
+    sh:property [ sh:path prov:wasAttributedTo ; sh:name "filedBy" ;  sh:node cr:PersonLeaf ] .
+
+# Artifact type leaf — scalars only (prefLabel + label render; the SKOS links stay out).
+cr:ArtifactTypeLeaf a sh:NodeShape .

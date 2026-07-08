@@ -59,6 +59,7 @@ VIEWS = {
     "supply":          ("supply-accountability-conformant.ttl", "sp-dispense", "DispensingView"),
     "coding":          ("coding-conformant.ttl", "cd-assign-ae", "CodeAssignmentView"),
     "site-closeout":   ("site-closeout-conformant.ttl", "sc-closure", "SiteClosureView"),
+    "tmf-onboarding":  ("tmf-onboarding-conformant.ttl", "tmf-opp101", "TMFDashboardView"),
 }
 
 # NGSI-LD system/core terms that render bare; everything else literal -> Property.
@@ -145,6 +146,11 @@ def _views_graph():
 def build_view(name):
     example, root_ln, shape_ln = VIEWS[name]
     g = Graph().parse(os.path.join(ROOT, "examples", example), format="turtle")
+    # Merge the ontology so commons reference data an instance points at (e.g. a TMF's
+    # completeness profile and the artifact-type prefLabels) resolves on the single pull.
+    # Instances are ex:* and reference data is tmf:/cr:*, so existing views are unaffected.
+    for f in sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl"))):
+        g.parse(f, format="turtle")
     sg = _views_graph()
     return expand(g, sg, URIRef(E + root_ln), URIRef(CR + shape_ln))
 

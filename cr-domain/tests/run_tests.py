@@ -147,6 +147,9 @@ def main():
     # (o) vocabulary — the thesaurus layer holds its ADR-0024 contract
     vb_passed, vb_total = vocab_checks(ont_graph, failures)
 
+    # (p) OWL DL well-formedness — sound "ingredients" for a consumer's reasoner
+    ol_passed, ol_total = owl_lint_checks(failures)
+
     _report([
         ("coherence", co_passed, co_total),
         ("seam", sm_passed, sm_total),
@@ -164,7 +167,43 @@ def main():
         ("view", vw_passed, vw_total),
         ("competency", cq_passed, cq_total),
         ("vocab", vb_passed, vb_total),
+        ("owl-lint", ol_passed, ol_total),
     ], failures)
+
+
+def owl_lint_checks(failures):
+    """OWL DL well-formedness: prove the authored ontology is sound "ingredients" for a
+    consumer's reasoner WITHOUT running one. (a) the real modules trip zero structural
+    OWL-DL problems; (b) the gate provably bites on a crafted broken ontology — so a
+    green result is meaningful, not a no-op. See tools/owl_lint.py. (Salvaged from the
+    sweet-gauss lineage at branch cleanup.)"""
+    import importlib.util
+    p = os.path.join(ROOT, "tools", "owl_lint.py")
+    spec = importlib.util.spec_from_file_location("owl_lint", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    total = passed = 0
+
+    total += 1
+    problems = mod.lint(mod.ont_files())
+    if not problems:
+        passed += 1
+        print("[PASS] OWL DL well-formedness: authored ontology trips 0 structural problems")
+    else:
+        for code, term, detail in problems:
+            failures.append(("OWL", f"{code} {term}", detail))
+        print(f"[FAIL] OWL DL well-formedness: {len(problems)} problem(s)")
+
+    total += 1
+    ok, missing = mod.selftest()
+    if ok:
+        passed += 1
+        print("[PASS] OWL lint self-test: gate bites on a broken ontology (P1/P2/P4/P5)")
+    else:
+        failures.append(("OWL", "selftest", f"gate failed to catch {sorted(missing)}"))
+        print(f"[FAIL] OWL lint self-test missed {sorted(missing)}")
+
+    return passed, total
 
 
 def vocab_checks(ont_graph, failures):
@@ -714,6 +753,16 @@ def view_checks(failures):
           lambda: val(cg, "verbatimTerm") == "achy joints"
           and val(cg, "codingDictionaryVersion") == "27.0"
           and val(cg["review"]["entity"], "reviewVerdict") == "approved")
+
+    # TMF onboarding dashboard — the EXPECTED set (profile) and the FILED set in ONE pull
+    tm = mod.build_view("tmf-onboarding")
+    req = {r["entity"]["prefLabel"]["value"] for r in tm["profile"]["entity"]["requires"]}
+    filed_current = {f["entity"]["ofType"]["entity"]["prefLabel"]["value"]
+                     for f in tm["filed"] if val(f["entity"], "status") == "current"}
+    check("tmf: dashboard inlines expected essentials + current filed set (diff in one pull)",
+          lambda: tm["id"] == "urn:tmf-opp101"
+          and req <= filed_current
+          and len(req) == 5)
 
     # Site closeout — closure rests on the COV + balanced reconciliations
     sc = mod.build_view("site-closeout")

@@ -384,9 +384,10 @@ FLOWS = [
          note="Descriptive vs deontic: we encode what E6(R3) <i>defines</i> (entities, terms) as classes/SKOS with <code>rdfs:isDefinedBy</code>; what it <i>requires</i> (“should/shall”) becomes graded shapes. ALCOA++ is realized by the bitemporal + PROV envelope; an explicit <code>cr:AuditTrail</code> is the stronger auditor-facing assertion."),
     dict(id="tmf", title="TMF document binding",
          blurb="Classify a document to its artifact type (a SKOS scheme aligned to the DIA TMF Reference Model), then bind what its facts <i>mean</i> to the domain class &mdash; the comprehension layer the eTMF world omits.",
-         onto=["tmf-reference.ttl"],
-         shapes=["tmf:ContentBindingShape"],
-         proj=["tmf_binding_map.rq"], screens=[],
+         onto=["tmf-reference.ttl", "tmf-onboarding.ttl"],
+         shapes=["tmf:ContentBindingShape", "tmf:FiledArtifactClassifiedShape",
+                 "tmf:TMFEssentialCompletenessShape", "tmf:TMFRecommendedCompletenessShape"],
+         proj=["tmf_binding_map.rq", "tmf_completeness.rq"], screens=[],
          claim="Filing a document isn&rsquo;t the same as understanding it: TMF classifies a document to its artifact type, then binds what its facts <b>mean</b> to the domain class &mdash; the comprehension layer the eTMF world omits.",
          stops=[
              dict(name="Document received", time="2026-02-17", who="site / sponsor", state="done", checks=[("ok", "e.g. a Protocol Deviation Log")]),
