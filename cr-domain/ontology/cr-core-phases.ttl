@@ -11,10 +11,15 @@
 # Convener ruling (sanity review, 2026-07): an earlier version of this file
 # conflated them under one word. They answer DIFFERENT questions:
 #
-#   TRIAL PHASE   — what kind of trial IS this?   (Phase 1..4, BESH)
-#                   A classification OF THE STUDY. "This is a Phase 2 trial."
-#   LIFECYCLE STAGE — where in its execution is it? (startup / conduct / closeout)
-#                   A position IN THE TRIAL'S RUN. "This trial is in startup."
+#   TRIAL PHASE — what kind of trial IS this?   (Phase 1..4, BESH)
+#                 A classification OF THE STUDY. "This is a Phase 2 trial."
+#   TRIAL STAGE — where in its execution is it? (startup / conduct / closeout)
+#                 A position IN THE TRIAL'S RUN. "This trial is in startup."
+#
+# Both live in the CR domain, not hcls: trial phases and trial stages exist
+# ONLY in clinical research. A bare 'Phase' class was removed from hcls-core
+# for the same reason 'phase' is watch-listed — the word alone is ambiguous;
+# only the qualified forms (trial phase, trial stage) are model names.
 #
 # A Phase 3 trial passes through every lifecycle stage; a trial in the conduct
 # stage can be of any phase. 'Phase' is on the ambiguous-terms watch-list
@@ -71,105 +76,133 @@ cr:BESH a cr:TrialPhase ;
     rdfs:comment "Basic Experimental Studies Involving Humans — the FDA/NIH-defined category sitting BETWEEN non-human basic research and conventional clinical trials: mechanistic studies that meet the NIH clinical-trial definition (human participants, prospective assignment, intervention, biomedical outcome) but whose aim is understanding a phenomenon, not evaluating a clinical intervention. Registered and disclosed under dedicated FDA/NIH policy. Size: small; sites: academic research settings." .
 
 #################################################################
-# B. TRIAL LIFECYCLE STAGES — position in the trial's execution
+# B. TRIAL STAGES — position in the trial's execution
 #################################################################
 #
 # Named individuals (reference-graph archetypes, not instances of any specific
 # trial). Three top-level STAGES with named sub-stages; a containment tree plus
 # a precedence chain at the top level.
 #
-# Operator grounding: each stage anchors hcls:occursIn on Actions, letting
+# Operator grounding: each stage anchors cr:occursInStage on Actions, letting
 # agents answer: "What am I authorized to do right now given where this trial is?"
 
-cr:TrialLifecycle a hcls:LifecycleStage ;
+cr:TrialStage a owl:Class ;
+    rdfs:label "Trial Stage" ;
+    skos:altLabel "lifecycle stage"@en , "study stage"@en ;
+    skos:definition "A bounded, sequenced stage of a clinical trial's execution lifecycle — the answer to 'where in its run is this trial?' (startup, conduct, closeout, and their named sub-stages). A position in the trial's execution, not a classification of the study (that is the trial phase)." ;
+    rdfs:comment "Stages form a containment tree (cr:containsStage) and a precedence chain (cr:precedesStage). Actions bind to stages via cr:occursInStage. CR-owned deliberately: trial stages exist only in clinical research, so this does not live in hcls-core." ;
+    rdfs:subClassOf top:Scope .
+
+cr:containsStage a owl:ObjectProperty ;
+    rdfs:label "contains stage" ;
+    rdfs:comment "Containment: a trial stage contains its named sub-stages. Transitive; used to derive the top-level stage for any sub-stage." ;
+    rdfs:domain cr:TrialStage ;
+    rdfs:range cr:TrialStage ;
+    top:flavor "Additive" .
+
+cr:precedesStage a owl:ObjectProperty ;
+    rdfs:label "precedes stage" ;
+    rdfs:comment "Temporal sequencing: Stage A precedes Stage B means B cannot begin before A's gate conditions are met." ;
+    rdfs:domain cr:TrialStage ;
+    rdfs:range cr:TrialStage ;
+    top:flavor "Additive" .
+
+cr:occursInStage a owl:ObjectProperty ;
+    rdfs:label "occurs in stage" ;
+    rdfs:comment "The trial stage in which this Action is typically performed." ;
+    rdfs:domain hcls:Action ;
+    rdfs:range cr:TrialStage ;
+    top:flavor "Additive" .
+
+cr:TrialLifecycle a cr:TrialStage ;
     rdfs:label "Clinical Trial Lifecycle" ;
     rdfs:comment "The root stage encompassing the entire lifespan of a clinical trial from protocol design to study archival." ;
-    hcls:contains cr:StartupStage , cr:ConductStage , cr:CloseoutStage .
+    cr:containsStage cr:StartupStage , cr:ConductStage , cr:CloseoutStage .
 
 # ── Stage 1: Startup ─────────────────────────────────────────────────────────
 
-cr:StartupStage a hcls:LifecycleStage ;
+cr:StartupStage a cr:TrialStage ;
     rdfs:label "Startup" ;
     rdfs:comment "Everything from initial protocol design through first-patient-in (FPI). Gate condition: first participant randomized. Canonical ICH E6(R3) pre-trial period." ;
-    hcls:precedes cr:ConductStage ;
-    hcls:contains
+    cr:precedesStage cr:ConductStage ;
+    cr:containsStage
         cr:StudyDesignStage ,
         cr:SiteSelectionStage ,
         cr:SiteRegulatoryStage ,
         cr:SiteActivationStage .
 
-cr:StudyDesignStage a hcls:LifecycleStage ;
+cr:StudyDesignStage a cr:TrialStage ;
     rdfs:label "Study Design" ;
     rdfs:comment "Protocol authoring, statistical analysis plan, SoA construction, CRF design, arm configuration, endpoint definition. Output: approved protocol version." .
 
-cr:SiteSelectionStage a hcls:LifecycleStage ;
+cr:SiteSelectionStage a cr:TrialStage ;
     rdfs:label "Site Selection" ;
     rdfs:comment "Feasibility assessment, site evaluation, qualification visit (SQV), site selection committee review. Output: selected site list with signed contracts." .
 
-cr:SiteRegulatoryStage a hcls:LifecycleStage ;
+cr:SiteRegulatoryStage a cr:TrialStage ;
     rdfs:label "Site Regulatory" ;
     rdfs:comment "IND/CTA filing, IRB/EC review, country-level submissions, amendment management. Output: regulatory clearance per country." .
 
-cr:SiteActivationStage a hcls:LifecycleStage ;
+cr:SiteActivationStage a cr:TrialStage ;
     rdfs:label "Site Activation" ;
     rdfs:comment "Study Startup Package readiness, Site Initiation Visit (SIV), training, delegation of authority, equipment qualification. Output: site activated and ready to enroll. (The stage; the green-light act itself is cr:SiteActivation.)" .
 
 # ── Stage 2: Conduct ─────────────────────────────────────────────────────────
 
-cr:ConductStage a hcls:LifecycleStage ;
+cr:ConductStage a cr:TrialStage ;
     rdfs:label "Conduct" ;
     rdfs:comment "From first patient in (FPI) through last patient out (LPO) / database lock (DBL). The operational execution window of the trial." ;
-    hcls:precedes cr:CloseoutStage ;
-    hcls:contains
+    cr:precedesStage cr:CloseoutStage ;
+    cr:containsStage
         cr:RecruitmentStage ,
         cr:VisitExecutionStage ,
         cr:DataCollectionStage ,
         cr:SafetyStage ,
         cr:OversightStage .
 
-cr:RecruitmentStage a hcls:LifecycleStage ;
+cr:RecruitmentStage a cr:TrialStage ;
     rdfs:label "Recruitment" ;
     rdfs:comment "Candidate identification, screening, informed consent, eligibility assessment, enrollment, randomization. Operator primary: Site Coordinator + Investigator." .
 
-cr:VisitExecutionStage a hcls:LifecycleStage ;
+cr:VisitExecutionStage a cr:TrialStage ;
     rdfs:label "Visit Execution" ;
     rdfs:comment "Scheduled and unscheduled visit conduct: actuals vs. SoA, activity completion, IP administration, sample collection, CRF completion at visit level." .
 
-cr:DataCollectionStage a hcls:LifecycleStage ;
+cr:DataCollectionStage a cr:TrialStage ;
     rdfs:label "Data Collection" ;
     rdfs:comment "EDC data entry and CRF completion, query management, lab reconciliation, concomitant medication and medical history recording. Dual-lens: site captures, sponsor/DM validates." .
 
-cr:SafetyStage a hcls:LifecycleStage ;
+cr:SafetyStage a cr:TrialStage ;
     rdfs:label "Safety" ;
     rdfs:comment "Adverse event reporting, SAE expedited reporting, investigator causality assessment, pharmacovigilance line listing, safety signal detection. Always concurrent with other sub-stages." .
 
-cr:OversightStage a hcls:LifecycleStage ;
+cr:OversightStage a cr:TrialStage ;
     rdfs:label "Oversight" ;
     rdfs:comment "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality." .
 
 # ── Stage 3: Closeout ────────────────────────────────────────────────────────
 
-cr:CloseoutStage a hcls:LifecycleStage ;
+cr:CloseoutStage a cr:TrialStage ;
     rdfs:label "Closeout" ;
     rdfs:comment "From last patient last visit (LPLV) through regulatory submission and study archival. Includes database lock, CSR, and eTMF finalization." ;
-    hcls:contains
+    cr:containsStage
         cr:FollowUpStage ,
         cr:DataAnalysisStage ,
         cr:ReportingStage ,
         cr:ArchivalStage .
 
-cr:FollowUpStage a hcls:LifecycleStage ;
+cr:FollowUpStage a cr:TrialStage ;
     rdfs:label "Follow-up" ;
     rdfs:comment "Post-treatment assessments, long-term safety evaluation, survival follow-up, adverse event monitoring through the follow-up window." .
 
-cr:DataAnalysisStage a hcls:LifecycleStage ;
+cr:DataAnalysisStage a cr:TrialStage ;
     rdfs:label "Data Analysis" ;
     rdfs:comment "Database lock, data cleaning and validation, statistical analysis plan execution, longitudinal analysis, survival analysis, interim and final analyses." .
 
-cr:ReportingStage a hcls:LifecycleStage ;
+cr:ReportingStage a cr:TrialStage ;
     rdfs:label "Reporting" ;
     rdfs:comment "Clinical Study Report (CSR) authoring, regulatory submission package preparation, safety reporting, data disclosure." .
 
-cr:ArchivalStage a hcls:LifecycleStage ;
+cr:ArchivalStage a cr:TrialStage ;
     rdfs:label "Archival" ;
     rdfs:comment "Site close-out visits, eTMF finalization, study archival, storage period compliance per country regulations." .

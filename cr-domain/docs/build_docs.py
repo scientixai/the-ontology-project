@@ -1530,7 +1530,7 @@ def roles_body():  # noqa: C901
     hcls_phase = URIRef(HCLS + "Phase")
     hcls_jtbd = URIRef(HCLS + "JobToBeDone")
     p_authz = URIRef(HCLS + "authorizedAgentType")
-    p_occurs = URIRef(HCLS + "occursIn")
+    p_occurs = URIRef(CR + "occursInStage")
     p_operates = URIRef(HCLS + "operatesOn")
     p_contains = URIRef(HCLS + "contains")
     p_precedes = URIRef(HCLS + "precedes")
@@ -1650,10 +1650,10 @@ def roles_body():  # noqa: C901
     sparql = (
         "SELECT ?action ?label WHERE {\n"
         "  ?action hcls:authorizedAgentType cr:SiteCoordinator ;\n"
-        "          hcls:occursIn ?stage ;\n"
+        "          cr:occursInStage ?stage ;\n"
         "          rdfs:label ?label .\n"
         "  # include sub-stages:\n"
-        "  cr:ConductStage hcls:contains+ ?stage .\n"
+        "  cr:ConductStage cr:containsStage+ ?stage .\n"
         "}"
     )
 
@@ -1687,7 +1687,7 @@ def roles_body():  # noqa: C901
         "<h2>Trial lifecycle stages</h2>"
         "<p>Three top-level stages (<code>cr:StartupStage</code>, <code>cr:ConductStage</code>, "
         "<code>cr:CloseoutStage</code>) form a containment tree and a precedence chain. "
-        "Actions bind to sub-stages via <code>hcls:occursIn</code>; the <code>hcls:contains+</code> "
+        "Actions bind to sub-stages via <code>cr:occursInStage</code>; the <code>cr:containsStage+</code> "
         "transitive closure lets you query all actions within a top-level stage. "
         "Not to be confused with the <b>trial phase</b> (<code>cr:TrialPhase</code>: Phase 1&ndash;4, BESH), "
         "which classifies the study itself, not its position in execution.</p>"

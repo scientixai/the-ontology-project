@@ -34,15 +34,19 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
   pivotal, post-market surveillance) classifies the study itself; **Lifecycle
   Stage** (startup/conduct/closeout) is the position in the trial's execution.
   Veterinary phases 1–3 noted as out of scope (separate domain).
-- **`hcls:Phase` → `hcls:LifecycleStage`** (deprecated equivalent-class alias
-  kept per policy); `hcls:contains`/`hcls:precedes`/`hcls:occursIn`
-  domains/ranges and comments now speak stage language.
+- **`hcls:Phase` removed; stages moved down to the CR domain** (convener
+  ruling: trial stages exist only in clinical research, and the bare word
+  'phase' is too ambiguous to be a model name — only the qualified forms
+  survive). New CR-owned `cr:TrialStage` class plus `cr:containsStage`,
+  `cr:precedesStage`, `cr:occursInStage` replace `hcls:Phase` /
+  `hcls:contains` / `hcls:precedes` / `hcls:occursIn` (removed outright —
+  never released, so no deprecation alias).
 - **Stage individuals renamed** (`*Phase`/`*SubPhase` → `*Stage`):
   `cr:StartupStage` (contains `cr:StudyDesignStage`, `cr:SiteSelectionStage`,
   `cr:SiteRegulatoryStage`, `cr:SiteActivationStage`), `cr:ConductStage`
   (Recruitment/VisitExecution/DataCollection/Safety/Oversight stages),
   `cr:CloseoutStage` (FollowUp/DataAnalysis/Reporting/Archival stages).
-  All 78 action-catalog `hcls:occursIn` references updated.
+  All 78 action-catalog `occursIn` references updated to `cr:occursInStage`.
 - **Watch-list**: `cr:xl-phase` added to the ambiguous-terms watch-list with
   trial-phase vs. lifecycle-stage routing; roles docs page retitled
   "Roles, stages &amp; actions".
