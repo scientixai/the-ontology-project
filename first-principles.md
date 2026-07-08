@@ -94,7 +94,7 @@ Every "is X" flag is a claim in disguise. A boolean strips away the authority, t
 
 ## 7. Build the Pipeline in Order
 
-Every concept in TOP — Core, workflow, customer — eventually carries all six layers of the [ontology pipeline](https://www.ontologypipeline.com/). Each layer is the precondition for the next. Skip one, the next inherits the weakness.
+Every concept in TOP — Core, workflow, customer — eventually carries all six layers of Jessica Talisman's [Ontology Pipeline](https://www.ontologypipeline.com/). Each layer is the precondition for the next. Skip one, the next inherits the weakness.
 
 1. **Controlled Vocabulary** — synonyms, anti-synonyms, definitions, per-property enums. With provenance.
 2. **Taxonomy** — hierarchical organization of the vocabulary.

@@ -100,7 +100,7 @@ This strategy operationalizes and extends prior commitments without superseding 
 - **ADR-0015 (promote facts to entities, no bespoke flags).** Disciplines the instance-level treatment of setting and therapeutic area.
 - **ADR-0016 (schema.org alignment).** Generalizes to the four-tier alignment in `top-hcls-strategy.md`.
 - **ADR-0017 (monorepo with directory-scoped ownership).** Maps directly to the bucket-then-workflow-then-composition directory structure.
-- **ADR-0018 (six-stage ontology pipeline).** Every workflow extension carries the pipeline; compositions add a layer on top.
+- **ADR-0018 (six-stage pipeline, per Talisman's Ontology Pipeline).** Every workflow extension carries the pipeline; compositions add a layer on top.
 - **ADR-0019 (open Core, constrained extension).** Sets the property-flavor discipline. The strategy preserves it.
 - **ADR-0020 (top:Organism as fifth Agent leaf).** Most recent Core addition. Unchanged.
 

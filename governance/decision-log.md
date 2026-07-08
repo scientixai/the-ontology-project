@@ -735,7 +735,7 @@ The same gap will surface in every workflow extension that lifts on TOP, and in 
 
 ### Decision
 
-TOP adopts the six-stage ontology pipeline as its build discipline, structurally and permanently:
+TOP adopts the six-stage build pipeline (Jessica Talisman's Ontology Pipeline) as its build discipline, structurally and permanently:
 
 1. **Controlled Vocabulary** — per concept, deduplicated and disambiguated synonyms (with provenance), anti-synonyms (with rationale), per-property enum vocabularies, context-routing for homonyms.
 2. **Taxonomy** — hierarchical organization (already in place at Core v1; ADR-0012).
