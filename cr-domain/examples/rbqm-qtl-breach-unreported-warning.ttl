@@ -1,0 +1,38 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# WARNING — a SYSTEMIC QTL breach with no CSR documentation. ICH E6(R3):
+# important deviations from quality tolerance limits and remedial actions are
+# reported in the clinical study report. Well-formed breach, missing cr:reportedIn.
+
+ex:qb-mgr a hcls:Practitioner, prov:Agent ; rdfs:label "Sofia Marino" ;
+    top:identifier "person:sofia-marino" ; hcls:actsAs "RBQM Lead" .
+
+ex:qb-ctq a cr:CriticalToQualityFactor ; rdfs:label "Retention through end of study" .
+
+ex:qb-qtl a cr:QualityToleranceLimit ; rdfs:label "Withdrawal rate QTL" ;
+    cr:protectsFactor ex:qb-ctq ;
+    cr:measuredParameter "percent of participants withdrawing consent post-randomization" ;
+    cr:qtlThreshold "15.0"^^xsd:decimal ;
+    cr:thresholdRationale "Historical benchmark across the program; power analysis tolerates 18% withdrawal." .
+
+ex:qb-engine a prov:SoftwareAgent, top:Agent ; rdfs:label "Central statistical monitoring engine" ;
+    top:identifier "system:csm-engine" .
+ex:qb-obs a cr:MetricObservation ; rdfs:label "Trial withdrawal rate, month 9" ;
+    cr:observesLimit ex:qb-qtl ; cr:metricValue "17.2"^^xsd:decimal ;
+    top:observedAt "2026-05-31T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-06-01T02:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:qb-engine ;
+    top:identifier "urn:qb-obs" ; top:status "active" .
+
+ex:qb-breach a cr:LimitBreach ; rdfs:label "Withdrawal QTL breached — systemic" ;
+    cr:breachedLimit ex:qb-qtl ; cr:breachEvidence ex:qb-obs ;
+    cr:breachDisposition "systemic" ;
+    top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-06-02T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:qb-mgr ;
+    top:identifier "urn:qb-breach" ; top:status "active" .
+# Missing: cr:reportedIn -> the CSR section documenting the breach + remedial action.

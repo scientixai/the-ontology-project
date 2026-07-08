@@ -1,14 +1,96 @@
 @prefix sh:  <http://www.w3.org/ns/shacl#> .
 @prefix cr:  <https://top.scientix.ai/cr/v1#> .
 
-# WELL-FORMEDNESS (Violation): a risk assessment names a factor and a level.
+# WELL-FORMEDNESS (Violation): a risk assessment names a factor and a level;
+# the Q9(R1) dimensions, when present, use the graded vocabulary.
 cr:RiskAssessmentShape a sh:NodeShape ;
     sh:targetClass cr:RiskAssessment ;
     sh:severity sh:Violation ;
     sh:property [ sh:path cr:assessesFactor ; sh:minCount 1 ; sh:class cr:CriticalToQualityFactor ;
         sh:message "Risk assessment must reference the critical-to-quality factor it assesses." ] ;
     sh:property [ sh:path cr:riskLevel ; sh:minCount 1 ; sh:in ( "low" "medium" "high" ) ;
-        sh:message "Risk assessment must carry a risk level (low/medium/high)." ] .
+        sh:message "Risk assessment must carry a risk level (low/medium/high)." ] ;
+    sh:property [ sh:path cr:likelihood ; sh:in ( "low" "medium" "high" ) ;
+        sh:message "Likelihood, when stated, is 'low'|'medium'|'high' (ICH Q9(R1) probability of harm)." ] ;
+    sh:property [ sh:path cr:impact ; sh:in ( "low" "medium" "high" ) ;
+        sh:message "Impact, when stated, is 'low'|'medium'|'high' (ICH Q9(R1) severity of harm)." ] ;
+    sh:property [ sh:path cr:detectability ; sh:in ( "low" "medium" "high" ) ;
+        sh:message "Detectability, when stated, is 'low'|'medium'|'high'." ] .
+
+# WELL-FORMEDNESS (Violation): a QTL is anchored — it guards a named CtQ factor,
+# has a numeric primary threshold, and its boundary is justified, not intuited.
+cr:QualityToleranceLimitShape a sh:NodeShape ;
+    sh:targetClass cr:QualityToleranceLimit ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:protectsFactor ; sh:minCount 1 ; sh:class cr:CriticalToQualityFactor ;
+        sh:message "A quality tolerance limit must guard a named critical-to-quality factor." ] ;
+    sh:property [ sh:path cr:qtlThreshold ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A quality tolerance limit must carry exactly one primary threshold." ] ;
+    sh:property [ sh:path cr:measuredParameter ; sh:minCount 1 ;
+        sh:message "A quality tolerance limit must state, in operator language, what is measured." ] ;
+    sh:property [ sh:path cr:thresholdRationale ; sh:minCount 1 ;
+        sh:message "QTL thresholds must be justified (benchmark, simulation, statistical model) — ICH E6(R3) proportionality." ] .
+
+# WELL-FORMEDNESS (Violation): a KRI traces to a CtQ factor, is categorized,
+# and has an action threshold.
+cr:KeyRiskIndicatorShape a sh:NodeShape ;
+    sh:targetClass cr:KeyRiskIndicator ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:informsFactor ; sh:minCount 1 ; sh:class cr:CriticalToQualityFactor ;
+        sh:message "A KRI with no critical-to-quality ancestry is measurement theater — it must inform a named CtQ factor." ] ;
+    sh:property [ sh:path cr:kriCategory ; sh:minCount 1 ;
+        sh:in ( "site-performance" "data-quality" "protocol-compliance" "safety-reporting" ) ;
+        sh:message "KRI category must be one of: site-performance | data-quality | protocol-compliance | safety-reporting." ] ;
+    sh:property [ sh:path cr:actionThreshold ; sh:minCount 1 ;
+        sh:message "A KRI must carry an action threshold (the boundary at which intervention is mandatory)." ] ;
+    sh:property [ sh:path cr:measuredParameter ; sh:minCount 1 ;
+        sh:message "A KRI must state, in operator language, what is measured." ] .
+
+# WELL-FORMEDNESS (Violation): a breach determination rests on evidence and is dispositioned.
+cr:LimitBreachShape a sh:NodeShape ;
+    sh:targetClass cr:LimitBreach ;
+    sh:severity sh:Violation ;
+    sh:property [ sh:path cr:breachedLimit ; sh:minCount 1 ;
+        sh:message "A limit breach must name the limit that was crossed." ] ;
+    sh:property [ sh:path cr:breachEvidence ; sh:minCount 1 ; sh:class cr:MetricObservation ;
+        sh:message "A limit breach must rest on at least one metric observation — no evidence, no breach." ] ;
+    sh:property [ sh:path cr:breachDisposition ; sh:minCount 1 ; sh:in ( "systemic" "isolated" ) ;
+        sh:message "A breach must be dispositioned 'systemic' or 'isolated' — the escalation path depends on it." ] .
+
+# REPORTING (Warning): a systemic QTL breach not yet documented in a CSR section.
+# ICH E6(R3): important deviations from QTLs are reported in the clinical study report.
+cr:QTLBreachReportingShape a sh:NodeShape ;
+    sh:targetClass cr:LimitBreach ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Systemic QTL breach has no CSR documentation (cr:reportedIn) — required in the clinical study report at trial end." ;
+        sh:select """
+            SELECT $this WHERE {
+              $this <https://top.scientix.ai/cr/v1#breachedLimit> ?limit ;
+                    <https://top.scientix.ai/cr/v1#breachDisposition> "systemic" .
+              ?limit a <https://top.scientix.ai/cr/v1#QualityToleranceLimit> .
+              FILTER NOT EXISTS { $this <https://top.scientix.ai/cr/v1#reportedIn> ?sec . }
+            }
+        """ ;
+    ] .
+
+# FOCUS DISCIPLINE (Info): more than 5 QTLs on one study dilutes oversight
+# (TransCelerate: 3-5 highly specific QTLs per trial).
+cr:QTLCountShape a sh:NodeShape ;
+    sh:targetClass cr:QualityToleranceLimit ;
+    sh:severity sh:Info ;
+    sh:sparql [
+        sh:message "Study carries more than 5 quality tolerance limits — TransCelerate recommends 3-5 to avoid diluting oversight." ;
+        sh:select """
+            SELECT $this WHERE {
+              { SELECT $this (COUNT(?q) AS ?n) WHERE {
+                  $this <https://top.scientix.ai/cr/v1#limitForStudy> ?study .
+                  ?q <https://top.scientix.ai/cr/v1#limitForStudy> ?study .
+                } GROUP BY $this }
+              FILTER ( ?n > 5 )
+            }
+        """ ;
+    ] .
 
 # FLAGSHIP (Violation): a HIGH risk must be mitigated. Unmitigated high risk is inadmissible.
 cr:HighRiskMitigationShape a sh:NodeShape ;

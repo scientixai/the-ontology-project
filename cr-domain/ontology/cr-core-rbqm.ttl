@@ -57,7 +57,224 @@ cr:MitigationPlan a owl:Class ;
 
 cr:RiskAssessment a owl:Class ;
     rdfs:label "Risk Assessment" ;
-    rdfs:comment "An assessment of risk to a CtQ factor (likelihood/impact/detectability -> level); bitemporal." ;
+    rdfs:comment "An assessment of risk to a CtQ factor. Carries the ICH Q9(R1) decomposition — cr:likelihood, cr:impact, cr:detectability — plus the rolled-up cr:riskLevel and optional cr:riskScore. Bitemporal: re-assessments supersede, never overwrite." ;
     rdfs:subClassOf top:Evidence,
         top:Versioned .
+
+# ── ICH Q9(R1) risk decomposition ──────────────────────────────────────────
+# Risk = probability of harm x severity of harm, tempered by how easily the
+# problem would be detected. Each dimension is carried explicitly so the
+# rolled-up riskLevel is auditable, not an opaque judgment.
+
+cr:likelihood a owl:DatatypeProperty ;
+    rdfs:label "likelihood" ;
+    rdfs:comment "How likely the risk is to occur ('low'|'medium'|'high'). ICH Q9(R1): probability of occurrence of harm." ;
+    rdfs:domain cr:RiskAssessment ;
+    top:flavor "Additive" .
+
+cr:impact a owl:DatatypeProperty ;
+    rdfs:label "impact" ;
+    rdfs:comment "How severe the consequence would be for participant safety or result reliability ('low'|'medium'|'high'). ICH Q9(R1): severity of harm." ;
+    rdfs:domain cr:RiskAssessment ;
+    top:flavor "Additive" .
+
+cr:detectability a owl:DatatypeProperty ;
+    rdfs:label "detectability" ;
+    rdfs:comment "How easily the problem would be found if it occurred ('low'|'medium'|'high'). Low detectability raises effective risk — an undetectable failure is worse than a visible one." ;
+    rdfs:domain cr:RiskAssessment ;
+    top:flavor "Additive" .
+
+cr:controlApproach a owl:DatatypeProperty ;
+    rdfs:label "control approach" ;
+    rdfs:comment "The risk-control decision this plan implements: 'eliminate' (design the risk out), 'reduce' (lower likelihood or impact), or 'accept' (tolerate with monitoring). ICH E6(R3) risk control step." ;
+    rdfs:domain cr:MitigationPlan ;
+    top:flavor "Additive" .
+
+# ── Trial-level guardrails: Quality Tolerance Limits (acceptable ranges) ────
+
+cr:QualityToleranceLimit a owl:Class ;
+    rdfs:label "Quality Tolerance Limit" ;
+    skos:altLabel "acceptable range"@en , "QTL"@en ;
+    skos:definition "A trial-level boundary on a quality parameter tied to a critical-to-quality factor — the range beyond which a systemic issue threatens participant safety, data integrity, or the study's statistical power. ICH E6(R3) calls these acceptable ranges; the industry says QTL." ;
+    rdfs:comment "Trial-level, few in number (TransCelerate: 3-5 per trial — see QTLCountShape), defined before first participant first visit, monitored continuously, and every significant deviation documented in the CSR (cr:reportedIn). Site-level leading metrics are cr:KeyRiskIndicator, a different concept." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:KeyRiskIndicator a owl:Class ;
+    rdfs:label "Key Risk Indicator" ;
+    skos:altLabel "KRI"@en , "risk indicator"@en ;
+    skos:definition "A site- or data-domain-level leading metric used to detect localized performance degradation early — screen-failure rate, eCRF entry cycle time, query aging, deviation rate. Breaches trigger targeted monitoring intervention, not (by themselves) CSR reporting." ;
+    rdfs:comment "Operational and leading, in contrast to the trial-level cr:QualityToleranceLimit which is systemic. A KRI should trace to the CtQ factor it protects (cr:informsFactor) — a KRI with no CtQ ancestry is measurement theater." ;
+    rdfs:subClassOf top:Constraint .
+
+cr:protectsFactor a owl:ObjectProperty ;
+    rdfs:label "protects factor" ;
+    rdfs:comment "The critical-to-quality factor this quality tolerance limit guards." ;
+    rdfs:domain cr:QualityToleranceLimit ;
+    rdfs:range cr:CriticalToQualityFactor ;
+    top:flavor "Additive" .
+
+cr:informsFactor a owl:ObjectProperty ;
+    rdfs:label "informs factor" ;
+    rdfs:comment "The critical-to-quality factor this key risk indicator provides early warning for." ;
+    rdfs:domain cr:KeyRiskIndicator ;
+    rdfs:range cr:CriticalToQualityFactor ;
+    top:flavor "Additive" .
+
+cr:limitForStudy a owl:ObjectProperty ;
+    rdfs:label "limit for study" ;
+    rdfs:comment "The study this quality tolerance limit is defined for. Intended range cr:Study; left open to avoid the RDFS target cascade on referenced studies." ;
+    rdfs:domain cr:QualityToleranceLimit ;
+    top:flavor "Additive" .
+
+cr:measuredParameter a owl:DatatypeProperty ;
+    rdfs:label "measured parameter" ;
+    rdfs:comment "Operator-language statement of what is measured (e.g. 'percent of randomized participants failing eligibility criteria', 'open queries older than 14 days')." ;
+    top:flavor "Additive" .
+
+cr:qtlThreshold a owl:DatatypeProperty ;
+    rdfs:label "QTL threshold" ;
+    rdfs:comment "The primary boundary value. Crossing it signals a potential systemic issue." ;
+    rdfs:domain cr:QualityToleranceLimit ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:qtlSecondaryLimit a owl:DatatypeProperty ;
+    rdfs:label "QTL secondary limit" ;
+    rdfs:comment "An earlier-warning boundary inside the primary threshold, allowing action before the QTL itself is breached." ;
+    rdfs:domain cr:QualityToleranceLimit ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:warningThreshold a owl:DatatypeProperty ;
+    rdfs:label "warning threshold" ;
+    rdfs:comment "KRI boundary at which a site is flagged for attention (statistical-process-control warning limit, e.g. 2 SD from benchmark)." ;
+    rdfs:domain cr:KeyRiskIndicator ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:actionThreshold a owl:DatatypeProperty ;
+    rdfs:label "action threshold" ;
+    rdfs:comment "KRI boundary at which intervention is mandatory (action limit, e.g. 3 SD from benchmark)." ;
+    rdfs:domain cr:KeyRiskIndicator ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:kriCategory a owl:DatatypeProperty ;
+    rdfs:label "KRI category" ;
+    rdfs:comment "The operational domain the indicator watches: 'site-performance' | 'data-quality' | 'protocol-compliance' | 'safety-reporting'." ;
+    rdfs:domain cr:KeyRiskIndicator ;
+    top:flavor "Additive" .
+
+cr:thresholdRationale a owl:DatatypeProperty ;
+    rdfs:label "threshold rationale" ;
+    rdfs:comment "Why the boundary sits where it sits — historical benchmark, statistical simulation, Poisson/lognormal modeling, expert calibration. ICH E6(R3) proportionality: thresholds must be justified, not intuited." ;
+    top:flavor "Additive" .
+
+# ── Centralized monitoring outputs: observations and breaches ───────────────
+
+cr:MetricObservation a owl:Class ;
+    rdfs:label "Metric Observation" ;
+    skos:definition "A computed value of a monitored quality parameter at a point in time — the output of a centralized-monitoring run. Attributed (prov:wasAttributedTo) to the computing agent, typically a system agent; bitemporal, so 'what did the algorithm know on March 3' is a filter, not an excavation." ;
+    rdfs:comment "The bitemporal envelope is what answers the inspector's question 'why didn't the algorithm flag the March 1 event on March 3?' — because recordedAt shows the event had not yet arrived." ;
+    rdfs:subClassOf top:Evidence ,
+        top:Versioned .
+
+cr:observesLimit a owl:ObjectProperty ;
+    rdfs:label "observes limit" ;
+    rdfs:comment "The quality tolerance limit or key risk indicator this observation is a reading of. Range intentionally open across the two limit classes." ;
+    rdfs:domain cr:MetricObservation ;
+    top:flavor "Additive" .
+
+cr:metricValue a owl:DatatypeProperty ;
+    rdfs:label "metric value" ;
+    rdfs:domain cr:MetricObservation ;
+    rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:observationForSite a owl:ObjectProperty ;
+    rdfs:label "observation for site" ;
+    rdfs:comment "The site a KRI observation is scoped to. Absent on trial-level (QTL) observations." ;
+    rdfs:domain cr:MetricObservation ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:LimitBreach a owl:Class ;
+    rdfs:label "Limit Breach" ;
+    skos:definition "A determination that a monitored parameter crossed its boundary — promoted to an entity (P6) so it carries evidence, disposition, escalation, and reporting, rather than living as a flag on the observation." ;
+    rdfs:comment "Root-cause disposition distinguishes 'systemic' (threatens the trial; may require protocol amendment; QTL breaches are documented in the CSR via cr:reportedIn) from 'isolated' (an operational artifact; targeted site action via cr:escalatedTo a CAPA or risk signal)." ;
+    rdfs:subClassOf top:Conclusion ,
+        top:Versioned .
+
+cr:breachedLimit a owl:ObjectProperty ;
+    rdfs:label "breached limit" ;
+    rdfs:comment "The quality tolerance limit or key risk indicator that was crossed. Range intentionally open across the two limit classes." ;
+    rdfs:domain cr:LimitBreach ;
+    top:flavor "Additive" .
+
+cr:breachEvidence a owl:ObjectProperty ;
+    rdfs:label "breach evidence" ;
+    rdfs:comment "The metric observation(s) the breach determination rests on." ;
+    rdfs:domain cr:LimitBreach ;
+    rdfs:range cr:MetricObservation ;
+    top:flavor "Additive" .
+
+cr:breachDisposition a owl:DatatypeProperty ;
+    rdfs:label "breach disposition" ;
+    rdfs:comment "'systemic' (trial-level issue) or 'isolated' (localized operational artifact). Drives the escalation path." ;
+    rdfs:domain cr:LimitBreach ;
+    top:flavor "Additive" .
+
+cr:escalatedTo a owl:ObjectProperty ;
+    rdfs:label "escalated to" ;
+    rdfs:comment "The corrective/preventive action or risk signal opened in response to this breach (cr:CAPA or cr:RiskSignal, deviation module). Range intentionally open across the two." ;
+    rdfs:domain cr:LimitBreach ;
+    top:flavor "Additive" .
+
+cr:reportedIn a owl:ObjectProperty ;
+    rdfs:label "reported in" ;
+    rdfs:comment "The CSR section documenting this QTL breach and its remedial action — ICH E6(R3) requires important deviations from quality tolerance limits to be reported in the clinical study report." ;
+    rdfs:domain cr:LimitBreach ;
+    rdfs:range cr:CSRSection ;
+    top:flavor "Additive" .
+
+# ── The plan and the review cycle ────────────────────────────────────────────
+
+cr:RiskManagementPlan a owl:Class ;
+    rdfs:label "Risk Management Plan" ;
+    skos:altLabel "RMP"@en ;
+    skos:definition "The living document that records the trial's risk methodology and current risk posture: identified assessments, evaluation criteria, control strategies, monitoring approach, and review cadence." ;
+    rdfs:comment "A living document — updated as circumstances change; versions supersede bitemporally. Aggregates via cr:documentsAssessment." ;
+    rdfs:subClassOf top:Constraint ,
+        top:Versioned .
+
+cr:documentsAssessment a owl:ObjectProperty ;
+    rdfs:label "documents assessment" ;
+    rdfs:domain cr:RiskManagementPlan ;
+    rdfs:range cr:RiskAssessment ;
+    top:flavor "Additive" .
+
+cr:reviewCadence a owl:DatatypeProperty ;
+    rdfs:label "review cadence" ;
+    rdfs:comment "How often the risk posture is formally revisited (e.g. 'quarterly', 'at each DSMB meeting', 'on QTL secondary-limit crossing')." ;
+    rdfs:domain cr:RiskManagementPlan ;
+    top:flavor "Additive" .
+
+cr:RiskReview a owl:Class ;
+    rdfs:label "Risk Review" ;
+    skos:definition "A periodic re-examination of a risk assessment against accumulated trial experience — the ICH E6(R3) risk review step. Each review confirms, revises, or retires the assessment it reviews." ;
+    rdfs:comment "RBQM is a cycle, not a checklist: identification, evaluation, control, communication, review — and review feeds back into identification. The review is the entity that makes the cycle auditable." ;
+    rdfs:subClassOf top:Evidence ,
+        top:Versioned .
+
+cr:reviewsAssessment a owl:ObjectProperty ;
+    rdfs:label "reviews assessment" ;
+    rdfs:domain cr:RiskReview ;
+    rdfs:range cr:RiskAssessment ;
+    top:flavor "Additive" .
+
+cr:reviewOutcome a owl:DatatypeProperty ;
+    rdfs:label "review outcome" ;
+    rdfs:comment "'confirmed' (risk posture stands) | 'revised' (a superseding assessment was issued) | 'retired' (the risk no longer applies)." ;
+    rdfs:domain cr:RiskReview ;
+    top:flavor "Additive" .
 

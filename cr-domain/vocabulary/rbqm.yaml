@@ -1,0 +1,118 @@
+# Controlled Vocabulary — RBQM concepts (CR domain).
+#
+# This file is the FIRST artifact of the pipeline's CV layer (decision-log,
+# "Ontology Pipeline" ADR: CV -> taxonomy -> schema -> thesaurus -> ontology ->
+# KG; "no concept ships only its ontology layer"). The Core back-fill under
+# core/v1/vocabulary/ remains an open obligation; this file sets the format
+# for the domain side. One record per concept: operator definition, inbound
+# synonyms, anti-synonyms with routing, and per-property enum CVs (each enum
+# is a CV in its own right).
+
+concepts:
+
+  - term: Critical-to-Quality Factor
+    iri: cr:CriticalToQualityFactor
+    definition: >
+      A specific element of the trial whose integrity is fundamental to
+      participant safety or the reliability of results. RBQM exists to
+      protect these; everything else gets proportionate (lighter) oversight.
+    synonyms: [CtQ factor, CtQ, critical quality factor]
+    antiSynonyms:
+      - term: critical finding
+        route: an audit/inspection grading, not a design-time quality factor
+
+  - term: Quality Tolerance Limit
+    iri: cr:QualityToleranceLimit
+    definition: >
+      A trial-level boundary on a quality parameter tied to a CtQ factor;
+      crossing it signals a systemic threat to safety, data integrity, or
+      statistical power. Defined before first participant first visit,
+      few in number (3-5 per trial), breaches documented in the CSR.
+    synonyms: [QTL, acceptable range, quality tolerance level]
+    antiSynonyms:
+      - term: reference range / normal range
+        route: laboratory result interpretation (LIMS layer), not a quality guardrail
+      - term: key risk indicator
+        route: cr:KeyRiskIndicator — site-level and leading, not trial-level and systemic
+
+  - term: Key Risk Indicator
+    iri: cr:KeyRiskIndicator
+    definition: >
+      A site- or data-domain-level leading metric that detects localized
+      performance degradation early (screen-failure rate, entry cycle time,
+      query aging, deviation rate). Breaches trigger targeted monitoring
+      intervention.
+    synonyms: [KRI, risk indicator, quality metric]
+    antiSynonyms:
+      - term: key performance indicator (KPI)
+        route: general business metric; a KRI must trace to a CtQ factor
+      - term: quality tolerance limit
+        route: cr:QualityToleranceLimit — trial-level, CSR-reportable
+
+  - term: Metric Observation
+    iri: cr:MetricObservation
+    definition: >
+      One computed reading of a monitored parameter from a centralized
+      monitoring run — attributed to the computing agent, bitemporal so
+      "what did the algorithm know that day" is answerable.
+    synonyms: [KRI reading, CSM metric, centralized monitoring output]
+
+  - term: Limit Breach
+    iri: cr:LimitBreach
+    definition: >
+      A determination that a monitored parameter crossed its boundary,
+      promoted to an entity so it carries evidence, disposition, escalation,
+      and reporting (P6 — never a flag on the observation).
+    synonyms: [QTL excursion, threshold breach, out-of-tolerance event]
+    enums:
+      breachDisposition:
+        systemic: trial-level issue; may require protocol amendment; QTL breaches reported in the CSR
+        isolated: localized operational artifact; targeted site action (CAPA / retraining)
+
+  - term: Risk Assessment
+    iri: cr:RiskAssessment
+    definition: >
+      An assessment of risk to a CtQ factor carrying the ICH Q9(R1)
+      decomposition (likelihood x impact, tempered by detectability) plus a
+      rolled-up level. Bitemporal; re-assessments supersede.
+    synonyms: [risk evaluation, risk scoring]
+    enums:
+      likelihood: {low: unlikely to occur, medium: plausible, high: expected without intervention}
+      impact: {low: negligible harm, medium: recoverable harm, high: threatens safety or result reliability}
+      detectability: {low: would likely go unseen (raises effective risk), medium: found by routine review, high: immediately visible}
+      riskLevel: {low: proportionate light oversight, medium: standard controls, high: must be mitigated (SHACL violation if not)}
+
+  - term: Mitigation Plan
+    iri: cr:MitigationPlan
+    definition: >
+      The risk-control response to an assessment: the control approach,
+      monitoring strategy, and SDV intensity that implement proportionality.
+    synonyms: [risk control plan, monitoring mitigation]
+    enums:
+      controlApproach:
+        eliminate: design the risk out (protocol/process change)
+        reduce: lower likelihood or impact (training, SOPs, targeted SDV)
+        accept: tolerate with monitoring (low-risk, proportionate)
+
+  - term: Risk Management Plan
+    iri: cr:RiskManagementPlan
+    definition: >
+      The living document recording the trial's risk methodology and current
+      posture — assessments, evaluation criteria, control strategies,
+      monitoring approach, review cadence. Versions supersede bitemporally.
+    synonyms: [RMP, RBQM plan, quality management plan]
+    antiSynonyms:
+      - term: risk management plan (pharmacovigilance RMP, EU-RMP)
+        route: the post-authorization safety document is a DIFFERENT artifact (safety domain); qualify by context
+
+  - term: Risk Review
+    iri: cr:RiskReview
+    definition: >
+      A periodic re-examination of a risk assessment against accumulated
+      trial experience — the review step that closes the RBQM cycle.
+    synonyms: [periodic risk review, risk re-assessment]
+    enums:
+      reviewOutcome:
+        confirmed: risk posture stands
+        revised: a superseding assessment was issued
+        retired: the risk no longer applies

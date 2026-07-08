@@ -25,6 +25,35 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Added — RBQM deepening (convener research report + ICH E6(R3)/Q9(R1))
+
+- **`cr-core-rbqm.ttl` grew from 3 classes to a full RBQM cycle**:
+  `cr:QualityToleranceLimit` (prefLabel QTL; altLabel "acceptable range" —
+  the E6(R3) term; trial-level, guards a CtQ factor, primary + secondary
+  thresholds, justified via `cr:thresholdRationale`),
+  `cr:KeyRiskIndicator` (site/domain-level leading metric with
+  warning/action thresholds and `cr:kriCategory`), `cr:MetricObservation`
+  (bitemporal centralized-monitoring output, attributed to the system
+  agent — the "what did the algorithm know on March 3" entity),
+  `cr:LimitBreach` (P6 promotion: evidence + 'systemic'|'isolated'
+  disposition + escalation to CAPA/RiskSignal + `cr:reportedIn` -> CSR
+  section), `cr:RiskManagementPlan` (living document, review cadence),
+  `cr:RiskReview` (closes the identify→evaluate→control→communicate→review
+  cycle). `cr:RiskAssessment` gains the ICH Q9(R1) decomposition
+  (`cr:likelihood`/`cr:impact`/`cr:detectability`) and MitigationPlan gains
+  `cr:controlApproach` ('eliminate'|'reduce'|'accept').
+- **Shapes** (`shapes/rbqm.ttl`, 3 → 8): QTL/KRI/breach well-formedness
+  (Violation), graded Q9 dimensions, systemic-QTL-breach-without-CSR-
+  documentation (Warning), >5 QTLs per study dilutes oversight
+  (Info, TransCelerate 3–5 guidance). 2 new manifest cases (96 total).
+- **Controlled-vocabulary layer started** (`cr-domain/vocabulary/rbqm.yaml`)
+  — the pipeline ADR's CV obligation had never produced an artifact;
+  this file sets the format: operator definitions, synonyms, anti-synonyms
+  with routing (e.g. pharmacovigilance EU-RMP ≠ RBQM RMP; reference range ≠
+  QTL), and per-property enum CVs. Core back-fill remains open.
+- **Thesaurus**: dialect entries for QTL/KRI/RMP/MetricObservation/
+  LimitBreach/RiskReview.
+
 ### Fixed — Provenance identity: attribution targets are people, not roles
 
 - **Convener finding**: example agents like `ex:sp-mgr rdfs:label "Start-up

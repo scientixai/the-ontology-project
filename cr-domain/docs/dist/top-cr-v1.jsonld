@@ -6400,6 +6400,52 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#KeyRiskIndicator",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Operational and leading, in contrast to the trial-level cr:QualityToleranceLimit which is systemic. A KRI should trace to the CtQ factor it protects (cr:informsFactor) \u2014 a KRI with no CtQ ancestry is measurement theater."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Key Risk Indicator"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "KRI"
+      },
+      {
+        "@language": "en",
+        "@value": "quality metric"
+      },
+      {
+        "@language": "en",
+        "@value": "risk indicator"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A site- or data-domain-level leading metric used to detect localized performance degradation early \u2014 screen-failure rate, eCRF entry cycle time, query aging, deviation rate. Breaches trigger targeted monitoring intervention, not (by themselves) CSR reporting."
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Key Risk Indicator"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#KitAssignment",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -6574,6 +6620,55 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#RegulatoryLaw"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#LimitBreach",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Root-cause disposition distinguishes 'systemic' (threatens the trial; may require protocol amendment; QTL breaches are documented in the CSR via cr:reportedIn) from 'isolated' (an operational artifact; targeted site action via cr:escalatedTo a CAPA or risk signal)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Limit Breach"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Conclusion"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "QTL excursion"
+      },
+      {
+        "@language": "en",
+        "@value": "out-of-tolerance event"
+      },
+      {
+        "@language": "en",
+        "@value": "threshold breach"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A determination that a monitored parameter crossed its boundary \u2014 promoted to an entity (P6) so it carries evidence, disposition, escalation, and reporting, rather than living as a flag on the observation."
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Limit Breach"
       }
     ]
   },
@@ -6805,6 +6900,55 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#MetricObservation",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The bitemporal envelope is what answers the inspector's question 'why didn't the algorithm flag the March 1 event on March 3?' \u2014 because recordedAt shows the event had not yet arrived."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Metric Observation"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "CSM metric"
+      },
+      {
+        "@language": "en",
+        "@value": "KRI reading"
+      },
+      {
+        "@language": "en",
+        "@value": "centralized monitoring output"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A computed value of a monitored quality parameter at a point in time \u2014 the output of a centralized-monitoring run. Attributed (prov:wasAttributedTo) to the computing agent, typically a system agent; bitemporal, so 'what did the algorithm know on March 3' is a filter, not an excavation."
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Metric Observation"
       }
     ]
   },
@@ -7618,6 +7762,52 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#QualityToleranceLimit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Trial-level, few in number (TransCelerate: 3-5 per trial \u2014 see QTLCountShape), defined before first participant first visit, monitored continuously, and every significant deviation documented in the CSR (cr:reportedIn). Site-level leading metrics are cr:KeyRiskIndicator, a different concept."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Quality Tolerance Limit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "QTL"
+      },
+      {
+        "@language": "en",
+        "@value": "acceptable range"
+      },
+      {
+        "@language": "en",
+        "@value": "quality tolerance level"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A trial-level boundary on a quality parameter tied to a critical-to-quality factor \u2014 the range beyond which a systemic issue threatens participant safety, data integrity, or the study's statistical power. ICH E6(R3) calls these acceptable ranges; the industry says QTL."
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Quality Tolerance Limit"
       }
     ]
   },
@@ -9232,7 +9422,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "An assessment of risk to a CtQ factor (likelihood/impact/detectability -> level); bitemporal."
+        "@value": "An assessment of risk to a CtQ factor. Carries the ICH Q9(R1) decomposition \u2014 cr:likelihood, cr:impact, cr:detectability \u2014 plus the rolled-up cr:riskLevel and optional cr:riskScore. Bitemporal: re-assessments supersede, never overwrite."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -9266,6 +9456,55 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#RiskManagementPlan",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "A living document \u2014 updated as circumstances change; versions supersede bitemporally. Aggregates via cr:documentsAssessment."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Risk Management Plan"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Constraint"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "RBQM plan"
+      },
+      {
+        "@language": "en",
+        "@value": "RMP"
+      },
+      {
+        "@language": "en",
+        "@value": "quality management plan"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "The living document that records the trial's risk methodology and current risk posture: identified assessments, evaluation criteria, control strategies, monitoring approach, and review cadence."
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Risk Management Plan"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#RiskRegister",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -9283,6 +9522,51 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#RiskReview",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "RBQM is a cycle, not a checklist: identification, evaluation, control, communication, review \u2014 and review feeds back into identification. The review is the entity that makes the cycle auditable."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Risk Review"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://top.scientix.ai/v1#Evidence"
+      },
+      {
+        "@id": "https://top.scientix.ai/v1#Versioned"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#altLabel": [
+      {
+        "@language": "en",
+        "@value": "periodic risk review"
+      },
+      {
+        "@language": "en",
+        "@value": "risk re-assessment"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#definition": [
+      {
+        "@value": "A periodic re-examination of a risk assessment against accumulated trial experience \u2014 the ICH E6(R3) risk review step. Each review confirms, revises, or retires the assessment it reviews."
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "en",
+        "@value": "Risk Review"
       }
     ]
   },
@@ -12638,6 +12922,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#actionThreshold",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "KRI boundary at which intervention is mandatory (action limit, e.g. 3 SD from benchmark)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#KeyRiskIndicator"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "action threshold"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#activates",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -13665,6 +13980,89 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#breachDisposition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "'systemic' (trial-level issue) or 'isolated' (localized operational artifact). Drives the escalation path."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LimitBreach"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "breach disposition"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#breachEvidence",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The metric observation(s) the breach determination rests on."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LimitBreach"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "breach evidence"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#MetricObservation"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#breachedLimit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The quality tolerance limit or key risk indicator that was crossed. Range intentionally open across the two limit classes."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LimitBreach"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "breached limit"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#builtOnLock",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -14558,6 +14956,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#TrialStage"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#controlApproach",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The risk-control decision this plan implements: 'eliminate' (design the risk out), 'reduce' (lower likelihood or impact), or 'accept' (tolerate with monitoring). ICH E6(R3) risk control step."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#MitigationPlan"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "control approach"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -15501,6 +15925,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#detectability",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "How easily the problem would be found if it occurred ('low'|'medium'|'high'). Low detectability raises effective risk \u2014 an undetectable failure is worse than a visible one."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskAssessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "detectability"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#deviationCategory",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -15663,6 +16113,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#documentsAssessment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskManagementPlan"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "documents assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskAssessment"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -16237,6 +16713,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#escalatedTo",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The corrective/preventive action or risk signal opened in response to this breach (cr:CAPA or cr:RiskSignal, deviation module). Range intentionally open across the two."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LimitBreach"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "escalated to"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -17630,6 +18132,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#impact",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "How severe the consequence would be for participant safety or result reliability ('low'|'medium'|'high'). ICH Q9(R1): severity of harm."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskAssessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "impact"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#inDataset",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -17832,6 +18360,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#informsFactor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The critical-to-quality factor this key risk indicator provides early warning for."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#KeyRiskIndicator"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "informs factor"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CriticalToQualityFactor"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#instantiatesTemplate",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -17993,6 +18552,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#kriCategory",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The operational domain the indicator watches: 'site-performance' | 'data-quality' | 'protocol-compliance' | 'safety-reporting'."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#KeyRiskIndicator"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "KRI category"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#lawfulBasisDescription",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -18015,6 +18600,58 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#likelihood",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "How likely the risk is to occur ('low'|'medium'|'high'). ICH Q9(R1): probability of occurrence of harm."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskAssessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "likelihood"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#limitForStudy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The study this quality tolerance limit is defined for. Intended range cr:Study; left open to avoid the RDFS target cascade on referenced studies."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#QualityToleranceLimit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "limit for study"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -18151,6 +18788,27 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#DeviationEvent"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#measuredParameter",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Operator-language statement of what is measured (e.g. 'percent of randomized participants failing eligibility criteria', 'open queries older than 14 days')."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "measured parameter"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -18414,6 +19072,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#metricValue",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#MetricObservation"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "metric value"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#metricsForSite",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -18513,6 +19197,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#observationForSite",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The site a KRI observation is scoped to. Absent on trial-level (QTL) observations."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#MetricObservation"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "observation for site"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#observationForSubject",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -18535,6 +19250,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#observesLimit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The quality tolerance limit or key risk indicator this observation is a reading of. Range intentionally open across the two limit classes."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#MetricObservation"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "observes limit"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -19633,6 +20374,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#protectsFactor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The critical-to-quality factor this quality tolerance limit guards."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#QualityToleranceLimit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "protects factor"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CriticalToQualityFactor"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#protocolDeviationRate",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -19743,6 +20515,68 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#qtlSecondaryLimit",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "An earlier-warning boundary inside the primary threshold, allowing action before the QTL itself is breached."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#QualityToleranceLimit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "QTL secondary limit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#qtlThreshold",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The primary boundary value. Crossing it signals a potential systemic issue."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#QualityToleranceLimit"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "QTL threshold"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -20581,6 +21415,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#reportedIn",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "The CSR section documenting this QTL breach and its remedial action \u2014 ICH E6(R3) requires important deviations from quality tolerance limits to be reported in the clinical study report."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LimitBreach"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "reported in"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSRSection"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#reportingDeadline",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -21167,6 +22032,58 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#reviewCadence",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "How often the risk posture is formally revisited (e.g. 'quarterly', 'at each DSMB meeting', 'on QTL secondary-limit crossing')."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskManagementPlan"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "review cadence"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#reviewOutcome",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "'confirmed' (risk posture stands) | 'revised' (a superseding assessment was issued) | 'retired' (the risk no longer applies)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskReview"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "review outcome"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#reviewVerdict",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -21220,6 +22137,32 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#reviewsAssessment",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskReview"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "reviews assessment"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RiskAssessment"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
@@ -22605,6 +23548,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#thresholdRationale",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Why the boundary sits where it sits \u2014 historical benchmark, statistical simulation, Poisson/lognormal modeling, expert calibration. ICH E6(R3) proportionality: thresholds must be justified, not intuited."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "threshold rationale"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#timing",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -23342,6 +24306,37 @@
     "http://www.w3.org/2000/01/rdf-schema#range": [
       {
         "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Additive"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#warningThreshold",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "KRI boundary at which a site is flagged for attention (statistical-process-control warning limit, e.g. 2 SD from benchmark)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#KeyRiskIndicator"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "warning threshold"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
       }
     ],
     "https://top.scientix.ai/v1#flavor": [
