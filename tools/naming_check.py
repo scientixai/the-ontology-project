@@ -24,6 +24,10 @@ TOP_NAMESPACES = (
 
 UPPER_CAMEL = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 LOWER_CAMEL = re.compile(r"^[a-z][A-Za-z0-9]*$")
+# Regulatory-citation IRI form: underscore-separated official citation
+# (ICH_E6_R3, CFR_21_Part_11, GDPR_Art9_2_a). Only valid on RegulatoryLaw /
+# LawfulBasis individuals — see the individual check below.
+CITATION = re.compile(r"^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)+$")
 
 # Industry-standard names where leading-lowercase is an established convention.
 UPPER_CAMEL_EXCEPTIONS = {"eCRF",           # electronic Case Report Form
@@ -68,6 +72,40 @@ def check_files(paths: list[str]) -> list[tuple[str, str, str]]:
         check(str(s), "property")
     for s in g.subjects(RDF.type, OWL.AnnotationProperty):
         check(str(s), "property")
+
+    # Named individuals: no jargon-coded identifiers (first-principles P2 —
+    # entity names come from operator vocabulary; codes like 'PI-J01' are
+    # spreadsheet coordinates, not names — the OOUX coordinate belongs in
+    # skos:notation, never in the IRI). Individuals must be UpperCamelCase.
+    # Excluded: schema terms (checked above), ontology headers, SHACL shapes,
+    # and reified SKOS-XL labels (the thesaurus's gated lowercase artifacts).
+    from rdflib import URIRef
+    SH_NS = "http://www.w3.org/ns/shacl#"
+    SKOSXL_LABEL = URIRef("http://www.w3.org/2008/05/skos-xl#Label")
+    schema_kinds = {OWL.Class, OWL.DatatypeProperty, OWL.ObjectProperty,
+                    OWL.AnnotationProperty, OWL.Ontology, OWL.NamedIndividual,
+                    SKOSXL_LABEL}
+    for s, t in g.subject_objects(RDF.type):
+        if not isinstance(s, URIRef) or not isinstance(t, URIRef):
+            continue
+        if t in schema_kinds or str(t).startswith(SH_NS):
+            continue
+        local = local_name(str(s))
+        if local is None or str(s) in seen:
+            continue
+        # only instances of OWNED classes (our vocabulary's individuals)
+        if local_name(str(t)) is None:
+            continue
+        seen.add(str(s))
+        # Regulatory citations are exempt: the citation IS the operator name —
+        # '21 CFR Part 11', 'ICH E6(R3)', 'GDPR Art 9(2)(a)' pass the Verbal
+        # Test verbatim; the underscore form is its IRI-safe spelling. This is
+        # the opposite of a jargon code like 'PI-J01', which nobody says aloud.
+        tl = local_name(str(t)) or ""
+        if tl in ("RegulatoryLaw", "LawfulBasis") and CITATION.match(local):
+            continue
+        if not UPPER_CAMEL.match(local) and local not in UPPER_CAMEL_EXCEPTIONS:
+            violations.append((str(s), "UpperCamelCase (individual; no coded IDs — P2)", local))
 
     return violations
 

@@ -164,6 +164,53 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ActivateSitesToEnrollmentPlan",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Select and activate sites to hit enrollment plan"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PM-J02"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AchieveMilestone"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SelectSiteForStudy"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Study in IN_STARTUP; feasibility responses in from candidate sites."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "First site activated on or before plannedActivationDate."
+      },
+      {
+        "@value": "Target number of sites SELECTED within window."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#ActivateStudy",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -1102,6 +1149,65 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#AssessAdverseEventCausalityAndSeriousness",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Assess adverse events for causality and seriousness"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PI-J02"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AssessAdverseEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseAdverseEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ReportSAE"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateSAE"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InvestigationalProduct"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Investigator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Site Coordinator reports an AE; or an SAE becomes known."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Causality and expectedness logged on every AE."
+      },
+      {
+        "@value": "Investigator assessment recorded within 24h of SAE awareness."
+      },
+      {
+        "@value": "Zero SAEs missed for expedited reporting."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#Assessment",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -1171,32 +1277,6 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#AssignParticipantsToArm",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#Action"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Assign Participants to Arm"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#authorizedAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#occursIn": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#RecruitmentSubPhase"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#operatesOn": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Arm"
       }
     ]
   },
@@ -1658,465 +1738,6 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#COORD-J01",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Screen and enroll a candidate participant"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CompleteCRF"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#EnrollParticipant"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ObtainParticipantConsent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ScheduleVisit"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ScreenParticipant"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateEnrollmentStatus"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#EnrollmentRecord"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#InformedConsentAct"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Candidate presents for screening; Informed Consent obtained."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "All enrollment CRFs complete at baseline visit."
-      },
-      {
-        "@value": "Participant.participantStatus = ON_TREATMENT within eligibility window."
-      },
-      {
-        "@value": "Zero open queries on eligibility data at enrollment."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#COORD-J02",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Run a protocol visit on schedule and within window"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CollectSample"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CompleteVisit"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StartVisit"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ActivityOccurrence"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Visit.visitStatus = SCHEDULED; visit window approaching."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "All per-protocol CRFs for the visit reach COMPLETED or VERIFIED."
-      },
-      {
-        "@value": "Samples shipped within chain-of-custody SLA."
-      },
-      {
-        "@value": "Visit.visitStatus = COMPLETED with windowStatus = IN_WINDOW."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#COORD-J03",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Capture data cleanly and respond to queries"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#RespondToQuery"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Data Manager raises a query; Discrepancy.queryStatus = OPEN."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Coordinator response posted within sponsor target TTR."
-      },
-      {
-        "@value": "No repeated re-open on the same data point."
-      },
-      {
-        "@value": "Query moves to ANSWERED or CLOSED."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#COORD-J04",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Report adverse events within sponsor-required timelines"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#FollowUpAdverseEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ReportAdverseEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateAdverseEventDetails"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Adverse Event observed or reported by participant."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "AE reported with reportedDate within 24h for SAEs."
-      },
-      {
-        "@value": "Investigator assessment completed within protocol timeline."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#COORD-J05",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Keep the site regulatory binder and logs current"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AddLogEntry"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateLog"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#LogCommunication"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Credential"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Delegation"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "New amendment approved, new staff onboarded, or monitoring visit upcoming."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Delegation, training, enrollment, and drug accountability logs up to date."
-      },
-      {
-        "@value": "Monitoring visit finds zero major findings in the binder category."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#CRA-J01",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Get a site ready to enroll its first participant"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ConductMonitoringVisit"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#InitiateSite"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SubmitMonitoringReport"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Credential"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Delegation"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Site.siteStatus enters READY_TO_INITIATE after Study Startup Package is ready."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "First participant enrolled within sponsor target window after activation."
-      },
-      {
-        "@value": "Site activated on or before plannedActivationDate."
-      },
-      {
-        "@value": "Zero open regulatory or training deficiencies at SIV close."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#CRA-J02",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Verify that site data matches source documents"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ConductMonitoringVisit"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateQuery"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#RecordFinding"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SubmitMonitoringReport"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Monitoring visit scheduled or risk-based trigger fires."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "CRFs reviewed during the visit left in VERIFIED status."
-      },
-      {
-        "@value": "No outstanding major findings recorded."
-      },
-      {
-        "@value": "SDV rate meets monitoring plan target for the window."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#CRA-J03",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Catch and close protocol deviations early"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#RecordFinding"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ReportDeviation"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Deviation identified during a monitoring visit or pattern review."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Deviation moved to REVIEWED within sponsor target cycle time."
-      },
-      {
-        "@value": "IRB reporting deadline met."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#CRA-J04",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Close the site cleanly at study end"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ConductMonitoringVisit"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SubmitMonitoringReport"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Site.siteStatus moves to CLOSED_TO_ENROLLMENT; close-out visit scheduled."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "All essential documents transferred to sponsor eTMF."
-      },
-      {
-        "@value": "Close-out monitoring visit completed and signed by PI."
-      },
-      {
-        "@value": "Open findings and action items closed."
-      }
-    ]
-  },
-  {
     "@id": "https://top.scientix.ai/cr/v1#CRO",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -2363,6 +1984,56 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#CaptureDataAndResolveQueries",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Capture data cleanly and respond to queries"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "COORD-J03"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RespondToQuery"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Data Manager raises a query; Discrepancy.queryStatus = OPEN."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Coordinator response posted within sponsor target TTR."
+      },
+      {
+        "@value": "No repeated re-open on the same data point."
+      },
+      {
+        "@value": "Query moves to ANSWERED or CLOSED."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#CaseReportForm",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -2392,6 +2063,56 @@
       {
         "@language": "en",
         "@value": "Case Report Form"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#CatchAndCloseDeviationsEarly",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Catch and close protocol deviations early"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "CRA-J03"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RecordFinding"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ReportDeviation"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Participant"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Deviation identified during a monitoring visit or pattern review."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Deviation moved to REVIEWED within sponsor target cycle time."
+      },
+      {
+        "@value": "IRB reporting deadline met."
       }
     ]
   },
@@ -2732,6 +2453,71 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#CloseAndArchiveStudy",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Close study and archive cleanly"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PM-J05"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ArchiveStudy"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseSite"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseSiteToEnrollment"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseStudy"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FinalizeReport"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CSR"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Last Patient Out (LPO) reached; database lock in progress."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "All sites closed; all open Tasks and Findings resolved."
+      },
+      {
+        "@value": "CSR finalized and distributed."
+      },
+      {
+        "@value": "Study moves to COMPLETED then archived."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#CloseArm",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -3066,6 +2852,56 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#CloseSiteCleanly",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Close the site cleanly at study end"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "CRA-J04"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ConductMonitoringVisit"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SubmitMonitoringReport"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Site.siteStatus moves to CLOSED_TO_ENROLLMENT; close-out visit scheduled."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "All essential documents transferred to sponsor eTMF."
+      },
+      {
+        "@value": "Close-out monitoring visit completed and signed by PI."
+      },
+      {
+        "@value": "Open findings and action items closed."
       }
     ]
   },
@@ -3599,6 +3435,65 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#CreateAndApproveBudgets",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Create and approve budgets per study and per site"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "FIN-J01"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AddBudgetLineItem"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ApproveBudget"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateBudget"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LockBudget"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FinanceStaff"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Study in IN_STARTUP; or new site activated."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Budget approved before first site activation."
+      },
+      {
+        "@value": "Line items match the SOA procedures and visit schedule."
+      },
+      {
+        "@value": "Site-level budget approved before first patient enrolled."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#CreateArm",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -3967,96 +3862,6 @@
       },
       {
         "@id": "https://top.scientix.ai/v1#Versioned"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#DM-J01",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Resolve open queries and achieve clean data state"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AssignQuery"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseQuery"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateQuery"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ReopenQuery"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DataManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Query created on a CRF; or discrepancy detected in incoming data."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "All queries on a CRF closed before CRF lock."
-      },
-      {
-        "@value": "Re-open rate below sponsor threshold."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#DM-J02",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Lock CRFs and database for analysis"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#LockUnlockCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DataManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Last patient last visit completed; data cleaning cycle closed."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "All CRFs in LOCKED state."
-      },
-      {
-        "@value": "Database lock confirmed by authorized Data Manager sign-off."
       }
     ]
   },
@@ -4451,6 +4256,53 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#DelegateTasksToQualifiedStaff",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Delegate tasks to qualified site staff"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PI-J04"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AddInvestigatorDelegation"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Credential"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Delegation"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Investigator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "New staff onboarded; or protocol amendment changes delegation requirements."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Delegation of Authority log is current and agrees with the recorded delegation acts."
+      },
+      {
+        "@value": "Each delegated task has a qualified delegate with training in place."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#Delegation",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -4552,6 +4404,56 @@
       {
         "@language": "en",
         "@value": "Destruction Event"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DetectAndEvaluateSafetySignals",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Detect and evaluate emerging safety signals"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PV-J01"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseSafetySignal"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EvaluateSafetySignal"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#IdentifySafetySignal"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#PharmacovigilianceSpecialist"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Aggregate AE data shows unexpected frequency or severity pattern."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "DSMB/IDMC notified if threshold met."
+      },
+      {
+        "@value": "Signal evaluated and action (escalate, monitor, or close) documented within SOP timeline."
       }
     ]
   },
@@ -4805,6 +4707,59 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DriveMilestonesAndTimeline",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Drive milestone achievement and timeline"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PM-J04"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AchieveMilestone"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AssignTask"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DelayMilestone"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateTimeline"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Milestone deadline approaches or slips."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Milestone moved to COMPLETED on or before plannedDate."
+      },
+      {
+        "@value": "Variance on Study Timeline within sponsor tolerance."
       }
     ]
   },
@@ -5179,107 +5134,49 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#FIN-J01",
+    "@id": "https://top.scientix.ai/cr/v1#FileExpeditedSAEReports",
     "@type": [
       "https://top.scientix.ai/hcls/v1#JobToBeDone"
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "Create and approve budgets per study and per site"
+        "@value": "File expedited SAE reports within regulatory timelines"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PV-J02"
       }
     ],
     "https://top.scientix.ai/hcls/v1#executesAction": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#AddBudgetLineItem"
+        "@id": "https://top.scientix.ai/cr/v1#ReconcileSAE"
       },
       {
-        "@id": "https://top.scientix.ai/cr/v1#ApproveBudget"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateBudget"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#LockBudget"
+        "@id": "https://top.scientix.ai/cr/v1#SubmitExpeditedReport"
       }
     ],
     "https://top.scientix.ai/hcls/v1#involvesObject": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
       }
     ],
     "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
       {
-        "@id": "https://top.scientix.ai/cr/v1#FinanceStaff"
+        "@id": "https://top.scientix.ai/cr/v1#PharmacovigilianceSpecialist"
       }
     ],
     "https://top.scientix.ai/hcls/v1#jobTrigger": [
       {
-        "@value": "Study in IN_STARTUP; or new site activated."
+        "@value": "SAE meets expedited reporting criteria (unexpected + possibly related)."
       }
     ],
     "https://top.scientix.ai/hcls/v1#successSignal": [
       {
-        "@value": "Budget approved before first site activation."
+        "@value": "7-day initial or 15-day full report filed within regulatory deadline."
       },
       {
-        "@value": "Line items match the SOA procedures and visit schedule."
-      },
-      {
-        "@value": "Site-level budget approved before first patient enrolled."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#FIN-J02",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Issue payments to sites per budget and visit accrual"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ApprovePayment"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreatePayment"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#IssueSitePayment"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ProcessPayment"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#FinanceStaff"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Visit.visitStatus = COMPLETED; accrual condition met; invoice received."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Payment issued within contract paymentTermsDays."
-      },
-      {
-        "@value": "complianceCheckStatus = PASSED (anti-kickback, Sunshine Act)."
+        "@value": "Narrative and causality consistent across all SAE documents."
       }
     ]
   },
@@ -5571,6 +5468,65 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#CSR"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#GetSiteReadyToEnroll",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Get a site ready to enroll its first participant"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "CRA-J01"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ConductMonitoringVisit"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InitiateSite"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SubmitMonitoringReport"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Credential"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Delegation"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Site.siteStatus enters READY_TO_INITIATE after Study Startup Package is ready."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "First participant enrolled within sponsor target window after activation."
+      },
+      {
+        "@value": "Site activated on or before plannedActivationDate."
+      },
+      {
+        "@value": "Zero open regulatory or training deficiencies at SIV close."
       }
     ]
   },
@@ -5868,6 +5824,68 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#InitializeNewStudy",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Initialize a new study"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PM-J01"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ActivateStudy"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateArm"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateMilestone"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateStudy"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateStudyDetails"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Program approval; Sponsor Exec authorises study start."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "First site selected within target window."
+      },
+      {
+        "@value": "Protocol, SOA, CRFs, and Budget approved and locked."
+      },
+      {
+        "@value": "Study in ACTIVE status within sponsor target cycle time."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#InitiateSite",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -6145,6 +6163,62 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#IssueSitePaymentsPerAccrual",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Issue payments to sites per budget and visit accrual"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "FIN-J02"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ApprovePayment"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreatePayment"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#IssueSitePayment"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ProcessPayment"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FinanceStaff"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Visit.visitStatus = COMPLETED; accrual condition met; invoice received."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Payment issued within contract paymentTermsDays."
+      },
+      {
+        "@value": "complianceCheckStatus = PASSED (anti-kickback, Sunshine Act)."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#ItemGroup",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -6162,6 +6236,59 @@
     "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
       {
         "@id": "https://top.scientix.ai/v1#Evidence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#KeepRegulatoryBinderCurrent",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Keep the site regulatory binder and logs current"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "COORD-J05"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AddLogEntry"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateLog"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LogCommunication"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Credential"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Delegation"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "New amendment approved, new staff onboarded, or monitoring visit upcoming."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Delegation, training, enrollment, and drug accountability logs up to date."
+      },
+      {
+        "@value": "Monitoring visit finds zero major findings in the binder category."
       }
     ]
   },
@@ -6310,6 +6437,53 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#LockCRFsAndDatabase",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Lock CRFs and database for analysis"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "DM-J02"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#LockUnlockCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Last patient last visit completed; data cleaning cycle closed."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "All CRFs in LOCKED state."
+      },
+      {
+        "@value": "Database lock confirmed by authorized Data Manager sign-off."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#LockUnlockCRF",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -6379,6 +6553,65 @@
     "http://www.w3.org/2004/02/skos/core#definition": [
       {
         "@value": "A planned long-term follow-up programme for a study (e.g. survival follow-up, long-term safety), spanning follow-up visits beyond the treatment period."
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ManageEnrollmentToPlan",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Manage enrollment across sites to meet plan"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PM-J03"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseEnrollment"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DelayMilestone"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#OpenEnrollment"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RebaselineTimeline"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Participant"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Study"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Study ENROLLING; enrollment plan and forecast in place."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Actual enrollmentCount tracks forecast within tolerance."
+      },
+      {
+        "@value": "Enrollment cycle time per site within sponsor target."
       }
     ]
   },
@@ -6553,29 +6786,18 @@
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#OversightSubPhase",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#Phase"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#comment": [
-      {
-        "@value": "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Oversight"
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PI-J01",
+    "@id": "https://top.scientix.ai/cr/v1#OverseeStudyConductAtSite",
     "@type": [
       "https://top.scientix.ai/hcls/v1#JobToBeDone"
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
         "@value": "Hold legal responsibility for trial conduct at the Site"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PI-J01"
       }
     ],
     "https://top.scientix.ai/hcls/v1#executesAction": [
@@ -6612,550 +6834,29 @@
     ],
     "https://top.scientix.ai/hcls/v1#successSignal": [
       {
-        "@value": "Form 1572 on file (US studies)."
-      },
-      {
         "@value": "GCP training current throughout the Study."
       },
       {
         "@value": "No regulatory or sponsor actions escalated to debarment."
+      },
+      {
+        "@value": "Regulatory investigator-commitment form on file (e.g. Form FDA 1572 in the US; jurisdiction-equivalent elsewhere)."
       }
     ]
   },
   {
-    "@id": "https://top.scientix.ai/cr/v1#PI-J02",
+    "@id": "https://top.scientix.ai/cr/v1#OversightSubPhase",
     "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+      "https://top.scientix.ai/hcls/v1#Phase"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Risk-based monitoring, interim monitoring visits, source data verification, deviation identification and classification, CAPA management, audit. Operator primary: CRA + Sponsor Quality."
+      }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "Assess adverse events for causality and seriousness"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AssessAdverseEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseAdverseEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ReportSAE"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateSAE"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#InvestigationalProduct"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Investigator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Site Coordinator reports an AE; or an SAE becomes known."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Causality and expectedness logged on every AE."
-      },
-      {
-        "@value": "Investigator assessment recorded within 24h of SAE awareness."
-      },
-      {
-        "@value": "Zero SAEs missed for expedited reporting."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PI-J03",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Review and sign CRFs"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ReviewCRF"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SignCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#eCRF"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Investigator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "CRF status reaches COMPLETED; PI review required per protocol."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "CRF electronicSignatureStatus = SIGNED within sponsor target TTR."
-      },
-      {
-        "@value": "Review and sign cycle does not block CRF lock."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PI-J04",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Delegate tasks to qualified site staff"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AddInvestigatorDelegation"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Credential"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Delegation"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Investigator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "New staff onboarded; or protocol amendment changes delegation requirements."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Delegation of Authority log current and matches Person.delegatedBy."
-      },
-      {
-        "@value": "Each delegated task has a qualified delegate with training in place."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PI-J05",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Withdraw or close out a participant"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CompleteParticipantStudy"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#WithdrawParticipant"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#InformedConsentAct"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Investigator"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Participant withdraws consent, completes study, or meets discontinuation criteria."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "In-flight SAEs followed up post-withdrawal."
-      },
-      {
-        "@value": "Participant.participantStatus reflects correct end state (COMPLETED, WITHDRAWN)."
-      },
-      {
-        "@value": "Withdrawal reason and date captured."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PM-J01",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Initialize a new study"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ActivateStudy"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateArm"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateMilestone"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CreateStudy"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateStudyDetails"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Arm"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Program approval; Sponsor Exec authorises study start."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "First site selected within target window."
-      },
-      {
-        "@value": "Protocol, SOA, CRFs, and Budget approved and locked."
-      },
-      {
-        "@value": "Study in ACTIVE status within sponsor target cycle time."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PM-J02",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Select and activate sites to hit enrollment plan"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AchieveMilestone"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SelectSiteForStudy"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Study in IN_STARTUP; feasibility responses in from candidate sites."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "First site activated on or before plannedActivationDate."
-      },
-      {
-        "@value": "Target number of sites SELECTED within window."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PM-J03",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Manage enrollment across sites to meet plan"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseEnrollment"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DelayMilestone"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#OpenEnrollment"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#RebaselineTimeline"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Participant"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Study ENROLLING; enrollment plan and forecast in place."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Actual enrollmentCount tracks forecast within tolerance."
-      },
-      {
-        "@value": "Enrollment cycle time per site within sponsor target."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PM-J04",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Drive milestone achievement and timeline"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AchieveMilestone"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AssignTask"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#DelayMilestone"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#UpdateTimeline"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Milestone deadline approaches or slips."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "Milestone moved to COMPLETED on or before plannedDate."
-      },
-      {
-        "@value": "Variance on Study Timeline within sponsor tolerance."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PM-J05",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Close study and archive cleanly"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ArchiveStudy"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseSite"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseSiteToEnrollment"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseStudy"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#FinalizeReport"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CSR"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Study"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#StudySite"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SponsorProjectManager"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Last Patient Out (LPO) reached; database lock in progress."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "All sites closed; all open Tasks and Findings resolved."
-      },
-      {
-        "@value": "CSR finalized and distributed."
-      },
-      {
-        "@value": "Study moves to COMPLETED then archived."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PV-J01",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "Detect and evaluate emerging safety signals"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#CloseSafetySignal"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#EvaluateSafetySignal"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#IdentifySafetySignal"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#PharmacovigilianceSpecialist"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "Aggregate AE data shows unexpected frequency or severity pattern."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "DSMB/IDMC notified if threshold met."
-      },
-      {
-        "@value": "Signal evaluated and action (escalate, monitor, or close) documented within SOP timeline."
-      }
-    ]
-  },
-  {
-    "@id": "https://top.scientix.ai/cr/v1#PV-J02",
-    "@type": [
-      "https://top.scientix.ai/hcls/v1#JobToBeDone"
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#label": [
-      {
-        "@value": "File expedited SAE reports within regulatory timelines"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#executesAction": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ReconcileSAE"
-      },
-      {
-        "@id": "https://top.scientix.ai/cr/v1#SubmitExpeditedReport"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#involvesObject": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#PharmacovigilianceSpecialist"
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#jobTrigger": [
-      {
-        "@value": "SAE meets expedited reporting criteria (unexpected + possibly related)."
-      }
-    ],
-    "https://top.scientix.ai/hcls/v1#successSignal": [
-      {
-        "@value": "7-day initial or 15-day full report filed within regulatory deadline."
-      },
-      {
-        "@value": "Narrative and causality consistent across all SAE documents."
+        "@value": "Oversight"
       }
     ]
   },
@@ -8627,6 +8328,56 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ReportAdverseEventsOnTime",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Report adverse events within sponsor-required timelines"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "COORD-J04"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#FollowUpAdverseEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ReportAdverseEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateAdverseEventDetails"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Adverse Event observed or reported by participant."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "AE reported with reportedDate within 24h for SAEs."
+      },
+      {
+        "@value": "Investigator assessment completed within protocol timeline."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#ReportDeviation",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -8750,6 +8501,37 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#RequestRandomization",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#Action"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Corrected from 'Assign Participants to Arm' (OOUX v0.2): arm assignment is performed by the randomization system (cr:RandomizationEvent, attributed to the IxRS) and is blinded \u2014 no site role can perform or know it. The human-performable act is REQUESTING randomization for an eligible, consented participant."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Request Randomization"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#authorizedAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#occursIn": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RecruitmentSubPhase"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#operatesOn": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#RescheduleVisit",
     "@type": [
       "https://top.scientix.ai/hcls/v1#Action"
@@ -8772,6 +8554,59 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ResolveQueriesToCleanData",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Resolve open queries and achieve clean data state"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "DM-J01"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AssignQuery"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseQuery"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateQuery"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ReopenQuery"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataManager"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Query created on a CRF; or discrepancy detected in incoming data."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "All queries on a CRF closed before CRF lock."
+      },
+      {
+        "@value": "Re-open rate below sponsor threshold."
       }
     ]
   },
@@ -8911,6 +8746,53 @@
       {
         "@language": "en",
         "@value": "Return Event"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ReviewAndSignCRFs",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Review and sign CRFs"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PI-J03"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ReviewCRF"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SignCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Investigator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "CRF status reaches COMPLETED; PI review required per protocol."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "Every completed CRF is electronically signed within the sponsor's target turnaround time."
+      },
+      {
+        "@value": "Review and sign cycle does not block CRF lock."
       }
     ]
   },
@@ -9172,6 +9054,68 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Study"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#RunProtocolVisitOnSchedule",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Run a protocol visit on schedule and within window"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "COORD-J02"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CollectSample"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CompleteVisit"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StartVisit"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ActivityOccurrence"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Visit.visitStatus = SCHEDULED; visit window approaching."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "All per-protocol CRFs for the visit reach COMPLETED or VERIFIED."
+      },
+      {
+        "@value": "Samples shipped within chain-of-custody SLA."
+      },
+      {
+        "@value": "Visit.visitStatus = COMPLETED with windowStatus = IN_WINDOW."
       }
     ]
   },
@@ -9466,6 +9410,80 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ScreenAndEnrollCandidate",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Screen and enroll a candidate participant"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "COORD-J01"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CompleteCRF"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EnrollParticipant"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ObtainParticipantConsent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ScheduleVisit"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ScreenParticipant"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UpdateEnrollmentStatus"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#EnrollmentRecord"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InformedConsentAct"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Participant"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#VisitOccurrence"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteCoordinator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Candidate presents for screening; Informed Consent obtained."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "All enrollment CRFs complete at baseline visit."
+      },
+      {
+        "@value": "Participant.participantStatus = ON_TREATMENT within eligibility window."
+      },
+      {
+        "@value": "Zero open queries on eligibility data at enrollment."
       }
     ]
   },
@@ -11826,6 +11844,62 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#VerifySiteDataAgainstSource",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Verify that site data matches source documents"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "CRA-J02"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ConductMonitoringVisit"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CreateQuery"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RecordFinding"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SubmitMonitoringReport"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#eCRF"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ClinicalResearchAssociate"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Monitoring visit scheduled or risk-based trigger fires."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "CRFs reviewed during the visit left in VERIFIED status."
+      },
+      {
+        "@value": "No outstanding major findings recorded."
+      },
+      {
+        "@value": "SDV rate meets monitoring plan target for the window."
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#Visit",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -12022,6 +12096,62 @@
     "https://top.scientix.ai/hcls/v1#operatesOn": [
       {
         "@id": "https://top.scientix.ai/cr/v1#InformedConsentAct"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#WithdrawOrCloseOutParticipant",
+    "@type": [
+      "https://top.scientix.ai/hcls/v1#JobToBeDone"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Withdraw or close out a participant"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "@value": "PI-J05"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#executesAction": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CompleteParticipantStudy"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#WithdrawParticipant"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#involvesObject": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#InformedConsentAct"
+      },
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Participant"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobOfAgentType": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Investigator"
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#jobTrigger": [
+      {
+        "@value": "Participant withdraws consent, completes study, or meets discontinuation criteria."
+      }
+    ],
+    "https://top.scientix.ai/hcls/v1#successSignal": [
+      {
+        "@value": "In-flight SAEs followed up post-withdrawal."
+      },
+      {
+        "@value": "Participant.participantStatus reflects correct end state (COMPLETED, WITHDRAWN)."
+      },
+      {
+        "@value": "Withdrawal reason and date captured."
       }
     ]
   },
@@ -25983,12 +26113,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "Identifier of the LLM (name + version/hash) that produced this conclusion, e.g. 'gpt-4o-2024-05-13'."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/v1#Conclusion"
+        "@value": "AI inference provenance (canonical in core/v1/modules/top-ai.ttl): the LLM name + version/hash that produced the conclusion."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -26035,12 +26160,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "The prompt template used to elicit the LLM inference, with slot markers. Stored verbatim for reproducibility."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/v1#Conclusion"
+        "@value": "AI inference provenance (canonical in core/v1/modules/top-ai.ttl): the verbatim prompt template behind an LLM-contributed Conclusion."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -26103,12 +26223,7 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
-        "@value": "The retrieved context passages (e.g. SPARQL results, vector-search snippets) injected into the prompt. Stored verbatim."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/v1#Conclusion"
+        "@value": "AI inference provenance (canonical in core/v1/modules/top-ai.ttl): the verbatim retrieved context injected into the prompt. PII: upstream redaction applies."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [

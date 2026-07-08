@@ -344,6 +344,13 @@ top:memberOf a owl:ObjectProperty ;
     rdfs:subPropertyOf prov:actedOnBehalfOf ;
     top:flavor "Tightenable" .
 
+top:modelVersion a owl:DatatypeProperty ;
+    rdfs:label "model version"@en ;
+    rdfs:comment "Identifier of the LLM (name + version/hash) that produced this conclusion." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 top:objectiveStatement a owl:DatatypeProperty ;
     rdfs:label "objective statement"@en ;
     rdfs:comment "High-level description of the strategic 'why'. Operator-grounded — what an investigator, sponsor, or regulator would say this Scope is for."@en ;
@@ -397,6 +404,13 @@ top:producedBy a owl:ObjectProperty ;
     rdfs:subPropertyOf prov:wasGeneratedBy ;
     top:flavor "Tightenable" .
 
+top:promptTemplate a owl:DatatypeProperty ;
+    rdfs:label "prompt template"@en ;
+    rdfs:comment "The prompt template used to elicit the LLM inference, with slot markers. Stored verbatim for reproducibility." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 top:rationale a owl:DatatypeProperty ;
     rdfs:label "rationale"@en ;
     rdfs:comment "Human-readable explanation of why this Conclusion was reached."@en ;
@@ -417,6 +431,13 @@ top:severityLevel a owl:DatatypeProperty ;
     rdfs:domain top:Constraint ;
     rdfs:range xsd:string ;
     top:flavor "Tightenable" .
+
+top:sourceContext a owl:DatatypeProperty ;
+    rdfs:label "source context"@en ;
+    rdfs:comment "The retrieved context passages (e.g. SPARQL results, vector-search snippets) injected into the prompt. Stored verbatim. See the PII scope note in this module's header." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
 
 top:startTime a owl:DatatypeProperty ;
     rdfs:label "start time"@en ;
@@ -536,13 +557,6 @@ top:validFrom a owl:DatatypeProperty ;
     rdfs:range xsd:dateTime ;
     top:flavor "Invariant" .
 
-top:Conclusion a owl:Class ;
-    rdfs:label "Conclusion"@en ;
-    rdfs:comment "A reasoned determination — adjudication outcome, root-cause finding, regulatory decision, eligibility determination."@en ;
-    rdfs:subClassOf bfo:GenericallyDependentContinuant,
-        prov:Entity,
-        top:Outcome .
-
 top:Versioned a owl:Class ;
     rdfs:label "Versioned"@en ;
     rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
@@ -565,6 +579,13 @@ top:BitemporalShape a sh:NodeShape ;
             sh:message "top:validUntil is open (absent) for the current version, or exactly one xsd:dateTime when closed." ;
             sh:path top:validUntil ] ;
     sh:targetClass top:Versioned .
+
+top:Conclusion a owl:Class ;
+    rdfs:label "Conclusion"@en ;
+    rdfs:comment "A reasoned determination — adjudication outcome, root-cause finding, regulatory decision, eligibility determination."@en ;
+    rdfs:subClassOf bfo:GenericallyDependentContinuant,
+        prov:Entity,
+        top:Outcome .
 
 top:Evidence a owl:Class ;
     rdfs:label "Evidence"@en ;

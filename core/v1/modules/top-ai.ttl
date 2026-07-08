@@ -1,0 +1,37 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+
+# AI inference provenance — the AI face of first-principles P4 (provenance-native).
+# Promoted from the CR domain (cr-core-ai.ttl) per the convener's ruling, 2026-07:
+# nothing here is clinical — LLM inference reproducibility applies identically to
+# every domain. These properties live on top:Conclusion so ANY reasoned
+# determination an LLM contributes to carries its full replay context.
+#
+# PII scope note: promptTemplate and sourceContext are stored VERBATIM for
+# reproducibility. In domains with a PII boundary (e.g. clinical research),
+# upstream redaction is the consuming system's responsibility before these
+# values enter the graph — the containment doctrine applies to prompts and
+# retrieved context exactly as it does to labels and free-text values.
+
+top:promptTemplate a owl:DatatypeProperty ;
+    rdfs:label "prompt template"@en ;
+    rdfs:comment "The prompt template used to elicit the LLM inference, with slot markers. Stored verbatim for reproducibility." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+top:sourceContext a owl:DatatypeProperty ;
+    rdfs:label "source context"@en ;
+    rdfs:comment "The retrieved context passages (e.g. SPARQL results, vector-search snippets) injected into the prompt. Stored verbatim. See the PII scope note in this module's header." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+top:modelVersion a owl:DatatypeProperty ;
+    rdfs:label "model version"@en ;
+    rdfs:comment "Identifier of the LLM (name + version/hash) that produced this conclusion." ;
+    rdfs:domain top:Conclusion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .

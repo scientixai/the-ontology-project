@@ -2,6 +2,7 @@
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
@@ -71,17 +72,19 @@ cr:FinanceStaff a owl:Class ; rdfs:subClassOf hcls:Person ;
 # Jobs to Be Done — Investigator
 #################################################################
 
-cr:PI-J01 a hcls:JobToBeDone ;
+cr:OverseeStudyConductAtSite a hcls:JobToBeDone ;
+    skos:notation "PI-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Hold legal responsibility for trial conduct at the Site" ;
     hcls:jobOfAgentType cr:Investigator ;
     hcls:jobTrigger "Site selected for a Study; PI designated as Principal Investigator." ;
-    hcls:successSignal "Form 1572 on file (US studies)." ;
+    hcls:successSignal "Regulatory investigator-commitment form on file (e.g. Form FDA 1572 in the US; jurisdiction-equivalent elsewhere)." ;
     hcls:successSignal "GCP training current throughout the Study." ;
     hcls:successSignal "No regulatory or sponsor actions escalated to debarment." ;
     hcls:involvesObject cr:Study , cr:Credential , cr:Delegation ;
     hcls:executesAction cr:RefreshGCPTraining , cr:UpdateFCOIDisclosure , cr:AddInvestigatorDelegation .
 
-cr:PI-J02 a hcls:JobToBeDone ;
+cr:AssessAdverseEventCausalityAndSeriousness a hcls:JobToBeDone ;
+    skos:notation "PI-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Assess adverse events for causality and seriousness" ;
     hcls:jobOfAgentType cr:Investigator ;
     hcls:jobTrigger "Site Coordinator reports an AE; or an SAE becomes known." ;
@@ -91,25 +94,28 @@ cr:PI-J02 a hcls:JobToBeDone ;
     hcls:involvesObject cr:AdverseEvent , cr:InvestigationalProduct ;
     hcls:executesAction cr:AssessAdverseEvent , cr:CloseAdverseEvent , cr:ReportSAE , cr:UpdateSAE .
 
-cr:PI-J03 a hcls:JobToBeDone ;
+cr:ReviewAndSignCRFs a hcls:JobToBeDone ;
+    skos:notation "PI-J03" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Review and sign CRFs" ;
     hcls:jobOfAgentType cr:Investigator ;
     hcls:jobTrigger "CRF status reaches COMPLETED; PI review required per protocol." ;
-    hcls:successSignal "CRF electronicSignatureStatus = SIGNED within sponsor target TTR." ;
+    hcls:successSignal "Every completed CRF is electronically signed within the sponsor's target turnaround time." ;
     hcls:successSignal "Review and sign cycle does not block CRF lock." ;
     hcls:involvesObject cr:eCRF ;
     hcls:executesAction cr:ReviewCRF , cr:SignCRF .
 
-cr:PI-J04 a hcls:JobToBeDone ;
+cr:DelegateTasksToQualifiedStaff a hcls:JobToBeDone ;
+    skos:notation "PI-J04" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Delegate tasks to qualified site staff" ;
     hcls:jobOfAgentType cr:Investigator ;
     hcls:jobTrigger "New staff onboarded; or protocol amendment changes delegation requirements." ;
-    hcls:successSignal "Delegation of Authority log current and matches Person.delegatedBy." ;
+    hcls:successSignal "Delegation of Authority log is current and agrees with the recorded delegation acts." ;
     hcls:successSignal "Each delegated task has a qualified delegate with training in place." ;
     hcls:involvesObject cr:Delegation , cr:Credential ;
     hcls:executesAction cr:AddInvestigatorDelegation .
 
-cr:PI-J05 a hcls:JobToBeDone ;
+cr:WithdrawOrCloseOutParticipant a hcls:JobToBeDone ;
+    skos:notation "PI-J05" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Withdraw or close out a participant" ;
     hcls:jobOfAgentType cr:Investigator ;
     hcls:jobTrigger "Participant withdraws consent, completes study, or meets discontinuation criteria." ;
@@ -123,7 +129,8 @@ cr:PI-J05 a hcls:JobToBeDone ;
 # Jobs to Be Done — Site Coordinator
 #################################################################
 
-cr:COORD-J01 a hcls:JobToBeDone ;
+cr:ScreenAndEnrollCandidate a hcls:JobToBeDone ;
+    skos:notation "COORD-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Screen and enroll a candidate participant" ;
     hcls:jobOfAgentType cr:SiteCoordinator ;
     hcls:jobTrigger "Candidate presents for screening; Informed Consent obtained." ;
@@ -139,7 +146,8 @@ cr:COORD-J01 a hcls:JobToBeDone ;
         cr:EnrollParticipant ,
         cr:UpdateEnrollmentStatus .
 
-cr:COORD-J02 a hcls:JobToBeDone ;
+cr:RunProtocolVisitOnSchedule a hcls:JobToBeDone ;
+    skos:notation "COORD-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Run a protocol visit on schedule and within window" ;
     hcls:jobOfAgentType cr:SiteCoordinator ;
     hcls:jobTrigger "Visit.visitStatus = SCHEDULED; visit window approaching." ;
@@ -149,7 +157,8 @@ cr:COORD-J02 a hcls:JobToBeDone ;
     hcls:involvesObject cr:VisitOccurrence , cr:ActivityOccurrence , cr:eCRF ;
     hcls:executesAction cr:StartVisit , cr:UpdateCRF , cr:CollectSample , cr:CompleteVisit .
 
-cr:COORD-J03 a hcls:JobToBeDone ;
+cr:CaptureDataAndResolveQueries a hcls:JobToBeDone ;
+    skos:notation "COORD-J03" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Capture data cleanly and respond to queries" ;
     hcls:jobOfAgentType cr:SiteCoordinator ;
     hcls:jobTrigger "Data Manager raises a query; Discrepancy.queryStatus = OPEN." ;
@@ -159,7 +168,8 @@ cr:COORD-J03 a hcls:JobToBeDone ;
     hcls:involvesObject cr:eCRF ;
     hcls:executesAction cr:RespondToQuery , cr:UpdateCRF .
 
-cr:COORD-J04 a hcls:JobToBeDone ;
+cr:ReportAdverseEventsOnTime a hcls:JobToBeDone ;
+    skos:notation "COORD-J04" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Report adverse events within sponsor-required timelines" ;
     hcls:jobOfAgentType cr:SiteCoordinator ;
     hcls:jobTrigger "Adverse Event observed or reported by participant." ;
@@ -168,7 +178,8 @@ cr:COORD-J04 a hcls:JobToBeDone ;
     hcls:involvesObject cr:AdverseEvent ;
     hcls:executesAction cr:ReportAdverseEvent , cr:UpdateAdverseEventDetails , cr:FollowUpAdverseEvent .
 
-cr:COORD-J05 a hcls:JobToBeDone ;
+cr:KeepRegulatoryBinderCurrent a hcls:JobToBeDone ;
+    skos:notation "COORD-J05" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Keep the site regulatory binder and logs current" ;
     hcls:jobOfAgentType cr:SiteCoordinator ;
     hcls:jobTrigger "New amendment approved, new staff onboarded, or monitoring visit upcoming." ;
@@ -181,7 +192,8 @@ cr:COORD-J05 a hcls:JobToBeDone ;
 # Jobs to Be Done — Clinical Research Associate
 #################################################################
 
-cr:CRA-J01 a hcls:JobToBeDone ;
+cr:GetSiteReadyToEnroll a hcls:JobToBeDone ;
+    skos:notation "CRA-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Get a site ready to enroll its first participant" ;
     hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
     hcls:jobTrigger "Site.siteStatus enters READY_TO_INITIATE after Study Startup Package is ready." ;
@@ -191,7 +203,8 @@ cr:CRA-J01 a hcls:JobToBeDone ;
     hcls:involvesObject cr:StudySite , cr:Credential , cr:Delegation ;
     hcls:executesAction cr:ConductMonitoringVisit , cr:InitiateSite , cr:SubmitMonitoringReport .
 
-cr:CRA-J02 a hcls:JobToBeDone ;
+cr:VerifySiteDataAgainstSource a hcls:JobToBeDone ;
+    skos:notation "CRA-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Verify that site data matches source documents" ;
     hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
     hcls:jobTrigger "Monitoring visit scheduled or risk-based trigger fires." ;
@@ -201,7 +214,8 @@ cr:CRA-J02 a hcls:JobToBeDone ;
     hcls:involvesObject cr:eCRF ;
     hcls:executesAction cr:ConductMonitoringVisit , cr:CreateQuery , cr:RecordFinding , cr:SubmitMonitoringReport .
 
-cr:CRA-J03 a hcls:JobToBeDone ;
+cr:CatchAndCloseDeviationsEarly a hcls:JobToBeDone ;
+    skos:notation "CRA-J03" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Catch and close protocol deviations early" ;
     hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
     hcls:jobTrigger "Deviation identified during a monitoring visit or pattern review." ;
@@ -210,7 +224,8 @@ cr:CRA-J03 a hcls:JobToBeDone ;
     hcls:involvesObject cr:VisitOccurrence , cr:Participant ;
     hcls:executesAction cr:ReportDeviation , cr:RecordFinding .
 
-cr:CRA-J04 a hcls:JobToBeDone ;
+cr:CloseSiteCleanly a hcls:JobToBeDone ;
+    skos:notation "CRA-J04" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Close the site cleanly at study end" ;
     hcls:jobOfAgentType cr:ClinicalResearchAssociate ;
     hcls:jobTrigger "Site.siteStatus moves to CLOSED_TO_ENROLLMENT; close-out visit scheduled." ;
@@ -224,7 +239,8 @@ cr:CRA-J04 a hcls:JobToBeDone ;
 # Jobs to Be Done — Sponsor Project Manager
 #################################################################
 
-cr:PM-J01 a hcls:JobToBeDone ;
+cr:InitializeNewStudy a hcls:JobToBeDone ;
+    skos:notation "PM-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Initialize a new study" ;
     hcls:jobOfAgentType cr:SponsorProjectManager ;
     hcls:jobTrigger "Program approval; Sponsor Exec authorises study start." ;
@@ -234,7 +250,8 @@ cr:PM-J01 a hcls:JobToBeDone ;
     hcls:involvesObject cr:Study , cr:Arm ;
     hcls:executesAction cr:CreateStudy , cr:UpdateStudyDetails , cr:CreateArm , cr:CreateMilestone , cr:ActivateStudy .
 
-cr:PM-J02 a hcls:JobToBeDone ;
+cr:ActivateSitesToEnrollmentPlan a hcls:JobToBeDone ;
+    skos:notation "PM-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Select and activate sites to hit enrollment plan" ;
     hcls:jobOfAgentType cr:SponsorProjectManager ;
     hcls:jobTrigger "Study in IN_STARTUP; feasibility responses in from candidate sites." ;
@@ -243,7 +260,8 @@ cr:PM-J02 a hcls:JobToBeDone ;
     hcls:involvesObject cr:StudySite ;
     hcls:executesAction cr:SelectSiteForStudy , cr:AchieveMilestone .
 
-cr:PM-J03 a hcls:JobToBeDone ;
+cr:ManageEnrollmentToPlan a hcls:JobToBeDone ;
+    skos:notation "PM-J03" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Manage enrollment across sites to meet plan" ;
     hcls:jobOfAgentType cr:SponsorProjectManager ;
     hcls:jobTrigger "Study ENROLLING; enrollment plan and forecast in place." ;
@@ -252,7 +270,8 @@ cr:PM-J03 a hcls:JobToBeDone ;
     hcls:involvesObject cr:Study , cr:StudySite , cr:Participant ;
     hcls:executesAction cr:OpenEnrollment , cr:CloseEnrollment , cr:DelayMilestone , cr:RebaselineTimeline .
 
-cr:PM-J04 a hcls:JobToBeDone ;
+cr:DriveMilestonesAndTimeline a hcls:JobToBeDone ;
+    skos:notation "PM-J04" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Drive milestone achievement and timeline" ;
     hcls:jobOfAgentType cr:SponsorProjectManager ;
     hcls:jobTrigger "Milestone deadline approaches or slips." ;
@@ -261,7 +280,8 @@ cr:PM-J04 a hcls:JobToBeDone ;
     hcls:involvesObject cr:Study ;
     hcls:executesAction cr:AchieveMilestone , cr:DelayMilestone , cr:UpdateTimeline , cr:AssignTask .
 
-cr:PM-J05 a hcls:JobToBeDone ;
+cr:CloseAndArchiveStudy a hcls:JobToBeDone ;
+    skos:notation "PM-J05" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Close study and archive cleanly" ;
     hcls:jobOfAgentType cr:SponsorProjectManager ;
     hcls:jobTrigger "Last Patient Out (LPO) reached; database lock in progress." ;
@@ -275,7 +295,8 @@ cr:PM-J05 a hcls:JobToBeDone ;
 # Jobs to Be Done — Data Manager
 #################################################################
 
-cr:DM-J01 a hcls:JobToBeDone ;
+cr:ResolveQueriesToCleanData a hcls:JobToBeDone ;
+    skos:notation "DM-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Resolve open queries and achieve clean data state" ;
     hcls:jobOfAgentType cr:DataManager ;
     hcls:jobTrigger "Query created on a CRF; or discrepancy detected in incoming data." ;
@@ -284,7 +305,8 @@ cr:DM-J01 a hcls:JobToBeDone ;
     hcls:involvesObject cr:eCRF ;
     hcls:executesAction cr:CreateQuery , cr:AssignQuery , cr:CloseQuery , cr:ReopenQuery .
 
-cr:DM-J02 a hcls:JobToBeDone ;
+cr:LockCRFsAndDatabase a hcls:JobToBeDone ;
+    skos:notation "DM-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Lock CRFs and database for analysis" ;
     hcls:jobOfAgentType cr:DataManager ;
     hcls:jobTrigger "Last patient last visit completed; data cleaning cycle closed." ;
@@ -297,7 +319,8 @@ cr:DM-J02 a hcls:JobToBeDone ;
 # Jobs to Be Done — Pharmacovigilance Specialist
 #################################################################
 
-cr:PV-J01 a hcls:JobToBeDone ;
+cr:DetectAndEvaluateSafetySignals a hcls:JobToBeDone ;
+    skos:notation "PV-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Detect and evaluate emerging safety signals" ;
     hcls:jobOfAgentType cr:PharmacovigilianceSpecialist ;
     hcls:jobTrigger "Aggregate AE data shows unexpected frequency or severity pattern." ;
@@ -306,7 +329,8 @@ cr:PV-J01 a hcls:JobToBeDone ;
     hcls:involvesObject cr:AdverseEvent ;
     hcls:executesAction cr:IdentifySafetySignal , cr:EvaluateSafetySignal , cr:CloseSafetySignal .
 
-cr:PV-J02 a hcls:JobToBeDone ;
+cr:FileExpeditedSAEReports a hcls:JobToBeDone ;
+    skos:notation "PV-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "File expedited SAE reports within regulatory timelines" ;
     hcls:jobOfAgentType cr:PharmacovigilianceSpecialist ;
     hcls:jobTrigger "SAE meets expedited reporting criteria (unexpected + possibly related)." ;
@@ -319,7 +343,8 @@ cr:PV-J02 a hcls:JobToBeDone ;
 # Jobs to Be Done — Finance
 #################################################################
 
-cr:FIN-J01 a hcls:JobToBeDone ;
+cr:CreateAndApproveBudgets a hcls:JobToBeDone ;
+    skos:notation "FIN-J01" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Create and approve budgets per study and per site" ;
     hcls:jobOfAgentType cr:FinanceStaff ;
     hcls:jobTrigger "Study in IN_STARTUP; or new site activated." ;
@@ -329,7 +354,8 @@ cr:FIN-J01 a hcls:JobToBeDone ;
     hcls:involvesObject cr:Study , cr:StudySite ;
     hcls:executesAction cr:CreateBudget , cr:AddBudgetLineItem , cr:ApproveBudget , cr:LockBudget .
 
-cr:FIN-J02 a hcls:JobToBeDone ;
+cr:IssueSitePaymentsPerAccrual a hcls:JobToBeDone ;
+    skos:notation "FIN-J02" ;   # OOUX map coordinate — provenance, not identity (ADR-0024 / first-principles P2)
     rdfs:label "Issue payments to sites per budget and visit accrual" ;
     hcls:jobOfAgentType cr:FinanceStaff ;
     hcls:jobTrigger "Visit.visitStatus = COMPLETED; accrual condition met; invoice received." ;

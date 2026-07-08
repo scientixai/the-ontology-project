@@ -25,6 +25,30 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Changed — Convener sanity-review fixes, round 1 (first-principles P2)
+
+- **25 Jobs-to-Be-Done renamed** from jargon-coded IRIs (`cr:PI-J01`,
+  `cr:COORD-J03`, ...) to operator-vocabulary names
+  (`cr:OverseeStudyConductAtSite`, `cr:CaptureDataAndResolveQueries`, ...).
+  The OOUX map coordinate is preserved as `skos:notation` — provenance, not
+  identity. P2's own rule: nobody says "PI-J01" aloud.
+- **`tools/naming_check.py` extended to named individuals** — jargon-coded
+  instance IRIs are now mechanically impossible, with a principled exception
+  for regulatory citations (`ICH_E6_R3`, `CFR_21_Part_11`), where the
+  citation IS the operator name.
+- **Success-signal jargon removed**: "Form 1572 (US studies)" restated
+  jurisdiction-neutrally; system-field prose ("electronicSignatureStatus =
+  SIGNED", "Person.delegatedBy") restated in operator language.
+- **`cr-core-ai.ttl` promoted to Core** (`core/v1/modules/top-ai.ttl`): the
+  LLM-provenance properties (`top:promptTemplate`/`sourceContext`/
+  `modelVersion`) are domain-agnostic — the AI face of P4 — now with a PII
+  scope note; the `cx:` HITL-gate properties moved to `crosswalk-vocab.ttl`
+  (IRIs unchanged). Core dist rebuilt; upstream pin updated deliberately.
+- **Blinding error corrected in the action catalog**:
+  `cr:AssignParticipantsToArm` (authorized: Site Coordinator — impossible in
+  a blinded study) is now `cr:RequestRandomization`; the assignment itself is
+  the randomization system's act (`cr:RandomizationEvent`).
+
 ### Added — Seven in-scope sub-domains (the deferral register, shipped)
 
 Every entry from the BOUNDARIES.md "Deferred within scope" register that was

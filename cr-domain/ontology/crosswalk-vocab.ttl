@@ -90,3 +90,22 @@ cx:verificationStatus a owl:DatatypeProperty ;
     rdfs:comment "verified | unverified | deprecated — whether the target IRI was confirmed against a primary source." ;
     ns1:flavor "Additive" .
 
+
+# ── LLM provenance on cx:Mapping (HITL gate support; moved from cr-core-ai.ttl
+#    when its top: properties were promoted to core/v1/modules/top-ai.ttl) ─────
+
+cx:inferredBy a owl:ObjectProperty ;
+    rdfs:label "inferred by" ;
+    rdfs:comment "The LLM agent (prov:SoftwareAgent IRI) that produced this mapping candidate. Presence triggers the SHACL HITL gate." ;
+    rdfs:domain cx:Mapping .
+
+cx:confirmedBy a owl:ObjectProperty ;
+    rdfs:label "confirmed by" ;
+    rdfs:comment "The human curator (prov:Person IRI) who reviewed and approved an LLM-inferred mapping. Required before verificationStatus may be set to 'verified'." ;
+    rdfs:domain cx:Mapping .
+
+cx:mappingMethod a owl:DatatypeProperty ;
+    rdfs:label "mapping method" ;
+    rdfs:comment "Free-text tag describing how the mapping was produced. Controlled values: 'ManualCuration', 'LLMInference', 'LexicalMatching', 'LogicalReasoning'." ;
+    rdfs:domain cx:Mapping ;
+    rdfs:range xsd:string .
