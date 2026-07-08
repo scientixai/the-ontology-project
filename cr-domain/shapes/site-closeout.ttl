@@ -1,0 +1,79 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/shapes/site-closeout-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — site closeout" .
+
+# A reconciliation says what it balanced and how it came out.
+cr:ReconciliationShape a sh:NodeShape ;
+    sh:targetClass cr:Reconciliation ;
+    sh:property [
+        sh:path cr:reconciliationScope ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "IMP" "device" "documents" "queries" ) ;
+        sh:message "cr:reconciliationScope must be one of: IMP, device, documents, queries." ;
+    ] ;
+    sh:property [
+        sh:path cr:reconcilesSite ;
+        sh:minCount 1 ;
+        sh:class cr:StudySite ;
+        sh:message "A reconciliation must name the site it balances." ;
+    ] ;
+    sh:property [
+        sh:path cr:reconciliationOutcome ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "balanced" "discrepant" ) ;
+        sh:message "cr:reconciliationOutcome must be 'balanced' or 'discrepant'." ;
+    ] .
+
+# A site is closed by evidence, not declaration: a closure must rest on a
+# Close-Out Visit and >=1 reconciliation — and every reconciliation it rests
+# on must be balanced.
+cr:SiteClosureShape a sh:NodeShape ;
+    sh:targetClass cr:SiteClosure ;
+    sh:property [
+        sh:path cr:closesSite ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:StudySite ;
+        sh:message "A closure must name the site it closes." ;
+    ] ;
+    sh:property [
+        sh:path cr:closureRestsOnCOV ;
+        sh:minCount 1 ;
+        sh:class cr:CloseOutVisit ;
+        sh:message "Violation: site closure without a Close-Out Visit — a site is closed by evidence, not declaration." ;
+    ] ;
+    sh:property [
+        sh:path cr:closureRestsOnReconciliation ;
+        sh:minCount 1 ;
+        sh:class cr:Reconciliation ;
+        sh:message "Violation: site closure resting on no reconciliation." ;
+    ] ;
+    sh:sparql [
+        sh:message "Violation: site closure rests on a reconciliation that is 'discrepant' — resolve (a later balanced reconciliation) before closing." ;
+        sh:severity sh:Violation ;
+        sh:prefixes <https://top.scientix.ai/shapes/site-closeout-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:closureRestsOnReconciliation ?r .
+                ?r cr:reconciliationOutcome "discrepant" .
+            }
+        """ ;
+    ] .
+
+# Archival opens a retention clock or it isn't archival (governance Warning).
+cr:ArchivalShape a sh:NodeShape ;
+    sh:targetClass cr:ArchivalEvent ;
+    sh:severity sh:Warning ;
+    sh:property [
+        sh:path cr:retentionUntil ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Warning: archival without a retention horizon (cr:retentionUntil) — the retention clock never started." ;
+    ] .

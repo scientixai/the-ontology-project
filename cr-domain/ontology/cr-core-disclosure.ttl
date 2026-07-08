@@ -1,0 +1,122 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/cr/v1/disclosure> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "CR-core — integrated summaries & disclosure" ;
+    dct:description "Two submission-and-transparency layers the CSR/eCTD spine didn't carry (Operating Model §3.4): (1) the Integrated Summaries of Safety and Efficacy (ISS/ISE) — cross-study analyses that rest on the per-study locked datasets; the summary KIND is a value, not a class (ADR-0024). (2) The public-disclosure obligations: the trial-registry record (ClinicalTrials.gov / EUCTR — registration, results posting) and publications. Disclosure artifacts are projections of already-produced results, never new sources of truth — the same manifest discipline as the eCTD." .
+
+# ── Integrated summaries (ISS / ISE) ─────────────────────────────────────────
+
+cr:IntegratedSummary a owl:Class ;
+    rdfs:label "Integrated Summary" ;
+    skos:definition "A cross-study integrated analysis prepared for a marketing application — the Integrated Summary of Safety (ISS) or of Efficacy (ISE) — resting on the locked analysis datasets of the studies it integrates." ;
+    rdfs:comment "The kind (safety vs efficacy) is cr:summaryKind, a value — not two classes (ADR-0024). Multi-study by construction: >=1 cr:integratesStudy, each referenced by IRI. Derives from the per-study ADaM datasets via prov:wasDerivedFrom, so the integrated number is reproducible to each study's source." ;
+    rdfs:subClassOf top:Evidence ,
+        top:Versioned .
+
+cr:summaryKind a owl:DatatypeProperty ;
+    rdfs:label "summary kind" ;
+    rdfs:comment "Controlled: 'safety' (ISS) | 'efficacy' (ISE)." ;
+    rdfs:domain cr:IntegratedSummary ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:integratesStudy a owl:ObjectProperty ;
+    rdfs:label "integrates study" ;
+    rdfs:comment "A study whose results this summary integrates (intended range cr:Study; left open so the summary references studies by IRI without re-typing them — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:IntegratedSummary ;
+    top:flavor "Additive" .
+
+cr:includesSummary a owl:ObjectProperty ;
+    rdfs:label "includes summary" ;
+    rdfs:comment "The eCTD manifest edge for integrated summaries (Module 5.3.5.3) — alongside includesReport / includesDataset / includesDefine." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:IntegratedSummary ;
+    top:flavor "Additive" .
+
+# ── Trial-registry disclosure (ClinicalTrials.gov / EUCTR) ────────────────────
+
+cr:RegistryRecord a owl:Class ;
+    rdfs:label "Registry Record" ;
+    skos:definition "The public trial-registry record for a study (ClinicalTrials.gov, EUCTR, ISRCTN): its registration, and later its posted results — the FDAAA 801 / EU CTR transparency obligation." ;
+    rdfs:comment "Bitemporal by construction: registration time and results-posting time are separate valid-time facts; the results POSTED are a projection of already-produced endpoint results (referenced by IRI), never re-authored." ;
+    rdfs:subClassOf top:Evidence ,
+        top:Versioned .
+
+cr:registryName a owl:DatatypeProperty ;
+    rdfs:label "registry name" ;
+    rdfs:comment "Controlled: 'ClinicalTrials.gov' | 'EUCTR' | 'ISRCTN' | 'jRCT' | 'ChiCTR'." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:registryIdentifier a owl:DatatypeProperty ;
+    rdfs:label "registry identifier" ;
+    rdfs:comment "The registry's public identifier (e.g. NCT number 'NCT05123456')." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:registersStudy a owl:ObjectProperty ;
+    rdfs:label "registers study" ;
+    rdfs:comment "The study this registry record discloses (intended range cr:Study; left open — by-IRI reference, no target cascade)." ;
+    rdfs:domain cr:RegistryRecord ;
+    top:flavor "Additive" .
+
+cr:registeredAt a owl:DatatypeProperty ;
+    rdfs:label "registered at" ;
+    rdfs:comment "When the study was registered (FDAAA: within 21 days of first enrollment)." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:resultsPostedAt a owl:DatatypeProperty ;
+    rdfs:label "results posted at" ;
+    rdfs:comment "When results were posted (FDAAA: generally within 12 months of primary completion). Absent until posted; the overdue check is a bitemporal detective query, not a shape." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:postsResult a owl:ObjectProperty ;
+    rdfs:label "posts result" ;
+    rdfs:comment "An endpoint result the registry posting discloses — referenced by IRI from the analysis layer, never re-authored." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .
+
+# ── Publications ─────────────────────────────────────────────────────────────
+
+cr:Publication a owl:Class ;
+    rdfs:label "Publication" ;
+    skos:definition "A peer-reviewed article, conference abstract, or preprint disclosing study results — reporting results that trace to the analysis layer." ;
+    rdfs:comment "The kind (article/abstract/preprint) is cr:publicationKind, a value (ADR-0024). A publication reporting a result cites it by IRI (cr:disclosesResult) — 'what does this paper's number rest on' is the same graph walk as the CSR's cr:reportsResult." ;
+    rdfs:subClassOf top:Evidence ,
+        top:Versioned .
+
+cr:publicationKind a owl:DatatypeProperty ;
+    rdfs:label "publication kind" ;
+    rdfs:comment "Controlled: 'journal-article' | 'conference-abstract' | 'preprint'." ;
+    rdfs:domain cr:Publication ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:disclosesResult a owl:ObjectProperty ;
+    rdfs:label "discloses result" ;
+    rdfs:comment "An endpoint result this publication (or other disclosure) reports — cited by IRI from the analysis layer. The disclosure counterpart of the CSR's cr:reportsResult (which is domain-locked to CSR sections)." ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .
+
+cr:publicationDOI a owl:DatatypeProperty ;
+    rdfs:label "publication DOI" ;
+    rdfs:comment "The DOI (or registry URL for abstracts without one)." ;
+    rdfs:domain cr:Publication ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .

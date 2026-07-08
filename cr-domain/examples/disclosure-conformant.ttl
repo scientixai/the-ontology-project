@@ -1,0 +1,90 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — integrated summaries & disclosure, done correctly.
+#
+# An ISS integrates two studies, deriving from their per-study ADaM datasets
+# (BDS/ADSL structures declared). The registry record registers the study and
+# — when results post — cites the endpoint result by IRI. A journal article
+# reports the same result: the paper's number rests on the same leaf fact.
+#
+# CONFORMANT: 0 violations, 0 warnings.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:dc-biostat a hcls:Practitioner ; rdfs:label "Lead Biostatistician" .
+ex:dc-sponsor a hcls:Organization ; rdfs:label "Sponsor regulatory affairs" .
+
+# ── Per-study analysis datasets (structures declared) ─────────────────────────
+ex:dc-native1 a prov:Entity ; rdfs:label "OPP-101 native facts" .
+ex:dc-native2 a prov:Entity ; rdfs:label "OPP-201 native facts" .
+
+ex:dc-adsl1 a cr:AnalysisDataset ; rdfs:label "OPP-101 ADSL" ;
+    top:identifier "urn:adam:ADSL-101" ; top:status "active" ;
+    cr:datasetName "ADSL" ; cr:datasetStructure "ADSL" ;
+    prov:wasDerivedFrom ex:dc-native1 ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dc-biostat .
+
+ex:dc-adae2 a cr:AnalysisDataset ; rdfs:label "OPP-201 ADAE" ;
+    top:identifier "urn:adam:ADAE-201" ; top:status "active" ;
+    cr:datasetName "ADAE" ; cr:datasetStructure "OCCDS" ;
+    prov:wasDerivedFrom ex:dc-native2 ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dc-biostat .
+
+# ── The ISS: cross-study, reproducible to each study's source ─────────────────
+ex:dc-iss a cr:IntegratedSummary ; rdfs:label "ISS — OPP-101 + OPP-201" ;
+    top:identifier "urn:iss:OPP-program" ; top:status "active" ;
+    cr:summaryKind "safety" ;
+    cr:integratesStudy ex:study-opp101 , ex:study-opp201 ;   # by IRI, never re-typed
+    prov:wasDerivedFrom ex:dc-adsl1 , ex:dc-adae2 ;
+    top:observedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dc-biostat .
+
+# ── The endpoint result the disclosures cite (fully pre-specified) ────────────
+ex:dc-endpoint a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
+ex:dc-estimand a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed, RECIST 1.1)" .
+ex:dc-sap a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+
+ex:dc-result a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
+    top:identifier "urn:result:orr-dc" ; top:status "active" ;
+    cr:measuresEndpoint ex:dc-endpoint ;
+    cr:perEstimand ex:dc-estimand ;
+    cr:analyzedUnder ex:dc-sap ;
+    prov:wasDerivedFrom ex:dc-adae2 ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dc-biostat .
+
+# ── Registry record: registered, results posted citing the result by IRI ──────
+ex:dc-registry a cr:RegistryRecord ; rdfs:label "NCT05123456 — OPP-201" ;
+    top:identifier "urn:registry:NCT05123456" ; top:status "active" ;
+    cr:registryName "ClinicalTrials.gov" ;
+    cr:registryIdentifier "NCT05123456" ;
+    cr:registersStudy ex:study-opp201 ;
+    cr:registeredAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    cr:resultsPostedAt "2026-10-15T00:00:00Z"^^xsd:dateTime ;
+    cr:postsResult ex:dc-result ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-20T00:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dc-sponsor .
+
+# ── The paper reports the same result — same leaf fact, same graph walk ───────
+ex:dc-paper a cr:Publication ; rdfs:label "Phase 2 results of OPP-201 (J Clin Oncol)" ;
+    top:identifier "urn:pub:opp201-jco" ; top:status "active" ;
+    cr:publicationKind "journal-article" ;
+    cr:publicationDOI "10.1200/JCO.2026.44.001" ;
+    cr:disclosesResult ex:dc-result ;
+    top:observedAt "2026-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-11-01T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dc-sponsor .

@@ -1,0 +1,93 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/shapes/supply-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — drug supply & IMP accountability" .
+
+# Dispensing is the pivotal accountability event: to exactly one pseudonymous
+# Participant, from exactly one lot, with a quantity.
+cr:DispensingEventShape a sh:NodeShape ;
+    sh:targetClass cr:DispensingEvent ;
+    sh:property [
+        sh:path cr:dispensesToSubject ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:StudySubject ;
+        sh:message "Dispensing must be to exactly one Participant (cr:StudySubject) — never an identifiable Person." ;
+    ] ;
+    sh:property [
+        sh:path cr:dispensesFromLot ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class hcls:Lot ;
+        sh:message "Dispensing must trace to exactly one hcls:Lot (the accountability chain)." ;
+    ] ;
+    sh:property [
+        sh:path cr:quantityDispensed ;
+        sh:minCount 1 ;
+        sh:datatype xsd:integer ;
+        sh:message "Dispensing must record its quantity." ;
+    ] .
+
+# Product never silently leaves the chain: destruction requires an authorizer
+# and a quantity.
+cr:DestructionEventShape a sh:NodeShape ;
+    sh:targetClass cr:DestructionEvent ;
+    sh:property [
+        sh:path cr:destroysLot ;
+        sh:minCount 1 ;
+        sh:class hcls:Lot ;
+        sh:message "Destruction must name the lot it closes out." ;
+    ] ;
+    sh:property [
+        sh:path cr:destructionAuthorizedBy ;
+        sh:minCount 1 ;
+        sh:class hcls:Person ;
+        sh:message "Violation: destruction without a recorded authorizer — product never silently leaves the accountability chain." ;
+    ] ;
+    sh:property [
+        sh:path cr:quantityDestroyed ;
+        sh:minCount 1 ;
+        sh:datatype xsd:integer ;
+        sh:message "Destruction must record the destroyed quantity." ;
+    ] .
+
+# A temperature excursion quarantines what it touched until dispositioned:
+# an excursion still 'quarantined' with a later dispensing from the same lot
+# is flagged. Excursion disposition must be from the controlled list.
+cr:TemperatureExcursionShape a sh:NodeShape ;
+    sh:targetClass cr:TemperatureExcursion ;
+    sh:property [
+        sh:path cr:excursionOnLot ;
+        sh:minCount 1 ;
+        sh:class hcls:Lot ;
+        sh:message "An excursion must name the affected lot." ;
+    ] ;
+    sh:property [
+        sh:path cr:excursionDisposition ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "quarantined" "released" "rejected" ) ;
+        sh:message "cr:excursionDisposition must be one of: quarantined, released, rejected." ;
+    ] ;
+    sh:sparql [
+        sh:message "Violation: product dispensed from a lot while a temperature excursion on it is still 'quarantined' (dispensing valid-time after the excursion's)." ;
+        sh:severity sh:Violation ;
+        sh:prefixes <https://top.scientix.ai/shapes/supply-v1> ;
+        sh:select """
+            PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+            PREFIX top: <https://top.scientix.ai/v1#>
+            SELECT $this WHERE {
+                $this cr:excursionDisposition "quarantined" ;
+                      cr:excursionOnLot ?lot ;
+                      top:observedAt ?et .
+                ?d a cr:DispensingEvent ;
+                   cr:dispensesFromLot ?lot ;
+                   top:observedAt ?dt .
+                FILTER ( ?dt > ?et )
+            }
+        """ ;
+    ] .

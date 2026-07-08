@@ -178,7 +178,64 @@ cr:eCTDSubmissionView a sh:NodeShape ;
     sh:property [ sh:path cr:includesDataset ;    sh:name "includesDataset" ; sh:node cr:DatasetLeaf ] ;
     sh:property [ sh:path cr:includesDefine ;     sh:name "includesDefine" ; sh:node cr:DefineLeaf ] .
 
+# --- Recruitment funnel: the candidate -> campaign, screening, conversion -----
+cr:RecruitFunnelView a sh:NodeShape ;
+    sh:targetClass cr:Recruit ;
+    sh:property [ sh:path cr:respondedToCampaign ; sh:name "campaign" ;   sh:node cr:CampaignLeaf ] ;
+    sh:property [ sh:path cr:hasScreening ;        sh:name "screening" ;  sh:node cr:ScreeningView ] ;
+    sh:property [ sh:path cr:convertedBy ;         sh:name "conversion" ; sh:node cr:ConversionView ] .
+
+cr:ScreeningView a sh:NodeShape ;
+    sh:property [ sh:path cr:failedCriterion ;     sh:name "failedCriterion" ; sh:node cr:CriterionLeaf ] .
+
+cr:ConversionView a sh:NodeShape ;
+    sh:property [ sh:path cr:asSubject ;           sh:name "subject" ;    sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:enrolledInArm ;       sh:name "arm" ;        sh:node cr:ArmLeaf ] .
+
+# --- Randomization: the blinded kit -> its randomization (subject + arm) ------
+cr:KitAssignmentView a sh:NodeShape ;
+    sh:targetClass cr:KitAssignment ;
+    sh:property [ sh:path cr:assignsKitTo ;        sh:name "subject" ;    sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:underRandomization ;  sh:name "randomization" ; sh:node cr:RandomizationView ] .
+
+cr:RandomizationView a sh:NodeShape ;
+    sh:property [ sh:path cr:assignsArm ;          sh:name "arm" ;        sh:node cr:ArmLeaf ] ;
+    sh:property [ sh:path cr:randomizesSubject ;   sh:name "subject" ;    sh:node cr:SubjectLeaf ] .
+
+# --- IMP accountability: the dispensing -> participant + lot -------------------
+cr:DispensingView a sh:NodeShape ;
+    sh:targetClass cr:DispensingEvent ;
+    sh:property [ sh:path cr:dispensesToSubject ;  sh:name "subject" ;    sh:node cr:SubjectLeaf ] ;
+    sh:property [ sh:path cr:dispensesFromLot ;    sh:name "lot" ;        sh:node cr:LotLeaf ] .
+
+# --- Medical coding: the assignment -> what it codes, the code, the review ----
+cr:CodeAssignmentView a sh:NodeShape ;
+    sh:targetClass cr:CodeAssignment ;
+    sh:property [ sh:path cr:codesEntity ;         sh:name "codes" ;      sh:node cr:CodedEntityLeaf ] ;
+    sh:property [ sh:path cr:assignedCode ;        sh:name "assignedCode" ] ;
+    sh:property [ sh:path cr:codedBy ;             sh:name "codedBy" ;    sh:node cr:PersonLeaf ] ;
+    sh:property [ sh:path cr:hasReview ;           sh:name "review" ;     sh:node cr:CodingReviewView ] .
+
+cr:CodingReviewView a sh:NodeShape ;
+    sh:property [ sh:path cr:reviewedBy ;          sh:name "reviewedBy" ; sh:node cr:PersonLeaf ] .
+
+# --- Site closeout: the closure -> its COV + the reconciliations it rests on --
+cr:SiteClosureView a sh:NodeShape ;
+    sh:targetClass cr:SiteClosure ;
+    sh:property [ sh:path cr:closesSite ;                    sh:name "site" ;            sh:node cr:SiteLeaf ] ;
+    sh:property [ sh:path cr:closureRestsOnCOV ;             sh:name "closeOutVisit" ;   sh:node cr:COVView ] ;
+    sh:property [ sh:path cr:closureRestsOnReconciliation ;  sh:name "reconciliations" ; sh:node cr:ReconLeaf ] .
+
+cr:COVView a sh:NodeShape ;
+    sh:property [ sh:path cr:conductedByCRA ;      sh:name "conductedBy" ; sh:node cr:PersonLeaf ] .
+
 # --- Leaf shapes (inline scalar facts only; no further relationship-following)-
+cr:CampaignLeaf   a sh:NodeShape .
+cr:CriterionLeaf  a sh:NodeShape .
+cr:ArmLeaf        a sh:NodeShape .
+cr:LotLeaf        a sh:NodeShape .
+cr:CodedEntityLeaf a sh:NodeShape .
+cr:ReconLeaf      a sh:NodeShape .
 cr:BriefingBookLeaf a sh:NodeShape .
 cr:QuestionLeaf   a sh:NodeShape .
 cr:LTFULeaf       a sh:NodeShape .

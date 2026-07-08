@@ -1,0 +1,125 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/cr/v1/recruitment> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "CR-core — recruitment & screening funnel" ;
+    dct:description "The funnel from outreach to enrolled participant (Operating Model §2.2–2.3): campaign → candidate → pre-screening → screening → conversion. The candidate (cr:Recruit) is a SITE-BOUNDARY identity like hcls:Person — PII-side, never referenced by downstream clinical data; conversion to the pseudonymous cr:StudySubject happens only through the attested cr:Enrollment bridge. Screen failure is an OUTCOME VALUE, not a class (ADR-0024 one-question gate: a classification of a screening, not a kind of thing)." .
+
+# ── Classes ──────────────────────────────────────────────────────────────────
+
+cr:RecruitmentCampaign a owl:Class ;
+    rdfs:label "Recruitment Campaign" ;
+    skos:definition "A planned outreach effort to find candidates for a study — advertising, referral programs, EHR cohort searches, community outreach." ;
+    rdfs:comment "The top of the funnel. Carries its channel (cr:campaignChannel) and the study it recruits for." ;
+    rdfs:subClassOf top:Scope .
+
+cr:Recruit a owl:Class ;
+    rdfs:label "Recruit" ;
+    skos:definition "A candidate considered for study participation, from first contact until conversion (enrollment) or exit. A site-boundary identity: PII-side, like hcls:Person." ;
+    rdfs:comment "PII containment: downstream clinical data NEVER references a Recruit (cr:forSubject ranges over cr:StudySubject only). The candidate's identifiable record stays inside the site boundary; conversion to a pseudonymous Participant happens only via the attested cr:Enrollment bridge. Retires the legacy undefined cr:Recruit used by pre-rich-shell examples." ;
+    rdfs:subClassOf top:Agent .
+
+cr:PreScreening a owl:Class ;
+    rdfs:label "Pre-Screening" ;
+    skos:definition "A preliminary eligibility check performed before consent — a phone script, an EHR filter, a questionnaire — that decides whether a candidate proceeds to full screening." ;
+    rdfs:subClassOf top:Temporal .
+
+cr:ScreeningRecord a owl:Class ;
+    rdfs:label "Screening Record" ;
+    skos:definition "The record of formally screening a consented candidate against the protocol's eligibility criteria, with a coded outcome (eligible / screen-failure / withdrew)." ;
+    rdfs:comment "Screen failure is cr:screeningOutcome \"screen-failure\", not a subclass (ADR-0024). The screen-failure reason cites the failed cr:EligibilityCriterion by IRI." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+# ── Properties ───────────────────────────────────────────────────────────────
+
+cr:recruitsForStudy a owl:ObjectProperty ;
+    rdfs:label "recruits for study" ;
+    rdfs:comment "The study a campaign recruits candidates for (intended range cr:Study; left open so a recruitment graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:RecruitmentCampaign ;
+    top:flavor "Additive" .
+
+cr:campaignChannel a owl:DatatypeProperty ;
+    rdfs:label "campaign channel" ;
+    rdfs:comment "Controlled: 'advertising' | 'referral' | 'ehr-search' | 'registry' | 'community' | 'advocacy'." ;
+    rdfs:domain cr:RecruitmentCampaign ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:respondedToCampaign a owl:ObjectProperty ;
+    rdfs:label "responded to campaign" ;
+    rdfs:comment "The campaign this candidate came from — the funnel's source-attribution edge." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:RecruitmentCampaign ;
+    top:flavor "Additive" .
+
+cr:recruitmentSource a owl:DatatypeProperty ;
+    rdfs:label "recruitment source" ;
+    rdfs:comment "Free-text source note when no campaign entity exists (e.g. 'physician referral, Dr. Chen'). Prefer cr:respondedToCampaign; a Recruit with neither is flagged (Warning)." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:candidatePerson a owl:ObjectProperty ;
+    rdfs:label "candidate person" ;
+    rdfs:comment "The identifiable person behind this candidate record (site-boundary, PII-side)." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:prescreens a owl:ObjectProperty ;
+    rdfs:label "prescreens" ;
+    rdfs:comment "The candidate a pre-screening evaluated." ;
+    rdfs:domain cr:PreScreening ;
+    rdfs:range cr:Recruit ;
+    top:flavor "Additive" .
+
+cr:prescreenOutcome a owl:DatatypeProperty ;
+    rdfs:label "prescreen outcome" ;
+    rdfs:comment "Controlled: 'proceed' | 'not-eligible' | 'declined'." ;
+    rdfs:domain cr:PreScreening ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:screensRecruit a owl:ObjectProperty ;
+    rdfs:label "screens recruit" ;
+    rdfs:comment "The candidate this screening record concerns." ;
+    rdfs:domain cr:ScreeningRecord ;
+    rdfs:range cr:Recruit ;
+    top:flavor "Additive" .
+
+cr:screeningOutcome a owl:DatatypeProperty ;
+    rdfs:label "screening outcome" ;
+    rdfs:comment "Controlled: 'eligible' | 'screen-failure' | 'withdrew'. Screen failure is this value, never a class (ADR-0024)." ;
+    rdfs:domain cr:ScreeningRecord ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:failedCriterion a owl:ObjectProperty ;
+    rdfs:label "failed criterion" ;
+    rdfs:comment "The eligibility criterion a screen-failure failed against — the reason cited by IRI, not free text." ;
+    rdfs:domain cr:ScreeningRecord ;
+    rdfs:range cr:EligibilityCriterion ;
+    top:flavor "Additive" .
+
+cr:hasScreening a owl:ObjectProperty ;
+    rdfs:label "has screening" ;
+    rdfs:comment "Forward retrieval edge (ETSI forward-only single-pull): the screening record for this candidate. Inverse of cr:screensRecruit." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:ScreeningRecord ;
+    owl:inverseOf cr:screensRecruit ;
+    top:flavor "Additive" .
+
+cr:convertedBy a owl:ObjectProperty ;
+    rdfs:label "converted by" ;
+    rdfs:comment "The Enrollment act that converted this candidate into a pseudonymous Participant — the ONLY path across the PII boundary. An enrollment converting a candidate whose screening outcome is not 'eligible' is a Violation." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:Enrollment ;
+    top:flavor "Additive" .

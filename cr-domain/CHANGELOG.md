@@ -25,6 +25,48 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Added — Seven in-scope sub-domains (the deferral register, shipped)
+
+Every entry from the BOUNDARIES.md "Deferred within scope" register that was
+in reach for v1, shipped the standard way: module + graded shapes + conformant
+and violation examples + gated tests + a docs page at the operator-screen bar
++ thesaurus dialects. All classifications ride as values, never subclasses
+(ADR-0024 one-question gate).
+
+- **`cr-core-recruitment.ttl` + `shapes/recruitment.ttl`** — the funnel
+  (Operating Model §2.2–2.3): campaign → `cr:Recruit` (site-boundary, PII-side)
+  → pre-screening → `cr:ScreeningRecord` (outcome as value; screen-failure must
+  cite the failed criterion by IRI) → conversion gated on 'eligible'
+  (Violation). Retires the legacy undefined `cr:Recruit`/`cr:ScreeningRecord`.
+- **`cr-core-randomization.ttl` + `shapes/randomization.ttl`** — IxRS/RTSM
+  events as facts: `cr:RandomizationEvent`, blinded `cr:KitAssignment`,
+  audited `cr:UnblindingEvent` (reason + authorizer required — the
+  DatabaseUnlock discipline applied to the blind).
+- **`cr-core-supply.ttl` + `shapes/supply.ttl` +
+  `projections/accountability_log.rq`** — IMP custody events on `hcls:Lot`
+  (ship/dispense/return/destroy) with the drug log as a projection;
+  `cr:TemperatureExcursion` quarantine (dispensing from a quarantined lot =
+  Violation; unauthorized destruction = Violation).
+- **`cr-core-coding.ttl` + `shapes/coding.ttl`** — the coding workflow:
+  `cr:CodeAssignment` as a promoted judgment (verbatim, BYOL dictionary IRI,
+  version required, method as value) + `cr:CodingReview`; unreviewed autocode
+  = Warning. WHODrug BYOL reference properties join the MedDRA set.
+- **`cr-core-adam.ttl` v1.1** — ADaM structure classes (ADSL/BDS/OCCDS) as
+  controlled values, `cr:AnalysisVariable` (PARAMCD), structure-enum shape.
+- **`cr-core-disclosure.ttl` + `shapes/disclosure.ttl`** — `cr:IntegratedSummary`
+  (ISS/ISE kind as value; ≥1 `cr:integratesStudy`; must derive from the
+  per-study datasets), `cr:RegistryRecord` (NCT; posted results must cite
+  results by IRI), `cr:Publication` (+`cr:disclosesResult`), and the
+  `cr:includesSummary` eCTD manifest edge.
+- **`cr-core-site-closeout.ttl` + `shapes/site-closeout.ttl`** — COV,
+  `cr:Reconciliation` (one class, four scope values), `cr:InvestigatorSiteFile`,
+  archival with retention clock, and `cr:SiteClosure` that must rest on the
+  COV + balanced reconciliations (closed by evidence, not declaration).
+- **Docs**: five new flow pages at the full bar (claim, train-stops, operator
+  screen + API tabs over real single-pull views, entities, validates tables);
+  ISS/disclosure folded into the submission page, ADaM structure into EOP2.
+- **Suite**: SHACL 79→91, projections 23→24, single-pull views 17→22.
+
 ### Added — Operator thesaurus & vocabulary discipline (ADR-0024)
 
 The Pipeline layer-1/layer-4 build: operator dialects through the pipeline.

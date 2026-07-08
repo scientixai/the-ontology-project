@@ -2,8 +2,8 @@
 @prefix cx: <https://top.scientix.ai/crosswalk/v1#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
-@prefix ns1: <http://www.w3.org/2008/05/skos-xl#> .
-@prefix ns2: <https://top.scientix.ai/tmf/v1#> .
+@prefix ns1: <https://top.scientix.ai/tmf/v1#> .
+@prefix ns2: <http://www.w3.org/2008/05/skos-xl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -1207,6 +1207,12 @@ cr:analysisCompletedAt a owl:DatatypeProperty ;
     rdfs:range xsd:dateTime ;
     top:flavor "Additive" .
 
+cr:analysisFlag a owl:DatatypeProperty ;
+    rdfs:label "analysis flag" ;
+    rdfs:comment "A population/record flag name applied at analysis (e.g. 'ITTFL', 'SAFFL') — the flag DEFINITION reference; membership itself is the analysis-population projection (projections/analysis_population_membership.rq)." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:analysisMethod a owl:DatatypeProperty ;
     rdfs:label "analysis method" ;
     rdfs:comment "Statistical analysis method name or STATO IRI (e.g. 'mixed model repeated measures')." ;
@@ -1228,6 +1234,13 @@ cr:anchorDate a owl:DatatypeProperty ;
     rdfs:comment "The resolved anchor (e.g. the subject's enrollment date) from which target dates are computed." ;
     rdfs:domain cr:ParticipantSchedule ;
     rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:archivesISF a owl:ObjectProperty ;
+    rdfs:label "archives ISF" ;
+    rdfs:comment "The Investigator Site File this archival event moves into retention." ;
+    rdfs:domain cr:ArchivalEvent ;
+    rdfs:range cr:InvestigatorSiteFile ;
     top:flavor "Additive" .
 
 cr:asSubject a owl:ObjectProperty ;
@@ -1280,6 +1293,26 @@ cr:assessmentUnit a owl:DatatypeProperty ;
     rdfs:comment "UCUM unit code for the result (e.g. 'kg', 'mmHg')." ;
     rdfs:domain cr:Assessment ;
     rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assignedCode a owl:ObjectProperty ;
+    rdfs:label "assigned code" ;
+    rdfs:comment "IRI reference to the assigned dictionary term (MedDRA LLT/PT or WHODrug record). BYOL — does not reproduce licensed content." ;
+    rdfs:domain cr:CodeAssignment ;
+    top:flavor "Additive" .
+
+cr:assignsArm a owl:ObjectProperty ;
+    rdfs:label "assigns arm" ;
+    rdfs:comment "The treatment arm the event assigns. In a blinded study this edge lives in the randomization system's graph partition, not the site's." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range cr:Arm ;
+    top:flavor "Additive" .
+
+cr:assignsKitTo a owl:ObjectProperty ;
+    rdfs:label "assigns kit to" ;
+    rdfs:comment "The participant the kit is assigned to." ;
+    rdfs:domain cr:KitAssignment ;
+    rdfs:range cr:StudySubject ;
     top:flavor "Additive" .
 
 cr:atSite a owl:ObjectProperty ;
@@ -1348,6 +1381,20 @@ cr:builtOnLock a owl:ObjectProperty ;
     rdfs:range cr:DatabaseLock ;
     top:flavor "Additive" .
 
+cr:campaignChannel a owl:DatatypeProperty ;
+    rdfs:label "campaign channel" ;
+    rdfs:comment "Controlled: 'advertising' | 'referral' | 'ehr-search' | 'registry' | 'community' | 'advocacy'." ;
+    rdfs:domain cr:RecruitmentCampaign ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:candidatePerson a owl:ObjectProperty ;
+    rdfs:label "candidate person" ;
+    rdfs:comment "The identifiable person behind this candidate record (site-boundary, PII-side)." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
 cr:capaStatus a owl:DatatypeProperty ;
     rdfs:label "CAPA status" ;
     rdfs:comment "open | in-progress | closed." ;
@@ -1395,10 +1442,65 @@ cr:closesConsent a owl:ObjectProperty ;
     rdfs:range cr:InformedConsent ;
     top:flavor "Additive" .
 
+cr:closesSite a owl:ObjectProperty ;
+    rdfs:label "closes site" ;
+    rdfs:comment "The site this closure record ends." ;
+    rdfs:domain cr:SiteClosure ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:closureRestsOnCOV a owl:ObjectProperty ;
+    rdfs:label "closure rests on COV" ;
+    rdfs:comment "The Close-Out Visit this closure rests on. Required — a site is closed by evidence, not declaration." ;
+    rdfs:domain cr:SiteClosure ;
+    rdfs:range cr:CloseOutVisit ;
+    top:flavor "Additive" .
+
+cr:closureRestsOnReconciliation a owl:ObjectProperty ;
+    rdfs:label "closure rests on reconciliation" ;
+    rdfs:comment "A completed reconciliation this closure rests on (>=1 required; each must be 'balanced')." ;
+    rdfs:domain cr:SiteClosure ;
+    rdfs:range cr:Reconciliation ;
+    top:flavor "Additive" .
+
 cr:codedAs a owl:ObjectProperty ;
     rdfs:label "coded as" ;
     rdfs:comment "A Relationship from a BiomedicalConcept to a dereferenceable external terminology URI (LOINC/NCIt/SNOMED). Codes are Relationships to URIs, never string Properties (naming convention)." ;
     rdfs:domain cr:BiomedicalConcept ;
+    top:flavor "Additive" .
+
+cr:codedBy a owl:ObjectProperty ;
+    rdfs:label "coded by" ;
+    rdfs:comment "The coder (person) or, for autocoded assignments, the responsible medical-coding owner." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:codesEntity a owl:ObjectProperty ;
+    rdfs:label "codes entity" ;
+    rdfs:comment "What this assignment codes — an adverse event (MedDRA) or a reported medication (WHODrug). Intended range cr:AdverseEvent / medication record; left open across the two." ;
+    rdfs:domain cr:CodeAssignment ;
+    top:flavor "Additive" .
+
+cr:codingDictionary a owl:DatatypeProperty ;
+    rdfs:label "coding dictionary" ;
+    rdfs:comment "Controlled: 'MedDRA' | 'WHODrug'." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:codingDictionaryVersion a owl:DatatypeProperty ;
+    rdfs:label "coding dictionary version" ;
+    rdfs:comment "The dictionary version the assignment was made against (e.g. MedDRA '27.0', WHODrug 'GLOBAL B3 Mar 2026'). Required — an assignment is meaningless without its version." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:codingMethod a owl:DatatypeProperty ;
+    rdfs:label "coding method" ;
+    rdfs:comment "Controlled: 'autocoder' | 'manual'. A value, not a class (ADR-0024)." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:concernsStudy a owl:ObjectProperty ;
@@ -1411,6 +1513,13 @@ cr:concernsStudy a owl:ObjectProperty ;
 cr:conductedAt a owl:ObjectProperty ;
     rdfs:domain cr:Study ;
     rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:conductedByCRA a owl:ObjectProperty ;
+    rdfs:label "conducted by CRA" ;
+    rdfs:comment "The monitor who conducted the visit." ;
+    rdfs:domain cr:CloseOutVisit ;
+    rdfs:range hcls:Person ;
     top:flavor "Additive" .
 
 cr:consentDate a owl:DatatypeProperty ;
@@ -1455,6 +1564,20 @@ cr:controllerOrg a owl:ObjectProperty ;
     rdfs:comment "The data controller (sponsor) party to this DPA." ;
     rdfs:domain cr:DataProcessingAgreement ;
     rdfs:range cr:Sponsor ;
+    top:flavor "Additive" .
+
+cr:convertedBy a owl:ObjectProperty ;
+    rdfs:label "converted by" ;
+    rdfs:comment "The Enrollment act that converted this candidate into a pseudonymous Participant — the ONLY path across the PII boundary. An enrollment converting a candidate whose screening outcome is not 'eligible' is a Violation." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:Enrollment ;
+    top:flavor "Additive" .
+
+cr:covAtSite a owl:ObjectProperty ;
+    rdfs:label "COV at site" ;
+    rdfs:comment "The site this Close-Out Visit closes out." ;
+    rdfs:domain cr:CloseOutVisit ;
+    rdfs:range cr:StudySite ;
     top:flavor "Additive" .
 
 cr:credentialOf a owl:ObjectProperty ;
@@ -1509,6 +1632,20 @@ cr:dataQueryRate a owl:DatatypeProperty ;
     rdfs:comment "Queries raised per CRF page during the reporting period." ;
     rdfs:domain cr:SiteMetrics ;
     rdfs:range xsd:decimal ;
+    top:flavor "Additive" .
+
+cr:datasetName a owl:DatatypeProperty ;
+    rdfs:label "dataset name" ;
+    rdfs:comment "The ADaM dataset name (ADSL, ADAE, ADEFF, ADLB, ...)." ;
+    rdfs:domain cr:AnalysisDataset ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:datasetStructure a owl:DatatypeProperty ;
+    rdfs:label "dataset structure" ;
+    rdfs:comment "Controlled (CDISC ADaM structure classes): 'ADSL' (one record per subject) | 'BDS' (basic data structure, one record per subject/parameter/timepoint) | 'OCCDS' (occurrence data structure). A classification, never a subclass (ADR-0024)." ;
+    rdfs:domain cr:AnalysisDataset ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:daysToQueryResolution a owl:DatatypeProperty ;
@@ -1619,10 +1756,51 @@ cr:derivedFlag a owl:DatatypeProperty ;
     rdfs:range xsd:boolean ;
     top:flavor "Additive" .
 
+cr:destroysLot a owl:ObjectProperty ;
+    rdfs:label "destroys lot" ;
+    rdfs:comment "The lot (or its remaining units) this destruction closes out." ;
+    rdfs:domain cr:DestructionEvent ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:destructionAuthorizedBy a owl:ObjectProperty ;
+    rdfs:label "destruction authorized by" ;
+    rdfs:comment "Who authorized the destruction. Required — product never silently leaves the chain." ;
+    rdfs:domain cr:DestructionEvent ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
 cr:deviationCategory a owl:DatatypeProperty ;
     rdfs:label "deviation category" ;
     rdfs:comment "Materiality: critical | major | minor. Critical/major are significant deviations requiring a CAPA." ;
     rdfs:domain cr:DeviationEvent ;
+    top:flavor "Additive" .
+
+cr:disclosesResult a owl:ObjectProperty ;
+    rdfs:label "discloses result" ;
+    rdfs:comment "An endpoint result this publication (or other disclosure) reports — cited by IRI from the analysis layer. The disclosure counterpart of the CSR's cr:reportsResult (which is domain-locked to CSR sections)." ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .
+
+cr:dispensesFromLot a owl:ObjectProperty ;
+    rdfs:label "dispenses from lot" ;
+    rdfs:comment "The lot the dispensed units came from — the trace the accountability log walks." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:dispensesKit a owl:ObjectProperty ;
+    rdfs:label "dispenses kit" ;
+    rdfs:comment "The blinded kit assignment this dispensing fulfils (randomization module)." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range cr:KitAssignment ;
+    top:flavor "Additive" .
+
+cr:dispensesToSubject a owl:ObjectProperty ;
+    rdfs:label "dispenses to subject" ;
+    rdfs:comment "The participant the product is dispensed to — always the pseudonymous cr:StudySubject." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range cr:StudySubject ;
     top:flavor "Additive" .
 
 cr:documentHash a owl:DatatypeProperty ;
@@ -1733,10 +1911,38 @@ cr:enrollmentRate a owl:DatatypeProperty ;
     rdfs:range xsd:decimal ;
     top:flavor "Additive" .
 
+cr:excursionDisposition a owl:DatatypeProperty ;
+    rdfs:label "excursion disposition" ;
+    rdfs:comment "Controlled: 'quarantined' | 'released' | 'rejected'. The lot stays unusable until a disposition other than 'quarantined' is recorded." ;
+    rdfs:domain cr:TemperatureExcursion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:excursionOnLot a owl:ObjectProperty ;
+    rdfs:label "excursion on lot" ;
+    rdfs:comment "The lot the temperature excursion affected (quarantined until disposition)." ;
+    rdfs:domain cr:TemperatureExcursion ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:excursionRange a owl:DatatypeProperty ;
+    rdfs:label "excursion range" ;
+    rdfs:comment "The observed out-of-range condition (e.g. '9.4°C for 6h; required 2–8°C')." ;
+    rdfs:domain cr:TemperatureExcursion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:exercisesCapability a owl:ObjectProperty ;
     rdfs:label "exercises capability" ;
     rdfs:comment "The capability a performed act requires." ;
     rdfs:range cr:Capability ;
+    top:flavor "Additive" .
+
+cr:failedCriterion a owl:ObjectProperty ;
+    rdfs:label "failed criterion" ;
+    rdfs:comment "The eligibility criterion a screen-failure failed against — the reason cited by IRI, not free text." ;
+    rdfs:domain cr:ScreeningRecord ;
+    rdfs:range cr:EligibilityCriterion ;
     top:flavor "Additive" .
 
 cr:fileFormat a owl:DatatypeProperty ;
@@ -1959,9 +2165,24 @@ cr:hasQuestion a owl:ObjectProperty ;
     rdfs:range cr:RegulatoryQuestion ;
     top:flavor "Additive" .
 
+cr:hasReview a owl:ObjectProperty ;
+    rdfs:label "has review" ;
+    rdfs:comment "Forward retrieval edge (ETSI forward-only single-pull): the human review of this assignment. Inverse of cr:reviewsAssignment." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range cr:CodingReview ;
+    top:flavor "Additive" .
+
 cr:hasRiskRegister a owl:ObjectProperty ;
     rdfs:domain cr:RegulatoryInteraction ;
     rdfs:range cr:RiskRegister ;
+    top:flavor "Additive" .
+
+cr:hasScreening a owl:ObjectProperty ;
+    rdfs:label "has screening" ;
+    rdfs:comment "Forward retrieval edge (ETSI forward-only single-pull): the screening record for this candidate. Inverse of cr:screensRecruit." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:ScreeningRecord ;
+    owl:inverseOf cr:screensRecruit ;
     top:flavor "Additive" .
 
 cr:hasSection a owl:ObjectProperty ;
@@ -1997,6 +2218,13 @@ cr:identifiesAntecedent a owl:ObjectProperty ;
     rdfs:range cr:DeviationAntecedent ;
     top:flavor "Additive" .
 
+cr:inDataset a owl:ObjectProperty ;
+    rdfs:label "in dataset" ;
+    rdfs:comment "The analysis dataset this variable is defined in." ;
+    rdfs:domain cr:AnalysisVariable ;
+    rdfs:range cr:AnalysisDataset ;
+    top:flavor "Additive" .
+
 cr:inItemGroup a owl:ObjectProperty ;
     rdfs:domain cr:ClinicalObservation ;
     rdfs:range cr:ItemGroup ;
@@ -2029,11 +2257,24 @@ cr:includesReport a owl:ObjectProperty ;
     rdfs:range cr:ClinicalStudyReport ;
     top:flavor "Additive" .
 
+cr:includesSummary a owl:ObjectProperty ;
+    rdfs:label "includes summary" ;
+    rdfs:comment "The eCTD manifest edge for integrated summaries (Module 5.3.5.3) — alongside includesReport / includesDataset / includesDefine." ;
+    rdfs:domain cr:eCTDSubmission ;
+    rdfs:range cr:IntegratedSummary ;
+    top:flavor "Additive" .
+
 cr:instantiatesTemplate a owl:ObjectProperty ;
     rdfs:label "instantiates template" ;
     rdfs:comment "0..1. Links to the protocol-defined activity template. Absent for unscheduled activities." ;
     rdfs:domain cr:ActivityOccurrence ;
     rdfs:range cr:ActivityTemplate ;
+    top:flavor "Additive" .
+
+cr:integratesStudy a owl:ObjectProperty ;
+    rdfs:label "integrates study" ;
+    rdfs:comment "A study whose results this summary integrates (intended range cr:Study; left open so the summary references studies by IRI without re-typing them — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:IntegratedSummary ;
     top:flavor "Additive" .
 
 cr:intoStudy a owl:ObjectProperty ;
@@ -2044,6 +2285,20 @@ cr:intoStudy a owl:ObjectProperty ;
 cr:irbApproval a owl:ObjectProperty ;
     rdfs:domain cr:SiteActivation ;
     rdfs:range cr:IRBApproval ;
+    top:flavor "Additive" .
+
+cr:isfForSite a owl:ObjectProperty ;
+    rdfs:label "ISF for site" ;
+    rdfs:comment "The site whose essential records this ISF holds." ;
+    rdfs:domain cr:InvestigatorSiteFile ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:kitNumber a owl:DatatypeProperty ;
+    rdfs:label "kit number" ;
+    rdfs:comment "The blinded kit identifier the site sees and dispenses by." ;
+    rdfs:domain cr:KitAssignment ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:lawfulBasisDescription a owl:DatatypeProperty ;
@@ -2165,7 +2420,7 @@ cr:ofArtifactType a owl:ObjectProperty ;
     rdfs:label "of artifact type" ;
     rdfs:comment "Classifies a document instance to its TMF artifact type (the document-type binding)." ;
     rdfs:domain cr:StartupArtifact ;
-    rdfs:range ns2:TMFArtifactType ;
+    rdfs:range ns1:TMFArtifactType ;
     top:flavor "Additive" .
 
 cr:ofProtocolVersion a owl:ObjectProperty ;
@@ -2223,6 +2478,12 @@ cr:packagesSpecification a owl:ObjectProperty ;
     rdfs:range cr:TransferSpecification ;
     top:flavor "Additive" .
 
+cr:parameterCode a owl:DatatypeProperty ;
+    rdfs:label "parameter code" ;
+    rdfs:comment "The BDS PARAMCD this variable/record pivots on (e.g. 'ORR', 'SODIUM'). Only meaningful for BDS-structured datasets." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:perEstimand a owl:ObjectProperty ;
     rdfs:domain cr:EndpointResult ;
     rdfs:range cr:Estimand ;
@@ -2264,6 +2525,13 @@ cr:plannedEnrollment a owl:DatatypeProperty ;
     rdfs:range xsd:integer ;
     top:flavor "Additive" .
 
+cr:postsResult a owl:ObjectProperty ;
+    rdfs:label "posts result" ;
+    rdfs:comment "An endpoint result the registry posting discloses — referenced by IRI from the analysis layer, never re-authored." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range cr:EndpointResult ;
+    top:flavor "Additive" .
+
 cr:precededByAct a owl:ObjectProperty ;
     rdfs:label "preceded by act" ;
     rdfs:comment "The assessment this act followed (executed ordering cite, e.g. the ECG before the draw)." ;
@@ -2276,6 +2544,20 @@ cr:precedes a owl:ObjectProperty ;
     rdfs:comment "Ordering-only constraint: this activity must occur before another, independent of clock timing (e.g. QS2 before ECG)." ;
     rdfs:domain cr:PlannedActivity ;
     rdfs:range cr:PlannedActivity ;
+    top:flavor "Additive" .
+
+cr:prescreenOutcome a owl:DatatypeProperty ;
+    rdfs:label "prescreen outcome" ;
+    rdfs:comment "Controlled: 'proceed' | 'not-eligible' | 'declined'." ;
+    rdfs:domain cr:PreScreening ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:prescreens a owl:ObjectProperty ;
+    rdfs:label "prescreens" ;
+    rdfs:comment "The candidate a pre-screening evaluated." ;
+    rdfs:domain cr:PreScreening ;
+    rdfs:range cr:Recruit ;
     top:flavor "Additive" .
 
 cr:presentsResult a owl:ObjectProperty ;
@@ -2362,11 +2644,58 @@ cr:providerFolder a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
+cr:publicationDOI a owl:DatatypeProperty ;
+    rdfs:label "publication DOI" ;
+    rdfs:comment "The DOI (or registry URL for abstracts without one)." ;
+    rdfs:domain cr:Publication ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:publicationKind a owl:DatatypeProperty ;
+    rdfs:label "publication kind" ;
+    rdfs:comment "Controlled: 'journal-article' | 'conference-abstract' | 'preprint'." ;
+    rdfs:domain cr:Publication ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:quantityDestroyed a owl:DatatypeProperty ;
+    rdfs:label "quantity destroyed" ;
+    rdfs:domain cr:DestructionEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:quantityDispensed a owl:DatatypeProperty ;
+    rdfs:label "quantity dispensed" ;
+    rdfs:comment "Units dispensed (kit-defined unit)." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:quantityReturned a owl:DatatypeProperty ;
+    rdfs:label "quantity returned" ;
+    rdfs:domain cr:ReturnEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:randomizationNumber a owl:DatatypeProperty ;
+    rdfs:label "randomization number" ;
+    rdfs:comment "The unique number the randomization system issues for this assignment." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:randomizationRatio a owl:DatatypeProperty ;
     rdfs:label "randomization ratio" ;
     rdfs:comment "Ratio of subjects assigned to this arm (e.g. '2:1' for active:control)." ;
     rdfs:domain cr:Arm ;
     rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:randomizesSubject a owl:ObjectProperty ;
+    rdfs:label "randomizes subject" ;
+    rdfs:comment "The participant this randomization event assigns." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range cr:StudySubject ;
     top:flavor "Additive" .
 
 cr:ratifiedBy a owl:ObjectProperty ;
@@ -2381,9 +2710,37 @@ cr:realizes a owl:ObjectProperty ;
     rdfs:comment "Links an actual execution event (cr:Visit, cr:Assessment) to the planned node it fulfils — the join for planned-vs-actual reconciliation." ;
     top:flavor "Additive" .
 
+cr:receivedAt a owl:DatatypeProperty ;
+    rdfs:label "received at" ;
+    rdfs:comment "When the site acknowledged receipt (valid time). Dispatch is the shipment's own top:observedAt." ;
+    rdfs:domain cr:Shipment ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
 cr:receiverFolder a owl:DatatypeProperty ;
     rdfs:label "receiver folder" ;
     rdfs:domain cr:TransferProfile ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:reconcilesSite a owl:ObjectProperty ;
+    rdfs:label "reconciles site" ;
+    rdfs:comment "The site whose records this reconciliation balances." ;
+    rdfs:domain cr:Reconciliation ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:reconciliationOutcome a owl:DatatypeProperty ;
+    rdfs:label "reconciliation outcome" ;
+    rdfs:comment "Controlled: 'balanced' | 'discrepant'. A discrepant reconciliation blocks closure until resolved (a later balanced reconciliation of the same scope)." ;
+    rdfs:domain cr:Reconciliation ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:reconciliationScope a owl:DatatypeProperty ;
+    rdfs:label "reconciliation scope" ;
+    rdfs:comment "Controlled: 'IMP' | 'device' | 'documents' | 'queries'. A value, not four classes (ADR-0024)." ;
+    rdfs:domain cr:Reconciliation ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
@@ -2391,6 +2748,19 @@ cr:recordedInTMF a owl:ObjectProperty ;
     rdfs:label "recorded in TMF" ;
     rdfs:domain cr:EssentialRecord ;
     rdfs:range cr:TrialMasterFile ;
+    top:flavor "Additive" .
+
+cr:recruitmentSource a owl:DatatypeProperty ;
+    rdfs:label "recruitment source" ;
+    rdfs:comment "Free-text source note when no campaign entity exists (e.g. 'physician referral, Dr. Chen'). Prefer cr:respondedToCampaign; a Recruit with neither is flagged (Warning)." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:recruitsForStudy a owl:ObjectProperty ;
+    rdfs:label "recruits for study" ;
+    rdfs:comment "The study a campaign recruits candidates for (intended range cr:Study; left open so a recruitment graph can reference the study by IRI without re-typing it — avoids the RDFS target cascade)." ;
+    rdfs:domain cr:RecruitmentCampaign ;
     top:flavor "Additive" .
 
 cr:referencesLegalDocument a owl:ObjectProperty ;
@@ -2405,6 +2775,33 @@ cr:referencesProfile a owl:ObjectProperty ;
     rdfs:comment "A DataTransferAgreement references the operational TransferProfile that governs its files." ;
     rdfs:domain cr:DataTransferAgreement ;
     rdfs:range cr:TransferProfile ;
+    top:flavor "Additive" .
+
+cr:registeredAt a owl:DatatypeProperty ;
+    rdfs:label "registered at" ;
+    rdfs:comment "When the study was registered (FDAAA: within 21 days of first enrollment)." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:registersStudy a owl:ObjectProperty ;
+    rdfs:label "registers study" ;
+    rdfs:comment "The study this registry record discloses (intended range cr:Study; left open — by-IRI reference, no target cascade)." ;
+    rdfs:domain cr:RegistryRecord ;
+    top:flavor "Additive" .
+
+cr:registryIdentifier a owl:DatatypeProperty ;
+    rdfs:label "registry identifier" ;
+    rdfs:comment "The registry's public identifier (e.g. NCT number 'NCT05123456')." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:registryName a owl:DatatypeProperty ;
+    rdfs:label "registry name" ;
+    rdfs:comment "Controlled: 'ClinicalTrials.gov' | 'EUCTR' | 'ISRCTN' | 'jRCT' | 'ChiCTR'." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:relativeTo a owl:ObjectProperty ;
@@ -2514,10 +2911,24 @@ cr:resolvedFrom a owl:ObjectProperty ;
     rdfs:subPropertyOf prov:wasDerivedFrom ;
     top:flavor "Additive" .
 
+cr:respondedToCampaign a owl:ObjectProperty ;
+    rdfs:label "responded to campaign" ;
+    rdfs:comment "The campaign this candidate came from — the funnel's source-attribution edge." ;
+    rdfs:domain cr:Recruit ;
+    rdfs:range cr:RecruitmentCampaign ;
+    top:flavor "Additive" .
+
 cr:restsOn a owl:ObjectProperty ;
     rdfs:label "rests on" ;
     rdfs:comment "The analysis evidence a decision rests on — a TableListingFigure and/or an EndpointResult. A decision that rests on nothing is a decision by assertion; its presence is required. (Range left open: both TLF (Evidence) and EndpointResult (Outcome) are valid analysis evidence.)" ;
     rdfs:domain cr:AnalysisDecision ;
+    top:flavor "Additive" .
+
+cr:resultsPostedAt a owl:DatatypeProperty ;
+    rdfs:label "results posted at" ;
+    rdfs:comment "When results were posted (FDAAA: generally within 12 months of primary completion). Absent until posted; the overdue check is a bitemporal detective query, not a shape." ;
+    rdfs:domain cr:RegistryRecord ;
+    rdfs:range xsd:dateTime ;
     top:flavor "Additive" .
 
 cr:retentionBasis a owl:ObjectProperty ;
@@ -2532,6 +2943,48 @@ cr:retentionPeriod a owl:DatatypeProperty ;
     rdfs:comment "ISO 8601 duration of the required retention period (e.g. 'P15Y' = 15 years)." ;
     rdfs:domain cr:RetentionPolicy ;
     rdfs:range xsd:duration ;
+    top:flavor "Additive" .
+
+cr:retentionUntil a owl:DatatypeProperty ;
+    rdfs:label "retention until" ;
+    rdfs:comment "The end of the retention period the archival opens (per protocol/regulation)." ;
+    rdfs:domain cr:ArchivalEvent ;
+    rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
+cr:returnsFromSubject a owl:ObjectProperty ;
+    rdfs:label "returns from subject" ;
+    rdfs:comment "The participant returning the product." ;
+    rdfs:domain cr:ReturnEvent ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:returnsToLotCustody a owl:ObjectProperty ;
+    rdfs:label "returns to lot custody" ;
+    rdfs:comment "The lot whose accountability chain receives the returned units." ;
+    rdfs:domain cr:ReturnEvent ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:reviewVerdict a owl:DatatypeProperty ;
+    rdfs:label "review verdict" ;
+    rdfs:comment "Controlled: 'approved' | 'recoded' | 'queried'." ;
+    rdfs:domain cr:CodingReview ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:reviewedBy a owl:ObjectProperty ;
+    rdfs:label "reviewed by" ;
+    rdfs:comment "The human medical coder who performed this review." ;
+    rdfs:domain cr:CodingReview ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:reviewsAssignment a owl:ObjectProperty ;
+    rdfs:label "reviews assignment" ;
+    rdfs:comment "The code assignment this review examined." ;
+    rdfs:domain cr:CodingReview ;
+    rdfs:range cr:CodeAssignment ;
     top:flavor "Additive" .
 
 cr:reviewsResult a owl:ObjectProperty ;
@@ -2578,6 +3031,13 @@ cr:screenFailureRate a owl:DatatypeProperty ;
     rdfs:range xsd:decimal ;
     top:flavor "Additive" .
 
+cr:screeningOutcome a owl:DatatypeProperty ;
+    rdfs:label "screening outcome" ;
+    rdfs:comment "Controlled: 'eligible' | 'screen-failure' | 'withdrew'. Screen failure is this value, never a class (ADR-0024)." ;
+    rdfs:domain cr:ScreeningRecord ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:sdvIntensity a owl:DatatypeProperty ;
     rdfs:comment "Fraction of data source-verified (1.0 = 100% SDV; reduced for low-risk)." ;
     rdfs:domain cr:MitigationPlan ;
@@ -2612,6 +3072,20 @@ cr:sectionTitle a owl:DatatypeProperty ;
 cr:severity a owl:DatatypeProperty ;
     rdfs:label "severity" ;
     rdfs:domain cr:Query ;
+    top:flavor "Additive" .
+
+cr:shippedTo a owl:ObjectProperty ;
+    rdfs:label "shipped to" ;
+    rdfs:comment "The receiving study site." ;
+    rdfs:domain cr:Shipment ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:shipsLot a owl:ObjectProperty ;
+    rdfs:label "ships lot" ;
+    rdfs:comment "A lot carried by this shipment." ;
+    rdfs:domain cr:Shipment ;
+    rdfs:range hcls:Lot ;
     top:flavor "Additive" .
 
 cr:significantDigits a owl:DatatypeProperty ;
@@ -2673,6 +3147,13 @@ cr:stratificationFactor a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
+cr:stratumKey a owl:DatatypeProperty ;
+    rdfs:label "stratum key" ;
+    rdfs:comment "The stratification cell this assignment was drawn in (e.g. 'ECOG:0-1|prior-lines:<=1')." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:streamForSite a owl:ObjectProperty ;
     rdfs:label "stream for site" ;
     rdfs:domain cr:WorkStream ;
@@ -2725,6 +3206,13 @@ cr:submittedTo a owl:ObjectProperty ;
     rdfs:label "submitted to" ;
     rdfs:comment "The regulatory agency this SUSAR was submitted to." ;
     rdfs:domain cr:SUSAR ;
+    top:flavor "Additive" .
+
+cr:summaryKind a owl:DatatypeProperty ;
+    rdfs:label "summary kind" ;
+    rdfs:comment "Controlled: 'safety' (ISS) | 'efficacy' (ISE)." ;
+    rdfs:domain cr:IntegratedSummary ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:susarUnexpected a owl:DatatypeProperty ;
@@ -2852,10 +3340,45 @@ cr:triggers a owl:ObjectProperty ;
     rdfs:range cr:CAPA ;
     top:flavor "Additive" .
 
+cr:unblindingAuthorizedBy a owl:ObjectProperty ;
+    rdfs:label "unblinding authorized by" ;
+    rdfs:comment "Who authorized breaking the blind (medical monitor, PI under emergency provisions). Required." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:unblindingKind a owl:DatatypeProperty ;
+    rdfs:label "unblinding kind" ;
+    rdfs:comment "Controlled: 'emergency' | 'planned' | 'regulatory'. A value, not a class (ADR-0024)." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:unblindingReason a owl:DatatypeProperty ;
+    rdfs:label "unblinding reason" ;
+    rdfs:comment "Why the blind was broken (e.g. 'SAE management required knowledge of assignment'). Required — an unblinding without a reason is a Violation." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:unblindsSubject a owl:ObjectProperty ;
+    rdfs:label "unblinds subject" ;
+    rdfs:comment "The participant whose assignment this event discloses." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
 cr:underDelegation a owl:ObjectProperty ;
     rdfs:label "under delegation" ;
     rdfs:comment "Links a performed act to the delegation authorizing it (delegation invariant)." ;
     rdfs:range cr:Delegation ;
+    top:flavor "Additive" .
+
+cr:underRandomization a owl:ObjectProperty ;
+    rdfs:label "under randomization" ;
+    rdfs:comment "The randomization event a kit assignment implements — the forward trace from kit to assignment." ;
+    rdfs:domain cr:KitAssignment ;
+    rdfs:range cr:RandomizationEvent ;
     top:flavor "Additive" .
 
 cr:underUnlock a owl:ObjectProperty ;
@@ -2903,10 +3426,33 @@ cr:vendorTerm a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
+cr:verbatimTerm a owl:DatatypeProperty ;
+    rdfs:label "verbatim term" ;
+    rdfs:comment "The investigator's words, exactly as captured ('achy joints', 'baby aspirin')." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:verifiedBy a owl:ObjectProperty ;
     rdfs:comment "The monitor who source-verified the value (SDV)." ;
     rdfs:domain cr:ClinicalObservation ;
     rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:whodrugAtcClass a owl:ObjectProperty ;
+    rdfs:label "WHODrug ATC class" ;
+    rdfs:comment "IRI reference to the ATC classification the coded product carries. BYOL." ;
+    top:flavor "Additive" .
+
+cr:whodrugCode a owl:ObjectProperty ;
+    rdfs:label "WHODrug code" ;
+    rdfs:comment "IRI reference to a WHODrug medicinal-product record. BYOL; no licensed content reproduced." ;
+    top:flavor "Additive" .
+
+cr:whodrugVersion a owl:DatatypeProperty ;
+    rdfs:label "WHODrug version" ;
+    rdfs:comment "The WHODrug release used (e.g. 'GLOBAL B3 Mar 2026')." ;
+    rdfs:range xsd:string ;
     top:flavor "Additive" .
 
 cr:window a owl:ObjectProperty ;
@@ -2973,6 +3519,21 @@ cr:yieldsResult a owl:ObjectProperty ;
     owl:inverseOf cr:derivedFromCollection ;
     top:flavor "Additive" .
 
+<https://top.scientix.ai/cr/v1/adam> a owl:Ontology ;
+    dcterms:description "ADaM's value is reproducibility: every analysis result traces to its source. In this reference the chain is result -> analysis dataset -> NATIVE source facts (via W3C PROV wasDerivedFrom) — traceability to the one source of truth, not the fragile SDTM-document -> ADaM-document chain. SDTM and ADaM are both views of the native graph. v1.1 adds the CDISC ADaM structural vocabulary: the dataset's structure class (ADSL / BDS / OCCDS — a CLASSIFICATION carried as a value, ADR-0024) and the analysis variable / parameter layer (PARAMCD) that BDS datasets pivot on." ;
+    dcterms:title "CR-core — ADaM analysis layer & traceability" ;
+    owl:versionInfo "1.1" .
+
+<https://top.scientix.ai/cr/v1/coding> a owl:Ontology ;
+    dcterms:description "The coding WORKFLOW the term crosswalks alone don't carry (Operating Model §3.2): a code assignment is a promoted JUDGMENT — 'this verbatim term means this dictionary code' — with its method (autocoder vs manual), its coder, and its review. The existing cr:meddra* properties record WHERE an event landed in MedDRA; this module records WHO decided that, HOW, and whether a human reviewed it. WHODrug joins MedDRA as a BYOL (bring-your-own-license) IRI reference — no licensed content is reproduced. NOTICE: MedDRA is © MSSO/ICH; WHODrug is © Uppsala Monitoring Centre; both require valid licences to resolve." ;
+    dcterms:title "CR-core — medical coding workflow (MedDRA / WHODrug)" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/cr/v1/disclosure> a owl:Ontology ;
+    dcterms:description "Two submission-and-transparency layers the CSR/eCTD spine didn't carry (Operating Model §3.4): (1) the Integrated Summaries of Safety and Efficacy (ISS/ISE) — cross-study analyses that rest on the per-study locked datasets; the summary KIND is a value, not a class (ADR-0024). (2) The public-disclosure obligations: the trial-registry record (ClinicalTrials.gov / EUCTR — registration, results posting) and publications. Disclosure artifacts are projections of already-produced results, never new sources of truth — the same manifest discipline as the eCTD." ;
+    dcterms:title "CR-core — integrated summaries & disclosure" ;
+    owl:versionInfo "1.0" .
+
 <https://top.scientix.ai/cr/v1/gcp> a owl:Ontology ;
     rdfs:label "TOP CR — ICH E6(R3) GCP definitional layer" ;
     dcterms:rights "Independent derivative adaptation of the ICH E6(R3) Guideline. The classes, properties, and SKOS concepts here are an adaptation (structure + paraphrased definitions), not a reproduction. NOT endorsed or sponsored by ICH. The original ICH E6(R3) document is copyright © ICH." ;
@@ -2983,6 +3544,26 @@ cr:yieldsResult a owl:ObjectProperty ;
     dcterms:description "Extends CR-core with InformedConsent enrichment (US-500-003): consentVersion, consentFormIRI, witnessedBy, withdrawalDate. Property-only module: the classes these properties describe (cr:InformedConsent, cr:StudySubject, cr:Enrollment, cr:EligibilityCriterion) are defined once, in cr-core.ttl." ;
     dcterms:title "CR-core ontology — participant & consent module" ;
     owl:versionInfo "1.5" .
+
+<https://top.scientix.ai/cr/v1/randomization> a owl:Ontology ;
+    dcterms:description "The events an IxRS/RTSM system records, modeled as first-class bitemporal facts (Operating Model §2.3): the randomization act (subject → arm, under a stratum), the kit assignment that keeps the blind, and the audited unblinding event. The design-time ratio stays on the study (cr:randomizationRatio); these are the EXECUTION events. An unblinding without a recorded reason and authorization is the pharmacovigilance breach every inspector checks first — modeled exactly like cr:DatabaseUnlock: an audited event, never a silent state flip." ;
+    dcterms:title "CR-core — randomization & blinding (IxRS/RTSM events)" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/cr/v1/recruitment> a owl:Ontology ;
+    dcterms:description "The funnel from outreach to enrolled participant (Operating Model §2.2–2.3): campaign → candidate → pre-screening → screening → conversion. The candidate (cr:Recruit) is a SITE-BOUNDARY identity like hcls:Person — PII-side, never referenced by downstream clinical data; conversion to the pseudonymous cr:StudySubject happens only through the attested cr:Enrollment bridge. Screen failure is an OUTCOME VALUE, not a class (ADR-0024 one-question gate: a classification of a screening, not a kind of thing)." ;
+    dcterms:title "CR-core — recruitment & screening funnel" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/cr/v1/site-closeout> a owl:Ontology ;
+    dcterms:description "The SITE-side of closeout (Operating Model §3.1) — the counterpart of the data-side database lock: the Close-Out Visit, the reconciliations (drug, device, documents, queries — the SCOPE is a value, not four classes, ADR-0024), the Investigator Site File whose completeness gates closure, the archival with its retention clock, and the site-closure record that must rest on all of it. A closure without a Close-Out Visit and completed reconciliations is a Violation — a site is closed by evidence, not by declaration." ;
+    dcterms:title "CR-core — site closeout" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/cr/v1/supply> a owl:Ontology ;
+    dcterms:description "The investigational-product custody events (Operating Model §2.1/§2.4/§3.1): shipment to site, dispensing to a participant, return, and authorized destruction — each a first-class bitemporal event on an hcls:Lot. The ACCOUNTABILITY LOG IS A PROJECTION of these events (like the DoA log), never a maintained spreadsheet: reconcile-ability is a query over the event chain. A temperature excursion is a promoted fact that quarantines what it touched." ;
+    dcterms:title "CR-core — drug supply & IMP accountability" ;
+    owl:versionInfo "1.0" .
 
 <https://top.scientix.ai/cr/v1/thesaurus> a owl:Ontology ;
     dcterms:title "TOP CR — operator thesaurus (dialects, acronyms, routing)" ;
@@ -3091,11 +3672,6 @@ hcls:Condition a owl:Class ;
     rdfs:label "Condition" ;
     rdfs:comment "A diagnosed state of a Person." ;
     rdfs:subClassOf top:Outcome .
-
-hcls:Lot a owl:Class ;
-    rdfs:label "Lot" ;
-    rdfs:comment "A manufactured batch/lot; the primary join to the manufacturing domain." ;
-    rdfs:subClassOf top:Resource .
 
 hcls:Substance a owl:Class ;
     rdfs:label "Substance" ;
@@ -3212,137 +3788,137 @@ hcls:successSignal a owl:DatatypeProperty ;
     rdfs:domain hcls:JobToBeDone ;
     top:flavor "Additive" .
 
-ns2:CAPALog a ns2:TMFArtifactType ;
+ns1:CAPALog a ns1:TMFArtifactType ;
     rdfs:label "CAPA Log" ;
-    skos:broader ns2:Zone_TrialManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_TrialManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "CAPA Log" ;
-    ns2:records cr:CAPA .
+    ns1:records cr:CAPA .
 
-ns2:ClinicalTrialAgreementDoc a ns2:TMFArtifactType ;
+ns1:ClinicalTrialAgreementDoc a ns1:TMFArtifactType ;
     rdfs:label "Clinical Trial Agreement (artifact)" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Clinical Trial Agreement" ;
-    ns2:documents cr:ClinicalTrialAgreement .
+    ns1:documents cr:ClinicalTrialAgreement .
 
-ns2:CurriculumVitae a ns2:TMFArtifactType ;
+ns1:CurriculumVitae a ns1:TMFArtifactType ;
     rdfs:label "Curriculum Vitae" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Curriculum Vitae" ;
-    ns2:documents cr:Credential .
+    ns1:documents cr:Credential .
 
-ns2:DataManagementPlan a ns2:TMFArtifactType ;
+ns1:DataManagementPlan a ns1:TMFArtifactType ;
     rdfs:label "Data Management Plan" ;
-    skos:broader ns2:Zone_TrialManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_TrialManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Data Management Plan" ;
-    ns2:documents cr:DataElementDef .
+    ns1:documents cr:DataElementDef .
 
-ns2:DelegationOfAuthorityLog a ns2:TMFArtifactType ;
+ns1:DelegationOfAuthorityLog a ns1:TMFArtifactType ;
     rdfs:label "Delegation of Authority Log" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Delegation of Authority Log" ;
-    ns2:records cr:Delegation .
+    ns1:records cr:Delegation .
 
-ns2:FinancialDisclosureForm a ns2:TMFArtifactType ;
+ns1:FinancialDisclosureForm a ns1:TMFArtifactType ;
     rdfs:label "Financial Disclosure Form" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Financial Disclosure Form" ;
-    ns2:documents cr:StudySite .
+    ns1:documents cr:StudySite .
 
-ns2:Form1572 a ns2:TMFArtifactType ;
+ns1:Form1572 a ns1:TMFArtifactType ;
     rdfs:label "Form FDA 1572" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Form FDA 1572" ;
-    ns2:documents cr:StudySite .
+    ns1:documents cr:StudySite .
 
-ns2:IRBApprovalLetter a ns2:TMFArtifactType ;
+ns1:IRBApprovalLetter a ns1:TMFArtifactType ;
     rdfs:label "IRB/IEC Approval Letter" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "IRB/IEC Approval Letter" ;
-    ns2:documents cr:IRBApproval .
+    ns1:documents cr:IRBApproval .
 
-ns2:InformedConsentForm a ns2:TMFArtifactType ;
+ns1:InformedConsentForm a ns1:TMFArtifactType ;
     rdfs:label "Informed Consent Form" ;
-    skos:broader ns2:Zone_SiteManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SiteManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Informed Consent Form" ;
-    ns2:documents cr:InformedConsent .
+    ns1:documents cr:InformedConsent .
 
-ns2:InvestigatorBrochure a ns2:TMFArtifactType ;
+ns1:InvestigatorBrochure a ns1:TMFArtifactType ;
     rdfs:label "Investigator Brochure" ;
-    skos:broader ns2:Zone_CentralTrialDocs ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_CentralTrialDocs ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Investigator Brochure" ;
-    ns2:documents cr:InvestigationalProduct .
+    ns1:documents cr:InvestigationalProduct .
 
-ns2:MonitoringPlan a ns2:TMFArtifactType ;
+ns1:MonitoringPlan a ns1:TMFArtifactType ;
     rdfs:label "Monitoring Plan" ;
-    skos:broader ns2:Zone_TrialManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_TrialManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Monitoring Plan" ;
-    ns2:documents cr:MitigationPlan,
+    ns1:documents cr:MitigationPlan,
         cr:RiskAssessment .
 
-ns2:Protocol a ns2:TMFArtifactType ;
+ns1:Protocol a ns1:TMFArtifactType ;
     rdfs:label "Protocol" ;
-    skos:broader ns2:Zone_CentralTrialDocs ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_CentralTrialDocs ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Protocol" ;
-    ns2:defines cr:CriticalToQualityFactor,
+    ns1:defines cr:CriticalToQualityFactor,
         cr:EligibilityCriterion,
         cr:Endpoint .
 
-ns2:ProtocolDeviationLog a ns2:TMFArtifactType ;
+ns1:ProtocolDeviationLog a ns1:TMFArtifactType ;
     rdfs:label "Protocol Deviation Log" ;
-    skos:broader ns2:Zone_TrialManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_TrialManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Protocol Deviation Log" ;
-    ns2:records cr:DeviationEvent .
+    ns1:records cr:DeviationEvent .
 
-ns2:SAEReport a ns2:TMFArtifactType ;
+ns1:SAEReport a ns1:TMFArtifactType ;
     rdfs:label "SAE Report" ;
-    skos:broader ns2:Zone_SafetyReporting ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_SafetyReporting ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "SAE Report" ;
-    ns2:records cr:SafetyReport .
+    ns1:records cr:SafetyReport .
 
-ns2:ScheduleOfActivities a ns2:TMFArtifactType ;
+ns1:ScheduleOfActivities a ns1:TMFArtifactType ;
     rdfs:label "Schedule of Activities" ;
-    skos:broader ns2:Zone_CentralTrialDocs ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_CentralTrialDocs ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Schedule of Activities" ;
-    ns2:defines cr:ScheduleTimeline .
+    ns1:defines cr:ScheduleTimeline .
 
-ns2:SiteActivationManual a ns2:TMFArtifactType ;
+ns1:SiteActivationManual a ns1:TMFArtifactType ;
     rdfs:label "Site Activation Manual" ;
-    skos:broader ns2:Zone_TrialManagement ;
-    skos:inScheme ns2:TMFReferenceModel ;
+    skos:broader ns1:Zone_TrialManagement ;
+    skos:inScheme ns1:TMFReferenceModel ;
     skos:prefLabel "Site Activation Manual" ;
-    ns2:documents cr:SiteActivation .
+    ns1:documents cr:SiteActivation .
 
-ns2:defines a owl:ObjectProperty ;
+ns1:defines a owl:ObjectProperty ;
     rdfs:label "defines" ;
     rdfs:comment "The artifact establishes/specifies the entity (e.g. a Protocol defines the CtQ factors)." ;
-    rdfs:subPropertyOf ns2:concerns ;
+    rdfs:subPropertyOf ns1:concerns ;
     top:flavor "Additive" .
 
-ns2:documents a owl:ObjectProperty ;
+ns1:documents a owl:ObjectProperty ;
     rdfs:label "documents" ;
     rdfs:comment "The artifact describes/evidences the entity (e.g. a Monitoring Plan documents the mitigation plan)." ;
-    rdfs:subPropertyOf ns2:concerns ;
+    rdfs:subPropertyOf ns1:concerns ;
     top:flavor "Additive" .
 
-ns2:records a owl:ObjectProperty ;
+ns1:records a owl:ObjectProperty ;
     rdfs:label "records" ;
     rdfs:comment "The artifact is a running log of the entity's instances (e.g. a Deviation Log records deviation events)." ;
-    rdfs:subPropertyOf ns2:concerns ;
+    rdfs:subPropertyOf ns1:concerns ;
     top:flavor "Additive" .
 
 top:ProvenancedEntity a owl:Class ;
@@ -3462,20 +4038,22 @@ cr:AddLogEntry a hcls:Action ;
     hcls:occursIn cr:ConductPhase ;
     hcls:operatesOn cr:StudySite .
 
-cr:AnalysisDataset a owl:Class ;
-    rdfs:label "Analysis Dataset (ADaM)" ;
-    rdfs:comment "An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
-    skos:altLabel "ADaM dataset"@en,
-        "analysis data"@en ;
-    skos:prefLabel "Analysis Dataset"@en .
-
 cr:AnalysisRequest a owl:Class ;
     rdfs:label "Analysis Request" ;
     rdfs:comment "Binds an AnalysisService to a Specimen (the order)." ;
     rdfs:subClassOf top:Temporal,
         top:Versioned .
+
+cr:AnalysisVariable a owl:Class ;
+    rdfs:label "Analysis Variable" ;
+    rdfs:comment "The analysis analog of the EDC item definition: results cite the variable they were computed over, closing the result -> variable -> dataset -> source chain at variable grain." ;
+    rdfs:subClassOf cr:DataElementDef ;
+    skos:altLabel "ADaM variable"@en,
+        "PARAMCD"@en,
+        "analysis parameter"@en ;
+    skos:definition "A variable definition within an analysis dataset (e.g. AVAL, CHG, TRTP) — the analysis-layer counterpart of the capture-layer cr:DataElementDef." ;
+    skos:prefLabel "Analysis Variable"@en ;
+    top:flavor "Additive" .
 
 cr:ApproveBudget a hcls:Action ;
     rdfs:label "Approve Budget" ;
@@ -3981,30 +4559,37 @@ cr:queryOn a owl:ObjectProperty ;
     rdfs:domain cr:Query ;
     top:flavor "Additive" .
 
+cr:screensRecruit a owl:ObjectProperty ;
+    rdfs:label "screens recruit" ;
+    rdfs:comment "The candidate this screening record concerns." ;
+    rdfs:domain cr:ScreeningRecord ;
+    rdfs:range cr:Recruit ;
+    top:flavor "Additive" .
+
 cr:specimen a owl:ObjectProperty ;
     rdfs:domain cr:CustodyEvent ;
     rdfs:range hcls:Specimen ;
     top:flavor "Additive" .
 
-cr:xl-agent a ns1:Label ;
+cr:xl-agent a ns2:Label ;
     dcterms:source "First-principles P7 CV-obligations (anti-synonym example)" ;
     skos:scopeNote "ANTI-SYNONYM: pharmacological 'agent' (the drug/substance) is NOT top:Agent (an actor bearing responsibility). Route drug-sense to cr:InvestigationalProduct / hcls:Substance; actor-sense to top:Agent."@en ;
-    ns1:literalForm "agent"@en .
+    ns2:literalForm "agent"@en .
 
-cr:xl-participant-patient a ns1:Label ;
+cr:xl-participant-patient a ns2:Label ;
     dcterms:source "Industry drift observed by convener, 2026-07 (ADR-0024): 'There are indications that the industry is moving to patient, but for clinical research, participant should be the preferred label.'" ;
     skos:scopeNote "Routed to cr:StudySubject in study context; routed to hcls:Person in care-delivery context."@en ;
-    ns1:literalForm "patient"@en .
+    ns2:literalForm "patient"@en .
 
-cr:xl-screen a ns1:Label ;
+cr:xl-screen a ns2:Label ;
     dcterms:source "OPMODEL §2.2 Recruitment" ;
     skos:scopeNote "HOMONYM: eligibility screening (the recruitment-funnel activity — vocabulary lands with the funnel model, a declared V1 deferral) vs screen failure vs the UI screen. No default routing; qualify."@en ;
-    ns1:literalForm "screen"@en .
+    ns2:literalForm "screen"@en .
 
-cr:xl-subject a ns1:Label ;
+cr:xl-subject a ns2:Label ;
     dcterms:source "First-principles P7 CV-obligations (homonym-routing example); OPMODEL" ;
     skos:scopeNote "HOMONYM: human-research 'subject' routes to cr:StudySubject (prefLabel Participant, ADR-0024); animal-research 'subject' is out of this domain; grammatical/email 'subject' is noise. Never route to hcls:Person."@en ;
-    ns1:literalForm "subject"@en .
+    ns2:literalForm "subject"@en .
 
 hcls:Clinician a owl:Class ;
     rdfs:label "Clinician" ;
@@ -4021,9 +4606,9 @@ hcls:MedicinalProduct a owl:Class ;
     rdfs:comment "A medicinal product (drug or biologic)." ;
     rdfs:subClassOf top:Resource .
 
-ns2:Zone_SafetyReporting a skos:Concept ;
+ns1:Zone_SafetyReporting a skos:Concept ;
     skos:prefLabel "Safety Reporting" ;
-    skos:topConceptOf ns2:TMFReferenceModel .
+    skos:topConceptOf ns1:TMFReferenceModel .
 
 top:AutonomousAgent a owl:Class ;
     rdfs:label "Autonomous Agent" ;
@@ -4056,6 +4641,15 @@ cr:AnalysisService a owl:Class ;
     rdfs:label "Analysis Service" ;
     rdfs:comment "Catalog definition of a test/assay (e.g. a biomarker assay)." ;
     rdfs:subClassOf top:Evidence .
+
+cr:ArchivalEvent a owl:Class ;
+    rdfs:label "Archival Event" ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "archiving"@en,
+        "records retention"@en ;
+    skos:definition "The transfer of the site's essential records into retention storage, opening the retention clock (ICH E6(R3): per sponsor/regulatory requirements)." ;
+    skos:prefLabel "Archival Event"@en .
 
 cr:AuditTrail a owl:Class ;
     rdfs:label "Audit Trail" ;
@@ -4195,10 +4789,42 @@ cr:InvestigationalProduct a owl:Class ;
         "test article"@en ;
     skos:prefLabel "Investigational Product"@en .
 
+cr:InvestigatorSiteFile a owl:Class ;
+    rdfs:label "Investigator Site File" ;
+    rdfs:comment "Sibling of cr:TrialMasterFile; ISF completeness is a closure gate." ;
+    rdfs:subClassOf top:Evidence ;
+    skos:altLabel "ISF"@en,
+        "investigator file"@en,
+        "regulatory binder"@en,
+        "site file"@en ;
+    skos:definition "The site's regulated file of essential records (the ISF / 'regulatory binder') — the site-held counterpart of the sponsor's Trial Master File." ;
+    skos:prefLabel "Investigator Site File"@en .
+
 cr:NonclinicalFinding a owl:Class ;
     rdfs:label "Nonclinical Finding" ;
     rdfs:comment "An observed animal toxicity/finding that the clinical protocol must address." ;
     rdfs:subClassOf top:Outcome .
+
+cr:PreScreening a owl:Class ;
+    rdfs:label "Pre-Screening" ;
+    rdfs:subClassOf top:Temporal ;
+    skos:altLabel "phone screen"@en,
+        "pre-screen"@en,
+        "prescreen"@en ;
+    skos:definition "A preliminary eligibility check performed before consent — a phone script, an EHR filter, a questionnaire — that decides whether a candidate proceeds to full screening." ;
+    skos:prefLabel "Pre-Screening"@en .
+
+cr:Publication a owl:Class ;
+    rdfs:label "Publication" ;
+    rdfs:comment "The kind (article/abstract/preprint) is cr:publicationKind, a value (ADR-0024). A publication reporting a result cites it by IRI (cr:disclosesResult) — 'what does this paper's number rest on' is the same graph walk as the CSR's cr:reportsResult." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:altLabel "abstract"@en,
+        "journal article"@en,
+        "manuscript"@en,
+        "paper"@en ;
+    skos:definition "A peer-reviewed article, conference abstract, or preprint disclosing study results — reporting results that trace to the analysis layer." ;
+    skos:prefLabel "Publication"@en .
 
 cr:RecordFinding a hcls:Action ;
     rdfs:label "Record Finding" ;
@@ -4256,20 +4882,20 @@ cr:VendorConnectorProfile a owl:Class ;
     rdfs:subClassOf cr:TransferProfile ;
     skos:definition "A TransferProfile pre-populated from a named vendor's documented data-export surface (API/format/terminology), so a sponsor onboarding that vendor starts from a catalog default rather than a blank DTA. The operational counterpart to the compounding alias corpus." .
 
-cr:xl-arm a ns1:Label ;
+cr:xl-arm a ns2:Label ;
     dcterms:source "OPMODEL §1.1 Study Design" ;
     skos:scopeNote "HOMONYM: treatment arm (cr:Arm) vs the anatomical arm (blood-draw laterality, injection site). Study-design context routes to cr:Arm; clinical-procedure context is anatomical."@en ;
-    ns1:literalForm "arm"@en .
+    ns2:literalForm "arm"@en .
 
-cr:xl-monitor a ns1:Label ;
+cr:xl-monitor a ns2:Label ;
     dcterms:source "OPMODEL §2.5 Oversight; ROLES persona aliases" ;
     skos:scopeNote "HOMONYM: the person (cr:ClinicalResearchAssociate), the visit (monitoring visit), the discipline (risk-based / central / medical monitoring — distinct capabilities), and the verb. Default routing: the CRA role; qualify otherwise."@en ;
-    ns1:literalForm "monitor"@en .
+    ns2:literalForm "monitor"@en .
 
-cr:xl-site a ns1:Label ;
+cr:xl-site a ns2:Label ;
     dcterms:source "OPMODEL §1.4 Site Selection" ;
     skos:scopeNote "HOMONYM: the investigative site (cr:StudySite, an organization) vs bfo:Site / top:Location (a place) vs injection/body site vs website. Default routing in this domain: cr:StudySite."@en ;
-    ns1:literalForm "site"@en .
+    ns2:literalForm "site"@en .
 
 hcls:Consent a owl:Class ;
     rdfs:label "Consent" ;
@@ -4323,6 +4949,17 @@ cr:ClinicalStudyReport a owl:Class ;
     skos:definition "The ICH E3 integrated report of a single study — the narrative document the submission (eCTD Module 5.3.5) carries. Modeled as a fact graph of its sections, not an opaque file, so its results sections trace to the analysis outputs they present." ;
     skos:prefLabel "Clinical Study Report"@en .
 
+cr:CloseOutVisit a owl:Class ;
+    rdfs:label "Close-Out Visit" ;
+    rdfs:comment "The closing bracket of the SIV — same shape as cr:SiteInitiationVisit, at the other end of the site's life." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "COV"@en,
+        "closeout visit"@en,
+        "final monitoring visit"@en ;
+    skos:definition "The CRA's final monitoring visit to a site (COV): confirming reconciliations, ISF completeness, outstanding-query closure, and archival arrangements before the site closes." ;
+    skos:prefLabel "Close-Out Visit"@en .
+
 cr:ConductMonitoringVisit a hcls:Action ;
     rdfs:label "Conduct Monitoring Visit" ;
     hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
@@ -4338,6 +4975,28 @@ cr:DatabaseUnlock a owl:Class ;
     skos:definition "A controlled, reasoned reopening of a locked database (e.g. a late data correction). It references the DatabaseLock it reopens and records a reason — the audit gate that makes post-lock change legitimate rather than silent." ;
     skos:prefLabel "Database Unlock"@en .
 
+cr:DestructionEvent a owl:Class ;
+    rdfs:label "Destruction Event" ;
+    rdfs:comment "Destruction without a recorded authorizer is a Violation — product never silently disappears from the chain." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "destruction"@en,
+        "drug destruction"@en ;
+    skos:definition "The authorized destruction of investigational product, closing its accountability chain." ;
+    skos:prefLabel "Destruction Event"@en .
+
+cr:IntegratedSummary a owl:Class ;
+    rdfs:label "Integrated Summary" ;
+    rdfs:comment "The kind (safety vs efficacy) is cr:summaryKind, a value — not two classes (ADR-0024). Multi-study by construction: >=1 cr:integratesStudy, each referenced by IRI. Derives from the per-study ADaM datasets via prov:wasDerivedFrom, so the integrated number is reproducible to each study's source." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:altLabel "ISE"@en,
+        "ISS"@en,
+        "integrated summary of efficacy"@en,
+        "integrated summary of safety"@en ;
+    skos:definition "A cross-study integrated analysis prepared for a marketing application — the Integrated Summary of Safety (ISS) or of Efficacy (ISE) — resting on the locked analysis datasets of the studies it integrates." ;
+    skos:prefLabel "Integrated Summary"@en .
+
 cr:Phase3Design a owl:Class ;
     rdfs:label "Proposed Phase 3 Design" ;
     rdfs:comment "A proposed Phase 3 trial design taken to the EOP2 meeting." ;
@@ -4347,6 +5006,25 @@ cr:PlannedEncounter a owl:Class ;
     rdfs:label "Planned Encounter" ;
     rdfs:comment "A planned visit slot on the timeline (USDM Encounter). Positioned by a cr:Timing relative to an anchor; actual cr:Visits are reconciled against it." ;
     rdfs:subClassOf top:Constraint .
+
+cr:RecruitmentCampaign a owl:Class ;
+    rdfs:label "Recruitment Campaign" ;
+    rdfs:comment "The top of the funnel. Carries its channel (cr:campaignChannel) and the study it recruits for." ;
+    rdfs:subClassOf top:Scope ;
+    skos:altLabel "outreach"@en,
+        "patient finding"@en,
+        "recruitment"@en ;
+    skos:definition "A planned outreach effort to find candidates for a study — advertising, referral programs, EHR cohort searches, community outreach." ;
+    skos:prefLabel "Recruitment Campaign"@en .
+
+cr:ReturnEvent a owl:Class ;
+    rdfs:label "Return Event" ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "drug return"@en,
+        "returned units"@en ;
+    skos:definition "The return of unused or partially used investigational product from a participant or site back into custody, with the returned quantity." ;
+    skos:prefLabel "Return Event"@en .
 
 cr:SafetyReport a owl:Class ;
     rdfs:label "Safety Report" ;
@@ -4364,6 +5042,27 @@ cr:SeriousAdverseEvent a owl:Class ;
     rdfs:subClassOf cr:AdverseEvent ;
     skos:altLabel "SAE"@en ;
     skos:prefLabel "Serious Adverse Event"@en .
+
+cr:Shipment a owl:Class ;
+    rdfs:label "Shipment" ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "consignment"@en,
+        "drug shipment"@en,
+        "resupply"@en ;
+    skos:definition "A transfer of investigational-product lots from depot (or sponsor) to a study site, with its dispatch and receipt times." ;
+    skos:prefLabel "Shipment"@en .
+
+cr:SiteClosure a owl:Class ;
+    rdfs:label "Site Closure" ;
+    rdfs:comment "A promoted fact (P6): 'isClosed' is never a flag. Closure without its evidence (COV + reconciliations complete) is a Violation." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned ;
+    skos:altLabel "closure"@en,
+        "site closed"@en,
+        "site closeout"@en ;
+    skos:definition "The record that a site's participation in the study has ended — resting on the Close-Out Visit and the completed reconciliations." ;
+    skos:prefLabel "Site Closure"@en .
 
 cr:SourceDocument a owl:Class ;
     rdfs:label "Source Document" ;
@@ -4385,6 +5084,16 @@ cr:SubmitMonitoringReport a hcls:Action ;
     hcls:authorizedAgentType cr:ClinicalResearchAssociate ;
     hcls:occursIn cr:OversightSubPhase ;
     hcls:operatesOn cr:VisitOccurrence .
+
+cr:TemperatureExcursion a owl:Class ;
+    rdfs:label "Temperature Excursion" ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned ;
+    skos:altLabel "cold-chain excursion"@en,
+        "excursion"@en,
+        "temp excursion"@en ;
+    skos:definition "A recorded departure from a lot's required storage conditions — a promoted fact (never an 'isCompromised' flag) that quarantines the affected product until disposition." ;
+    skos:prefLabel "Temperature Excursion"@en .
 
 cr:TransferAmendment a owl:Class ;
     rdfs:label "Transfer Amendment" ;
@@ -4415,16 +5124,26 @@ cx:Mapping a owl:Class ;
     rdfs:comment "A curated, provenanced correspondence from a TOP term to an external ontology term." ;
     rdfs:subClassOf top:Evidence .
 
-ns2:Zone_CentralTrialDocs a skos:Concept ;
+ns1:Zone_CentralTrialDocs a skos:Concept ;
     skos:prefLabel "Central Trial Documents" ;
-    skos:topConceptOf ns2:TMFReferenceModel .
+    skos:topConceptOf ns1:TMFReferenceModel .
 
-ns2:concerns a owl:ObjectProperty ;
+ns1:concerns a owl:ObjectProperty ;
     rdfs:label "concerns" ;
     rdfs:comment "The domain class whose instances this artifact type carries (general bridge)." ;
-    rdfs:domain ns2:TMFArtifactType ;
+    rdfs:domain ns1:TMFArtifactType ;
     rdfs:range owl:Class ;
     top:flavor "Additive" .
+
+cr:AnalysisDataset a owl:Class ;
+    rdfs:label "Analysis Dataset (ADaM)" ;
+    rdfs:comment "Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source. Its ADaM structure (ADSL/BDS/OCCDS) is cr:datasetStructure — a value, not a subclass (ADR-0024 one-question gate)." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:altLabel "ADaM dataset"@en,
+        "analysis data"@en ;
+    skos:definition "An ADaM analysis dataset (e.g. ADSL, ADAE, ADEFF) — analysis-ready data derived from the native clinical facts, structured per a CDISC ADaM structure class." ;
+    skos:prefLabel "Analysis Dataset"@en .
 
 cr:CAPA a owl:Class ;
     rdfs:label "CAPA" ;
@@ -4434,6 +5153,14 @@ cr:CAPA a owl:Class ;
     skos:altLabel "corrective action"@en,
         "corrective and preventive action"@en ;
     skos:prefLabel "CAPA"@en .
+
+cr:CodingReview a owl:Class ;
+    rdfs:label "Coding Review" ;
+    rdfs:subClassOf top:Temporal ;
+    skos:altLabel "coder review"@en,
+        "coding approval"@en ;
+    skos:definition "A human review of a code assignment — approving, correcting, or querying it. Autocoded assignments carry one or are flagged." ;
+    skos:prefLabel "Coding Review"@en .
 
 cr:CriticalToQualityFactor a owl:Class ;
     rdfs:label "Critical-to-Quality Factor" ;
@@ -4475,20 +5202,37 @@ cr:DatabaseLock a owl:Class ;
     skos:prefLabel "Database Lock"@en ;
     skos:scopeNote "Operators say 'the finish line'; soft vs hard is carried by cr:lockType, not by separate classes (ADR-0024 one-question gate: a classification, not a kind)."@en .
 
-cr:EligibilityCriterion a owl:Class ;
-    rdfs:label "Eligibility Criterion" ;
-    rdfs:comment "An inclusion/exclusion rule defining who may enroll." ;
-    rdfs:subClassOf top:Constraint ;
-    skos:altLabel "I/E criteria"@en,
-        "entry criteria"@en,
-        "exclusion criterion"@en,
-        "inclusion criterion"@en ;
-    skos:prefLabel "Eligibility Criterion"@en .
+cr:DispensingEvent a owl:Class ;
+    rdfs:label "Dispensing Event" ;
+    rdfs:comment "Dispensed TO the pseudonymous Participant (cr:StudySubject), never an identifiable Person — the PII containment invariant extends to the pharmacy." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "dispensation"@en,
+        "dispensing"@en,
+        "drug dispensing"@en ;
+    skos:definition "The handing of investigational product (by kit, from a lot) to a participant at a visit — the pivotal accountability event." ;
+    skos:prefLabel "Dispensing Event"@en .
 
 cr:ItemGroup a owl:Class ;
     rdfs:label "Item Group" ;
     rdfs:comment "A logical clustering of items (ItemGroupOID)." ;
     rdfs:subClassOf top:Evidence .
+
+cr:KitAssignment a owl:Class ;
+    rdfs:label "Kit Assignment" ;
+    rdfs:comment "The kit number is what the site sees; the arm behind it stays with the randomization system. Dispensing (cr:DispensingEvent, supply module) cites the kit." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "blinded kit"@en,
+        "kit"@en,
+        "kit number"@en ;
+    skos:definition "The assignment of a blinded kit (numbered container of investigational product or comparator) to a randomized participant — the mechanism that operationalizes the blind." ;
+    skos:hiddenLabel "IRT"@en,
+        "IWRS"@en,
+        "IxRS"@en,
+        "RTSM"@en ;
+    skos:prefLabel "Kit Assignment"@en ;
+    skos:scopeNote "IxRS / IWRS / IRT / RTSM name the SYSTEM that performs randomization and supply; its recorded acts are cr:RandomizationEvent and cr:KitAssignment."@en .
 
 cr:ParticipantSchedule a owl:Class ;
     rdfs:label "Participant Schedule" ;
@@ -4500,6 +5244,18 @@ cr:PlannedActivity a owl:Class ;
     rdfs:label "Planned Activity" ;
     rdfs:comment "A planned activity within an encounter (USDM ScheduledActivityInstance) — e.g. ECG, blood draw, PRO. Positioned by a cr:Timing and/or an ordering edge (cr:precedes)." ;
     rdfs:subClassOf top:Constraint .
+
+cr:Reconciliation a owl:Class ;
+    rdfs:label "Reconciliation" ;
+    rdfs:comment "One class, four scopes (ADR-0024 one-question gate: drug vs document reconciliation is a classification of the act, not a different kind of act). The IMP scope reconciles against the accountability-log projection (supply module) — arithmetic over events, not a spreadsheet." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "device reconciliation"@en,
+        "document reconciliation"@en,
+        "drug reconciliation"@en ;
+    skos:definition "The act of confirming that a site's records balance at closeout — investigational product counts, device counts, essential documents, or open queries. The scope (what is being reconciled) is cr:reconciliationScope, a value." ;
+    skos:prefLabel "Reconciliation"@en ;
+    skos:scopeNote "One act, four scopes (IMP/device/documents/queries) — the scope is a value, never four classes (ADR-0024)."@en .
 
 cr:SUSAR a owl:Class ;
     rdfs:label "SUSAR" ;
@@ -4540,21 +5296,23 @@ cr:TableListingFigure a owl:Class ;
     skos:definition "A pre-specified analysis output — a table, a listing, or a figure — built from an ADaM analysis dataset. The unit the CSR and the submission actually present. Must be reproducible to source (prov:wasDerivedFrom an AnalysisDataset) and grounded in the SAP that pre-specified it." ;
     skos:prefLabel "Table, Listing or Figure"@en .
 
+cr:UnblindingEvent a owl:Class ;
+    rdfs:label "Unblinding Event" ;
+    rdfs:comment "Modeled like cr:DatabaseUnlock: the blind is never silently broken. An unblinding must carry its reason and its authorizer; one without both is a Violation. The unblinding kind (emergency vs planned) is a value, not a class (ADR-0024 one-question gate)." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "breaking the blind"@en,
+        "code break"@en,
+        "emergency unblinding"@en,
+        "unblinding"@en ;
+    skos:definition "The controlled, audited disclosure of a participant's treatment assignment — emergency (safety) or planned (analysis milestone)." ;
+    skos:prefLabel "Unblinding Event"@en .
+
 cr:Visit a owl:Class ;
     rdfs:label "Trial Visit" ;
     rdfs:comment "A protocol visit — a kind of study event." ;
     rdfs:subClassOf cr:StudyEvent,
         top:Temporal .
-
-top:Agent a owl:Class ;
-    rdfs:label "Agent" ;
-    rdfs:comment "CLO: an actor that can bear responsibility — person, organization, group, system, organism." ;
-    rdfs:subClassOf top:CommonEntity .
-
-top:Conclusion a owl:Class ;
-    rdfs:label "Conclusion" ;
-    rdfs:comment "A reasoned determination resting on evidence (Outcome leaf)." ;
-    rdfs:subClassOf top:Outcome .
 
 top:Resource a owl:Class ;
     rdfs:label "Resource" ;
@@ -4580,11 +5338,6 @@ cr:CloseoutPhase a hcls:Phase ;
         cr:FollowUpSubPhase,
         cr:ReportingSubPhase .
 
-cr:DataElementDef a owl:Class ;
-    rdfs:label "Data Element Definition" ;
-    rdfs:comment "A variable DEFINITION (ItemOID), independent of any form version; carries a PHI classification." ;
-    rdfs:subClassOf top:Evidence .
-
 cr:DeviationEvent a owl:Class ;
     rdfs:label "Deviation Event" ;
     rdfs:comment "A protocol deviation occurrence (departure from the protocol or GCP). Classified by materiality; significant deviations require a CAPA. Bitemporal + attested." ;
@@ -4599,6 +5352,16 @@ cr:DeviationEvent a owl:Class ;
 cr:E6R3Glossary a skos:ConceptScheme ;
     rdfs:label "ICH E6(R3) glossary (selected terms)" ;
     rdfs:comment "Definitional concepts cited to ICH E6(R3); related to the cr: class/relation that realizes each, where one exists." .
+
+cr:EligibilityCriterion a owl:Class ;
+    rdfs:label "Eligibility Criterion" ;
+    rdfs:comment "An inclusion/exclusion rule defining who may enroll." ;
+    rdfs:subClassOf top:Constraint ;
+    skos:altLabel "I/E criteria"@en,
+        "entry criteria"@en,
+        "exclusion criterion"@en,
+        "inclusion criterion"@en ;
+    skos:prefLabel "Eligibility Criterion"@en .
 
 cr:LawfulBasis a owl:Class ;
     rdfs:label "Lawful Basis" ;
@@ -4615,15 +5378,41 @@ cr:PlannedVisit a owl:Class ;
     rdfs:comment "A projected planned visit for a subject: a target date and a resolved window (start/end dates), against which the actual visit is reconciled." ;
     rdfs:subClassOf top:Constraint .
 
+cr:RandomizationEvent a owl:Class ;
+    rdfs:label "Randomization Event" ;
+    rdfs:comment "A promoted fact (first-principles P6): 'is randomized' is never a flag — it is this event, with its time, its authority (the system or the unblinded pharmacist), and its stratum." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "random assignment"@en,
+        "randomisation"@en,
+        "randomization"@en ;
+    skos:definition "The act of assigning an enrolled participant to a treatment arm by the randomization system, under a stratification key, yielding a randomization number." ;
+    skos:prefLabel "Randomization Event"@en .
+
 cr:SiteSelectionDecision a owl:Class ;
     rdfs:label "Site Selection Decision" ;
     rdfs:comment "A recorded, provenance-tagged decision about a study site at a specific lifecycle transition. Captures both positive (Selected, Reserve) and negative (Dropped) outcomes with mandatory rationale. The negative path — why a site was not selected — is institutional intelligence that is almost never captured in practice today but is essential for: (a) sponsor learning across studies, (b) avoiding repeat qualification of unsuitable sites, (c) CRO accountability. Bitemporal (top:Versioned) because decisions can be revised (a Dropped site can become Reserve under rescue conditions)." ;
     rdfs:subClassOf top:Evidence,
         top:Versioned .
 
-ns2:Zone_TrialManagement a skos:Concept ;
+hcls:Lot a owl:Class ;
+    rdfs:label "Lot" ;
+    rdfs:comment "A manufactured batch/lot; the primary join to the manufacturing domain." ;
+    rdfs:subClassOf top:Resource .
+
+ns1:Zone_TrialManagement a skos:Concept ;
     skos:prefLabel "Trial Management" ;
-    skos:topConceptOf ns2:TMFReferenceModel .
+    skos:topConceptOf ns1:TMFReferenceModel .
+
+top:Agent a owl:Class ;
+    rdfs:label "Agent" ;
+    rdfs:comment "CLO: an actor that can bear responsibility — person, organization, group, system, organism." ;
+    rdfs:subClassOf top:CommonEntity .
+
+top:Conclusion a owl:Class ;
+    rdfs:label "Conclusion" ;
+    rdfs:comment "A reasoned determination resting on evidence (Outcome leaf)." ;
+    rdfs:subClassOf top:Outcome .
 
 cr:ArchivalSubPhase a hcls:Phase ;
     rdfs:label "Archival" ;
@@ -4634,6 +5423,11 @@ cr:CSRSection a owl:Class ;
     rdfs:comment "The sectionKind qualifier (efficacy-results | safety-results | synopsis | narrative | administrative) selects which sections must carry analysis traceability, without a parallel hierarchy." ;
     rdfs:subClassOf top:Evidence ;
     skos:definition "A section of a Clinical Study Report, keyed to its ICH E3 number (e.g. 11.4 Efficacy Results, 12.2 Adverse Events). A results section presents the TLFs and reports the results it draws its conclusions from." .
+
+cr:DataElementDef a owl:Class ;
+    rdfs:label "Data Element Definition" ;
+    rdfs:comment "A variable DEFINITION (ItemOID), independent of any form version; carries a PHI classification." ;
+    rdfs:subClassOf top:Evidence .
 
 cr:DataTransferAgreement a owl:Class ;
     rdfs:label "Data Transfer Agreement" ;
@@ -4653,16 +5447,6 @@ cr:DeviationAntecedent a owl:Class ;
     rdfs:subClassOf top:Constraint,
         top:Versioned .
 
-cr:EndpointResult a owl:Class ;
-    rdfs:label "Endpoint Result" ;
-    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned ;
-    skos:altLabel "primary result"@en,
-        "result"@en,
-        "topline result"@en ;
-    skos:prefLabel "Endpoint Result"@en .
-
 cr:Query a owl:Class ;
     rdfs:label "Query" ;
     rdfs:comment "A discrepancy note / data query anchored to a data point or other entity; threaded." ;
@@ -4673,6 +5457,18 @@ cr:Query a owl:Class ;
         "data query"@en,
         "discrepancy"@en ;
     skos:prefLabel "Query"@en .
+
+cr:RegistryRecord a owl:Class ;
+    rdfs:label "Registry Record" ;
+    rdfs:comment "Bitemporal by construction: registration time and results-posting time are separate valid-time facts; the results POSTED are a projection of already-produced endpoint results (referenced by IRI), never re-authored." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:altLabel "ClinicalTrials.gov record"@en,
+        "NCT number"@en,
+        "registry posting"@en,
+        "trial registration"@en ;
+    skos:definition "The public trial-registry record for a study (ClinicalTrials.gov, EUCTR, ISRCTN): its registration, and later its posted results — the FDAAA 801 / EU CTR transparency obligation." ;
+    skos:prefLabel "Registry Record"@en .
 
 cr:SiteMetrics a owl:Class ;
     rdfs:label "Site Metrics" ;
@@ -4701,19 +5497,6 @@ cr:TransferSpecification a owl:Class ;
         top:Versioned ;
     skos:definition "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act." .
 
-cr:eCTDSubmission a owl:Class ;
-    rdfs:label "eCTD Submission" ;
-    rdfs:comment "Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock — submitting on reversible (soft-locked) data is inadmissible." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
-    skos:altLabel "BLA"@en,
-        "NDA"@en,
-        "filing"@en,
-        "marketing application"@en,
-        "submission"@en ;
-    skos:definition "An electronic Common Technical Document submission to a regulator (e.g. NDA / BLA / MAA). Modeled as a manifest that references the locked, already-produced content — the Clinical Study Report, the analysis datasets, and the Define-XML — not a re-authored copy of any of it." ;
-    skos:prefLabel "eCTD Submission"@en .
-
 cr:CSR a owl:Class ;
     rdfs:label "Clinical Study Report" ;
     rdfs:comment "The definitive summary of a study's results (CSR)." ;
@@ -4727,16 +5510,16 @@ cr:Endpoint a owl:Class ;
         "outcome measure"@en ;
     skos:prefLabel "Endpoint"@en .
 
-cr:Enrollment a owl:Class ;
-    rdfs:label "Enrollment" ;
-    rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
-    skos:altLabel "enrolment"@en,
-        "onboarding"@en,
-        "registration"@en,
-        "study entry"@en ;
-    skos:prefLabel "Enrollment"@en .
+cr:Recruit a owl:Class ;
+    rdfs:label "Recruit" ;
+    rdfs:comment "PII containment: downstream clinical data NEVER references a Recruit (cr:forSubject ranges over cr:StudySubject only). The candidate's identifiable record stays inside the site boundary; conversion to a pseudonymous Participant happens only via the attested cr:Enrollment bridge. Retires the legacy undefined cr:Recruit used by pre-rich-shell examples." ;
+    rdfs:subClassOf top:Agent ;
+    skos:altLabel "candidate"@en,
+        "prospective participant"@en,
+        "referral"@en ;
+    skos:definition "A candidate considered for study participation, from first contact until conversion (enrollment) or exit. A site-boundary identity: PII-side, like hcls:Person." ;
+    skos:prefLabel "Recruit"@en ;
+    skos:scopeNote "PII-side, site-boundary identity — never referenced by downstream clinical data. Converts to Participant only via the attested Enrollment bridge."@en .
 
 cr:RegulatoryAffairsSpecialist a owl:Class ;
     rdfs:label "Regulatory Affairs Specialist" ;
@@ -4756,6 +5539,18 @@ cr:RiskAssessment a owl:Class ;
         "risk review"@en ;
     skos:prefLabel "Risk Assessment"@en .
 
+cr:ScreeningRecord a owl:Class ;
+    rdfs:label "Screening Record" ;
+    rdfs:comment "Screen failure is cr:screeningOutcome \"screen-failure\", not a subclass (ADR-0024). The screen-failure reason cites the failed cr:EligibilityCriterion by IRI." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "screening"@en,
+        "screening visit"@en ;
+    skos:definition "The record of formally screening a consented candidate against the protocol's eligibility criteria, with a coded outcome (eligible / screen-failure / withdrew)." ;
+    skos:hiddenLabel "screen failure"@en ;
+    skos:prefLabel "Screening Record"@en ;
+    skos:scopeNote "'Screen failure' routes here as the outcome value screeningOutcome=\"screen-failure\" — a classification, never a class (ADR-0024)."@en .
+
 cr:SiteActivation a owl:Class ;
     rdfs:label "Site Activation" ;
     rdfs:comment "The green-light record (observedAt = activated date); must cite IRB approval, executed CTA, and SIV." ;
@@ -4766,22 +5561,22 @@ cr:SiteActivation a owl:Class ;
         "site ready"@en ;
     skos:prefLabel "Site Activation"@en .
 
-cr:StudySubject a owl:Class ;
-    rdfs:label "Participant" ;
-    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII. Preferred label 'Participant' per ADR-0024 (operator vocabulary, first-principles P2); the IRI stays cr:StudySubject for stability. The PII boundary is held by homonym routing, not the label: 'Participant' names this pseudonymous identity, never the identifiable hcls:Person." ;
-    rdfs:subClassOf top:Agent ;
-    skos:altLabel "study participant"@en,
-        "study subject"@en,
-        "subject"@en ;
-    skos:hiddenLabel "ResearchSubject"@en,
-        "patient"@en ;
-    skos:prefLabel "Participant"@en ;
-    skos:scopeNote "ADR-0024: 'Participant' is the preferred operator label for the pseudonymous in-study identity (IRI stays cr:StudySubject for stability). 'Patient' is routed but not promoted — industry drift toward 'patient' is noted; in clinical research the person is a participant, patient only in care contexts. The identifiable human is hcls:Person, never this class; the only bridge is the attested cr:Enrollment."@en ;
-    ns1:altLabel cr:xl-participant-patient .
+cr:eCTDSubmission a owl:Class ;
+    rdfs:label "eCTD Submission" ;
+    rdfs:comment "Module 5 (clinical) is what this reference reaches; earlier modules (quality, nonclinical) are out of scope. The submission must be built on a HARD database lock — submitting on reversible (soft-locked) data is inadmissible." ;
+    rdfs:subClassOf top:Evidence,
+        top:Versioned ;
+    skos:altLabel "BLA"@en,
+        "NDA"@en,
+        "filing"@en,
+        "marketing application"@en,
+        "submission"@en ;
+    skos:definition "An electronic Common Technical Document submission to a regulator (e.g. NDA / BLA / MAA). Modeled as a manifest that references the locked, already-produced content — the Clinical Study Report, the analysis datasets, and the Define-XML — not a re-authored copy of any of it." ;
+    skos:prefLabel "eCTD Submission"@en .
 
-ns2:Zone_SiteManagement a skos:Concept ;
+ns1:Zone_SiteManagement a skos:Concept ;
     skos:prefLabel "Site Management" ;
-    skos:topConceptOf ns2:TMFReferenceModel .
+    skos:topConceptOf ns1:TMFReferenceModel .
 
 cr:Assessment a owl:Class ;
     rdfs:label "Assessment" ;
@@ -4793,6 +5588,27 @@ cr:DataElementSpecification a owl:Class ;
     rdfs:comment "Grounded in MVP Inventory content rows and the LAB v2.0 LB variable list. The SDTM target is NEVER a stored attribute here — it is a crosswalk edge rendered on projection." ;
     rdfs:subClassOf top:Scope ;
     skos:definition "One expected data element in a TransferSpecification: it binds to a canonical BiomedicalConcept, declares its unit, value range, controlled terminology, mandatory-ness, significant digits and derived flag. The universal content pattern — one shape covers lab, ECG, imaging analytes; data-type specifics are typed extensions, not parallel hierarchies." .
+
+cr:EndpointResult a owl:Class ;
+    rdfs:label "Endpoint Result" ;
+    rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
+    rdfs:subClassOf top:Outcome,
+        top:Versioned ;
+    skos:altLabel "primary result"@en,
+        "result"@en,
+        "topline result"@en ;
+    skos:prefLabel "Endpoint Result"@en .
+
+cr:Enrollment a owl:Class ;
+    rdfs:label "Enrollment" ;
+    rdfs:comment "The bitemporal act linking an hcls:Person to a cr:StudySubject in a cr:Study." ;
+    rdfs:subClassOf top:Temporal,
+        top:Versioned ;
+    skos:altLabel "enrolment"@en,
+        "onboarding"@en,
+        "registration"@en,
+        "study entry"@en ;
+    skos:prefLabel "Enrollment"@en .
 
 cr:ProtocolVersion a owl:Class ;
     rdfs:label "Protocol Version" ;
@@ -4817,6 +5633,18 @@ cr:WorkStream a owl:Class ;
     rdfs:label "Activation Work Stream" ;
     rdfs:comment "A site-level stream of work triggered by a study award: consumes package documents and produces outputs. Specialized into the three streams below." ;
     rdfs:subClassOf top:Temporal .
+
+cr:CodeAssignment a owl:Class ;
+    rdfs:label "Code Assignment" ;
+    rdfs:comment "A promoted fact (first-principles P6, ADR-0024): 'is coded' is never a flag. The same shape as cr:CausalityAssessment — a judgment with authority, time, and rationale. The target code is a BYOL IRI reference." ;
+    rdfs:subClassOf top:Conclusion,
+        top:Versioned ;
+    skos:altLabel "autocoding"@en,
+        "coding"@en,
+        "medical coding"@en,
+        "term coding"@en ;
+    skos:definition "The recorded judgment that a verbatim term (an investigator's words) corresponds to a dictionary code (MedDRA term, WHODrug record) — with its method, coder, and dictionary version." ;
+    skos:prefLabel "Code Assignment"@en .
 
 cr:InformedConsent a owl:Class ;
     rdfs:label "Informed Consent" ;
@@ -4864,21 +5692,6 @@ hcls:Specimen a owl:Class ;
         "sample"@en ;
     skos:prefLabel "Specimen"@en .
 
-top:Outcome a owl:Class ;
-    rdfs:label "Outcome" ;
-    rdfs:comment "CLO: a result of activity — conclusion, status change, deliverable state." ;
-    rdfs:subClassOf top:CommonEntity .
-
-cr:Arm a owl:Class ;
-    rdfs:label "Arm" ;
-    rdfs:comment "A treatment arm of the study." ;
-    rdfs:subClassOf top:Scope ;
-    skos:altLabel "study arm"@en,
-        "treatment arm"@en,
-        "treatment group"@en ;
-    skos:prefLabel "Arm"@en ;
-    ns1:altLabel cr:xl-arm .
-
 cr:Delegation a owl:Class ;
     rdfs:label "Delegation" ;
     rdfs:comment "PI delegates a Capability to a Person, gated by a Credential, attested. DOA/training logs are projections of this." ;
@@ -4897,6 +5710,29 @@ cr:RegulatorySubPhase a hcls:Phase ;
     rdfs:label "Regulatory Submissions" ;
     rdfs:comment "IND/CTA filing, IRB/EC review, country-level submissions, amendment management. Output: regulatory clearance per country." .
 
+cr:Arm a owl:Class ;
+    rdfs:label "Arm" ;
+    rdfs:comment "A treatment arm of the study." ;
+    rdfs:subClassOf top:Scope ;
+    skos:altLabel "study arm"@en,
+        "treatment arm"@en,
+        "treatment group"@en ;
+    skos:prefLabel "Arm"@en ;
+    ns2:altLabel cr:xl-arm .
+
+cr:StudySubject a owl:Class ;
+    rdfs:label "Participant" ;
+    rdfs:comment "The pseudonymous in-study participant identity. Linked to an hcls:Person via the bitemporal cr:Enrollment act (the sensitive bridge); carries no PII. Preferred label 'Participant' per ADR-0024 (operator vocabulary, first-principles P2); the IRI stays cr:StudySubject for stability. The PII boundary is held by homonym routing, not the label: 'Participant' names this pseudonymous identity, never the identifiable hcls:Person." ;
+    rdfs:subClassOf top:Agent ;
+    skos:altLabel "study participant"@en,
+        "study subject"@en,
+        "subject"@en ;
+    skos:hiddenLabel "ResearchSubject"@en,
+        "patient"@en ;
+    skos:prefLabel "Participant"@en ;
+    skos:scopeNote "ADR-0024: 'Participant' is the preferred operator label for the pseudonymous in-study identity (IRI stays cr:StudySubject for stability). 'Patient' is routed but not promoted — industry drift toward 'patient' is noted; in clinical research the person is a participant, patient only in care contexts. The identifiable human is hcls:Person, never this class; the only bridge is the attested cr:Enrollment."@en ;
+    ns2:altLabel cr:xl-participant-patient .
+
 cr:TransferProfile a owl:Class ;
     rdfs:label "Transfer Profile" ;
     rdfs:comment "Grounded in MVP Inventory §5 'File Transfer Information'. Specialized per vendor as cr:VendorConnectorProfile instances grounded in each vendor's public API/export surface." ;
@@ -4906,6 +5742,11 @@ cr:TransferProfile a owl:Class ;
 cr:VisitExecutionSubPhase a hcls:Phase ;
     rdfs:label "Visit Execution" ;
     rdfs:comment "Scheduled and unscheduled visit conduct: actuals vs. SOA, activity completion, IP administration, sample collection, CRF completion at visit level." .
+
+top:Outcome a owl:Class ;
+    rdfs:label "Outcome" ;
+    rdfs:comment "CLO: a result of activity — conclusion, status change, deliverable state." ;
+    rdfs:subClassOf top:CommonEntity .
 
 cr:ActivationSubPhase a hcls:Phase ;
     rdfs:label "Site Activation" ;
@@ -4953,7 +5794,7 @@ cr:ClinicalResearchAssociate a owl:Class ;
     skos:hiddenLabel "monitor"@en ;
     skos:prefLabel "Clinical Research Associate"@en ;
     skos:scopeNote "ROLES: OOUX persona aliases. 'Monitor' is on the watch-list: the person (CRA), the activity (monitoring visit), and central/medical monitoring are different things."@en ;
-    ns1:altLabel cr:xl-monitor .
+    ns2:altLabel cr:xl-monitor .
 
 cr:SafetySubPhase a hcls:Phase ;
     rdfs:label "Safety" ;
@@ -4977,15 +5818,15 @@ cr:DataManager a owl:Class ;
         "clinical data manager"@en ;
     skos:prefLabel "Data Manager"@en .
 
-top:Scope a owl:Class ;
-    rdfs:label "Scope" ;
-    rdfs:comment "CLO: a unit of intent that bounds work — program, project, plan element." ;
-    rdfs:subClassOf top:CommonEntity .
-
 cr:SponsorQualityStaff a owl:Class ;
     rdfs:label "Sponsor Quality" ;
     rdfs:comment "Classifies, approves, and closes deviations. Conducts audits and risk assessments; manages CAPAs. OOUX persona aliases: Sponsor Quality, Quality, Auditor." ;
     rdfs:subClassOf hcls:Person .
+
+top:Scope a owl:Class ;
+    rdfs:label "Scope" ;
+    rdfs:comment "CLO: a unit of intent that bounds work — program, project, plan element." ;
+    rdfs:subClassOf top:CommonEntity .
 
 cr:RegulatoryInteraction a owl:Class ;
     rdfs:label "Regulatory Interaction" ;
@@ -4997,7 +5838,7 @@ cr:SponsorOperationsStaff a owl:Class ;
     rdfs:comment "Manages protocol amendments, site network structure, regions, country configuration, site activation mechanics, and system configuration. OOUX persona aliases: Sponsor Operations, Sponsor Ops, Site Activation Manager." ;
     rdfs:subClassOf hcls:Person .
 
-ns2:TMFArtifactType a owl:Class ;
+ns1:TMFArtifactType a owl:Class ;
     rdfs:label "TMF Artifact Type" ;
     rdfs:comment "A kind of trial-master-file document (the document-type binding target)." ;
     rdfs:subClassOf skos:Concept .
@@ -5016,7 +5857,7 @@ cr:eCRF a owl:Class ;
         "electronic case report form"@en ;
     skos:prefLabel "eCRF"@en .
 
-ns2:TMFReferenceModel a skos:ConceptScheme ;
+ns1:TMFReferenceModel a skos:ConceptScheme ;
     rdfs:label "TOP TMF artifact-type scheme" ;
     rdfs:comment "A SKOS scheme of trial-master-file artifact types, aligned by name to the DIA TMF Reference Model; each artifact type carries content bridges to the domain classes it concerns." .
 
@@ -5024,11 +5865,6 @@ hcls:Phase a owl:Class ;
     rdfs:label "Phase" ;
     rdfs:comment "A bounded, sequenced stage of a process lifecycle within an HCLS domain. Phases form a containment tree (hcls:contains) and a precedence chain (hcls:precedes). Permutates to: cr:StartupPhase/ConductPhase/CloseoutPhase (clinical research); Admission/Inpatient/Discharge (clinical care); Formulation/Fill-Finish/Release (manufacturing)." ;
     rdfs:subClassOf top:Scope .
-
-top:Temporal a owl:Class ;
-    rdfs:label "Temporal" ;
-    rdfs:comment "CLO: a time-anchored occurrence — activity, milestone, schedule, window." ;
-    rdfs:subClassOf top:CommonEntity .
 
 cr:OversightSubPhase a hcls:Phase ;
     rdfs:label "Oversight" ;
@@ -5062,12 +5898,6 @@ cr:DataCollectionSubPhase a hcls:Phase ;
     rdfs:label "Data Collection" ;
     rdfs:comment "EDC data entry and CRF completion, query management, lab reconciliation, concomitant medication and medical history recording. Dual-lens: site captures, sponsor/DM validates." .
 
-hcls:Person a owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
-    rdfs:subClassOf top:Agent ;
-    skos:scopeNote "The identifiable human — PII, boundary-only. When an operator says 'participant' or 'patient' about in-study data, route to cr:StudySubject; this class is only for the site-sovereign identity behind the enrollment bridge."@en .
-
 cr:AdverseEvent a owl:Class ;
     rdfs:label "Adverse Event" ;
     rdfs:comment "An untoward medical occurrence in a trial subject." ;
@@ -5096,21 +5926,21 @@ cr:ConductPhase a hcls:Phase ;
         cr:VisitExecutionSubPhase ;
     hcls:precedes cr:CloseoutPhase .
 
+hcls:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A human. BOUNDARY-ONLY / PII layer: an identifiable Person lives inside the source/site sovereign boundary. Downstream and shareable artifacts must attach to a pseudonymous cr:StudySubject, never to a Person. The only legal Person<->Subject link is the attested Enrollment bridge (cr:enrolledPerson). Clinical data is PSEUDONYMIZED, not anonymized: re-identification is preserved but controlled (safety / emergency unblinding)." ;
+    rdfs:subClassOf top:Agent ;
+    skos:scopeNote "The identifiable human — PII, boundary-only. When an operator says 'participant' or 'patient' about in-study data, route to cr:StudySubject; this class is only for the site-sovereign identity behind the enrollment bridge."@en .
+
 cr:SponsorProjectManager a owl:Class ;
     rdfs:label "Sponsor Project Manager" ;
     rdfs:comment "Creates and activates studies, selects and manages sites, tracks milestones and enrollment, and closes studies. OOUX persona aliases: Sponsor PM, Study PM, Project Manager, Study Manager." ;
     rdfs:subClassOf hcls:Person .
 
-cr:StudySite a owl:Class ;
-    rdfs:label "Study Site" ;
-    rdfs:comment "An investigative site conducting the study (an organization at a facility)." ;
-    rdfs:subClassOf hcls:Organization ;
-    skos:altLabel "clinical site"@en,
-        "investigative site"@en,
-        "research site"@en,
-        "site"@en ;
-    skos:prefLabel "Study Site"@en ;
-    ns1:altLabel cr:xl-site .
+top:Temporal a owl:Class ;
+    rdfs:label "Temporal" ;
+    rdfs:comment "CLO: a time-anchored occurrence — activity, milestone, schedule, window." ;
+    rdfs:subClassOf top:CommonEntity .
 
 cr:SiteCoordinator a owl:Class ;
     rdfs:label "Site Coordinator" ;
@@ -5123,10 +5953,16 @@ cr:SiteCoordinator a owl:Class ;
     skos:prefLabel "Site Coordinator"@en ;
     skos:scopeNote "ROLES: OOUX persona aliases."@en .
 
-top:Versioned a owl:Class ;
-    rdfs:label "Versioned" ;
-    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version (ADR-0021). Applied where Tier-1 entailment fires or where a workflow opts an attribute in." ;
-    rdfs:subClassOf top:CommonEntity .
+cr:StudySite a owl:Class ;
+    rdfs:label "Study Site" ;
+    rdfs:comment "An investigative site conducting the study (an organization at a facility)." ;
+    rdfs:subClassOf hcls:Organization ;
+    skos:altLabel "clinical site"@en,
+        "investigative site"@en,
+        "research site"@en,
+        "site"@en ;
+    skos:prefLabel "Study Site"@en ;
+    ns2:altLabel cr:xl-site .
 
 top:Evidence a owl:Class ;
     rdfs:label "Evidence" ;
@@ -5143,6 +5979,11 @@ cr:Study a owl:Class ;
         "trial"@en ;
     skos:prefLabel "Study"@en ;
     skos:scopeNote "'Protocol' is routed here when the speaker means the study itself ('this protocol is enrolling'); the versioned protocol document is cr:ProtocolVersion."@en .
+
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned" ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version (ADR-0021). Applied where Tier-1 entailment fires or where a workflow opts an attribute in." ;
+    rdfs:subClassOf top:CommonEntity .
 
 hcls:Action a owl:Class ;
     rdfs:label "Action" ;

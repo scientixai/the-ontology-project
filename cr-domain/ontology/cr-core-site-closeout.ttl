@@ -1,0 +1,127 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/cr/v1/site-closeout> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "CR-core — site closeout" ;
+    dct:description "The SITE-side of closeout (Operating Model §3.1) — the counterpart of the data-side database lock: the Close-Out Visit, the reconciliations (drug, device, documents, queries — the SCOPE is a value, not four classes, ADR-0024), the Investigator Site File whose completeness gates closure, the archival with its retention clock, and the site-closure record that must rest on all of it. A closure without a Close-Out Visit and completed reconciliations is a Violation — a site is closed by evidence, not by declaration." .
+
+# ── Classes ──────────────────────────────────────────────────────────────────
+
+cr:CloseOutVisit a owl:Class ;
+    rdfs:label "Close-Out Visit" ;
+    skos:definition "The CRA's final monitoring visit to a site (COV): confirming reconciliations, ISF completeness, outstanding-query closure, and archival arrangements before the site closes." ;
+    rdfs:comment "The closing bracket of the SIV — same shape as cr:SiteInitiationVisit, at the other end of the site's life." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:Reconciliation a owl:Class ;
+    rdfs:label "Reconciliation" ;
+    skos:definition "The act of confirming that a site's records balance at closeout — investigational product counts, device counts, essential documents, or open queries. The scope (what is being reconciled) is cr:reconciliationScope, a value." ;
+    rdfs:comment "One class, four scopes (ADR-0024 one-question gate: drug vs document reconciliation is a classification of the act, not a different kind of act). The IMP scope reconciles against the accountability-log projection (supply module) — arithmetic over events, not a spreadsheet." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:InvestigatorSiteFile a owl:Class ;
+    rdfs:label "Investigator Site File" ;
+    skos:definition "The site's regulated file of essential records (the ISF / 'regulatory binder') — the site-held counterpart of the sponsor's Trial Master File." ;
+    rdfs:comment "Sibling of cr:TrialMasterFile; ISF completeness is a closure gate." ;
+    rdfs:subClassOf top:Evidence .
+
+cr:ArchivalEvent a owl:Class ;
+    rdfs:label "Archival Event" ;
+    skos:definition "The transfer of the site's essential records into retention storage, opening the retention clock (ICH E6(R3): per sponsor/regulatory requirements)." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:SiteClosure a owl:Class ;
+    rdfs:label "Site Closure" ;
+    skos:definition "The record that a site's participation in the study has ended — resting on the Close-Out Visit and the completed reconciliations." ;
+    rdfs:comment "A promoted fact (P6): 'isClosed' is never a flag. Closure without its evidence (COV + reconciliations complete) is a Violation." ;
+    rdfs:subClassOf top:Outcome ,
+        top:Versioned .
+
+# ── Properties ───────────────────────────────────────────────────────────────
+
+cr:covAtSite a owl:ObjectProperty ;
+    rdfs:label "COV at site" ;
+    rdfs:comment "The site this Close-Out Visit closes out." ;
+    rdfs:domain cr:CloseOutVisit ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:conductedByCRA a owl:ObjectProperty ;
+    rdfs:label "conducted by CRA" ;
+    rdfs:comment "The monitor who conducted the visit." ;
+    rdfs:domain cr:CloseOutVisit ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:reconciliationScope a owl:DatatypeProperty ;
+    rdfs:label "reconciliation scope" ;
+    rdfs:comment "Controlled: 'IMP' | 'device' | 'documents' | 'queries'. A value, not four classes (ADR-0024)." ;
+    rdfs:domain cr:Reconciliation ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:reconcilesSite a owl:ObjectProperty ;
+    rdfs:label "reconciles site" ;
+    rdfs:comment "The site whose records this reconciliation balances." ;
+    rdfs:domain cr:Reconciliation ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:reconciliationOutcome a owl:DatatypeProperty ;
+    rdfs:label "reconciliation outcome" ;
+    rdfs:comment "Controlled: 'balanced' | 'discrepant'. A discrepant reconciliation blocks closure until resolved (a later balanced reconciliation of the same scope)." ;
+    rdfs:domain cr:Reconciliation ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:isfForSite a owl:ObjectProperty ;
+    rdfs:label "ISF for site" ;
+    rdfs:comment "The site whose essential records this ISF holds." ;
+    rdfs:domain cr:InvestigatorSiteFile ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:archivesISF a owl:ObjectProperty ;
+    rdfs:label "archives ISF" ;
+    rdfs:comment "The Investigator Site File this archival event moves into retention." ;
+    rdfs:domain cr:ArchivalEvent ;
+    rdfs:range cr:InvestigatorSiteFile ;
+    top:flavor "Additive" .
+
+cr:retentionUntil a owl:DatatypeProperty ;
+    rdfs:label "retention until" ;
+    rdfs:comment "The end of the retention period the archival opens (per protocol/regulation)." ;
+    rdfs:domain cr:ArchivalEvent ;
+    rdfs:range xsd:date ;
+    top:flavor "Additive" .
+
+cr:closesSite a owl:ObjectProperty ;
+    rdfs:label "closes site" ;
+    rdfs:comment "The site this closure record ends." ;
+    rdfs:domain cr:SiteClosure ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:closureRestsOnCOV a owl:ObjectProperty ;
+    rdfs:label "closure rests on COV" ;
+    rdfs:comment "The Close-Out Visit this closure rests on. Required — a site is closed by evidence, not declaration." ;
+    rdfs:domain cr:SiteClosure ;
+    rdfs:range cr:CloseOutVisit ;
+    top:flavor "Additive" .
+
+cr:closureRestsOnReconciliation a owl:ObjectProperty ;
+    rdfs:label "closure rests on reconciliation" ;
+    rdfs:comment "A completed reconciliation this closure rests on (>=1 required; each must be 'balanced')." ;
+    rdfs:domain cr:SiteClosure ;
+    rdfs:range cr:Reconciliation ;
+    top:flavor "Additive" .

@@ -1,0 +1,85 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — IMP accountability, done correctly.
+#
+# A lot ships to the site and is received; units are dispensed to a
+# participant (under a blinded kit), partially returned, and the remainder is
+# destroyed WITH authorization. An earlier temperature excursion on the lot was
+# dispositioned 'released' before any dispensing. The accountability log is a
+# PROJECTION over these events (projections/accountability_log.rq).
+#
+# CONFORMANT: 0 violations, 0 warnings.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:sp-site a cr:StudySite ; rdfs:label "Denver Cancer Center" .
+ex:sp-pharmacist a hcls:Person ; rdfs:label "Priya Rao, Unblinded Pharmacist" .
+ex:sp-sponsor a hcls:Organization ; rdfs:label "Sponsor clinical supplies" .
+
+ex:sp-lot a hcls:Lot ; rdfs:label "Lot L-2209 (active, 2-8°C)" .
+
+ex:sp-subject a cr:StudySubject ;
+    rdfs:label "OPP-201 S-042 (pseudonymous)" ;
+    cr:subjectId "S-042" ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+# ── Shipment: depot -> site, dispatched then received ─────────────────────────
+ex:sp-shipment a cr:Shipment ;
+    rdfs:label "Shipment SH-88 to Denver" ;
+    top:identifier "urn:ship:SH-88" ; top:status "active" ;
+    cr:shipsLot ex:sp-lot ;
+    cr:shippedTo ex:sp-site ;
+    cr:receivedAt "2026-03-01T15:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-02-27T08:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-27T08:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-sponsor .
+
+# ── An excursion in transit — dispositioned RELEASED before any dispensing ────
+ex:sp-excursion a cr:TemperatureExcursion ;
+    rdfs:label "Excursion on L-2209 in transit (released after review)" ;
+    top:identifier "urn:excursion:L-2209-1" ; top:status "active" ;
+    cr:excursionOnLot ex:sp-lot ;
+    cr:excursionRange "9.4°C for 2h during transit; required 2-8°C" ;
+    cr:excursionDisposition "released" ;
+    top:observedAt "2026-02-28T22:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T15:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-sponsor .
+
+# ── Dispensing to the participant, under the blinded kit ──────────────────────
+ex:sp-dispense a cr:DispensingEvent ;
+    rdfs:label "Dispense 30 units of K-1187 to S-042" ;
+    top:identifier "urn:dispense:S-042-C1" ; top:status "active" ;
+    cr:dispensesToSubject ex:sp-subject ;
+    cr:dispensesFromLot ex:sp-lot ;
+    cr:quantityDispensed 30 ;
+    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T11:02:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-pharmacist .
+
+# ── Partial return at the next visit ──────────────────────────────────────────
+ex:sp-return a cr:ReturnEvent ;
+    rdfs:label "Return of 4 unused units from S-042" ;
+    top:identifier "urn:return:S-042-C1" ; top:status "active" ;
+    cr:returnsFromSubject ex:sp-subject ;
+    cr:returnsToLotCustody ex:sp-lot ;
+    cr:quantityReturned 4 ;
+    top:observedAt "2026-03-30T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-30T10:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-pharmacist .
+
+# ── Authorized destruction closes the chain ───────────────────────────────────
+ex:sp-destruction a cr:DestructionEvent ;
+    rdfs:label "Destruction of returned units (authorized)" ;
+    top:identifier "urn:destroy:L-2209-1" ; top:status "active" ;
+    cr:destroysLot ex:sp-lot ;
+    cr:quantityDestroyed 4 ;
+    cr:destructionAuthorizedBy ex:sp-pharmacist ;
+    top:observedAt "2026-06-15T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-15T09:10:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sp-pharmacist .

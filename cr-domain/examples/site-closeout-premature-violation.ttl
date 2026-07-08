@@ -1,0 +1,38 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEGATIVE EXAMPLE — closure by declaration.
+#
+# A site closure with NO Close-Out Visit, resting on a single reconciliation
+# that is still DISCREPANT. cr:SiteClosureShape fires twice.
+# EXPECT: violation.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:scv-site a cr:StudySite ; rdfs:label "Riverside Clinic" .
+ex:scv-sponsor a hcls:Organization ; rdfs:label "Sponsor" .
+
+ex:scv-recon a cr:Reconciliation ;
+    rdfs:label "IMP reconciliation at Riverside — DISCREPANT (12 units unaccounted)" ;
+    top:identifier "urn:recon:riverside-imp" ; top:status "active" ;
+    cr:reconciliationScope "IMP" ;
+    cr:reconcilesSite ex:scv-site ;
+    cr:reconciliationOutcome "discrepant" ;
+    top:observedAt "2026-08-10T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-10T11:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:scv-sponsor .
+
+ex:scv-closure a cr:SiteClosure ;
+    rdfs:label "Closure of Riverside — premature" ;
+    top:identifier "urn:closure:riverside" ; top:status "active" ;
+    cr:closesSite ex:scv-site ;
+    # no cr:closureRestsOnCOV                      ← Violation
+    cr:closureRestsOnReconciliation ex:scv-recon ; # discrepant ← Violation
+    top:observedAt "2026-08-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-20T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:scv-sponsor .

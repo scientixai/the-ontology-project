@@ -687,6 +687,43 @@ def view_checks(failures):
           and sb["includesDataset"]["object"] == "urn:adsl-b1"
           and sb["includesDefine"]["object"] == "urn:define-b1")
 
+    # Recruitment funnel — campaign attribution + eligible screening + conversion
+    rc = mod.build_view("recruitment")
+    check("recruitment: campaign + eligible screening + conversion to subject inlined",
+          lambda: rc["campaign"]["object"] == "urn:rf-campaign"
+          and val(rc["screening"]["entity"], "screeningOutcome") == "eligible"
+          and rc["conversion"]["entity"]["subject"]["object"] == "urn:rf-subject")
+
+    # Randomization — the blinded kit carries its randomization (arm + subject)
+    rz = mod.build_view("randomization")
+    check("randomization: kit -> randomization (number + arm + subject) inlined",
+          lambda: val(rz, "kitNumber") == "K-1187"
+          and val(rz["randomization"]["entity"], "randomizationNumber") == "R-0042"
+          and rz["randomization"]["entity"]["arm"]["object"] == "urn:rz-arm")
+
+    # IMP accountability — dispensing to the pseudonymous subject, from the lot
+    sp = mod.build_view("supply")
+    check("supply: dispensing -> subject + lot + quantity inlined",
+          lambda: sp["subject"]["object"] == "urn:sp-subject"
+          and sp["lot"]["object"] == "urn:sp-lot"
+          and val(sp, "quantityDispensed") == "30")
+
+    # Medical coding — verbatim + code + version + human review
+    cg = mod.build_view("coding")
+    check("coding: verbatim + assigned code + dictionary version + review inlined",
+          lambda: val(cg, "verbatimTerm") == "achy joints"
+          and val(cg, "codingDictionaryVersion") == "27.0"
+          and val(cg["review"]["entity"], "reviewVerdict") == "approved")
+
+    # Site closeout — closure rests on the COV + balanced reconciliations
+    sc = mod.build_view("site-closeout")
+    recons = sc["reconciliations"]
+    recons = recons if isinstance(recons, list) else [recons]
+    check("site-closeout: closure -> COV + balanced reconciliations inlined",
+          lambda: sc["closeOutVisit"]["object"] == "urn:sc-cov"
+          and len(recons) == 2
+          and all(val(r["entity"], "reconciliationOutcome") == "balanced" for r in recons))
+
     return passed, total
 
 

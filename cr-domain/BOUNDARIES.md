@@ -175,13 +175,23 @@ shared spine the same way every shipped sub-domain did, gated green before it me
 
 | Deferred sub-domain | What it covers | Why deferred / entry point when built |
 |---------------------|----------------|----------------------------------------|
-| **Randomization / IxRS·RTSM** | randomization events, kit/IMP assignment, stratification, emergency unblinding | design carries `cr:randomizationRatio` today; the *events* (assignment, dispensing) are the increment — a `cr:RandomizationEvent` on the enrollment/visit spine |
-| **Drug supply & IMP accountability** | depot→site resupply, dispensing/return/destruction logs, DEA reconciliation, temperature excursions | a supply-chain leaf under the LIMS custody pattern (state machine + bitemporal custody already exist) |
-| **Medical coding (MedDRA/WHODrug)** | the coding *workflow* — autocoder, medical-coding review, coding queries; WHODrug entirely | today `crosswalks/cr-to-meddra.ttl` maps AE→MedDRA by IRI (a term crosswalk, not a workflow); the increment is `cr:CodingActivity` + WHODrug crosswalk |
 | **eCOA / ePRO, imaging, DHT as domains** | instrument definitions, ePRO item libraries, imaging read workflows (BICR), wearable signal | present today only as DTA *transfer profiles* (vendor data sources); first-class instrument/read models are the increment |
 | **Query management depth** | SAE↔EDC reconciliation, cross-vendor reconciliation, query aging/escalation | EDC query/discrepancy + SDV exist; reconciliation across sources is the increment |
 | **Decentralized trials (DCT)** | televisit, remote consent, home nursing, direct-to-patient supply | the visit/consent spine generalizes; DCT-specific modes are the increment |
 | **Real-world evidence (RWD/RWE)** | external comparator, registry linkage, RWD source provenance | out of the interventional core today; a decision to model (or declare a sibling) is itself deferred |
+
+**Shipped from this register** (each with module + graded shapes + worked examples + gated tests +
+a docs page at the operator-screen bar):
+
+| Shipped sub-domain | Where it landed |
+|--------------------|-----------------|
+| Recruitment & screening funnel | `cr-core-recruitment.ttl` — campaign → candidate (PII-side) → screening (outcome as value) → attested conversion |
+| Randomization / IxRS·RTSM | `cr-core-randomization.ttl` — RandomizationEvent, blinded KitAssignment, audited UnblindingEvent |
+| Drug supply & IMP accountability | `cr-core-supply.ttl` — shipment/dispense/return/destroy on `hcls:Lot`; accountability log as a projection; excursion quarantine |
+| Medical coding (MedDRA/WHODrug) | `cr-core-coding.ttl` — CodeAssignment as promoted judgment + CodingReview; WHODrug BYOL references |
+| ADaM depth | `cr-core-adam.ttl` v1.1 — structure classes (ADSL/BDS/OCCDS as values), AnalysisVariable, PARAMCD |
+| ISS/ISE + disclosure | `cr-core-disclosure.ttl` — IntegratedSummary (kind as value), RegistryRecord (NCT, results-by-IRI), Publication |
+| Site closeout | `cr-core-site-closeout.ttl` — COV, Reconciliation (scope as value), ISF, archival + retention, evidence-resting SiteClosure |
 
 These are **not** promises for v1; they are the map of where the reference goes next, kept honest and
 visible. A consumer building their own graph today extends the model into any of these using the same

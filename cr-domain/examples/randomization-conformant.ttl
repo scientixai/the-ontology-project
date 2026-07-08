@@ -1,0 +1,61 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — Randomization & blinding (IxRS events), done correctly.
+#
+# The participant is randomized (arm + number + stratum), a blinded kit is
+# assigned under that randomization, and — later — an EMERGENCY unblinding
+# happens the right way: with a reason and an authorizer, audited, never silent.
+#
+# CONFORMANT: 0 violations, 0 warnings.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:rz-arm a cr:Arm ; rdfs:label "Arm A (active)" .
+ex:rz-medmonitor a hcls:Person ; rdfs:label "Dr. Lena Fischer, Medical Monitor" .
+ex:rz-system a hcls:Organization ; rdfs:label "IxRS (randomization system of record)" .
+
+ex:rz-subject a cr:StudySubject ;
+    rdfs:label "OPP-201 S-042 (pseudonymous)" ;
+    cr:subjectId "S-042" ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+# ── The randomization act — a first-class event, not a flag ───────────────────
+ex:rz-event a cr:RandomizationEvent ;
+    rdfs:label "Randomization of S-042" ;
+    top:identifier "urn:rand:S-042" ; top:status "active" ;
+    cr:randomizesSubject ex:rz-subject ;
+    cr:assignsArm ex:rz-arm ;
+    cr:randomizationNumber "R-0042" ;
+    cr:stratumKey "ECOG:0-1|prior-lines:<=1" ;
+    top:observedAt "2026-03-02T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T10:00:05Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rz-system .
+
+# ── The blinded kit that operationalizes it ───────────────────────────────────
+ex:rz-kit a cr:KitAssignment ;
+    rdfs:label "Kit K-1187 assigned to S-042" ;
+    top:identifier "urn:kit:K-1187" ; top:status "active" ;
+    cr:underRandomization ex:rz-event ;
+    cr:assignsKitTo ex:rz-subject ;
+    cr:kitNumber "K-1187" ;
+    top:observedAt "2026-03-02T10:00:10Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T10:00:12Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rz-system .
+
+# ── The blind broken the RIGHT way: reasoned, authorized, audited ─────────────
+ex:rz-unblinding a cr:UnblindingEvent ;
+    rdfs:label "Emergency unblinding of S-042" ;
+    top:identifier "urn:unblind:S-042" ; top:status "active" ;
+    cr:unblindsSubject ex:rz-subject ;
+    cr:unblindingKind "emergency" ;
+    cr:unblindingReason "Grade 4 SAE management required knowledge of treatment assignment (anticoagulation decision)." ;
+    cr:unblindingAuthorizedBy ex:rz-medmonitor ;
+    top:observedAt "2026-05-18T02:40:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-05-18T02:41:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rz-medmonitor .

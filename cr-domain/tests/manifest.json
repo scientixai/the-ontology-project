@@ -331,5 +331,65 @@
   {
     "file": "examples/dta-lab-safety/fhir-lab-connectors.ttl",
     "expect": "conformant"
+  },
+  {
+    "file": "examples/recruitment-funnel-conformant.ttl",
+    "expect": "conformant",
+    "desc": "recruitment funnel: campaign -> candidate -> eligible screening -> attested conversion"
+  },
+  {
+    "file": "examples/recruitment-conversion-violation.ttl",
+    "expect": "violation",
+    "desc": "funnel integrity: screen-failed candidate converted to Participant = Violation"
+  },
+  {
+    "file": "examples/randomization-conformant.ttl",
+    "expect": "conformant",
+    "desc": "randomization: event + blinded kit + authorized emergency unblinding"
+  },
+  {
+    "file": "examples/randomization-unblinding-violation.ttl",
+    "expect": "violation",
+    "desc": "silent unblinding (no reason, no authorizer) = Violation"
+  },
+  {
+    "file": "examples/supply-accountability-conformant.ttl",
+    "expect": "conformant",
+    "desc": "IMP accountability: ship -> released excursion -> dispense -> return -> authorized destroy"
+  },
+  {
+    "file": "examples/supply-quarantine-violation.ttl",
+    "expect": "violation",
+    "desc": "dispensing from quarantined lot + unauthorized destruction = Violations"
+  },
+  {
+    "file": "examples/coding-conformant.ttl",
+    "expect": "conformant",
+    "desc": "medical coding: autocoded MedDRA + human review; manual WHODrug, versions carried"
+  },
+  {
+    "file": "examples/coding-unreviewed-warning.ttl",
+    "expect": "warning",
+    "desc": "autocoded assignment with no human review = Warning (suggestion, not judgment)"
+  },
+  {
+    "file": "examples/disclosure-conformant.ttl",
+    "expect": "conformant",
+    "desc": "ISS integrates two studies reproducibly; registry posting + paper cite the result by IRI"
+  },
+  {
+    "file": "examples/disclosure-unposted-violation.ttl",
+    "expect": "violation",
+    "desc": "results 'posted' citing nothing + ISS deriving from nothing = Violations"
+  },
+  {
+    "file": "examples/site-closeout-conformant.ttl",
+    "expect": "conformant",
+    "desc": "site closeout: COV + balanced reconciliations + archived ISF -> evidenced closure"
+  },
+  {
+    "file": "examples/site-closeout-premature-violation.ttl",
+    "expect": "violation",
+    "desc": "closure by declaration: no COV + discrepant reconciliation = Violations"
   }
 ]

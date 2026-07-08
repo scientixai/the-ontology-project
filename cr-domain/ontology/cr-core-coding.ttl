@@ -1,0 +1,124 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/cr/v1/coding> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "CR-core — medical coding workflow (MedDRA / WHODrug)" ;
+    dct:description "The coding WORKFLOW the term crosswalks alone don't carry (Operating Model §3.2): a code assignment is a promoted JUDGMENT — 'this verbatim term means this dictionary code' — with its method (autocoder vs manual), its coder, and its review. The existing cr:meddra* properties record WHERE an event landed in MedDRA; this module records WHO decided that, HOW, and whether a human reviewed it. WHODrug joins MedDRA as a BYOL (bring-your-own-license) IRI reference — no licensed content is reproduced. NOTICE: MedDRA is © MSSO/ICH; WHODrug is © Uppsala Monitoring Centre; both require valid licences to resolve." .
+
+# ── Classes ──────────────────────────────────────────────────────────────────
+
+cr:CodeAssignment a owl:Class ;
+    rdfs:label "Code Assignment" ;
+    skos:definition "The recorded judgment that a verbatim term (an investigator's words) corresponds to a dictionary code (MedDRA term, WHODrug record) — with its method, coder, and dictionary version." ;
+    rdfs:comment "A promoted fact (first-principles P6, ADR-0024): 'is coded' is never a flag. The same shape as cr:CausalityAssessment — a judgment with authority, time, and rationale. The target code is a BYOL IRI reference." ;
+    rdfs:subClassOf top:Conclusion ,
+        top:Versioned .
+
+cr:CodingReview a owl:Class ;
+    rdfs:label "Coding Review" ;
+    skos:definition "A human review of a code assignment — approving, correcting, or querying it. Autocoded assignments carry one or are flagged." ;
+    rdfs:subClassOf top:Temporal .
+
+# ── Properties ───────────────────────────────────────────────────────────────
+
+cr:codesEntity a owl:ObjectProperty ;
+    rdfs:label "codes entity" ;
+    rdfs:comment "What this assignment codes — an adverse event (MedDRA) or a reported medication (WHODrug). Intended range cr:AdverseEvent / medication record; left open across the two." ;
+    rdfs:domain cr:CodeAssignment ;
+    top:flavor "Additive" .
+
+cr:verbatimTerm a owl:DatatypeProperty ;
+    rdfs:label "verbatim term" ;
+    rdfs:comment "The investigator's words, exactly as captured ('achy joints', 'baby aspirin')." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assignedCode a owl:ObjectProperty ;
+    rdfs:label "assigned code" ;
+    rdfs:comment "IRI reference to the assigned dictionary term (MedDRA LLT/PT or WHODrug record). BYOL — does not reproduce licensed content." ;
+    rdfs:domain cr:CodeAssignment ;
+    top:flavor "Additive" .
+
+cr:codingDictionary a owl:DatatypeProperty ;
+    rdfs:label "coding dictionary" ;
+    rdfs:comment "Controlled: 'MedDRA' | 'WHODrug'." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:codingDictionaryVersion a owl:DatatypeProperty ;
+    rdfs:label "coding dictionary version" ;
+    rdfs:comment "The dictionary version the assignment was made against (e.g. MedDRA '27.0', WHODrug 'GLOBAL B3 Mar 2026'). Required — an assignment is meaningless without its version." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:codingMethod a owl:DatatypeProperty ;
+    rdfs:label "coding method" ;
+    rdfs:comment "Controlled: 'autocoder' | 'manual'. A value, not a class (ADR-0024)." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:codedBy a owl:ObjectProperty ;
+    rdfs:label "coded by" ;
+    rdfs:comment "The coder (person) or, for autocoded assignments, the responsible medical-coding owner." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:hasReview a owl:ObjectProperty ;
+    rdfs:label "has review" ;
+    rdfs:comment "Forward retrieval edge (ETSI forward-only single-pull): the human review of this assignment. Inverse of cr:reviewsAssignment." ;
+    rdfs:domain cr:CodeAssignment ;
+    rdfs:range cr:CodingReview ;
+    top:flavor "Additive" .
+
+cr:reviewsAssignment a owl:ObjectProperty ;
+    rdfs:label "reviews assignment" ;
+    rdfs:comment "The code assignment this review examined." ;
+    rdfs:domain cr:CodingReview ;
+    rdfs:range cr:CodeAssignment ;
+    top:flavor "Additive" .
+
+cr:reviewVerdict a owl:DatatypeProperty ;
+    rdfs:label "review verdict" ;
+    rdfs:comment "Controlled: 'approved' | 'recoded' | 'queried'." ;
+    rdfs:domain cr:CodingReview ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:reviewedBy a owl:ObjectProperty ;
+    rdfs:label "reviewed by" ;
+    rdfs:comment "The human medical coder who performed this review." ;
+    rdfs:domain cr:CodingReview ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+# ── WHODrug BYOL reference properties (parallel to cr:meddra*) ────────────────
+# NOTICE: WHODrug is a licensed terminology (Uppsala Monitoring Centre). These
+# reference WHODrug IRIs; they do not reproduce or distribute WHODrug content.
+
+cr:whodrugCode a owl:ObjectProperty ;
+    rdfs:label "WHODrug code" ;
+    rdfs:comment "IRI reference to a WHODrug medicinal-product record. BYOL; no licensed content reproduced." ;
+    top:flavor "Additive" .
+
+cr:whodrugAtcClass a owl:ObjectProperty ;
+    rdfs:label "WHODrug ATC class" ;
+    rdfs:comment "IRI reference to the ATC classification the coded product carries. BYOL." ;
+    top:flavor "Additive" .
+
+cr:whodrugVersion a owl:DatatypeProperty ;
+    rdfs:label "WHODrug version" ;
+    rdfs:comment "The WHODrug release used (e.g. 'GLOBAL B3 Mar 2026')." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .

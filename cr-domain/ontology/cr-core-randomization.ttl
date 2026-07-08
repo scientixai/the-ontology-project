@@ -1,0 +1,115 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/cr/v1/randomization> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "CR-core — randomization & blinding (IxRS/RTSM events)" ;
+    dct:description "The events an IxRS/RTSM system records, modeled as first-class bitemporal facts (Operating Model §2.3): the randomization act (subject → arm, under a stratum), the kit assignment that keeps the blind, and the audited unblinding event. The design-time ratio stays on the study (cr:randomizationRatio); these are the EXECUTION events. An unblinding without a recorded reason and authorization is the pharmacovigilance breach every inspector checks first — modeled exactly like cr:DatabaseUnlock: an audited event, never a silent state flip." .
+
+# ── Classes ──────────────────────────────────────────────────────────────────
+
+cr:RandomizationEvent a owl:Class ;
+    rdfs:label "Randomization Event" ;
+    skos:definition "The act of assigning an enrolled participant to a treatment arm by the randomization system, under a stratification key, yielding a randomization number." ;
+    rdfs:comment "A promoted fact (first-principles P6): 'is randomized' is never a flag — it is this event, with its time, its authority (the system or the unblinded pharmacist), and its stratum." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:KitAssignment a owl:Class ;
+    rdfs:label "Kit Assignment" ;
+    skos:definition "The assignment of a blinded kit (numbered container of investigational product or comparator) to a randomized participant — the mechanism that operationalizes the blind." ;
+    rdfs:comment "The kit number is what the site sees; the arm behind it stays with the randomization system. Dispensing (cr:DispensingEvent, supply module) cites the kit." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:UnblindingEvent a owl:Class ;
+    rdfs:label "Unblinding Event" ;
+    skos:definition "The controlled, audited disclosure of a participant's treatment assignment — emergency (safety) or planned (analysis milestone)." ;
+    rdfs:comment "Modeled like cr:DatabaseUnlock: the blind is never silently broken. An unblinding must carry its reason and its authorizer; one without both is a Violation. The unblinding kind (emergency vs planned) is a value, not a class (ADR-0024 one-question gate)." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+# ── Properties ───────────────────────────────────────────────────────────────
+
+cr:randomizesSubject a owl:ObjectProperty ;
+    rdfs:label "randomizes subject" ;
+    rdfs:comment "The participant this randomization event assigns." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:assignsArm a owl:ObjectProperty ;
+    rdfs:label "assigns arm" ;
+    rdfs:comment "The treatment arm the event assigns. In a blinded study this edge lives in the randomization system's graph partition, not the site's." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range cr:Arm ;
+    top:flavor "Additive" .
+
+cr:randomizationNumber a owl:DatatypeProperty ;
+    rdfs:label "randomization number" ;
+    rdfs:comment "The unique number the randomization system issues for this assignment." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:stratumKey a owl:DatatypeProperty ;
+    rdfs:label "stratum key" ;
+    rdfs:comment "The stratification cell this assignment was drawn in (e.g. 'ECOG:0-1|prior-lines:<=1')." ;
+    rdfs:domain cr:RandomizationEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:underRandomization a owl:ObjectProperty ;
+    rdfs:label "under randomization" ;
+    rdfs:comment "The randomization event a kit assignment implements — the forward trace from kit to assignment." ;
+    rdfs:domain cr:KitAssignment ;
+    rdfs:range cr:RandomizationEvent ;
+    top:flavor "Additive" .
+
+cr:kitNumber a owl:DatatypeProperty ;
+    rdfs:label "kit number" ;
+    rdfs:comment "The blinded kit identifier the site sees and dispenses by." ;
+    rdfs:domain cr:KitAssignment ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:assignsKitTo a owl:ObjectProperty ;
+    rdfs:label "assigns kit to" ;
+    rdfs:comment "The participant the kit is assigned to." ;
+    rdfs:domain cr:KitAssignment ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:unblindsSubject a owl:ObjectProperty ;
+    rdfs:label "unblinds subject" ;
+    rdfs:comment "The participant whose assignment this event discloses." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:unblindingKind a owl:DatatypeProperty ;
+    rdfs:label "unblinding kind" ;
+    rdfs:comment "Controlled: 'emergency' | 'planned' | 'regulatory'. A value, not a class (ADR-0024)." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:unblindingReason a owl:DatatypeProperty ;
+    rdfs:label "unblinding reason" ;
+    rdfs:comment "Why the blind was broken (e.g. 'SAE management required knowledge of assignment'). Required — an unblinding without a reason is a Violation." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:unblindingAuthorizedBy a owl:ObjectProperty ;
+    rdfs:label "unblinding authorized by" ;
+    rdfs:comment "Who authorized breaking the blind (medical monitor, PI under emergency provisions). Required." ;
+    rdfs:domain cr:UnblindingEvent ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .

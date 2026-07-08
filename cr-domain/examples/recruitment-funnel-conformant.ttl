@@ -1,0 +1,85 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — Recruitment funnel (Operating Model §2.2–2.3), done correctly.
+#
+# Campaign → candidate (site-boundary, PII-side) → pre-screening → consented
+# screening (outcome: eligible) → conversion via the attested Enrollment bridge
+# to a pseudonymous Participant. Source attribution intact end-to-end.
+#
+# CONFORMANT: 0 violations, 0 warnings across every baseline + funnel shape.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:rf-study a cr:Study ; rdfs:label "OPP-101 (Phase 1 FIH)" ;
+    cr:sponsoredBy ex:rf-sponsor ; cr:conductedAt ex:rf-site ;
+    cr:hasProtocolVersion ex:rf-proto .
+ex:rf-sponsor a cr:Sponsor ; rdfs:label "Oppentix Bio" .
+ex:rf-site a cr:StudySite ; rdfs:label "Denver Cancer Center" .
+ex:rf-proto a cr:ProtocolVersion ; rdfs:label "OPP-101 protocol v1.0" ;
+    top:identifier "urn:proto:OPP-101-v1" ; top:status "active" ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rf-sponsor ;
+    cr:hasEligibilityCriterion ex:rf-elig .
+ex:rf-elig a cr:EligibilityCriterion ; rdfs:label "ECOG performance status 0-1" ;
+    cr:criterionType "inclusion" ; cr:criterionText "ECOG performance status 0-1" .
+ex:rf-arm a cr:Arm ; rdfs:label "Arm A" .
+ex:rf-crc a hcls:Practitioner ; rdfs:label "Jo Santos, CRC" .
+
+# ── Top of funnel: the campaign ───────────────────────────────────────────────
+ex:rf-campaign a cr:RecruitmentCampaign ;
+    rdfs:label "OPP-101 community-oncology referral program" ;
+    cr:recruitsForStudy ex:rf-study ;
+    cr:campaignChannel "referral" .
+
+# ── The candidate — a SITE-BOUNDARY identity (PII-side, like hcls:Person) ─────
+ex:rf-person a hcls:Person ; rdfs:label "Maria Gonzalez (PII — stays at site)" .
+
+ex:rf-recruit a cr:Recruit ;
+    rdfs:label "Candidate R-014" ;
+    cr:candidatePerson ex:rf-person ;
+    cr:respondedToCampaign ex:rf-campaign ;
+    cr:hasScreening ex:rf-screening ;
+    cr:convertedBy ex:rf-enroll .
+
+# ── Pre-screening: proceed to full screening ──────────────────────────────────
+ex:rf-prescreen a cr:PreScreening ;
+    rdfs:label "Phone pre-screen against I/E summary" ;
+    cr:prescreens ex:rf-recruit ;
+    cr:prescreenOutcome "proceed" ;
+    top:observedAt "2026-02-01T09:00:00Z"^^xsd:dateTime .
+
+# ── Screening: eligible (the gate that authorizes conversion) ─────────────────
+ex:rf-screening a cr:ScreeningRecord ;
+    rdfs:label "Screening of R-014 — eligible" ;
+    top:identifier "urn:screening:R-014" ; top:status "active" ;
+    cr:screensRecruit ex:rf-recruit ;
+    cr:screeningOutcome "eligible" ;
+    top:observedAt "2026-02-04T14:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-04T14:10:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rf-crc .
+
+# ── Conversion: the attested Enrollment bridge to the pseudonymous Participant ─
+ex:rf-subject a cr:StudySubject ;
+    rdfs:label "OPP-101 S-014 (pseudonymous)" ;
+    cr:subjectId "S-014" ;
+    top:validFrom "2026-02-05T10:00:00Z"^^xsd:dateTime .
+
+ex:rf-enroll a cr:Enrollment ;
+    rdfs:label "Enrollment of S-014" ;
+    top:identifier "urn:enroll:S-014" ; top:status "active" ;
+    cr:enrolledPerson ex:rf-person ;
+    cr:asSubject ex:rf-subject ;
+    cr:intoStudy ex:rf-study ;
+    cr:enrollmentDate "2026-02-05"^^xsd:date ;
+    cr:enrolledInArm ex:rf-arm ;
+    top:validFrom "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T10:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:rf-crc .

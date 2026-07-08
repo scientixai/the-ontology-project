@@ -1,0 +1,39 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEGATIVE EXAMPLE — disclosure without traceability.
+#
+# (a) A registry record claims results were posted (resultsPostedAt) but cites
+#     NO endpoint result — re-authored numbers    (cr:RegistryRecordShape)
+# (b) An ISS that derives from nothing            (cr:IntegratedSummaryShape)
+# EXPECT: violation.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:dcv-sponsor a hcls:Organization ; rdfs:label "Sponsor" .
+
+ex:dcv-registry a cr:RegistryRecord ; rdfs:label "NCT09999999 — results 'posted' from nowhere" ;
+    top:identifier "urn:registry:NCT09999999" ; top:status "active" ;
+    cr:registryName "ClinicalTrials.gov" ;
+    cr:registryIdentifier "NCT09999999" ;
+    cr:registersStudy ex:dcv-study ;
+    cr:registeredAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    cr:resultsPostedAt "2026-10-15T00:00:00Z"^^xsd:dateTime ;
+    # no cr:postsResult  ← Violation (a)
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-20T00:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dcv-sponsor .
+
+ex:dcv-iss a cr:IntegratedSummary ; rdfs:label "ISS deriving from nothing" ;
+    top:identifier "urn:iss:orphan" ; top:status "active" ;
+    cr:summaryKind "safety" ;
+    cr:integratesStudy ex:dcv-study ;
+    # no prov:wasDerivedFrom  ← Violation (b)
+    top:observedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:dcv-sponsor .

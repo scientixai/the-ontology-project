@@ -1,0 +1,71 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — medical coding, done correctly.
+#
+# An AE verbatim ('achy joints') is autocoded to a MedDRA PT (BYOL IRI) and a
+# human coder REVIEWS and approves it; a concomitant medication verbatim
+# ('baby aspirin') is manually coded to WHODrug. Both carry dictionary versions.
+#
+# CONFORMANT: 0 violations, 0 warnings.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:cd-coder a hcls:Person ; rdfs:label "Sam Okafor, Medical Coder" .
+
+ex:cd-ae a cr:AdverseEvent ;
+    rdfs:label "AE: achy joints" ;
+    top:identifier "urn:ae:achy-joints" ; top:status "active" ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cd-coder .
+
+# ── Autocoded MedDRA assignment + its human review ────────────────────────────
+ex:cd-assign-ae a cr:CodeAssignment ;
+    rdfs:label "Coding of 'achy joints' -> MedDRA PT Arthralgia" ;
+    top:identifier "urn:coding:ae-achy-joints" ; top:status "active" ;
+    cr:codesEntity ex:cd-ae ;
+    cr:verbatimTerm "achy joints" ;
+    cr:assignedCode <https://identifiers.org/meddra:10003239> ;   # PT Arthralgia (BYOL IRI)
+    cr:codingDictionary "MedDRA" ;
+    cr:codingDictionaryVersion "27.0" ;
+    cr:codingMethod "autocoder" ;
+    cr:codedBy ex:cd-coder ;
+    cr:hasReview ex:cd-review ;
+    top:observedAt "2026-03-11T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-11T09:00:02Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cd-coder .
+
+ex:cd-review a cr:CodingReview ;
+    rdfs:label "Review of the Arthralgia assignment — approved" ;
+    cr:reviewsAssignment ex:cd-assign-ae ;
+    cr:reviewVerdict "approved" ;
+    cr:reviewedBy ex:cd-coder ;
+    top:observedAt "2026-03-12T14:00:00Z"^^xsd:dateTime .
+
+# ── Manual WHODrug assignment for a conmed ────────────────────────────────────
+ex:cd-conmed a top:Versioned ;
+    rdfs:label "ConMed: baby aspirin" ;
+    top:identifier "urn:conmed:S-042-1" ; top:status "active" ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cd-coder .
+
+ex:cd-assign-cm a cr:CodeAssignment ;
+    rdfs:label "Coding of 'baby aspirin' -> WHODrug Acetylsalicylic acid" ;
+    top:identifier "urn:coding:cm-baby-aspirin" ; top:status "active" ;
+    cr:codesEntity ex:cd-conmed ;
+    cr:verbatimTerm "baby aspirin" ;
+    cr:assignedCode <https://identifiers.org/whodrug:000200.01.005> ;  # BYOL IRI
+    cr:codingDictionary "WHODrug" ;
+    cr:codingDictionaryVersion "GLOBAL B3 Mar 2026" ;
+    cr:codingMethod "manual" ;
+    cr:codedBy ex:cd-coder ;
+    top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-11T10:01:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cd-coder .

@@ -1,0 +1,78 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKED EXAMPLE — site closeout, done correctly.
+#
+# The CRA conducts the Close-Out Visit; IMP and document reconciliations come
+# out balanced; the ISF is archived with a retention horizon; and the site
+# closure RESTS ON the COV and the balanced reconciliations — closed by
+# evidence, not declaration.
+#
+# CONFORMANT: 0 violations, 0 warnings.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:sc-site a cr:StudySite ; rdfs:label "Denver Cancer Center" .
+ex:sc-cra a hcls:Person ; rdfs:label "Silvia Rodriguez, CRA" .
+ex:sc-sponsor a hcls:Organization ; rdfs:label "Sponsor clinical operations" .
+
+# ── The Close-Out Visit ───────────────────────────────────────────────────────
+ex:sc-cov a cr:CloseOutVisit ;
+    rdfs:label "Close-Out Visit at Denver" ;
+    top:identifier "urn:cov:denver" ; top:status "active" ;
+    cr:covAtSite ex:sc-site ;
+    cr:conductedByCRA ex:sc-cra ;
+    top:observedAt "2026-08-10T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-10T17:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sc-cra .
+
+# ── Reconciliations: one act, different scopes — both balanced ────────────────
+ex:sc-recon-imp a cr:Reconciliation ;
+    rdfs:label "IMP reconciliation at Denver — balanced" ;
+    top:identifier "urn:recon:denver-imp" ; top:status "active" ;
+    cr:reconciliationScope "IMP" ;
+    cr:reconcilesSite ex:sc-site ;
+    cr:reconciliationOutcome "balanced" ;
+    top:observedAt "2026-08-10T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-10T11:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sc-cra .
+
+ex:sc-recon-docs a cr:Reconciliation ;
+    rdfs:label "Essential-documents reconciliation at Denver — balanced" ;
+    top:identifier "urn:recon:denver-docs" ; top:status "active" ;
+    cr:reconciliationScope "documents" ;
+    cr:reconcilesSite ex:sc-site ;
+    cr:reconciliationOutcome "balanced" ;
+    top:observedAt "2026-08-10T14:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-10T14:30:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sc-cra .
+
+# ── The ISF, archived with a retention horizon ────────────────────────────────
+ex:sc-isf a cr:InvestigatorSiteFile ;
+    rdfs:label "Denver ISF (regulatory binder)" ;
+    cr:isfForSite ex:sc-site .
+
+ex:sc-archival a cr:ArchivalEvent ;
+    rdfs:label "Archival of the Denver ISF" ;
+    top:identifier "urn:archive:denver-isf" ; top:status "active" ;
+    cr:archivesISF ex:sc-isf ;
+    cr:retentionUntil "2051-08-15"^^xsd:date ;
+    top:observedAt "2026-08-15T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-15T10:05:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sc-sponsor .
+
+# ── The closure — resting on its evidence ─────────────────────────────────────
+ex:sc-closure a cr:SiteClosure ;
+    rdfs:label "Closure of Denver Cancer Center" ;
+    top:identifier "urn:closure:denver" ; top:status "active" ;
+    cr:closesSite ex:sc-site ;
+    cr:closureRestsOnCOV ex:sc-cov ;
+    cr:closureRestsOnReconciliation ex:sc-recon-imp , ex:sc-recon-docs ;
+    top:observedAt "2026-08-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-20T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:sc-sponsor .

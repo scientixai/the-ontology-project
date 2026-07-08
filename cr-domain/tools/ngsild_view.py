@@ -54,6 +54,11 @@ VIEWS = {
     "csr":             ("csr-reporting-conformant.ttl", "csr-opp201", "CSRReportView"),
     "dblock":          ("closeout-dblock-conformant.ttl", "postlock-obs", "PostLockValueView"),
     "submission":      ("submission-ectd-conformant.ttl", "ectd-b1", "eCTDSubmissionView"),
+    "recruitment":     ("recruitment-funnel-conformant.ttl", "rf-recruit", "RecruitFunnelView"),
+    "randomization":   ("randomization-conformant.ttl", "rz-kit", "KitAssignmentView"),
+    "supply":          ("supply-accountability-conformant.ttl", "sp-dispense", "DispensingView"),
+    "coding":          ("coding-conformant.ttl", "cd-assign-ae", "CodeAssignmentView"),
+    "site-closeout":   ("site-closeout-conformant.ttl", "sc-closure", "SiteClosureView"),
 }
 
 # NGSI-LD system/core terms that render bare; everything else literal -> Property.

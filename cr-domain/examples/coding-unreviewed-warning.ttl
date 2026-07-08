@@ -1,0 +1,39 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GRADED EXAMPLE — the unreviewed autocode.
+#
+# A complete, well-formed autocoder assignment (no Violation) that no human has
+# reviewed — cr:AutocodedReviewShape flags it as a Warning: a suggestion
+# presented as a judgment.
+# EXPECT: warning.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:cdw-coder a hcls:Person ; rdfs:label "Coding owner" .
+
+ex:cdw-ae a cr:AdverseEvent ;
+    rdfs:label "AE: headache" ;
+    top:identifier "urn:ae:headache" ; top:status "active" ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cdw-coder .
+
+ex:cdw-assign a cr:CodeAssignment ;
+    rdfs:label "Autocoded 'headache' -> MedDRA PT Headache — NO human review" ;
+    top:identifier "urn:coding:ae-headache" ; top:status "active" ;
+    cr:codesEntity ex:cdw-ae ;
+    cr:verbatimTerm "headache" ;
+    cr:assignedCode <https://identifiers.org/meddra:10019211> ;
+    cr:codingDictionary "MedDRA" ;
+    cr:codingDictionaryVersion "27.0" ;
+    cr:codingMethod "autocoder" ;
+    cr:codedBy ex:cdw-coder ;
+    top:observedAt "2026-03-11T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-11T09:00:02Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:cdw-coder .

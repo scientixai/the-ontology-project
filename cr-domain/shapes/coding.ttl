@@ -1,0 +1,69 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/shapes/coding-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — medical coding workflow" .
+
+# A code assignment is a complete judgment: what it codes, the verbatim, the
+# code, the dictionary + version, and the method.
+cr:CodeAssignmentShape a sh:NodeShape ;
+    sh:targetClass cr:CodeAssignment ;
+    sh:property [
+        sh:path cr:codesEntity ;
+        sh:minCount 1 ;
+        sh:message "A code assignment must say what it codes (cr:codesEntity)." ;
+    ] ;
+    sh:property [
+        sh:path cr:verbatimTerm ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "A code assignment must preserve the verbatim term it coded." ;
+    ] ;
+    sh:property [
+        sh:path cr:assignedCode ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:message "A code assignment must reference the assigned dictionary code by IRI (BYOL)." ;
+    ] ;
+    sh:property [
+        sh:path cr:codingDictionary ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "MedDRA" "WHODrug" ) ;
+        sh:message "cr:codingDictionary must be MedDRA or WHODrug." ;
+    ] ;
+    sh:property [
+        sh:path cr:codingDictionaryVersion ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Violation: a code assignment without its dictionary version is meaningless at reconciliation and at submission (Define-XML external codelist versioning)." ;
+    ] ;
+    sh:property [
+        sh:path cr:codingMethod ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "autocoder" "manual" ) ;
+        sh:message "cr:codingMethod must be autocoder or manual." ;
+    ] .
+
+# Autocoded ≠ unreviewed: an autocoder assignment with no human coding review
+# is flagged (governance Warning, risk-proportionate — not a hard stop).
+cr:AutocodedReviewShape a sh:NodeShape ;
+    sh:targetClass cr:CodeAssignment ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Warning: autocoded assignment has no human cr:CodingReview — the autocoder's output is a suggestion, not a judgment, until a coder reviews it." ;
+        sh:severity sh:Warning ;
+        sh:prefixes <https://top.scientix.ai/shapes/coding-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:codingMethod "autocoder" .
+                FILTER NOT EXISTS { ?r cr:reviewsAssignment $this }
+            }
+        """ ;
+    ] .

@@ -1,0 +1,79 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/shapes/randomization-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — randomization & blinding" .
+
+# A randomization event is complete or it didn't happen: exactly one subject,
+# exactly one arm, a number from the system.
+cr:RandomizationEventShape a sh:NodeShape ;
+    sh:targetClass cr:RandomizationEvent ;
+    sh:property [
+        sh:path cr:randomizesSubject ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:StudySubject ;
+        sh:message "A randomization event must randomize exactly one Participant (cr:StudySubject)." ;
+    ] ;
+    sh:property [
+        sh:path cr:assignsArm ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:Arm ;
+        sh:message "A randomization event must assign exactly one cr:Arm." ;
+    ] ;
+    sh:property [
+        sh:path cr:randomizationNumber ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "A randomization event must carry its cr:randomizationNumber." ;
+    ] .
+
+# A kit assignment must trace to the randomization it implements and name its kit.
+cr:KitAssignmentShape a sh:NodeShape ;
+    sh:targetClass cr:KitAssignment ;
+    sh:property [
+        sh:path cr:underRandomization ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:RandomizationEvent ;
+        sh:message "A kit assignment must trace to exactly one cr:RandomizationEvent." ;
+    ] ;
+    sh:property [
+        sh:path cr:kitNumber ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "A kit assignment must carry its blinded cr:kitNumber." ;
+    ] .
+
+# The blind is never silently broken: an unblinding carries its kind, its
+# reason, and its authorizer — or it is the finding, not the record.
+cr:UnblindingEventShape a sh:NodeShape ;
+    sh:targetClass cr:UnblindingEvent ;
+    sh:property [
+        sh:path cr:unblindsSubject ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:StudySubject ;
+        sh:message "An unblinding event must name the Participant it unblinds." ;
+    ] ;
+    sh:property [
+        sh:path cr:unblindingKind ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "emergency" "planned" "regulatory" ) ;
+        sh:message "cr:unblindingKind must be one of: emergency, planned, regulatory." ;
+    ] ;
+    sh:property [
+        sh:path cr:unblindingReason ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Violation: an unblinding without a recorded reason — the blind is never silently broken." ;
+    ] ;
+    sh:property [
+        sh:path cr:unblindingAuthorizedBy ;
+        sh:minCount 1 ;
+        sh:class hcls:Person ;
+        sh:message "Violation: an unblinding without a recorded authorizer." ;
+    ] .

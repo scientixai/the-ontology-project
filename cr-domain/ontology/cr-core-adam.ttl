@@ -2,13 +2,58 @@
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
-# ADaM analysis layer + traceability.
-# ADaM's value is reproducibility: every analysis result traces to its source. In this
-# reference the chain is result -> analysis dataset -> NATIVE source facts (via W3C PROV
-# wasDerivedFrom), i.e. traceability to the one source of truth, not the fragile
-# SDTM-document -> ADaM-document chain. SDTM and ADaM are both views of the native graph.
+<https://top.scientix.ai/cr/v1/adam> a owl:Ontology ;
+    owl:versionInfo "1.1" ;
+    dct:title "CR-core — ADaM analysis layer & traceability" ;
+    dct:description "ADaM's value is reproducibility: every analysis result traces to its source. In this reference the chain is result -> analysis dataset -> NATIVE source facts (via W3C PROV wasDerivedFrom) — traceability to the one source of truth, not the fragile SDTM-document -> ADaM-document chain. SDTM and ADaM are both views of the native graph. v1.1 adds the CDISC ADaM structural vocabulary: the dataset's structure class (ADSL / BDS / OCCDS — a CLASSIFICATION carried as a value, ADR-0024) and the analysis variable / parameter layer (PARAMCD) that BDS datasets pivot on." .
 
 cr:AnalysisDataset a owl:Class ; rdfs:subClassOf top:Evidence, top:Versioned ;
     rdfs:label "Analysis Dataset (ADaM)" ;
-    rdfs:comment "An ADaM analysis dataset (e.g. ADSL, ADAE). Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source." .
+    skos:definition "An ADaM analysis dataset (e.g. ADSL, ADAE, ADEFF) — analysis-ready data derived from the native clinical facts, structured per a CDISC ADaM structure class." ;
+    rdfs:comment "Must declare prov:wasDerivedFrom its source so any result built on it is reproducible to source. Its ADaM structure (ADSL/BDS/OCCDS) is cr:datasetStructure — a value, not a subclass (ADR-0024 one-question gate)." .
+
+# ── Structural vocabulary (v1.1) ─────────────────────────────────────────────
+
+cr:datasetName a owl:DatatypeProperty ;
+    rdfs:label "dataset name" ;
+    rdfs:comment "The ADaM dataset name (ADSL, ADAE, ADEFF, ADLB, ...)." ;
+    rdfs:domain cr:AnalysisDataset ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:datasetStructure a owl:DatatypeProperty ;
+    rdfs:label "dataset structure" ;
+    rdfs:comment "Controlled (CDISC ADaM structure classes): 'ADSL' (one record per subject) | 'BDS' (basic data structure, one record per subject/parameter/timepoint) | 'OCCDS' (occurrence data structure). A classification, never a subclass (ADR-0024)." ;
+    rdfs:domain cr:AnalysisDataset ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:AnalysisVariable a owl:Class ;
+    rdfs:label "Analysis Variable" ;
+    skos:definition "A variable definition within an analysis dataset (e.g. AVAL, CHG, TRTP) — the analysis-layer counterpart of the capture-layer cr:DataElementDef." ;
+    rdfs:comment "The analysis analog of the EDC item definition: results cite the variable they were computed over, closing the result -> variable -> dataset -> source chain at variable grain." ;
+    rdfs:subClassOf cr:DataElementDef ;
+    top:flavor "Additive" .
+
+cr:inDataset a owl:ObjectProperty ;
+    rdfs:label "in dataset" ;
+    rdfs:comment "The analysis dataset this variable is defined in." ;
+    rdfs:domain cr:AnalysisVariable ;
+    rdfs:range cr:AnalysisDataset ;
+    top:flavor "Additive" .
+
+cr:parameterCode a owl:DatatypeProperty ;
+    rdfs:label "parameter code" ;
+    rdfs:comment "The BDS PARAMCD this variable/record pivots on (e.g. 'ORR', 'SODIUM'). Only meaningful for BDS-structured datasets." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:analysisFlag a owl:DatatypeProperty ;
+    rdfs:label "analysis flag" ;
+    rdfs:comment "A population/record flag name applied at analysis (e.g. 'ITTFL', 'SAFFL') — the flag DEFINITION reference; membership itself is the analysis-population projection (projections/analysis_population_membership.rq)." ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .

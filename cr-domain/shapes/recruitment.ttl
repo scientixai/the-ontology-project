@@ -1,0 +1,78 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/shapes/recruitment-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — recruitment & screening funnel" .
+
+# A screening record must say who it screened and how it came out — and a
+# screen-failure must cite the criterion it failed against (by IRI, not prose).
+cr:ScreeningRecordShape a sh:NodeShape ;
+    sh:targetClass cr:ScreeningRecord ;
+    sh:property [
+        sh:path cr:screensRecruit ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class cr:Recruit ;
+        sh:message "A screening record must screen exactly one cr:Recruit." ;
+    ] ;
+    sh:property [
+        sh:path cr:screeningOutcome ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "eligible" "screen-failure" "withdrew" ) ;
+        sh:message "cr:screeningOutcome must be one of: eligible, screen-failure, withdrew." ;
+    ] ;
+    sh:sparql [
+        sh:message "Violation: a screen-failure must cite the failed eligibility criterion (cr:failedCriterion)." ;
+        sh:severity sh:Violation ;
+        sh:prefixes <https://top.scientix.ai/shapes/recruitment-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:screeningOutcome "screen-failure" .
+                FILTER NOT EXISTS { $this cr:failedCriterion ?c }
+            }
+        """ ;
+    ] .
+
+# The funnel's integrity invariant: a candidate converts to a Participant ONLY
+# on an 'eligible' screening. Converting a screen-failure (or an unscreened
+# candidate) is the enrollment-integrity breach every inspector looks for.
+cr:RecruitConversionShape a sh:NodeShape ;
+    sh:targetClass cr:Recruit ;
+    sh:sparql [
+        sh:message "Violation: candidate converted to Participant without an 'eligible' screening outcome." ;
+        sh:severity sh:Violation ;
+        sh:prefixes <https://top.scientix.ai/shapes/recruitment-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:convertedBy ?enrollment .
+                FILTER NOT EXISTS {
+                    ?sr cr:screensRecruit $this ; cr:screeningOutcome "eligible" .
+                }
+            }
+        """ ;
+    ] .
+
+# Funnel provenance (governance, not blocking): a candidate should carry a
+# source — a campaign edge or at least a source note — or accrual analytics
+# and diversity-plan reporting have a hole.
+cr:RecruitSourceShape a sh:NodeShape ;
+    sh:targetClass cr:Recruit ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Warning: candidate has no recruitment source (no cr:respondedToCampaign and no cr:recruitmentSource) — funnel attribution is broken." ;
+        sh:severity sh:Warning ;
+        sh:prefixes <https://top.scientix.ai/shapes/recruitment-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS { $this cr:respondedToCampaign ?c }
+                FILTER NOT EXISTS { $this cr:recruitmentSource ?s }
+            }
+        """ ;
+    ] .

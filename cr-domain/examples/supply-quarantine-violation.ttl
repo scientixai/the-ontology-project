@@ -1,0 +1,54 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEGATIVE EXAMPLE — dispensing from a quarantined lot + unauthorized destruction.
+#
+# (a) A temperature excursion on the lot is still 'quarantined', yet product is
+#     dispensed from that lot afterwards       (cr:TemperatureExcursionShape)
+# (b) Product is destroyed with no authorizer  (cr:DestructionEventShape)
+# EXPECT: violation.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:spv-pharmacist a hcls:Person ; rdfs:label "Pharmacist" .
+ex:spv-lot a hcls:Lot ; rdfs:label "Lot L-3301" .
+
+ex:spv-subject a cr:StudySubject ;
+    rdfs:label "S-099 (pseudonymous)" ;
+    cr:subjectId "S-099" ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+ex:spv-excursion a cr:TemperatureExcursion ;
+    rdfs:label "Excursion on L-3301 — STILL QUARANTINED" ;
+    top:identifier "urn:excursion:L-3301-1" ; top:status "active" ;
+    cr:excursionOnLot ex:spv-lot ;
+    cr:excursionRange "12.1°C for 9h; required 2-8°C" ;
+    cr:excursionDisposition "quarantined" ;
+    top:observedAt "2026-03-01T04:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:spv-pharmacist .
+
+# Dispensed AFTER the excursion, while still quarantined  ← Violation (a)
+ex:spv-dispense a cr:DispensingEvent ;
+    rdfs:label "Dispense from quarantined lot" ;
+    top:identifier "urn:dispense:S-099-C1" ; top:status "active" ;
+    cr:dispensesToSubject ex:spv-subject ;
+    cr:dispensesFromLot ex:spv-lot ;
+    cr:quantityDispensed 30 ;
+    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T11:02:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:spv-pharmacist .
+
+# Destroyed with no authorizer  ← Violation (b)
+ex:spv-destruction a cr:DestructionEvent ;
+    rdfs:label "Destruction with no recorded authorizer" ;
+    top:identifier "urn:destroy:L-3301-1" ; top:status "active" ;
+    cr:destroysLot ex:spv-lot ;
+    cr:quantityDestroyed 12 ;
+    top:observedAt "2026-06-15T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-15T09:10:00Z"^^xsd:dateTime .

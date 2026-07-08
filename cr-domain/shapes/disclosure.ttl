@@ -1,0 +1,101 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/shapes/disclosure-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — integrated summaries, registry disclosure, ADaM structure" .
+
+# An integrated summary is cross-study evidence or it isn't integrated:
+# a kind, >=1 study, and derivation from the datasets it summarizes.
+cr:IntegratedSummaryShape a sh:NodeShape ;
+    sh:targetClass cr:IntegratedSummary ;
+    sh:property [
+        sh:path cr:summaryKind ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "safety" "efficacy" ) ;
+        sh:message "cr:summaryKind must be 'safety' (ISS) or 'efficacy' (ISE)." ;
+    ] ;
+    sh:property [
+        sh:path cr:integratesStudy ;
+        sh:minCount 1 ;
+        sh:message "An integrated summary must integrate >=1 study (by IRI)." ;
+    ] ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:minCount 1 ;
+        sh:message "Violation: an integrated summary that derives from nothing — the integrated number must be reproducible to the per-study datasets." ;
+    ] .
+
+# A registry record without its public identifier discloses nothing.
+cr:RegistryRecordShape a sh:NodeShape ;
+    sh:targetClass cr:RegistryRecord ;
+    sh:property [
+        sh:path cr:registryName ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "ClinicalTrials.gov" "EUCTR" "ISRCTN" "jRCT" "ChiCTR" ) ;
+        sh:message "cr:registryName must be a recognized public registry." ;
+    ] ;
+    sh:property [
+        sh:path cr:registryIdentifier ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "A registry record must carry its public identifier (e.g. NCT number)." ;
+    ] ;
+    sh:property [
+        sh:path cr:registersStudy ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A registry record must reference the study it registers (by IRI)." ;
+    ] ;
+    sh:property [
+        sh:path cr:registeredAt ;
+        sh:minCount 1 ;
+        sh:datatype xsd:dateTime ;
+        sh:message "A registry record must carry its registration time." ;
+    ] ;
+    # Posted results are projections, never re-authored: a posting must cite
+    # the endpoint results it discloses.
+    sh:sparql [
+        sh:message "Violation: results posted (cr:resultsPostedAt) but no cr:postsResult citation — a posting must reference the endpoint results it discloses, not re-author them." ;
+        sh:severity sh:Violation ;
+        sh:prefixes <https://top.scientix.ai/shapes/disclosure-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:resultsPostedAt ?t .
+                FILTER NOT EXISTS { $this cr:postsResult ?r }
+            }
+        """ ;
+    ] .
+
+# A publication reporting a result must cite it by IRI (the CSR discipline,
+# extended to papers). Advisory: a publication with no result citation may be
+# a methods/design paper — Warning, not Violation.
+cr:PublicationTraceShape a sh:NodeShape ;
+    sh:targetClass cr:Publication ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Warning: publication cites no endpoint result (cr:disclosesResult) — fine for a design/methods paper, a trace hole for a results paper." ;
+        sh:severity sh:Warning ;
+        sh:prefixes <https://top.scientix.ai/shapes/disclosure-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS { $this cr:disclosesResult ?r }
+            }
+        """ ;
+    ] .
+
+# ADaM structure discipline: the structure class comes from the controlled list.
+cr:AnalysisDatasetStructureShape a sh:NodeShape ;
+    sh:targetClass cr:AnalysisDataset ;
+    sh:property [
+        sh:path cr:datasetStructure ;
+        sh:maxCount 1 ;
+        sh:in ( "ADSL" "BDS" "OCCDS" ) ;
+        sh:message "cr:datasetStructure, when declared, must be ADSL, BDS, or OCCDS (CDISC ADaM structure classes)." ;
+    ] .

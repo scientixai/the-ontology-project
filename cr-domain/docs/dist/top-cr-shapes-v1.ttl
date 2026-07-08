@@ -54,6 +54,13 @@ cr:ActivityOrderingShape a sh:NodeShape ;
         """ ] ;
     sh:targetSubjectsOf cr:realizes .
 
+cr:AnalysisDatasetStructureShape a sh:NodeShape ;
+    sh:property [ sh:in ( "ADSL" "BDS" "OCCDS" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:datasetStructure, when declared, must be ADSL, BDS, or OCCDS (CDISC ADaM structure classes)." ;
+            sh:path cr:datasetStructure ] ;
+    sh:targetClass cr:AnalysisDataset .
+
 cr:AnalysisDecisionShape a sh:NodeShape ;
     rdfs:label "A gate decision must be coded and evidenced (hard)" ;
     sh:property [ sh:in ( "go" "no-go" "go-with-modification" "dose-selection" ) ;
@@ -66,6 +73,14 @@ cr:AnalysisDecisionShape a sh:NodeShape ;
             sh:path cr:restsOn ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:AnalysisDecision .
+
+cr:ArchivalShape a sh:NodeShape ;
+    sh:property [ sh:message "Warning: archival without a retention horizon (cr:retentionUntil) — the retention clock never started." ;
+            sh:minCount 1 ;
+            sh:path cr:retentionUntil ;
+            sh:severity sh:Warning ] ;
+    sh:severity sh:Warning ;
+    sh:targetClass cr:ArchivalEvent .
 
 cr:AssayResultShape a sh:NodeShape ;
     sh:property [ sh:class cr:AnalysisService ;
@@ -105,6 +120,20 @@ cr:AssessmentResultUnitShape a sh:NodeShape ;
             }
         """ ] ;
     sh:targetClass cr:Assessment .
+
+cr:AutocodedReviewShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Warning: autocoded assignment has no human cr:CodingReview — the autocoder's output is a suggestion, not a judgment, until a coder reviews it." ;
+            sh:prefixes <https://top.scientix.ai/shapes/coding-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:codingMethod "autocoder" .
+                FILTER NOT EXISTS { ?r cr:reviewsAssignment $this }
+            }
+        """ ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:CodeAssignment .
 
 cr:BiomedicalConceptCodedShape a sh:NodeShape ;
     rdfs:label "A BiomedicalConcept must carry a dereferenceable code (hard)" ;
@@ -222,6 +251,34 @@ cr:ClinicalStudyReportShape a sh:NodeShape ;
             sh:path cr:csrForStudy ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:ClinicalStudyReport .
+
+cr:CodeAssignmentShape a sh:NodeShape ;
+    sh:property [ sh:in ( "MedDRA" "WHODrug" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:codingDictionary must be MedDRA or WHODrug." ;
+            sh:minCount 1 ;
+            sh:path cr:codingDictionary ],
+        [ sh:message "A code assignment must say what it codes (cr:codesEntity)." ;
+            sh:minCount 1 ;
+            sh:path cr:codesEntity ],
+        [ sh:datatype xsd:string ;
+            sh:message "Violation: a code assignment without its dictionary version is meaningless at reconciliation and at submission (Define-XML external codelist versioning)." ;
+            sh:minCount 1 ;
+            sh:path cr:codingDictionaryVersion ],
+        [ sh:in ( "autocoder" "manual" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:codingMethod must be autocoder or manual." ;
+            sh:minCount 1 ;
+            sh:path cr:codingMethod ],
+        [ sh:datatype xsd:string ;
+            sh:message "A code assignment must preserve the verbatim term it coded." ;
+            sh:minCount 1 ;
+            sh:path cr:verbatimTerm ],
+        [ sh:message "A code assignment must reference the assigned dictionary code by IRI (BYOL)." ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path cr:assignedCode ] ;
+    sh:targetClass cr:CodeAssignment .
 
 cr:CompletedVisitShouldHaveEndDateShape a sh:NodeShape ;
     rdfs:label "COMPLETED VisitOccurrence should have actualEndDate (warning)" ;
@@ -429,6 +486,21 @@ cr:DelegationTimingShape a sh:NodeShape ;
         """ ] ;
     sh:targetSubjectsOf cr:exercisesCapability .
 
+cr:DestructionEventShape a sh:NodeShape ;
+    sh:property [ sh:class hcls:Lot ;
+            sh:message "Destruction must name the lot it closes out." ;
+            sh:minCount 1 ;
+            sh:path cr:destroysLot ],
+        [ sh:datatype xsd:integer ;
+            sh:message "Destruction must record the destroyed quantity." ;
+            sh:minCount 1 ;
+            sh:path cr:quantityDestroyed ],
+        [ sh:class hcls:Person ;
+            sh:message "Violation: destruction without a recorded authorizer — product never silently leaves the accountability chain." ;
+            sh:minCount 1 ;
+            sh:path cr:destructionAuthorizedBy ] ;
+    sh:targetClass cr:DestructionEvent .
+
 cr:DeviationEventShape a sh:NodeShape ;
     sh:property [ sh:in ( "critical" "major" "minor" ) ;
             sh:message "Deviation event must carry a category (critical/major/minor)." ;
@@ -436,6 +508,23 @@ cr:DeviationEventShape a sh:NodeShape ;
             sh:path cr:deviationCategory ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:DeviationEvent .
+
+cr:DispensingEventShape a sh:NodeShape ;
+    sh:property [ sh:class hcls:Lot ;
+            sh:maxCount 1 ;
+            sh:message "Dispensing must trace to exactly one hcls:Lot (the accountability chain)." ;
+            sh:minCount 1 ;
+            sh:path cr:dispensesFromLot ],
+        [ sh:datatype xsd:integer ;
+            sh:message "Dispensing must record its quantity." ;
+            sh:minCount 1 ;
+            sh:path cr:quantityDispensed ],
+        [ sh:class cr:StudySubject ;
+            sh:maxCount 1 ;
+            sh:message "Dispensing must be to exactly one Participant (cr:StudySubject) — never an identifiable Person." ;
+            sh:minCount 1 ;
+            sh:path cr:dispensesToSubject ] ;
+    sh:targetClass cr:DispensingEvent .
 
 cr:EOP2ReadinessShape a sh:NodeShape ;
     sh:severity sh:Warning ;
@@ -607,6 +696,32 @@ cr:InformedConsentShape a sh:NodeShape ;
         """ ;
             sh:severity sh:Violation ] ;
     sh:targetClass cr:InformedConsent .
+
+cr:IntegratedSummaryShape a sh:NodeShape ;
+    sh:property [ sh:message "An integrated summary must integrate >=1 study (by IRI)." ;
+            sh:minCount 1 ;
+            sh:path cr:integratesStudy ],
+        [ sh:in ( "safety" "efficacy" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:summaryKind must be 'safety' (ISS) or 'efficacy' (ISE)." ;
+            sh:minCount 1 ;
+            sh:path cr:summaryKind ],
+        [ sh:message "Violation: an integrated summary that derives from nothing — the integrated number must be reproducible to the per-study datasets." ;
+            sh:minCount 1 ;
+            sh:path prov:wasDerivedFrom ] ;
+    sh:targetClass cr:IntegratedSummary .
+
+cr:KitAssignmentShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "A kit assignment must carry its blinded cr:kitNumber." ;
+            sh:minCount 1 ;
+            sh:path cr:kitNumber ],
+        [ sh:class cr:RandomizationEvent ;
+            sh:maxCount 1 ;
+            sh:message "A kit assignment must trace to exactly one cr:RandomizationEvent." ;
+            sh:minCount 1 ;
+            sh:path cr:underRandomization ] ;
+    sh:targetClass cr:KitAssignment .
 
 cr:LLMInferredMappingConfirmedShape a sh:NodeShape ;
     rdfs:label "LLM-inferred mapping requires human confirmation (hard)" ;
@@ -791,6 +906,19 @@ cr:ProtocolEligibilityShape a sh:NodeShape ;
             sh:severity sh:Warning ] ;
     sh:targetClass cr:ProtocolVersion .
 
+cr:PublicationTraceShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Warning: publication cites no endpoint result (cr:disclosesResult) — fine for a design/methods paper, a trace hole for a results paper." ;
+            sh:prefixes <https://top.scientix.ai/shapes/disclosure-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS { $this cr:disclosesResult ?r }
+            }
+        """ ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:Publication .
+
 cr:QueryShape a sh:NodeShape ;
     sh:property [ sh:message "Query must be anchored to a target entity (cr:queryOn)." ;
             sh:minCount 1 ;
@@ -802,6 +930,101 @@ cr:QueryShape a sh:NodeShape ;
             sh:path cr:resolutionStatus ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:Query .
+
+cr:RandomizationEventShape a sh:NodeShape ;
+    sh:property [ sh:class cr:StudySubject ;
+            sh:maxCount 1 ;
+            sh:message "A randomization event must randomize exactly one Participant (cr:StudySubject)." ;
+            sh:minCount 1 ;
+            sh:path cr:randomizesSubject ],
+        [ sh:class cr:Arm ;
+            sh:maxCount 1 ;
+            sh:message "A randomization event must assign exactly one cr:Arm." ;
+            sh:minCount 1 ;
+            sh:path cr:assignsArm ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message "A randomization event must carry its cr:randomizationNumber." ;
+            sh:minCount 1 ;
+            sh:path cr:randomizationNumber ] ;
+    sh:targetClass cr:RandomizationEvent .
+
+cr:ReconciliationShape a sh:NodeShape ;
+    sh:property [ sh:in ( "balanced" "discrepant" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:reconciliationOutcome must be 'balanced' or 'discrepant'." ;
+            sh:minCount 1 ;
+            sh:path cr:reconciliationOutcome ],
+        [ sh:in ( "IMP" "device" "documents" "queries" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:reconciliationScope must be one of: IMP, device, documents, queries." ;
+            sh:minCount 1 ;
+            sh:path cr:reconciliationScope ],
+        [ sh:class cr:StudySite ;
+            sh:message "A reconciliation must name the site it balances." ;
+            sh:minCount 1 ;
+            sh:path cr:reconcilesSite ] ;
+    sh:targetClass cr:Reconciliation .
+
+cr:RecruitConversionShape a sh:NodeShape ;
+    sh:sparql [ sh:message "Violation: candidate converted to Participant without an 'eligible' screening outcome." ;
+            sh:prefixes <https://top.scientix.ai/shapes/recruitment-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:convertedBy ?enrollment .
+                FILTER NOT EXISTS {
+                    ?sr cr:screensRecruit $this ; cr:screeningOutcome "eligible" .
+                }
+            }
+        """ ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:Recruit .
+
+cr:RecruitSourceShape a sh:NodeShape ;
+    sh:severity sh:Warning ;
+    sh:sparql [ sh:message "Warning: candidate has no recruitment source (no cr:respondedToCampaign and no cr:recruitmentSource) — funnel attribution is broken." ;
+            sh:prefixes <https://top.scientix.ai/shapes/recruitment-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS { $this cr:respondedToCampaign ?c }
+                FILTER NOT EXISTS { $this cr:recruitmentSource ?s }
+            }
+        """ ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass cr:Recruit .
+
+cr:RegistryRecordShape a sh:NodeShape ;
+    sh:property [ sh:in ( "ClinicalTrials.gov" "EUCTR" "ISRCTN" "jRCT" "ChiCTR" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:registryName must be a recognized public registry." ;
+            sh:minCount 1 ;
+            sh:path cr:registryName ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message "A registry record must carry its public identifier (e.g. NCT number)." ;
+            sh:minCount 1 ;
+            sh:path cr:registryIdentifier ],
+        [ sh:maxCount 1 ;
+            sh:message "A registry record must reference the study it registers (by IRI)." ;
+            sh:minCount 1 ;
+            sh:path cr:registersStudy ],
+        [ sh:datatype xsd:dateTime ;
+            sh:message "A registry record must carry its registration time." ;
+            sh:minCount 1 ;
+            sh:path cr:registeredAt ] ;
+    sh:sparql [ sh:message "Violation: results posted (cr:resultsPostedAt) but no cr:postsResult citation — a posting must reference the endpoint results it discloses, not re-author them." ;
+            sh:prefixes <https://top.scientix.ai/shapes/disclosure-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:resultsPostedAt ?t .
+                FILTER NOT EXISTS { $this cr:postsResult ?r }
+            }
+        """ ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:RegistryRecord .
 
 cr:RegulatoryInteractionRequiredShape a sh:NodeShape ;
     rdfs:label "Regulatory interaction required fields" ;
@@ -870,6 +1093,29 @@ cr:SUSARDeadlineShape a sh:NodeShape ;
         """ ] ;
     sh:targetClass cr:SUSAR .
 
+cr:ScreeningRecordShape a sh:NodeShape ;
+    sh:property [ sh:in ( "eligible" "screen-failure" "withdrew" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:screeningOutcome must be one of: eligible, screen-failure, withdrew." ;
+            sh:minCount 1 ;
+            sh:path cr:screeningOutcome ],
+        [ sh:class cr:Recruit ;
+            sh:maxCount 1 ;
+            sh:message "A screening record must screen exactly one cr:Recruit." ;
+            sh:minCount 1 ;
+            sh:path cr:screensRecruit ] ;
+    sh:sparql [ sh:message "Violation: a screen-failure must cite the failed eligibility criterion (cr:failedCriterion)." ;
+            sh:prefixes <https://top.scientix.ai/shapes/recruitment-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:screeningOutcome "screen-failure" .
+                FILTER NOT EXISTS { $this cr:failedCriterion ?c }
+            }
+        """ ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:ScreeningRecord .
+
 cr:SeriousAEMedDRAShape a sh:NodeShape ;
     rdfs:label "Serious AE should carry MedDRA preferred term" ;
     sh:property [ sh:message "cr:SeriousAdverseEvent should carry a MedDRA preferred term (cr:meddraPreferredTerm)." ;
@@ -909,6 +1155,32 @@ cr:SiteActivationShape a sh:NodeShape ;
             sh:path cr:cta ] ;
     sh:severity sh:Violation ;
     sh:targetClass cr:SiteActivation .
+
+cr:SiteClosureShape a sh:NodeShape ;
+    sh:property [ sh:class cr:CloseOutVisit ;
+            sh:message "Violation: site closure without a Close-Out Visit — a site is closed by evidence, not declaration." ;
+            sh:minCount 1 ;
+            sh:path cr:closureRestsOnCOV ],
+        [ sh:class cr:Reconciliation ;
+            sh:message "Violation: site closure resting on no reconciliation." ;
+            sh:minCount 1 ;
+            sh:path cr:closureRestsOnReconciliation ],
+        [ sh:class cr:StudySite ;
+            sh:maxCount 1 ;
+            sh:message "A closure must name the site it closes." ;
+            sh:minCount 1 ;
+            sh:path cr:closesSite ] ;
+    sh:sparql [ sh:message "Violation: site closure rests on a reconciliation that is 'discrepant' — resolve (a later balanced reconciliation) before closing." ;
+            sh:prefixes <https://top.scientix.ai/shapes/site-closeout-v1> ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+                $this cr:closureRestsOnReconciliation ?r .
+                ?r cr:reconciliationOutcome "discrepant" .
+            }
+        """ ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:SiteClosure .
 
 cr:SiteMetricsRequiredShape a sh:NodeShape ;
     rdfs:label "Site metrics snapshot completeness" ;
@@ -1023,6 +1295,34 @@ cr:TLFTraceabilityShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:TableListingFigure .
 
+cr:TemperatureExcursionShape a sh:NodeShape ;
+    sh:property [ sh:class hcls:Lot ;
+            sh:message "An excursion must name the affected lot." ;
+            sh:minCount 1 ;
+            sh:path cr:excursionOnLot ],
+        [ sh:in ( "quarantined" "released" "rejected" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:excursionDisposition must be one of: quarantined, released, rejected." ;
+            sh:minCount 1 ;
+            sh:path cr:excursionDisposition ] ;
+    sh:sparql [ sh:message "Violation: product dispensed from a lot while a temperature excursion on it is still 'quarantined' (dispensing valid-time after the excursion's)." ;
+            sh:prefixes <https://top.scientix.ai/shapes/supply-v1> ;
+            sh:select """
+            PREFIX cr:  <https://top.scientix.ai/cr/v1#>
+            PREFIX top: <https://top.scientix.ai/v1#>
+            SELECT $this WHERE {
+                $this cr:excursionDisposition "quarantined" ;
+                      cr:excursionOnLot ?lot ;
+                      top:observedAt ?et .
+                ?d a cr:DispensingEvent ;
+                   cr:dispensesFromLot ?lot ;
+                   top:observedAt ?dt .
+                FILTER ( ?dt > ?et )
+            }
+        """ ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass cr:TemperatureExcursion .
+
 cr:TransferAmendmentPropagationShape a sh:NodeShape ;
     rdfs:label "An amendment must reference the specifications it affects (hard)" ;
     sh:property [ sh:class cr:TransferSpecification ;
@@ -1056,6 +1356,27 @@ cr:TransferScheduleShape a sh:NodeShape ;
             sh:path cr:transferSchedule ;
             sh:severity sh:Info ] ;
     sh:targetClass cr:TransferProfile .
+
+cr:UnblindingEventShape a sh:NodeShape ;
+    sh:property [ sh:in ( "emergency" "planned" "regulatory" ) ;
+            sh:maxCount 1 ;
+            sh:message "cr:unblindingKind must be one of: emergency, planned, regulatory." ;
+            sh:minCount 1 ;
+            sh:path cr:unblindingKind ],
+        [ sh:datatype xsd:string ;
+            sh:message "Violation: an unblinding without a recorded reason — the blind is never silently broken." ;
+            sh:minCount 1 ;
+            sh:path cr:unblindingReason ],
+        [ sh:class hcls:Person ;
+            sh:message "Violation: an unblinding without a recorded authorizer." ;
+            sh:minCount 1 ;
+            sh:path cr:unblindingAuthorizedBy ],
+        [ sh:class cr:StudySubject ;
+            sh:maxCount 1 ;
+            sh:message "An unblinding event must name the Participant it unblinds." ;
+            sh:minCount 1 ;
+            sh:path cr:unblindsSubject ] ;
+    sh:targetClass cr:UnblindingEvent .
 
 cr:UncapturedAntecedentShape a sh:NodeShape ;
     sh:severity sh:Warning ;
@@ -1283,6 +1604,10 @@ cx:MappingShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cx:Mapping .
 
+<https://top.scientix.ai/shapes/randomization-v1> a owl:Ontology ;
+    dcterms:title "SHACL shapes — randomization & blinding" ;
+    owl:versionInfo "1.0" .
+
 <https://top.scientix.ai/tmf/v1#ContentBindingShape> a sh:NodeShape ;
     sh:property [ sh:message "TMF artifact type has no content binding (concerns/defines/records/documents) — a filing label, not comprehension." ;
             sh:minCount 1 ;
@@ -1308,7 +1633,27 @@ top:BitemporalProvShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass top:Versioned .
 
+<https://top.scientix.ai/shapes/coding-v1> a owl:Ontology ;
+    dcterms:title "SHACL shapes — medical coding workflow" ;
+    owl:versionInfo "1.0" .
+
 <https://top.scientix.ai/shapes/participant-v1> a owl:Ontology ;
     dcterms:title "SHACL shapes — participant & consent (US-500-003)" ;
     owl:versionInfo "1.2" .
+
+<https://top.scientix.ai/shapes/site-closeout-v1> a owl:Ontology ;
+    dcterms:title "SHACL shapes — site closeout" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/shapes/supply-v1> a owl:Ontology ;
+    dcterms:title "SHACL shapes — drug supply & IMP accountability" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/shapes/disclosure-v1> a owl:Ontology ;
+    dcterms:title "SHACL shapes — integrated summaries, registry disclosure, ADaM structure" ;
+    owl:versionInfo "1.0" .
+
+<https://top.scientix.ai/shapes/recruitment-v1> a owl:Ontology ;
+    dcterms:title "SHACL shapes — recruitment & screening funnel" ;
+    owl:versionInfo "1.0" .
 

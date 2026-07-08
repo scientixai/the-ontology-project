@@ -1,0 +1,159 @@
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<https://top.scientix.ai/cr/v1/supply> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "CR-core — drug supply & IMP accountability" ;
+    dct:description "The investigational-product custody events (Operating Model §2.1/§2.4/§3.1): shipment to site, dispensing to a participant, return, and authorized destruction — each a first-class bitemporal event on an hcls:Lot. The ACCOUNTABILITY LOG IS A PROJECTION of these events (like the DoA log), never a maintained spreadsheet: reconcile-ability is a query over the event chain. A temperature excursion is a promoted fact that quarantines what it touched." .
+
+# ── Classes ──────────────────────────────────────────────────────────────────
+
+cr:Shipment a owl:Class ;
+    rdfs:label "Shipment" ;
+    skos:definition "A transfer of investigational-product lots from depot (or sponsor) to a study site, with its dispatch and receipt times." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:DispensingEvent a owl:Class ;
+    rdfs:label "Dispensing Event" ;
+    skos:definition "The handing of investigational product (by kit, from a lot) to a participant at a visit — the pivotal accountability event." ;
+    rdfs:comment "Dispensed TO the pseudonymous Participant (cr:StudySubject), never an identifiable Person — the PII containment invariant extends to the pharmacy." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:ReturnEvent a owl:Class ;
+    rdfs:label "Return Event" ;
+    skos:definition "The return of unused or partially used investigational product from a participant or site back into custody, with the returned quantity." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:DestructionEvent a owl:Class ;
+    rdfs:label "Destruction Event" ;
+    skos:definition "The authorized destruction of investigational product, closing its accountability chain." ;
+    rdfs:comment "Destruction without a recorded authorizer is a Violation — product never silently disappears from the chain." ;
+    rdfs:subClassOf top:Temporal ,
+        top:Versioned .
+
+cr:TemperatureExcursion a owl:Class ;
+    rdfs:label "Temperature Excursion" ;
+    skos:definition "A recorded departure from a lot's required storage conditions — a promoted fact (never an 'isCompromised' flag) that quarantines the affected product until disposition." ;
+    rdfs:subClassOf top:Outcome ,
+        top:Versioned .
+
+# ── Properties ───────────────────────────────────────────────────────────────
+
+cr:shipsLot a owl:ObjectProperty ;
+    rdfs:label "ships lot" ;
+    rdfs:comment "A lot carried by this shipment." ;
+    rdfs:domain cr:Shipment ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:shippedTo a owl:ObjectProperty ;
+    rdfs:label "shipped to" ;
+    rdfs:comment "The receiving study site." ;
+    rdfs:domain cr:Shipment ;
+    rdfs:range cr:StudySite ;
+    top:flavor "Additive" .
+
+cr:receivedAt a owl:DatatypeProperty ;
+    rdfs:label "received at" ;
+    rdfs:comment "When the site acknowledged receipt (valid time). Dispatch is the shipment's own top:observedAt." ;
+    rdfs:domain cr:Shipment ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Additive" .
+
+cr:dispensesToSubject a owl:ObjectProperty ;
+    rdfs:label "dispenses to subject" ;
+    rdfs:comment "The participant the product is dispensed to — always the pseudonymous cr:StudySubject." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:dispensesFromLot a owl:ObjectProperty ;
+    rdfs:label "dispenses from lot" ;
+    rdfs:comment "The lot the dispensed units came from — the trace the accountability log walks." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:dispensesKit a owl:ObjectProperty ;
+    rdfs:label "dispenses kit" ;
+    rdfs:comment "The blinded kit assignment this dispensing fulfils (randomization module)." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range cr:KitAssignment ;
+    top:flavor "Additive" .
+
+cr:quantityDispensed a owl:DatatypeProperty ;
+    rdfs:label "quantity dispensed" ;
+    rdfs:comment "Units dispensed (kit-defined unit)." ;
+    rdfs:domain cr:DispensingEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:returnsFromSubject a owl:ObjectProperty ;
+    rdfs:label "returns from subject" ;
+    rdfs:comment "The participant returning the product." ;
+    rdfs:domain cr:ReturnEvent ;
+    rdfs:range cr:StudySubject ;
+    top:flavor "Additive" .
+
+cr:returnsToLotCustody a owl:ObjectProperty ;
+    rdfs:label "returns to lot custody" ;
+    rdfs:comment "The lot whose accountability chain receives the returned units." ;
+    rdfs:domain cr:ReturnEvent ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:quantityReturned a owl:DatatypeProperty ;
+    rdfs:label "quantity returned" ;
+    rdfs:domain cr:ReturnEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:destroysLot a owl:ObjectProperty ;
+    rdfs:label "destroys lot" ;
+    rdfs:comment "The lot (or its remaining units) this destruction closes out." ;
+    rdfs:domain cr:DestructionEvent ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:quantityDestroyed a owl:DatatypeProperty ;
+    rdfs:label "quantity destroyed" ;
+    rdfs:domain cr:DestructionEvent ;
+    rdfs:range xsd:integer ;
+    top:flavor "Additive" .
+
+cr:destructionAuthorizedBy a owl:ObjectProperty ;
+    rdfs:label "destruction authorized by" ;
+    rdfs:comment "Who authorized the destruction. Required — product never silently leaves the chain." ;
+    rdfs:domain cr:DestructionEvent ;
+    rdfs:range hcls:Person ;
+    top:flavor "Additive" .
+
+cr:excursionOnLot a owl:ObjectProperty ;
+    rdfs:label "excursion on lot" ;
+    rdfs:comment "The lot the temperature excursion affected (quarantined until disposition)." ;
+    rdfs:domain cr:TemperatureExcursion ;
+    rdfs:range hcls:Lot ;
+    top:flavor "Additive" .
+
+cr:excursionRange a owl:DatatypeProperty ;
+    rdfs:label "excursion range" ;
+    rdfs:comment "The observed out-of-range condition (e.g. '9.4°C for 6h; required 2–8°C')." ;
+    rdfs:domain cr:TemperatureExcursion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:excursionDisposition a owl:DatatypeProperty ;
+    rdfs:label "excursion disposition" ;
+    rdfs:comment "Controlled: 'quarantined' | 'released' | 'rejected'. The lot stays unusable until a disposition other than 'quarantined' is recorded." ;
+    rdfs:domain cr:TemperatureExcursion ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .

@@ -1,0 +1,30 @@
+@prefix ex:   <https://top.scientix.ai/examples/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEGATIVE EXAMPLE — the silent unblinding.
+#
+# An unblinding event with NO reason and NO authorizer — the blind broken as a
+# state flip, exactly what cr:UnblindingEventShape exists to catch.
+# EXPECT: violation.
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:rzv-subject a cr:StudySubject ;
+    rdfs:label "S-077 (pseudonymous)" ;
+    cr:subjectId "S-077" ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+ex:rzv-unblinding a cr:UnblindingEvent ;
+    rdfs:label "Unblinding of S-077 — no reason, no authorizer" ;
+    top:identifier "urn:unblind:S-077" ; top:status "active" ;
+    cr:unblindsSubject ex:rzv-subject ;
+    cr:unblindingKind "emergency" ;
+    # no cr:unblindingReason        ← Violation
+    # no cr:unblindingAuthorizedBy  ← Violation
+    top:observedAt "2026-05-20T03:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-05-20T03:01:00Z"^^xsd:dateTime .

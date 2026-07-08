@@ -74,6 +74,29 @@
     ]
   },
   {
+    "@id": "_:cb11a0ced0b1817018b2c024fd9cf89cf2f2ecde9b25a2a398ab16361cc967cfaab",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Warning: publication cites no endpoint result (cr:disclosesResult) \u2014 fine for a design/methods paper, a trace hole for a results paper."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/disclosure-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                FILTER NOT EXISTS { $this cr:disclosesResult ?r }\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb11a6dfbf633d422b829d09d0a65a6cabb97e6bd4bebdb2b74f8b60b499e631df9",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -244,6 +267,52 @@
     ]
   },
   {
+    "@id": "_:cb171af4db37c721b5aff45ddd6d9a3842dad18604f89eb32e1e734f1453d89b896",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "ChiCTR"
+          },
+          {
+            "@value": "ClinicalTrials.gov"
+          },
+          {
+            "@value": "EUCTR"
+          },
+          {
+            "@value": "ISRCTN"
+          },
+          {
+            "@value": "jRCT"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:registryName must be a recognized public registry."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#registryName"
+      }
+    ]
+  },
+  {
     "@id": "_:cb172c1aef25a2c9c5c00053ab5015ec0f9493e2a8a7b6eae90c06b0751474b051b",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -327,6 +396,43 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              FILTER NOT EXISTS { ?a <https://top.scientix.ai/cr/v1#manifestsAs> $this . }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1765229286e395b5eda662dfb79204cfdeb1a6c384f9e7aa26cb7137d8925e30f",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "MedDRA"
+          },
+          {
+            "@value": "WHODrug"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:codingDictionary must be MedDRA or WHODrug."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#codingDictionary"
       }
     ]
   },
@@ -421,6 +527,29 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this a cr:eCTDSubmission ; cr:builtOnLock ?lk .\n              FILTER NOT EXISTS { ?lk cr:lockType \"hard\" }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb18658ced976334f71e5903b8b04ca1b84d46d064f10be51f07054d7e81975f409",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Warning: autocoded assignment has no human cr:CodingReview \u2014 the autocoder's output is a suggestion, not a judgment, until a coder reviews it."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/coding-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                $this cr:codingMethod \"autocoder\" .\n                FILTER NOT EXISTS { ?r cr:reviewsAssignment $this }\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
       }
     ]
   },
@@ -681,6 +810,29 @@
     ]
   },
   {
+    "@id": "_:cb1a27a0ab475b36b001f249386254d5f189ad4751751e70b6c6fc79dd7f92ee84d",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: product dispensed from a lot while a temperature excursion on it is still 'quarantined' (dispensing valid-time after the excursion's)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/supply-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr:  <https://top.scientix.ai/cr/v1#>\n            PREFIX top: <https://top.scientix.ai/v1#>\n            SELECT $this WHERE {\n                $this cr:excursionDisposition \"quarantined\" ;\n                      cr:excursionOnLot ?lot ;\n                      top:observedAt ?et .\n                ?d a cr:DispensingEvent ;\n                   cr:dispensesFromLot ?lot ;\n                   top:observedAt ?dt .\n                FILTER ( ?dt > ?et )\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1a3ecf1f3af34f928c806c23b6d65e05dc10bb126741adec2fa018fcb1246cb1e",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -727,6 +879,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#decisionOutcome"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1a859de85ffab63aa198f81de272d8b110e652b219bfa4685a779458826602702",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An integrated summary must integrate >=1 study (by IRI)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#integratesStudy"
       }
     ]
   },
@@ -779,6 +950,70 @@
     ]
   },
   {
+    "@id": "_:cb1aedfb27d625c6893c011a70e2f84650a5aefa543b1552639bb75e7826fc2a453",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CloseOutVisit"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: site closure without a Close-Out Visit \u2014 a site is closed by evidence, not declaration."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#closureRestsOnCOV"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1b14aa438ea87584265c603e992231ff34ae1d6f400fad7746e6384bd646b5e74",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "emergency"
+          },
+          {
+            "@value": "planned"
+          },
+          {
+            "@value": "regulatory"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:unblindingKind must be one of: emergency, planned, regulatory."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#unblindingKind"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1b2b6ccb9e33cf980eb5ee20d72852149d3bfe9495552c3bd0bca8021f8c534e9",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -793,6 +1028,30 @@
     "http://www.w3.org/ns/shacl#severity": [
       {
         "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1b7147594d9838c07a11cd4aa39095eab89db62d82d618e16e605df94c0bddd38",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Lot"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Destruction must name the lot it closes out."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#destroysLot"
       }
     ]
   },
@@ -882,6 +1141,65 @@
     ]
   },
   {
+    "@id": "_:cb1c211f1b17467a1b814404f317a93b604d13dcb2b17bb0a5bd1e80d130004372e",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A code assignment must say what it codes (cr:codesEntity)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#codesEntity"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1c44b9038ee58199b0832676f6fce14c666a33af7e39ea70d11919fb740ef4600",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "eligible"
+          },
+          {
+            "@value": "screen-failure"
+          },
+          {
+            "@value": "withdrew"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:screeningOutcome must be one of: eligible, screen-failure, withdrew."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#screeningOutcome"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1c5dddf1085bccb02e00f57c935040a9a5f184cd16cecd22f72739f7b5ec3a626",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -902,6 +1220,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#declaredUnitConcept"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1c777141f9aeb37bebff18e2a274002fbcfd38d0eef81ad11228e863f2bf21109",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Lot"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An excursion must name the affected lot."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#excursionOnLot"
       }
     ]
   },
@@ -1175,6 +1517,67 @@
     ]
   },
   {
+    "@id": "_:cb1de62641bc5072250b593a7d43947ca31458b7db51126173c792504afcab7235e",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: a code assignment without its dictionary version is meaningless at reconciliation and at submission (Define-XML external codelist versioning)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#codingDictionaryVersion"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1de9929065dd5cc2f48c8c42e72739ea7a327203dbca79500be7677ab961e17f3",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "efficacy"
+          },
+          {
+            "@value": "safety"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:summaryKind must be 'safety' (ISS) or 'efficacy' (ISE)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#summaryKind"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1e490ea782fbd65ee331a72cf6498a56ea9efc941964540af95e0f6a1ef74f4ba",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -1283,6 +1686,46 @@
     ]
   },
   {
+    "@id": "_:cb1eb264aa0c4edecfc19d21bec94a7189a310c06be21813f7bc631c8c1c0e85a11",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "quarantined"
+          },
+          {
+            "@value": "rejected"
+          },
+          {
+            "@value": "released"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:excursionDisposition must be one of: quarantined, released, rejected."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#excursionDisposition"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1ecac955daf0f01fa8f8e563cebe59e298466158b9fb91cd2790e8ebc4058f260",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1331,6 +1774,43 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/crosswalk/v1#justification"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1f12c7b480d241a8e78bc8952078c09c3cdaab5dfb89b2244dd616505cdcfc856",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "autocoder"
+          },
+          {
+            "@value": "manual"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:codingMethod must be autocoder or manual."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#codingMethod"
       }
     ]
   },
@@ -1442,6 +1922,64 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#queryOn"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1f8b62c8c7dff30c6d5a0f9a7af10c5bdf40a8f2181830f19a4591e76cd7411b8",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A code assignment must preserve the verbatim term it coded."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#verbatimTerm"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1fd32da1b2cc7ab7d98ab20bb874e10b1d01de3121b2b67b553136d1eb3207996",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "ADSL"
+          },
+          {
+            "@value": "BDS"
+          },
+          {
+            "@value": "OCCDS"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:datasetStructure, when declared, must be ADSL, BDS, or OCCDS (CDISC ADaM structure classes)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#datasetStructure"
       }
     ]
   },
@@ -1621,6 +2159,30 @@
     ]
   },
   {
+    "@id": "_:cb2175b24d59d2dd69d899395bfbefeef962f542617b61eae90b6c743043a9f77cf",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A code assignment must reference the assigned dictionary code by IRI (BYOL)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#assignedCode"
+      }
+    ]
+  },
+  {
     "@id": "_:cb21921c1f7383b20c67d2cc26f53394723fb7b2f3f1f8ce7d23a810d9888570713",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1704,6 +2266,30 @@
     ]
   },
   {
+    "@id": "_:cb2209935c7b08a5c795f7c6d90b0da55ff6b2ecaaf28935e053ef755ff1ac757cb",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: an unblinding without a recorded reason \u2014 the blind is never silently broken."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#unblindingReason"
+      }
+    ]
+  },
+  {
     "@id": "_:cb221f5ce2135f4ba5769f26719a3f0bfdaa6d4621129033c4856fd652918af4da0",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -1724,6 +2310,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#analyzedUnder"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb22272a8231e3e70d6f1e5d016e4db52d39621516511c704803076694c27945bab",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: an integrated summary that derives from nothing \u2014 the integrated number must be reproducible to the per-study datasets."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
       }
     ]
   },
@@ -2126,6 +2731,30 @@
     ]
   },
   {
+    "@id": "_:cb24a64d2c639921ac49fec608dc42ca22ebff1357d03594a0788f4ae687a202723",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: an unblinding without a recorded authorizer."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#unblindingAuthorizedBy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb24d1944fd585494b79be791c8ba302f5bebed95e1872bbabea7d12e4a8306335f",
     "http://www.w3.org/ns/shacl#in": [
       {
@@ -2229,6 +2858,36 @@
     ]
   },
   {
+    "@id": "_:cb259e2fcecf6d07f9a1b97bcbe5bd5c7c9f50621aeff5c5c8a15d4d528a129d2bc",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Lot"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Dispensing must trace to exactly one hcls:Lot (the accountability chain)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#dispensesFromLot"
+      }
+    ]
+  },
+  {
     "@id": "_:cb25cd809833cd78d0681c3b1fd7a68719349e01e7e628496e5902a7bcb1e2ab781",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2249,6 +2908,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#observationForSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb25ee3431a98dd14f332fe78a7f868c5e7f45ccdb679e9d4068356e572183e3d9c",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A kit assignment must carry its blinded cr:kitNumber."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#kitNumber"
       }
     ]
   },
@@ -2695,6 +3378,73 @@
     ]
   },
   {
+    "@id": "_:cb28b4761e6125dd4ce2ca9b187fff1e2d5bde930c3b0a75f3f40999b2d9cbc4e76",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A registry record must carry its public identifier (e.g. NCT number)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#registryIdentifier"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb28e0a48fa39809bfc01fa5a20352040164670ee20a6e24018e9b53bc4136c392e",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "balanced"
+          },
+          {
+            "@value": "discrepant"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:reconciliationOutcome must be 'balanced' or 'discrepant'."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#reconciliationOutcome"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2928dbee13db485b422717c5352d54039fb3893e929e014b65e7ab102626ef446",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -2715,6 +3465,60 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#consentDate"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb294afc30b53aa3bddd47168a6503a46d9e244f840f2e561075696f9e6aef8096b",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RandomizationEvent"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A kit assignment must trace to exactly one cr:RandomizationEvent."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#underRandomization"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2997486af1ee2176d83eb7b1f319c0c2a28f826596ce63aca781bc4bfe4f76f2b",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Warning: archival without a retention horizon (cr:retentionUntil) \u2014 the retention clock never started."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#retentionUntil"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
       }
     ]
   },
@@ -2791,6 +3595,84 @@
     ]
   },
   {
+    "@id": "_:cb2a615876f729205e7547c66ccf4ed719a628137690f0529e6ee74770f8b51798c",
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A registry record must reference the study it registers (by IRI)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#registersStudy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2a66ce59afc1a7471159a51eae49a5624b1fa141a07d7bc88680e04cc513e0499",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An unblinding event must name the Participant it unblinds."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#unblindsSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2a960bcb215ea7a8849ad73282f336ded0dff1edba922040ddfa2c3205e5b9fea",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: site closure rests on a reconciliation that is 'discrepant' \u2014 resolve (a later balanced reconciliation) before closing."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/site-closeout-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                $this cr:closureRestsOnReconciliation ?r .\n                ?r cr:reconciliationOutcome \"discrepant\" .\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2a9c97b4c54b7302f094a3e4c8a600118b0d786a1de1d745136936f86ea9fd70f",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2811,6 +3693,60 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#submissionForStudy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2ab9765c0a05a4f8e998c5ed337602c35c00488e633f07cdef457e71fa631fa41",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Recruit"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A screening record must screen exactly one cr:Recruit."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#screensRecruit"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2aeeef92ec5ce0f8139e680562cfa6fc3f9e484dbfa701841cf1dd861256b5f34",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Destruction must record the destroyed quantity."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#quantityDestroyed"
       }
     ]
   },
@@ -3102,6 +4038,54 @@
     ]
   },
   {
+    "@id": "_:cb2dbd3d66cf4a153f02e78e502605433b7246bd22e13136219e1d66f1ebc220e73",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Dispensing must record its quantity."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#quantityDispensed"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2dee214a19e31f4d08c4c24b39946ed90cdfea94f4d7a09f689d7950953200c93",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Reconciliation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: site closure resting on no reconciliation."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#closureRestsOnReconciliation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2e0db5c6fcd2945157334b88a825c2a0ac3472af347298ebf64f08eb77e415597",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -3122,6 +4106,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#referencesProfile"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2e268504b47ed18a5f32a982fc0a06a08f3c45a369491d6b0a2c495357401d8ff",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A registry record must carry its registration time."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#registeredAt"
       }
     ]
   },
@@ -3174,6 +4182,29 @@
     ]
   },
   {
+    "@id": "_:cb2ed289cbd8a1f822f7eaf73051a0bc5180b07e9a12bbac2e7debf4f6fdc140ee9",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Warning: candidate has no recruitment source (no cr:respondedToCampaign and no cr:recruitmentSource) \u2014 funnel attribution is broken."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/recruitment-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                FILTER NOT EXISTS { $this cr:respondedToCampaign ?c }\n                FILTER NOT EXISTS { $this cr:recruitmentSource ?s }\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2ee76019f0da9918ae43278ada2912472dc31888bfad23777171e09fae8bdf265",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -3222,6 +4253,30 @@
     ]
   },
   {
+    "@id": "_:cb2f4ff93887a17ba10134aafb868a6606831143a8d39f26fc1dfd36c9e5ca56fe5",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Person"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: destruction without a recorded authorizer \u2014 product never silently leaves the accountability chain."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#destructionAuthorizedBy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2f60dc6efb4dec7b0e7f94624b17ccb8782111fe1ba2bb2b95884316c267420f3",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -3242,6 +4297,72 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#vendorTerm"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2fa508ab2b169704223160b095ab852576f5e992be2f3eff4342cbd84314e2b76",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: candidate converted to Participant without an 'eligible' screening outcome."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/recruitment-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                $this cr:convertedBy ?enrollment .\n                FILTER NOT EXISTS {\n                    ?sr cr:screensRecruit $this ; cr:screeningOutcome \"eligible\" .\n                }\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2ff7e328b6623063c1d02d2b59f0669d408bdaf6f83b693f98c88133b747c5a29",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "IMP"
+          },
+          {
+            "@value": "device"
+          },
+          {
+            "@value": "documents"
+          },
+          {
+            "@value": "queries"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:reconciliationScope must be one of: IMP, device, documents, queries."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#reconciliationScope"
       }
     ]
   },
@@ -3490,6 +4611,36 @@
     ]
   },
   {
+    "@id": "_:cb31b44fa0df555427cc73368a2b8c6e418d1eac3ac012f3de139a8932615378086",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Dispensing must be to exactly one Participant (cr:StudySubject) \u2014 never an identifiable Person."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#dispensesToSubject"
+      }
+    ]
+  },
+  {
     "@id": "_:cb320cc6e561ff813fcabd1e4386bc173d6b293337f3c7fc6e0c52c4d22fa4754e8",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -3529,6 +4680,60 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#forSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb33a92c6520bc9aae48dfc4d0cf1406b0b99a88eadb2f667844e571959b5277f3a",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A reconciliation must name the site it balances."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#reconcilesSite"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb33e849a27c2f07fc659250f6973439adb398280857bcf05d87dba73ec1e806c44",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySubject"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A randomization event must randomize exactly one Participant (cr:StudySubject)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#randomizesSubject"
       }
     ]
   },
@@ -3639,6 +4844,59 @@
     ]
   },
   {
+    "@id": "_:cb36f79713ca6a69f86e1b600a7a448f86cc11cb404d02dada247703566c81c55dc",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#StudySite"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A closure must name the site it closes."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#closesSite"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb3875526b2a390968fc49074d71ba6229fda253f868e3de4712c61061d98eed5a4",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: a screen-failure must cite the failed eligibility criterion (cr:failedCriterion)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/recruitment-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                $this cr:screeningOutcome \"screen-failure\" .\n                FILTER NOT EXISTS { $this cr:failedCriterion ?c }\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cb38950f00af3498c4c0b7d704d16b16ddb1d4194aa234c4e4cbb1c209b8014a4e8",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -3665,6 +4923,66 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#enrolledInArm"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb39b4891b67e08a58d9c3cc5c902348c0ae89c679b80d8a0b76d9b9095ca7614d8",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Arm"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A randomization event must assign exactly one cr:Arm."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#assignsArm"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb3ac8dce2f878bdfc7c4b30c5fa76424ec8ab51c8adf0a22e230fe8f79b71f8cd2",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A randomization event must carry its cr:randomizationNumber."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#randomizationNumber"
       }
     ]
   },
@@ -3838,6 +5156,29 @@
     ]
   },
   {
+    "@id": "_:cbd4252d69f081ae02353a1717ed48fe95acf2fd836c90c3a11d08606c8f5a3e46",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Violation: results posted (cr:resultsPostedAt) but no cr:postsResult citation \u2014 a posting must reference the endpoint results it discloses, not re-author them."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/disclosure-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n                $this cr:resultsPostedAt ?t .\n                FILTER NOT EXISTS { $this cr:postsResult ?r }\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ]
+  },
+  {
     "@id": "_:cbe1579e44002d98cc52a45915ba33972adca2f6427fdd33f1f6e6ec19b4c59ede",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -3951,6 +5292,22 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#AnalysisDatasetStructureShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1fd32da1b2cc7ab7d98ab20bb874e10b1d01de3121b2b67b553136d1eb3207996"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AnalysisDataset"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#AnalysisDecisionShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -3976,6 +5333,27 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#AnalysisDecision"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ArchivalShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb2997486af1ee2176d83eb7b1f319c0c2a28f826596ce63aca781bc4bfe4f76f2b"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ArchivalEvent"
       }
     ]
   },
@@ -4058,6 +5436,27 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Assessment"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#AutocodedReviewShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb18658ced976334f71e5903b8b04ca1b84d46d064f10be51f07054d7e81975f409"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CodeAssignment"
       }
     ]
   },
@@ -4307,6 +5706,37 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#ClinicalStudyReport"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#CodeAssignmentShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1765229286e395b5eda662dfb79204cfdeb1a6c384f9e7aa26cb7137d8925e30f"
+      },
+      {
+        "@id": "_:cb1c211f1b17467a1b814404f317a93b604d13dcb2b17bb0a5bd1e80d130004372e"
+      },
+      {
+        "@id": "_:cb1de62641bc5072250b593a7d43947ca31458b7db51126173c792504afcab7235e"
+      },
+      {
+        "@id": "_:cb1f12c7b480d241a8e78bc8952078c09c3cdaab5dfb89b2244dd616505cdcfc856"
+      },
+      {
+        "@id": "_:cb1f8b62c8c7dff30c6d5a0f9a7af10c5bdf40a8f2181830f19a4591e76cd7411b8"
+      },
+      {
+        "@id": "_:cb2175b24d59d2dd69d899395bfbefeef962f542617b61eae90b6c743043a9f77cf"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CodeAssignment"
       }
     ]
   },
@@ -4714,6 +6144,28 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#DestructionEventShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1b7147594d9838c07a11cd4aa39095eab89db62d82d618e16e605df94c0bddd38"
+      },
+      {
+        "@id": "_:cb2aeeef92ec5ce0f8139e680562cfa6fc3f9e484dbfa701841cf1dd861256b5f34"
+      },
+      {
+        "@id": "_:cb2f4ff93887a17ba10134aafb868a6606831143a8d39f26fc1dfd36c9e5ca56fe5"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DestructionEvent"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#DeviationEventShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -4731,6 +6183,28 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#DeviationEvent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DispensingEventShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb259e2fcecf6d07f9a1b97bcbe5bd5c7c9f50621aeff5c5c8a15d4d528a129d2bc"
+      },
+      {
+        "@id": "_:cb2dbd3d66cf4a153f02e78e502605433b7246bd22e13136219e1d66f1ebc220e73"
+      },
+      {
+        "@id": "_:cb31b44fa0df555427cc73368a2b8c6e418d1eac3ac012f3de139a8932615378086"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DispensingEvent"
       }
     ]
   },
@@ -4958,6 +6432,47 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#InformedConsent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#IntegratedSummaryShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1a859de85ffab63aa198f81de272d8b110e652b219bfa4685a779458826602702"
+      },
+      {
+        "@id": "_:cb1de9929065dd5cc2f48c8c42e72739ea7a327203dbca79500be7677ab961e17f3"
+      },
+      {
+        "@id": "_:cb22272a8231e3e70d6f1e5d016e4db52d39621516511c704803076694c27945bab"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#IntegratedSummary"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#KitAssignmentShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb25ee3431a98dd14f332fe78a7f868c5e7f45ccdb679e9d4068356e572183e3d9c"
+      },
+      {
+        "@id": "_:cb294afc30b53aa3bddd47168a6503a46d9e244f840f2e561075696f9e6aef8096b"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#KitAssignment"
       }
     ]
   },
@@ -5338,6 +6853,27 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#PublicationTraceShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb11a0ced0b1817018b2c024fd9cf89cf2f2ecde9b25a2a398ab16361cc967cfaab"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Publication"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#QueryShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -5358,6 +6894,117 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#Query"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#RandomizationEventShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb33e849a27c2f07fc659250f6973439adb398280857bcf05d87dba73ec1e806c44"
+      },
+      {
+        "@id": "_:cb39b4891b67e08a58d9c3cc5c902348c0ae89c679b80d8a0b76d9b9095ca7614d8"
+      },
+      {
+        "@id": "_:cb3ac8dce2f878bdfc7c4b30c5fa76424ec8ab51c8adf0a22e230fe8f79b71f8cd2"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RandomizationEvent"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#ReconciliationShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb28e0a48fa39809bfc01fa5a20352040164670ee20a6e24018e9b53bc4136c392e"
+      },
+      {
+        "@id": "_:cb2ff7e328b6623063c1d02d2b59f0669d408bdaf6f83b693f98c88133b747c5a29"
+      },
+      {
+        "@id": "_:cb33a92c6520bc9aae48dfc4d0cf1406b0b99a88eadb2f667844e571959b5277f3a"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Reconciliation"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#RecruitConversionShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb2fa508ab2b169704223160b095ab852576f5e992be2f3eff4342cbd84314e2b76"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Recruit"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#RecruitSourceShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb2ed289cbd8a1f822f7eaf73051a0bc5180b07e9a12bbac2e7debf4f6fdc140ee9"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#Recruit"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#RegistryRecordShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb171af4db37c721b5aff45ddd6d9a3842dad18604f89eb32e1e734f1453d89b896"
+      },
+      {
+        "@id": "_:cb28b4761e6125dd4ce2ca9b187fff1e2d5bde930c3b0a75f3f40999b2d9cbc4e76"
+      },
+      {
+        "@id": "_:cb2a615876f729205e7547c66ccf4ed719a628137690f0529e6ee74770f8b51798c"
+      },
+      {
+        "@id": "_:cb2e268504b47ed18a5f32a982fc0a06a08f3c45a369491d6b0a2c495357401d8ff"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cbd4252d69f081ae02353a1717ed48fe95acf2fd836c90c3a11d08606c8f5a3e46"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#RegistryRecord"
       }
     ]
   },
@@ -5493,6 +7140,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#ScreeningRecordShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1c44b9038ee58199b0832676f6fce14c666a33af7e39ea70d11919fb740ef4600"
+      },
+      {
+        "@id": "_:cb2ab9765c0a05a4f8e998c5ed337602c35c00488e633f07cdef457e71fa631fa41"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb3875526b2a390968fc49074d71ba6229fda253f868e3de4712c61061d98eed5a4"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ScreeningRecord"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#SeriousAEMedDRAShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -5566,6 +7237,33 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#SiteActivation"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#SiteClosureShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1aedfb27d625c6893c011a70e2f84650a5aefa543b1552639bb75e7826fc2a453"
+      },
+      {
+        "@id": "_:cb2dee214a19e31f4d08c4c24b39946ed90cdfea94f4d7a09f689d7950953200c93"
+      },
+      {
+        "@id": "_:cb36f79713ca6a69f86e1b600a7a448f86cc11cb404d02dada247703566c81c55dc"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb2a960bcb215ea7a8849ad73282f336ded0dff1edba922040ddfa2c3205e5b9fea"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#SiteClosure"
       }
     ]
   },
@@ -5795,6 +7493,30 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#TemperatureExcursionShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1c777141f9aeb37bebff18e2a274002fbcfd38d0eef81ad11228e863f2bf21109"
+      },
+      {
+        "@id": "_:cb1eb264aa0c4edecfc19d21bec94a7189a310c06be21813f7bc631c8c1c0e85a11"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb1a27a0ab475b36b001f249386254d5f189ad4751751e70b6c6fc79dd7f92ee84d"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#TemperatureExcursion"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#TransferAmendmentPropagationShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -5870,6 +7592,31 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#TransferProfile"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#UnblindingEventShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1b14aa438ea87584265c603e992231ff34ae1d6f400fad7746e6384bd646b5e74"
+      },
+      {
+        "@id": "_:cb2209935c7b08a5c795f7c6d90b0da55ff6b2ecaaf28935e053ef755ff1ac757cb"
+      },
+      {
+        "@id": "_:cb24a64d2c639921ac49fec608dc42ca22ebff1357d03594a0788f4ae687a202723"
+      },
+      {
+        "@id": "_:cb2a66ce59afc1a7471159a51eae49a5624b1fa141a07d7bc88680e04cc513e0499"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#UnblindingEvent"
       }
     ]
   },
@@ -6299,6 +8046,38 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/shapes/coding-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 medical coding workflow"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/shapes/disclosure-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 integrated summaries, registry disclosure, ADaM structure"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/shapes/participant-v1",
     "@type": [
       "http://www.w3.org/2002/07/owl#Ontology"
@@ -6311,6 +8090,70 @@
     "http://www.w3.org/2002/07/owl#versionInfo": [
       {
         "@value": "1.2"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/shapes/randomization-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 randomization & blinding"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/shapes/recruitment-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 recruitment & screening funnel"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/shapes/site-closeout-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 site closeout"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/shapes/supply-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 drug supply & IMP accountability"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
       }
     ]
   },

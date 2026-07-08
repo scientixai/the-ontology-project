@@ -1,0 +1,26 @@
+# IMP accountability log — the drug log as a PROJECTION of custody events (like
+# the DoA log): every dispensing, return, and destruction on each lot, in valid-
+# time order, with quantities and parties. Reconciliation is arithmetic over
+# this view, never a maintained spreadsheet.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX top:  <https://top.scientix.ai/v1#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?lot ?eventKind ?when ?quantity ?party WHERE {
+  {
+    ?e a cr:DispensingEvent ; cr:dispensesFromLot ?l ; top:observedAt ?when ;
+       cr:quantityDispensed ?quantity .
+    BIND("dispense" AS ?eventKind)
+  } UNION {
+    ?e a cr:ReturnEvent ; cr:returnsToLotCustody ?l ; top:observedAt ?when ;
+       cr:quantityReturned ?quantity .
+    BIND("return" AS ?eventKind)
+  } UNION {
+    ?e a cr:DestructionEvent ; cr:destroysLot ?l ; top:observedAt ?when ;
+       cr:quantityDestroyed ?quantity .
+    BIND("destroy" AS ?eventKind)
+  }
+  ?l rdfs:label ?lot .
+  OPTIONAL { ?e prov:wasAttributedTo ?p . ?p rdfs:label ?party }
+}
+ORDER BY ?lot ?when
