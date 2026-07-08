@@ -3,6 +3,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix top: <https://top.scientix.ai/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+<https://top.scientix.ai/cr/v1/startup> a owl:Ontology ;
+    dct:title "CR-core — site activation" ;
+    dct:description "Site activation and its prerequisites: IRB approval, CTA, SIV; enrollment-before-activation is the flagship violation." .
 
 cr:CoverageAnalysis a owl:Class ;
     rdfs:label "Coverage Analysis (MCA)" ;
@@ -70,3 +75,10 @@ cr:SiteActivation a owl:Class ;
     rdfs:subClassOf top:Temporal,
         top:Versioned .
 
+
+cr:coverageForProtocol a owl:ObjectProperty ;
+    rdfs:label "coverage for protocol" ;
+    rdfs:comment "The protocol version whose procedures this coverage analysis classifies (billable to insurance vs. sponsor-paid)." ;
+    rdfs:domain cr:CoverageAnalysis ;
+    rdfs:range cr:ProtocolVersion ;
+    top:flavor "Additive" .

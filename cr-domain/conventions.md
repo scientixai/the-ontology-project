@@ -14,7 +14,7 @@ Every assertion that a regulator could ever ask about carries **two time axes** 
 **provenance**. This is the non-negotiable spine (v1-plan Principle 4).
 
 ## Two time axes
-- **Valid time** — when the fact is true *in the world*: `top:observedAt`, `top:validTo`.
+- **Valid time** — when the fact is true *in the world*: `top:observedAt` (instant) or `top:validFrom`/`top:validUntil` (interval; Core ADR-0021 names).
 - **Transaction time** — when the *system knew it* (append-only, immutable):
   `top:recordedAt`, `top:supersededAt`.
 
@@ -23,7 +23,7 @@ is visible and back-dating is structurally impossible (transaction time is never
 a correction is a *new* assertion with a later `recordedAt`, and the prior one gets
 `supersededAt`).
 
-> Runtime mapping (NGSI-LD): `top:observedAt/validTo` ≈ `observedAt`;
+> Runtime mapping (NGSI-LD): `top:observedAt/validUntil` ≈ `observedAt`;
 > `top:recordedAt/supersededAt` ≈ `createdAt`/`modifiedAt`; queried via the Temporal API.
 > In this reference model we encode the convention explicitly so SHACL can test it.
 

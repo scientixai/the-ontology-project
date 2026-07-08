@@ -212,6 +212,19 @@ def build():
     os.makedirs(DIST, exist_ok=True)
 
     onto = _merge(["ontology/*.ttl"])
+    # The dist is pre-merged: drop the source layout's owl:imports so consumers'
+    # reasoners don't try to resolve module IRIs that only exist as files.
+    for t in list(onto.triples((None, OWL.imports, None))):
+        onto.remove(t)
+    # Self-contained: fold in the PINNED Core artifact so no top: IRI dangles
+    # in the published bundle (there is no local stub; see upstream-pin.json).
+    import json as _json
+    _pin_p = os.path.join(ROOT, "upstream-pin.json")
+    if os.path.exists(_pin_p):
+        _pin = _json.load(open(_pin_p))
+        _core_p = os.path.join(os.path.dirname(ROOT), _pin["artifact"])
+        if os.path.exists(_core_p):
+            onto.parse(_core_p, format="turtle")
     _stamp(onto)
     _bind(onto)
     _write(onto, "top-cr-v1")

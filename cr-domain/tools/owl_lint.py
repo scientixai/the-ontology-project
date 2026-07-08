@@ -53,9 +53,17 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def ont_files():
-    """The authored ontology modules — the same non-recursive set the harness parses.
-    Vendored/generated ontologies (ontology/vendor/**) are external and checked separately."""
-    return sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl")))
+    """The authored ontology modules — the same non-recursive set the harness parses —
+    plus the PINNED Core artifact (upstream-pin.json), so top: terms resolve without a
+    local stub. Vendored/generated ontologies (ontology/vendor/**) are external."""
+    files = sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl")))
+    pin_p = os.path.join(ROOT, "upstream-pin.json")
+    if os.path.exists(pin_p):
+        import json
+        core_p = os.path.join(os.path.dirname(ROOT), json.load(open(pin_p))["artifact"])
+        if os.path.exists(core_p):
+            files.append(core_p)
+    return files
 
 
 def owned(t):

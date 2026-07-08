@@ -197,6 +197,9 @@
 <https://top.scientix.ai/v1#Project> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/bfo#GenericallyDependentContinuant> .
 <https://top.scientix.ai/v1#Project> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Plan> .
 <https://top.scientix.ai/v1#Project> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://top.scientix.ai/v1#Scope> .
+<https://top.scientix.ai/v1#ProvenancedEntity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://top.scientix.ai/v1#ProvenancedEntity> <http://www.w3.org/2000/01/rdf-schema#comment> "Marker for anything carrying the full bitemporal + PROV envelope: exactly one top:observedAt, exactly one top:recordedAt, at least one prov:wasAttributedTo (an identified agent). Domains enforce the envelope with their own SHACL (e.g. the CR domain's top:BitemporalProvShape); Core carries the vocabulary."@en .
+<https://top.scientix.ai/v1#ProvenancedEntity> <http://www.w3.org/2000/01/rdf-schema#label> "Provenanced Entity"@en .
 <https://top.scientix.ai/v1#RegulatoryLaw> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://top.scientix.ai/v1#RegulatoryLaw> <http://www.w3.org/2000/01/rdf-schema#comment> "A rule rooted in legal or regulatory authority — 21 CFR clause, ICH guideline, EU CTR provision, contractual SLA, jurisdictional reporting requirement."@en .
 <https://top.scientix.ai/v1#RegulatoryLaw> <http://www.w3.org/2000/01/rdf-schema#label> "Regulatory Law"@en .
@@ -465,6 +468,11 @@
 <https://top.scientix.ai/v1#rationale> <http://www.w3.org/2000/01/rdf-schema#label> "rationale"@en .
 <https://top.scientix.ai/v1#rationale> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
 <https://top.scientix.ai/v1#rationale> <https://top.scientix.ai/v1#flavor> "Tightenable" .
+<https://top.scientix.ai/v1#recordedAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<https://top.scientix.ai/v1#recordedAt> <http://www.w3.org/2000/01/rdf-schema#comment> "Transaction time (append-only): when the system first knew this fact. Never rewritten. Complements top:observedAt / top:validFrom (valid time). PROV peer: prov:generatedAtTime carries the same instant when a generation activity is modeled."@en .
+<https://top.scientix.ai/v1#recordedAt> <http://www.w3.org/2000/01/rdf-schema#label> "recorded at"@en .
+<https://top.scientix.ai/v1#recordedAt> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://top.scientix.ai/v1#recordedAt> <https://top.scientix.ai/v1#flavor> "Invariant" .
 <https://top.scientix.ai/v1#satisfiesConstraint> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <https://top.scientix.ai/v1#satisfiesConstraint> <http://www.w3.org/2000/01/rdf-schema#comment> "Links the Outcome to the Constraint(s) it has been validated against."@en .
 <https://top.scientix.ai/v1#satisfiesConstraint> <http://www.w3.org/2000/01/rdf-schema#domain> <https://top.scientix.ai/v1#Outcome> .
@@ -503,15 +511,19 @@
 <https://top.scientix.ai/v1#status> <http://www.w3.org/2000/01/rdf-schema#label> "status"@en .
 <https://top.scientix.ai/v1#status> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
 <https://top.scientix.ai/v1#status> <https://top.scientix.ai/v1#flavor> "Tightenable" .
+<https://top.scientix.ai/v1#supersededAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<https://top.scientix.ai/v1#supersededAt> <http://www.w3.org/2000/01/rdf-schema#comment> "Transaction time (append-only): when a later assertion superseded this one. A correction is a NEW assertion carrying its own recordedAt; this timestamp closes the old one and is never rewritten."@en .
+<https://top.scientix.ai/v1#supersededAt> <http://www.w3.org/2000/01/rdf-schema#label> "superseded at"@en .
+<https://top.scientix.ai/v1#supersededAt> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://top.scientix.ai/v1#supersededAt> <https://top.scientix.ai/v1#flavor> "Invariant" .
 <https://top.scientix.ai/v1#validFrom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<https://top.scientix.ai/v1#validFrom> <http://www.w3.org/2000/01/rdf-schema#comment> "Domain intentionally open: rdfs:domain is an inference axiom, not a constraint — a domain of top:Versioned would retype every dated entity as Versioned and drag it under the versioning contract (the RDFS target cascade). The requirement side lives in SHACL: top:BitemporalShape demands validFrom on Versioned."@en .
 <https://top.scientix.ai/v1#validFrom> <http://www.w3.org/2000/01/rdf-schema#comment> "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en .
-<https://top.scientix.ai/v1#validFrom> <http://www.w3.org/2000/01/rdf-schema#domain> <https://top.scientix.ai/v1#Versioned> .
 <https://top.scientix.ai/v1#validFrom> <http://www.w3.org/2000/01/rdf-schema#label> "valid from"@en .
 <https://top.scientix.ai/v1#validFrom> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
 <https://top.scientix.ai/v1#validFrom> <https://top.scientix.ai/v1#flavor> "Invariant" .
 <https://top.scientix.ai/v1#validUntil> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <https://top.scientix.ai/v1#validUntil> <http://www.w3.org/2000/01/rdf-schema#comment> "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
-<https://top.scientix.ai/v1#validUntil> <http://www.w3.org/2000/01/rdf-schema#domain> <https://top.scientix.ai/v1#Versioned> .
 <https://top.scientix.ai/v1#validUntil> <http://www.w3.org/2000/01/rdf-schema#label> "valid until"@en .
 <https://top.scientix.ai/v1#validUntil> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
 <https://top.scientix.ai/v1#validUntil> <https://top.scientix.ai/v1#flavor> "Invariant" .

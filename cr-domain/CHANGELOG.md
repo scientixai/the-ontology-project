@@ -25,6 +25,35 @@ Deprecated terms remain in the dist bundle for two MINOR versions before removal
 
 ## [Unreleased]
 
+### Changed — Structure: no more Core stub; the module set declares itself
+
+- **`ontology/top-core.ttl` deleted** (convener: "it feels brittle" — it was).
+  Its only real content — the transaction-time envelope — is now Core's:
+  `top:recordedAt`, `top:supersededAt`, `top:ProvenancedEntity` promoted into
+  `core/v1/modules/top-bitemporal.ttl`; `top:validTo` dropped (unused in data;
+  Core's ADR-0021 name is `top:validUntil`). Core also drops the
+  `rdfs:domain top:Versioned` axioms on `validFrom`/`validUntil` — an inference
+  axiom used as a constraint retypes every dated entity as Versioned (the RDFS
+  target cascade); the requirement lives in SHACL (`top:BitemporalShape`).
+- **Loaders resolve Core from the pinned artifact** (`upstream-pin.json` →
+  `core/v1/dist/top-core-v1.ttl`): tests, docs, owl-lint, and the dist build
+  (which folds Core in and strips source-layout `owl:imports`). At extraction
+  (ADR-0023) only the pin's artifact path changes. Seam gate now checks that
+  every `top:` term the cr modules reference exists in the pinned Core.
+- **`ontology/cr.ttl` module root added**: one `owl:Ontology` that
+  `owl:imports` all 36 modules plus TOP Core — the file that declares what the
+  module set IS. Every module now carries its own `owl:Ontology` header
+  (18 were missing one). New coherence gate: a module without a header, or not
+  imported by the root, fails the suite.
+- **Connectivity stitch**: cross-module audit found 10 classes with no
+  object-property edge; 3 were deprecated aliases (connected via
+  `owl:equivalentClass`), 7 genuine islands now stitched:
+  `cr:administersProduct` + `cr:atDoseLevel` (Administration→IP/DoseLevel),
+  `cr:inCohort` (StudySubject→Cohort), `cr:definedInProtocol`
+  (StoppingRule→ProtocolVersion), `cr:operationalRecordFor`,
+  `cr:publishesResultsOf` (Publication, sibling of registersStudy /
+  integratesStudy), `cr:coverageForProtocol` (CoverageAnalysis→ProtocolVersion).
+
 ### Added — RBQM deepening (convener research report + ICH E6(R3)/Q9(R1))
 
 - **`cr-core-rbqm.ttl` grew from 3 classes to a full RBQM cycle**:

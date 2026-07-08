@@ -483,3 +483,40 @@ cr:endpointEstimand a owl:ObjectProperty ;
     rdfs:domain cr:Endpoint ;
     rdfs:range cr:Estimand ;
     top:flavor "Additive" .
+
+# ── Connectivity stitch (convener review, 2026-07): classes that had no
+# object-property edge in the T-box. Every class earns its place by being
+# reachable — an island class is either missing its edges or missing its case.
+
+cr:administersProduct a owl:ObjectProperty ;
+    rdfs:label "administers product" ;
+    rdfs:comment "The investigational product given in this dosing event." ;
+    rdfs:domain cr:Administration ;
+    rdfs:range cr:InvestigationalProduct ;
+    top:flavor "Additive" .
+
+cr:atDoseLevel a owl:ObjectProperty ;
+    rdfs:label "at dose level" ;
+    rdfs:comment "The dose level of a dose-escalation design this dosing event or cohort sits at. Domain intentionally open (cr:Administration, cr:Cohort)." ;
+    rdfs:range cr:DoseLevel ;
+    top:flavor "Additive" .
+
+cr:inCohort a owl:ObjectProperty ;
+    rdfs:label "in cohort" ;
+    rdfs:comment "The dose/treatment cohort this participant belongs to." ;
+    rdfs:domain cr:StudySubject ;
+    rdfs:range cr:Cohort ;
+    top:flavor "Additive" .
+
+cr:definedInProtocol a owl:ObjectProperty ;
+    rdfs:label "defined in protocol" ;
+    rdfs:comment "The protocol version that defines this rule. A stopping rule exists only as protocol text until this edge grounds it." ;
+    rdfs:domain cr:StoppingRule ;
+    rdfs:range cr:ProtocolVersion ;
+    top:flavor "Additive" .
+
+cr:operationalRecordFor a owl:ObjectProperty ;
+    rdfs:label "operational record for" ;
+    rdfs:comment "The entity (site, study, visit) this operational record describes. Range intentionally open — operational payloads attach anywhere." ;
+    rdfs:domain cr:OperationalRecord ;
+    top:flavor "Additive" .

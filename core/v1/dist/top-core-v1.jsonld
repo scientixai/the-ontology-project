@@ -1229,6 +1229,24 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/v1#ProvenancedEntity",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@language": "en",
+        "@value": "Marker for anything carrying the full bitemporal + PROV envelope: exactly one top:observedAt, exactly one top:recordedAt, at least one prov:wasAttributedTo (an identified agent). Domains enforce the envelope with their own SHACL (e.g. the CR domain's top:BitemporalProvShape); Core carries the vocabulary."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@language": "en",
+        "@value": "Provenanced Entity"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/v1#RegulatoryLaw",
     "@type": [
       "http://www.w3.org/2002/07/owl#Class"
@@ -2650,6 +2668,34 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/v1#recordedAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@language": "en",
+        "@value": "Transaction time (append-only): when the system first knew this fact. Never rewritten. Complements top:observedAt / top:validFrom (valid time). PROV peer: prov:generatedAtTime carries the same instant when a generation activity is modeled."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@language": "en",
+        "@value": "recorded at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Invariant"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/v1#satisfiesConstraint",
     "@type": [
       "http://www.w3.org/2002/07/owl#ObjectProperty"
@@ -2857,6 +2903,34 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/v1#supersededAt",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@language": "en",
+        "@value": "Transaction time (append-only): when a later assertion superseded this one. A correction is a NEW assertion carrying its own recordedAt; this timestamp closes the old one and is never rewritten."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@language": "en",
+        "@value": "superseded at"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "https://top.scientix.ai/v1#flavor": [
+      {
+        "@value": "Invariant"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/v1#validFrom",
     "@type": [
       "http://www.w3.org/2002/07/owl#DatatypeProperty"
@@ -2864,12 +2938,11 @@
     "http://www.w3.org/2000/01/rdf-schema#comment": [
       {
         "@language": "en",
-        "@value": "Start of the valid-time interval \u2014 when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
+        "@value": "Domain intentionally open: rdfs:domain is an inference axiom, not a constraint \u2014 a domain of top:Versioned would retype every dated entity as Versioned and drag it under the versioning contract (the RDFS target cascade). The requirement side lives in SHACL: top:BitemporalShape demands validFrom on Versioned."
+      },
       {
-        "@id": "https://top.scientix.ai/v1#Versioned"
+        "@language": "en",
+        "@value": "Start of the valid-time interval \u2014 when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
@@ -2898,11 +2971,6 @@
       {
         "@language": "en",
         "@value": "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."
-      }
-    ],
-    "http://www.w3.org/2000/01/rdf-schema#domain": [
-      {
-        "@id": "https://top.scientix.ai/v1#Versioned"
       }
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [

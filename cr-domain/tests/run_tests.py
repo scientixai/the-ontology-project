@@ -71,6 +71,13 @@ def main():
     shapes_graph = load_graph(shape_files) if shape_files else Graph()
     ont_graph = load_graph(ont_files) if ont_files else Graph()
 
+    # Core terms come from the PINNED Core artifact (upstream-pin.json) — there
+    # is no local stub. While co-located, the pin path resolves to the sibling
+    # core/v1/dist; post-extraction (ADR-0023) it points at a fetched release.
+    core_path = pinned_core_path()
+    if core_path:
+        ont_graph.parse(core_path, format="turtle")
+
     # (a2) T-box coherence: no duplicate class definitions across modules,
     # no dangling top:/cr:/hcls: references. Catches the participant-module
     # class of drift (dangling upper class, re-defined classes) mechanically.
@@ -402,8 +409,10 @@ def coherence_checks(ont_files, ont_graph, failures):
               f"{ {str(c): fs for c, fs in dups.items()} }")
 
     # (2) dangling superclass / domain / range references in owned namespaces
+    # (top: terms resolve from the pinned Core artifact merged into ont_graph)
     total += 1
-    defined = set(defined_in)
+    defined = set(defined_in) | {s for s in ont_graph.subjects(RDF.type, OWL.Class)
+                                 if isinstance(s, URIRef)}
     dangling = set()
     for pred in (RDFS.subClassOf, RDFS.domain, RDFS.range):
         for o in set(ont_graph.objects(None, pred)):
@@ -432,15 +441,54 @@ def coherence_checks(ont_files, ont_graph, failures):
         print(f"[FAIL] coherence: ontology IRI claimed by multiple files: "
               f"{ {str(o): fs for o, fs in oidups.items()} }")
 
+    # (4) module registry: every module has an owl:Ontology header, and the
+    # root (ontology/cr.ttl) owl:imports every module — the file that declares
+    # what the module set IS. A new module that isn't registered fails here.
+    total += 1
+    root_path = os.path.join(ROOT, "ontology", "cr.ttl")
+    problems = []
+    if not os.path.exists(root_path):
+        problems.append("ontology/cr.ttl (module root) is missing")
+    else:
+        root_g = Graph(); root_g.parse(root_path, format="turtle")
+        imported = {str(o) for o in root_g.objects(None, OWL.imports)}
+        for f in ont_files:
+            base = os.path.basename(f)
+            if base == "cr.ttl":
+                continue
+            g = Graph(); g.parse(f, format="turtle")
+            headers = [str(s) for s in set(g.subjects(RDF.type, OWL.Ontology))]
+            if len(headers) != 1:
+                problems.append(f"{base}: expected exactly one owl:Ontology header, found {len(headers)}")
+            elif headers[0] not in imported:
+                problems.append(f"{base}: header {headers[0]} not owl:imports'ed by ontology/cr.ttl")
+    if not problems:
+        passed += 1
+        print(f"[PASS] coherence: module registry — every module has a header and is imported by the root")
+    else:
+        for pr in problems:
+            failures.append(("COHERENCE", "module-registry", pr))
+        print(f"[FAIL] coherence: module registry: {problems}")
+
     return passed, total
+
+
+def pinned_core_path():
+    """Resolve the pinned Core artifact's path from upstream-pin.json, or None."""
+    pin_path = os.path.join(ROOT, "upstream-pin.json")
+    if not os.path.exists(pin_path):
+        return None
+    pin = json.load(open(pin_path))
+    core_path = os.path.join(os.path.dirname(ROOT), pin["artifact"])
+    return core_path if os.path.exists(core_path) else None
 
 
 def seam_checks(failures):
     """Core↔domain seam (ADR-0023): verify (1) the pinned Core artifact's checksum,
-    and (2) that every top: term in the local stub (ontology/top-core.ttl) exists in
-    that pinned artifact — except the divergences upstream-pin.json documents.
-    Skips silently when the pin file or Core artifact is absent (post-extraction,
-    the pin will point at a fetched release instead of a sibling directory)."""
+    and (2) that every top: term the cr modules reference exists in that pinned
+    artifact — the domain has NO local Core stub, so this is what keeps the seam
+    honest. Skips silently when the pin file or Core artifact is absent
+    (post-extraction, the pin will point at a fetched release)."""
     import hashlib
     pin_path = os.path.join(ROOT, "upstream-pin.json")
     if not os.path.exists(pin_path):
@@ -462,22 +510,27 @@ def seam_checks(failures):
         print("[FAIL] seam: Core artifact does not match upstream-pin.json")
 
     total += 1
-    from rdflib import OWL
     core = Graph(); core.parse(core_path, format="turtle")
     core_terms = {s for s in core.subjects(None, None) if isinstance(s, URIRef)}
-    stub = Graph(); stub.parse(os.path.join(ROOT, pin["stub"]), format="turtle")
-    allowed = set(pin["documented_divergences"]["classes"]) | \
-        set(pin["documented_divergences"]["properties"])
+    domain = load_graph(sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl"))))
+    allowed = set(pin["documented_divergences"].get("classes", [])) | \
+        set(pin["documented_divergences"].get("properties", []))
     top_ns = "https://top.scientix.ai/v1#"
-    undocumented = sorted(
-        str(s) for s in stub.subjects(RDF.type, None)
-        if isinstance(s, URIRef) and str(s).startswith(top_ns)
-        and s not in core_terms and str(s) not in allowed)
-    if not undocumented:
-        passed += 1; print("[PASS] seam: every stub top: term exists in pinned Core (divergences documented)")
+    referenced = set()
+    for s, p, o in domain:
+        for node in (s, p, o):
+            if isinstance(node, URIRef) and str(node).startswith(top_ns):
+                referenced.add(node)
+    locally_defined = {s for s in domain.subjects(RDF.type, None) if isinstance(s, URIRef)}
+    missing = sorted(
+        str(t) for t in referenced
+        if t not in core_terms and t not in locally_defined and str(t) not in allowed)
+    if not missing:
+        passed += 1
+        print(f"[PASS] seam: all {len(referenced)} referenced top: terms resolve in the pinned Core artifact")
     else:
-        failures.append(("SEAM", "stub-alignment", f"stub terms missing from Core and undocumented: {undocumented}"))
-        print(f"[FAIL] seam: undocumented stub divergences: {undocumented}")
+        failures.append(("SEAM", "dangling-core-ref", f"top: terms referenced by cr modules but absent from pinned Core: {missing}"))
+        print(f"[FAIL] seam: top: terms not in pinned Core: {missing}")
     return passed, total
 
 

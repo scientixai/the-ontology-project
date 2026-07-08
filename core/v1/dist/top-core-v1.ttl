@@ -155,6 +155,10 @@ top:Project a owl:Class ;
         prov:Plan,
         top:Scope .
 
+top:ProvenancedEntity a owl:Class ;
+    rdfs:label "Provenanced Entity"@en ;
+    rdfs:comment "Marker for anything carrying the full bitemporal + PROV envelope: exactly one top:observedAt, exactly one top:recordedAt, at least one prov:wasAttributedTo (an identified agent). Domains enforce the envelope with their own SHACL (e.g. the CR domain's top:BitemporalProvShape); Core carries the vocabulary."@en .
+
 top:RegulatoryLaw a owl:Class ;
     rdfs:label "Regulatory Law"@en ;
     rdfs:comment "A rule rooted in legal or regulatory authority — 21 CFR clause, ICH guideline, EU CTR provision, contractual SLA, jurisdictional reporting requirement."@en ;
@@ -418,6 +422,12 @@ top:rationale a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Tightenable" .
 
+top:recordedAt a owl:DatatypeProperty ;
+    rdfs:label "recorded at"@en ;
+    rdfs:comment "Transaction time (append-only): when the system first knew this fact. Never rewritten. Complements top:observedAt / top:validFrom (valid time). PROV peer: prov:generatedAtTime carries the same instant when a generation activity is modeled."@en ;
+    rdfs:range xsd:dateTime ;
+    top:flavor "Invariant" .
+
 top:satisfiesConstraint a owl:ObjectProperty ;
     rdfs:label "satisfies constraint"@en ;
     rdfs:comment "Links the Outcome to the Constraint(s) it has been validated against."@en ;
@@ -445,6 +455,12 @@ top:startTime a owl:DatatypeProperty ;
     rdfs:domain top:Temporal ;
     rdfs:range xsd:dateTime ;
     rdfs:subPropertyOf prov:startedAtTime ;
+    top:flavor "Invariant" .
+
+top:supersededAt a owl:DatatypeProperty ;
+    rdfs:label "superseded at"@en ;
+    rdfs:comment "Transaction time (append-only): when a later assertion superseded this one. A correction is a NEW assertion carrying its own recordedAt; this timestamp closes the old one and is never rewritten."@en ;
+    rdfs:range xsd:dateTime ;
     top:flavor "Invariant" .
 
 top:variance a owl:DatatypeProperty ;
@@ -490,6 +506,10 @@ top:StatusChange a owl:Class ;
         prov:Entity,
         top:Outcome .
 
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned"@en ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
+
 top:identifier a owl:DatatypeProperty,
         owl:FunctionalProperty ;
     rdfs:label "identifier"@en ;
@@ -530,7 +550,6 @@ top:status a owl:DatatypeProperty ;
 top:validUntil a owl:DatatypeProperty ;
     rdfs:label "valid until"@en ;
     rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en ;
-    rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
     top:flavor "Invariant" .
 
@@ -552,14 +571,10 @@ top:VersionSeries a owl:Class ;
 
 top:validFrom a owl:DatatypeProperty ;
     rdfs:label "valid from"@en ;
-    rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en ;
-    rdfs:domain top:Versioned ;
+    rdfs:comment "Domain intentionally open: rdfs:domain is an inference axiom, not a constraint — a domain of top:Versioned would retype every dated entity as Versioned and drag it under the versioning contract (the RDFS target cascade). The requirement side lives in SHACL: top:BitemporalShape demands validFrom on Versioned."@en,
+        "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en ;
     rdfs:range xsd:dateTime ;
     top:flavor "Invariant" .
-
-top:Versioned a owl:Class ;
-    rdfs:label "Versioned"@en ;
-    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
 
 top:BitemporalShape a sh:NodeShape ;
     rdfs:label "Bitemporal Shape"@en ;

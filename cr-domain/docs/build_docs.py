@@ -42,6 +42,13 @@ def qn(uri):
 PER_FILE = {}        # filename -> [class iris]
 IDX = {}             # localname -> iri
 MERGED = Graph()
+# Core terms resolve from the PINNED Core artifact (upstream-pin.json) — no local stub.
+_pin_p = os.path.join(ROOT, "upstream-pin.json")
+if os.path.exists(_pin_p):
+    _pin = json.load(open(_pin_p))
+    _core_p = os.path.join(os.path.dirname(ROOT), _pin["artifact"])
+    if os.path.exists(_core_p):
+        MERGED.parse(_core_p, format="turtle")
 for f in sorted(glob.glob(os.path.join(ROOT, "ontology", "*.ttl"))):
     g = Graph(); g.parse(f, format="turtle"); MERGED += g
     iris = [s for s in g.subjects(RDF.type, OWL.Class) if isinstance(s, URIRef)]

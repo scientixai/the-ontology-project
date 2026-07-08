@@ -21,18 +21,39 @@ top:Versioned a owl:Class ;
 top:validFrom a owl:DatatypeProperty ;
     rdfs:label "valid from"@en ;
     top:flavor "Invariant" ;
-    rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
+    rdfs:comment "Domain intentionally open: rdfs:domain is an inference axiom, not a constraint — a domain of top:Versioned would retype every dated entity as Versioned and drag it under the versioning contract (the RDFS target cascade). The requirement side lives in SHACL: top:BitemporalShape demands validFrom on Versioned."@en ;
     rdfs:comment "Start of the valid-time interval — when this version's state became true in the world. Distinct from top:observedAt (transaction time). Invariant per ADR-0019, like top:startTime/top:endTime. No PROV-O peer: PROV models system time, not valid-time-of-a-fact (declared absence, per ADR-0021)."@en .
 
 top:validUntil a owl:DatatypeProperty ;
     rdfs:label "valid until"@en ;
     top:flavor "Invariant" ;
-    rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
     rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
 
 prov:specializationOf rdfs:range top:VersionSeries .
+
+# ── Transaction time (append-only system knowledge) ─────────────────────────
+# Promoted from the CR domain (2026-07, convener ruling resolving the stub's
+# "documented divergence"): valid time says when a fact was true in the world;
+# transaction time says when the SYSTEM knew it. Both are needed to answer
+# "what did we know on day X" — the inspector's question.
+
+top:recordedAt a owl:DatatypeProperty ;
+    rdfs:label "recorded at"@en ;
+    top:flavor "Invariant" ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Transaction time (append-only): when the system first knew this fact. Never rewritten. Complements top:observedAt / top:validFrom (valid time). PROV peer: prov:generatedAtTime carries the same instant when a generation activity is modeled."@en .
+
+top:supersededAt a owl:DatatypeProperty ;
+    rdfs:label "superseded at"@en ;
+    top:flavor "Invariant" ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Transaction time (append-only): when a later assertion superseded this one. A correction is a NEW assertion carrying its own recordedAt; this timestamp closes the old one and is never rewritten."@en .
+
+top:ProvenancedEntity a owl:Class ;
+    rdfs:label "Provenanced Entity"@en ;
+    rdfs:comment "Marker for anything carrying the full bitemporal + PROV envelope: exactly one top:observedAt, exactly one top:recordedAt, at least one prov:wasAttributedTo (an identified agent). Domains enforce the envelope with their own SHACL (e.g. the CR domain's top:BitemporalProvShape); Core carries the vocabulary."@en .
 
 top:BitemporalShape a sh:NodeShape ;
     rdfs:label "Bitemporal Shape"@en ;
