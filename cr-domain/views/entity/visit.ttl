@@ -1,0 +1,72 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Visit can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:VisitEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Visit ;
+    rdfs:label "Visit" ;
+    cr:catalogNumber 6 ;
+    sh:property [ sh:path cr:visitId ; sh:name "visitId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:visitNumber ; sh:name "visitNumber" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Visit ordinal in the SOA." ] ;
+    sh:property [ sh:path cr:visitName ; sh:name "visitName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:visitType ; sh:name "visitType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SCREENING, BASELINE, TREATMENT, FOLLOW_UP, EARLY_TERMINATION, UNSCHEDULED." ] ;
+    sh:property [ sh:path cr:visitModality ; sh:name "visitModality" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: IN_CLINIC, TELEVISIT, HOME_HEALTH, HYBRID." ] ;
+    sh:property [ sh:path cr:scheduledDate ; sh:name "scheduledDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Planned datetime." ] ;
+    sh:property [ sh:path cr:actualDate ; sh:name "actualDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Actual datetime." ] ;
+    sh:property [ sh:path cr:windowStart ; sh:name "windowStart" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Visit window start." ] ;
+    sh:property [ sh:path cr:windowEnd ; sh:name "windowEnd" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Visit window end." ] ;
+    sh:property [ sh:path cr:windowAnchor ; sh:name "windowAnchor" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: BASELINE, PRIOR_VISIT, FIXED_DATE." ] ;
+    sh:property [ sh:path cr:visitStatus ; sh:name "visitStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: SCHEDULED, IN_PROGRESS, COMPLETED, MISSED, CANCELED." ] ;
+    sh:property [ sh:path cr:visitDuration ; sh:name "visitDuration" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Planned duration." ] ;
+    sh:property [ sh:path cr:visitLocation ; sh:name "visitLocation" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Physical or virtual location." ] ;
+    sh:property [ sh:path cr:windowComplianceStatus ; sh:name "windowComplianceStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: IN_WINDOW, OUT_OF_WINDOW." ] ;
+    sh:property [ sh:path cr:visitCost ; sh:name "visitCost" ; rdfs:comment "money: Cost for budget accrual." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Last modification." ] ;
+    sh:property [ sh:path cr:performedBy ; sh:name "performedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Person who performed the visit." ] ;
+    sh:property [ sh:path cr:reviewedBy ; sh:name "reviewedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Reviewer." ] ;
+    sh:property [ sh:path cr:dataEntryDate ; sh:name "dataEntryDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Date data was entered." ] ;
+    sh:property [ sh:path cr:dataEntryBy ; sh:name "dataEntryBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Data entry person." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Parent study." ] ;
+    sh:property [ sh:path cr:hostedAt ; sh:name "hostedAt -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Hosting site." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Subject of the visit." ] ;
+    sh:property [ sh:path cr:follows ; sh:name "follows -> Schedule of Assessments" ; sh:node cr:ScheduleOfAssessmentsEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] SOA item." ] ;
+    sh:property [ sh:path cr:captures ; sh:name "captures -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] CRFs at the visit." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Procedure" ; sh:node cr:ProcedureEntityView ; rdfs:comment "[0..N] Procedures performed." ] ;
+    sh:property [ sh:path cr:collects ; sh:name "collects -> Sample" ; sh:node cr:SampleEntityView ; rdfs:comment "[0..N] Samples collected." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Vital Sign Measurement" ; sh:node cr:VitalSignMeasurementEntityView ; rdfs:comment "[0..N] Vitals captured." ] ;
+    sh:property [ sh:path cr:dispenses ; sh:name "dispenses -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP dispensations." ] ;
+    sh:property [ sh:path cr:receivesReturn ; sh:name "receivesReturn -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP returns." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs noted at the visit." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs noted." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Deviations identified." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Concomitant Medication" ; sh:node cr:ConcomitantMedicationEntityView ; rdfs:comment "[0..N] Conmed updates." ] ;
+    sh:property [ sh:path cr:administers ; sh:name "administers -> Questionnaire" ; sh:node cr:QuestionnaireEntityView ; rdfs:comment "[0..N] COA / PRO administrations." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Imaging Procedure" ; sh:node cr:ImagingProcedureEntityView ; rdfs:comment "[0..N] Imaging performed." ] ;
+    sh:property [ sh:path cr:orders ; sh:name "orders -> Lab Test" ; sh:node cr:LabTestEntityView ; rdfs:comment "[0..N] Lab tests ordered." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Physical Examination" ; sh:node cr:PhysicalExaminationEntityView ; rdfs:comment "[0..N] Physical exams." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Source documents." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Clinician Assessment" ; sh:node cr:ClinicianAssessmentEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Clinician assessment record." ] ;
+    sh:property [ sh:path cr:captures ; sh:name "captures -> Endpoint Data Collection" ; sh:node cr:EndpointDataCollectionEntityView ; rdfs:comment "[0..N] Endpoint data captured at visit." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Drug Accountability Check" ; sh:node cr:DrugAccountabilityCheckEntityView ; rdfs:comment "[0..N] Accountability events." ] ;
+    sh:property [ sh:path cr:updatesEligibility ; sh:name "updatesEligibility -> Inclusion Criteria" ; sh:node cr:InclusionCriteriaEntityView ; rdfs:comment "[0..N] Eligibility re-checks." ] ;
+    sh:property [ sh:path cr:collects ; sh:name "collects -> Wearable Device Data" ; sh:node cr:WearableDeviceDataEntityView ; rdfs:comment "[0..N] Wearable data captured." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Pharmacokinetic Sample Collection" ; sh:node cr:PharmacokineticSampleCollectionEntityView ; rdfs:comment "[0..N] PK samples." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Unscheduled Procedure" ; sh:node cr:UnscheduledProcedureEntityView ; rdfs:comment "[0..N] Unplanned procedures." ] ;
+    sh:property [ sh:path cr:updates ; sh:name "updates -> Informed Consent" ; sh:node cr:InformedConsentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Re-consent if required." ] .

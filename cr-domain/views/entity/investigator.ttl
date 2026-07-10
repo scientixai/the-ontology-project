@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Investigator can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:InvestigatorEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Investigator ;
+    rdfs:label "Investigator" ;
+    cr:catalogNumber 61 ;
+    sh:property [ sh:path cr:investigatorId ; sh:name "investigatorId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:personId ; sh:name "personId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Linked Person." ] ;
+    sh:property [ sh:path cr:investigatorRole ; sh:name "investigatorRole" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: principal, sub, coordinator_investigator." ] ;
+    sh:property [ sh:path cr:licenseNumber ; sh:name "licenseNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: License number." ] ;
+    sh:property [ sh:path cr:licenseAuthority ; sh:name "licenseAuthority" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: License authority." ] ;
+    sh:property [ sh:path cr:licenseExpiry ; sh:name "licenseExpiry" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: License expiry." ] ;
+    sh:property [ sh:path cr:cvOnFileDate ; sh:name "cvOnFileDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: CV currency." ] ;
+    sh:property [ sh:path cr:gcpTrainingExpiry ; sh:name "gcpTrainingExpiry" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: GCP training expiry." ] ;
+    sh:property [ sh:path cr:form1572OnFile ; sh:name "form1572OnFile" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: 1572 on file (US)." ] ;
+    sh:property [ sh:path cr:financialDisclosureOnFile ; sh:name "financialDisclosureOnFile" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: FCOI disclosure." ] ;
+    sh:property [ sh:path cr:debarmentStatus ; sh:name "debarmentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: clear, debarred, under_review." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:specializes ; sh:name "specializes -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Parent person." ] ;
+    sh:property [ sh:path cr:affiliatedWith ; sh:name "affiliatedWith -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Affiliated sites." ] ;
+    sh:property [ sh:path cr:delegatedTasksFor ; sh:name "delegatedTasksFor -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies." ] ;
+    sh:property [ sh:path cr:hasCredentials ; sh:name "hasCredentials -> Credential" ; sh:node cr:CredentialEntityView ; rdfs:comment "[0..N] System access." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] CV, training, 1572\\." ] ;
+    sh:property [ sh:path cr:classifiedBy ; sh:name "classifiedBy -> Therapeutic Area" ; sh:node cr:TherapeuticAreaEntityView ; rdfs:comment "[0..N] Areas of experience." ] .

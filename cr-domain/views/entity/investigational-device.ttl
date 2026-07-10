@@ -1,0 +1,75 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Investigational Device can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:InvestigationalDeviceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:InvestigationalDevice ;
+    rdfs:label "Investigational Device" ;
+    cr:catalogNumber 24 ;
+    sh:property [ sh:path cr:deviceId ; sh:name "deviceId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:deviceName ; sh:name "deviceName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Name." ] ;
+    sh:property [ sh:path cr:deviceType ; sh:name "deviceType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: IMPLANTABLE, WEARABLE, DISPOSABLE, DIAGNOSTIC." ] ;
+    sh:property [ sh:path cr:deviceDescription ; sh:name "deviceDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:manufacturerId ; sh:name "manufacturerId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Manufacturer." ] ;
+    sh:property [ sh:path cr:udi ; sh:name "udi" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Unique Device Identifier (FDA UDI)." ] ;
+    sh:property [ sh:path cr:modelNumber ; sh:name "modelNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Model." ] ;
+    sh:property [ sh:path cr:serialNumber ; sh:name "serialNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Serial." ] ;
+    sh:property [ sh:path cr:lotNumber ; sh:name "lotNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Lot." ] ;
+    sh:property [ sh:path cr:expirationDate ; sh:name "expirationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Expiration." ] ;
+    sh:property [ sh:path cr:macAddress ; sh:name "macAddress" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: MAC address (connected devices)." ] ;
+    sh:property [ sh:path cr:firmwareVersion ; sh:name "firmwareVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Firmware." ] ;
+    sh:property [ sh:path cr:softwareVersion ; sh:name "softwareVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Software." ] ;
+    sh:property [ sh:path cr:storageRequirements ; sh:name "storageRequirements" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Storage." ] ;
+    sh:property [ sh:path cr:usageInstructions ; sh:name "usageInstructions" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Usage." ] ;
+    sh:property [ sh:path cr:sterilizationStatus ; sh:name "sterilizationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: NOT_REQUIRED, STERILE, UNSTERILE." ] ;
+    sh:property [ sh:path cr:reuseStatus ; sh:name "reuseStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SINGLE_USE, REUSABLE." ] ;
+    sh:property [ sh:path cr:calibrationRequired ; sh:name "calibrationRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Calibration required." ] ;
+    sh:property [ sh:path cr:calibrationFrequency ; sh:name "calibrationFrequency" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration, optional: Frequency." ] ;
+    sh:property [ sh:path cr:lastCalibrationDate ; sh:name "lastCalibrationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Last calibration." ] ;
+    sh:property [ sh:path cr:batteryType ; sh:name "batteryType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Battery type." ] ;
+    sh:property [ sh:path cr:batteryLife ; sh:name "batteryLife" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration, optional: Battery life." ] ;
+    sh:property [ sh:path cr:chargingInstructions ; sh:name "chargingInstructions" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Charging." ] ;
+    sh:property [ sh:path cr:waterResistanceRating ; sh:name "waterResistanceRating" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: IP rating." ] ;
+    sh:property [ sh:path cr:mriCompatibility ; sh:name "mriCompatibility" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, optional: MRI_SAFE, MRI_CONDITIONAL, MRI_UNSAFE." ] ;
+    sh:property [ sh:path cr:disposalInstructions ; sh:name "disposalInstructions" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Disposal." ] ;
+    sh:property [ sh:path cr:regulatoryClassification ; sh:name "regulatoryClassification" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Class I, II, III; CE class." ] ;
+    sh:property [ sh:path cr:certifications ; sh:name "certifications" ; rdfs:comment "array<string>: Certifications." ] ;
+    sh:property [ sh:path cr:accountabilityRequired ; sh:name "accountabilityRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Accountability required." ] ;
+    sh:property [ sh:path cr:returnRequired ; sh:name "returnRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Return required." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:usedIn ; sh:name "usedIn -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Studies." ] ;
+    sh:property [ sh:path cr:suppliedTo ; sh:name "suppliedTo -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sites." ] ;
+    sh:property [ sh:path cr:manufacturedBy ; sh:name "manufacturedBy -> Organization" ; sh:node cr:OrganizationEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Manufacturer." ] ;
+    sh:property [ sh:path cr:administeredTo ; sh:name "administeredTo -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Participants." ] ;
+    sh:property [ sh:path cr:usedAt ; sh:name "usedAt -> Visit" ; sh:node cr:VisitEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Visits." ] ;
+    sh:property [ sh:path cr:shippedVia ; sh:name "shippedVia -> Shipment" ; sh:node cr:ShipmentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Shipments." ] ;
+    sh:property [ sh:path cr:storedAt ; sh:name "storedAt -> Storage Location" ; sh:node cr:StorageLocationEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Storage." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Manuals, specs." ] ;
+    sh:property [ sh:path cr:causes ; sh:name "causes -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Deviations." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:requires ; sh:name "requires -> Training Record" ; sh:node cr:TrainingRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trainings." ] ;
+    sh:property [ sh:path cr:hasMaintenanceRecord ; sh:name "hasMaintenanceRecord -> Maintenance Record" ; sh:node cr:MaintenanceRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Maintenance." ] ;
+    sh:property [ sh:path cr:hasCalibrationRecord ; sh:name "hasCalibrationRecord -> Calibration Record" ; sh:node cr:CalibrationRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Calibrations." ] ;
+    sh:property [ sh:path cr:testedBy ; sh:name "testedBy -> Quality Control Check" ; sh:node cr:QualityControlCheckEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] QC checks." ] ;
+    sh:property [ sh:path cr:emits ; sh:name "emits -> Data Transfer" ; sh:node cr:DataTransferEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Device data transfers." ] ;
+    sh:property [ sh:path cr:referencedIn ; sh:name "referencedIn -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Submissions." ] ;
+    sh:property [ sh:path cr:producesReports ; sh:name "producesReports -> Safety Report" ; sh:node cr:SafetyReportEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Safety reports." ] ;
+    sh:property [ sh:path cr:inventoriedBy ; sh:name "inventoriedBy -> Inventory Record" ; sh:node cr:InventoryRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Inventory." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

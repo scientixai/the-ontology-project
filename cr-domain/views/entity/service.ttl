@@ -1,0 +1,44 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Service can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:ServiceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Service ;
+    rdfs:label "Service" ;
+    cr:catalogNumber 29 ;
+    sh:property [ sh:path cr:serviceId ; sh:name "serviceId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:serviceName ; sh:name "serviceName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Service name." ] ;
+    sh:property [ sh:path cr:serviceType ; sh:name "serviceType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: data_management, monitoring, statistics, central_lab, central_reading, irt, econsent, ecoa, etmf, safety_processing, regulatory, translation, other." ] ;
+    sh:property [ sh:path cr:providerOrganizationId ; sh:name "providerOrganizationId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Vendor or sponsor function." ] ;
+    sh:property [ sh:path cr:systemId ; sh:name "systemId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: System used to deliver, if any." ] ;
+    sh:property [ sh:path cr:slaResponseHours ; sh:name "slaResponseHours" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, optional: Response SLA." ] ;
+    sh:property [ sh:path cr:slaResolutionHours ; sh:name "slaResolutionHours" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, optional: Resolution SLA." ] ;
+    sh:property [ sh:path cr:costModel ; sh:name "costModel" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: fixed_fee, time_and_materials, per_subject, per_site, hybrid." ] ;
+    sh:property [ sh:path cr:serviceStatus ; sh:name "serviceStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: planned, active, suspended, completed." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:providedBy ; sh:name "providedBy -> Sponsor" ; sh:node cr:SponsorEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Vendor or function." ] ;
+    sh:property [ sh:path cr:deliveredVia ; sh:name "deliveredVia -> System" ; sh:node cr:SystemEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] System." ] ;
+    sh:property [ sh:path cr:hasConfigurations ; sh:name "hasConfigurations -> Service Configuration" ; sh:node cr:ServiceConfigurationEntityView ; rdfs:comment "[0..N] Service configs." ] ;
+    sh:property [ sh:path cr:servesStudy ; sh:name "servesStudy -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies." ] ;
+    sh:property [ sh:path cr:servesSite ; sh:name "servesSite -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites." ] ;
+    sh:property [ sh:path cr:governedBy ; sh:name "governedBy -> Contract" ; sh:node cr:ContractEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Contracts." ] ;
+    sh:property [ sh:path cr:hasReports ; sh:name "hasReports -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Service reports." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Service tasks." ] ;
+    sh:property [ sh:path cr:hasMilestones ; sh:name "hasMilestones -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Service milestones." ] ;
+    sh:property [ sh:path cr:hasIssues ; sh:name "hasIssues -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Service action items." ] .

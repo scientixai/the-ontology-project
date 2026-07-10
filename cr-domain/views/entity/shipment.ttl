@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Shipment can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:ShipmentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Shipment ;
+    rdfs:label "Shipment" ;
+    cr:catalogNumber 43 ;
+    sh:property [ sh:path cr:shipmentId ; sh:name "shipmentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:shipmentType ; sh:name "shipmentType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ip_outbound, ip_return, sample_outbound, device, equipment, supplies." ] ;
+    sh:property [ sh:path cr:trackingNumber ; sh:name "trackingNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Carrier tracking." ] ;
+    sh:property [ sh:path cr:carrier ; sh:name "carrier" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Carrier." ] ;
+    sh:property [ sh:path cr:originOrganizationId ; sh:name "originOrganizationId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Origin." ] ;
+    sh:property [ sh:path cr:destinationSiteId ; sh:name "destinationSiteId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Destination." ] ;
+    sh:property [ sh:path cr:shippedAt ; sh:name "shippedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Ship time." ] ;
+    sh:property [ sh:path cr:expectedDeliveryAt ; sh:name "expectedDeliveryAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime, optional: Expected delivery." ] ;
+    sh:property [ sh:path cr:deliveredAt ; sh:name "deliveredAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime, optional: Actual delivery." ] ;
+    sh:property [ sh:path cr:chainOfCustody ; sh:name "chainOfCustody" ; rdfs:comment "list\\[json\\]: Custody events." ] ;
+    sh:property [ sh:path cr:temperatureExcursion ; sh:name "temperatureExcursion" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Excursion flag." ] ;
+    sh:property [ sh:path cr:excursionDetails ; sh:name "excursionDetails" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Details." ] ;
+    sh:property [ sh:path cr:shipmentStatus ; sh:name "shipmentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: planned, in_transit, delivered, lost, damaged, returned." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP contents." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Investigational Device" ; sh:node cr:InvestigationalDeviceEntityView ; rdfs:comment "[0..N] Device contents." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Sample" ; sh:node cr:SampleEntityView ; rdfs:comment "[0..N] Sample contents." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Equipment" ; sh:node cr:EquipmentEntityView ; rdfs:comment "[0..N] Equipment contents." ] ;
+    sh:property [ sh:path cr:forStudy ; sh:name "forStudy -> Study" ; sh:node cr:StudyEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Study." ] ;
+    sh:property [ sh:path cr:forSite ; sh:name "forSite -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Destination site." ] ;
+    sh:property [ sh:path cr:managedBy ; sh:name "managedBy -> Service" ; sh:node cr:ServiceEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] IRT or central lab service." ] ;
+    sh:property [ sh:path cr:managedBy ; sh:name "managedBy -> System" ; sh:node cr:SystemEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] IRT or lab system." ] ;
+    sh:property [ sh:path cr:mayTrigger ; sh:name "mayTrigger -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Excursion-related." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Packing slips, COAs." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

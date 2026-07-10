@@ -1,0 +1,81 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Investigational Product can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:InvestigationalProductEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:InvestigationalProduct ;
+    rdfs:label "Investigational Product" ;
+    cr:catalogNumber 23 ;
+    sh:property [ sh:path cr:productId ; sh:name "productId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:productName ; sh:name "productName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Name." ] ;
+    sh:property [ sh:path cr:productType ; sh:name "productType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: DRUG, BIOLOGIC, CELL_THERAPY, GENE_THERAPY, RADIOLIGAND." ] ;
+    sh:property [ sh:path cr:productDescription ; sh:name "productDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:manufacturerId ; sh:name "manufacturerId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Manufacturer reference." ] ;
+    sh:property [ sh:path cr:batchNumber ; sh:name "batchNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Batch number." ] ;
+    sh:property [ sh:path cr:lotNumber ; sh:name "lotNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Lot number." ] ;
+    sh:property [ sh:path cr:expirationDate ; sh:name "expirationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Expiration." ] ;
+    sh:property [ sh:path cr:storageRequirements ; sh:name "storageRequirements" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Storage requirements." ] ;
+    sh:property [ sh:path cr:dosingInstructions ; sh:name "dosingInstructions" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Dosing." ] ;
+    sh:property [ sh:path cr:formulation ; sh:name "formulation" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Formulation." ] ;
+    sh:property [ sh:path cr:strength ; sh:name "strength" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Strength." ] ;
+    sh:property [ sh:path cr:route ; sh:name "route" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ORAL, INTRAVENOUS, SUBCUTANEOUS, INTRAMUSCULAR, TOPICAL, INHALED, OTHER." ] ;
+    sh:property [ sh:path cr:packaging ; sh:name "packaging" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Packaging." ] ;
+    sh:property [ sh:path cr:blindingStatus ; sh:name "blindingStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: OPEN_LABEL, BLINDED." ] ;
+    sh:property [ sh:path cr:controlType ; sh:name "controlType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PLACEBO, ACTIVE, NONE." ] ;
+    sh:property [ sh:path cr:accountabilityRequired ; sh:name "accountabilityRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Accountability required." ] ;
+    sh:property [ sh:path cr:returnRequired ; sh:name "returnRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Return required." ] ;
+    sh:property [ sh:path cr:destructionRequired ; sh:name "destructionRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Destruction required." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:usedIn ; sh:name "usedIn -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Studies." ] ;
+    sh:property [ sh:path cr:definedBy ; sh:name "definedBy -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Protocols." ] ;
+    sh:property [ sh:path cr:suppliedTo ; sh:name "suppliedTo -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sites." ] ;
+    sh:property [ sh:path cr:administeredTo ; sh:name "administeredTo -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Participants." ] ;
+    sh:property [ sh:path cr:administeredAt ; sh:name "administeredAt -> Visit" ; sh:node cr:VisitEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Visits." ] ;
+    sh:property [ sh:path cr:shippedVia ; sh:name "shippedVia -> Shipment" ; sh:node cr:ShipmentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Shipments." ] ;
+    sh:property [ sh:path cr:storedAt ; sh:name "storedAt -> Storage Location" ; sh:node cr:StorageLocationEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Storage locations; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] IB, package insert." ] ;
+    sh:property [ sh:path cr:causes ; sh:name "causes -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs." ] ;
+    sh:property [ sh:path cr:causes ; sh:name "causes -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Deviations." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:hasBatches ; sh:name "hasBatches -> Batch" ; sh:node cr:BatchEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Batches." ] ;
+    sh:property [ sh:path cr:hasDosageForms ; sh:name "hasDosageForms -> Dosage Form" ; sh:node cr:DosageFormEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Dosage forms." ] ;
+    sh:property [ sh:path cr:handledAt ; sh:name "handledAt -> Pharmacy" ; sh:node cr:PharmacyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Pharmacy locations." ] ;
+    sh:property [ sh:path cr:inventoriedBy ; sh:name "inventoriedBy -> Inventory Record" ; sh:node cr:InventoryRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Inventory records." ] ;
+    sh:property [ sh:path cr:monitoredBy ; sh:name "monitoredBy -> Temperature Log" ; sh:node cr:TemperatureLogEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Temperature logs." ] ;
+    sh:property [ sh:path cr:accountabilityLog ; sh:name "accountabilityLog -> Accountability Log" ; sh:node cr:AccountabilityLogEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Accountability logs." ] ;
+    sh:property [ sh:path cr:returnRecord ; sh:name "returnRecord -> Return/Destruction Record" ; sh:node cr:ReturnDestructionRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Returns and destructions." ] ;
+    sh:property [ sh:path cr:mappedTo ; sh:name "mappedTo -> Randomization Code" ; sh:node cr:RandomizationCodeEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Randomization codes." ] ;
+    sh:property [ sh:path cr:unblindRecord ; sh:name "unblindRecord -> Unblinding Record" ; sh:node cr:UnblindingRecordEntityView ; rdfs:comment "[0..N] Unblindings." ] ;
+    sh:property [ sh:path cr:hasManufacturingRecord ; sh:name "hasManufacturingRecord -> Manufacturing Record" ; sh:node cr:ManufacturingRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Mfg records." ] ;
+    sh:property [ sh:path cr:testedBy ; sh:name "testedBy -> Quality Control Test" ; sh:node cr:QualityControlTestEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] QC tests." ] ;
+    sh:property [ sh:path cr:referencedIn ; sh:name "referencedIn -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Submissions." ] ;
+    sh:property [ sh:path cr:producesReports ; sh:name "producesReports -> Safety Report" ; sh:node cr:SafetyReportEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Safety reports; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:hasInteractions ; sh:name "hasInteractions -> Drug Interaction" ; sh:node cr:DrugInteractionEntityView ; rdfs:comment "[0..N] Drug interactions; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:restrictsConmeds ; sh:name "restrictsConmeds -> Concomitant Medication" ; sh:node cr:ConcomitantMedicationEntityView ; rdfs:comment "[0..N] Restricted conmeds." ] ;
+    sh:property [ sh:path cr:monitoredVia ; sh:name "monitoredVia -> Lab Test" ; sh:node cr:LabTestEntityView ; rdfs:comment "[0..N] Monitoring labs." ] ;
+    sh:property [ sh:path cr:administeredBy ; sh:name "administeredBy -> Procedure" ; sh:node cr:ProcedureEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Procedures." ] ;
+    sh:property [ sh:path cr:handledWith ; sh:name "handledWith -> Equipment" ; sh:node cr:EquipmentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Equipment." ] ;
+    sh:property [ sh:path cr:requires ; sh:name "requires -> Training Record" ; sh:node cr:TrainingRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trainings." ] ;
+    sh:property [ sh:path cr:monitoredVia ; sh:name "monitoredVia -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Monitoring visits." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:recordedOn ; sh:name "recordedOn -> CRF" ; sh:node cr:CRFEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] CRFs." ] ;
+    sh:property [ sh:path cr:hasMilestones ; sh:name "hasMilestones -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Milestones." ] ;
+    sh:property [ sh:path cr:assessedBy ; sh:name "assessedBy -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; rdfs:comment "[0..N] Risk assessments." ] ;
+    sh:property [ sh:path cr:triggers ; sh:name "triggers -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] .

@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Data Quality Metric can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:DataQualityMetricEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:DataQualityMetric ;
+    rdfs:label "Data Quality Metric" ;
+    cr:catalogNumber 68 ;
+    sh:property [ sh:path cr:dataQualityMetricId ; sh:name "dataQualityMetricId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:metricName ; sh:name "metricName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:metricCode ; sh:name "metricCode" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: query_rate, ttr_days, missing_rate, sdv_rate, lock_rate, cdisc_conformance." ] ;
+    sh:property [ sh:path cr:scope ; sh:name "scope" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: study, site, subject, crf." ] ;
+    sh:property [ sh:path cr:scopeRefId ; sh:name "scopeRefId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Scope reference." ] ;
+    sh:property [ sh:path cr:observationWindowStart ; sh:name "observationWindowStart" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Window start." ] ;
+    sh:property [ sh:path cr:observationWindowEnd ; sh:name "observationWindowEnd" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Window end." ] ;
+    sh:property [ sh:path cr:value ; sh:name "value" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "decimal: Value." ] ;
+    sh:property [ sh:path cr:unit ; sh:name "unit" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Unit." ] ;
+    sh:property [ sh:path cr:thresholdLow ; sh:name "thresholdLow" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "decimal, optional: Low threshold." ] ;
+    sh:property [ sh:path cr:thresholdHigh ; sh:name "thresholdHigh" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "decimal, optional: High threshold." ] ;
+    sh:property [ sh:path cr:breached ; sh:name "breached" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Threshold breach." ] ;
+    sh:property [ sh:path cr:computedAt ; sh:name "computedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Computation time." ] ;
+    sh:property [ sh:path cr:computedBy ; sh:name "computedBy" ; cr:isMetadata true ; rdfs:comment "SystemRef: Computing system." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Study" ; sh:node cr:StudyEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> CRF" ; sh:node cr:CRFEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] CRF." ] ;
+    sh:property [ sh:path cr:mayTrigger ; sh:name "mayTrigger -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Action items." ] ;
+    sh:property [ sh:path cr:reportedIn ; sh:name "reportedIn -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Reports." ] .

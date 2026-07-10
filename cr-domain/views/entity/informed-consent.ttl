@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Informed Consent can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:InformedConsentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:InformedConsent ;
+    rdfs:label "Informed Consent" ;
+    cr:catalogNumber 17 ;
+    sh:property [ sh:path cr:consentId ; sh:name "consentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:consentVersion ; sh:name "consentVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: ICF version." ] ;
+    sh:property [ sh:path cr:consentDate ; sh:name "consentDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Consent date." ] ;
+    sh:property [ sh:path cr:consentTime ; sh:name "consentTime" ; rdfs:comment "time: Consent time." ] ;
+    sh:property [ sh:path cr:consentStatus ; sh:name "consentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: OBTAINED, WITHDRAWN, RECONSENTED." ] ;
+    sh:property [ sh:path cr:consentMethod ; sh:name "consentMethod" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: IN_PERSON, ECONSENT, REMOTE_ECONSENT, HYBRID." ] ;
+    sh:property [ sh:path cr:consentLanguage ; sh:name "consentLanguage" ; rdfs:comment "BCP-47: Language used." ] ;
+    sh:property [ sh:path cr:translatorUsed ; sh:name "translatorUsed" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Translator present." ] ;
+    sh:property [ sh:path cr:translatorName ; sh:name "translatorName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, optional: Translator name." ] ;
+    sh:property [ sh:path cr:reconsentRequired ; sh:name "reconsentRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Re-consent required." ] ;
+    sh:property [ sh:path cr:reconsentDueDate ; sh:name "reconsentDueDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Re-consent deadline." ] ;
+    sh:property [ sh:path cr:reConsentTriggerEvent ; sh:name "reConsentTriggerEvent" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, optional: AMENDMENT, SAFETY_UPDATE, JURISDICTION_CHANGE, OTHER." ] ;
+    sh:property [ sh:path cr:withdrawalDate ; sh:name "withdrawalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Withdrawal." ] ;
+    sh:property [ sh:path cr:withdrawalReason ; sh:name "withdrawalReason" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Reason." ] ;
+    sh:property [ sh:path cr:verifiedBy ; sh:name "verifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Verifier." ] ;
+    sh:property [ sh:path cr:verificationDate ; sh:name "verificationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Verification date." ] ;
+    sh:property [ sh:path cr:electronicSignatureStatus ; sh:name "electronicSignatureStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NOT_REQUIRED, PENDING, SIGNED." ] ;
+    sh:property [ sh:path cr:accessibilityFeatures ; sh:name "accessibilityFeatures" ; rdfs:comment "array<enum>: LARGE_PRINT, AUDIO, BRAILLE, EASY_READ, TRANSLATED." ] ;
+    sh:property [ sh:path cr:consentStorageLocation ; sh:name "consentStorageLocation" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Storage location." ] ;
+    sh:property [ sh:path cr:consentExpirationDate ; sh:name "consentExpirationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Expiration." ] ;
+    sh:property [ sh:path cr:consentComprehensionCheckStatus ; sh:name "consentComprehensionCheckStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NOT_DONE, PASSED, FAILED." ] ;
+    sh:property [ sh:path cr:consentingPersonRelationship ; sh:name "consentingPersonRelationship" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PARTICIPANT, LEGAL_REPRESENTATIVE, PARENT_OR_GUARDIAN." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:consentingPersonId ; sh:name "consentingPersonId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Consenting person." ] ;
+    sh:property [ sh:path cr:personObtainingConsentId ; sh:name "personObtainingConsentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Person obtaining consent." ] ;
+    sh:property [ sh:path cr:consentWitnessId ; sh:name "consentWitnessId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string, optional: Witness." ] ;
+    sh:property [ sh:path cr:qcStatus ; sh:name "qcStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "enum: PENDING, PASSED, FAILED." ] ;
+    sh:property [ sh:path cr:qcBy ; sh:name "qcBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: QC person." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Site." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Participant." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Signed forms, info sheets." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Screening visit typically." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Deviation if process failed." ] ;
+    sh:property [ sh:path cr:containsElements ; sh:name "containsElements -> Consent Element" ; sh:node cr:ConsentElementEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Specific items consented to." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Protocol version." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Amendment" ; sh:node cr:AmendmentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Amendment that triggered re-consent." ] ;
+    sh:property [ sh:path cr:triggersTask ; sh:name "triggersTask -> Task" ; sh:node cr:TaskEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Re-consent task." ] ;
+    sh:property [ sh:path cr:approvedBy ; sh:name "approvedBy -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] IRB / EC approval of the form." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

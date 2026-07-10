@@ -1,0 +1,68 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Adverse Event can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:AdverseEventEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:AdverseEvent ;
+    rdfs:label "Adverse Event" ;
+    cr:catalogNumber 16 ;
+    sh:property [ sh:path cr:adverseEventId ; sh:name "adverseEventId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:aeNumber ; sh:name "aeNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Site or sponsor AE number." ] ;
+    sh:property [ sh:path cr:aeDescription ; sh:name "aeDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:aeStartDate ; sh:name "aeStartDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Onset." ] ;
+    sh:property [ sh:path cr:aeEndDate ; sh:name "aeEndDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime, optional: Resolution." ] ;
+    sh:property [ sh:path cr:aeSeverity ; sh:name "aeSeverity" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: MILD, MODERATE, SEVERE." ] ;
+    sh:property [ sh:path cr:intensityGrade ; sh:name "intensityGrade" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, optional: CTCAE grade where applicable." ] ;
+    sh:property [ sh:path cr:aeSeriousness ; sh:name "aeSeriousness" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NON_SERIOUS, SERIOUS." ] ;
+    sh:property [ sh:path cr:aeRelationship ; sh:name "aeRelationship" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NOT_RELATED, UNLIKELY, POSSIBLE, PROBABLE, DEFINITE." ] ;
+    sh:property [ sh:path cr:causalityAssessment ; sh:name "causalityAssessment" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Causality narrative." ] ;
+    sh:property [ sh:path cr:actionTaken ; sh:name "actionTaken" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NONE, DOSE_REDUCED, DOSE_INTERRUPTED, DRUG_WITHDRAWN, OTHER." ] ;
+    sh:property [ sh:path cr:outcome ; sh:name "outcome" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: RECOVERED, RECOVERING, NOT_RECOVERED, RECOVERED_WITH_SEQUELAE, FATAL, UNKNOWN." ] ;
+    sh:property [ sh:path cr:expectedness ; sh:name "expectedness" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: EXPECTED, UNEXPECTED." ] ;
+    sh:property [ sh:path cr:susarStatus ; sh:name "susarStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum, optional: SUSAR classification." ] ;
+    sh:property [ sh:path cr:frequency ; sh:name "frequency" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SINGLE, INTERMITTENT, CONTINUOUS." ] ;
+    sh:property [ sh:path cr:pattern ; sh:name "pattern" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Pattern note." ] ;
+    sh:property [ sh:path cr:medDraCode ; sh:name "medDraCode" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: MedDRA Preferred Term code." ] ;
+    sh:property [ sh:path cr:medDraTerm ; sh:name "medDraTerm" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: MedDRA preferred term." ] ;
+    sh:property [ sh:path cr:codingDictionary ; sh:name "codingDictionary" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: MedDRA version." ] ;
+    sh:property [ sh:path cr:regulatoryReportingStatus ; sh:name "regulatoryReportingStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NOT_REQUIRED, PENDING, SUBMITTED." ] ;
+    sh:property [ sh:path cr:aeResolutionStatus ; sh:name "aeResolutionStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: OPEN, CLOSED, FOLLOW_UP_REQUIRED." ] ;
+    sh:property [ sh:path cr:followUpRequired ; sh:name "followUpRequired" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Follow-up required flag." ] ;
+    sh:property [ sh:path cr:followUpDate ; sh:name "followUpDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Follow-up date." ] ;
+    sh:property [ sh:path cr:aiPipelineFlag ; sh:name "aiPipelineFlag" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean, optional: Coded with AI assistance." ] ;
+    sh:property [ sh:path cr:reportedBy ; sh:name "reportedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Reporter." ] ;
+    sh:property [ sh:path cr:reportedDate ; sh:name "reportedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Report date." ] ;
+    sh:property [ sh:path cr:investigatorAssessmentDate ; sh:name "investigatorAssessmentDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: PI assessment date." ] ;
+    sh:property [ sh:path cr:investigatorAssessmentBy ; sh:name "investigatorAssessmentBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Assessor." ] ;
+    sh:property [ sh:path cr:reviewedBy ; sh:name "reviewedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string, optional: Reviewer." ] ;
+    sh:property [ sh:path cr:reviewedDate ; sh:name "reviewedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime, optional: Review date." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Site." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Participant." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Linked SAE." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Concomitant Medication" ; sh:node cr:ConcomitantMedicationEntityView ; rdfs:comment "[0..N] Conmeds." ] ;
+    sh:property [ sh:path cr:recordedOn ; sh:name "recordedOn -> CRF" ; sh:node cr:CRFEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] CRFs." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Supporting evidence." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Deviation cause." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Visit context." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Lab Results" ; sh:node cr:LabResultsEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Triggering lab." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Investigational Product Administration" ; sh:node cr:InvestigationalProductAdministrationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] IP admin event." ] ;
+    sh:property [ sh:path cr:triggers ; sh:name "triggers -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

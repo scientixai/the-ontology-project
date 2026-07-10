@@ -1,0 +1,70 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Oversight Body can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:OversightBodyEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:OversightBody ;
+    rdfs:label "Oversight Body" ;
+    cr:catalogNumber 26 ;
+    sh:property [ sh:path cr:oversightBodyId ; sh:name "oversightBodyId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:bodyName ; sh:name "bodyName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Name." ] ;
+    sh:property [ sh:path cr:bodyType ; sh:name "bodyType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: IRB, EC, DSMB, IDMC, SAFETY_REVIEW, STEERING_COMMITTEE." ] ;
+    sh:property [ sh:path cr:centralVsLocal ; sh:name "centralVsLocal" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: CENTRAL, LOCAL." ] ;
+    sh:property [ sh:path cr:description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:contactPerson ; sh:name "contactPerson" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Contact." ] ;
+    sh:property [ sh:path cr:contactEmail ; sh:name "contactEmail" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Email." ] ;
+    sh:property [ sh:path cr:contactPhone ; sh:name "contactPhone" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Phone." ] ;
+    sh:property [ sh:path cr:address ; sh:name "address" ; rdfs:comment "object: Address." ] ;
+    sh:property [ sh:path cr:country ; sh:name "country" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: Country." ] ;
+    sh:property [ sh:path cr:approvalStatus ; sh:name "approvalStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: PENDING, APPROVED, CONDITIONAL, REJECTED." ] ;
+    sh:property [ sh:path cr:approvalDate ; sh:name "approvalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Approval date." ] ;
+    sh:property [ sh:path cr:nextReviewDate ; sh:name "nextReviewDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Next review." ] ;
+    sh:property [ sh:path cr:meetingFrequency ; sh:name "meetingFrequency" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, RRULE: Meeting cadence." ] ;
+    sh:property [ sh:path cr:lastMeetingDate ; sh:name "lastMeetingDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Last meeting." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:oversees ; sh:name "oversees -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Studies overseen." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Protocols." ] ;
+    sh:property [ sh:path cr:hasMembers ; sh:name "hasMembers -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Members." ] ;
+    sh:property [ sh:path cr:hasChair ; sh:name "hasChair -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Chairperson." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Charters, minutes, reports." ] ;
+    sh:property [ sh:path cr:holds ; sh:name "holds -> Meeting" ; sh:node cr:MeetingEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Meetings; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:conducts ; sh:name "conducts -> Review" ; sh:node cr:ReviewEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Reviews; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:issues ; sh:name "issues -> Recommendation" ; sh:node cr:RecommendationEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Recommendations; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:issues ; sh:name "issues -> Decision" ; sh:node cr:DecisionEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Decisions; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs reviewed." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs reviewed." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Safety Report" ; sh:node cr:SafetyReportEntityView ; rdfs:comment "[0..N] Safety reports." ] ;
+    sh:property [ sh:path cr:conducts ; sh:name "conducts -> Interim Analysis" ; sh:node cr:InterimAnalysisEntityView ; rdfs:comment "[0..N] Interim analyses." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Amendment" ; sh:node cr:AmendmentEntityView ; rdfs:comment "[0..N] Amendments." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Informed Consent" ; sh:node cr:InformedConsentEntityView ; rdfs:comment "[0..N] Consent versions." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:hasMilestones ; sh:name "hasMilestones -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Milestones." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Deviations." ] ;
+    sh:property [ sh:path cr:reviews ; sh:name "reviews -> Data Transfer" ; sh:node cr:DataTransferEntityView ; rdfs:comment "[0..N] Data transfers." ] ;
+    sh:property [ sh:path cr:producesReports ; sh:name "producesReports -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Reports." ] ;
+    sh:property [ sh:path cr:hasNotificationRules ; sh:name "hasNotificationRules -> Notification Rule" ; sh:node cr:NotificationRuleEntityView ; rdfs:comment "[0..N] Notifications." ] ;
+    sh:property [ sh:path cr:hasCommunicationLog ; sh:name "hasCommunicationLog -> Communication Log" ; sh:node cr:CommunicationLogEntityView ; rdfs:comment "[0..N] Comms; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:hasTrainingRecords ; sh:name "hasTrainingRecords -> Training Record" ; sh:node cr:TrainingRecordEntityView ; rdfs:comment "[0..N] Trainings." ] ;
+    sh:property [ sh:path cr:discloses ; sh:name "discloses -> Conflict of Interest Disclosure" ; sh:node cr:ConflictOfInterestDisclosureEntityView ; rdfs:comment "[0..N] COI." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] ;
+    sh:property [ sh:path cr:conducts ; sh:name "conducts -> Visit" ; sh:node cr:VisitEntityView ; rdfs:comment "[0..N] On-site reviews." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries from reviews." ] ;
+    sh:property [ sh:path cr:recommends ; sh:name "recommends -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] ;
+    sh:property [ sh:path cr:conducts ; sh:name "conducts -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; rdfs:comment "[0..N] Risk assessments." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

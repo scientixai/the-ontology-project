@@ -1,0 +1,59 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Task can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:TaskEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Task ;
+    rdfs:label "Task" ;
+    cr:catalogNumber 7 ;
+    sh:property [ sh:path cr:taskId ; sh:name "taskId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:taskType ; sh:name "taskType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: CRF_REVIEW, QUERY_RESPONSE, IP_RECONCILIATION, SHIPMENT_RECEIPT, MONITORING_PREP, REGULATORY_SUBMISSION, GENERIC." ] ;
+    sh:property [ sh:path cr:taskCategory ; sh:name "taskCategory" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Free-form category." ] ;
+    sh:property [ sh:path cr:taskDescription ; sh:name "taskDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:taskStatus ; sh:name "taskStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: PENDING, IN_PROGRESS, COMPLETED, OVERDUE, CANCELED." ] ;
+    sh:property [ sh:path cr:taskPriority ; sh:name "taskPriority" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: LOW, MEDIUM, HIGH, URGENT." ] ;
+    sh:property [ sh:path cr:taskOrigin ; sh:name "taskOrigin" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SYSTEM, USER, RULE_ENGINE." ] ;
+    sh:property [ sh:path cr:dueDate ; sh:name "dueDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: When due." ] ;
+    sh:property [ sh:path cr:completionDate ; sh:name "completionDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: When completed." ] ;
+    sh:property [ sh:path cr:estimatedDuration ; sh:name "estimatedDuration" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Estimated effort." ] ;
+    sh:property [ sh:path cr:actualDuration ; sh:name "actualDuration" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Actual effort." ] ;
+    sh:property [ sh:path cr:slaMinutes ; sh:name "slaMinutes" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, optional: SLA target in minutes." ] ;
+    sh:property [ sh:path cr:relatedEntityType ; sh:name "relatedEntityType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: VISIT, PARTICIPANT, DEVIATION, CRF, SHIPMENT, others." ] ;
+    sh:property [ sh:path cr:relatedEntityId ; sh:name "relatedEntityId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Linked entity id." ] ;
+    sh:property [ sh:path cr:creationDate ; sh:name "creationDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: When created." ] ;
+    sh:property [ sh:path cr:lastModifiedDate ; sh:name "lastModifiedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Last modified." ] ;
+    sh:property [ sh:path cr:lastModifiedBy ; sh:name "lastModifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Last modifier." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Owning study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site scope." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Visit scope." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Participant" ; sh:node cr:ParticipantEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Participant scope." ] ;
+    sh:property [ sh:path cr:assignedTo ; sh:name "assignedTo -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Assignee." ] ;
+    sh:property [ sh:path cr:assignedBy ; sh:name "assignedBy -> Person" ; sh:node cr:PersonEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Assigner." ] ;
+    sh:property [ sh:path cr:parentTask ; sh:name "parentTask -> Task" ; sh:node cr:TaskEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Parent task for hierarchies." ] ;
+    sh:property [ sh:path cr:childTasks ; sh:name "childTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Subtasks." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Action items." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> CRF" ; sh:node cr:CRFEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related CRF." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Milestone" ; sh:node cr:MilestoneEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related milestone." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related protocol section." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related IP." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related AE." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related deviation." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Related queries." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Shipment" ; sh:node cr:ShipmentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related shipment." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Sample" ; sh:node cr:SampleEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related sample." ] ;
+    sh:property [ sh:path cr:raisesIssues ; sh:name "raisesIssues -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Study Startup Package can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:StudyStartupPackageEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:StudyStartupPackage ;
+    rdfs:label "Study Startup Package" ;
+    cr:catalogNumber 31 ;
+    sh:property [ sh:path cr:studyStartupPackageId ; sh:name "studyStartupPackageId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:studyId ; sh:name "studyId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Parent study." ] ;
+    sh:property [ sh:path cr:siteId ; sh:name "siteId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Site being activated." ] ;
+    sh:property [ sh:path cr:packageStatus ; sh:name "packageStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: planned, in_progress, ready_for_activation, activated, on_hold, terminated." ] ;
+    sh:property [ sh:path cr:plannedStartDate ; sh:name "plannedStartDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Planned start." ] ;
+    sh:property [ sh:path cr:plannedActivationDate ; sh:name "plannedActivationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Planned activation." ] ;
+    sh:property [ sh:path cr:actualActivationDate ; sh:name "actualActivationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Actual activation." ] ;
+    sh:property [ sh:path cr:cycleTimeDays ; sh:name "cycleTimeDays" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, computed: Days from start to activation." ] ;
+    sh:property [ sh:path cr:regulatoryStatus ; sh:name "regulatoryStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: not_started, in_review, approved, conditional, rejected." ] ;
+    sh:property [ sh:path cr:contractStatus ; sh:name "contractStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: not_started, drafted, negotiating, executed." ] ;
+    sh:property [ sh:path cr:trainingStatus ; sh:name "trainingStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: not_started, in_progress, complete." ] ;
+    sh:property [ sh:path cr:suppliesStatus ; sh:name "suppliesStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: not_started, ordered, received, deficient." ] ;
+    sh:property [ sh:path cr:itSetupStatus ; sh:name "itSetupStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: not_started, in_progress, complete." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:ownedBy ; sh:name "ownedBy" ; cr:isMetadata true ; rdfs:comment "PersonRef: Startup specialist." ] ;
+    sh:property [ sh:path cr:activatesSite ; sh:name "activatesSite -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Target site." ] ;
+    sh:property [ sh:path cr:forStudy ; sh:name "forStudy -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Parent study." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Startup tasks." ] ;
+    sh:property [ sh:path cr:hasMilestones ; sh:name "hasMilestones -> Milestone" ; sh:node cr:MilestoneEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Startup milestones (e.g., FPI ready)." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Regulatory binder contents." ] ;
+    sh:property [ sh:path cr:hasContracts ; sh:name "hasContracts -> Contract" ; sh:node cr:ContractEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] CTA, MSA, budgets." ] ;
+    sh:property [ sh:path cr:hasBudgets ; sh:name "hasBudgets -> Budget" ; sh:node cr:BudgetEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Site budget." ] ;
+    sh:property [ sh:path cr:hasTrainingRecords ; sh:name "hasTrainingRecords -> Training Record" ; sh:node cr:TrainingRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Site staff trainings." ] ;
+    sh:property [ sh:path cr:hasShipments ; sh:name "hasShipments -> Shipment" ; sh:node cr:ShipmentEntityView ; rdfs:comment "[0..N] Initial supplies." ] ;
+    sh:property [ sh:path cr:hasRegulatorySubmissions ; sh:name "hasRegulatorySubmissions -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] ;
+    sh:property [ sh:path cr:hasCredentials ; sh:name "hasCredentials -> Credential" ; sh:node cr:CredentialEntityView ; rdfs:comment "[0..N] System logins." ] ;
+    sh:property [ sh:path cr:hasActionItems ; sh:name "hasActionItems -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Open items." ] ;
+    sh:property [ sh:path cr:hasRiskAssessment ; sh:name "hasRiskAssessment -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site risk; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

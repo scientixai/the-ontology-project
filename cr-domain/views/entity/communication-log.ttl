@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Communication Log can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:CommunicationLogEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:CommunicationLog ;
+    rdfs:label "Communication Log" ;
+    cr:catalogNumber 74 ;
+    sh:property [ sh:path cr:communicationLogId ; sh:name "communicationLogId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:subject ; sh:name "subject" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Subject line." ] ;
+    sh:property [ sh:path cr:communicationType ; sh:name "communicationType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: email, phone_call, letter, fax, meeting_note, video_call." ] ;
+    sh:property [ sh:path cr:direction ; sh:name "direction" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: inbound, outbound, internal." ] ;
+    sh:property [ sh:path cr:fromPartyId ; sh:name "fromPartyId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: From." ] ;
+    sh:property [ sh:path cr:toPartyIds ; sh:name "toPartyIds" ; rdfs:comment "list\\[string, IRI\\]: To." ] ;
+    sh:property [ sh:path cr:ccPartyIds ; sh:name "ccPartyIds" ; rdfs:comment "list\\[string, IRI\\]: CC." ] ;
+    sh:property [ sh:path cr:occurredAt ; sh:name "occurredAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Time." ] ;
+    sh:property [ sh:path cr:summary ; sh:name "summary" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Summary." ] ;
+    sh:property [ sh:path cr:containsPhi ; sh:name "containsPhi" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Contains PHI." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:scopedToStudy ; sh:name "scopedToStudy -> Study" ; sh:node cr:StudyEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Study." ] ;
+    sh:property [ sh:path cr:scopedToSite ; sh:name "scopedToSite -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site." ] ;
+    sh:property [ sh:path cr:scopedToSubject ; sh:name "scopedToSubject -> Participant" ; sh:node cr:ParticipantEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Subject." ] ;
+    sh:property [ sh:path cr:referencesPersons ; sh:name "referencesPersons -> Person" ; sh:node cr:PersonEntityView ; rdfs:comment "[0..N] Persons referenced." ] ;
+    sh:property [ sh:path cr:hasAttachments ; sh:name "hasAttachments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Attachments." ] ;
+    sh:property [ sh:path cr:triggersActionItem ; sh:name "triggersActionItem -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Action items." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

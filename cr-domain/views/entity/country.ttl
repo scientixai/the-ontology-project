@@ -1,0 +1,35 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Country can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:CountryEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Country ;
+    rdfs:label "Country" ;
+    cr:catalogNumber 57 ;
+    sh:property [ sh:path cr:countryId ; sh:name "countryId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:countryCode ; sh:name "countryCode" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, ISO 3166: ISO code." ] ;
+    sh:property [ sh:path cr:countryName ; sh:name "countryName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:regulatoryAuthorityId ; sh:name "regulatoryAuthorityId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Primary authority." ] ;
+    sh:property [ sh:path cr:privacyRegime ; sh:name "privacyRegime" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: gdpr, hipaa, lgpd, pipl, other." ] ;
+    sh:property [ sh:path cr:languages ; sh:name "languages" ; rdfs:comment "list\\[string, ISO 639\\]: Official languages." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:memberOfRegion ; sh:name "memberOfRegion -> Region" ; sh:node cr:RegionEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Region." ] ;
+    sh:property [ sh:path cr:hasAuthority ; sh:name "hasAuthority -> Regulatory Authority" ; sh:node cr:RegulatoryAuthorityEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Authorities." ] ;
+    sh:property [ sh:path cr:hostsSite ; sh:name "hostsSite -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites." ] ;
+    sh:property [ sh:path cr:receivesSubmission ; sh:name "receivesSubmission -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] .

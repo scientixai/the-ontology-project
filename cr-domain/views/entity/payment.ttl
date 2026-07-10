@@ -1,0 +1,62 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Payment can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:PaymentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Payment ;
+    rdfs:label "Payment" ;
+    cr:catalogNumber 21 ;
+    sh:property [ sh:path cr:paymentId ; sh:name "paymentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:paymentAmount ; sh:name "paymentAmount" ; rdfs:comment "money: Amount." ] ;
+    sh:property [ sh:path cr:paymentCurrency ; sh:name "paymentCurrency" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, ISO 4217: Currency." ] ;
+    sh:property [ sh:path cr:exchangeRate ; sh:name "exchangeRate" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "number, optional: Exchange rate." ] ;
+    sh:property [ sh:path cr:paymentDate ; sh:name "paymentDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Payment date." ] ;
+    sh:property [ sh:path cr:paymentStatus ; sh:name "paymentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: PENDING, APPROVED, PROCESSED, COMPLETED, CANCELED." ] ;
+    sh:property [ sh:path cr:paymentType ; sh:name "paymentType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SITE_PAYMENT, INVESTIGATOR_FEE, PARTICIPANT_REIMBURSEMENT, VENDOR_PAYMENT." ] ;
+    sh:property [ sh:path cr:paymentReason ; sh:name "paymentReason" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: VISIT_COMPLETION, PROCEDURE, TRAVEL, MILESTONE, OTHER." ] ;
+    sh:property [ sh:path cr:paymentMethod ; sh:name "paymentMethod" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: BANK_TRANSFER, CHECK, CASH, CARD." ] ;
+    sh:property [ sh:path cr:paymentCategory ; sh:name "paymentCategory" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: STARTUP, ONGOING, CLOSEOUT." ] ;
+    sh:property [ sh:path cr:paymentFrequency ; sh:name "paymentFrequency" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ONE_TIME, MONTHLY, QUARTERLY." ] ;
+    sh:property [ sh:path cr:paymentNotes ; sh:name "paymentNotes" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Notes." ] ;
+    sh:property [ sh:path cr:invoiceNumber ; sh:name "invoiceNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Invoice number." ] ;
+    sh:property [ sh:path cr:invoiceDate ; sh:name "invoiceDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Invoice date." ] ;
+    sh:property [ sh:path cr:payer ; sh:name "payer" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Paying entity." ] ;
+    sh:property [ sh:path cr:payee ; sh:name "payee" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Receiving entity." ] ;
+    sh:property [ sh:path cr:taxInformation ; sh:name "taxInformation" ; rdfs:comment "object: Tax id, VAT, withholding." ] ;
+    sh:property [ sh:path cr:withholdingTaxAmount ; sh:name "withholdingTaxAmount" ; rdfs:comment "money, optional: Withholding amount." ] ;
+    sh:property [ sh:path cr:paymentVerificationStatus ; sh:name "paymentVerificationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PENDING, VERIFIED, REJECTED." ] ;
+    sh:property [ sh:path cr:complianceCheckStatus ; sh:name "complianceCheckStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PENDING, PASSED, FAILED." ] ;
+    sh:property [ sh:path cr:createdBy ; sh:name "createdBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Creator." ] ;
+    sh:property [ sh:path cr:createdDate ; sh:name "createdDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Created." ] ;
+    sh:property [ sh:path cr:lastModifiedBy ; sh:name "lastModifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Modifier." ] ;
+    sh:property [ sh:path cr:lastModifiedDate ; sh:name "lastModifiedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modified." ] ;
+    sh:property [ sh:path cr:approvalStatus ; sh:name "approvalStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "enum: PENDING, APPROVED, REJECTED." ] ;
+    sh:property [ sh:path cr:approvedBy ; sh:name "approvedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Approver." ] ;
+    sh:property [ sh:path cr:approvalDate ; sh:name "approvalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: Approval date." ] ;
+    sh:property [ sh:path cr:paymentVerifiedBy ; sh:name "paymentVerifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Verifier." ] ;
+    sh:property [ sh:path cr:paymentVerificationDate ; sh:name "paymentVerificationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: Verification date." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site (if site payment)." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Participant (if reimbursement)." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Visit-based payment." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Procedure" ; sh:node cr:ProcedureEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Procedure-based payment." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Contract" ; sh:node cr:ContractEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Contract." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Budget Line Item" ; sh:node cr:BudgetLineItemEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Budget line." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Receipts, invoices." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Task" ; sh:node cr:TaskEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Processing task." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

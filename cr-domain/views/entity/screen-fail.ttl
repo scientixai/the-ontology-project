@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Screen Fail can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:ScreenFailEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:ScreenFail ;
+    rdfs:label "Screen Fail" ;
+    cr:catalogNumber 11 ;
+    sh:property [ sh:path cr:screenFailId ; sh:name "screenFailId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:screeningNumber ; sh:name "screeningNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Screening id." ] ;
+    sh:property [ sh:path cr:screenFailDate ; sh:name "screenFailDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Date of screen fail." ] ;
+    sh:property [ sh:path cr:screenFailReason ; sh:name "screenFailReason" ; rdfs:comment "array<enum>: Reasons (failed inclusion, failed exclusion, withdrew consent, lost to follow-up, AE during screening, other)." ] ;
+    sh:property [ sh:path cr:failedInclusionCriteria ; sh:name "failedInclusionCriteria" ; rdfs:comment "array<criteriaId>: Failed inclusion criteria." ] ;
+    sh:property [ sh:path cr:failedExclusionCriteria ; sh:name "failedExclusionCriteria" ; rdfs:comment "array<criteriaId>: Failed exclusion criteria." ] ;
+    sh:property [ sh:path cr:investigatorAssessment ; sh:name "investigatorAssessment" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: PI rationale." ] ;
+    sh:property [ sh:path cr:informedConsentStatus ; sh:name "informedConsentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: OBTAINED, WITHDRAWN, NOT_OBTAINED." ] ;
+    sh:property [ sh:path cr:rescreeningEligibility ; sh:name "rescreeningEligibility" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean, optional: Eligible to rescreen." ] ;
+    sh:property [ sh:path cr:rescreeningDate ; sh:name "rescreeningDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Planned rescreen date." ] ;
+    sh:property [ sh:path cr:screenFailVerificationStatus ; sh:name "screenFailVerificationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PENDING, VERIFIED, DISPUTED." ] ;
+    sh:property [ sh:path cr:timeInScreeningPeriod ; sh:name "timeInScreeningPeriod" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Duration in screening." ] ;
+    sh:property [ sh:path cr:impactOnEnrollmentMetrics ; sh:name "impactOnEnrollmentMetrics" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Impact note." ] ;
+    sh:property [ sh:path cr:reportedBy ; sh:name "reportedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Reporter." ] ;
+    sh:property [ sh:path cr:reportedDate ; sh:name "reportedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Report date." ] ;
+    sh:property [ sh:path cr:reviewedBy ; sh:name "reviewedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Reviewer." ] ;
+    sh:property [ sh:path cr:reviewedDate ; sh:name "reviewedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime, optional: Review date." ] ;
+    sh:property [ sh:path cr:dataEntryTimestamp ; sh:name "dataEntryTimestamp" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Data entry timestamp." ] ;
+    sh:property [ sh:path cr:dataEntryUser ; sh:name "dataEntryUser" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Data entry user." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Site." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Participant." ] ;
+    sh:property [ sh:path cr:observedAt ; sh:name "observedAt -> Visit" ; sh:node cr:VisitEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Screening visit." ] ;
+    sh:property [ sh:path cr:hasCRFs ; sh:name "hasCRFs -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] Screening CRFs." ] ;
+    sh:property [ sh:path cr:hasLabResults ; sh:name "hasLabResults -> Lab Results" ; sh:node cr:LabResultsEntityView ; rdfs:comment "[0..N] Screening labs." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Vital Sign Measurement" ; sh:node cr:VitalSignMeasurementEntityView ; rdfs:comment "[0..N] Vitals." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Physical Examination Result" ; sh:node cr:PhysicalExaminationResultEntityView ; rdfs:comment "[0..N] Exams." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs during screening." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Source docs." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Concomitant Medication" ; sh:node cr:ConcomitantMedicationEntityView ; rdfs:comment "[0..N] Conmeds." ] ;
+    sh:property [ sh:path cr:has ; sh:name "has -> Medical History Item" ; sh:node cr:MedicalHistoryItemEntityView ; rdfs:comment "[0..N] Medical history." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Imaging Procedure Result" ; sh:node cr:ImagingProcedureResultEntityView ; rdfs:comment "[0..N] Imaging." ] ;
+    sh:property [ sh:path cr:administers ; sh:name "administers -> Questionnaire" ; sh:node cr:QuestionnaireEntityView ; rdfs:comment "[0..N] Questionnaires." ] ;
+    sh:property [ sh:path cr:producesPRO ; sh:name "producesPRO -> Patient Reported Outcome" ; sh:node cr:PatientReportedOutcomeEntityView ; rdfs:comment "[0..N] PROs." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Task" ; sh:node cr:TaskEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Follow-up task." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Deviation if screening process deviated." ] ;
+    sh:property [ sh:path cr:triggers ; sh:name "triggers -> Payment" ; sh:node cr:PaymentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Reimbursement payment." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Sample" ; sh:node cr:SampleEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Sample collected during screening." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Equipment" ; sh:node cr:EquipmentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Equipment used." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

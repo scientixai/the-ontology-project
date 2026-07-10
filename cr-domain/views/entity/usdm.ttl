@@ -1,0 +1,1209 @@
+# ---------------------------------------------------------------------------
+# USDM STRUCTURAL MENU — the entirety of CDISC USDM v4.0 as reference entity
+# views (generated — do not edit by hand).
+# Source: ontology/vendor/usdm/usdm-v4.ttl (81 classes, itself generated from
+#   the CDISC DDF-RA OpenAPI model). Generator: tools/gen_usdm_views.py
+#
+# The Protocol object IS USDM in operator terms, so its page must be able to
+# expose ALL of USDM and let the operator pick — the viewer must not limit them.
+# Every USDM class is one cr:USDM_<Class>EntityView; object properties are
+# pointers, datatype properties are attributes, cardinality is native SHACL read
+# from the USDM owl:Restrictions. cr:ProtocolEntityView projects into the root.
+#
+# REFERENCE, NOT RUNTIME. A recipe over CDISC's (CC-BY-4.0) model, carrying no
+# prominence or arrangement. See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix usdm: <https://w3id.org/cdisc/usdm/v4/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:USDM_AbbreviationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Abbreviation ;
+    rdfs:label "Abbreviation" ;
+    rdfs:comment "A set of letters that are drawn from a word or from a sequence of words and that are used for brevity in place of the full word or phrase. (CDISC Glossary)" ;
+    sh:property [ sh:path usdm:Abbreviation-abbreviatedText ; sh:name "abbreviatedText" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Abbreviation-expandedText ; sh:name "expandedText" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Abbreviation-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Abbreviation-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Abbreviation-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Abbreviation-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_ActivityEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Activity ;
+    rdfs:label "Activity" ;
+    rdfs:comment "An action, undertaking, or event, which is anticipated to be performed or observed, or was performed or observed, according to the study protocol during the execution of the study." ;
+    sh:property [ sh:path usdm:Activity-bcCategoryIds ; sh:name "bcCategoryIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Activity-bcSurrogateIds ; sh:name "bcSurrogateIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Activity-biomedicalConceptIds ; sh:name "biomedicalConceptIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Activity-childIds ; sh:name "childIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Activity-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Activity-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Activity-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Activity-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Activity-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Activity-nextId ; sh:name "nextId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Activity-previousId ; sh:name "previousId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Activity-timelineId ; sh:name "timelineId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Activity-definedProcedures ; sh:name "definedProcedures" ; sh:node cr:USDM_ProcedureEntityView ] ;
+    sh:property [ sh:path usdm:Activity-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Activity-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_AddressEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Address ;
+    rdfs:label "Address" ;
+    rdfs:comment "A standardized representation of the location of a person, business, building, or organization. (NCI)" ;
+    sh:property [ sh:path usdm:Address-city ; sh:name "city" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-country ; sh:name "country" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-district ; sh:name "district" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Address-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-lines ; sh:name "lines" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Address-postalCode ; sh:name "postalCode" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-state ; sh:name "state" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-text ; sh:name "text" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Address-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_AdministrableProductEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:AdministrableProduct ;
+    rdfs:label "AdministrableProduct" ;
+    rdfs:comment "Any study product that is formulated and presented in the form that is suitable for administration to a study participant." ;
+    sh:property [ sh:path usdm:AdministrableProduct-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-pharmacologicClass ; sh:name "pharmacologicClass" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-sourcing ; sh:name "sourcing" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-administrableDoseForm ; sh:name "administrableDoseForm" ; sh:node cr:USDM_AliasCodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-identifiers ; sh:name "identifiers" ; sh:node cr:USDM_AdministrableProductIdentifierEntityView ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-ingredients ; sh:name "ingredients" ; sh:node cr:USDM_IngredientEntityView ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-productDesignation ; sh:name "productDesignation" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProduct-properties ; sh:name "properties" ; sh:node cr:USDM_AdministrableProductPropertyEntityView ] .
+
+cr:USDM_AdministrableProductIdentifierEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:AdministrableProductIdentifier ;
+    rdfs:label "AdministrableProductIdentifier" ;
+    rdfs:comment "A sequence of characters used to identify, name, or characterize the administrable product." ;
+    sh:property [ sh:path usdm:AdministrableProductIdentifier-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AdministrableProductIdentifier-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProductIdentifier-scopeId ; sh:name "scopeId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProductIdentifier-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProductIdentifier-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_AdministrableProductPropertyEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:AdministrableProductProperty ;
+    rdfs:label "AdministrableProductProperty" ;
+    rdfs:comment "A characteristic from a set of characteristics used to define an administrable product." ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-quantity ; sh:name "quantity" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:AdministrableProductProperty-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_AdministrationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Administration ;
+    rdfs:label "Administration" ;
+    rdfs:comment "The act of dispensing, applying, or tendering a product, agent, or therapy." ;
+    sh:property [ sh:path usdm:Administration-administrableProductId ; sh:name "administrableProductId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-dose ; sh:name "dose" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-frequency ; sh:name "frequency" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Administration-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Administration-medicalDeviceId ; sh:name "medicalDeviceId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-route ; sh:name "route" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-duration ; sh:name "duration" ; sh:node cr:USDM_DurationEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Administration-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Administration-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_AliasCodeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:AliasCode ;
+    rdfs:label "AliasCode" ;
+    rdfs:comment "An alternative symbol or combination of symbols which is assigned to the members of a collection." ;
+    sh:property [ sh:path usdm:AliasCode-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AliasCode-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AliasCode-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:AliasCode-standardCode ; sh:name "standardCode" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AliasCode-standardCodeAliases ; sh:name "standardCodeAliases" ; sh:node cr:USDM_CodeEntityView ] .
+
+cr:USDM_AnalysisPopulationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:AnalysisPopulation ;
+    rdfs:label "AnalysisPopulation" ;
+    rdfs:comment "A target study population on which an analysis is performed. These may be represented by the entire study population, a subgroup defined by a particular characteristic measured at baseline, or a principal stratum defined by the occurrence (or non-occurrence, depending on context) of a specific intercurrent event. (ICH E9 R1 Addendum)" ;
+    sh:property [ sh:path usdm:AnalysisPopulation-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-subsetOfIds ; sh:name "subsetOfIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:AnalysisPopulation-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_AssignedPersonEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:AssignedPerson ;
+    rdfs:label "AssignedPerson" ;
+    rdfs:comment "An individual person who is allotted or appointed to a particular role, function, or other entity." ;
+    sh:property [ sh:path usdm:AssignedPerson-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AssignedPerson-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AssignedPerson-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AssignedPerson-jobTitle ; sh:name "jobTitle" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AssignedPerson-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:AssignedPerson-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AssignedPerson-organizationId ; sh:name "organizationId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:AssignedPerson-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:AssignedPerson-personName ; sh:name "personName" ; sh:node cr:USDM_PersonNameEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_BiomedicalConceptEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:BiomedicalConcept ;
+    rdfs:label "BiomedicalConcept" ;
+    rdfs:comment "A unit of biomedical knowledge created from a unique combination of characteristics that include implementation details like variables and terminologies, used as building blocks for standardized, hierarchically structured clinical research information." ;
+    sh:property [ sh:path usdm:BiomedicalConcept-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-reference ; sh:name "reference" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-synonyms ; sh:name "synonyms" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-code ; sh:name "code" ; sh:node cr:USDM_AliasCodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:BiomedicalConcept-properties ; sh:name "properties" ; sh:node cr:USDM_BiomedicalConceptPropertyEntityView ] .
+
+cr:USDM_BiomedicalConceptCategoryEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:BiomedicalConceptCategory ;
+    rdfs:label "BiomedicalConceptCategory" ;
+    rdfs:comment "A grouping of biomedical concepts based on some commonality or by user defined characteristics." ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-childIds ; sh:name "childIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-code ; sh:name "code" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-memberIds ; sh:name "memberIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptCategory-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_BiomedicalConceptPropertyEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:BiomedicalConceptProperty ;
+    rdfs:label "BiomedicalConceptProperty" ;
+    rdfs:comment "A characteristic from a set of characteristics used to define a biomedical concept." ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-datatype ; sh:name "datatype" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-isEnabled ; sh:name "isEnabled" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-isRequired ; sh:name "isRequired" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-code ; sh:name "code" ; sh:node cr:USDM_AliasCodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptProperty-responseCodes ; sh:name "responseCodes" ; sh:node cr:USDM_ResponseCodeEntityView ] .
+
+cr:USDM_BiomedicalConceptSurrogateEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:BiomedicalConceptSurrogate ;
+    rdfs:label "BiomedicalConceptSurrogate" ;
+    rdfs:comment "A concept that substitutes for a standard biomedical concept from the designated source." ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-reference ; sh:name "reference" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:BiomedicalConceptSurrogate-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_BiospecimenRetentionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:BiospecimenRetention ;
+    rdfs:label "BiospecimenRetention" ;
+    rdfs:comment "The continued possession, cataloging, and storage of collected biological specimens beyond their initial use." ;
+    sh:property [ sh:path usdm:BiospecimenRetention-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-includesDNA ; sh:name "includesDNA" ; sh:datatype xsd:boolean ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-isRetained ; sh:name "isRetained" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:BiospecimenRetention-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_CharacteristicEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Characteristic ;
+    rdfs:label "Characteristic" ;
+    rdfs:comment "The distinguishing qualities or prominent aspects of an entity." ;
+    sh:property [ sh:path usdm:Characteristic-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Characteristic-dictionaryId ; sh:name "dictionaryId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Characteristic-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Characteristic-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Characteristic-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Characteristic-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Characteristic-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Characteristic-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Characteristic-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_CodeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Code ;
+    rdfs:label "Code" ;
+    rdfs:comment "A symbol or combination of symbols which is assigned to the members of a collection." ;
+    sh:property [ sh:path usdm:Code-code ; sh:name "code" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Code-codeSystem ; sh:name "codeSystem" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Code-codeSystemVersion ; sh:name "codeSystemVersion" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Code-decode ; sh:name "decode" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Code-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Code-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Code-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_CommentAnnotationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:CommentAnnotation ;
+    rdfs:label "CommentAnnotation" ;
+    rdfs:comment "An explanatory or critical comment, or other in-context information (e.g., pattern, motif, link), that has been associated with data or other types of information." ;
+    sh:property [ sh:path usdm:CommentAnnotation-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:CommentAnnotation-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:CommentAnnotation-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:CommentAnnotation-codes ; sh:name "codes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:CommentAnnotation-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ConditionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Condition ;
+    rdfs:label "Condition" ;
+    rdfs:comment "A state of being." ;
+    sh:property [ sh:path usdm:Condition-appliesToIds ; sh:name "appliesToIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Condition-contextIds ; sh:name "contextIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:Condition-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Condition-dictionaryId ; sh:name "dictionaryId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Condition-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Condition-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Condition-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Condition-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Condition-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Condition-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Condition-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_ConditionAssignmentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ConditionAssignment ;
+    rdfs:label "ConditionAssignment" ;
+    rdfs:comment "An allotting or appointment to a condition or set of conditions that are to be met in order to make a logical decision." ;
+    sh:property [ sh:path usdm:ConditionAssignment-condition ; sh:name "condition" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ConditionAssignment-conditionTargetId ; sh:name "conditionTargetId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ConditionAssignment-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ConditionAssignment-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ConditionAssignment-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_DocumentContentReferenceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:DocumentContentReference ;
+    rdfs:label "DocumentContentReference" ;
+    rdfs:comment "A citation pointing to the location of specific content within a document." ;
+    sh:property [ sh:path usdm:DocumentContentReference-appliesToId ; sh:name "appliesToId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:DocumentContentReference-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:DocumentContentReference-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:DocumentContentReference-sectionNumber ; sh:name "sectionNumber" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:DocumentContentReference-sectionTitle ; sh:name "sectionTitle" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:DocumentContentReference-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_DurationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Duration ;
+    rdfs:label "Duration" ;
+    rdfs:comment "The length of time during which something continues." ;
+    sh:property [ sh:path usdm:Duration-durationWillVary ; sh:name "durationWillVary" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Duration-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Duration-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Duration-quantity ; sh:name "quantity" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Duration-reasonDurationWillVary ; sh:name "reasonDurationWillVary" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Duration-text ; sh:name "text" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Duration-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_EligibilityCriterionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:EligibilityCriterion ;
+    rdfs:label "EligibilityCriterion" ;
+    rdfs:comment "Characteristics which are necessary to allow a subject to participate in a clinical study, as outlined in the study protocol. The concept covers inclusion and exclusion criteria." ;
+    sh:property [ sh:path usdm:EligibilityCriterion-criterionItemId ; sh:name "criterionItemId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-identifier ; sh:name "identifier" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-nextId ; sh:name "nextId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-previousId ; sh:name "previousId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-category ; sh:name "category" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:EligibilityCriterion-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_EligibilityCriterionItemEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:EligibilityCriterionItem ;
+    rdfs:label "EligibilityCriterionItem" ;
+    rdfs:comment "An individual item within the container that holds an instance of an eligibility criterion." ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-dictionaryId ; sh:name "dictionaryId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:EligibilityCriterionItem-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_EncounterEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Encounter ;
+    rdfs:label "Encounter" ;
+    rdfs:comment "Any physical or virtual contact between two or more parties involved in a study, at which an assessment or activity takes place." ;
+    sh:property [ sh:path usdm:Encounter-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Encounter-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Encounter-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-nextId ; sh:name "nextId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-previousId ; sh:name "previousId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-scheduledAtId ; sh:name "scheduledAtId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-transitionEndRule ; sh:name "transitionEndRule" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-transitionStartRule ; sh:name "transitionStartRule" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Encounter-contactModes ; sh:name "contactModes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:Encounter-environmentalSettings ; sh:name "environmentalSettings" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:Encounter-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Encounter-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:Encounter-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_EndpointEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Endpoint ;
+    rdfs:label "Endpoint" ;
+    rdfs:comment "A defined variable intended to reflect an outcome of interest that is statistically analyzed to address a particular research question. NOTE: A precise definition of an endpoint typically specifies the type of assessments made, the timing of those assessments, the assessment tools used, and possibly other details, as applicable, such as how multiple assessments within an individual are to be combined. [After BEST Resource] (CDISC Glossary)" ;
+    sh:property [ sh:path usdm:Endpoint-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-dictionaryId ; sh:name "dictionaryId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Endpoint-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Endpoint-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-purpose ; sh:name "purpose" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Endpoint-level ; sh:name "level" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Endpoint-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_EstimandEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Estimand ;
+    rdfs:label "Estimand" ;
+    rdfs:comment "A precise description of the treatment effect reflecting the clinical question posed by a given clinical trial objective. It summarises at a population level what the outcomes would be in the same patients under different treatment conditions being compared. (ICH E9 R1 Addendum)" ;
+    sh:property [ sh:path usdm:Estimand-analysisPopulationId ; sh:name "analysisPopulationId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Estimand-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-interventionIds ; sh:name "interventionIds" ; sh:datatype xsd:string ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Estimand-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-populationSummary ; sh:name "populationSummary" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-variableOfInterestId ; sh:name "variableOfInterestId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Estimand-intercurrentEvents ; sh:name "intercurrentEvents" ; sh:node cr:USDM_IntercurrentEventEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:Estimand-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_ExtensionAttributeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ExtensionAttribute ;
+    rdfs:label "ExtensionAttribute" ;
+    sh:property [ sh:path usdm:ExtensionAttribute-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-url ; sh:name "url" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueAliasCode ; sh:name "valueAliasCode" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueBoolean ; sh:name "valueBoolean" ; sh:datatype xsd:boolean ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueCode ; sh:name "valueCode" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueExtensionClass ; sh:name "valueExtensionClass" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueId ; sh:name "valueId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueInteger ; sh:name "valueInteger" ; sh:datatype xsd:integer ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueQuantity ; sh:name "valueQuantity" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueRange ; sh:name "valueRange" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-valueString ; sh:name "valueString" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionAttribute-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ExtensionClassEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ExtensionClass ;
+    rdfs:label "ExtensionClass" ;
+    sh:property [ sh:path usdm:ExtensionClass-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ExtensionClass-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionClass-url ; sh:name "url" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ExtensionClass-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ; sh:minCount 1 ] .
+
+cr:USDM_GeographicScopeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:GeographicScope ;
+    rdfs:label "GeographicScope" ;
+    rdfs:comment "The extent or range related to the physical location of an entity." ;
+    sh:property [ sh:path usdm:GeographicScope-code ; sh:name "code" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:GeographicScope-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:GeographicScope-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:GeographicScope-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:GeographicScope-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_GovernanceDateEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:GovernanceDate ;
+    rdfs:label "GovernanceDate" ;
+    rdfs:comment "Any of the dates associated with event milestones within a clinical study's oversight and management framework." ;
+    sh:property [ sh:path usdm:GovernanceDate-dateValue ; sh:name "dateValue" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:GovernanceDate-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:GovernanceDate-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:GovernanceDate-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:GovernanceDate-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:GovernanceDate-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:GovernanceDate-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:GovernanceDate-geographicScopes ; sh:name "geographicScopes" ; sh:node cr:USDM_GeographicScopeEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:GovernanceDate-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_IndicationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Indication ;
+    rdfs:label "Indication" ;
+    rdfs:comment "The disease or condition the intervention will diagnose, treat, prevent, cure, or mitigate." ;
+    sh:property [ sh:path usdm:Indication-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Indication-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Indication-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Indication-isRareDisease ; sh:name "isRareDisease" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Indication-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Indication-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Indication-codes ; sh:name "codes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:Indication-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Indication-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_IngredientEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Ingredient ;
+    rdfs:label "Ingredient" ;
+    rdfs:comment "Any component that constitutes a part of a compounded substance or mixture." ;
+    sh:property [ sh:path usdm:Ingredient-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Ingredient-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Ingredient-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Ingredient-role ; sh:name "role" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Ingredient-substance ; sh:name "substance" ; sh:node cr:USDM_SubstanceEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_IntercurrentEventEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:IntercurrentEvent ;
+    rdfs:label "IntercurrentEvent" ;
+    rdfs:comment "An event(s) occurring after treatment initiation that affects either the interpretation or the existence of the measurements associated with the clinical question of interest. (ICH E9 Addendum on Estimands)" ;
+    sh:property [ sh:path usdm:IntercurrentEvent-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-dictionaryId ; sh:name "dictionaryId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-strategy ; sh:name "strategy" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:IntercurrentEvent-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_InterventionalStudyDesignEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:InterventionalStudyDesign ;
+    rdfs:label "InterventionalStudyDesign" ;
+    rdfs:comment "The strategy that specifies the structure of an interventional trial in terms of the planned activities (including timing) and statistical analysis approach intended to meet the objectives of the study." ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-blindingSchema ; sh:name "blindingSchema" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-documentVersionIds ; sh:name "documentVersionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-rationale ; sh:name "rationale" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-studyInterventionIds ; sh:name "studyInterventionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-studyPhase ; sh:name "studyPhase" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-studyType ; sh:name "studyType" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-activities ; sh:name "activities" ; sh:node cr:USDM_ActivityEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-analysisPopulations ; sh:name "analysisPopulations" ; sh:node cr:USDM_AnalysisPopulationEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-arms ; sh:name "arms" ; sh:node cr:USDM_StudyArmEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-biospecimenRetentions ; sh:name "biospecimenRetentions" ; sh:node cr:USDM_BiospecimenRetentionEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-characteristics ; sh:name "characteristics" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-elements ; sh:name "elements" ; sh:node cr:USDM_StudyElementEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-eligibilityCriteria ; sh:name "eligibilityCriteria" ; sh:node cr:USDM_EligibilityCriterionEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-encounters ; sh:name "encounters" ; sh:node cr:USDM_EncounterEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-epochs ; sh:name "epochs" ; sh:node cr:USDM_StudyEpochEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-estimands ; sh:name "estimands" ; sh:node cr:USDM_EstimandEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-indications ; sh:name "indications" ; sh:node cr:USDM_IndicationEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-intentTypes ; sh:name "intentTypes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-model ; sh:name "model" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-objectives ; sh:name "objectives" ; sh:node cr:USDM_ObjectiveEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-population ; sh:name "population" ; sh:node cr:USDM_StudyDesignPopulationEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-scheduleTimelines ; sh:name "scheduleTimelines" ; sh:node cr:USDM_ScheduleTimelineEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-studyCells ; sh:name "studyCells" ; sh:node cr:USDM_StudyCellEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-subTypes ; sh:name "subTypes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:InterventionalStudyDesign-therapeuticAreas ; sh:name "therapeuticAreas" ; sh:node cr:USDM_CodeEntityView ] .
+
+cr:USDM_MaskingEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Masking ;
+    rdfs:label "Masking" ;
+    rdfs:comment "The mechanism used to obscure the distinctive characteristics of the study intervention or procedure to make it indistinguishable from a comparator. (CDISC Glossary)" ;
+    sh:property [ sh:path usdm:Masking-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Masking-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Masking-isMasked ; sh:name "isMasked" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Masking-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Masking-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_MedicalDeviceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:MedicalDevice ;
+    rdfs:label "MedicalDevice" ;
+    rdfs:comment "Any instrument, apparatus, implement, machine, appliance, implant, reagent for in vitro use, software, material or other similar or related article, intended by the manufacturer to be used, alone or in combination for, one or more specific medical purpose(s). [After REGULATION (EU) 2017/745 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 5 April 2017 on medical devices]" ;
+    sh:property [ sh:path usdm:MedicalDevice-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-embeddedProductId ; sh:name "embeddedProductId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-hardwareVersion ; sh:name "hardwareVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:MedicalDevice-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:MedicalDevice-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-softwareVersion ; sh:name "softwareVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-sourcing ; sh:name "sourcing" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDevice-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:MedicalDevice-identifiers ; sh:name "identifiers" ; sh:node cr:USDM_MedicalDeviceIdentifierEntityView ] ;
+    sh:property [ sh:path usdm:MedicalDevice-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_MedicalDeviceIdentifierEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:MedicalDeviceIdentifier ;
+    rdfs:label "MedicalDeviceIdentifier" ;
+    rdfs:comment "A sequence of characters used to identify, name, or characterize the medical device." ;
+    sh:property [ sh:path usdm:MedicalDeviceIdentifier-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:MedicalDeviceIdentifier-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDeviceIdentifier-scopeId ; sh:name "scopeId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDeviceIdentifier-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:MedicalDeviceIdentifier-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:MedicalDeviceIdentifier-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_NarrativeContentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:NarrativeContent ;
+    rdfs:label "NarrativeContent" ;
+    rdfs:comment "The container that holds an instance of unstructured text and which may include objects such as tables, figures, and images." ;
+    sh:property [ sh:path usdm:NarrativeContent-childIds ; sh:name "childIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:NarrativeContent-contentItemId ; sh:name "contentItemId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-displaySectionNumber ; sh:name "displaySectionNumber" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-displaySectionTitle ; sh:name "displaySectionTitle" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:NarrativeContent-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:NarrativeContent-nextId ; sh:name "nextId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-previousId ; sh:name "previousId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-sectionNumber ; sh:name "sectionNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-sectionTitle ; sh:name "sectionTitle" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContent-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_NarrativeContentItemEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:NarrativeContentItem ;
+    rdfs:label "NarrativeContentItem" ;
+    rdfs:comment "An individual item within the container that holds an instance of unstructured text and which may include objects such as tables, figures, and images." ;
+    sh:property [ sh:path usdm:NarrativeContentItem-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:NarrativeContentItem-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContentItem-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:NarrativeContentItem-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:NarrativeContentItem-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ObjectiveEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Objective ;
+    rdfs:label "Objective" ;
+    rdfs:comment "The reason for performing a study in terms of the scientific questions to be answered by the analysis of data collected during the study." ;
+    sh:property [ sh:path usdm:Objective-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Objective-dictionaryId ; sh:name "dictionaryId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Objective-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Objective-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Objective-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Objective-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Objective-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Objective-endpoints ; sh:name "endpoints" ; sh:node cr:USDM_EndpointEntityView ] ;
+    sh:property [ sh:path usdm:Objective-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Objective-level ; sh:name "level" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Objective-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_ObservationalStudyDesignEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ObservationalStudyDesign ;
+    rdfs:label "ObservationalStudyDesign" ;
+    rdfs:comment "The strategy that specifies the structure of an observational study in terms of the planned activities (including timing) and statistical analysis approach intended to meet the objectives of the study." ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-documentVersionIds ; sh:name "documentVersionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-rationale ; sh:name "rationale" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-samplingMethod ; sh:name "samplingMethod" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-studyInterventionIds ; sh:name "studyInterventionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-studyPhase ; sh:name "studyPhase" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-studyType ; sh:name "studyType" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-activities ; sh:name "activities" ; sh:node cr:USDM_ActivityEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-analysisPopulations ; sh:name "analysisPopulations" ; sh:node cr:USDM_AnalysisPopulationEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-arms ; sh:name "arms" ; sh:node cr:USDM_StudyArmEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-biospecimenRetentions ; sh:name "biospecimenRetentions" ; sh:node cr:USDM_BiospecimenRetentionEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-characteristics ; sh:name "characteristics" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-elements ; sh:name "elements" ; sh:node cr:USDM_StudyElementEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-eligibilityCriteria ; sh:name "eligibilityCriteria" ; sh:node cr:USDM_EligibilityCriterionEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-encounters ; sh:name "encounters" ; sh:node cr:USDM_EncounterEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-epochs ; sh:name "epochs" ; sh:node cr:USDM_StudyEpochEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-estimands ; sh:name "estimands" ; sh:node cr:USDM_EstimandEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-indications ; sh:name "indications" ; sh:node cr:USDM_IndicationEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-model ; sh:name "model" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-objectives ; sh:name "objectives" ; sh:node cr:USDM_ObjectiveEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-population ; sh:name "population" ; sh:node cr:USDM_StudyDesignPopulationEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-scheduleTimelines ; sh:name "scheduleTimelines" ; sh:node cr:USDM_ScheduleTimelineEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-studyCells ; sh:name "studyCells" ; sh:node cr:USDM_StudyCellEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-subTypes ; sh:name "subTypes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-therapeuticAreas ; sh:name "therapeuticAreas" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:ObservationalStudyDesign-timePerspective ; sh:name "timePerspective" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_OrganizationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Organization ;
+    rdfs:label "Organization" ;
+    rdfs:comment "A formalized group of persons or other organizations collected together for a common purpose (such as administrative, legal, political) and the infrastructure to carry out that purpose. (BRIDG)" ;
+    sh:property [ sh:path usdm:Organization-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Organization-identifier ; sh:name "identifier" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Organization-identifierScheme ; sh:name "identifierScheme" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Organization-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Organization-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Organization-legalAddress ; sh:name "legalAddress" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Organization-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Organization-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Organization-managedSites ; sh:name "managedSites" ; sh:node cr:USDM_StudySiteEntityView ] ;
+    sh:property [ sh:path usdm:Organization-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_ParameterMapEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ParameterMap ;
+    rdfs:label "ParameterMap" ;
+    rdfs:comment "The paired name and value for a given parameter." ;
+    sh:property [ sh:path usdm:ParameterMap-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ParameterMap-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ParameterMap-reference ; sh:name "reference" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ParameterMap-tag ; sh:name "tag" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ParameterMap-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_PersonNameEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:PersonName ;
+    rdfs:label "PersonName" ;
+    rdfs:comment "A word or group of words indicating the identity of a person usually consisting of a first (personal) name and a last (family) name with an optional middle name. In some cultural traditions the family name comes first." ;
+    sh:property [ sh:path usdm:PersonName-familyName ; sh:name "familyName" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:PersonName-givenNames ; sh:name "givenNames" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:PersonName-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:PersonName-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:PersonName-prefixes ; sh:name "prefixes" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:PersonName-suffixes ; sh:name "suffixes" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:PersonName-text ; sh:name "text" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:PersonName-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ProcedureEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Procedure ;
+    rdfs:label "Procedure" ;
+    rdfs:comment "Any activity performed by manual and/or instrumental means for the purpose of diagnosis, assessment, therapy, prevention, or palliative care." ;
+    sh:property [ sh:path usdm:Procedure-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Procedure-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Procedure-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Procedure-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Procedure-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Procedure-procedureType ; sh:name "procedureType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Procedure-studyInterventionId ; sh:name "studyInterventionId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Procedure-code ; sh:name "code" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Procedure-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Procedure-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_ProductOrganizationRoleEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ProductOrganizationRole ;
+    rdfs:label "ProductOrganizationRole" ;
+    rdfs:comment "A designation that identifies the function of an organization within the context of the product." ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-appliesToIds ; sh:name "appliesToIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-organizationId ; sh:name "organizationId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-code ; sh:name "code" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ProductOrganizationRole-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_QuantityEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Quantity ;
+    rdfs:label "Quantity" ;
+    rdfs:comment "How much there is of something that can be measured; the total amount or number." ;
+    sh:property [ sh:path usdm:Quantity-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Quantity-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Quantity-unit ; sh:name "unit" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Quantity-value ; sh:name "value" ; sh:datatype xsd:decimal ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Quantity-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_RangeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Range ;
+    rdfs:label "Range" ;
+    rdfs:comment "An expression that defines the lower and upper limits of a variation." ;
+    sh:property [ sh:path usdm:Range-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Range-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Range-isApproximate ; sh:name "isApproximate" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Range-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Range-maxValue ; sh:name "maxValue" ; sh:node cr:USDM_QuantityEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Range-minValue ; sh:name "minValue" ; sh:node cr:USDM_QuantityEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_ReferenceIdentifierEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ReferenceIdentifier ;
+    rdfs:label "ReferenceIdentifier" ;
+    rdfs:comment "A sequence of characters used to identify, name, or characterize the reference." ;
+    sh:property [ sh:path usdm:ReferenceIdentifier-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ReferenceIdentifier-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ReferenceIdentifier-scopeId ; sh:name "scopeId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ReferenceIdentifier-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ReferenceIdentifier-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:ReferenceIdentifier-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_ResponseCodeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ResponseCode ;
+    rdfs:label "ResponseCode" ;
+    rdfs:comment "A symbol or combination of symbols representing the response to the question." ;
+    sh:property [ sh:path usdm:ResponseCode-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ResponseCode-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ResponseCode-isEnabled ; sh:name "isEnabled" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ResponseCode-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ResponseCode-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ResponseCode-code ; sh:name "code" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ResponseCode-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ScheduleTimelineEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ScheduleTimeline ;
+    rdfs:label "ScheduleTimeline" ;
+    rdfs:comment "A chronological schedule of planned temporal events." ;
+    sh:property [ sh:path usdm:ScheduleTimeline-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-entryCondition ; sh:name "entryCondition" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-entryId ; sh:name "entryId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-instances ; sh:name "instances" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-mainTimeline ; sh:name "mainTimeline" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-plannedDuration ; sh:name "plannedDuration" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-exits ; sh:name "exits" ; sh:node cr:USDM_ScheduleTimelineExitEntityView ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:ScheduleTimeline-timings ; sh:name "timings" ; sh:node cr:USDM_TimingEntityView ] .
+
+cr:USDM_ScheduleTimelineExitEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ScheduleTimelineExit ;
+    rdfs:label "ScheduleTimelineExit" ;
+    rdfs:comment "To go out of or leave the schedule timeline." ;
+    sh:property [ sh:path usdm:ScheduleTimelineExit-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduleTimelineExit-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduleTimelineExit-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ScheduledActivityInstanceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ScheduledActivityInstance ;
+    rdfs:label "ScheduledActivityInstance" ;
+    rdfs:comment "A scheduled occurrence of an activity event." ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-activityIds ; sh:name "activityIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-defaultConditionId ; sh:name "defaultConditionId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-encounterId ; sh:name "encounterId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-epochId ; sh:name "epochId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-timelineExitId ; sh:name "timelineExitId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-timelineId ; sh:name "timelineId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledActivityInstance-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_ScheduledDecisionInstanceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:ScheduledDecisionInstance ;
+    rdfs:label "ScheduledDecisionInstance" ;
+    rdfs:comment "A scheduled occurrence of a decision event." ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-defaultConditionId ; sh:name "defaultConditionId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-epochId ; sh:name "epochId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-conditionAssignments ; sh:name "conditionAssignments" ; sh:node cr:USDM_ConditionAssignmentEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:ScheduledDecisionInstance-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StrengthEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Strength ;
+    rdfs:label "Strength" ;
+    rdfs:comment "The content of an substance expressed quantitatively per dosage unit, per unit of volume, or per unit of weight, according to the pharmaceutical dose form of the product." ;
+    sh:property [ sh:path usdm:Strength-denominator ; sh:name "denominator" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Strength-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Strength-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Strength-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Strength-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Strength-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Strength-numerator ; sh:name "numerator" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Strength-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StudyEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Study ;
+    rdfs:label "Study" ;
+    rdfs:comment "A clinical study involves research using human volunteers (also called participants) that is intended to add to medical knowledge. There are two main types of clinical studies: clinical trials (also called interventional studies) and observational studies. (CDISC Glossary)" ;
+    sh:property [ sh:path usdm:Study-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Study-id ; sh:name "id" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Study-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Study-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Study-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Study-documentedBy ; sh:name "documentedBy" ; sh:node cr:USDM_StudyDefinitionDocumentEntityView ] ;
+    sh:property [ sh:path usdm:Study-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Study-versions ; sh:name "versions" ; sh:node cr:USDM_StudyVersionEntityView ] .
+
+cr:USDM_StudyAmendmentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyAmendment ;
+    rdfs:label "StudyAmendment" ;
+    rdfs:comment "A written description of a change(s) to, or formal clarification of, a study." ;
+    sh:property [ sh:path usdm:StudyAmendment-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyAmendment-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyAmendment-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-number ; sh:name "number" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-previousId ; sh:name "previousId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-summary ; sh:name "summary" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-changes ; sh:name "changes" ; sh:node cr:USDM_StudyChangeEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-dateValues ; sh:name "dateValues" ; sh:node cr:USDM_GovernanceDateEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendment-enrollments ; sh:name "enrollments" ; sh:node cr:USDM_SubjectEnrollmentEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendment-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendment-geographicScopes ; sh:name "geographicScopes" ; sh:node cr:USDM_GeographicScopeEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-impacts ; sh:name "impacts" ; sh:node cr:USDM_StudyAmendmentImpactEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendment-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendment-primaryReason ; sh:name "primaryReason" ; sh:node cr:USDM_StudyAmendmentReasonEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendment-secondaryReasons ; sh:name "secondaryReasons" ; sh:node cr:USDM_StudyAmendmentReasonEntityView ] .
+
+cr:USDM_StudyAmendmentImpactEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyAmendmentImpact ;
+    rdfs:label "StudyAmendmentImpact" ;
+    rdfs:comment "The effect or consequence of an amendment on some aspect of the study." ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-isSubstantial ; sh:name "isSubstantial" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyAmendmentImpact-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_StudyAmendmentReasonEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyAmendmentReason ;
+    rdfs:label "StudyAmendmentReason" ;
+    rdfs:comment "The rationale for the change(s) to, or formal clarification of, a protocol." ;
+    sh:property [ sh:path usdm:StudyAmendmentReason-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyAmendmentReason-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendmentReason-otherReason ; sh:name "otherReason" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendmentReason-code ; sh:name "code" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyAmendmentReason-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StudyArmEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyArm ;
+    rdfs:label "StudyArm" ;
+    rdfs:comment "A planned pathway assigned to the subject as they progress through the study, usually referred to by a name that reflects one or more treatments, exposures, and/or controls included in the path." ;
+    sh:property [ sh:path usdm:StudyArm-dataOriginDescription ; sh:name "dataOriginDescription" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyArm-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyArm-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyArm-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyArm-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyArm-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyArm-populationIds ; sh:name "populationIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyArm-dataOriginType ; sh:name "dataOriginType" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyArm-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyArm-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyArm-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_StudyCellEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyCell ;
+    rdfs:label "StudyCell" ;
+    rdfs:comment "A partitioning of a study arm into individual pieces, which are associated with an epoch and any number of sequential elements within that epoch." ;
+    sh:property [ sh:path usdm:StudyCell-armId ; sh:name "armId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCell-elementIds ; sh:name "elementIds" ; sh:datatype xsd:string ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCell-epochId ; sh:name "epochId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCell-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyCell-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCell-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StudyChangeEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyChange ;
+    rdfs:label "StudyChange" ;
+    rdfs:comment "The act of alteration or modification to a study." ;
+    sh:property [ sh:path usdm:StudyChange-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyChange-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyChange-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyChange-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyChange-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyChange-rationale ; sh:name "rationale" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyChange-summary ; sh:name "summary" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyChange-changedSections ; sh:name "changedSections" ; sh:node cr:USDM_DocumentContentReferenceEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:StudyChange-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StudyCohortEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyCohort ;
+    rdfs:label "StudyCohort" ;
+    rdfs:comment "A group of individuals who share a set of characteristics (e.g., exposures, experiences, attributes), which logically defines a population under study." ;
+    sh:property [ sh:path usdm:StudyCohort-criterionIds ; sh:name "criterionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyCohort-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyCohort-includesHealthySubjects ; sh:name "includesHealthySubjects" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-indicationIds ; sh:name "indicationIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyCohort-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyCohort-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-plannedAge ; sh:name "plannedAge" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-plannedCompletionNumber ; sh:name "plannedCompletionNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-plannedEnrollmentNumber ; sh:name "plannedEnrollmentNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyCohort-characteristics ; sh:name "characteristics" ; sh:node cr:USDM_CharacteristicEntityView ] ;
+    sh:property [ sh:path usdm:StudyCohort-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyCohort-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyCohort-plannedSex ; sh:name "plannedSex" ; sh:node cr:USDM_CodeEntityView ] .
+
+cr:USDM_StudyDefinitionDocumentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyDefinitionDocument ;
+    rdfs:label "StudyDefinitionDocument" ;
+    rdfs:comment "Any physical or electronic document that is related to defining a study or part of a study." ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-childIds ; sh:name "childIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-templateName ; sh:name "templateName" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-language ; sh:name "language" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocument-versions ; sh:name "versions" ; sh:node cr:USDM_StudyDefinitionDocumentVersionEntityView ] .
+
+cr:USDM_StudyDefinitionDocumentVersionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyDefinitionDocumentVersion ;
+    rdfs:label "StudyDefinitionDocumentVersion" ;
+    rdfs:comment "A representation of a particular edition or snapshot of the study definition document as it exists at a particular point in time." ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-version ; sh:name "version" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-contents ; sh:name "contents" ; sh:node cr:USDM_NarrativeContentEntityView ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-dateValues ; sh:name "dateValues" ; sh:node cr:USDM_GovernanceDateEntityView ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyDefinitionDocumentVersion-status ; sh:name "status" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_StudyDesignPopulationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyDesignPopulation ;
+    rdfs:label "StudyDesignPopulation" ;
+    rdfs:comment "The population within the general population to which the study results can be generalized." ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-criterionIds ; sh:name "criterionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-includesHealthySubjects ; sh:name "includesHealthySubjects" ; sh:datatype xsd:boolean ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-plannedAge ; sh:name "plannedAge" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-plannedCompletionNumber ; sh:name "plannedCompletionNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-plannedEnrollmentNumber ; sh:name "plannedEnrollmentNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-cohorts ; sh:name "cohorts" ; sh:node cr:USDM_StudyCohortEntityView ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyDesignPopulation-plannedSex ; sh:name "plannedSex" ; sh:node cr:USDM_CodeEntityView ] .
+
+cr:USDM_StudyElementEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyElement ;
+    rdfs:label "StudyElement" ;
+    rdfs:comment "A basic building block for time within a clinical study comprising the following characteristics: a description of what happens to the subject during the element; a definition of the start of the element; a rule for ending the element." ;
+    sh:property [ sh:path usdm:StudyElement-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyElement-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyElement-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyElement-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyElement-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyElement-studyInterventionIds ; sh:name "studyInterventionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyElement-transitionEndRule ; sh:name "transitionEndRule" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyElement-transitionStartRule ; sh:name "transitionStartRule" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyElement-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyElement-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_StudyEpochEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyEpoch ;
+    rdfs:label "StudyEpoch" ;
+    rdfs:comment "A named time period defined in the protocol, wherein a study activity is specified and unchanging throughout the interval, to support a study-specific purpose." ;
+    sh:property [ sh:path usdm:StudyEpoch-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyEpoch-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyEpoch-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyEpoch-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyEpoch-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyEpoch-nextId ; sh:name "nextId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyEpoch-previousId ; sh:name "previousId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyEpoch-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyEpoch-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyEpoch-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_StudyIdentifierEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyIdentifier ;
+    rdfs:label "StudyIdentifier" ;
+    rdfs:comment "A sequence of characters used to identify, name, or characterize the study." ;
+    sh:property [ sh:path usdm:StudyIdentifier-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyIdentifier-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIdentifier-scopeId ; sh:name "scopeId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIdentifier-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIdentifier-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StudyInterventionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyIntervention ;
+    rdfs:label "StudyIntervention" ;
+    rdfs:comment "Any agent, device, or procedure being tested or used as a reference or comparator in the conduct of a clinical trial." ;
+    sh:property [ sh:path usdm:StudyIntervention-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIntervention-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyIntervention-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIntervention-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyIntervention-minimumResponseDuration ; sh:name "minimumResponseDuration" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIntervention-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIntervention-administrations ; sh:name "administrations" ; sh:node cr:USDM_AdministrationEntityView ] ;
+    sh:property [ sh:path usdm:StudyIntervention-codes ; sh:name "codes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:StudyIntervention-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyIntervention-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyIntervention-role ; sh:name "role" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyIntervention-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_StudyRoleEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyRole ;
+    rdfs:label "StudyRole" ;
+    rdfs:comment "A designation that identifies the function of study personnel or an organization within the context of the study." ;
+    sh:property [ sh:path usdm:StudyRole-appliesToIds ; sh:name "appliesToIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyRole-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyRole-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyRole-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyRole-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyRole-masking ; sh:name "masking" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyRole-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyRole-organizationIds ; sh:name "organizationIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyRole-assignedPersons ; sh:name "assignedPersons" ; sh:node cr:USDM_AssignedPersonEntityView ] ;
+    sh:property [ sh:path usdm:StudyRole-code ; sh:name "code" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyRole-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyRole-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] .
+
+cr:USDM_StudySiteEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudySite ;
+    rdfs:label "StudySite" ;
+    rdfs:comment "The location at which a study investigator conducts study activities." ;
+    sh:property [ sh:path usdm:StudySite-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudySite-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudySite-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudySite-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudySite-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudySite-country ; sh:name "country" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudySite-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_StudyTitleEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyTitle ;
+    rdfs:label "StudyTitle" ;
+    rdfs:comment "The sponsor-defined name of the clinical study." ;
+    sh:property [ sh:path usdm:StudyTitle-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyTitle-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyTitle-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyTitle-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyTitle-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_StudyVersionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:StudyVersion ;
+    rdfs:label "StudyVersion" ;
+    rdfs:comment "A plan at a particular point in time for a study." ;
+    sh:property [ sh:path usdm:StudyVersion-documentVersionIds ; sh:name "documentVersionIds" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyVersion-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:StudyVersion-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyVersion-rationale ; sh:name "rationale" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyVersion-studyDesigns ; sh:name "studyDesigns" ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path usdm:StudyVersion-versionIdentifier ; sh:name "versionIdentifier" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:StudyVersion-abbreviations ; sh:name "abbreviations" ; sh:node cr:USDM_AbbreviationEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-administrableProducts ; sh:name "administrableProducts" ; sh:node cr:USDM_AdministrableProductEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-amendments ; sh:name "amendments" ; sh:node cr:USDM_StudyAmendmentEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-bcCategories ; sh:name "bcCategories" ; sh:node cr:USDM_BiomedicalConceptCategoryEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-bcSurrogates ; sh:name "bcSurrogates" ; sh:node cr:USDM_BiomedicalConceptSurrogateEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-biomedicalConcepts ; sh:name "biomedicalConcepts" ; sh:node cr:USDM_BiomedicalConceptEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-businessTherapeuticAreas ; sh:name "businessTherapeuticAreas" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-conditions ; sh:name "conditions" ; sh:node cr:USDM_ConditionEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-dateValues ; sh:name "dateValues" ; sh:node cr:USDM_GovernanceDateEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-dictionaries ; sh:name "dictionaries" ; sh:node cr:USDM_SyntaxTemplateDictionaryEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-eligibilityCriterionItems ; sh:name "eligibilityCriterionItems" ; sh:node cr:USDM_EligibilityCriterionItemEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-medicalDevices ; sh:name "medicalDevices" ; sh:node cr:USDM_MedicalDeviceEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-narrativeContentItems ; sh:name "narrativeContentItems" ; sh:node cr:USDM_NarrativeContentItemEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-notes ; sh:name "notes" ; sh:node cr:USDM_CommentAnnotationEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-organizations ; sh:name "organizations" ; sh:node cr:USDM_OrganizationEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-productOrganizationRoles ; sh:name "productOrganizationRoles" ; sh:node cr:USDM_ProductOrganizationRoleEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-referenceIdentifiers ; sh:name "referenceIdentifiers" ; sh:node cr:USDM_ReferenceIdentifierEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-roles ; sh:name "roles" ; sh:node cr:USDM_StudyRoleEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-studyIdentifiers ; sh:name "studyIdentifiers" ; sh:node cr:USDM_StudyIdentifierEntityView ; sh:minCount 1 ] ;
+    sh:property [ sh:path usdm:StudyVersion-studyInterventions ; sh:name "studyInterventions" ; sh:node cr:USDM_StudyInterventionEntityView ] ;
+    sh:property [ sh:path usdm:StudyVersion-titles ; sh:name "titles" ; sh:node cr:USDM_StudyTitleEntityView ; sh:minCount 1 ] .
+
+cr:USDM_SubjectEnrollmentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:SubjectEnrollment ;
+    rdfs:label "SubjectEnrollment" ;
+    rdfs:comment "The act of enrolling subjects into a study. The subject will have met the inclusion/exclusion criteria to participate in the trial and will have signed an informed consent form. (CDISC Glossary)" ;
+    sh:property [ sh:path usdm:SubjectEnrollment-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-forGeographicScope ; sh:name "forGeographicScope" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-forStudyCohortId ; sh:name "forStudyCohortId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-forStudySiteId ; sh:name "forStudySiteId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:SubjectEnrollment-quantity ; sh:name "quantity" ; sh:node cr:USDM_QuantityEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_SubstanceEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Substance ;
+    rdfs:label "Substance" ;
+    rdfs:comment "Any matter of defined composition that has discrete existence, whose origin may be biological, mineral or chemical." ;
+    sh:property [ sh:path usdm:Substance-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Substance-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Substance-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Substance-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Substance-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Substance-referenceSubstance ; sh:name "referenceSubstance" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Substance-codes ; sh:name "codes" ; sh:node cr:USDM_CodeEntityView ] ;
+    sh:property [ sh:path usdm:Substance-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Substance-strengths ; sh:name "strengths" ; sh:node cr:USDM_StrengthEntityView ; sh:minCount 1 ] .
+
+cr:USDM_SyntaxTemplateDictionaryEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:SyntaxTemplateDictionary ;
+    rdfs:label "SyntaxTemplateDictionary" ;
+    rdfs:comment "A reference source that provides a listing of valid parameter names and values used in syntax template text strings." ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:SyntaxTemplateDictionary-parameterMaps ; sh:name "parameterMaps" ; sh:node cr:USDM_ParameterMapEntityView ; sh:minCount 1 ] .
+
+cr:USDM_TimingEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Timing ;
+    rdfs:label "Timing" ;
+    rdfs:comment "The chronological relationship between temporal events." ;
+    sh:property [ sh:path usdm:Timing-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Timing-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Timing-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-relativeFromScheduledInstanceId ; sh:name "relativeFromScheduledInstanceId" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-relativeToScheduledInstanceId ; sh:name "relativeToScheduledInstanceId" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-value ; sh:name "value" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-valueLabel ; sh:name "valueLabel" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-windowLabel ; sh:name "windowLabel" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-windowLower ; sh:name "windowLower" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-windowUpper ; sh:name "windowUpper" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] ;
+    sh:property [ sh:path usdm:Timing-relativeToFrom ; sh:name "relativeToFrom" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Timing-type ; sh:name "type" ; sh:node cr:USDM_CodeEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+cr:USDM_TransitionRuleEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:TransitionRule ;
+    rdfs:label "TransitionRule" ;
+    rdfs:comment "A guide that governs the allocation of subjects to operational options at a discrete decision point or branch (e.g., assignment to a particular arm, discontinuation) within a clinical trial plan." ;
+    sh:property [ sh:path usdm:TransitionRule-description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:TransitionRule-id ; sh:name "id" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:TransitionRule-instanceType ; sh:name "instanceType" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:TransitionRule-label ; sh:name "label" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:TransitionRule-name ; sh:name "name" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:TransitionRule-text ; sh:name "text" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:TransitionRule-extensionAttributes ; sh:name "extensionAttributes" ; sh:node cr:USDM_ExtensionAttributeEntityView ] .
+
+cr:USDM_WrapperEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass usdm:Wrapper ;
+    rdfs:label "Wrapper" ;
+    sh:property [ sh:path usdm:Wrapper-systemName ; sh:name "systemName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ] ;
+    sh:property [ sh:path usdm:Wrapper-systemVersion ; sh:name "systemVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Wrapper-usdmVersion ; sh:name "usdmVersion" ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path usdm:Wrapper-study ; sh:name "study" ; sh:node cr:USDM_StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+# The Protocol object projects into the entirety of USDM from this root.
+cr:ProtocolEntityView cr:usdmProjection cr:USDM_StudyDefinitionDocumentEntityView .

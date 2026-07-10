@@ -1,0 +1,61 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Enrollment can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:EnrollmentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Enrollment ;
+    rdfs:label "Enrollment" ;
+    cr:catalogNumber 20 ;
+    sh:property [ sh:path cr:enrollmentId ; sh:name "enrollmentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:enrollmentNumber ; sh:name "enrollmentNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Sequence within study." ] ;
+    sh:property [ sh:path cr:randomizationNumber ; sh:name "randomizationNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Randomization id." ] ;
+    sh:property [ sh:path cr:enrollmentStatus ; sh:name "enrollmentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: SCREENED, ENROLLED, SCREEN_FAILED, WITHDRAWN." ] ;
+    sh:property [ sh:path cr:enrollmentDate ; sh:name "enrollmentDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Enrollment date." ] ;
+    sh:property [ sh:path cr:enrollmentMethod ; sh:name "enrollmentMethod" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ON_SITE, REMOTE, HYBRID." ] ;
+    sh:property [ sh:path cr:recruitingChannel ; sh:name "recruitingChannel" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: EHR_QUERY, REGISTRY, REFERRAL_NETWORK, SOCIAL, COMMUNITY, ADVOCACY, OTHER." ] ;
+    sh:property [ sh:path cr:eligibilityConfirmationDate ; sh:name "eligibilityConfirmationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Eligibility confirmed." ] ;
+    sh:property [ sh:path cr:screeningFailureReason ; sh:name "screeningFailureReason" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Reason if screen-failed." ] ;
+    sh:property [ sh:path cr:withdrawalDate ; sh:name "withdrawalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Withdrawal date." ] ;
+    sh:property [ sh:path cr:withdrawalReason ; sh:name "withdrawalReason" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Reason." ] ;
+    sh:property [ sh:path cr:protocolVersionAtEnrollment ; sh:name "protocolVersionAtEnrollment" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Protocol version active at enrollment." ] ;
+    sh:property [ sh:path cr:investigatorSignatureDate ; sh:name "investigatorSignatureDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: PI signature date." ] ;
+    sh:property [ sh:path cr:enrollmentVerificationStatus ; sh:name "enrollmentVerificationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PENDING, VERIFIED, DISPUTED." ] ;
+    sh:property [ sh:path cr:stratificationFactors ; sh:name "stratificationFactors" ; rdfs:comment "object: Stratification key-values." ] ;
+    sh:property [ sh:path cr:firstDoseDate ; sh:name "firstDoseDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: First dose." ] ;
+    sh:property [ sh:path cr:lastDoseDate ; sh:name "lastDoseDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Last dose." ] ;
+    sh:property [ sh:path cr:treatmentArmAssignment ; sh:name "treatmentArmAssignment" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Arm id." ] ;
+    sh:property [ sh:path cr:enrollmentInCompetingStudyStatus ; sh:name "enrollmentInCompetingStudyStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NONE, DISCLOSED, BLOCKED." ] ;
+    sh:property [ sh:path cr:priorStudyParticipationStatus ; sh:name "priorStudyParticipationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NAIVE, PRIOR_PARTICIPANT." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:eligibilityConfirmedBy ; sh:name "eligibilityConfirmedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Confirming PI or coordinator." ] ;
+    sh:property [ sh:path cr:enrollmentVerifiedBy ; sh:name "enrollmentVerifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Verifier." ] ;
+    sh:property [ sh:path cr:enrollmentVerificationDate ; sh:name "enrollmentVerificationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: Verification date." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Site." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Participant." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Informed Consent" ; sh:node cr:InformedConsentEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Consent." ] ;
+    sh:property [ sh:path cr:assesses ; sh:name "assesses -> Inclusion Criteria" ; sh:node cr:InclusionCriteriaEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Inclusion assessments." ] ;
+    sh:property [ sh:path cr:assesses ; sh:name "assesses -> Exclusion Criteria" ; sh:node cr:ExclusionCriteriaEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Exclusion assessments." ] ;
+    sh:property [ sh:path cr:observedAt ; sh:name "observedAt -> Visit" ; sh:node cr:VisitEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Enrollment visit." ] ;
+    sh:property [ sh:path cr:hasCRFs ; sh:name "hasCRFs -> CRF" ; sh:node cr:CRFEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Enrollment CRFs." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Deviations." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Source docs." ] ;
+    sh:property [ sh:path cr:hasLabResults ; sh:name "hasLabResults -> Lab Results" ; sh:node cr:LabResultsEntityView ; rdfs:comment "[0..N] Eligibility labs." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

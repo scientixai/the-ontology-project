@@ -1249,6 +1249,45 @@ Two post-acceptance corrections (see RFC 0001, Correction):
 ---
 
 
+## ADR-0026: The reference entity-view corpus — exhaustive per-object menus, the identity set, and arrangement as an application record
+
+Date: 2026-07-10
+Status: Accepted
+Source: design thread continuing RFC 0001 / ADR-0025.
+
+### Context
+
+ADR-0025 adopted the OOUX catalog as the operator-facing projection and named a "Graph layer" built from curated forward-inline retrieval views, with "`cr:StudyView` plus the other missing views" as follow-on. Two questions stayed open: how much of an object a view should express, and where the judgment of what matters lives. Working through them reframed both.
+
+The unit is the object, and each object's view must be **exhaustive**: it exposes every relationship the catalog declares for that object, with its cardinality, not a curated subset. But an exhaustive Study carries 46 relationships; rendered flat it is unreadable — and that flatness is the point. The commons cannot say enrolment matters more than payments, because for one persona on one day it does not. Prominence, ordering, depth, and role scoping are a judgment a specific person makes on a specific day; they are not facts about the object, so they do not belong in a reference graph. From the design thread: *"provide the full recipe of all the elements that can be expressed in a view, but the adapted layer and the ephemeral application can pick, choose, and prioritize those as the operator needs."* That arrangement is recorded in the consumer's runtime graph under the bitemporal envelope: roll the clock back a month and an element the app had dropped is absent; roll forward and it returns — exact recall of the page as it was arranged on that day, by that person. Reference, not runtime (ADR-0025 Correction; first-principles §9).
+
+A sub-object expressed in a view is a **pointer, never an inlining**: *"embedded sub-objects within a view should just be pointers."* A pointer resolves to the sub-object's own view. Its depth-0 render is the target's **identity set** — *"the minimal set of fields that is its identity"* — the fields that identify it anywhere it appears. Going deeper is navigation, not expansion; this is what keeps an exhaustive corpus finite (a Study points to a Site that points back to the Study without the page trying to render the whole graph).
+
+### Decision
+
+1. **A reference entity-view corpus.** One `cr:<Object>EntityView` per OOUX object, one file per object under `cr-domain/views/entity/`, generated deterministically from the catalog by `tools/gen_entity_views.py`. Each view is the exhaustive, flat menu of what the object can express: attributes (`sh:datatype`), provenance metadata (`cr:isMetadata`), and relationships as pointers (`sh:node`) to other objects' views, with native SHACL cardinality (`sh:minCount`/`sh:maxCount`) read from the catalog. 78 views, 1271 attributes, 969 relationships.
+2. **One new primitive: the identity set.** `cr:isIdentity` marks the property shapes that are an object's minimal identity — the depth-0 render of any pointer to it. Everything else is native SHACL: a pointer is `sh:node`, an attribute is `sh:datatype`, cardinality is `sh:minCount`/`maxCount`. The view vocabulary (`cr:EntityView`, `cr:isIdentity`, `cr:isMetadata`, `cr:catalogNumber`, `cr:usdmProjection`) lives in the views layer (`views/entity/_schema.ttl`), not the T-box: it describes the view recipe, not the domain.
+3. **No arrangement in the commons.** The corpus carries no prominence, rank, ordering, or role scoping. That is an application concern, authored per person per day and stored in the consumer's runtime graph under the bitemporal envelope, so it is replayable by date. TOP provides the complete menu; the application picks, orders, and scopes. Role splits cleanly: role → *action authorization* stays a fact (`hcls:authorizedAgentType`, cr-core-actions.ttl); role → *view arrangement* is a preference and lives in the app record.
+4. **Protocol is USDM.** `cr:ProtocolEntityView` is linked (`cr:usdmProjection`) to an exhaustive USDM structural menu: the entire vendored CDISC USDM v4.0 (81 classes) rendered into the same entity-view pattern by `tools/gen_usdm_views.py` (`cr:USDM_<Class>EntityView`, object properties as pointers, cardinality from the USDM `owl:Restriction`s). The Protocol page can traverse the entirety of USDM; the viewer does not limit the operator.
+5. **Guarded, not constrained.** A structural, non-recursive test (`run_tests.py`, "entity-view") asserts every file parses, the vocabulary is declared, every view has a `sh:targetClass`, properties, and a non-empty identity set, and every pointer resolves to an entity view. The corpus is a reference recipe, not a runtime shape, so it is not validated as a SHACL constraint against fixtures.
+
+Relationship to ADR-0025: this **refines the Graph layer**. Where 0025 described a curated, monitoring-relevant subset walked by `ngsild_view.py`, this makes the per-object menu exhaustive and relocates the "curated subset" judgment to the application as a dated arrangement record. The existing `views/operator-views.ttl` single-pull retrieval views are unchanged and remain the operational retrieval layer; the new corpus is the reference menu. `cr:StudyView`, named as follow-on in 0025, ships here as `cr:StudyEntityView`.
+
+### Consequences
+
+- The generic viewer stays as dumb as possible: it reads an object's exhaustive menu plus the application's dated arrangement, composes, and obeys. No per-type logic; importance lives in data (the app record), not code.
+- Every OOUX object has a machine-readable, exhaustive view; adding a relationship to the catalog and regenerating adds a pointer with no viewer change.
+- 92 relationship targets reference finer-grained sub-objects the catalog does not yet define (Batch, Objective, Consent Element, …); their pointers are minted and reported by the generator, and resolve additively as those objects are added.
+- The corpus is generated and byte-reproducible; the generators are the reviewable logic. Hand-edits are out of contract — regenerate instead.
+- USDM is a mechanical projection of CDISC's CC-BY-4.0 model, not TOP-owned; the menu is a reference recipe over it.
+
+### Status
+
+Accepted 2026-07-10. Ships with: `cr-domain/tools/gen_entity_views.py`, `cr-domain/tools/gen_usdm_views.py`, `cr-domain/views/entity/` (`_schema.ttl` + 78 object views + `usdm.ttl`), and the `run_tests.py` "entity-view" gate.
+
+---
+
+
 ## How to add an ADR
 
 1. Pick the next number in sequence.

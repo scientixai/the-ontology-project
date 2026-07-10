@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Safety Report can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:SafetyReportEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:SafetyReport ;
+    rdfs:label "Safety Report" ;
+    cr:catalogNumber 73 ;
+    sh:property [ sh:path cr:safetyReportId ; sh:name "safetyReportId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:reportType ; sh:name "reportType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: dsur, pbrer, ind_safety_report, annual_safety_report, iciar, other." ] ;
+    sh:property [ sh:path cr:reportingPeriodStart ; sh:name "reportingPeriodStart" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Start." ] ;
+    sh:property [ sh:path cr:reportingPeriodEnd ; sh:name "reportingPeriodEnd" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: End." ] ;
+    sh:property [ sh:path cr:preparedByOrganizationId ; sh:name "preparedByOrganizationId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Preparer org." ] ;
+    sh:property [ sh:path cr:submittedToAuthorities ; sh:name "submittedToAuthorities" ; rdfs:comment "list\\[string\\]: Authorities." ] ;
+    sh:property [ sh:path cr:reportStatus ; sh:name "reportStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: in_preparation, submitted, accepted, questioned." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:forStudy ; sh:name "forStudy -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies." ] ;
+    sh:property [ sh:path cr:forIP ; sh:name "forIP -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] IP." ] ;
+    sh:property [ sh:path cr:aggregatesAE ; sh:name "aggregatesAE -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs." ] ;
+    sh:property [ sh:path cr:aggregatesSAE ; sh:name "aggregatesSAE -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs." ] ;
+    sh:property [ sh:path cr:aggregatesSignal ; sh:name "aggregatesSignal -> Safety Signal" ; sh:node cr:SafetySignalEntityView ; rdfs:comment "[0..N] Signals." ] ;
+    sh:property [ sh:path cr:submittedIn ; sh:name "submittedIn -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] ;
+    sh:property [ sh:path cr:reviewedBy ; sh:name "reviewedBy -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; rdfs:comment "[0..N] Oversight." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Report files." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

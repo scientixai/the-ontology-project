@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Storage Location can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:StorageLocationEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:StorageLocation ;
+    rdfs:label "Storage Location" ;
+    cr:catalogNumber 78 ;
+    sh:property [ sh:path cr:storageLocationId ; sh:name "storageLocationId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:siteId ; sh:name "siteId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Host site." ] ;
+    sh:property [ sh:path cr:locationName ; sh:name "locationName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:storageType ; sh:name "storageType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: freezer, refrigerator, room_temperature, controlled_temperature, cryogenic, pharmacy_vault, biobank." ] ;
+    sh:property [ sh:path cr:targetTemperatureC ; sh:name "targetTemperatureC" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "decimal, optional: Target temperature." ] ;
+    sh:property [ sh:path cr:toleranceTemperatureC ; sh:name "toleranceTemperatureC" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "decimal, optional: Tolerance." ] ;
+    sh:property [ sh:path cr:capacityUnits ; sh:name "capacityUnits" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Capacity." ] ;
+    sh:property [ sh:path cr:usedUnits ; sh:name "usedUnits" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Used." ] ;
+    sh:property [ sh:path cr:monitoringSystemId ; sh:name "monitoringSystemId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Monitoring system." ] ;
+    sh:property [ sh:path cr:locationStatus ; sh:name "locationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: in_service, out_of_service, retired." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:atSite ; sh:name "atSite -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Host site." ] ;
+    sh:property [ sh:path cr:stores ; sh:name "stores -> Sample" ; sh:node cr:SampleEntityView ; rdfs:comment "[0..N] Samples stored." ] ;
+    sh:property [ sh:path cr:stores ; sh:name "stores -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP stored." ] ;
+    sh:property [ sh:path cr:stores ; sh:name "stores -> Equipment" ; sh:node cr:EquipmentEntityView ; rdfs:comment "[0..N] Equipment stored." ] ;
+    sh:property [ sh:path cr:monitoredBy ; sh:name "monitoredBy -> System" ; sh:node cr:SystemEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Monitoring system." ] ;
+    sh:property [ sh:path cr:hasLog ; sh:name "hasLog -> Log" ; sh:node cr:LogEntityView ; rdfs:comment "[0..N] Temperature logs." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

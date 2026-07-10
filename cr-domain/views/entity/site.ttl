@@ -1,0 +1,129 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Site can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:SiteEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Site ;
+    rdfs:label "Site" ;
+    cr:catalogNumber 1 ;
+    sh:property [ sh:path cr:siteId ; sh:name "siteId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique, NGSI-LD URI: Globally unique identifier (urn:ngsi-ld:Site:...)." ] ;
+    sh:property [ sh:path cr:siteNumber ; sh:name "siteNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, unique-within-study: Sponsor-issued numeric or alphanumeric site identifier scoped to a Study." ] ;
+    sh:property [ sh:path cr:siteName ; sh:name "siteName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name of the site." ] ;
+    sh:property [ sh:path cr:legalName ; sh:name "legalName" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Legal name of the institution operating the site." ] ;
+    sh:property [ sh:path cr:ctgovFacilityId ; sh:name "ctgovFacilityId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: ClinicalTrials dot gov facility identifier where applicable." ] ;
+    sh:property [ sh:path cr:fhirOrganizationId ; sh:name "fhirOrganizationId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: FHIR Organization.id reference for downstream FHIR projection." ] ;
+    sh:property [ sh:path cr:siteType ; sh:name "siteType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: HOSPITAL, CLINIC, ACADEMIC_MEDICAL_CENTER, RESEARCH_CENTER, COMMUNITY_PRACTICE, DECENTRALIZED_HUB, VIRTUAL." ] ;
+    sh:property [ sh:path cr:parentNetworkId ; sh:name "parentNetworkId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Reference to a parent Network or System (for site networks and SMOs)." ] ;
+    sh:property [ sh:path cr:siteStatus ; sh:name "siteStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: PLANNED, FEASIBILITY, SELECTED, IN_STARTUP, READY_TO_INITIATE, ACTIVE, ON_HOLD, CLOSED_TO_ENROLLMENT, CLOSED." ] ;
+    sh:property [ sh:path cr:address ; sh:name "address" ; rdfs:comment "object {line1, line2, city, region, postalCode}: Postal address." ] ;
+    sh:property [ sh:path cr:country ; sh:name "country" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, ISO 3166-1 alpha-3: Country code (used for regulatory and reporting jurisdiction)." ] ;
+    sh:property [ sh:path cr:region ; sh:name "region" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: Sponsor-defined region grouping (e.g., NORAM, EMEA, APAC, LATAM)." ] ;
+    sh:property [ sh:path cr:timezone ; sh:name "timezone" ; rdfs:comment "IANA timezone string: Local timezone (e.g., America/Chicago)." ] ;
+    sh:property [ sh:path cr:regulatoryAuthority ; sh:name "regulatoryAuthority" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, ISO-coded: Primary regulatory authority for the site (FDA, EMA, MHRA, PMDA, NMPA, ANVISA, others)." ] ;
+    sh:property [ sh:path cr:languagesSupported ; sh:name "languagesSupported" ; rdfs:comment "array of BCP-47 codes: Languages the site can support for consent and conduct." ] ;
+    sh:property [ sh:path cr:facilityCapabilities ; sh:name "facilityCapabilities" ; rdfs:comment "array<enum>: INPATIENT, OUTPATIENT, ICU, ED, INFUSION, IMAGING_MRI, IMAGING_CT, IMAGING_PET, RADIOPHARMACY, NUCLEAR_MEDICINE, SURGERY, ENDOSCOPY, GENOMICS_LAB, BIOSPECIMEN_PROCESSING." ] ;
+    sh:property [ sh:path cr:therapeuticExperience ; sh:name "therapeuticExperience" ; rdfs:comment "array<enum>: Therapeutic areas with prior trial experience (ONCOLOGY, CARDIOLOGY, NEUROLOGY, IMMUNOLOGY, RARE_DISEASE, etc.)." ] ;
+    sh:property [ sh:path cr:investigationalProductHandling ; sh:name "investigationalProductHandling" ; rdfs:comment "array<enum>: IP modalities the site can handle: SMALL_MOLECULE, BIOLOGIC, CELL_THERAPY, GENE_THERAPY, RADIOLIGAND, DEVICE." ] ;
+    sh:property [ sh:path cr:storageCapability ; sh:name "storageCapability" ; rdfs:comment "object: Pharmacy and biospecimen storage profile: ambient, 2 to 8 C, minus 20 C, minus 80 C, liquid nitrogen; controlled substance vault; backup power." ] ;
+    sh:property [ sh:path cr:onSiteLab ; sh:name "onSiteLab" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NONE, BASIC, FULL_CLIA, FULL_CAP." ] ;
+    sh:property [ sh:path cr:imagingDevices ; sh:name "imagingDevices" ; rdfs:comment "array<object>: List of relevant imaging assets and their certifications." ] ;
+    sh:property [ sh:path cr:bedCount ; sh:name "bedCount" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, optional: Inpatient bed count where relevant." ] ;
+    sh:property [ sh:path cr:operatingHours ; sh:name "operatingHours" ; rdfs:comment "object: Standard operating hours by day of week." ] ;
+    sh:property [ sh:path cr:afterHoursContact ; sh:name "afterHoursContact" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, encrypted reference: Reference to encrypted after-hours contact record." ] ;
+    sh:property [ sh:path cr:decentralizedTrialReadiness ; sh:name "decentralizedTrialReadiness" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NONE, PARTIAL, FULL (supports remote consent, home health, televisits, direct-to-patient IP shipping)." ] ;
+    sh:property [ sh:path cr:homeHealthVendor ; sh:name "homeHealthVendor" ; rdfs:comment "array<string>: Home health vendors the site has agreements with." ] ;
+    sh:property [ sh:path cr:recruitmentChannels ; sh:name "recruitmentChannels" ; rdfs:comment "array<enum>: EHR_QUERY, REGISTRY, REFERRAL_NETWORK, SOCIAL, PATIENT_ADVOCACY, COMMUNITY_OUTREACH." ] ;
+    sh:property [ sh:path cr:backupSiteId ; sh:name "backupSiteId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Designated backup site for participant continuity." ] ;
+    sh:property [ sh:path cr:gcpCompliance ; sh:name "gcpCompliance" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: COMPLIANT, NONCOMPLIANT, UNDER_REVIEW." ] ;
+    sh:property [ sh:path cr:lastFdaInspectionDate ; sh:name "lastFdaInspectionDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Most recent FDA bioresearch monitoring inspection." ] ;
+    sh:property [ sh:path cr:lastFdaInspectionOutcome ; sh:name "lastFdaInspectionOutcome" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, optional: NAI, VAI, OAI (no action indicated, voluntary action indicated, official action indicated)." ] ;
+    sh:property [ sh:path cr:lastSponsorAuditDate ; sh:name "lastSponsorAuditDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Most recent sponsor audit date." ] ;
+    sh:property [ sh:path cr:openCAPACount ; sh:name "openCAPACount" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Number of open CAPAs at the site (denormalised for dashboards)." ] ;
+    sh:property [ sh:path cr:gdprApplicability ; sh:name "gdprApplicability" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Whether GDPR governs personal data at the site." ] ;
+    sh:property [ sh:path cr:hipaaApplicability ; sh:name "hipaaApplicability" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Whether HIPAA governs PHI at the site." ] ;
+    sh:property [ sh:path cr:part11Compliant ; sh:name "part11Compliant" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: 21 CFR Part 11 compliance posture for site-managed systems." ] ;
+    sh:property [ sh:path cr:principalInvestigatorId ; sh:name "principalInvestigatorId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, NGSI-LD relationship target: PI of record at this site for this study; modelled as a Relationship to Investigator." ] ;
+    sh:property [ sh:path cr:subInvestigatorIds ; sh:name "subInvestigatorIds" ; rdfs:comment "array<string>: Sub-investigators delegated by the PI; relationship targets." ] ;
+    sh:property [ sh:path cr:studyCoordinatorIds ; sh:name "studyCoordinatorIds" ; rdfs:comment "array<string>: Coordinator personnel; relationship targets." ] ;
+    sh:property [ sh:path cr:pharmacistIds ; sh:name "pharmacistIds" ; rdfs:comment "array<string>: Investigational pharmacist personnel." ] ;
+    sh:property [ sh:path cr:regulatoryContactId ; sh:name "regulatoryContactId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Site regulatory contact." ] ;
+    sh:property [ sh:path cr:staffHeadcount ; sh:name "staffHeadcount" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Total clinical research staff at the site." ] ;
+    sh:property [ sh:path cr:staffTrainingCompletionRate ; sh:name "staffTrainingCompletionRate" ; rdfs:comment "percentage: Percent of required trainings completed." ] ;
+    sh:property [ sh:path cr:masterServiceAgreementId ; sh:name "masterServiceAgreementId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Site-sponsor MSA reference." ] ;
+    sh:property [ sh:path cr:clinicalTrialAgreementId ; sh:name "clinicalTrialAgreementId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Per-study CTA reference." ] ;
+    sh:property [ sh:path cr:budgetId ; sh:name "budgetId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Per-study site budget." ] ;
+    sh:property [ sh:path cr:paymentTermsDays ; sh:name "paymentTermsDays" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Net payment terms (e.g., 30, 45, 60)." ] ;
+    sh:property [ sh:path cr:paymentCurrency ; sh:name "paymentCurrency" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, ISO 4217: Currency for site payments." ] ;
+    sh:property [ sh:path cr:indirectCostRate ; sh:name "indirectCostRate" ; rdfs:comment "percentage: Indirect cost or institutional overhead rate." ] ;
+    sh:property [ sh:path cr:coverageAnalysisStatus ; sh:name "coverageAnalysisStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NOT_STARTED, IN_PROGRESS, COMPLETE; required for US sites with billable items." ] ;
+    sh:property [ sh:path cr:ehrSystem ; sh:name "ehrSystem" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Primary EHR (e.g., Epic, Cerner, Meditech)." ] ;
+    sh:property [ sh:path cr:ehrIntegrationStatus ; sh:name "ehrIntegrationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NONE, READ_ONLY, BIDIRECTIONAL, FHIR_API." ] ;
+    sh:property [ sh:path cr:edcSystemIds ; sh:name "edcSystemIds" ; rdfs:comment "array<string>: EDC systems used at the site for sponsor studies." ] ;
+    sh:property [ sh:path cr:ctmsId ; sh:name "ctmsId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: CTMS identifier where the site is recorded." ] ;
+    sh:property [ sh:path cr:eRegSystem ; sh:name "eRegSystem" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: eRegulatory binder system (e.g., Florence, Veeva SiteVault)." ] ;
+    sh:property [ sh:path cr:esourceCapability ; sh:name "esourceCapability" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: Whether site supports eSource data capture." ] ;
+    sh:property [ sh:path cr:integrationProfiles ; sh:name "integrationProfiles" ; rdfs:comment "array<object>: Active integration profiles (HL7, FHIR R4/R5, NGSI-LD subscriptions)." ] ;
+    sh:property [ sh:path cr:catchmentPopulationSize ; sh:name "catchmentPopulationSize" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, optional: Estimated catchment population for screening." ] ;
+    sh:property [ sh:path cr:payerMix ; sh:name "payerMix" ; rdfs:comment "object: Insurance payer mix percentages." ] ;
+    sh:property [ sh:path cr:patientDemographicProfile ; sh:name "patientDemographicProfile" ; rdfs:comment "object: Aggregate demographic distribution served by the site." ] ;
+    sh:property [ sh:path cr:historicalEnrollmentRate ; sh:name "historicalEnrollmentRate" ; sh:datatype xsd:decimal ; sh:maxCount 1 ; rdfs:comment "number: Average participants enrolled per month per study at this site." ] ;
+    sh:property [ sh:path cr:historicalScreenFailRate ; sh:name "historicalScreenFailRate" ; rdfs:comment "percentage: Average screen fail rate." ] ;
+    sh:property [ sh:path cr:languageAccessSupport ; sh:name "languageAccessSupport" ; rdfs:comment "array<string>: On-site interpreters and translation services available." ] ;
+    sh:property [ sh:path cr:accessibilityProfile ; sh:name "accessibilityProfile" ; rdfs:comment "object: ADA and equivalent accessibility features." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: NGSI-LD entity creation timestamp." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Last modification timestamp." ] ;
+    sh:property [ sh:path cr:createdBy ; sh:name "createdBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Person identifier of creator." ] ;
+    sh:property [ sh:path cr:modifiedBy ; sh:name "modifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Person identifier of last modifier." ] ;
+    sh:property [ sh:path cr:source ; sh:name "source" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "enum: MANUAL, FEASIBILITY_IMPORT, CTMS_SYNC, EHR_SYNC." ] ;
+    sh:property [ sh:path cr:dataQualityFlags ; sh:name "dataQualityFlags" ; cr:isMetadata true ; rdfs:comment "array<enum>: Quality issues observed (MISSING_PI, EXPIRED_CTA, OVERDUE_TRAINING, etc.)." ] ;
+    sh:property [ sh:path cr:ngsiLdContext ; sh:name "ngsi-ld@context" ; cr:isMetadata true ; rdfs:comment "URI: JSON-LD context describing site vocabulary." ] ;
+    sh:property [ sh:path cr:hasPrincipalInvestigator ; sh:name "hasPrincipalInvestigator -> Investigator" ; sh:node cr:InvestigatorEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Per study; PI is now a first-class relationship target rather than a typed Person." ] ;
+    sh:property [ sh:path cr:hasSubInvestigators ; sh:name "hasSubInvestigators -> Investigator" ; sh:node cr:InvestigatorEntityView ; rdfs:comment "[0..N] Delegated sub-investigators." ] ;
+    sh:property [ sh:path cr:hasStaff ; sh:name "hasStaff -> Person" ; sh:node cr:PersonEntityView ; rdfs:comment "[0..N] All site-affiliated personnel (coordinators, pharmacists, regulatory)." ] ;
+    sh:property [ sh:path cr:participatesIn ; sh:name "participatesIn -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] A site can participate in multiple studies for multiple sponsors." ] ;
+    sh:property [ sh:path cr:conductedBy ; sh:name "conductedBy -> Sponsor" ; sh:node cr:SponsorEntityView ; rdfs:comment "[0..N] Sponsors with active engagements at the site." ] ;
+    sh:property [ sh:path cr:operatedBy ; sh:name "operatedBy -> Organization" ; sh:node cr:OrganizationEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] The legal institution operating the site." ] ;
+    sh:property [ sh:path cr:memberOf ; sh:name "memberOf -> Network" ; sh:node cr:NetworkEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site network or SMO membership; flagged as a missing object below." ] ;
+    sh:property [ sh:path cr:locatedIn ; sh:name "locatedIn -> Country" ; sh:node cr:CountryEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Country of location; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:locatedIn ; sh:name "locatedIn -> Region" ; sh:node cr:RegionEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Sponsor-defined region grouping; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:enrolls ; sh:name "enrolls -> Participant" ; sh:node cr:ParticipantEntityView ; rdfs:comment "[0..N] Participants screened or enrolled at the site." ] ;
+    sh:property [ sh:path cr:hosts ; sh:name "hosts -> Visit" ; sh:node cr:VisitEntityView ; rdfs:comment "[0..N] Visits conducted at the site (in-person or hybrid)." ] ;
+    sh:property [ sh:path cr:holdsAgreement ; sh:name "holdsAgreement -> Contract" ; sh:node cr:ContractEntityView ; rdfs:comment "[0..N] CTA, MSA, confidentiality and material transfer agreements scoped to the site." ] ;
+    sh:property [ sh:path cr:operatesUnderBudget ; sh:name "operatesUnderBudget -> Budget" ; sh:node cr:BudgetEntityView ; rdfs:comment "[0..N] Site-specific budgets (one per study typically)." ] ;
+    sh:property [ sh:path cr:receivesPayment ; sh:name "receivesPayment -> Payment" ; sh:node cr:PaymentEntityView ; rdfs:comment "[0..N] Payments received by the site." ] ;
+    sh:property [ sh:path cr:overseenBy ; sh:name "overseenBy -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; rdfs:comment "[0..N] IRB or EC of record for the site." ] ;
+    sh:property [ sh:path cr:hasTherapeuticExperience ; sh:name "hasTherapeuticExperience -> Therapeutic Area" ; sh:node cr:TherapeuticAreaEntityView ; rdfs:comment "[0..N] Areas in which the site has prior experience; flagged as a missing object below." ] ;
+    sh:property [ sh:path cr:holdsCredentials ; sh:name "holdsCredentials -> Credential" ; sh:node cr:CredentialEntityView ; rdfs:comment "[0..N] Site-level credentials (e.g., CAP, CLIA, GCP organisational training)." ] ;
+    sh:property [ sh:path cr:operatesEquipment ; sh:name "operatesEquipment -> Equipment" ; sh:node cr:EquipmentEntityView ; rdfs:comment "[0..N] Equipment registered to the site." ] ;
+    sh:property [ sh:path cr:usesSystem ; sh:name "usesSystem -> System" ; sh:node cr:SystemEntityView ; rdfs:comment "[0..N] Systems the site uses or integrates with (EHR, EDC, CTMS, eReg)." ] ;
+    sh:property [ sh:path cr:receivesShipment ; sh:name "receivesShipment -> Shipment" ; sh:node cr:ShipmentEntityView ; rdfs:comment "[0..N] Inbound shipments of IP, kits, devices." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries originating from or about site data." ] ;
+    sh:property [ sh:path cr:reports ; sh:name "reports -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Deviations occurring at the site." ] ;
+    sh:property [ sh:path cr:reports ; sh:name "reports -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] Adverse events recorded at the site." ] ;
+    sh:property [ sh:path cr:reports ; sh:name "reports -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs recorded at the site." ] ;
+    sh:property [ sh:path cr:receives ; sh:name "receives -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; rdfs:comment "[0..N] Monitoring visits hosted by the site." ] ;
+    sh:property [ sh:path cr:undergoes ; sh:name "undergoes -> Audit" ; sh:node cr:AuditEntityView ; rdfs:comment "[0..N] Audits performed at the site." ] ;
+    sh:property [ sh:path cr:executes ; sh:name "executes -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs the site is responsible for." ] ;
+    sh:property [ sh:path cr:supplies ; sh:name "supplies -> Sample" ; sh:node cr:SampleEntityView ; rdfs:comment "[0..N] Samples collected at the site." ] ;
+    sh:property [ sh:path cr:holds ; sh:name "holds -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP allocated to the site (drug, biologic, device)." ] ;
+    sh:property [ sh:path cr:hostsTrainings ; sh:name "hostsTrainings -> Training Record" ; sh:node cr:TrainingRecordEntityView ; rdfs:comment "[0..N] Trainings completed by site staff." ] ;
+    sh:property [ sh:path cr:hasConfiguration ; sh:name "hasConfiguration -> System Configuration" ; sh:node cr:SystemConfigurationEntityView ; rdfs:comment "[0..N] Site-scoped configurations of sponsor systems." ] ;
+    sh:property [ sh:path cr:hasConfiguration ; sh:name "hasConfiguration -> Service Configuration" ; sh:node cr:ServiceConfigurationEntityView ; rdfs:comment "[0..N] Site-scoped service configurations." ] ;
+    sh:property [ sh:path cr:hasStartupPackage ; sh:name "hasStartupPackage -> Study Startup Package" ; sh:node cr:StudyStartupPackageEntityView ; rdfs:comment "[0..N] Site-specific startup packages." ] ;
+    sh:property [ sh:path cr:hasUserRoles ; sh:name "hasUserRoles -> User Role" ; sh:node cr:UserRoleEntityView ; rdfs:comment "[0..N] Role assignments scoped to the site." ] ;
+    sh:property [ sh:path cr:producesMetrics ; sh:name "producesMetrics -> Site Performance Metric" ; sh:node cr:SitePerformanceMetricEntityView ; rdfs:comment "[0..N] Aggregated site KPIs (enrollment rate, query age, deviation rate); flagged as a missing object." ] .

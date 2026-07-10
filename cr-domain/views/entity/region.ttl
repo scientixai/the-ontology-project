@@ -1,0 +1,34 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Region can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:RegionEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Region ;
+    rdfs:label "Region" ;
+    cr:catalogNumber 56 ;
+    sh:property [ sh:path cr:regionId ; sh:name "regionId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:regionName ; sh:name "regionName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:regionCode ; sh:name "regionCode" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Code (e.g., NA, EU, APAC)." ] ;
+    sh:property [ sh:path cr:parentRegionId ; sh:name "parentRegionId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Parent region." ] ;
+    sh:property [ sh:path cr:countries ; sh:name "countries" ; rdfs:comment "list\\[string, ISO 3166\\]: Member countries." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Country" ; sh:node cr:CountryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Countries; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites in region." ] ;
+    sh:property [ sh:path cr:monitoredBy ; sh:name "monitoredBy -> Person" ; sh:node cr:PersonEntityView ; rdfs:comment "[0..N] Regional leads." ] ;
+    sh:property [ sh:path cr:governedBy ; sh:name "governedBy -> Sponsor" ; sh:node cr:SponsorEntityView ; rdfs:comment "[0..N] Regional sponsor org units." ] .

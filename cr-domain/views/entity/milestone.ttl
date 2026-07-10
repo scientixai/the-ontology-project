@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Milestone can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:MilestoneEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Milestone ;
+    rdfs:label "Milestone" ;
+    cr:catalogNumber 19 ;
+    sh:property [ sh:path cr:milestoneId ; sh:name "milestoneId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:milestoneName ; sh:name "milestoneName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Name." ] ;
+    sh:property [ sh:path cr:milestoneDescription ; sh:name "milestoneDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:milestoneType ; sh:name "milestoneType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: REGULATORY, ENROLLMENT, TREATMENT, DATA_MANAGEMENT, FINANCIAL, OTHER." ] ;
+    sh:property [ sh:path cr:milestoneCategory ; sh:name "milestoneCategory" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: STARTUP, CONDUCT, CLOSEOUT." ] ;
+    sh:property [ sh:path cr:plannedDate ; sh:name "plannedDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Planned date." ] ;
+    sh:property [ sh:path cr:forecastDate ; sh:name "forecastDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Forecast date." ] ;
+    sh:property [ sh:path cr:actualDate ; sh:name "actualDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Actual date." ] ;
+    sh:property [ sh:path cr:milestoneStatus ; sh:name "milestoneStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: PLANNED, IN_PROGRESS, COMPLETED, DELAYED, CANCELED." ] ;
+    sh:property [ sh:path cr:importance ; sh:name "importance" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: CRITICAL, HIGH, MEDIUM, LOW." ] ;
+    sh:property [ sh:path cr:completionPercentage ; sh:name "completionPercentage" ; rdfs:comment "percentage: Progress." ] ;
+    sh:property [ sh:path cr:milestoneVisibilityLevel ; sh:name "milestoneVisibilityLevel" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SPONSOR_ONLY, SITE_VISIBLE, PUBLIC." ] ;
+    sh:property [ sh:path cr:milestoneTrackingMethod ; sh:name "milestoneTrackingMethod" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: MANUAL, SYSTEM_CALCULATED." ] ;
+    sh:property [ sh:path cr:milestoneFlexibility ; sh:name "milestoneFlexibility" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: FIXED, ADJUSTABLE." ] ;
+    sh:property [ sh:path cr:milestoneDelayReason ; sh:name "milestoneDelayReason" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Delay reason." ] ;
+    sh:property [ sh:path cr:milestoneDelayMitigationPlan ; sh:name "milestoneDelayMitigationPlan" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Mitigation plan." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:createdBy ; sh:name "createdBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Creator." ] ;
+    sh:property [ sh:path cr:lastModifiedDate ; sh:name "lastModifiedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modified." ] ;
+    sh:property [ sh:path cr:lastModifiedBy ; sh:name "lastModifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Modifier." ] ;
+    sh:property [ sh:path cr:lastReviewDate ; sh:name "lastReviewDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: Last review." ] ;
+    sh:property [ sh:path cr:lastReviewedBy ; sh:name "lastReviewedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Last reviewer." ] ;
+    sh:property [ sh:path cr:nextReviewDate ; sh:name "nextReviewDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: Next review." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site (if site-specific)." ] ;
+    sh:property [ sh:path cr:ownedBy ; sh:name "ownedBy -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Owner." ] ;
+    sh:property [ sh:path cr:dependsOn ; sh:name "dependsOn -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Prerequisite milestones." ] ;
+    sh:property [ sh:path cr:enables ; sh:name "enables -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Dependent milestones." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Supporting docs." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:hasActionItems ; sh:name "hasActionItems -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Action items." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Protocol Version" ; sh:node cr:ProtocolVersionEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Protocol version." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Amendment" ; sh:node cr:AmendmentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Amendment." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Submission." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Contract" ; sh:node cr:ContractEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Contract." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Budget" ; sh:node cr:BudgetEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Budget." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Visit." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Endpoint" ; sh:node cr:EndpointEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Endpoint." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Report" ; sh:node cr:ReportEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Report." ] ;
+    sh:property [ sh:path cr:hasNotificationRules ; sh:name "hasNotificationRules -> Notification Rule" ; sh:node cr:NotificationRuleEntityView ; rdfs:comment "[0..N] Notifications." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

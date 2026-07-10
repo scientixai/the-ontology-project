@@ -1,0 +1,40 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Inclusion Criteria can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:InclusionCriteriaEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:InclusionCriteria ;
+    rdfs:label "Inclusion Criteria" ;
+    cr:catalogNumber 52 ;
+    sh:property [ sh:path cr:inclusionCriteriaId ; sh:name "inclusionCriteriaId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:protocolId ; sh:name "protocolId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Parent protocol." ] ;
+    sh:property [ sh:path cr:ordinal ; sh:name "ordinal" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Display order." ] ;
+    sh:property [ sh:path cr:criterionText ; sh:name "criterionText" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Criterion text." ] ;
+    sh:property [ sh:path cr:criterionCode ; sh:name "criterionCode" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Coded condition (LOINC, SNOMED)." ] ;
+    sh:property [ sh:path cr:comparator ; sh:name "comparator" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, optional: eq, ne, gt, gte, lt, lte, in, contains." ] ;
+    sh:property [ sh:path cr:expectedValue ; sh:name "expectedValue" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Expected value." ] ;
+    sh:property [ sh:path cr:unit ; sh:name "unit" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, UCUM, optional: Unit." ] ;
+    sh:property [ sh:path cr:effectiveStart ; sh:name "effectiveStart" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Effective start." ] ;
+    sh:property [ sh:path cr:effectiveEnd ; sh:name "effectiveEnd" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Effective end." ] ;
+    sh:property [ sh:path cr:version ; sh:name "version" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, semver: Criterion version." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:definedBy ; sh:name "definedBy -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Parent protocol." ] ;
+    sh:property [ sh:path cr:evaluatedAgainst ; sh:name "evaluatedAgainst -> Participant" ; sh:node cr:ParticipantEntityView ; rdfs:comment "[0..N] Subjects evaluated." ] ;
+    sh:property [ sh:path cr:hasAmendments ; sh:name "hasAmendments -> Amendment" ; sh:node cr:AmendmentEntityView ; rdfs:comment "[0..N] Amendments." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

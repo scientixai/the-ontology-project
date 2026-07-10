@@ -1,0 +1,77 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Person can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:PersonEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Person ;
+    rdfs:label "Person" ;
+    cr:catalogNumber 12 ;
+    sh:property [ sh:path cr:personId ; sh:name "personId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:firstName ; sh:name "firstName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: First name." ] ;
+    sh:property [ sh:path cr:lastName ; sh:name "lastName" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Last name." ] ;
+    sh:property [ sh:path cr:middleName ; sh:name "middleName" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Middle name." ] ;
+    sh:property [ sh:path cr:title ; sh:name "title" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Title." ] ;
+    sh:property [ sh:path cr:orcid ; sh:name "orcid" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: ORCID id." ] ;
+    sh:property [ sh:path cr:npi ; sh:name "npi" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: US National Provider Identifier." ] ;
+    sh:property [ sh:path cr:organization ; sh:name "organization" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Employer organisation." ] ;
+    sh:property [ sh:path cr:department ; sh:name "department" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Department." ] ;
+    sh:property [ sh:path cr:email ; sh:name "email" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Email." ] ;
+    sh:property [ sh:path cr:phone ; sh:name "phone" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Phone." ] ;
+    sh:property [ sh:path cr:address ; sh:name "address" ; rdfs:comment "object: Address." ] ;
+    sh:property [ sh:path cr:gender ; sh:name "gender" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: Administrative gender." ] ;
+    sh:property [ sh:path cr:dateOfBirth ; sh:name "dateOfBirth" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: DOB; restricted access." ] ;
+    sh:property [ sh:path cr:startDate ; sh:name "startDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Engagement start." ] ;
+    sh:property [ sh:path cr:endDate ; sh:name "endDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Engagement end." ] ;
+    sh:property [ sh:path cr:status ; sh:name "status" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: ACTIVE, INACTIVE, ON_LEAVE." ] ;
+    sh:property [ sh:path cr:employmentStatus ; sh:name "employmentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: EMPLOYEE, CONTRACTOR, CONSULTANT, AFFILIATE." ] ;
+    sh:property [ sh:path cr:gcpTrainingStatus ; sh:name "gcpTrainingStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: CURRENT, EXPIRED, NOT_TRAINED." ] ;
+    sh:property [ sh:path cr:protocolTrainingStatus ; sh:name "protocolTrainingStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: CURRENT, EXPIRED, NOT_TRAINED." ] ;
+    sh:property [ sh:path cr:languageProficiency ; sh:name "languageProficiency" ; rdfs:comment "array<BCP-47>: Languages." ] ;
+    sh:property [ sh:path cr:lastSystemAccessDate ; sh:name "lastSystemAccessDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Last login date." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:worksOn ; sh:name "worksOn -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies." ] ;
+    sh:property [ sh:path cr:worksAt ; sh:name "worksAt -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites." ] ;
+    sh:property [ sh:path cr:holdsRole ; sh:name "holdsRole -> Person Role" ; sh:node cr:PersonRoleEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Roles." ] ;
+    sh:property [ sh:path cr:holdsCredential ; sh:name "holdsCredential -> Credential" ; sh:node cr:CredentialEntityView ; rdfs:comment "[0..N] Credentials." ] ;
+    sh:property [ sh:path cr:hasTrainingRecords ; sh:name "hasTrainingRecords -> Training Record" ; sh:node cr:TrainingRecordEntityView ; rdfs:comment "[0..N] Trainings." ] ;
+    sh:property [ sh:path cr:holdsCertifications ; sh:name "holdsCertifications -> Certification" ; sh:node cr:CertificationEntityView ; rdfs:comment "[0..N] Certifications." ] ;
+    sh:property [ sh:path cr:ownsTasks ; sh:name "ownsTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks assigned or created." ] ;
+    sh:property [ sh:path cr:authors ; sh:name "authors -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Authored or reviewed docs." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Created or resolved queries." ] ;
+    sh:property [ sh:path cr:reports ; sh:name "reports -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Reported or reviewed deviations." ] ;
+    sh:property [ sh:path cr:signs ; sh:name "signs -> Signature" ; sh:node cr:SignatureEntityView ; rdfs:comment "[0..N] Signatures." ] ;
+    sh:property [ sh:path cr:hasUserAccount ; sh:name "hasUserAccount -> User Account" ; sh:node cr:UserAccountEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] System access." ] ;
+    sh:property [ sh:path cr:holdsRoles ; sh:name "holdsRoles -> User Role" ; sh:node cr:UserRoleEntityView ; rdfs:comment "[0..N] System role assignments." ] ;
+    sh:property [ sh:path cr:conducts ; sh:name "conducts -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; rdfs:comment "[0..N] Monitoring visits." ] ;
+    sh:property [ sh:path cr:ownsActionItems ; sh:name "ownsActionItems -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Action items." ] ;
+    sh:property [ sh:path cr:logs ; sh:name "logs -> Log Entry" ; sh:node cr:LogEntryEntityView ; rdfs:comment "[0..N] Log entries." ] ;
+    sh:property [ sh:path cr:reports ; sh:name "reports -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs reported." ] ;
+    sh:property [ sh:path cr:reports ; sh:name "reports -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs reported." ] ;
+    sh:property [ sh:path cr:administers ; sh:name "administers -> Informed Consent" ; sh:node cr:InformedConsentEntityView ; rdfs:comment "[0..N] Consent administrations." ] ;
+    sh:property [ sh:path cr:completes ; sh:name "completes -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] CRFs completed." ] ;
+    sh:property [ sh:path cr:has ; sh:name "has -> CV" ; sh:node cr:CVEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Curriculum Vitae." ] ;
+    sh:property [ sh:path cr:delegatedBy ; sh:name "delegatedBy -> Delegation of Authority Record" ; sh:node cr:DelegationOfAuthorityRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Delegation records." ] ;
+    sh:property [ sh:path cr:acknowledges ; sh:name "acknowledges -> Amendment" ; sh:node cr:AmendmentEntityView ; rdfs:comment "[0..N] Amendments acknowledged." ] ;
+    sh:property [ sh:path cr:files ; sh:name "files -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions handled." ] ;
+    sh:property [ sh:path cr:authors ; sh:name "authors -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Reports." ] ;
+    sh:property [ sh:path cr:involvedIn ; sh:name "involvedIn -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] ;
+    sh:property [ sh:path cr:handles ; sh:name "handles -> Shipment" ; sh:node cr:ShipmentEntityView ; rdfs:comment "[0..N] Shipments." ] ;
+    sh:property [ sh:path cr:responsibleFor ; sh:name "responsibleFor -> Equipment" ; sh:node cr:EquipmentEntityView ; rdfs:comment "[0..N] Equipment." ] ;
+    sh:property [ sh:path cr:communicates ; sh:name "communicates -> Communication Record" ; sh:node cr:CommunicationRecordEntityView ; rdfs:comment "[0..N] Communication records." ] ;
+    sh:property [ sh:path cr:discloses ; sh:name "discloses -> Conflict of Interest Disclosure" ; sh:node cr:ConflictOfInterestDisclosureEntityView ; rdfs:comment "[0..N] COI disclosures." ] .

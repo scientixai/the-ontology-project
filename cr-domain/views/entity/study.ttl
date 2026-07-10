@@ -1,0 +1,93 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Study can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:StudyEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Study ;
+    rdfs:label "Study" ;
+    cr:catalogNumber 4 ;
+    sh:property [ sh:path cr:studyId ; sh:name "studyId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Unique identifier." ] ;
+    sh:property [ sh:path cr:studyTitle ; sh:name "studyTitle" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Official title." ] ;
+    sh:property [ sh:path cr:studyDescription ; sh:name "studyDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Brief description." ] ;
+    sh:property [ sh:path cr:acronym ; sh:name "acronym" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Short name." ] ;
+    sh:property [ sh:path cr:nctId ; sh:name "nctId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: ClinicalTrials dot gov identifier." ] ;
+    sh:property [ sh:path cr:regulatoryIdentifiers ; sh:name "regulatoryIdentifiers" ; rdfs:comment "array<object>: INDs, IDEs, EUDRACT, JapicCTI, ChiCTR, others." ] ;
+    sh:property [ sh:path cr:masterProtocolId ; sh:name "masterProtocolId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Reference to a parent master / umbrella / platform protocol." ] ;
+    sh:property [ sh:path cr:studyType ; sh:name "studyType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: INTERVENTIONAL, OBSERVATIONAL, EXPANDED_ACCESS." ] ;
+    sh:property [ sh:path cr:studyPhase ; sh:name "studyPhase" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: PHASE0, PHASE1, PHASE2, PHASE3, PHASE4, NA." ] ;
+    sh:property [ sh:path cr:studyStatus ; sh:name "studyStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PLANNED, IN_STARTUP, ACTIVE, ENROLLING, ENROLLMENT_COMPLETE, FOLLOW_UP, COMPLETED, TERMINATED, WITHDRAWN." ] ;
+    sh:property [ sh:path cr:startDate ; sh:name "startDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Study start." ] ;
+    sh:property [ sh:path cr:endDate ; sh:name "endDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Planned or actual end." ] ;
+    sh:property [ sh:path cr:primaryCompletionDate ; sh:name "primaryCompletionDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Primary outcome measure completion." ] ;
+    sh:property [ sh:path cr:conditionStudied ; sh:name "conditionStudied" ; rdfs:comment "array<string>: Primary condition or disease." ] ;
+    sh:property [ sh:path cr:interventionModel ; sh:name "interventionModel" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: SINGLE_GROUP, PARALLEL, CROSSOVER, FACTORIAL, SEQUENTIAL." ] ;
+    sh:property [ sh:path cr:numberOfArms ; sh:name "numberOfArms" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Number of study arms." ] ;
+    sh:property [ sh:path cr:enrollmentType ; sh:name "enrollmentType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ACTUAL, ANTICIPATED, TARGET." ] ;
+    sh:property [ sh:path cr:enrollmentCount ; sh:name "enrollmentCount" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Participants enrolled." ] ;
+    sh:property [ sh:path cr:responsibleParty ; sh:name "responsibleParty" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Name of responsible party." ] ;
+    sh:property [ sh:path cr:tags ; sh:name "tags" ; rdfs:comment "array<tagId>: Applied tags." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Last modification." ] ;
+    sh:property [ sh:path cr:studyFirstSubmitDate ; sh:name "studyFirstSubmitDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: First regulatory submission." ] ;
+    sh:property [ sh:path cr:lastUpdateSubmitDate ; sh:name "lastUpdateSubmitDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: Most recent update submission." ] ;
+    sh:property [ sh:path cr:sponsoredBy ; sh:name "sponsoredBy -> Sponsor" ; sh:node cr:SponsorEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] The sponsoring organization." ] ;
+    sh:property [ sh:path cr:governedBy ; sh:name "governedBy -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] The current effective protocol version." ] ;
+    sh:property [ sh:path cr:hasArms ; sh:name "hasArms -> Arm" ; sh:node cr:ArmEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Study arms." ] ;
+    sh:property [ sh:path cr:conductedAt ; sh:name "conductedAt -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sites conducting the study." ] ;
+    sh:property [ sh:path cr:enrols ; sh:name "enrols -> Participant" ; sh:node cr:ParticipantEntityView ; rdfs:comment "[0..N] Participants enrolled across all sites." ] ;
+    sh:property [ sh:path cr:schedules ; sh:name "schedules -> Visit" ; sh:node cr:VisitEntityView ; rdfs:comment "[0..N] Scheduled and completed visits." ] ;
+    sh:property [ sh:path cr:captures ; sh:name "captures -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] CRFs collected." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Study documents." ] ;
+    sh:property [ sh:path cr:tracks ; sh:name "tracks -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Study milestones." ] ;
+    sh:property [ sh:path cr:supplies ; sh:name "supplies -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP used in the study." ] ;
+    sh:property [ sh:path cr:executes ; sh:name "executes -> Plan" ; sh:node cr:PlanEntityView ; rdfs:comment "[0..N] Plans (monitoring, data management, statistical analysis)." ] ;
+    sh:property [ sh:path cr:overseenBy ; sh:name "overseenBy -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; rdfs:comment "[0..N] IRB/EC, DSMB, IDMC." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Deviation" ; sh:node cr:DeviationEntityView ; rdfs:comment "[0..N] Protocol deviations." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Screen Fail" ; sh:node cr:ScreenFailEntityView ; rdfs:comment "[0..N] Screen fails." ] ;
+    sh:property [ sh:path cr:employs ; sh:name "employs -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Investigators, coordinators, monitors." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; rdfs:comment "[0..N] AEs." ] ;
+    sh:property [ sh:path cr:captures ; sh:name "captures -> Informed Consent" ; sh:node cr:InformedConsentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Consent records." ] ;
+    sh:property [ sh:path cr:hasActionItems ; sh:name "hasActionItems -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Action items." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Enrollment" ; sh:node cr:EnrollmentEntityView ; rdfs:comment "[0..N] Enrollment events." ] ;
+    sh:property [ sh:path cr:authorizes ; sh:name "authorizes -> Payment" ; sh:node cr:PaymentEntityView ; rdfs:comment "[0..N] Payments." ] ;
+    sh:property [ sh:path cr:uses ; sh:name "uses -> System" ; sh:node cr:SystemEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] EDC, CTMS, eTMF, IRT, others." ] ;
+    sh:property [ sh:path cr:consumes ; sh:name "consumes -> Service" ; sh:node cr:ServiceEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Central lab, imaging, biostat services." ] ;
+    sh:property [ sh:path cr:hasStartupPackage ; sh:name "hasStartupPackage -> Study Startup Package" ; sh:node cr:StudyStartupPackageEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study-level startup package." ] ;
+    sh:property [ sh:path cr:budgetedBy ; sh:name "budgetedBy -> Budget" ; sh:node cr:BudgetEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study budget." ] ;
+    sh:property [ sh:path cr:governedByContracts ; sh:name "governedByContracts -> Contract" ; sh:node cr:ContractEntityView ; rdfs:comment "[0..N] Study-related contracts." ] ;
+    sh:property [ sh:path cr:organizedBy ; sh:name "organizedBy -> Schedule of Assessments" ; sh:node cr:ScheduleOfAssessmentsEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] SOAs (one per arm or unified)." ] ;
+    sh:property [ sh:path cr:measuredBy ; sh:name "measuredBy -> Endpoint" ; sh:node cr:EndpointEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Endpoints." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Lab Results" ; sh:node cr:LabResultsEntityView ; rdfs:comment "[0..N] Lab results." ] ;
+    sh:property [ sh:path cr:files ; sh:name "files -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] ;
+    sh:property [ sh:path cr:undergoes ; sh:name "undergoes -> Audit" ; sh:node cr:AuditEntityView ; rdfs:comment "[0..N] Audits." ] ;
+    sh:property [ sh:path cr:produces ; sh:name "produces -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Reports." ] ;
+    sh:property [ sh:path cr:administers ; sh:name "administers -> Questionnaire" ; sh:node cr:QuestionnaireEntityView ; rdfs:comment "[0..N] COA / PRO instruments." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Other Clinical Event" ; sh:node cr:OtherClinicalEventEntityView ; rdfs:comment "[0..N] Other clinical events." ] ;
+    sh:property [ sh:path cr:executes ; sh:name "executes -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] ;
+    sh:property [ sh:path cr:marksTime ; sh:name "marksTime -> Date" ; sh:node cr:DateEntityView ; rdfs:comment "[0..N] Key dates." ] ;
+    sh:property [ sh:path cr:exchanges ; sh:name "exchanges -> Data Transfer" ; sh:node cr:DataTransferEntityView ; rdfs:comment "[0..N] Data transfers." ] ;
+    sh:property [ sh:path cr:hasUserRoles ; sh:name "hasUserRoles -> User Role" ; sh:node cr:UserRoleEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Study-scoped role assignments." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Serious Adverse Event" ; sh:node cr:SeriousAdverseEventEntityView ; rdfs:comment "[0..N] SAEs." ] ;
+    sh:property [ sh:path cr:governedBy ; sh:name "governedBy -> Statistical Analysis Plan" ; sh:node cr:StatisticalAnalysisPlanEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] SAP." ] ;
+    sh:property [ sh:path cr:hasAmendments ; sh:name "hasAmendments -> Amendment" ; sh:node cr:AmendmentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Protocol amendments." ] ;
+    sh:property [ sh:path cr:hasRandomizationLists ; sh:name "hasRandomizationLists -> Randomization List" ; sh:node cr:RandomizationListEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Randomization lists." ] ;
+    sh:property [ sh:path cr:hasQueries ; sh:name "hasQueries -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] All queries." ] ;
+    sh:property [ sh:path cr:records ; sh:name "records -> Training Record" ; sh:node cr:TrainingRecordEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Training records of personnel." ] ;
+    sh:property [ sh:path cr:receives ; sh:name "receives -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; rdfs:comment "[0..N] Monitoring visits." ] ;
+    sh:property [ sh:path cr:assessedBy ; sh:name "assessedBy -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Risk assessments; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:producesMetrics ; sh:name "producesMetrics -> Study Performance Metric" ; sh:node cr:StudyPerformanceMetricEntityView ; rdfs:comment "[0..N] Study KPIs; flagged as missing object below." ] .

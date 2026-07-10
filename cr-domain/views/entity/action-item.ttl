@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Action Item can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:ActionItemEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:ActionItem ;
+    rdfs:label "Action Item" ;
+    cr:catalogNumber 18 ;
+    sh:property [ sh:path cr:actionItemId ; sh:name "actionItemId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:actionItemTrackingNumber ; sh:name "actionItemTrackingNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Tracking number." ] ;
+    sh:property [ sh:path cr:actionItemDescription ; sh:name "actionItemDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:actionItemStatus ; sh:name "actionItemStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: OPEN, IN_PROGRESS, COMPLETED, OVERDUE, CANCELED." ] ;
+    sh:property [ sh:path cr:priority ; sh:name "priority" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: LOW, MEDIUM, HIGH, CRITICAL." ] ;
+    sh:property [ sh:path cr:actionItemImpactLevel ; sh:name "actionItemImpactLevel" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: LOW, MEDIUM, HIGH." ] ;
+    sh:property [ sh:path cr:actionItemCategory ; sh:name "actionItemCategory" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: DATA_QUERY, PROTOCOL_DEVIATION, REGULATORY, SAFETY, OTHER." ] ;
+    sh:property [ sh:path cr:actionItemSource ; sh:name "actionItemSource" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: MONITOR, INVESTIGATOR, DATA_MANAGER, AUDITOR, OTHER." ] ;
+    sh:property [ sh:path cr:dueDate ; sh:name "dueDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Due date." ] ;
+    sh:property [ sh:path cr:completionDate ; sh:name "completionDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime, optional: Completion." ] ;
+    sh:property [ sh:path cr:estimatedEffort ; sh:name "estimatedEffort" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Estimated time." ] ;
+    sh:property [ sh:path cr:actualEffort ; sh:name "actualEffort" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration, optional: Actual time." ] ;
+    sh:property [ sh:path cr:recurrenceFrequency ; sh:name "recurrenceFrequency" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, RRULE: Recurrence rule." ] ;
+    sh:property [ sh:path cr:verificationStatus ; sh:name "verificationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PENDING, VERIFIED, FAILED." ] ;
+    sh:property [ sh:path cr:resolutionNotes ; sh:name "resolutionNotes" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Notes." ] ;
+    sh:property [ sh:path cr:actionItemClosureNotes ; sh:name "actionItemClosureNotes" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Closure notes." ] ;
+    sh:property [ sh:path cr:creationDate ; sh:name "creationDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:createdBy ; sh:name "createdBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Creator." ] ;
+    sh:property [ sh:path cr:lastModifiedDate ; sh:name "lastModifiedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modified." ] ;
+    sh:property [ sh:path cr:lastModifiedBy ; sh:name "lastModifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Modifier." ] ;
+    sh:property [ sh:path cr:verifiedBy ; sh:name "verifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string, optional: Verifier." ] ;
+    sh:property [ sh:path cr:verificationDate ; sh:name "verificationDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime, optional: Verification date." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site (if site-specific)." ] ;
+    sh:property [ sh:path cr:assignedTo ; sh:name "assignedTo -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Assignee." ] ;
+    sh:property [ sh:path cr:assignedBy ; sh:name "assignedBy -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Assigner." ] ;
+    sh:property [ sh:path cr:parentActionItem ; sh:name "parentActionItem -> Action Item" ; sh:node cr:ActionItemEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Parent." ] ;
+    sh:property [ sh:path cr:childActionItems ; sh:name "childActionItems -> Action Item" ; sh:node cr:ActionItemEntityView ; rdfs:comment "[0..N] Children." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Visit." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Participant." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Monitoring visit." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Audit" ; sh:node cr:AuditEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Audit." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Deviation." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] AE." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> CRF" ; sh:node cr:CRFEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] CRF." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Supporting docs." ] ;
+    sh:property [ sh:path cr:raises ; sh:name "raises -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; rdfs:comment "[0..N] Queries." ] ;
+    sh:property [ sh:path cr:triggers ; sh:name "triggers -> CAPA" ; sh:node cr:CAPAEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Linked CAPA." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Protocol section." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] IP." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Equipment" ; sh:node cr:EquipmentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Equipment." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# ENTITY-VIEW SCHEMA — the tiny vocabulary the reference entity-view corpus uses.
+#
+# Kept in the views/ layer, NOT in the ontology T-box: these terms describe the
+# reference VIEW recipe, not the clinical-research domain. Almost everything the
+# corpus needs is native SHACL — a pointer is sh:node, an attribute is
+# sh:datatype, cardinality is sh:minCount/sh:maxCount. The only genuinely new
+# ideas are the identity set and the entity-view marker, below.
+#
+# REFERENCE, NOT RUNTIME. The corpus is the exhaustive, flat menu of what each
+# object CAN express. It carries no prominence, rank, ordering, or role scoping —
+# that arrangement is an application's choice, recorded per person per day in the
+# runtime graph, never in the commons. See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+cr:EntityView a owl:Class ;
+    rdfs:label "Entity View" ;
+    rdfs:comment "The exhaustive, FLAT reference menu of everything one OOUX object can express in a view: its own attributes (with an identity set), its provenance metadata, and its relationships as pointers to other objects' views. A reference recipe, not a runtime dependency: a consumer builds its own runtime graph from this, and an application decides arrangement, prominence, depth, and role scoping — recorded per person per day, never here. One EntityView per object; one file per object under views/entity/." .
+
+cr:isIdentity a owl:AnnotationProperty ;
+    rdfs:label "is identity field" ;
+    rdfs:comment "Marks a property shape as part of its object's IDENTITY SET: the minimal fields that identify the object anywhere it appears as a pointer in another object's view. The depth-0 render of a pointer is exactly these fields; going deeper is navigation, not inlining. Non-recursive by construction." .
+
+cr:isMetadata a owl:AnnotationProperty ;
+    rdfs:label "is metadata field" ;
+    rdfs:comment "Marks a property shape as part of the object's provenance / bitemporal metadata envelope (the OOUX Metadata column), distinct from its domain attributes." .
+
+cr:catalogNumber a owl:AnnotationProperty ;
+    rdfs:label "catalog number" ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "The object's number in docs/ooux-object-catalog-v0.2.md — the traceability link from a generated view back to its catalog entry." .
+
+cr:usdmProjection a owl:AnnotationProperty ;
+    rdfs:label "USDM projection" ;
+    rdfs:comment "Links an object's entity view to the root of the exhaustive USDM structural menu (views/entity/usdm.ttl) it can project into. Used by cr:ProtocolEntityView: an operator on a Protocol page can traverse the entirety of USDM and pick what they need." .

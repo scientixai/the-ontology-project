@@ -1,0 +1,66 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Document can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:DocumentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Document ;
+    rdfs:label "Document" ;
+    cr:catalogNumber 15 ;
+    sh:property [ sh:path cr:documentId ; sh:name "documentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:documentTitle ; sh:name "documentTitle" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Title." ] ;
+    sh:property [ sh:path cr:documentDescription ; sh:name "documentDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:documentType ; sh:name "documentType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PROTOCOL, ICF, REGULATORY, SOURCE, TRAINING, REPORT, AGREEMENT, OTHER." ] ;
+    sh:property [ sh:path cr:documentClassification ; sh:name "documentClassification" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ESSENTIAL_DOCUMENT, SOURCE_DOCUMENT, REGULATORY_DOCUMENT, ADMINISTRATIVE." ] ;
+    sh:property [ sh:path cr:documentVersion ; sh:name "documentVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Version." ] ;
+    sh:property [ sh:path cr:documentStatus ; sh:name "documentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: DRAFT, IN_REVIEW, APPROVED, EFFECTIVE, SUPERSEDED, RETIRED." ] ;
+    sh:property [ sh:path cr:fileType ; sh:name "fileType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PDF, DOCX, XLSX, PPTX, JPG, PNG, XML, JSON, OTHER." ] ;
+    sh:property [ sh:path cr:fileLocation ; sh:name "fileLocation" ; rdfs:comment "URI: Storage URI." ] ;
+    sh:property [ sh:path cr:fileSize ; sh:name "fileSize" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer, bytes: Size in bytes." ] ;
+    sh:property [ sh:path cr:contentHash ; sh:name "contentHash" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, SHA-256: Content hash." ] ;
+    sh:property [ sh:path cr:documentLanguage ; sh:name "documentLanguage" ; rdfs:comment "BCP-47: Language." ] ;
+    sh:property [ sh:path cr:retentionPeriod ; sh:name "retentionPeriod" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Retention period." ] ;
+    sh:property [ sh:path cr:expirationDate ; sh:name "expirationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Expiration if applicable." ] ;
+    sh:property [ sh:path cr:electronicSignatureStatus ; sh:name "electronicSignatureStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NOT_REQUIRED, PENDING, SIGNED." ] ;
+    sh:property [ sh:path cr:accessControlList ; sh:name "accessControlList" ; rdfs:comment "object: ACL." ] ;
+    sh:property [ sh:path cr:tmfReference ; sh:name "tmfReference" ; rdfs:comment "object: TMF zone / section / artifact reference." ] ;
+    sh:property [ sh:path cr:documentTemplateReference ; sh:name "documentTemplateReference" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Source template id." ] ;
+    sh:property [ sh:path cr:creationDate ; sh:name "creationDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:createdBy ; sh:name "createdBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Creator." ] ;
+    sh:property [ sh:path cr:lastModifiedDate ; sh:name "lastModifiedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Last modified." ] ;
+    sh:property [ sh:path cr:lastModifiedBy ; sh:name "lastModifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Last modifier." ] ;
+    sh:property [ sh:path cr:approvalStatus ; sh:name "approvalStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "enum: PENDING, APPROVED, REJECTED." ] ;
+    sh:property [ sh:path cr:approvalDate ; sh:name "approvalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date, optional: Approval date." ] ;
+    sh:property [ sh:path cr:approvedBy ; sh:name "approvedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string, optional: Approver." ] ;
+    sh:property [ sh:path cr:qualityControlStatus ; sh:name "qualityControlStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "enum: PENDING, PASSED, FAILED." ] ;
+    sh:property [ sh:path cr:qualityControlBy ; sh:name "qualityControlBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: QC person." ] ;
+    sh:property [ sh:path cr:qualityControlDate ; sh:name "qualityControlDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "date: QC date." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Site (if site-specific)." ] ;
+    sh:property [ sh:path cr:for ; sh:name "for -> Participant" ; sh:node cr:ParticipantEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Participant (if participant-specific)." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] Related CRFs." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Visit" ; sh:node cr:VisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Related visit." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Adverse Event" ; sh:node cr:AdverseEventEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] AE." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Deviation." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Monitoring visit." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Submission." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Audit" ; sh:node cr:AuditEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Audit." ] ;
+    sh:property [ sh:path cr:translatedFrom ; sh:name "translatedFrom -> Document" ; sh:node cr:DocumentEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Source language version." ] ;
+    sh:property [ sh:path cr:translatedTo ; sh:name "translatedTo -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Translations." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Training Record" ; sh:node cr:TrainingRecordEntityView ; rdfs:comment "[0..N] Trainings." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

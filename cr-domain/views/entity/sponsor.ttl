@@ -1,0 +1,59 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Sponsor can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:SponsorEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Sponsor ;
+    rdfs:label "Sponsor" ;
+    cr:catalogNumber 2 ;
+    sh:property [ sh:path cr:sponsorId ; sh:name "sponsorId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique, NGSI-LD URI: Globally unique identifier." ] ;
+    sh:property [ sh:path cr:sponsorName ; sh:name "sponsorName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:legalName ; sh:name "legalName" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Registered legal name." ] ;
+    sh:property [ sh:path cr:sponsorType ; sh:name "sponsorType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PHARMACEUTICAL, BIOTECH, ACADEMIC, GOVERNMENT, INVESTIGATOR_SPONSOR, CRO_AS_SPONSOR, OTHER." ] ;
+    sh:property [ sh:path cr:duns ; sh:name "duns" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: DUNS number." ] ;
+    sh:property [ sh:path cr:orcid ; sh:name "orcid" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: ORCID identifier when sponsor is an individual investigator-sponsor." ] ;
+    sh:property [ sh:path cr:address ; sh:name "address" ; rdfs:comment "object: Headquarters address." ] ;
+    sh:property [ sh:path cr:country ; sh:name "country" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, ISO 3166-1 alpha-3: Country of registration." ] ;
+    sh:property [ sh:path cr:phone ; sh:name "phone" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Primary phone." ] ;
+    sh:property [ sh:path cr:email ; sh:name "email" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Primary email." ] ;
+    sh:property [ sh:path cr:website ; sh:name "website" ; rdfs:comment "URI: Sponsor website." ] ;
+    sh:property [ sh:path cr:status ; sh:name "status" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: ACTIVE, INACTIVE, MERGED, ACQUIRED." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Entity creation timestamp." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Last modification." ] ;
+    sh:property [ sh:path cr:source ; sh:name "source" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "enum: MANUAL, IMPORT." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Studies sponsored by this organization." ] ;
+    sh:property [ sh:path cr:employs ; sh:name "employs -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Employees and contractors." ] ;
+    sh:property [ sh:path cr:engages ; sh:name "engages -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sites the sponsor has contracted." ] ;
+    sh:property [ sh:path cr:contractsWith ; sh:name "contractsWith -> CRO" ; sh:node cr:CROEntityView ; rdfs:comment "[0..N] Contracted CROs (CRO is flagged as a missing object)." ] ;
+    sh:property [ sh:path cr:holds ; sh:name "holds -> Contract" ; sh:node cr:ContractEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] All sponsor-side contracts." ] ;
+    sh:property [ sh:path cr:authors ; sh:name "authors -> Budget" ; sh:node cr:BudgetEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Budgets the sponsor maintains." ] ;
+    sh:property [ sh:path cr:publishes ; sh:name "publishes -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sponsor-controlled documents." ] ;
+    sh:property [ sh:path cr:files ; sh:name "files -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Submissions filed by the sponsor." ] ;
+    sh:property [ sh:path cr:commissions ; sh:name "commissions -> Audit" ; sh:node cr:AuditEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sponsor-commissioned audits." ] ;
+    sh:property [ sh:path cr:operates ; sh:name "operates -> Training Program" ; sh:node cr:TrainingProgramEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sponsor training programs." ] ;
+    sh:property [ sh:path cr:maintains ; sh:name "maintains -> SOP" ; sh:node cr:SOPEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Standard operating procedures." ] ;
+    sh:property [ sh:path cr:operates ; sh:name "operates -> System" ; sh:node cr:SystemEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sponsor-owned systems." ] ;
+    sh:property [ sh:path cr:produces ; sh:name "produces -> Report" ; sh:node cr:ReportEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Reports authored by the sponsor." ] ;
+    sh:property [ sh:path cr:plans ; sh:name "plans -> Milestone" ; sh:node cr:MilestoneEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Program-level milestones." ] ;
+    sh:property [ sh:path cr:conducts ; sh:name "conducts -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Risk assessments owned by the sponsor." ] ;
+    sh:property [ sh:path cr:executes ; sh:name "executes -> CAPA" ; sh:node cr:CAPAEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Sponsor-driven CAPAs." ] ;
+    sh:property [ sh:path cr:interfacesWith ; sh:name "interfacesWith -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] IRB, EC, DSMB, IDMC engagement." ] ;
+    sh:property [ sh:path cr:publishes ; sh:name "publishes -> Publication" ; sh:node cr:PublicationEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Resulting publications." ] ;
+    sh:property [ sh:path cr:signs ; sh:name "signs -> Data Transfer Agreement" ; sh:node cr:DataTransferAgreementEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Data transfer agreements." ] ;
+    sh:property [ sh:path cr:supplies ; sh:name "supplies -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] IP the sponsor supplies." ] ;
+    sh:property [ sh:path cr:organizes ; sh:name "organizes -> Tag" ; sh:node cr:TagEntityView ; rdfs:comment "[0..N] User-defined organizational tags." ] .

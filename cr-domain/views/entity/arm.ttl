@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Arm can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:ArmEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Arm ;
+    rdfs:label "Arm" ;
+    cr:catalogNumber 5 ;
+    sh:property [ sh:path cr:armId ; sh:name "armId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Unique arm identifier." ] ;
+    sh:property [ sh:path cr:armName ; sh:name "armName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:armDescription ; sh:name "armDescription" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description of the intervention assigned." ] ;
+    sh:property [ sh:path cr:armType ; sh:name "armType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: EXPERIMENTAL, ACTIVE_COMPARATOR, PLACEBO_COMPARATOR, NO_INTERVENTION, SHAM_COMPARATOR." ] ;
+    sh:property [ sh:path cr:armCohortType ; sh:name "armCohortType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PARALLEL, DOSE_ESCALATION, EXPANSION, BACKFILL, BASKET_SUB_ARM." ] ;
+    sh:property [ sh:path cr:intendedSampleSize ; sh:name "intendedSampleSize" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Target enrollment for the arm." ] ;
+    sh:property [ sh:path cr:stratumId ; sh:name "stratumId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Stratum identifier when stratified." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Parent study." ] ;
+    sh:property [ sh:path cr:hasSchedule ; sh:name "hasSchedule -> Schedule of Assessments" ; sh:node cr:ScheduleOfAssessmentsEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Arm-specific SOA when applicable." ] ;
+    sh:property [ sh:path cr:hasVisits ; sh:name "hasVisits -> Visit" ; sh:node cr:VisitEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Visits scheduled for this arm." ] ;
+    sh:property [ sh:path cr:administers ; sh:name "administers -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] IP assigned to the arm." ] ;
+    sh:property [ sh:path cr:enrolls ; sh:name "enrolls -> Participant" ; sh:node cr:ParticipantEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Participants in this arm." ] ;
+    sh:property [ sh:path cr:restrictedBy ; sh:name "restrictedBy -> Inclusion Criteria" ; sh:node cr:InclusionCriteriaEntityView ; rdfs:comment "[0..N] Arm-specific inclusion criteria." ] ;
+    sh:property [ sh:path cr:restrictedBy ; sh:name "restrictedBy -> Exclusion Criteria" ; sh:node cr:ExclusionCriteriaEntityView ; rdfs:comment "[0..N] Arm-specific exclusion criteria." ] ;
+    sh:property [ sh:path cr:runs ; sh:name "runs -> Procedure" ; sh:node cr:ProcedureEntityView ; rdfs:comment "[0..N] Procedures specific to the arm." ] ;
+    sh:property [ sh:path cr:captures ; sh:name "captures -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] Arm-specific CRFs." ] ;
+    sh:property [ sh:path cr:contains ; sh:name "contains -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Arm documents." ] ;
+    sh:property [ sh:path cr:employs ; sh:name "employs -> Person" ; sh:node cr:PersonEntityView ; rdfs:comment "[0..N] Staff specifically assigned." ] ;
+    sh:property [ sh:path cr:tracks ; sh:name "tracks -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Arm milestones." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Arm tasks." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Audit trail." ] .

@@ -1,0 +1,77 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Plan can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:PlanEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Plan ;
+    rdfs:label "Plan" ;
+    cr:catalogNumber 25 ;
+    sh:property [ sh:path cr:planId ; sh:name "planId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:planType ; sh:name "planType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: MONITORING, DATA_MANAGEMENT, STATISTICAL_ANALYSIS, RISK_MANAGEMENT, SAFETY, COMMUNICATION, PUBLICATION, ARCHIVING." ] ;
+    sh:property [ sh:path cr:planTitle ; sh:name "planTitle" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Title." ] ;
+    sh:property [ sh:path cr:planVersion ; sh:name "planVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Version." ] ;
+    sh:property [ sh:path cr:planStatus ; sh:name "planStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: DRAFT, IN_REVIEW, APPROVED, EFFECTIVE, RETIRED." ] ;
+    sh:property [ sh:path cr:creationDate ; sh:name "creationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Created." ] ;
+    sh:property [ sh:path cr:approvalDate ; sh:name "approvalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Approved." ] ;
+    sh:property [ sh:path cr:effectiveDate ; sh:name "effectiveDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Effective." ] ;
+    sh:property [ sh:path cr:expirationDate ; sh:name "expirationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Expiration." ] ;
+    sh:property [ sh:path cr:description ; sh:name "description" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Description." ] ;
+    sh:property [ sh:path cr:keywords ; sh:name "keywords" ; rdfs:comment "array<string>: Keywords." ] ;
+    sh:property [ sh:path cr:authorId ; sh:name "authorId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Author." ] ;
+    sh:property [ sh:path cr:reviewerId ; sh:name "reviewerId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Reviewer." ] ;
+    sh:property [ sh:path cr:approverId ; sh:name "approverId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Approver." ] ;
+    sh:property [ sh:path cr:lastModifiedDate ; sh:name "lastModifiedDate" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modified." ] ;
+    sh:property [ sh:path cr:lastModifiedBy ; sh:name "lastModifiedBy" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "string: Modifier." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Study." ] ;
+    sh:property [ sh:path cr:governedBy ; sh:name "governedBy -> Protocol" ; sh:node cr:ProtocolEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Protocol." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Plan documents." ] ;
+    sh:property [ sh:path cr:authoredBy ; sh:name "authoredBy -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] People involved." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:hasMilestones ; sh:name "hasMilestones -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Milestones." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Visit" ; sh:node cr:VisitEntityView ; rdfs:comment "[0..N] Visit scope." ] ;
+    sh:property [ sh:path cr:scopedTo ; sh:name "scopedTo -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Site scope." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] CRFs." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Procedure" ; sh:node cr:ProcedureEntityView ; rdfs:comment "[0..N] Procedures." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Lab Test" ; sh:node cr:LabTestEntityView ; rdfs:comment "[0..N] Lab tests." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Adverse Event Type" ; sh:node cr:AdverseEventTypeEntityView ; rdfs:comment "[0..N] AE types." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Deviation Type" ; sh:node cr:DeviationTypeEntityView ; rdfs:comment "[0..N] Deviation types." ] ;
+    sh:property [ sh:path cr:guidedBy ; sh:name "guidedBy -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; rdfs:comment "[0..N] Risk assessments." ] ;
+    sh:property [ sh:path cr:governs ; sh:name "governs -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; rdfs:comment "[0..N] Monitoring visits." ] ;
+    sh:property [ sh:path cr:governs ; sh:name "governs -> Audit" ; sh:node cr:AuditEntityView ; rdfs:comment "[0..N] Audits." ] ;
+    sh:property [ sh:path cr:producesReports ; sh:name "producesReports -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Reports." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Data Transfer" ; sh:node cr:DataTransferEntityView ; rdfs:comment "[0..N] Data transfers." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Statistical Analysis" ; sh:node cr:StatisticalAnalysisEntityView ; rdfs:comment "[0..N] Statistical analyses." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Quality Control Check" ; sh:node cr:QualityControlCheckEntityView ; rdfs:comment "[0..N] QC checks." ] ;
+    sh:property [ sh:path cr:requiresTraining ; sh:name "requiresTraining -> Training Requirement" ; sh:node cr:TrainingRequirementEntityView ; rdfs:comment "[0..N] Training requirements." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; rdfs:comment "[0..N] Oversight bodies." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Budget Item" ; sh:node cr:BudgetItemEntityView ; rdfs:comment "[0..N] Budget items." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; rdfs:comment "[0..N] IP." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Sample" ; sh:node cr:SampleEntityView ; rdfs:comment "[0..N] Sample types." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Equipment" ; sh:node cr:EquipmentEntityView ; rdfs:comment "[0..N] Equipment." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> System" ; sh:node cr:SystemEntityView ; rdfs:comment "[0..N] Systems." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Service" ; sh:node cr:ServiceEntityView ; rdfs:comment "[0..N] Services." ] ;
+    sh:property [ sh:path cr:triggers ; sh:name "triggers -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] ;
+    sh:property [ sh:path cr:amendedBy ; sh:name "amendedBy -> Amendment" ; sh:node cr:AmendmentEntityView ; rdfs:comment "[0..N] Amendments." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> SOP" ; sh:node cr:SOPEntityView ; rdfs:comment "[0..N] SOPs." ] ;
+    sh:property [ sh:path cr:administersInstruments ; sh:name "administersInstruments -> Questionnaire" ; sh:node cr:QuestionnaireEntityView ; rdfs:comment "[0..N] Instruments." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Endpoint" ; sh:node cr:EndpointEntityView ; rdfs:comment "[0..N] Endpoints." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Data Management Rule" ; sh:node cr:DataManagementRuleEntityView ; rdfs:comment "[0..N] Data rules." ] ;
+    sh:property [ sh:path cr:relatesTo ; sh:name "relatesTo -> Publication Plan" ; sh:node cr:PublicationPlanEntityView ; rdfs:comment "[0..N] Publication plans." ] ;
+    sh:property [ sh:path cr:hasArchivingStrategy ; sh:name "hasArchivingStrategy -> Archiving Strategy" ; sh:node cr:ArchivingStrategyEntityView ; rdfs:comment "[0..N] Archiving." ] ;
+    sh:property [ sh:path cr:audits ; sh:name "audits -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

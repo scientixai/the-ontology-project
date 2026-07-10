@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Audit Trail Entry can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:AuditTrailEntryEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:AuditTrailEntry ;
+    rdfs:label "Audit Trail Entry" ;
+    cr:catalogNumber 63 ;
+    sh:property [ sh:path cr:auditTrailEntryId ; sh:name "auditTrailEntryId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:eventTime ; sh:name "eventTime" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; rdfs:comment "datetime: Event time (UTC)." ] ;
+    sh:property [ sh:path cr:systemId ; sh:name "systemId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Source system." ] ;
+    sh:property [ sh:path cr:actorPersonId ; sh:name "actorPersonId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Actor." ] ;
+    sh:property [ sh:path cr:actorSystemId ; sh:name "actorSystemId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Acting system (for automation)." ] ;
+    sh:property [ sh:path cr:action ; sh:name "action" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: create, read, update, delete, sign, login, logout, export, import." ] ;
+    sh:property [ sh:path cr:targetObjectType ; sh:name "targetObjectType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Target type." ] ;
+    sh:property [ sh:path cr:targetObjectId ; sh:name "targetObjectId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Target id." ] ;
+    sh:property [ sh:path cr:oldValueJson ; sh:name "oldValueJson" ; rdfs:comment "json, optional: Old value." ] ;
+    sh:property [ sh:path cr:newValueJson ; sh:name "newValueJson" ; rdfs:comment "json, optional: New value." ] ;
+    sh:property [ sh:path cr:reasonForChange ; sh:name "reasonForChange" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Reason." ] ;
+    sh:property [ sh:path cr:signatureId ; sh:name "signatureId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Electronic signature." ] ;
+    sh:property [ sh:path cr:ipAddress ; sh:name "ipAddress" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: IP." ] ;
+    sh:property [ sh:path cr:sessionId ; sh:name "sessionId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: Session." ] ;
+    sh:property [ sh:path cr:ingestedAt ; sh:name "ingestedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Ingestion." ] ;
+    sh:property [ sh:path cr:emittedBy ; sh:name "emittedBy -> System" ; sh:node cr:SystemEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Source system." ] ;
+    sh:property [ sh:path cr:performedBy ; sh:name "performedBy -> Person" ; sh:node cr:PersonEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Actor person." ] ;
+    sh:property [ sh:path cr:affects ; sh:name "affects -> Object" ; sh:node cr:ObjectEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Target object (any type)." ] .

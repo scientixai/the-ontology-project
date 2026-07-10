@@ -1,0 +1,33 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Therapeutic Area can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:TherapeuticAreaEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:TherapeuticArea ;
+    rdfs:label "Therapeutic Area" ;
+    cr:catalogNumber 59 ;
+    sh:property [ sh:path cr:therapeuticAreaId ; sh:name "therapeuticAreaId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:therapeuticAreaName ; sh:name "therapeuticAreaName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:parentTherapeuticAreaId ; sh:name "parentTherapeuticAreaId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI, optional: Parent area." ] ;
+    sh:property [ sh:path cr:icd10Codes ; sh:name "icd10Codes" ; rdfs:comment "list\\[string\\]: Mapped ICD-10 codes." ] ;
+    sh:property [ sh:path cr:snomedCodes ; sh:name "snomedCodes" ; rdfs:comment "list\\[string\\]: Mapped SNOMED codes." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:classifiesStudy ; sh:name "classifiesStudy -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies." ] ;
+    sh:property [ sh:path cr:classifiesSite ; sh:name "classifiesSite -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites with experience." ] ;
+    sh:property [ sh:path cr:classifiesInvestigator ; sh:name "classifiesInvestigator -> Person" ; sh:node cr:PersonEntityView ; rdfs:comment "[0..N] Investigators with experience." ] .

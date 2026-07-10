@@ -1,0 +1,56 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# System can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:SystemEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:System ;
+    rdfs:label "System" ;
+    cr:catalogNumber 27 ;
+    sh:property [ sh:path cr:systemId ; sh:name "systemId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:systemName ; sh:name "systemName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:systemType ; sh:name "systemType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: edc, etmf, ctms, irt, ecoa, eregulatory, esource, central_lab, imaging, safety, other." ] ;
+    sh:property [ sh:path cr:vendor ; sh:name "vendor" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Vendor." ] ;
+    sh:property [ sh:path cr:productName ; sh:name "productName" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Product." ] ;
+    sh:property [ sh:path cr:version ; sh:name "version" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, semver: Version." ] ;
+    sh:property [ sh:path cr:environment ; sh:name "environment" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: development, validation, production." ] ;
+    sh:property [ sh:path cr:validationStatus ; sh:name "validationStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: unvalidated, validated, requalification_due." ] ;
+    sh:property [ sh:path cr:validationDate ; sh:name "validationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Last validation date." ] ;
+    sh:property [ sh:path cr:ownerOrganizationId ; sh:name "ownerOrganizationId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Owning organization." ] ;
+    sh:property [ sh:path cr:supportContact ; sh:name "supportContact" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Support email or phone." ] ;
+    sh:property [ sh:path cr:url ; sh:name "url" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, URL: Access URL." ] ;
+    sh:property [ sh:path cr:ssoEnabled ; sh:name "ssoEnabled" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: SSO support." ] ;
+    sh:property [ sh:path cr:part11Compliant ; sh:name "part11Compliant" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: 21 CFR Part 11 compliance." ] ;
+    sh:property [ sh:path cr:gdprAdequate ; sh:name "gdprAdequate" ; sh:datatype xsd:boolean ; sh:maxCount 1 ; rdfs:comment "boolean: GDPR adequacy." ] ;
+    sh:property [ sh:path cr:retiredAt ; sh:name "retiredAt" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Retirement date." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:hasConfigurations ; sh:name "hasConfigurations -> System Configuration" ; sh:node cr:SystemConfigurationEntityView ; rdfs:comment "[0..N] Per study or per site configurations." ] ;
+    sh:property [ sh:path cr:provides ; sh:name "provides -> Service" ; sh:node cr:ServiceEntityView ; rdfs:comment "[0..N] Services offered." ] ;
+    sh:property [ sh:path cr:hostedBy ; sh:name "hostedBy -> Sponsor" ; sh:node cr:SponsorEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Hosting org." ] ;
+    sh:property [ sh:path cr:integratesWith ; sh:name "integratesWith -> System" ; sh:node cr:SystemEntityView ; rdfs:comment "[0..N] Other systems." ] ;
+    sh:property [ sh:path cr:hasIntegrationProfiles ; sh:name "hasIntegrationProfiles -> Integration Profile" ; sh:node cr:IntegrationProfileEntityView ; rdfs:comment "[0..N] Profiles; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:hasUserRoles ; sh:name "hasUserRoles -> User Role" ; sh:node cr:UserRoleEntityView ; rdfs:comment "[0..N] Roles defined." ] ;
+    sh:property [ sh:path cr:hasCredentials ; sh:name "hasCredentials -> Credential" ; sh:node cr:CredentialEntityView ; rdfs:comment "[0..N] Credentials." ] ;
+    sh:property [ sh:path cr:storesData ; sh:name "storesData -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] CRFs." ] ;
+    sh:property [ sh:path cr:storesData ; sh:name "storesData -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Documents." ] ;
+    sh:property [ sh:path cr:emitsEvents ; sh:name "emitsEvents -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Audit trail." ] ;
+    sh:property [ sh:path cr:producesReports ; sh:name "producesReports -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Reports." ] ;
+    sh:property [ sh:path cr:supports ; sh:name "supports -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies supported." ] ;
+    sh:property [ sh:path cr:operatedAt ; sh:name "operatedAt -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites where used." ] ;
+    sh:property [ sh:path cr:hasDataTransfers ; sh:name "hasDataTransfers -> Data Transfer" ; sh:node cr:DataTransferEntityView ; rdfs:comment "[0..N] Outbound or inbound transfers." ] ;
+    sh:property [ sh:path cr:hasShipments ; sh:name "hasShipments -> Shipment" ; sh:node cr:ShipmentEntityView ; rdfs:comment "[0..N] Shipment records (for IRT)." ] .

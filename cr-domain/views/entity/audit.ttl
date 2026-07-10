@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Audit can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:AuditEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Audit ;
+    rdfs:label "Audit" ;
+    cr:catalogNumber 41 ;
+    sh:property [ sh:path cr:auditId ; sh:name "auditId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:auditName ; sh:name "auditName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:auditType ; sh:name "auditType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: internal, external, regulatory_inspection, for_cause, routine, system_validation." ] ;
+    sh:property [ sh:path cr:auditScope ; sh:name "auditScope" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Scope description." ] ;
+    sh:property [ sh:path cr:scheduledStart ; sh:name "scheduledStart" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Scheduled start." ] ;
+    sh:property [ sh:path cr:scheduledEnd ; sh:name "scheduledEnd" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Scheduled end." ] ;
+    sh:property [ sh:path cr:actualStart ; sh:name "actualStart" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Actual start." ] ;
+    sh:property [ sh:path cr:actualEnd ; sh:name "actualEnd" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Actual end." ] ;
+    sh:property [ sh:path cr:auditStatus ; sh:name "auditStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: planned, in_progress, report_draft, closed, cancelled." ] ;
+    sh:property [ sh:path cr:findingCountMajor ; sh:name "findingCountMajor" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Major findings." ] ;
+    sh:property [ sh:path cr:findingCountMinor ; sh:name "findingCountMinor" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Minor findings." ] ;
+    sh:property [ sh:path cr:findingCountCritical ; sh:name "findingCountCritical" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Critical findings." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:leadAuditor ; sh:name "leadAuditor" ; cr:isMetadata true ; rdfs:comment "PersonRef: Lead auditor." ] ;
+    sh:property [ sh:path cr:ofStudy ; sh:name "ofStudy -> Study" ; sh:node cr:StudyEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Target study." ] ;
+    sh:property [ sh:path cr:ofSite ; sh:name "ofSite -> Site" ; sh:node cr:SiteEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Target site." ] ;
+    sh:property [ sh:path cr:ofSponsor ; sh:name "ofSponsor -> Sponsor" ; sh:node cr:SponsorEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Target sponsor." ] ;
+    sh:property [ sh:path cr:ofSystem ; sh:name "ofSystem -> System" ; sh:node cr:SystemEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Target system." ] ;
+    sh:property [ sh:path cr:ofService ; sh:name "ofService -> Service" ; sh:node cr:ServiceEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Target service." ] ;
+    sh:property [ sh:path cr:commissionedBy ; sh:name "commissionedBy -> Sponsor" ; sh:node cr:SponsorEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Commissioner." ] ;
+    sh:property [ sh:path cr:hasFindings ; sh:name "hasFindings -> Finding" ; sh:node cr:FindingEntityView ; rdfs:comment "[0..N] Findings; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:triggersCAPAs ; sh:name "triggersCAPAs -> CAPA" ; sh:node cr:CAPAEntityView ; rdfs:comment "[0..N] CAPAs." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Reports and letters." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Prep and response tasks." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

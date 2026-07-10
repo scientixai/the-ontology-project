@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Protocol can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:ProtocolEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Protocol ;
+    rdfs:label "Protocol" ;
+    cr:catalogNumber 22 ;
+    sh:property [ sh:path cr:protocolId ; sh:name "protocolId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, unique: Identifier." ] ;
+    sh:property [ sh:path cr:protocolNumber ; sh:name "protocolNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Sponsor protocol number." ] ;
+    sh:property [ sh:path cr:protocolTitle ; sh:name "protocolTitle" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Title." ] ;
+    sh:property [ sh:path cr:protocolVersion ; sh:name "protocolVersion" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Version." ] ;
+    sh:property [ sh:path cr:protocolStatus ; sh:name "protocolStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: DRAFT, APPROVED, AMENDED, RETIRED." ] ;
+    sh:property [ sh:path cr:therapeuticArea ; sh:name "therapeuticArea" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: ONCOLOGY, CARDIOLOGY, NEUROLOGY, IMMUNOLOGY, INFECTIOUS_DISEASE, OTHER." ] ;
+    sh:property [ sh:path cr:studyPhase ; sh:name "studyPhase" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PHASE1, PHASE2, PHASE3, PHASE4." ] ;
+    sh:property [ sh:path cr:studyDesign ; sh:name "studyDesign" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: PARALLEL, CROSSOVER, FACTORIAL, ADAPTIVE, SINGLE_GROUP." ] ;
+    sh:property [ sh:path cr:sampleSize ; sh:name "sampleSize" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Planned sample size." ] ;
+    sh:property [ sh:path cr:studyDuration ; sh:name "studyDuration" ; sh:datatype xsd:duration ; sh:maxCount 1 ; rdfs:comment "duration: Overall planned duration." ] ;
+    sh:property [ sh:path cr:randomizationMethod ; sh:name "randomizationMethod" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: NONE, SIMPLE, BLOCK, STRATIFIED, ADAPTIVE." ] ;
+    sh:property [ sh:path cr:blindingType ; sh:name "blindingType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: OPEN_LABEL, SINGLE_BLIND, DOUBLE_BLIND, TRIPLE_BLIND." ] ;
+    sh:property [ sh:path cr:primaryEndpoint ; sh:name "primaryEndpoint" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Primary endpoint description." ] ;
+    sh:property [ sh:path cr:secondaryEndpoints ; sh:name "secondaryEndpoints" ; rdfs:comment "array<string>: Secondary endpoints." ] ;
+    sh:property [ sh:path cr:creationDate ; sh:name "creationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Created." ] ;
+    sh:property [ sh:path cr:approvalDate ; sh:name "approvalDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Approved." ] ;
+    sh:property [ sh:path cr:effectiveDate ; sh:name "effectiveDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Effective." ] ;
+    sh:property [ sh:path cr:expirationDate ; sh:name "expirationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Expiration." ] ;
+    sh:property [ sh:path cr:primaryProtocolDocumentId ; sh:name "primaryProtocolDocumentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Reference to PDF protocol." ] ;
+    sh:property [ sh:path cr:ddfJsonDocumentId ; sh:name "ddfJsonDocumentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, optional: USDM Digital Definition Format JSON document." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:partOf ; sh:name "partOf -> Study" ; sh:node cr:StudyEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Owning study." ] ;
+    sh:property [ sh:path cr:hasPI ; sh:name "hasPI -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Principal Investigator." ] ;
+    sh:property [ sh:path cr:authoredBy ; sh:name "authoredBy -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Authors." ] ;
+    sh:property [ sh:path cr:reviewedBy ; sh:name "reviewedBy -> Person" ; sh:node cr:PersonEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Reviewers." ] ;
+    sh:property [ sh:path cr:hasObjectives ; sh:name "hasObjectives -> Objective" ; sh:node cr:ObjectiveEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Objectives; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:hasEndpoints ; sh:name "hasEndpoints -> Endpoint" ; sh:node cr:EndpointEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Endpoints." ] ;
+    sh:property [ sh:path cr:definesInclusion ; sh:name "definesInclusion -> Inclusion Criteria" ; sh:node cr:InclusionCriteriaEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Inclusion criteria." ] ;
+    sh:property [ sh:path cr:definesExclusion ; sh:name "definesExclusion -> Exclusion Criteria" ; sh:node cr:ExclusionCriteriaEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Exclusion criteria." ] ;
+    sh:property [ sh:path cr:definesVisits ; sh:name "definesVisits -> Visit" ; sh:node cr:VisitEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Planned visits." ] ;
+    sh:property [ sh:path cr:definesArms ; sh:name "definesArms -> Arm" ; sh:node cr:ArmEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Treatment arms." ] ;
+    sh:property [ sh:path cr:definesIP ; sh:name "definesIP -> Investigational Product" ; sh:node cr:InvestigationalProductEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] IP definitions." ] ;
+    sh:property [ sh:path cr:hasSafetyMonitoringPlan ; sh:name "hasSafetyMonitoringPlan -> Plan" ; sh:node cr:PlanEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Safety plan." ] ;
+    sh:property [ sh:path cr:hasStatisticalAnalysisPlan ; sh:name "hasStatisticalAnalysisPlan -> Plan" ; sh:node cr:PlanEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] SAP." ] ;
+    sh:property [ sh:path cr:hasAmendments ; sh:name "hasAmendments -> Amendment" ; sh:node cr:AmendmentEntityView ; rdfs:comment "[0..N] Amendments." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; rdfs:comment "[0..N] Tasks." ] ;
+    sh:property [ sh:path cr:hasSOPs ; sh:name "hasSOPs -> SOP" ; sh:node cr:SOPEntityView ; rdfs:comment "[0..N] SOPs." ] ;
+    sh:property [ sh:path cr:triggers ; sh:name "triggers -> Regulatory Submission" ; sh:node cr:RegulatorySubmissionEntityView ; rdfs:comment "[0..N] Submissions." ] ;
+    sh:property [ sh:path cr:hasMilestones ; sh:name "hasMilestones -> Milestone" ; sh:node cr:MilestoneEntityView ; rdfs:comment "[0..N] Milestones." ] ;
+    sh:property [ sh:path cr:definesCRFs ; sh:name "definesCRFs -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] CRFs." ] ;
+    sh:property [ sh:path cr:administersInstruments ; sh:name "administersInstruments -> Questionnaire" ; sh:node cr:QuestionnaireEntityView ; rdfs:comment "[0..N] Instruments." ] ;
+    sh:property [ sh:path cr:orders ; sh:name "orders -> Lab Test" ; sh:node cr:LabTestEntityView ; rdfs:comment "[0..N] Lab tests." ] ;
+    sh:property [ sh:path cr:definesProcedures ; sh:name "definesProcedures -> Procedure" ; sh:node cr:ProcedureEntityView ; rdfs:comment "[0..N] Procedures." ] ;
+    sh:property [ sh:path cr:anticipates ; sh:name "anticipates -> Adverse Event Type" ; sh:node cr:AdverseEventTypeEntityView ; rdfs:comment "[0..N] Expected AE types." ] ;
+    sh:property [ sh:path cr:allows ; sh:name "allows -> Deviation Type" ; sh:node cr:DeviationTypeEntityView ; rdfs:comment "[0..N] Allowed deviation types." ] ;
+    sh:property [ sh:path cr:budgetedBy ; sh:name "budgetedBy -> Budget" ; sh:node cr:BudgetEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Budget." ] ;
+    sh:property [ sh:path cr:approvedSites ; sh:name "approvedSites -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Approved sites." ] ;
+    sh:property [ sh:path cr:requires ; sh:name "requires -> Equipment" ; sh:node cr:EquipmentEntityView ; rdfs:comment "[0..N] Required equipment." ] ;
+    sh:property [ sh:path cr:collects ; sh:name "collects -> Sample" ; sh:node cr:SampleEntityView ; rdfs:comment "[0..N] Sample types." ] ;
+    sh:property [ sh:path cr:definesDataTransfer ; sh:name "definesDataTransfer -> Data Transfer Specification" ; sh:node cr:DataTransferSpecificationEntityView ; rdfs:comment "[0..N] Transfer specs." ] ;
+    sh:property [ sh:path cr:producesReports ; sh:name "producesReports -> Report" ; sh:node cr:ReportEntityView ; rdfs:comment "[0..N] Report types." ] ;
+    sh:property [ sh:path cr:hasMonitoringPlan ; sh:name "hasMonitoringPlan -> Plan" ; sh:node cr:PlanEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Monitoring plan." ] ;
+    sh:property [ sh:path cr:assessedBy ; sh:name "assessedBy -> Risk Assessment" ; sh:node cr:RiskAssessmentEntityView ; rdfs:comment "[0..N] Risk assessments." ] ;
+    sh:property [ sh:path cr:requiresTraining ; sh:name "requiresTraining -> Training Requirement" ; sh:node cr:TrainingRequirementEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Training requirements." ] ;
+    sh:property [ sh:path cr:definesConsentVersions ; sh:name "definesConsentVersions -> Informed Consent" ; sh:node cr:InformedConsentEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Consent versions." ] ;
+    sh:property [ sh:path cr:definesSOA ; sh:name "definesSOA -> Schedule of Assessments" ; sh:node cr:ScheduleOfAssessmentsEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] SOAs." ] ;
+    sh:property [ sh:path cr:overseenBy ; sh:name "overseenBy -> Oversight Body" ; sh:node cr:OversightBodyEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] IRB / EC, DSMB." ] ;
+    sh:property [ sh:path cr:hasPublicationPlan ; sh:name "hasPublicationPlan -> Publication Plan" ; sh:node cr:PublicationPlanEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Publication plans." ] .

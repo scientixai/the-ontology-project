@@ -1,0 +1,51 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# CAPA can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:CAPAEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:CAPA ;
+    rdfs:label "CAPA" ;
+    cr:catalogNumber 46 ;
+    sh:property [ sh:path cr:capaId ; sh:name "capaId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:capaName ; sh:name "capaName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:triggerType ; sh:name "triggerType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: finding, deviation, complaint, audit_observation, monitoring_observation, internal_review." ] ;
+    sh:property [ sh:path cr:triggerRefId ; sh:name "triggerRefId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Trigger reference." ] ;
+    sh:property [ sh:path cr:rootCause ; sh:name "rootCause" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Root cause." ] ;
+    sh:property [ sh:path cr:correctiveAction ; sh:name "correctiveAction" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Corrective action description." ] ;
+    sh:property [ sh:path cr:preventiveAction ; sh:name "preventiveAction" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Preventive action description." ] ;
+    sh:property [ sh:path cr:plannedCompletionDate ; sh:name "plannedCompletionDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date: Planned completion." ] ;
+    sh:property [ sh:path cr:actualCompletionDate ; sh:name "actualCompletionDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Actual completion." ] ;
+    sh:property [ sh:path cr:effectivenessCheckDate ; sh:name "effectivenessCheckDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Effectiveness check." ] ;
+    sh:property [ sh:path cr:effectivenessOutcome ; sh:name "effectivenessOutcome" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum, optional: effective, not_effective, partially_effective." ] ;
+    sh:property [ sh:path cr:capaStatus ; sh:name "capaStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: open, in_progress, awaiting_effectiveness_check, closed_effective, closed_ineffective, cancelled." ] ;
+    sh:property [ sh:path cr:severity ; sh:name "severity" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "enum: low, medium, high, critical." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:ownedBy ; sh:name "ownedBy" ; cr:isMetadata true ; rdfs:comment "PersonRef: Owner." ] ;
+    sh:property [ sh:path cr:triggeredBy ; sh:name "triggeredBy -> Finding" ; sh:node cr:FindingEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Audit finding; flagged as missing object below." ] ;
+    sh:property [ sh:path cr:triggeredBy ; sh:name "triggeredBy -> Deviation" ; sh:node cr:DeviationEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Deviation." ] ;
+    sh:property [ sh:path cr:triggeredBy ; sh:name "triggeredBy -> Audit" ; sh:node cr:AuditEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Audit." ] ;
+    sh:property [ sh:path cr:triggeredBy ; sh:name "triggeredBy -> Monitoring Visit" ; sh:node cr:MonitoringVisitEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Monitoring visit." ] ;
+    sh:property [ sh:path cr:triggeredBy ; sh:name "triggeredBy -> Discrepancy" ; sh:node cr:DiscrepancyEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Query." ] ;
+    sh:property [ sh:path cr:affectsStudy ; sh:name "affectsStudy -> Study" ; sh:node cr:StudyEntityView ; rdfs:comment "[0..N] Studies." ] ;
+    sh:property [ sh:path cr:affectsSite ; sh:name "affectsSite -> Site" ; sh:node cr:SiteEntityView ; rdfs:comment "[0..N] Sites." ] ;
+    sh:property [ sh:path cr:affectsSystem ; sh:name "affectsSystem -> System" ; sh:node cr:SystemEntityView ; rdfs:comment "[0..N] Systems." ] ;
+    sh:property [ sh:path cr:affectsService ; sh:name "affectsService -> Service" ; sh:node cr:ServiceEntityView ; rdfs:comment "[0..N] Services." ] ;
+    sh:property [ sh:path cr:hasTasks ; sh:name "hasTasks -> Task" ; sh:node cr:TaskEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] CAPA tasks." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Documents." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .

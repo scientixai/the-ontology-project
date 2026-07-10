@@ -1,0 +1,44 @@
+# ---------------------------------------------------------------------------
+# REFERENCE ENTITY VIEW  (generated — do not edit by hand)
+# Source: docs/ooux-object-catalog-v0.2.md  |  Generator: tools/gen_entity_views.py
+#
+# REFERENCE, NOT RUNTIME. This is the exhaustive, FLAT menu of everything a
+# Equipment can express in a view: its own attributes, its provenance metadata,
+# and its relationships as POINTERS to other objects' views. It carries NO
+# prominence, rank, ordering, or role scoping — that arrangement is an
+# application's choice, recorded per person per day in the runtime graph, never
+# in the commons. A pointer RESOLVES to the target's view; it never inlines it.
+# The depth-0 render of a pointer is the target's identity set (cr:isIdentity).
+# See the entity-view ADR and RFC 0001.
+# ---------------------------------------------------------------------------
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+cr:EquipmentEntityView a sh:NodeShape, cr:EntityView ;
+    sh:targetClass cr:Equipment ;
+    rdfs:label "Equipment" ;
+    cr:catalogNumber 49 ;
+    sh:property [ sh:path cr:equipmentId ; sh:name "equipmentId" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string, IRI: Unique identifier." ] ;
+    sh:property [ sh:path cr:equipmentName ; sh:name "equipmentName" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "string: Display name." ] ;
+    sh:property [ sh:path cr:equipmentType ; sh:name "equipmentType" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Type." ] ;
+    sh:property [ sh:path cr:manufacturer ; sh:name "manufacturer" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Manufacturer." ] ;
+    sh:property [ sh:path cr:model ; sh:name "model" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Model." ] ;
+    sh:property [ sh:path cr:serialNumber ; sh:name "serialNumber" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string: Serial number." ] ;
+    sh:property [ sh:path cr:siteId ; sh:name "siteId" ; sh:datatype xsd:string ; sh:maxCount 1 ; rdfs:comment "string, IRI: Site." ] ;
+    sh:property [ sh:path cr:calibrationCadenceDays ; sh:name "calibrationCadenceDays" ; sh:datatype xsd:integer ; sh:maxCount 1 ; rdfs:comment "integer: Calibration cadence." ] ;
+    sh:property [ sh:path cr:lastCalibrationDate ; sh:name "lastCalibrationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Last calibration." ] ;
+    sh:property [ sh:path cr:nextCalibrationDate ; sh:name "nextCalibrationDate" ; sh:datatype xsd:date ; sh:maxCount 1 ; rdfs:comment "date, optional: Next calibration." ] ;
+    sh:property [ sh:path cr:equipmentStatus ; sh:name "equipmentStatus" ; sh:datatype xsd:string ; sh:maxCount 1 ; cr:isIdentity true ; rdfs:comment "enum: in_service, out_of_service, retired, in_calibration." ] ;
+    sh:property [ sh:path cr:createdAt ; sh:name "createdAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Creation." ] ;
+    sh:property [ sh:path cr:modifiedAt ; sh:name "modifiedAt" ; sh:datatype xsd:dateTime ; sh:maxCount 1 ; cr:isMetadata true ; rdfs:comment "datetime: Modification." ] ;
+    sh:property [ sh:path cr:locatedAt ; sh:name "locatedAt -> Site" ; sh:node cr:SiteEntityView ; sh:minCount 1 ; sh:maxCount 1 ; rdfs:comment "[1] Host site." ] ;
+    sh:property [ sh:path cr:usedFor ; sh:name "usedFor -> Visit" ; sh:node cr:VisitEntityView ; rdfs:comment "[0..N] Visits where used." ] ;
+    sh:property [ sh:path cr:producedBy ; sh:name "producedBy -> Sponsor" ; sh:node cr:SponsorEntityView ; sh:maxCount 1 ; rdfs:comment "[0..1] Manufacturer organization." ] ;
+    sh:property [ sh:path cr:producesData ; sh:name "producesData -> CRF" ; sh:node cr:CRFEntityView ; rdfs:comment "[0..N] Data records." ] ;
+    sh:property [ sh:path cr:producesData ; sh:name "producesData -> Lab Results" ; sh:node cr:LabResultsEntityView ; rdfs:comment "[0..N] Lab results." ] ;
+    sh:property [ sh:path cr:hasShipments ; sh:name "hasShipments -> Shipment" ; sh:node cr:ShipmentEntityView ; rdfs:comment "[0..N] Shipments." ] ;
+    sh:property [ sh:path cr:hasDocuments ; sh:name "hasDocuments -> Document" ; sh:node cr:DocumentEntityView ; rdfs:comment "[0..N] Calibration certificates." ] ;
+    sh:property [ sh:path cr:hasAuditTrail ; sh:name "hasAuditTrail -> Audit Trail Entry" ; sh:node cr:AuditTrailEntryEntityView ; sh:minCount 1 ; rdfs:comment "[1..N] Trail." ] .
