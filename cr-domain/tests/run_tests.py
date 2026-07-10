@@ -291,7 +291,7 @@ def entity_view_checks(failures):
     total += 1
     vocab_ok = ((EV, RDF.type, OWL.Class) in merged
                 and (ISID, RDF.type, OWL.AnnotationProperty) in merged
-                and len(views) >= 70)
+                and len(views) >= 65)  # RFC 0003/ADR-0028 drops demote/defer objects; corpus is ~70
     if vocab_ok:
         passed += 1
         print(f"[PASS] entity-view: vocabulary declared; {len(views)} object views cover the catalog")
@@ -299,7 +299,7 @@ def entity_view_checks(failures):
         failures.append(("ENTITYVIEW", "coverage",
                          f"EntityView class/isIdentity declared? "
                          f"{(EV, RDF.type, OWL.Class) in merged}/"
-                         f"{(ISID, RDF.type, OWL.AnnotationProperty) in merged}; views={len(views)} (need >=70)"))
+                         f"{(ISID, RDF.type, OWL.AnnotationProperty) in merged}; views={len(views)} (need >=65)"))
         print(f"[FAIL] entity-view: vocabulary/coverage ({len(views)} views)")
 
     # (3) each view: targetClass + >=1 property + non-empty identity set

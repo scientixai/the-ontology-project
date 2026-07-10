@@ -1,6 +1,6 @@
 # RFC 0003: Layer attribution — the two-axis reconciliation (KIND × TIER) and disposition of the clinical-research object catalog
 
-- **Status:** Proposed
+- **Status:** Accepted (ratified 2026-07-10, ADR-0028)
 - **Date:** 2026-07-10
 - **Authors:** @bo-lora (convener)
 - **Affected groups:** Core Stewards, HCLS umbrella WG (forming), Clinical Research WG

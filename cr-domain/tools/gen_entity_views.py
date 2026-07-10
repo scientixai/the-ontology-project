@@ -20,6 +20,7 @@ Deterministic and byte-reproducible: same catalog in, same TTL out. Run:
     python3 cr-domain/tools/gen_entity_views.py            # write corpus
     python3 cr-domain/tools/gen_entity_views.py --check    # report only, no write
 """
+import json
 import os
 import re
 import sys
@@ -27,6 +28,8 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CATALOG = os.path.join(ROOT, "docs", "ooux-object-catalog-v0.2.md")
 OUT_DIR = os.path.join(ROOT, "views", "entity")
+TIERMAP = os.path.join(ROOT, "views", "tier-map.json")
+BINDINGS = os.path.join(ROOT, "ontology", "cr-tier-bindings.ttl")
 
 CARD_RE = re.compile(r"^\d+(?:\.\.(?:N|\d+))?$")
 HEADER_RE = re.compile(r"^##\s+\*\*(\d+)\\?\.\s+(.+?)\*\*\s*$")
@@ -203,19 +206,21 @@ HEADER = """\
 # ---------------------------------------------------------------------------
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 """
 
 
-def render(obj, view_iri_of):
+def render(obj, view_iri_of, target_class):
     cam = camel(obj["name"])
     view = f"cr:{cam}EntityView"
     ident = set(pick_identity(obj["attrs"]))
     lines = [HEADER.format(label=esc(obj["name"]))]
     lines.append(f"{view} a sh:NodeShape, cr:EntityView ;")
-    lines.append(f'    sh:targetClass cr:{cam} ;')
+    lines.append(f'    sh:targetClass {target_class} ;')
     lines.append(f'    rdfs:label "{esc(obj["name"])}" ;')
     lines.append(f'    cr:catalogNumber {obj["num"]} ;')
 
@@ -280,10 +285,56 @@ def render(obj, view_iri_of):
     return "\n".join(lines) + "\n", unresolved, len(ident)
 
 
+def write_bindings(bindings):
+    """The tier class-bindings: each domain-native (subclass) object declared as a
+    cr: class chaining to its parent-layer category (RFC 0003 / ADR-0028), so the
+    layer-discipline gate sees a real subClassOf chain, not an orphan."""
+    lines = [
+        "# ---------------------------------------------------------------------------",
+        "# TIER CLASS BINDINGS  (generated — do not edit by hand)",
+        "# Source: cr-domain/views/tier-map.json  |  Generator: tools/gen_entity_views.py",
+        "# Per RFC 0003 / ADR-0028: each domain-native object is subClassOf its parent-",
+        "# layer category, so tools/lint_layering.py sees a real chain to Core/HCLS.",
+        "# dedupe objects are absent (their views target the parent directly); demote/",
+        "# defer objects are dropped from the corpus entirely.",
+        "# ---------------------------------------------------------------------------",
+        "@prefix cr:   <https://top.scientix.ai/cr/v1#> .",
+        "@prefix top:  <https://top.scientix.ai/v1#> .",
+        "@prefix hcls: <https://top.scientix.ai/hcls/v1#> .",
+        "@prefix owl:  <http://www.w3.org/2002/07/owl#> .",
+        "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .",
+        "",
+    ]
+    for cam in sorted(bindings):
+        lines.append(f"cr:{cam} a owl:Class ;")
+        lines.append(f"    rdfs:subClassOf {bindings[cam]} .")
+        lines.append("")
+    open(BINDINGS, "w", encoding="utf-8").write("\n".join(lines) + "\n")
+
+
 def main():
     check = "--check" in sys.argv
     objects = parse_catalog()
     by_canon = {canon(o["name"]): camel(o["name"]) for o in objects}
+
+    tiermap = {}
+    if os.path.exists(TIERMAP):
+        tiermap = json.load(open(TIERMAP, encoding="utf-8")).get("objects", {})
+
+    def disposition(cam):
+        """(target_class_iri_or_None, subclass_parent_or_None) per the tier map.
+        target None => drop the view (demote/defer)."""
+        e = tiermap.get(cam)
+        if not e:
+            return f"cr:{cam}", None                 # untriaged-but-chaining: unchanged
+        v, res = e.get("verdict"), e.get("resolve")
+        if v == "dedupe" and res:
+            return res, None                          # view targets the parent directly
+        if v == "subclass" and res:
+            return f"cr:{cam}", res                    # native class chaining to res
+        if v in ("demote", "defer"):
+            return None, None                         # not an object here — drop the view
+        return f"cr:{cam}", None                       # review/held: keep, tracked as WARN
 
     def view_iri_of(target):
         cam = by_canon.get(canon(target))
@@ -295,22 +346,38 @@ def main():
         os.makedirs(OUT_DIR, exist_ok=True)
     total_unresolved = {}
     n_rel = n_attr = 0
-    written = []
+    written, skipped, bindings = [], [], {}
     for o in objects:
-        ttl, unresolved, nident = render(o, view_iri_of)
+        cam = camel(o["name"])
+        target, parent = disposition(cam)
+        path = os.path.join(OUT_DIR, f"{slug(o['name'])}.ttl")
+        if target is None:                            # demote/defer: drop the view
+            skipped.append(o["name"])
+            if not check and os.path.exists(path):
+                os.remove(path)
+            continue
+        if parent:
+            bindings[cam] = parent
+        ttl, unresolved, nident = render(o, view_iri_of, target)
         n_rel += len(o["rels"])
         n_attr += len(o["attrs"]) + len(o["meta"])
         if nident == 0 and (o["attrs"] or o["rels"]):
             print(f"  WARN: {o['name']} has empty identity set")
         for u in unresolved:
             total_unresolved.setdefault(u, []).append(o["name"])
-        path = os.path.join(OUT_DIR, f"{slug(o['name'])}.ttl")
         written.append(os.path.relpath(path, ROOT))
         if not check:
             open(path, "w", encoding="utf-8").write(ttl)
 
-    print(f"objects: {len(objects)}  attributes: {n_attr}  relationships: {n_rel}")
-    print(f"files: {len(written)}  -> views/entity/")
+    if not check and bindings:
+        write_bindings(bindings)
+
+    print(f"objects: {len(objects)}  written: {len(written)}  skipped(demote/defer): {len(skipped)}")
+    print(f"attributes: {n_attr}  relationships: {n_rel}  -> views/entity/")
+    if skipped:
+        print(f"  dropped (re-modeled as properties / deferred): {', '.join(sorted(skipped))}")
+    if bindings:
+        print(f"  tier bindings: {len(bindings)} native subclasses -> ontology/cr-tier-bindings.ttl")
     if total_unresolved:
         print(f"\nunresolved relationship targets (no catalog object — pointer minted, "
               f"resolves once the object is added): {len(total_unresolved)}")

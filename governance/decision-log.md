@@ -1287,6 +1287,32 @@ Accepted 2026-07-10. Ships with: `cr-domain/tools/gen_entity_views.py`, `cr-doma
 
 ---
 
+## ADR-0028: Layer attribution — two-axis (KIND × TIER) reconciliation; the TBox shrinks
+
+**Date:** 2026-07-10 · **Status:** Accepted · **Refs:** [RFC 0003](rfcs/accepted/0003-layer-attribution.md), [`docs/ooux-layer-blindness.md`](../docs/ooux-layer-blindness.md), [`cr-domain/views/tier-map.json`](../cr-domain/views/tier-map.json), [`tools/lint_layering.py`](../tools/lint_layering.py), [`extension-contract.md`](extension-contract.md) § "Layer discipline", Jessica Talisman, *Context Is a Property, Not an Object*
+
+### Context
+
+The OOUX entity-view corpus (ADR-0026) is a faithful operator snapshot and, because faithful, **layer-blind and kind-blind**: it minted concepts parent layers already own (`cr:Person` shadowing `hcls:Person`; `cr:Date`, `cr:Tag`, `cr:System`) and reified attributes/relations/context into classes. The convener's reviewer, Jessica Talisman, supplied the decisive correction: *"context is a property, not an object; classes are the TBox — small — and properties are the ABox, the data."* Left unreconciled, the flat corpus fails the federation conformance gate (RFC 0002): a domain repo that pins Core cannot redefine the primitives it inherits.
+
+### Decision
+
+Adopt a **two-axis reconciliation**, machine-enforced (`tools/lint_layering.py` + `cr-domain/views/tier-map.json` + the extension contract), as a required pipeline stage between an object catalog and class-minting:
+
+1. **KIND** — a class (object; the small TBox) or a property/relation/context (the ABox)? A property reified as a class is **demoted**, not tiered.
+2. **TIER** — only for classes — `dedupe` (bind to a parent), `subclass` (native, `subClassOf` a named parent), or `promote` (a real parent-layer gap).
+
+Disposition of the 66 flagged clinical-research objects (RFC 0003): **5 demote** to properties (Date, Tag, TherapeuticArea, PersonRole, UserRole); **9 dedupe** exact shadows; **~40 subclass** existing Core/HCLS categories; **1 promote** — `hcls:Questionnaire` (rule of three); **3 defer** to a future finance bucket (Budget/BudgetForecast/Payment); **3 held** (Participant boundary, Service/AnalysisService tier). **Core gains nothing; the HCLS base gains `hcls:Questionnaire`.** Applying KIND first shrinks the TBox rather than growing it.
+
+### Consequences
+
+- Federation (RFC 0002) unblocks once `lint_layering.py --strict` reaches zero.
+- The entity-view generator becomes **author-tiered, generate-flat**: `sh:targetClass` resolves to the parent (dedupe) or a native class chaining to a parent (subclass); demoted items become properties; deferred/held items leave the corpus.
+- Two ontology-class shadows — `cr:Attestation` ↔ `top:Attestation`, `cr:Window` ↔ `top:Window` — are **held for a careful concept-check dedupe** (each spans multiple SHACL-validated example files); tracked in the tier map, not auto-rewritten.
+- The rule cannot regress: an untriaged term fails CI; a property modeled as a class is a reify violation.
+
+---
+
 
 ## How to add an ADR
 
