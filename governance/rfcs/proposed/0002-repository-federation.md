@@ -6,7 +6,7 @@
 - **Affected groups:** Core Stewards, HCLS umbrella WG (forming), Clinical Research WG
 - **Required quorum:** Core stewards + one Clinical Research WG maintainer (convener as review pool of one today)
 - **Supersedes:** n/a — **extends** [ADR-0023](../../decision-log.md#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo)
-- **ADR on acceptance:** ADR-0026
+- **ADR on acceptance:** ADR-0027 (ADR-0026 is the entity-view corpus)
 
 ## Motivation
 
@@ -127,4 +127,4 @@ Bo: the two parts I most want your read on are **§Proposal.1 (the recursive thi
 
 ---
 
-*Extends ADR-0023. On acceptance, moves to `accepted/0002-repository-federation.md` and appends ADR-0026 to the decision log.*
+*Extends ADR-0023. On acceptance, moves to `accepted/0002-repository-federation.md` and appends ADR-0027 to the decision log.*
