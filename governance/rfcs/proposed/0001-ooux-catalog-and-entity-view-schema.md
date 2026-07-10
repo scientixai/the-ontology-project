@@ -35,7 +35,7 @@ A generic viewer builds an entity page from four layers, each sourced from the o
 
 1. **Context / Identity** — the node's `@id` (stable), label/slug, and `status` (from the class's status enum, e.g. `studyStatus: PLANNED..ENROLLING..COMPLETED`). Universal DNA (identifier, observedAt, status) already guarantees the minimum.
 2. **Core Record** — the class's Properties, rendered by type (string → text, enum → pill, date → timeline, `array<object>` → structured list). The class definition already carries these.
-3. **Graph** — the entity's forward-linked neighbors, sourced from the SHACL retrieval views in `views/operator-views.ttl` and walked by `tools/ngsild_view.py`. Each `sh:NodeShape` already declares exactly which relationships a single `?join=inline` pull inlines and which leaf shape renders each neighbor. This *is* the graph-layer schema, already built and tooled. A viewer groups edges as upstream (parents: `sponsoredBy`, `governedBy`), downstream (children: `conductedAt`, `enrols`, `contains`), and peer/process (`executes`, `receives`).
+3. **Graph** — the entity's forward-linked neighbors, sourced from the SHACL retrieval views in `views/operator-views.ttl` and walked by `tools/ngsild_view.py`. Each `sh:NodeShape` already declares exactly which relationships a single `?join=inline` pull inlines and which leaf shape renders each neighbor. This *is* the graph-layer schema, already built and tooled. A viewer groups edges as upstream (parents: `sponsoredBy`, `governedBy`), downstream (children: `conductedAt`, `enrols`, `contains`), and peer/process (`executes`, `receives`). An operator view curates a monitoring-relevant subset rather than the full fan-out: it inlines only immediate, high-level context and exposes dense collections as traversal links (edges to navigate), never inlined object sets, so the `?join=inline` payload stays small and the operator's cognitive load bounded.
 4. **Action** — persona actions gated by role × entity state. This layer has no ontology home yet. This RFC proposes a lightweight, additive annotation (see §3) so the Action layer is also schema-driven.
 
 Nothing in layers 1–3 is new construction; the RFC's contribution is naming this arrangement as a **contract** consumers depend on, and reconciling the OOUX catalog onto it.
@@ -53,13 +53,13 @@ A worked reconciliation for the first objects, to be extended to all 78 in follo
 | Site | `top:Location` | *gap — additive* | `cr:SiteLeaf` (exists) | `site_activation_tracker.rq` |
 | Deviation, Screen Fail, Document, Protocol, Tag, Task, CRF, Milestone, Budget, Contract, Person, Person Role | (per leaf) | *gaps — additive* | *some leaves exist* | *various* |
 
-The **Calls to Action** column is the one genuinely missing piece. Proposal: add a small, additive vocabulary that attaches CTAs to a class as `(action, persona, gatingState)` triples — for example, `cr:Study cr:hasAction [ cr:action "Activate Study" ; cr:persona "Sponsor PM" ; cr:whenState "IN_STARTUP" ]`. This lives in the operator layer, is Additive per the extension contract, and gives the Action layer a schema without touching Core.
+The **Calls to Action** column is the one genuinely missing piece. Proposal: add a small, additive vocabulary that attaches CTAs to a class as `(action, persona, gatingState)` triples — for example, `cr:Study cr:hasAction [ cr:action "Activate Study" ; cr:persona "Sponsor PM" ; cr:whenState "IN_STARTUP" ]`. This lives in the operator layer, is Additive per the extension contract, and gives the Action layer a schema without touching Core. The scope is deliberately narrow: it states **who may do what, and in which state**, and stops there. It carries no pre-conditions, post-conditions, or side effects — modeling those would build a workflow execution engine inside the graph, and the ontology's job is to describe structural facts and state, not to execute them. Validation logic and state mutation stay in the consuming application or an API layer.
 
 ### 4. Governance
 
 - **Additive only.** Per the extension contract (ADR-0019), gap objects are added as new `cr` classes subclassing a TOP leaf in the `cr` namespace; no Core term is redefined and no canonical label is rewritten. The OOUX "Participant (Subject)" reconciles to the settled ADR-0024 decision (Participant preferred, subject altLabel), not a new label.
 - **Tests stay green.** New classes ship with worked examples and pass `tests/run_tests.py`; the deterministic build (`build_dist.py`) round-trips.
-- **The OOUX catalog itself** is imported into `cr-domain/docs/` (or a `catalog/` sibling) as the durable source the reconciliation is measured against, so the mapping never drifts silently.
+- **The OOUX catalog itself** is imported into `cr-domain/docs/` as a Docs-as-Code artifact, so the reconciliation is measured against a source that lives in the same branch: a PR that changes `operator-views.ttl` is reviewable against the catalog markdown beside it, and the mapping never drifts silently.
 
 ## Alternatives considered
 
@@ -67,11 +67,13 @@ The **Calls to Action** column is the one genuinely missing piece. Proposal: add
 - **House the entity-view schema in a consuming product or a design system.** *Changes* where the schema lives; *preserves* speed for one consumer; *not chosen* because it inverts the dependency direction — consumers depend on the commons; the commons must depend on none of them. The schema is ontology, so it lives here.
 - **Treat the OOUX map as a replacement ontology.** *Changes* Core wholesale; *not chosen* because it would redefine Core terms and violate open-core / constrained-extension (ADR-0019). The map is a lens, not a new spine.
 
-## Open questions
+## Resolved questions
 
-- **CTA home and format.** Should Calls to Action be modeled in the ontology (the `cr:hasAction` proposal above) or remain consumer policy? If modeled, is `(action, persona, whenState)` sufficient, or do actions need pre/post-conditions and effects? Reviewer guidance wanted.
-- **StudyView scope.** `operator-views.ttl` has `EnrollmentView`, `AdverseEventView`, `EDCObservationView`, etc., but no `StudyView`. A Study inlines a very large forward fan-out; should its operator view inline a curated subset (the monitoring-relevant edges) rather than all ~45 relationships?
-- **Catalog import.** Import the full 78-object OOUX catalog as a doc artifact in `cr-domain`, or keep it external and track only the reconciliation table here?
+Resolved by reviewer, 2026-07-10:
+
+- **CTA home and format — modeled in the ontology, no execution semantics.** Calls to Action use the lightweight `cr:hasAction [ cr:action ; cr:persona ; cr:whenState ]` vocabulary (§Proposal.3). The annotation stops at who / what / when and carries no pre-conditions, post-conditions, or side effects; those would build a workflow execution engine inside the graph. The ontology describes structural facts and state; the consuming application or API layer owns validation and state mutation.
+- **StudyView scope — curated subset, not the full fan-out.** `cr:StudyView` inlines only immediate, high-level context (for example the active Protocol, overarching Milestones, top-level Budget). Dense collections (Participants, CRFs, Visits, Adverse Events) are exposed as traversal links to navigate, never inlined object sets. This bounds the payload and the operator's cognitive load, and the principle generalizes to every operator view (§Proposal.2, layer 3).
+- **Catalog import — import into `cr-domain/docs/` (Docs-as-Code).** The full 78-object OOUX catalog is imported into the repository so the reconciliation is measured against a source in the same branch, and a PR changing `operator-views.ttl` is reviewable against the catalog markdown beside it. Keeping the catalog external would guarantee drift.
 
 ## Consequences
 
