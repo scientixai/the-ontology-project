@@ -1239,6 +1239,13 @@ Adopt the OOUX v0.2 catalog as the operator-facing projection of cr-domain, reco
 
 Accepted 2026-07-10. Ships with: RFC 0001 (accepted), `cr-domain/docs/ooux-object-catalog-v0.2.md` (the imported catalog).
 
+### Correction (2026-07-10)
+
+Two post-acceptance corrections (see RFC 0001, Correction):
+
+- **The Action layer is not a gap; no `cr:hasAction` vocabulary is needed.** `ontology/cr-core-actions.ttl` already models it as 171 `hcls:Action` archetypes (persona via `hcls:authorizedAgentType`, stage via `cr:occursInStage`, target via `hcls:operatesOn`). The `cr:hasAction` proposal is withdrawn. Gating is stage-based; the retrieval path is `projections/entity_actions.rq`.
+- **Reference, not runtime.** TOP is a reference graph, not a runtime graph. The entity-view schema and its operator/action views are reference recipes a consumer adapts against its own customer runtime graph; TOP does not prescribe them. The caveat is carried on the opinionated view artifacts.
+
 ---
 
 
