@@ -1,10 +1,16 @@
 {
-  "_doc": "Tier attribution for clinical-research OOUX objects — the reconciliation record enforced by tools/lint_layering.py. See docs/ooux-layer-blindness.md. Every object a domain mints or targets must resolve to its home layer: dedupe (bind to an existing parent class), subclass (domain-native, rdfs:subClassOf a named existing parent), promote (a cross-domain primitive with no parent yet — needs a Core/mid class via RFC), or review (tier decision pending). dedupe/subclass PASS; promote/review WARN (tracked, non-blocking) until --strict. An object absent from this map is an untriaged shadow/orphan and FAILS the gate — that is what prevents recurrence.",
+  "_doc": "Two-axis reconciliation for clinical-research OOUX objects — enforced by tools/lint_layering.py. See docs/ooux-layer-blindness.md. AXIS 1 KIND (Jessica Talisman): is this a class (an object / the TBox, which is small) or a property/relation/context (the ABox, where the data lives)? A property reified as a class is demoted, not tiered. AXIS 2 TIER (only for kind=class): which layer owns it — dedupe/subclass (resolved) vs promote/review (backlog). dedupe/subclass PASS; kind!=class, promote, and review WARN (tracked) until --strict. An object absent from this map is an untriaged shadow/orphan and FAILS the gate — that is what prevents recurrence.",
+  "_kinds": {
+    "class": "an object / a TBox class — proceed to the TIER axis",
+    "property": "an attribute or a literal value (firstName, date, a metric) — model as a property with a domain, not a class",
+    "relation": "a relationship, role, or CONTEXT (Jessica Talisman: 'context is a property, not an object') — model as an object property, not a class"
+  },
   "_verdicts": {
     "dedupe": "same concept the parent already owns — bind the view/target to it, do not re-mint",
     "subclass": "domain-native specialization — mint in cr:, but rdfs:subClassOf the named parent",
     "promote": "cross-domain primitive; no parent exists yet — candidate for Core or a mid-layer (RFC)",
-    "review": "home tier not yet decided — tracked so the map stays complete; resolve before federation"
+    "review": "home tier not yet decided — tracked so the map stays complete; resolve before federation",
+    "demote": "not a class at all — a property/relation/context reified as an object (KIND axis); re-model as a property"
   },
   "objects": {
     "Person":              {"verdict": "dedupe",   "resolve": "hcls:Person"},
@@ -17,7 +23,7 @@
     "Attestation":         {"verdict": "dedupe",   "resolve": "top:Attestation"},
     "Window":              {"verdict": "dedupe",   "resolve": "top:Window"},
 
-    "Date":                {"verdict": "subclass", "resolve": "top:Temporal"},
+    "Date":                {"kind": "property", "verdict": "demote", "note": "a datetime value, not an object — model as a property (a milestone-date is a property of the milestone/subject)"},
     "Region":              {"verdict": "subclass", "resolve": "top:Location"},
     "Country":             {"verdict": "subclass", "resolve": "top:Location"},
     "StorageLocation":     {"verdict": "subclass", "resolve": "top:Location"},
@@ -40,7 +46,7 @@
     "Sample":              {"verdict": "subclass", "resolve": "hcls:Specimen"},
     "InformedConsent":     {"verdict": "subclass", "resolve": "hcls:Consent"},
 
-    "Tag":                 {"verdict": "promote", "note": "generic classification/annotation primitive — candidate Core class (RFC)"},
+    "Tag":                 {"kind": "property", "verdict": "demote", "note": "an annotation/classification value — a property or skos:Concept, not an object"},
     "Budget":              {"verdict": "promote", "note": "cross-industry finance primitive — candidate finance mid-layer (RFC)"},
     "BudgetForecast":      {"verdict": "promote", "note": "finance primitive — with Budget (RFC)"},
     "Payment":             {"verdict": "promote", "note": "finance primitive — with Budget (RFC)"},
@@ -64,7 +70,7 @@
     "MonitoringVisit":     {"verdict": "review", "note": "cr-native vs a visit/encounter primitive"},
     "OtherClinicalEvent":  {"verdict": "review", "note": "cr-native clinical event"},
     "Participant":         {"verdict": "review", "note": "SENSITIVE — the pseudonymous subject/boundary; route via hcls:Person + Enrollment bridge, do not merge"},
-    "PersonRole":          {"verdict": "review", "note": "role concept — see ADR-0020/0022 (agency is a role)"},
+    "PersonRole":          {"kind": "relation", "verdict": "demote", "note": "a role is a relationship/context, not an object — see ADR-0020/0022 (agency is a role); context is a property, not an object"},
     "Plan":                {"verdict": "review", "note": "vs top:Scope / top:Program"},
     "Protocol":            {"verdict": "review", "note": "document + plan; vs top:Document and USDM"},
     "SafetySignal":        {"verdict": "review", "note": "cr-native / pharmacovigilance tier"},
@@ -75,7 +81,7 @@
     "StudyPerformanceMetric": {"verdict": "review", "note": "metric — with DataQualityMetric (RFC)"},
     "SystemConfiguration": {"verdict": "review", "note": "config artifact tier"},
     "Task":                {"verdict": "review", "note": "vs hcls:Action / top:Activity"},
-    "TherapeuticArea":     {"verdict": "review", "note": "classification concept — vs a taxonomy tier"},
-    "UserRole":            {"verdict": "review", "note": "role concept — see ADR-0020/0022"}
+    "TherapeuticArea":     {"kind": "property", "verdict": "demote", "note": "a classification value (skos:Concept), not an object"},
+    "UserRole":            {"kind": "relation", "verdict": "demote", "note": "a role is a relationship/context, not an object — see ADR-0020/0022"}
   }
 }

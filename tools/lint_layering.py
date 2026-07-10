@@ -141,6 +141,17 @@ def main():
         roles = ",".join(sorted(terms[ln]["as"]))
         entry = tmap.get(ln)
         if entry:
+            # AXIS 1 — KIND (object vs property). Jessica Talisman: "context is a
+            # property, not an object; classes are the TBox (small), properties are
+            # the ABox (the data)." A term marked non-class but modeled as a class /
+            # sh:targetClass is REIFIED — it should be demoted to a property/relation.
+            kind = entry.get("kind", "class")
+            if kind != "class":
+                warns.append((ln, roles,
+                              f"REIFY — kind={kind}: an attribute/relation/context modeled as a class; "
+                              f"demote to a property ({entry.get('note','context is a property, not an object')})"))
+                continue
+            # AXIS 2 — TIER (which layer owns this class).
             v = entry.get("verdict")
             if v in ("dedupe", "subclass"):
                 # sanity: a dedupe/subclass target must actually exist upstream

@@ -57,16 +57,32 @@ borrowed.
 
 > OOUX captures the room; it can't tell you which furniture you brought and which was already there.
 
-## The mitigation: a tier-attribution stage the pipeline already implies
+## The second axis: object vs property (Jessica Talisman)
 
-Between the OOUX object catalog and class-minting, insert a **tier-attribution / reconciliation**
-pass. For each object, ask *"does a parent world already own this?"*:
+Reviewing this, Jessica Talisman pushed the finding one level deeper:
 
-| Verdict | Action |
-| --- | --- |
-| Yes, and the parent class exists | **Dedupe** — bind to the existing upper/mid class; do not re-mint. |
-| Yes in principle, but no parent has it yet | **Promote** — it reveals a real gap in Core or a mid-layer. (For us, `budget`, `shipment`, `capa`, `task` turned out to be cross-industry primitives, not clinical-research at all.) |
-| No, genuinely domain-specific | **Mint native** — but still `rdfs:subClassOf` a parent category. |
+> "First name, last name, employee are not classes or objects — they are properties. **Context is a property, not an object.** Classes are the TBox, which is small; properties represent the data — the ABox."
+> — [*Context Is a Property, Not an Object*](https://substack.com/@jessicatalisman/note/p-206101455)
+
+Layer-blindness is the *tier* axis. This is the *kind* axis — and OOUX flattens it too. It renders the operator's world as **objects**, but many catalog "objects" are really **attributes, relations, or context** — the ABox, where the data actually lives. Reifying them into classes is a category error that *compounds* the tier problem. "Promote `Date` or `Tag` to a Core class" can itself be wrong: a date is a value, a tag is an annotation, a role is a relationship, context is a property. They should be **demoted to properties**, not minted as classes at all.
+
+So the reconciliation is **two-axis**, and both are answered before anything is minted:
+
+1. **KIND** — is this a class (an object; the TBox, which is small), or a property / relation / context (the ABox, where the data lives)? A property reified as a class is *demoted*, not tiered.
+2. **TIER** — *only if it is a class*, which layer owns it (the original layer-blindness question).
+
+Class-first modeling — the shape an object catalog hands you — is backwards from where the data is. The TBox is a thin scaffold; the properties carry the weight. The gate enforces both axes (`tier-map.json` carries a `kind` per object; a non-class term modeled as a class is a REIFY violation).
+
+## The mitigation: a two-axis reconciliation stage the pipeline already implies
+
+Between the OOUX object catalog and class-minting, insert a **reconciliation** pass. For each catalog item, first fix its KIND, then — if it is a class — its TIER:
+
+| Verdict | Axis | Action |
+| --- | --- | --- |
+| **Demote** | kind | Not a class at all — a property, relation, or context reified as an object. Re-model as a property (Jessica Talisman: *context is a property, not an object*). |
+| **Dedupe** | tier | The parent class exists — bind to the existing upper/mid class; do not re-mint. |
+| **Promote** | tier | A class, but no parent has it yet — it reveals a real gap in Core or a mid-layer. (For us, `budget`, `shipment`, `capa` turned out to be cross-industry primitives, not clinical-research at all.) |
+| **Mint native** | tier | Genuinely domain-specific — mint it, but still `rdfs:subClassOf` a parent category. |
 
 This is nothing more than the **reuse-first alignment discipline of the ontology pipeline** the
 project already credits (Jessica Talisman's pipeline). The trap is that an OOUX catalog *feels
