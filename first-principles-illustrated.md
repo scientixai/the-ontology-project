@@ -102,7 +102,19 @@
 
 ---
 
-## 9. Why Human-Centered Wins
+## 9. Reference Graph, not Runtime Graph
+
+**The challenge.** Two sponsors adopt the same commons. One runs risk-based monitoring hard and wants the worst-sites view front and center; the other barely uses it and wants it gone. If the commons is also the runtime graph, one opinion wins and the other customer is stuck with a view they never chose.
+
+**How it's done today, and why it hurts.** Shared models are often consumed wholesale: download the ontology, wire the UI straight to it. Every opinion baked into the shared model becomes every consumer's opinion, and customizing means forking the commons and losing the shared benefit.
+
+**TOP's approach.** TOP is a reference graph, not a runtime graph: the ingredients and the recipes, not the dish. A consumer builds its own customer runtime graph from TOP, extends it per Open Core, and drives every rendering decision from that graph. The reference views, action catalog, and entity-view schema are recipes to adapt or drop, never runtime dependencies. Each customer keeps its own dish.
+
+**See it.** The reference-not-runtime caveat headers on [`cr-domain/views/operator-views.ttl`](cr-domain/views/operator-views.ttl) and [`cr-domain/ontology/cr-core-actions.ttl`](cr-domain/ontology/cr-core-actions.ttl); the entity-view schema in [RFC 0001](governance/rfcs/accepted/0001-ooux-catalog-and-entity-view-schema.md) and [ADR-0025](governance/decision-log.md).
+
+---
+
+## 10. Why Human-Centered Wins
 
 **The challenge.** A sponsor employs a small army of data managers whose entire job is reshaping operator-generated data into submission formats. The work is expensive, slow, error-prone, and adds no clinical value — it exists only because the foundation was built for the regulator instead of the work.
 
@@ -110,7 +122,7 @@
 
 **TOP's approach.** TOP eats the complexity so operators don't have to: humans work in their own vocabulary, and the foundation handles the logic and the projection to standards at the edge. The advantage compounds — anyone anchored standards-up starts from behind, because they'd have to throw away their model to catch up. TOP starts at the finish line.
 
-**See it.** This is the cumulative payoff of principles 1–8; the [README](README.md) frames the problem and the [manifesto](manifesto.html) the stance.
+**See it.** This is the cumulative payoff of principles 1–9; the [README](README.md) frames the problem and the [manifesto](manifesto.html) the stance.
 
 ---
 

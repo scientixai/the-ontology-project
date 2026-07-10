@@ -121,7 +121,18 @@ Consumer extensions live in the consumer's namespace and chain to Core via `subC
 
 ---
 
-## 9. The Competitive Advantage: Why Human-Centered Wins
+## 9. Reference Graph, not Runtime Graph
+
+TOP is a reference knowledge graph, not a runtime graph. It is the ingredients and the recipes; it does not cook the dish. A consumer builds its own customer runtime graph from TOP and drives every rendering and decision from *that* graph, never by querying TOP directly at runtime.
+
+* **Opinionated, never prescriptive.** TOP offers reference views, an action catalog, an entity-view schema. A consumer adapts, reweights, or drops any of them. Two customers can weight the same concept differently; each chooses what matters.
+* **Consume by building, not by adopting wholesale.** A consumer projects the reference into its own namespace and runtime graph, extends it per Open Core (§8), and renders from the result.
+
+**Why it matters:** A reference graph that doubles as a runtime graph forces its opinions on every consumer and cannot serve two customers whose priorities differ. Keeping TOP a reference keeps the commons stable and neutral while each customer's runtime graph stays theirs. The opinionated artifacts carry this caveat in their headers; RFC 0001 and ADR-0025 record it for the entity-view schema.
+
+---
+
+## 10. The Competitive Advantage: Why Human-Centered Wins
 
 Sponsors burn millions on standards-compliance headcount because standards are built for regulators, not for work. **TOP eats the complexity so operators don't have to.**
 
