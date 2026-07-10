@@ -62,7 +62,7 @@ borrowed.
 Reviewing this, Jessica Talisman pushed the finding one level deeper:
 
 > "First name, last name, employee are not classes or objects — they are properties. **Context is a property, not an object.** Classes are the TBox, which is small; properties represent the data — the ABox."
-> — [*Context Is a Property, Not an Object*](https://substack.com/@jessicatalisman/note/p-206101455)
+> — Jessica Talisman, [*Context Is a Property, Not an Object*](https://jessicatalisman.substack.com/p/context-is-a-property-not-an-object) (Substack)
 
 Layer-blindness is the *tier* axis. This is the *kind* axis — and OOUX flattens it too. It renders the operator's world as **objects**, but many catalog "objects" are really **attributes, relations, or context** — the ABox, where the data actually lives. Reifying them into classes is a category error that *compounds* the tier problem. "Promote `Date` or `Tag` to a Core class" can itself be wrong: a date is a value, a tag is an annotation, a role is a relationship, context is a property. They should be **demoted to properties**, not minted as classes at all.
 
