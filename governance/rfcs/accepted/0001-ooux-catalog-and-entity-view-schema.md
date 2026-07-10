@@ -8,6 +8,14 @@
 - **Supersedes:** n/a
 - **ADR on acceptance:** ADR-0025
 
+## Correction (2026-07-10, post-acceptance)
+
+Two corrections surfaced during implementation. The Decision below stands except where superseded here.
+
+1. **The Action layer is not a gap.** This RFC called the CTA layer "the one genuinely missing piece" and proposed a new `cr:hasAction` vocabulary. That was an authoring miss: `ontology/cr-core-actions.ttl` already models the Action layer as 171 `hcls:Action` archetypes, each carrying `hcls:authorizedAgentType` (persona), `cr:occursInStage` (lifecycle stage), and `hcls:operatesOn` (target class) — a typed model, richer than the proposed blank-node annotation. **The `cr:hasAction` proposal is withdrawn.** The Action layer is sourced from the existing catalog; gating is by lifecycle stage (`occursInStage`), with the viewer mapping an entity's status to a stage. The only genuinely missing piece was a retrieval path, now added as `projections/entity_actions.rq`.
+
+2. **Reference, not runtime.** TOP is a reference graph, not a runtime graph. The entity-view schema and every operator/action view it names are opinionated **reference recipes**: a consumer builds its own customer runtime graph from TOP and drives rendering from that graph, adapting, reweighting, or dropping these views to fit the customer. TOP is the ingredients and recipes; it does not cook the dish, and it does not prescribe these views. This caveat is carried as a header on the opinionated view artifacts (`operator-views.ttl`, `cr-core-actions.ttl`, `entity_actions.rq`).
+
 ## Motivation
 
 A recurring downstream need: a consumer wants to render **any** entity's page on the fly from the graph, with no hardcoded "Study Page" or "Document Page." A single generic entity viewer reads a node, identifies its type, pulls a schema, and generates the view; clicking a related entity shifts the central node rather than loading a different template. In the same pattern, lightweight applications are themselves entities whose sole purpose is an ephemeral projection that queries the graph at runtime (no ETL, no copy, context inherited by edge traversal).

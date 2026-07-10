@@ -1,0 +1,29 @@
+# Entity action registry — the Action layer of the reference entity-view schema
+# (RFC 0001 / ADR-0025).
+#
+# For every authorized-operation archetype in the action catalog
+# (ontology/cr-core-actions.ttl), this returns the target class it operates on,
+# the persona authorized to perform it, and the lifecycle stage it occurs in. A
+# generic entity viewer filters these rows by the entity's class and the
+# operator's role, mapping the entity's current status to a stage (stage-based
+# gating; see ADR-0025).
+#
+# REFERENCE RECIPE, NOT A RUNTIME QUERY. TOP is a reference graph, not a runtime
+# graph: it is the ingredients and recipes, it does not cook the dish. A consumer
+# builds its own customer runtime graph from TOP and drives every rendering
+# decision from that graph, adapting, reweighting, or dropping this projection to
+# fit the customer. TOP does not prescribe it.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX hcls: <https://top.scientix.ai/hcls/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?action ?target ?persona ?stage WHERE {
+  ?a a hcls:Action ;
+     rdfs:label ?action ;
+     hcls:operatesOn ?targetIri ;
+     hcls:authorizedAgentType ?personaIri ;
+     cr:occursInStage ?stageIri .
+  BIND(STRAFTER(STR(?targetIri),  "v1#") AS ?target)
+  BIND(STRAFTER(STR(?personaIri), "v1#") AS ?persona)
+  BIND(STRAFTER(STR(?stageIri),   "v1#") AS ?stage)
+}
+ORDER BY ?target ?action ?persona
