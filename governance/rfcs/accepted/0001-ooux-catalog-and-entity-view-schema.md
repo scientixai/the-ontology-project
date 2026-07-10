@@ -1,12 +1,12 @@
 # RFC 0001: the OOUX object catalog as the operator-facing lens, and the entity-view schema a generic viewer builds from
 
-- **Status:** Proposed
+- **Status:** Accepted (ratified 2026-07-10, ADR-0025)
 - **Date:** 2026-07-10
 - **Authors:** @scientixai (Clinical Research WG)
 - **Affected groups:** Clinical Research WG, Core Stewards
 - **Required quorum:** Core stewards + one Clinical Research WG maintainer
 - **Supersedes:** n/a
-- **ADR on acceptance:** ADR-0022
+- **ADR on acceptance:** ADR-0025
 
 ## Motivation
 

@@ -1214,6 +1214,34 @@ vocabulary conventions in `cr-domain/conventions.md`, and a harness gate for the
 
 ---
 
+## ADR-0025: OOUX object catalog as the operator-facing lens; the entity-view schema a generic viewer builds from
+
+Date: 2026-07-10
+Status: Accepted
+Source: RFC 0001 (`governance/rfcs/accepted/0001-ooux-catalog-and-entity-view-schema.md`)
+
+### Context
+
+Consumers want to render any entity's page on the fly from the graph, with no hardcoded per-type pages, and to run lightweight apps that are themselves entities projecting the graph at runtime. Both need one schema to read, and that schema is the ontology expressed for the operator. The clinical-research OOUX object catalog (v0.2, 78 objects across four columns) already carries that structure, and much of "how a generic viewer builds a page" already exists in cr-domain (`views/operator-views.ttl` walked by `tools/ngsild_view.py`, the `projections/*.rq` set, and the cr-core classes that already subclass TOP leaves). Without explicit reconciliation the catalog and the model drift.
+
+### Decision
+
+Adopt the OOUX v0.2 catalog as the operator-facing projection of cr-domain, reconciled to TOP by `rdfs:subClassOf` per leaf. The four OOUX columns map to the model: Attributes to NGSI-LD Properties, Metadata to the PROV plus bitemporal envelope, Relationships to object-property triples, Calls to Action to persona actions. A generic viewer builds any entity page from four ontology-sourced layers: Context/Identity, Core Record (class properties by type), Graph (the forward-inline retrieval views in `operator-views.ttl`, curated to a monitoring-relevant subset with dense collections exposed as traversal links rather than inlined object sets), and Action. The Action layer gets a new additive `cr:hasAction [ cr:action ; cr:persona ; cr:whenState ]` vocabulary that states who may do what and in which state, with no pre-conditions, post-conditions, or side effects, so the graph never becomes a workflow execution engine; validation and state mutation stay in the consuming application. Gap objects are added additively per the extension contract. The catalog is imported into `cr-domain/docs/` as a Docs-as-Code artifact.
+
+### Consequences
+
+- Consumers read one ontology-sourced schema; a new relationship in the ontology renders as a new connection block with no UI change; projective apps inherit context by edge traversal.
+- Every operator-facing object now owes an operator view (Graph layer) and, where actionable, CTA annotations.
+- Follow-on: the full 78-object reconciliation pass (additive), the `cr:hasAction` vocabulary, and `cr:StudyView` plus the other missing views.
+- Forecloses hardcoded per-type pages in any consumer; the ontology becomes the source of the operator UI.
+
+### Status
+
+Accepted 2026-07-10. Ships with: RFC 0001 (accepted), `cr-domain/docs/ooux-object-catalog-v0.2.md` (the imported catalog).
+
+---
+
+
 ## How to add an ADR
 
 1. Pick the next number in sequence.
