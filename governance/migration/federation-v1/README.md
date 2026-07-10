@@ -23,15 +23,30 @@ org after inspecting them. No force-push, no history rewrite on the live monorep
 
 1. **Finish CR V1 on its branch** — consistency fixes, docs, release discipline. Prerequisite
    regardless of topology. *Not automated here.*
-2. **Publish Core as a versioned, checksummed consumable** and resolve the known Core↔CR seam
+2. **Rebase the namespace to `w3id.org/top`** (RFC 0002 §Proposal.0) — the `@base`/prefix
+   rewrite across the repos. Do this *before* extraction so history carries the final IRIs.
+   Submit `w3id-top.htaccess` to `perma-id/w3id.org` (confirm `top/` is unclaimed first).
+   *The bulk `@base` rewrite is a separate scripted pass, tracked separately.*
+3. **Publish Core as a versioned, checksummed consumable** and resolve the known Core↔CR seam
    conflicts (duplicate `top:UniversalDNAShape` IRI, dangling upper-class refs). *Not automated
    here — this is ontology work, tracked separately.*
-3. **Run `./federate.sh`** — produces the five repos locally, history preserved.
-4. **Inspect** each produced repo (`git log`, `git verify`, parse-check the TTL).
-5. **Push** each to the org (the script prints the exact `git remote add` + `git push` lines;
+4. **Run `./federate.sh`** — produces the five repos locally, history preserved. The `site`
+   build is retargeted to `the-ontology-project.org` via `site-overlay/` (the live monorepo
+   root `CNAME` is left untouched).
+5. **Inspect** each produced repo (`git log`, `git verify`, parse-check the TTL).
+6. **Push** each to the org (the script prints the exact `git remote add` + `git push` lines;
    it does not run them).
-6. **Register** — commit `domain-registry.seed.ttl` into `core` as `registry/domains.ttl`.
-7. **Wire deploy-time site assembly** for `top.scientix.ai`. *Not automated here.*
+7. **Register** — commit `domain-registry.seed.ttl` into `core` as `registry/domains.ttl`.
+8. **DNS + site** — point `the-ontology-project.org` at GitHub Pages (apex `A`/`ALIAS` records),
+   enable Pages on the `site` repo, then wire deploy-time assembly. Add a `301` from
+   `top.scientix.ai` → `the-ontology-project.org`. *Not automated here.*
+
+## Bundle files
+
+- `federate.sh` — the carve-out (history-preserving, non-destructive to origin).
+- `domain-registry.seed.ttl` — Core-owned registry seed (w3id namespaces).
+- `w3id-top.htaccess` — draft redirect rule to submit to `perma-id/w3id.org`.
+- `site-overlay/` — `CNAME` (`the-ontology-project.org`) + web `.gitignore` applied to the `site` build.
 
 ## What lands where
 

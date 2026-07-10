@@ -1,0 +1,19 @@
+# Draft redirect rule for https://w3id.org/top  — The Ontology Project (TOP)
+#
+# HOW TO SUBMIT (RFC 0002 §Proposal.0):
+#   1. Fork github.com/perma-id/w3id.org
+#   2. Create a folder `top/` at the repo root and place this file in it as `.htaccess`
+#   3. Open a PR. w3id maintainers require the namespace to be unclaimed and the
+#      redirect target to be live. Confirm `top/` does not already exist first;
+#      if it does, fall back to `top-ontology/` and rebase IRIs accordingly.
+#
+# w3id is the permanent identity; it 302-redirects (temporary, so the target can be
+# retargeted later without touching IRIs) to the current project host. Path and query
+# are preserved, so https://w3id.org/top/hcls/v1#Person -> host/hcls/v1#Person.
+
+Options +FollowSymLinks
+RewriteEngine on
+
+# Content negotiation hook (optional, add later): serve Turtle/RDF-XML/JSON-LD by
+# Accept header from the host. For now, a single path-preserving redirect to the host.
+RewriteRule ^(.*)$ https://the-ontology-project.org/$1 [R=302,L]

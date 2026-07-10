@@ -24,6 +24,25 @@ The forcing function is concrete: the FHIR/AFO binding work is ready to start, c
 
 ## Proposal
 
+### 0. Rebase the namespace to a permanent, host-independent identifier (do this first)
+
+The neutral org removes sponsor coupling from *governance*; it does nothing for the coupling baked into every term IRI. `https://top.scientix.ai/v1#Person` names the sponsor's domain in the identity of every class and property — permanently, in the data. This RFC closes that in the same move, because it is logically prior to every repo carve-out (the registry entries and each `.ttl`'s `@base` encode the namespace).
+
+**Term IRIs rebase to `https://w3id.org/top/…`** — a permanent, hosting-independent identifier operated by the W3C Permanent Identifier Community Group (the OBO / W3C best practice). w3id is the *identity*; it redirects to whatever host serves the content:
+
+| layer | before | after |
+| --- | --- | --- |
+| Core | `https://top.scientix.ai/v1#` | `https://w3id.org/top/v1#` |
+| HCLS | `https://top.scientix.ai/hcls/v1#` | `https://w3id.org/top/hcls/v1#` |
+| CR | `https://top.scientix.ai/cr/v1#` | `https://w3id.org/top/cr/v1#` |
+| standards | (new) | `https://w3id.org/top/standards/v1#` |
+
+The **host** is `the-ontology-project.org` (owned by the project; `top.scientix.ai` 301-redirects to it). w3id → host is a redirect the project controls and can retarget anytime **without changing a single IRI**. That is why the rebase is a true one-time event: after it, hosting, domain name, and sponsor can all change and the identifiers never move again.
+
+**Timing is the whole point.** Per ADR-0023 the IRIs don't resolve yet and nothing external pins them — today's blast radius is purely internal (`@base` / prefix rewrite across the repos + this RFC + the registry). This is the last cheap moment; after Core ships as a consumable, it becomes a breaking migration.
+
+**Cost:** one PR to the `perma-id/w3id.org` repository adding a `top/.htaccess` redirect rule (drafted at [`governance/migration/federation-v1/w3id-top.htaccess`](../../migration/federation-v1/w3id-top.htaccess)). *Prerequisite:* confirm `w3id.org/top` is unclaimed — if taken, fall back to `w3id.org/top-ontology`.
+
 ### 1. Generalize ADR-0023's two tiers into three
 
 ADR-0023's hub-and-spoke is **recursive, not flat**. Core is the hub. A **bucket base** (hcls, later manufacturing, supply-chain, energy) is a *sub-hub*: it pins Core, and it re-publishes the same three Core-owned things **scoped to its bucket** — a bucket upper layer, a bucket-scoped extension contract, and a sub-registry of the workflows under it. A **workflow** (clinical-research, clinical-care, …) is a spoke that pins its bucket base.
@@ -40,7 +59,7 @@ core            (hub)        owns: upper ontology · extension contract · domai
 
 The dependency graph stays a **DAG that never cycles**: `spoke → sub-hub → hub`; `standards → sub-hub → hub`; `site → (published artifacts of all)`. Nothing upstream ever imports anything downstream. This is ADR-0023's rule ("a Core release plus per-domain upgrade PRs against pinned versions"), applied at each tier.
 
-**Crucially, no IRI moves.** Namespaces are `https://top.scientix.ai/v1#`, `/hcls/v1#`, `/cr/v1#` — they resolve to *published release artifacts*, not repo paths (per ADR-0023's deploy-time site assembly, and the fact that cr-core already references `top:` by namespace string with no import closure). Federation repackages the containers; it does not touch the ontology.
+**The IRIs rebase exactly once — now — then never again (§0).** After the w3id rebase, namespaces are `https://w3id.org/top/v1#`, `/hcls/…`, `/cr/…`; they resolve (via the w3id redirect to `the-ontology-project.org`) to *published release artifacts*, not repo paths — consistent with ADR-0023's deploy-time assembly and the fact that cr-core already references `top:` by namespace string with no import closure. Federation repackages the containers; the §0 rebase is the single, deliberate IRI change, taken at the last moment before anything external pins them.
 
 ### 2. Phase 1 — five repos in a new neutral org
 
@@ -90,9 +109,9 @@ The migration bundle (`governance/migration/federation-v1/`) carves the new repo
 
 - **What gets easier.** Democratized ownership becomes real (a consortium owns `hcls` or a workflow from day one by conforming + registering). Per-repo cadence, permissions, and CODEOWNERS. License quarantine is structural, not a policy note. Downstream consumers pull just the tier they need.
 - **What gets harder.** Cross-tier changes lose atomicity — a Core rename is a Core release plus per-tier upgrade PRs against pinned versions (ADR-0023's deliberate price). Three-tier pinning is more machinery than two-tier.
-- **What downstream consumers must adapt to.** Nothing at the IRI level — namespaces are unchanged. Consumers that cloned the monorepo repoint at `core` (+ whichever tiers they use). Release artifacts and checksums become the integration surface.
+- **What downstream consumers must adapt to.** The one-time IRI rebase to `w3id.org/top` (§0) — but nothing has pinned the old `top.scientix.ai` IRIs yet (they don't resolve today), so the blast radius is internal. After the rebase, IRIs never move again regardless of host, domain, or sponsor changes. Consumers that cloned the monorepo repoint at `core` (+ whichever tiers they use). Release artifacts and checksums become the integration surface.
 - **Follow-on work.** Publish Core as a versioned, checksummed consumable and resolve the known Core↔CR seam conflicts (ADR-0023 already lists this as blocking); build the executable-contract CI template once and adopt per repo; stand up deploy-time site assembly; author the `w5`-axis and AFO bindings into `standards`.
-- **What this forecloses.** Atomic monorepo commits across tiers (deliberately). Re-homing hcls back inside a workflow (the extraction is one-way once workflows pin the `hcls` release).
+- **What this forecloses.** Atomic monorepo commits across tiers (deliberately). Re-homing hcls back inside a workflow (the extraction is one-way once workflows pin the `hcls` release). The namespace host (`top.scientix.ai`) as an *identity* — after §0 it is only ever a redirect target, freely retargetable.
 
 ## References
 

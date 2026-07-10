@@ -1,5 +1,5 @@
-@prefix reg:  <https://top.scientix.ai/registry/v1#> .
-@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix reg:  <https://w3id.org/top/registry/v1#> .
+@prefix top:  <https://w3id.org/top/v1#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
@@ -8,11 +8,16 @@
 # Seed for core/registry/domains.ttl — the Core-owned domain registry (ADR-0023's
 # third thing; RFC 0002 §Proposal.3). Discoverability without coupling: name, owner,
 # repo, namespace, pinned Core version, tier, contract-conformance status.
-# The public site (top.scientix.ai) is assembled at deploy time from these entries.
+#
+# Namespaces use the permanent w3id base (RFC 0002 §Proposal.0). w3id.org/top
+# redirects to the project host (the-ontology-project.org); the redirect is
+# retargetable without changing any IRI. The public site is assembled at deploy
+# time from these entries.
 
-<https://top.scientix.ai/registry/v1> a owl:Ontology ;
+<https://w3id.org/top/registry/v1> a owl:Ontology ;
     owl:versionInfo "1.0-seed" ;
     dct:title "TOP federation registry (seed)" ;
+    dct:publisher <https://the-ontology-project.org> ;   # redirect host for w3id.org/top
     rdfs:comment "Initial entries for the RFC-0002 five-repo federation. Conformance status is aspirational until the executable-contract CI (ADR-0023) is adopted per repo." .
 
 # --- vocabulary (minimal; graduates into core/registry/ on acceptance) --------
@@ -31,7 +36,7 @@ reg:core a reg:Node ;
     reg:tier "hub" ;
     reg:owner "Core Stewards" ;
     reg:repo <https://github.com/the-ontology-project/core> ;
-    reg:namespace <https://top.scientix.ai/v1#> ;
+    reg:namespace <https://w3id.org/top/v1#> ;
     reg:conformance "n/a" ;
     rdfs:comment "Upper ontology + executable extension contract + this registry." .
 
@@ -40,7 +45,7 @@ reg:hcls a reg:Node ;
     reg:tier "sub-hub" ;
     reg:owner "HCLS umbrella WG (forming)" ;
     reg:repo <https://github.com/the-ontology-project/hcls> ;
-    reg:namespace <https://top.scientix.ai/hcls/v1#> ;
+    reg:namespace <https://w3id.org/top/hcls/v1#> ;
     reg:pinsCore "v1" ;
     reg:conformance "pending" ;
     rdfs:comment "Healthcare & life-sciences base layer. Extracted from cr-domain/ontology/hcls-core.ttl." .
@@ -50,7 +55,7 @@ reg:clinical-research a reg:Node ;
     reg:tier "spoke" ;
     reg:owner "Clinical Research WG" ;
     reg:repo <https://github.com/the-ontology-project/clinical-research> ;
-    reg:namespace <https://top.scientix.ai/cr/v1#> ;
+    reg:namespace <https://w3id.org/top/cr/v1#> ;
     reg:pinsCore "v1" ;
     reg:pinsBucket "hcls@v1" ;
     reg:conformance "pending" ;
@@ -61,7 +66,7 @@ reg:standards a reg:Node ;
     reg:tier "node" ;
     reg:owner "HCLS umbrella WG (forming)" ;
     reg:repo <https://github.com/the-ontology-project/standards> ;
-    reg:namespace <https://top.scientix.ai/standards/v1#> ;
+    reg:namespace <https://w3id.org/top/standards/v1#> ;
     reg:pinsCore "v1" ;
     reg:pinsBucket "hcls@v1" ;
     reg:conformance "n/a" ;

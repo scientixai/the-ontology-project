@@ -12,6 +12,8 @@
 #
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"    # this bundle's dir
+
 # ---- config ---------------------------------------------------------------
 ORG="the-ontology-project"                                   # new neutral GitHub org
 SRC_URL="${SRC_URL:-https://github.com/scientixai/the-ontology-project.git}"
@@ -88,6 +90,12 @@ fork_mirror "$BUILD/site"
 ( cd "$BUILD/site"
   args=(); for p in "${SITE_PATHS[@]}"; do args+=( --path "$p" ); done
   git filter-repo "${args[@]}"
+  # Apply the overlay: retarget the site to the-ontology-project.org and add a
+  # web-appropriate .gitignore. The live monorepo root CNAME (top.scientix.ai) is
+  # NOT touched — only this extracted copy is retargeted (flip DNS before serving).
+  cp "$SCRIPT_DIR/site-overlay/CNAME" "$SCRIPT_DIR/site-overlay/.gitignore" ./
+  git add -A && git -c user.name="federation" -c user.email="federation@localhost" \
+    commit -q -m "site: retarget to the-ontology-project.org (RFC 0002 §0)"
 )
 
 # ---------------------------------------------------------------------------
