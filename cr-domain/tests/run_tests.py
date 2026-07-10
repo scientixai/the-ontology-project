@@ -163,6 +163,9 @@ def main():
     # (r) entity-view corpus — the reference per-object view menus are well-formed
     ev_passed, ev_total = entity_view_checks(failures)
 
+    # (s) layer discipline — no domain term shadows a parent class or floats as an orphan
+    ly_passed, ly_total = layering_checks(failures)
+
     _report([
         ("coherence", co_passed, co_total),
         ("seam", sm_passed, sm_total),
@@ -183,7 +186,31 @@ def main():
         ("owl-lint", ol_passed, ol_total),
         ("provenance", pv_passed, pv_total),
         ("entity-view", ev_passed, ev_total),
+        ("layering", ly_passed, ly_total),
     ], failures)
+
+
+def layering_checks(failures):
+    """(s) Layer discipline: no domain term shadows a parent-layer class, and none is an
+    untriaged orphan. Enforces docs/ooux-layer-blindness.md via tools/lint_layering.py.
+    Default mode fails only on UNTRIAGED shadows/orphans (regressions); the known
+    promote/review backlog in cr-domain/views/tier-map.json is tracked, non-blocking."""
+    import subprocess
+    repo_root = os.path.dirname(ROOT)
+    linter = os.path.join(repo_root, "tools", "lint_layering.py")
+    if not os.path.exists(linter):
+        print("[SKIP] layer discipline — tools/lint_layering.py not found")
+        return 0, 0
+    r = subprocess.run([sys.executable, linter], cwd=repo_root,
+                       capture_output=True, text=True)
+    if r.returncode == 0:
+        print("[PASS] layer discipline — no untriaged shadows/orphans")
+        return 1, 1
+    failures.append(("LAYER", "layer-discipline",
+                     "untriaged shadow/orphan — triage into cr-domain/views/tier-map.json"))
+    print("[FAIL] layer discipline — untriaged shadow/orphan")
+    print(r.stdout[-1200:])
+    return 0, 1
 
 
 def provenance_identity_checks(failures):

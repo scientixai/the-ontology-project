@@ -1,0 +1,31 @@
+name: layer-discipline
+
+# Enforces docs/ooux-layer-blindness.md: a domain must not shadow or orphan a
+# parent-layer concept. The gate blocks NEW untriaged shadows/orphans; the known
+# promote/review backlog (cr-domain/views/tier-map.json) is reported but non-blocking
+# until it is resolved for federation.
+
+on:
+  pull_request:
+    paths:
+      - 'core/**'
+      - 'cr-domain/ontology/**'
+      - 'cr-domain/views/**'
+      - 'tools/lint_layering.py'
+  push:
+    branches: [ 'main', 'claude/**' ]
+
+jobs:
+  layering:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install rdflib
+      - name: Gate — no untriaged shadows or orphans
+        run: python3 tools/lint_layering.py
+      - name: Federation-readiness — promote/review backlog (informational)
+        run: python3 tools/lint_layering.py --strict
+        continue-on-error: true

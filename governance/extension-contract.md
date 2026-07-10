@@ -156,6 +156,19 @@ The pattern isn't anyone's fault — it's what an unspecified extension surface 
 
 **TOP's posture toward peer ontologies** is integration at the projection edge, not Core-shape competition. The Broker (and equivalent projection adapters) ingest FHIR, USDM, SDTM, MedDRA, and other peer-ontology data and normalize it into NGSI-LD entities against Core. The Core stays small and stable; the peer-ontology alignment lives in projection-layer artifacts (SSSOM crosswalks per leaf, per ADR-0018). The discipline in this document is what keeps Core itself from drifting under extension pressure.
 
+## Layer discipline — no shadowing, no orphans (machine-enforced)
+
+The three flavors govern how a consumer *extends* a Core concept. This rule governs the prior question: **is this concept the consumer's to mint at all, or does a parent layer already own it?** It exists because an operator-elicited object catalog (OOUX) has no import statement — it reads its own completeness as self-containment and re-mints concepts Core or a mid-layer already owns. See [`docs/ooux-layer-blindness.md`](../docs/ooux-layer-blindness.md) for the failure that motivated it.
+
+Two violations, both mechanical, both blocking at PR time:
+
+- **Shadow.** A domain term (a `cr:`/`topcr:` class or a SHACL `sh:targetClass`) whose **local name equals an existing parent-layer class** (`top:X` / `hcls:X`). Re-minting a parent concept is forbidden — dedupe to it or subclass it.
+- **Orphan.** A domain class with **no `rdfs:subClassOf` chain to a parent layer** and no recorded tier decision. Every domain object must cite its parent world.
+
+**Resolution is recorded, not implicit.** Each domain's object set carries a tier map (`<domain>/views/tier-map.json`) with a verdict per object — `dedupe` (bind to an existing parent), `subclass` (mint native, `subClassOf` a named parent), `promote` (a cross-domain primitive with no parent yet — a Core/mid-layer candidate, RFC-gated), or `review` (tier decision pending). `dedupe`/`subclass` pass; `promote`/`review` are tracked backlog. An object **absent** from the map is an untriaged shadow/orphan and fails the gate — which is what stops recurrence: a newly introduced object must be triaged before it can land.
+
+The rule is enforced by [`tools/lint_layering.py`](../tools/lint_layering.py) (wired into `cr-domain/tests/run_tests.py` and `.github/workflows/layering.yml`). Run it with `--strict` for the federation-readiness check: a domain module should carry **zero** `promote`/`review` objects before it is carved into its own repository ([ADR-0023](decision-log.md#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo)), because a repo that pins Core but re-mints its primitives cannot pass conformance.
+
 ## What a consumer reads to understand their obligations
 
 A workflow extension or customer building on TOP reads, in order:

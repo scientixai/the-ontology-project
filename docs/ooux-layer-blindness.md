@@ -91,3 +91,15 @@ Correct ownership in source; viewer convenience in output.
 - [ ] "Promote" candidates are logged — they are the signal for what Core or a mid-layer is missing.
 - [ ] Views target the class at its **home tier**; subclass views carry only deltas.
 - [ ] The domain module passes the executable extension contract **before** federation carve-out.
+
+## Enforcement
+
+This is a machine-checked rule, not a convention. [`tools/lint_layering.py`](../tools/lint_layering.py)
+flags every **shadow** (a domain name equal to a `top:`/`hcls:` class) and every **orphan** (a
+domain class with no `subClassOf` chain to a parent). Resolution is recorded per object in
+[`cr-domain/views/tier-map.json`](../cr-domain/views/tier-map.json) — `dedupe` / `subclass`
+(resolved) vs. `promote` / `review` (tracked backlog). An object **absent** from the map fails the
+gate, so a new shadow cannot regress in. The check is wired into `cr-domain/tests/run_tests.py` and
+[`.github/workflows/layering.yml`](../.github/workflows/layering.yml); `--strict` is the
+federation-readiness gate (zero `promote`/`review` before a domain is carved out). Codified in
+[`governance/extension-contract.md`](../governance/extension-contract.md) § "Layer discipline."
