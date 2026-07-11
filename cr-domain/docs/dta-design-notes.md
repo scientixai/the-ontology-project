@@ -21,7 +21,7 @@ so that any concept which merely *stores* a manual mapping fails the test:
 | `ENCOUNTER_MAPPING` stored per DTA | `cr:VendorAlias` — a resolution edge (`cr:aliasResolvesTo` + `cr:resolvedFrom` + confidence), resolved once; the corpus compounds (`crosswalks/dta-encounter-alias.sssom.tsv`) |
 | Sponsor hand-authors content into SDTM | `cr:DataElementSpecification` binds to a `cr:BiomedicalConcept`; SDTM `LB` is a **projection** (`projections/dta_sdtm_lb.rq`) |
 | Reconciliation/conformance/QC = human process, cut from MVP | Executable SHACL (`shapes/dta-*.ttl`), graded Violation/Warning/Info, run at ingestion |
-| Signature = a field; blinding = a boolean; amendment = a re-author | `cr:Attestation` (credential-backed), `cr:BlindingConstraint` (scope+provenance), `cr:TransferAmendment` (bitemporal, propagation forced by shape) |
+| Signature = a field; blinding = a boolean; amendment = a re-author | `top:Attestation` (credential-backed), `cr:BlindingConstraint` (scope+provenance), `cr:TransferAmendment` (bitemporal, propagation forced by shape) |
 
 ## Answers to the open modeling questions (§11)
 
@@ -99,14 +99,14 @@ pinned, so the reference cannot silently drift.
 For data with no open-source identifier, the binding is **vendor-certified once
 at the catalog**, still bind-once-reuse, and the attestation path is **first-
 class, not an exception**: `cr:VendorAlias cr:resolutionAttestedBy` →
-`cr:Attestation`. The resolution shape (`cr:VendorAliasResolvedShape`) admits an
+`top:Attestation`. The resolution shape (`cr:VendorAliasResolvedShape`) admits an
 alias that is *either* auto-resolved *or* attested — so an imaging analyte with
 no LOINC code is conformant precisely when a clinician has attested it.
 
 This matches how imaging actually arrives (per the user): DICOM carries metadata
 and the radiologist's notes, and any image entering the clinic is **reviewed by
 the PI** — so the clinician attestation genuinely exists and is captured as the
-`cr:Attestation`, rather than being invented to satisfy the model.
+`top:Attestation`, rather than being invented to satisfy the model.
 
 ## Central-lab & the FHIR lab-resource model (the corrected vendor tier)
 

@@ -1416,7 +1416,7 @@ cr:attestedBy a owl:ObjectProperty ;
 cr:backedByCredential a owl:ObjectProperty ;
     rdfs:label "backed by credential" ;
     rdfs:comment "The Credential/delegation that authorized a signatory Attestation to ratify a transfer. Enables the 'was this party authorized to make this transfer?' gate — a ratifying Attestation with no backing Credential is a Violation." ;
-    rdfs:domain cr:Attestation ;
+    rdfs:domain top:Attestation ;
     rdfs:range cr:Credential ;
     top:flavor "Additive" .
 
@@ -2957,7 +2957,7 @@ cr:ratifiedBy a owl:ObjectProperty ;
     rdfs:label "ratified by" ;
     rdfs:comment "A signatory Attestation that ratifies a DataTransferAgreement (facts over flags: a signature is an Attestation, not a boolean)." ;
     rdfs:domain cr:DataTransferAgreement ;
-    rdfs:range cr:Attestation ;
+    rdfs:range top:Attestation ;
     top:flavor "Additive" .
 
 cr:realizes a owl:ObjectProperty ;
@@ -3142,7 +3142,7 @@ cr:resolutionAttestedBy a owl:ObjectProperty ;
     rdfs:label "resolution attested by" ;
     rdfs:comment "For the uncovered tail (imaging/eCOA/DHT/genomics with no open identifier): the clinician/PI Attestation that certifies a binding at the catalog when it cannot be auto-resolved. Model the attestation path as first-class, not an exception (open Q6). E.g. imaging reviewed by the PI on receipt." ;
     rdfs:domain cr:VendorAlias ;
-    rdfs:range cr:Attestation ;
+    rdfs:range top:Attestation ;
     top:flavor "Additive" .
 
 cr:resolutionConfidence a owl:DatatypeProperty ;
@@ -3771,7 +3771,7 @@ cr:whodrugVersion a owl:DatatypeProperty ;
 cr:window a owl:ObjectProperty ;
     rdfs:label "window" ;
     rdfs:domain cr:Timing ;
-    rdfs:range cr:Window ;
+    rdfs:range cr:TimingWindow ;
     top:flavor "Additive" .
 
 cr:windowEnd a owl:DatatypeProperty ;
@@ -3782,7 +3782,7 @@ cr:windowEnd a owl:DatatypeProperty ;
 
 cr:windowLowerDays a owl:DatatypeProperty ;
     rdfs:label "window lower (days)" ;
-    rdfs:domain cr:Window ;
+    rdfs:domain cr:TimingWindow ;
     rdfs:range xsd:decimal ;
     top:flavor "Additive" .
 
@@ -3794,7 +3794,7 @@ cr:windowStart a owl:DatatypeProperty ;
 
 cr:windowUpperDays a owl:DatatypeProperty ;
     rdfs:label "window upper (days)" ;
-    rdfs:domain cr:Window ;
+    rdfs:domain cr:TimingWindow ;
     rdfs:range xsd:decimal ;
     top:flavor "Additive" .
 
@@ -5881,7 +5881,7 @@ cr:AssayResult a owl:Class ;
         "test result"@en ;
     skos:prefLabel "Assay Result"@en .
 
-cr:Attestation a owl:Class ;
+top:Attestation a owl:Class ;
     rdfs:label "Attestation" ;
     rdfs:comment "A sworn, non-repudiable statement; the write-path that creates delegation/consent assertions." ;
     rdfs:subClassOf top:Evidence,
@@ -6093,7 +6093,7 @@ cr:VisitDefinition a owl:Class ;
     rdfs:subClassOf prov:Entity,
         top:Scope .
 
-cr:Window a owl:Class ;
+cr:TimingWindow a owl:Class ;
     rdfs:label "Window" ;
     rdfs:comment "An allowed tolerance around a planned time: a lower and an upper offset in days (e.g. [-2 days, +2 days])." ;
     rdfs:subClassOf top:Constraint .

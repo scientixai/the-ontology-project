@@ -11,7 +11,8 @@
     "promote": "cross-domain primitive; no parent exists yet — candidate for Core or a mid-layer (RFC)",
     "review": "home tier not yet decided — tracked so the map stays complete; resolve before federation",
     "demote": "not a class at all — a property/relation/context reified as an object (KIND axis); re-model as a property",
-    "defer": "out of this domain's scope — a different bucket owns it (e.g. a finance bucket); re-enters when that bucket forms"
+    "defer": "out of this domain's scope — a different bucket owns it (e.g. a finance bucket); re-enters when that bucket forms",
+    "alias": "retarget to an existing sibling domain class (same concept, already modeled) — resolved"
   },
   "objects": {
     "Person": {
@@ -41,14 +42,6 @@
     "Milestone": {
       "verdict": "dedupe",
       "resolve": "top:Milestone"
-    },
-    "Attestation": {
-      "verdict": "review",
-      "note": "RFC 0003 HELD: cr:Attestation is a declared ontology class shadowing top:Attestation; dedupe requires rewriting ~8 files incl. SHACL examples — careful concept-check pass, not auto-rewritten (ADR-0028)"
-    },
-    "Window": {
-      "verdict": "review",
-      "note": "RFC 0003 HELD: cr:Window (visit tolerance) shadows top:Window; confirm same concept vs rename before rewriting ~4 example files (ADR-0028)"
     },
     "Date": {
       "kind": "property",
@@ -123,10 +116,6 @@
       "verdict": "subclass",
       "resolve": "top:Document"
     },
-    "CSR": {
-      "verdict": "subclass",
-      "resolve": "top:Document"
-    },
     "LabResults": {
       "verdict": "subclass",
       "resolve": "hcls:Observation"
@@ -170,15 +159,6 @@
       "verdict": "subclass",
       "resolve": "hcls:Action",
       "note": "RFC 0003 nearest-category disposition"
-    },
-    "AnalysisRequest": {
-      "verdict": "subclass",
-      "resolve": "top:Activity",
-      "note": "RFC 0003 nearest-category disposition"
-    },
-    "AnalysisService": {
-      "verdict": "review",
-      "note": "RFC 0003 HELD: software-service tier, with Service"
     },
     "ConcomitantMedication": {
       "verdict": "subclass",
@@ -246,8 +226,9 @@
       "note": "RFC 0003 nearest-category disposition"
     },
     "Participant": {
-      "verdict": "review",
-      "note": "RFC 0003 HELD: pseudonymous-subject boundary; routes to hcls:Person only via the attested cr:Enrollment bridge — participant/PII sub-RFC, do not merge"
+      "verdict": "alias",
+      "resolve": "cr:StudySubject",
+      "note": "RFC 0003/ADR-0028: Participant IS the pseudonymous cr:StudySubject (its prefLabel); view retargets to it. Person<->Subject link stays the attested cr:Enrollment bridge — no merge to hcls:Person."
     },
     "PersonRole": {
       "kind": "relation",
@@ -275,8 +256,9 @@
       "note": "RFC 0003 nearest-category disposition"
     },
     "Service": {
-      "verdict": "review",
-      "note": "RFC 0003 HELD: software-service tier decided with smart-X composition work"
+      "verdict": "subclass",
+      "resolve": "top:Resource",
+      "note": "RFC 0003/ADR-0028: a vendor-delivered service/capability (catalog obj 29)"
     },
     "ServiceConfiguration": {
       "verdict": "subclass",

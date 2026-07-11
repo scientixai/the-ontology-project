@@ -105,10 +105,13 @@ def domain_terms():
                 return True
         return False
 
+    deprecated = set()
     for c in og.subjects(RDF.type, OWL.Class):
         if not str(c).startswith(CR):
             continue
         ln = localname(c)
+        if (c, OWL.deprecated, None) in og:
+            deprecated.add(ln)                    # scheduled for removal — don't police layering
         rec = terms.setdefault(ln, {"as": set(), "chains_to_parent": False})
         rec["as"].add("class")
         if reaches_parent(c):
@@ -119,7 +122,7 @@ def domain_terms():
         if str(t).startswith(CR):
             ln = localname(t)
             terms.setdefault(ln, {"as": set(), "chains_to_parent": False})["as"].add("view-target")
-    return terms
+    return terms, deprecated
 
 
 def load_tier_map():
@@ -133,11 +136,13 @@ def load_tier_map():
 def main():
     strict = "--strict" in sys.argv
     parents = parent_classes()
-    terms = domain_terms()
+    terms, deprecated = domain_terms()
     tmap = load_tier_map()
 
     fails, warns = [], []
     for ln in sorted(terms):
+        if ln in deprecated:
+            continue  # owl:deprecated class (being removed) — layering not enforced
         roles = ",".join(sorted(terms[ln]["as"]))
         entry = tmap.get(ln)
         if entry:
@@ -160,6 +165,8 @@ def main():
                 if v == "dedupe" and tln not in parents:
                     fails.append((ln, roles, f"tier-map dedupe target {tgt} is not a real parent class"))
                 continue  # resolved -> PASS
+            if v == "alias":
+                continue  # retargeted to an existing sibling domain class — resolved
             warns.append((ln, roles, f"{v}: {entry.get('note','tier decision pending (RFC)')}"))
             continue
         # not in the tier map -> untriaged

@@ -24,7 +24,7 @@
 #   * data content binds to a canonical cr:BiomedicalConcept — SDTM is a
 #     projection, never a stored target;
 #   * conformance is executable SHACL (shapes/dta-*.ttl), not a human process;
-#   * signatures are cr:Attestation, blinding is a cr:BlindingConstraint,
+#   * signatures are top:Attestation, blinding is a cr:BlindingConstraint,
 #     amendment is a cr:TransferAmendment — all provenanced & bitemporal.
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -128,7 +128,7 @@ cr:ratifiedBy a owl:ObjectProperty ;
     rdfs:label "ratified by" ;
     rdfs:comment "A signatory Attestation that ratifies a DataTransferAgreement (facts over flags: a signature is an Attestation, not a boolean)." ;
     rdfs:domain cr:DataTransferAgreement ;
-    rdfs:range cr:Attestation ;
+    rdfs:range top:Attestation ;
     top:flavor "Additive" .
 
 cr:citesShape a owl:ObjectProperty ;
@@ -234,7 +234,7 @@ cr:resolutionAttestedBy a owl:ObjectProperty ;
     rdfs:label "resolution attested by" ;
     rdfs:comment "For the uncovered tail (imaging/eCOA/DHT/genomics with no open identifier): the clinician/PI Attestation that certifies a binding at the catalog when it cannot be auto-resolved. Model the attestation path as first-class, not an exception (open Q6). E.g. imaging reviewed by the PI on receipt." ;
     rdfs:domain cr:VendorAlias ;
-    rdfs:range cr:Attestation ;
+    rdfs:range top:Attestation ;
     top:flavor "Additive" .
 
 # ───────────────────────────────────────────────────────────────────────────
@@ -450,6 +450,6 @@ cr:documentHash a owl:DatatypeProperty ;
 cr:backedByCredential a owl:ObjectProperty ;
     rdfs:label "backed by credential" ;
     rdfs:comment "The Credential/delegation that authorized a signatory Attestation to ratify a transfer. Enables the 'was this party authorized to make this transfer?' gate — a ratifying Attestation with no backing Credential is a Violation." ;
-    rdfs:domain cr:Attestation ;
+    rdfs:domain top:Attestation ;
     rdfs:range cr:Credential ;
     top:flavor "Additive" .

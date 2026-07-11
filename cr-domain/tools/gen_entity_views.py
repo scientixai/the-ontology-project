@@ -328,8 +328,8 @@ def main():
         if not e:
             return f"cr:{cam}", None                 # untriaged-but-chaining: unchanged
         v, res = e.get("verdict"), e.get("resolve")
-        if v == "dedupe" and res:
-            return res, None                          # view targets the parent directly
+        if v in ("dedupe", "alias") and res:
+            return res, None                          # view targets the parent / sibling class directly
         if v == "subclass" and res:
             return f"cr:{cam}", res                    # native class chaining to res
         if v in ("demote", "defer"):
