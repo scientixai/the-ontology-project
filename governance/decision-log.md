@@ -32,6 +32,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | ADR-0022 | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Proposed (on `main`; this branch forked before it landed — see `main` for the full text) |
 | [ADR-0023](#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo) | 2026-07-07 | Hub-and-spoke domains — Core owns the contract and the registry; each domain owns its repo | Proposed (invokes ADR-0017's reassessment trigger) |
 | [ADR-0024](#adr-0024-operator-vocabulary-through-the-pipeline-bfo-at-core-participant-preflabel-promote-dont-subclass) | 2026-07-07 | Operator vocabulary through the pipeline — BFO-at-Core, Participant prefLabel, promote-don't-subclass | Accepted |
+| [ADR-0029](#adr-0029-adopt-sound-external-ontologies-dont-reinvent--usdm-rdf-via-kerforsusdm-rdf) | 2026-07-22 | Adopt sound external ontologies, don't reinvent — USDM-RDF via `kerfors/usdm-rdf` | Accepted |
 
 ---
 
@@ -1310,6 +1311,37 @@ Disposition of the 66 flagged clinical-research objects (RFC 0003): **5 demote**
 - The entity-view generator becomes **author-tiered, generate-flat**: `sh:targetClass` resolves to the parent (dedupe) or a native class chaining to a parent (subclass); demoted items become properties; deferred/held items leave the corpus.
 - Two ontology-class shadows — `cr:Attestation` ↔ `top:Attestation`, `cr:Window` ↔ `top:Window` — are **held for a careful concept-check dedupe** (each spans multiple SHACL-validated example files); tracked in the tier map, not auto-rewritten.
 - The rule cannot regress: an untriaged term fails CI; a property modeled as a class is a reify violation.
+
+---
+
+## ADR-0029: Adopt sound external ontologies, don't reinvent — USDM-RDF via `kerfors/usdm-rdf`
+
+**Date:** 2026-07-22 · **Status:** Accepted · **Refs:** [`cr-domain/COLLABORATION.md`](../cr-domain/COLLABORATION.md), [`cr-domain/ontology/vendor/usdm/PROVENANCE.md`](../cr-domain/ontology/vendor/usdm/PROVENANCE.md), [`cr-domain/crosswalks/usdm-to-cr.ttl`](../cr-domain/crosswalks/usdm-to-cr.ttl), [github.com/kerfors/usdm-rdf](https://github.com/kerfors/usdm-rdf) · builds on ADR-0006 (SKOS as canonical), ADR-0016 (schema.org alignment where the peer is honest)
+
+### Context
+
+Binding the DTA module to USDM raised a first-principles question: do we hand-author a USDM RDF rendering, or leverage existing work? The vendored `usdm:` layer had been **generated in-house** from the CDISC DDF-RA OpenAPI and stamped with the `w3id.org/cdisc/usdm/v4/` namespace. That namespace turns out to be the registered target of **Kerstin Forsberg's `kerfors/usdm-rdf`** — the canonical *community* USDM-RDF (CDISC has ratified no official one; the RDF representation is a community effort she has championed since ~2011). So TOP was maintaining a **parallel rendering at another project's canonical IRIs** — same namespace, same `{Class}-{attribute}` scheme, same DDF-RA source — a latent drift hazard, not reuse.
+
+The operator's framing forced the decision: *"we don't reinvent, we leverage any sound ontology we find… this way we can also pull her into work that ventures outside of USDM… TOP could move ahead of USDM as a testing ground that could eventually feed USDM."*
+
+### Decision
+
+**When a sound external ontology already covers a space, TOP adopts and crosswalks to it rather than authoring a rival.** Adoption means: vendor the canonical artifact **verbatim, sha-pinned, with provenance** (source, version, license, retrieval date); **crosswalk** TOP's own classes to it via SSSOM (never duplicate-and-diverge); and **credit the author**. TOP does not maintain a second rendering at another project's IRIs.
+
+Applied to USDM:
+
+1. Vendor `kerfors/usdm-rdf` **v0.6.0 verbatim** (CC-BY-4.0) as the USDM source of truth — her `usdm_v4.ttl` (90 classes), her SHACL shapes, and her JSON-LD context. **Retire** the in-house OWL generator (`tools/usdm-rdf-gen/generate.py`, marked superseded).
+2. Keep the CT SKOS + NCIt verification **TOP-produced** — her artifact renders the model, not the CT codelists, so this is a genuine complement, not a duplication. (NCIt anchoring is a property of the DDF-RA CT, independent of the OWL rendering — the swap does not disturb it.)
+3. Remap `crosswalks/usdm-to-cr.ttl` to her class names; **every `usdm:` IRI TOP references must resolve in her file** (`Amendment`→`StudyAmendment`, `EstimandPopulation`→`AnalysisPopulation`, `EstimandVariable`→`Endpoint` relatedMatch, `IntercurrentEventStrategy`→`IntercurrentEvent` relatedMatch).
+
+This generalizes the posture already set by ADR-0006 (adopt SKOS) and ADR-0016 (align to schema.org where the peer is honest): TOP is a **consumer and crosswalker** of NCIt, LOINC/UCUM/QUDT, FHIR, SDTM, MedDRA, and now USDM-RDF — never their re-author. Recorded as a standing principle in [`cr-domain/COLLABORATION.md`](../cr-domain/COLLABORATION.md).
+
+### Consequences
+
+- **No parallel renderings at foreign IRIs.** There is one USDM-RDF and it is hers; the drift hazard is gone. Re-verification on each of her releases is a documented procedure in `PROVENANCE.md`.
+- **TOP gains her shapes + JSON-LD context** it did not previously have, at no cost.
+- **A two-way relationship becomes possible.** Because TOP is not bound to a standards body's ballot cycle, it can model and *test* the adjacent, unmodeled space (transfer cadence, chain of custody, closeout, submission — where USDM stops) under its regression-gated shape suite, then **feed proven extensions back upstream** as evidence the standard can ratify. TOP moves ahead *so that* the standard can follow with evidence — the measure of success is one shared model reached faster, not TOP owning it.
+- **Adoption is a relationship, not a dependency.** It creates the natural opening to invite the upstream author into the adjacent work.
 
 ---
 
