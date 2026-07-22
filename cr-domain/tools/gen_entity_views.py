@@ -285,10 +285,32 @@ def render(obj, view_iri_of, target_class):
     return "\n".join(lines) + "\n", unresolved, len(ident)
 
 
+def _native_classes():
+    """Camel localnames of cr: classes typed `a owl:Class` in a HAND-AUTHORED
+    module (every ontology/*.ttl except the generated bindings file itself). A
+    binding for one of these must add only the subClassOf edge — re-declaring the
+    type would be a duplicate class definition (the coherence gate flags it)."""
+    native = set()
+    ont_dir = os.path.join(ROOT, "ontology")
+    for fn in os.listdir(ont_dir):
+        if not fn.endswith(".ttl") or fn == "cr-tier-bindings.ttl":
+            continue
+        txt = open(os.path.join(ont_dir, fn), encoding="utf-8").read()
+        for m in re.finditer(r'^cr:(\w+)\s+a\s+owl:Class', txt, re.M):
+            native.add(m.group(1))
+    return native
+
+
 def write_bindings(bindings):
     """The tier class-bindings: each domain-native (subclass) object declared as a
     cr: class chaining to its parent-layer category (RFC 0003 / ADR-0028), so the
-    layer-discipline gate sees a real subClassOf chain, not an orphan."""
+    layer-discipline gate sees a real subClassOf chain, not an orphan.
+
+    The file is a registered module: it carries one owl:Ontology header and is
+    owl:imports'ed by ontology/cr.ttl. A class already typed in a hand-authored
+    module (e.g. cr:InformedConsent in cr-core.ttl) gets only the subClassOf edge
+    here — re-typing it would be a duplicate class definition."""
+    native = _native_classes()
     lines = [
         "# ---------------------------------------------------------------------------",
         "# TIER CLASS BINDINGS  (generated — do not edit by hand)",
@@ -304,10 +326,19 @@ def write_bindings(bindings):
         "@prefix owl:  <http://www.w3.org/2002/07/owl#> .",
         "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .",
         "",
+        "cr:tierBindingsModule a owl:Ontology ;",
+        '    rdfs:label "TOP CR — Tier class bindings (generated; RFC 0003 / ADR-0028)" ;',
+        '    rdfs:comment "Layer-attribution bindings: each domain-native object subClassOf its parent-layer category so the layer-discipline gate sees a real chain to Core/HCLS. Source: views/tier-map.json." .',
+        "",
     ]
     for cam in sorted(bindings):
-        lines.append(f"cr:{cam} a owl:Class ;")
-        lines.append(f"    rdfs:subClassOf {bindings[cam]} .")
+        if cam in native:
+            # already typed `a owl:Class` in a hand-authored module — add only the
+            # parent-layer chain edge (re-typing = duplicate class definition).
+            lines.append(f"cr:{cam} rdfs:subClassOf {bindings[cam]} .")
+        else:
+            lines.append(f"cr:{cam} a owl:Class ;")
+            lines.append(f"    rdfs:subClassOf {bindings[cam]} .")
         lines.append("")
     open(BINDINGS, "w", encoding="utf-8").write("\n".join(lines) + "\n")
 
