@@ -5,12 +5,22 @@ Generated, **not authoritative**. The authoritative USDM source is CDISC DDF-RA.
 **Namespace status (`https://w3id.org/cdisc/usdm/v4/`).** CDISC has **no ratified
 official USDM-RDF**; the RDF representation is a community effort (championed by
 Kerstin Forsberg / the CDISC-RDF lineage), and the `w3id.org/cdisc/usdm/` namespace
-is that **aspirational community convention**, not an official CDISC artifact. This
-vendored file is therefore an **early, faithful implementation** of that convention —
-derived deterministically from the authoritative DDF-RA source below — not a mirror of
-a canonical RDF (none exists). If/when CDISC ratifies an official USDM-RDF, align this
-rendering (and our IRI-minting scheme — currently the `usdm:Class-property` pattern) to
-it. Coordinate the scheme with the CDISC-RDF effort so this stays forward-compatible.
+is that **community convention**, not an official CDISC artifact.
+
+**Canonical community artifact: `github.com/kerfors/usdm-rdf`** (Kerstin Forsberg) —
+the w3id namespace's registered target. Verified aligned with this vendored file:
+same namespace `w3id.org/cdisc/usdm/v4/`, same `{Class}-{attribute}` property IRI
+scheme (e.g. `usdm:Administration-dose`, `usdm:BiomedicalConcept-code`), same DDF-RA
+source, same CC-BY-4.0 license. Her repo additionally ships a JSON-LD 1.1 context and
+SHACL shapes (`usdm_v4.shapes.ttl`, `usdm_v4.shapes-ct.ttl`) this file does not.
+
+**Recommended path: consume hers, don't maintain a parallel rendering.** This file was
+generated locally from DDF-RA (below) and happens to match her IRIs — but two renderings
+at one namespace is a latent drift risk. The clean move is to **vendor `kerfors/usdm-rdf`
+at a pinned release (sha-pinned) as the source of truth**, inherit her shapes + JSON-LD
+context, and retire our generator — making TOP an adopter of the canonical community
+artifact rather than a parallel author. Her repo is draft / not-yet-normative, so keep
+the pin explicit and re-verify on each of her releases.
 
 | field | value |
 |---|---|
