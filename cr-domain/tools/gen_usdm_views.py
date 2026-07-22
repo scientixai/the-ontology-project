@@ -3,8 +3,9 @@
 
 The Protocol object is, in operator terms, USDM. So its page must be able to
 expose the ENTIRETY of USDM and let the operator pick — the viewer must not
-limit them. This renders the vendored, generated CDISC USDM v4.0 OWL
-(ontology/vendor/usdm/usdm-v4.ttl: 81 classes) into the same reference
+limit them. This renders the vendored CDISC USDM v4 OWL
+(ontology/vendor/usdm/usdm-v4.ttl, adopted from kerfors/usdm-rdf — see
+ontology/vendor/usdm/PROVENANCE.md) into the same reference
 entity-view pattern as the OOUX corpus:
 
   * one cr:USDM_<Class>EntityView per USDM class
@@ -36,8 +37,8 @@ HEADER = """\
 # ---------------------------------------------------------------------------
 # USDM STRUCTURAL MENU — the entirety of CDISC USDM v4.0 as reference entity
 # views (generated — do not edit by hand).
-# Source: ontology/vendor/usdm/usdm-v4.ttl (81 classes, itself generated from
-#   the CDISC DDF-RA OpenAPI model). Generator: tools/gen_usdm_views.py
+# Source: ontology/vendor/usdm/usdm-v4.ttl (adopted from kerfors/usdm-rdf, the
+#   canonical community USDM-RDF — see vendor/usdm/PROVENANCE.md). Generator: tools/gen_usdm_views.py
 #
 # The Protocol object IS USDM in operator terms, so its page must be able to
 # expose ALL of USDM and let the operator pick — the viewer must not limit them.

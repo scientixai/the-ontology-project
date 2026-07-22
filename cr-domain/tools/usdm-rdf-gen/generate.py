@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Deterministic USDM v4.0 -> OWL generator (TOP-owned).
+"""SUPERSEDED — do NOT run to (re)produce ontology/vendor/usdm/usdm-v4.ttl.
+
+As of 2026-07-22 the vendored USDM OWL is adopted verbatim from the canonical
+community artifact github.com/kerfors/usdm-rdf (Kerstin Forsberg) — see
+ontology/vendor/usdm/PROVENANCE.md. TOP is an adopter, not a parallel author.
+This generator is retained for history only. The CT tooling (extract_ct.py,
+generate_ct.py, verify_ncit.py) remains active — her artifact does not render CT.
+
+Deterministic USDM v4.0 -> OWL generator (TOP-owned; retired).
 
 Reads the pinned CDISC DDF-RA OpenAPI model (USDM_API.json) and emits a faithful
 structural OWL rendering of the USDM v4.0 class model: one owl:Class per entity,
