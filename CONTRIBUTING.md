@@ -2,6 +2,10 @@
 
 Welcome. TOP is open community-governed infrastructure for high-consequence regulated industries, hosted under Apache 2.0. Contributions land through GitHub pull requests against `main`.
 
+## Public-repo IP hygiene
+
+This is a **public** repository. Committed content — code, comments, docs, and commit messages — is world-readable. Public work describes the **reference graph**, SHACL, projections, standards alignment (including pure NGSI-LD), and the technical *why*. **Never commit** internal **runtime-engine** detail — the PNE Bridge, the Factual/Adaptive layer architecture, anything past the open NGSI-LD standard — nor commercial strategy, unannounced plans, customer names, or material from confidential uploads. Rule of thumb: *describe the reference graph, never the runtime.* Enforced by `tools/check_ip_leak.py` (CI + optional local hooks: `git config core.hooksPath .githooks`); the denylist is `tools/ip-denylist.json`. See [`CLAUDE.md`](CLAUDE.md).
+
 ## Before you start
 
 Read these in order. They take an hour combined and save you a week of misaligned work:

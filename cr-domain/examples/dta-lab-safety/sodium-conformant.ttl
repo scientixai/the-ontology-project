@@ -63,9 +63,9 @@ ex:fhir-obs-visit a prov:Entity ;
     cr:sourceSystem "Acme Central Lab / FHIR R4" ;
     cr:sourceUri "https://fhir.acme.example/Encounter/enc-4471"^^xsd:anyURI .
 
-ex:pne-resolver a top:AutonomousAgent ;
-    rdfs:label "PNE resolver 1.4.0" ;
-    cr:agentModel "PNE resolver 1.4.0" .
+ex:auto-resolver a top:AutonomousAgent ;
+    rdfs:label "Auto-resolver 1.4.0" ;
+    cr:agentModel "Auto-resolver 1.4.0" .
 
 # ── Vendor alias corpus: resolved ONCE, not stored per-DTA ────────────────────
 # Each auto-resolution carries prov:wasDerivedFrom (the retained FHIR source) and
@@ -78,7 +78,7 @@ ex:alias-sodium-col a cr:VendorAlias ;
     cr:resolvedAgainstVersion "cr/v1" ;
     cr:resolvedFrom ex:vendor-centrallab ;
     prov:wasDerivedFrom ex:fhir-obs-sodium ;
-    cr:resolvedBy ex:pne-resolver .
+    cr:resolvedBy ex:auto-resolver .
 
 ex:alias-visit-v3d29 a cr:VendorAlias ;
     top:identifier "urn:alias:visit-V3D29" ; top:status "active" ;
@@ -88,7 +88,7 @@ ex:alias-visit-v3d29 a cr:VendorAlias ;
     cr:resolvedAgainstVersion "cr/v1" ;
     cr:resolvedFrom ex:vendor-centrallab ;
     prov:wasDerivedFrom ex:fhir-obs-visit ;
-    cr:resolvedBy ex:pne-resolver .
+    cr:resolvedBy ex:auto-resolver .
 
 # The template's LBCODE is "populated with the LUDWIG numeric code" (handoff G3).
 # LUDWIG is not a public URI-resolvable terminology (LOINC/SNOMED/NCIt) — it is a
@@ -105,7 +105,7 @@ ex:alias-ludwig-na a cr:VendorAlias ;
     cr:resolvedAgainstVersion "cr/v1" ;
     cr:resolvedFrom ex:vendor-centrallab ;
     prov:wasDerivedFrom ex:fhir-obs-sodium ;
-    cr:resolvedBy ex:pne-resolver .
+    cr:resolvedBy ex:auto-resolver .
 
 ex:visit-3 a cr:Visit ;
     top:identifier "urn:visit:V3" ; top:status "active" ;

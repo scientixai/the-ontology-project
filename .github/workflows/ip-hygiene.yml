@@ -1,0 +1,21 @@
+name: ip-hygiene
+
+# Keeps internal runtime-engine detail (the PNE Bridge, the Factual/Adaptive layer
+# architecture — anything beyond the open NGSI-LD standard) out of this PUBLIC repo.
+# Enforced: a gated term in tracked content fails the check. Denylist: tools/ip-denylist.json.
+
+on:
+  pull_request:
+  push:
+    branches: [ 'main', 'claude/**' ]
+
+jobs:
+  ip-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Scan tracked content for gated terms
+        run: python3 tools/check_ip_leak.py
