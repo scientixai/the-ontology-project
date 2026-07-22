@@ -293,5 +293,13 @@ change the answer.
   (`cr:vendorTerm "LUDWIG:8480"` → `ex:concept-sodium` → LOINC 2951-2) alongside the
   column and visit aliases. The numeric LBCODE reconciles cleanly; the rule holds.
 
-Residual for the workstream (not blocking): confirm LUDWIG's real identity to set the
-resolution's confidence/provenance from the actual dictionary rather than an illustrative code.
+Name-collision warning (do not chase): "LUDWIG" here is a **clinical laboratory test
+dictionary** (what a central lab codes `LBCODE` against). It is NOT ludwig.guru (an
+English-writing assistant), NOT Uber's Ludwig AI (a model-training framework), and NOT
+a Wittgenstein ontology — all unrelated name-collisions. Pointing the DTA model at any of
+those APIs would be a category error.
+
+Residual for the workstream (not blocking): confirm LUDWIG's real identity — it is the
+central lab's own dictionary, so the CDISC DTA workstream / the specific lab in the
+template is the source, not the public web — to set the resolution's confidence/provenance
+from the actual dictionary rather than an illustrative code.
