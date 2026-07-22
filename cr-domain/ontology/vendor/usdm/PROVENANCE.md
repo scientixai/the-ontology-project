@@ -34,12 +34,23 @@ is unaffected by the swap. Vendored verbatim (byte-exact), CC-BY-4.0:
 | ultimate USDM source | CDISC DDF-RA `dataStructure.yml` @ v4.0.0 |
 | license | CC-BY-4.0 |
 
-**Re-verify on update:** re-fetch her files, re-compare sha256, and re-run the
-crosswalk resolution check (every `usdm:` IRI in `crosswalks/usdm-to-cr.ttl` must
-resolve in `usdm-v4.ttl`). Her class names can differ from our old local generation —
-the crosswalk was remapped on adoption (`Amendment`→`StudyAmendment`,
+**Machine-readable pin:** `upstream-pin.json` (version + per-file sha256) is the pin of
+record; this table is its human-readable companion.
+
+**Watch + assess (automated):** `tools/usdm-rdf-gen/check_upstream.py` compares the pin
+against her latest and emits an absorb/review assessment — version delta, class diff, and
+the decision-critical **crosswalk impact** (which `usdm:` targets would break). Run it
+manually, or let the scheduled CI watch (`.github/workflows/usdm-upstream-watch.yml`,
+weekly + on-demand) surface it: the job goes red only when there is a new release to
+assess. Exit 0 = up to date; exit 1 = a new release is available.
+
+**Absorbing an update (deliberate):** re-fetch her files into this directory, update
+`upstream-pin.json` (version + sha256s) and this table, re-run the crosswalk resolution
+check + full suite, then commit. Her class names can differ across releases — the
+crosswalk was remapped on adoption (`Amendment`→`StudyAmendment`,
 `EstimandPopulation`→`AnalysisPopulation`, `EstimandVariable`→`Endpoint` relatedMatch,
-`IntercurrentEventStrategy`→`IntercurrentEvent` relatedMatch).
+`IntercurrentEventStrategy`→`IntercurrentEvent` relatedMatch), and a future release may
+require the same.
 
 ## CT layer — still ours (complementary)
 
