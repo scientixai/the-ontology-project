@@ -1,8 +1,11 @@
 name: ip-hygiene
 
-# Keeps internal runtime-engine detail (the PNE Bridge, the Factual/Adaptive layer
-# architecture — anything beyond the open NGSI-LD standard) out of this PUBLIC repo.
-# Enforced: a gated term in tracked content fails the check. Denylist: tools/ip-denylist.json.
+# Keeps internal runtime-engine detail (anything past the open NGSI-LD standard) out of
+# this PUBLIC repo. The denylist patterns are provisioned out-of-band via the
+# IP_DENYLIST_PATTERNS repo secret — deliberately NOT stored in the repo, so the gate does
+# not disclose what it protects. If the secret is unset the scan passes with a notice
+# (CLAUDE.md + local hooks are the primary control; CI is the backstop). See
+# tools/check_ip_leak.py and tools/ip-denylist.example.json.
 
 on:
   pull_request:
@@ -18,4 +21,6 @@ jobs:
         with:
           python-version: '3.11'
       - name: Scan tracked content for gated terms
+        env:
+          IP_DENYLIST_PATTERNS: ${{ secrets.IP_DENYLIST_PATTERNS }}
         run: python3 tools/check_ip_leak.py
