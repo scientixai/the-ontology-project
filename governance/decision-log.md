@@ -1338,7 +1338,8 @@ This generalizes the posture already set by ADR-0006 (adopt SKOS) and ADR-0016 (
 
 ### Consequences
 
-- **No parallel renderings at foreign IRIs.** There is one USDM-RDF and it is hers; the drift hazard is gone. Re-verification on each of her releases is a documented procedure in `PROVENANCE.md`.
+- **No parallel renderings at foreign IRIs.** There is one USDM-RDF and it is hers; the drift hazard is gone.
+- **The adoption is actively maintained, not a one-time copy.** A machine-readable pin (`ontology/vendor/usdm/upstream-pin.json`) + a watch-and-assess tool (`tools/usdm-rdf-gen/check_upstream.py`) + a scheduled CI job (`.github/workflows/usdm-upstream-watch.yml`) check each new upstream release and emit an absorb/review assessment — version delta, class diff, and the decision-critical crosswalk-impact (which `usdm:` targets would break). Absorbing stays a deliberate act, but the decision is informed automatically. This is the operational form of the commitment: we track her work as it evolves.
 - **TOP gains her shapes + JSON-LD context** it did not previously have, at no cost.
 - **A two-way relationship becomes possible.** Because TOP is not bound to a standards body's ballot cycle, it can model and *test* the adjacent, unmodeled space (transfer cadence, chain of custody, closeout, submission — where USDM stops) under its regression-gated shape suite, then **feed proven extensions back upstream** as evidence the standard can ratify. TOP moves ahead *so that* the standard can follow with evidence — the measure of success is one shared model reached faster, not TOP owning it.
 - **Adoption is a relationship, not a dependency.** It creates the natural opening to invite the upstream author into the adjacent work.
