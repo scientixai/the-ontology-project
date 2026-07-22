@@ -2504,6 +2504,30 @@
     ]
   },
   {
+    "@id": "_:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/hcls/v1#Specimen"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A transferred lab result must ride a managed hcls:Specimen (cr:onSpecimen) \u2014 the specimen its lifecycle timestamps describe."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#onSpecimen"
+      }
+    ]
+  },
+  {
     "@id": "_:cb224bb9096480b90b17b614cb15fe9e3536a8054d0c9857e053a6224fecaa4f30c",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -2567,6 +2591,19 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#cta"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb230ba48ad015921c82195d620ee306bdbb265119649a8f6253b682c53c5a83f45",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A transferred lab result carries specimen-lifecycle timestamps but its hcls:Specimen has no cr:CustodyEvent chain. The timestamps are a convenience view over the authoritative chain of custody (provenance, not a Biomedical Concept), which must exist."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this cr:onSpecimen ?spec .\n              FILTER NOT EXISTS { ?ce a cr:CustodyEvent ; cr:specimen ?spec }\n            }\n        "
       }
     ]
   },
@@ -4462,30 +4499,6 @@
     ]
   },
   {
-    "@id": "_:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0",
-    "http://www.w3.org/ns/shacl#class": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#Attestation"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "A DataTransferAgreement must be ratified by >=1 signatory Attestation (a signature is a fact, not a boolean)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#ratifiedBy"
-      }
-    ]
-  },
-  {
     "@id": "_:cb2ef3af8ccbd0f8ecf5bab0ea88b0e83c9fe023e760fec48bb55c29154c6ecd624",
     "http://www.w3.org/ns/shacl#in": [
       {
@@ -4777,6 +4790,30 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#unlockReason"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769",
+    "http://www.w3.org/ns/shacl#class": [
+      {
+        "@id": "https://top.scientix.ai/v1#Attestation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A DataTransferAgreement must be ratified by >=1 signatory Attestation (a signature is a fact, not a boolean)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#ratifiedBy"
       }
     ]
   },
@@ -6432,7 +6469,7 @@
         "@id": "_:cb2e0db5c6fcd2945157334b88a825c2a0ac3472af347298ebf64f08eb77e415597"
       },
       {
-        "@id": "_:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0"
+        "@id": "_:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769"
       },
       {
         "@id": "_:cb31402137456d696cd62043361ae58af7f92380469eee8be2f26884c81e975560c"
@@ -8092,6 +8129,37 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#TransferAmendment"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#TransferCustodyChainShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A transferred result's lifecycle must be backed by a managed custody chain (hard)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb230ba48ad015921c82195d620ee306bdbb265119649a8f6253b682c53c5a83f45"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetSubjectsOf": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#specimenReceivedAt"
       }
     ]
   },

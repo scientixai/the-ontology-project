@@ -62,7 +62,7 @@ provenance axis it currently only gestures at with loose timestamps.
 
 | # | Gap | Nature | Owner call needed? |
 |---|-----|--------|--------------------|
-| G1 | DTA specimen timestamps not connected to `hcls:Specimen` + `cr:CustodyEvent` | **Reuse, don't reinvent** — wire the transfer model to the existing custody chain; assert custody is provenance (not a BC) | No — TOP-aligned, clear |
+| G1 | DTA specimen timestamps not connected to `hcls:Specimen` + `cr:CustodyEvent` | **DONE** ✅ — `cr:TransferCustodyChainShape` requires the transferred result to ride a specimen carrying a custody chain; timestamps kept as a convenience view; custody on the provenance axis, not a BC | — |
 | G2 | SME definitions authored as template prose ("Controlled Terminology"/"Origin" columns empty in v0.11) | **Bind, don't describe** — the `boundConcept`/`codedAs`/`declaredUnitConcept`/`VendorAlias` machinery already exists; drive the template columns from model bindings | No — mechanism exists; needs a binding pass |
 | G3 | `LUDWIG` numeric `LBCODE` vs the code-as-URI rule | Reconciliation — is LUDWIG a URI-resolvable terminology (→ `codedAs`) or a vendor dictionary (→ `VendorAlias` resolution)? | **Yes** — needs LUDWIG's identity (research) |
 | G4 | No transfer-archetype / payload-shape partition | Modeling philosophy — adopt explicit payload-shape classes (tabular-scheduled, binary-object+metadata, waveform, questionnaire, time-series, message/event) or keep implicit? Partially pre-addressed by design-note Q6 | **Yes** — Bo's call |

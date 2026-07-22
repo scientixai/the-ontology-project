@@ -203,3 +203,26 @@ libraries and CDISC/HL7 source data pulled from GitHub, and LOINC 2951-2 + UCUM
 essence file. Items that could not be verified are labelled as such in the
 connector comments; connector defaults should be re-confirmed from an
 unrestricted environment before production use.
+
+## Handoff G1 (2026-07-22) — specimen custody is provenance, reuse the chain
+
+The CDISC DTA working-group handoff flagged Sample Management / specimen custody
+as the highest-value gap, independently visible in all three DTA representations
+(the board note "how to address, as no link to BCs," the template's `LBREFID`
+"Specimen ID?" / `<TBD from Lab v2>`, and the `.ttl`'s five loose lifecycle
+timestamps). Verified against the full `cr:` domain, the resolution:
+
+- **Custody is provenance, not a Biomedical Concept.** Sample Management "has no
+  link to a BC" because it rides the provenance axis (`top:Temporal` /
+  `cr:CustodyEvent`), while clinical content rides `cr:BiomedicalConcept`. The two
+  axes are deliberately separate — the board's anomaly is the model working.
+- **Reuse, don't reinvent.** The custody chain already exists in `cr-core-lims.ttl`:
+  `hcls:Specimen` + `cr:CustodyEvent` (a bitemporal `SampleDue → Received →
+  ToBeVerified → Verified → Published` state machine). The DTA module's five
+  `cr:specimen*At` / `cr:*GeneratedAt` timestamps are kept as a **convenience view**;
+  the authoritative record is the managed specimen and its `cr:CustodyEvent` chain.
+- **Enforced.** `cr:TransferCustodyChainShape` (`shapes/dta-custody.ttl`) targets any
+  result asserting the transfer lifecycle (`sh:targetSubjectsOf cr:specimenReceivedAt`)
+  and requires it to ride an `hcls:Specimen` that carries a `cr:CustodyEvent` chain.
+  Worked: `sodium-conformant.ttl` now shows the full chain; `custody-nochain-violation.ttl`
+  is well-formed except its specimen has no chain — the shape bites (1 Violation).

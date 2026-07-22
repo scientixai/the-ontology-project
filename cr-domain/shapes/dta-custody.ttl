@@ -1,0 +1,38 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DTA custody (handoff G1) — chain of custody is PROVENANCE, not a Biomedical
+# Concept. The DTA transfer lifecycle timestamps (cr:specimenCollectedAt …
+# cr:clinicalReviewAt) are a CONVENIENCE view; the authoritative record is the
+# managed hcls:Specimen and its cr:CustodyEvent chain (SampleDue → Received →
+# ToBeVerified → Verified → Published), reused from the LIMS custody model rather
+# than reinvented. A transferred result that asserts the lifecycle timestamps
+# must ride a specimen that actually carries that custody chain.
+#
+# This is why "Sample Management has no link to a BiomedicalConcept" (the gap the
+# CDISC board, the template, and the .ttl each flagged): custody rides the
+# provenance axis (top:Temporal / cr:CustodyEvent), clinical content rides
+# cr:BiomedicalConcept — the two are deliberately separate.
+# ═══════════════════════════════════════════════════════════════════════════
+
+cr:TransferCustodyChainShape a sh:NodeShape ;
+    rdfs:label "A transferred result's lifecycle must be backed by a managed custody chain (hard)" ;
+    sh:targetSubjectsOf cr:specimenReceivedAt ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:onSpecimen ; sh:minCount 1 ; sh:class hcls:Specimen ;
+        sh:message "A transferred lab result must ride a managed hcls:Specimen (cr:onSpecimen) — the specimen its lifecycle timestamps describe." ;
+    ] ;
+    sh:sparql [
+        sh:message "A transferred lab result carries specimen-lifecycle timestamps but its hcls:Specimen has no cr:CustodyEvent chain. The timestamps are a convenience view over the authoritative chain of custody (provenance, not a Biomedical Concept), which must exist." ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:onSpecimen ?spec .
+              FILTER NOT EXISTS { ?ce a cr:CustodyEvent ; cr:specimen ?spec }
+            }
+        """ ;
+    ] .

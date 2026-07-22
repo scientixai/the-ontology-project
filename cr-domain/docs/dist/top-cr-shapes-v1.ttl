@@ -1419,6 +1419,23 @@ cr:TransferAmendmentPropagationShape a sh:NodeShape ;
     sh:severity sh:Violation ;
     sh:targetClass cr:TransferAmendment .
 
+cr:TransferCustodyChainShape a sh:NodeShape ;
+    rdfs:label "A transferred result's lifecycle must be backed by a managed custody chain (hard)" ;
+    sh:property [ sh:class hcls:Specimen ;
+            sh:message "A transferred lab result must ride a managed hcls:Specimen (cr:onSpecimen) — the specimen its lifecycle timestamps describe." ;
+            sh:minCount 1 ;
+            sh:path cr:onSpecimen ] ;
+    sh:severity sh:Violation ;
+    sh:sparql [ sh:message "A transferred lab result carries specimen-lifecycle timestamps but its hcls:Specimen has no cr:CustodyEvent chain. The timestamps are a convenience view over the authoritative chain of custody (provenance, not a Biomedical Concept), which must exist." ;
+            sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            SELECT $this WHERE {
+              $this cr:onSpecimen ?spec .
+              FILTER NOT EXISTS { ?ce a cr:CustodyEvent ; cr:specimen ?spec }
+            }
+        """ ] ;
+    sh:targetSubjectsOf cr:specimenReceivedAt .
+
 cr:TransferProfileMandatoryShape a sh:NodeShape ;
     rdfs:label "TransferProfile mandatory operational attributes (hard)" ;
     sh:property [ sh:in ( "SFTP" "FTP" "API" "FHIR-API" "Webhook" "Snowflake-share" "BigQuery-direct" "Manual-upload" ) ;

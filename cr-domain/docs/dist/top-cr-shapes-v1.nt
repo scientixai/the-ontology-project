@@ -158,7 +158,7 @@
 <https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 <https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/2000/01/rdf-schema#label> "A DTA must package content, reference a profile, and be ratified (hard)" .
 <https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/ns/shacl#property> _:cb2e0db5c6fcd2945157334b88a825c2a0ac3472af347298ebf64f08eb77e415597 .
-<https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/ns/shacl#property> _:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0 .
+<https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/ns/shacl#property> _:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769 .
 <https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/ns/shacl#property> _:cb31402137456d696cd62043361ae58af7f92380469eee8be2f26884c81e975560c .
 <https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/ns/shacl#severity> <http://www.w3.org/ns/shacl#Violation> .
 <https://top.scientix.ai/cr/v1#DataTransferAgreementShape> <http://www.w3.org/ns/shacl#targetClass> <https://top.scientix.ai/cr/v1#DataTransferAgreement> .
@@ -503,6 +503,12 @@
 <https://top.scientix.ai/cr/v1#TransferAmendmentPropagationShape> <http://www.w3.org/ns/shacl#property> _:cb1f196a3bdbdb295f74eac74e47d472ade27315bebd602f0daa5fc0c74db08edd1 .
 <https://top.scientix.ai/cr/v1#TransferAmendmentPropagationShape> <http://www.w3.org/ns/shacl#severity> <http://www.w3.org/ns/shacl#Violation> .
 <https://top.scientix.ai/cr/v1#TransferAmendmentPropagationShape> <http://www.w3.org/ns/shacl#targetClass> <https://top.scientix.ai/cr/v1#TransferAmendment> .
+<https://top.scientix.ai/cr/v1#TransferCustodyChainShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+<https://top.scientix.ai/cr/v1#TransferCustodyChainShape> <http://www.w3.org/2000/01/rdf-schema#label> "A transferred result's lifecycle must be backed by a managed custody chain (hard)" .
+<https://top.scientix.ai/cr/v1#TransferCustodyChainShape> <http://www.w3.org/ns/shacl#property> _:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8 .
+<https://top.scientix.ai/cr/v1#TransferCustodyChainShape> <http://www.w3.org/ns/shacl#severity> <http://www.w3.org/ns/shacl#Violation> .
+<https://top.scientix.ai/cr/v1#TransferCustodyChainShape> <http://www.w3.org/ns/shacl#sparql> _:cb230ba48ad015921c82195d620ee306bdbb265119649a8f6253b682c53c5a83f45 .
+<https://top.scientix.ai/cr/v1#TransferCustodyChainShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <https://top.scientix.ai/cr/v1#specimenReceivedAt> .
 <https://top.scientix.ai/cr/v1#TransferProfileMandatoryShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 <https://top.scientix.ai/cr/v1#TransferProfileMandatoryShape> <http://www.w3.org/2000/01/rdf-schema#label> "TransferProfile mandatory operational attributes (hard)" .
 <https://top.scientix.ai/cr/v1#TransferProfileMandatoryShape> <http://www.w3.org/ns/shacl#property> _:cb221ba8d17c55d396b39c196d05b7e4cfc6ef489d1b99fe291b4db46d5be7d4caa .
@@ -1173,6 +1179,10 @@ _:cb22272a8231e3e70d6f1e5d016e4db52d39621516511c704803076694c27945bab <http://ww
 _:cb2235e5cb31a16d51f75740428f8a63e1c9b4da335a0783887ddc3a03d0d4a0eb2 <http://www.w3.org/ns/shacl#message> "A clinical observation was recorded/changed after a HARD database lock but is not covered by a cr:DatabaseUnlock. Post-lock change must be legitimate (a documented unlock), never silent." .
 _:cb2235e5cb31a16d51f75740428f8a63e1c9b4da335a0783887ddc3a03d0d4a0eb2 <http://www.w3.org/ns/shacl#prefixes> <https://top.scientix.ai/cr/v1#> .
 _:cb2235e5cb31a16d51f75740428f8a63e1c9b4da335a0783887ddc3a03d0d4a0eb2 <http://www.w3.org/ns/shacl#select> "\n            PREFIX cr:  <https://top.scientix.ai/cr/v1#>\n            PREFIX top: <https://top.scientix.ai/v1#>\n            SELECT $this WHERE {\n              $this a cr:ClinicalObservation ; top:observedAt ?od .\n              ?lk a cr:DatabaseLock ; cr:lockType \"hard\" ; top:observedAt ?ld .\n              FILTER ( ?od > ?ld )\n              FILTER NOT EXISTS { $this cr:underUnlock ?u }\n            }\n        " .
+_:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8 <http://www.w3.org/ns/shacl#class> <https://top.scientix.ai/hcls/v1#Specimen> .
+_:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8 <http://www.w3.org/ns/shacl#message> "A transferred lab result must ride a managed hcls:Specimen (cr:onSpecimen) — the specimen its lifecycle timestamps describe." .
+_:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb223d9c94c082ef2273c59ad141326d26f4dd885aff729e5d7081f5f3000cc10a8 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#onSpecimen> .
 _:cb224bb9096480b90b17b614cb15fe9e3536a8054d0c9857e053a6224fecaa4f30c <http://www.w3.org/ns/shacl#message> "A quality tolerance limit must state, in operator language, what is measured." .
 _:cb224bb9096480b90b17b614cb15fe9e3536a8054d0c9857e053a6224fecaa4f30c <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb224bb9096480b90b17b614cb15fe9e3536a8054d0c9857e053a6224fecaa4f30c <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#measuredParameter> .
@@ -1190,6 +1200,8 @@ _:cb2294be378a84d6b3020beb4b6f5ce6ed61716417c41cf21532918e82ee73ab149 <http://ww
 _:cb2294be378a84d6b3020beb4b6f5ce6ed61716417c41cf21532918e82ee73ab149 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb188a8fed75f027f206969600dc4cab5ad3879eaa85216055eaa54042ce789f862 .
 _:cb22ed61f63c5541ac0a55fbaa7e508a38f3852cee84a4b7cf2020317bbfc06ca82 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "OCCDS" .
 _:cb22ed61f63c5541ac0a55fbaa7e508a38f3852cee84a4b7cf2020317bbfc06ca82 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb230ba48ad015921c82195d620ee306bdbb265119649a8f6253b682c53c5a83f45 <http://www.w3.org/ns/shacl#message> "A transferred lab result carries specimen-lifecycle timestamps but its hcls:Specimen has no cr:CustodyEvent chain. The timestamps are a convenience view over the authoritative chain of custody (provenance, not a Biomedical Concept), which must exist." .
+_:cb230ba48ad015921c82195d620ee306bdbb265119649a8f6253b682c53c5a83f45 <http://www.w3.org/ns/shacl#select> "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this cr:onSpecimen ?spec .\n              FILTER NOT EXISTS { ?ce a cr:CustodyEvent ; cr:specimen ?spec }\n            }\n        " .
 _:cb2310e0394f0305e1834c9db2daa79f98e6b1876903e23125fbf99d09854e05640 <http://www.w3.org/ns/shacl#message> "cr:DataProcessingAgreement must link to a processor organization via cr:processorOrg." .
 _:cb2310e0394f0305e1834c9db2daa79f98e6b1876903e23125fbf99d09854e05640 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2310e0394f0305e1834c9db2daa79f98e6b1876903e23125fbf99d09854e05640 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#processorOrg> .
@@ -1513,10 +1525,6 @@ _:cb2ee76019f0da9918ae43278ada2912472dc31888bfad23777171e09fae8bdf265 <http://ww
 _:cb2ee76019f0da9918ae43278ada2912472dc31888bfad23777171e09fae8bdf265 <http://www.w3.org/ns/shacl#message> "Mapping must carry a mapping date." .
 _:cb2ee76019f0da9918ae43278ada2912472dc31888bfad23777171e09fae8bdf265 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2ee76019f0da9918ae43278ada2912472dc31888bfad23777171e09fae8bdf265 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/crosswalk/v1#mappingDate> .
-_:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0 <http://www.w3.org/ns/shacl#class> <https://top.scientix.ai/cr/v1#Attestation> .
-_:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0 <http://www.w3.org/ns/shacl#message> "A DataTransferAgreement must be ratified by >=1 signatory Attestation (a signature is a fact, not a boolean)." .
-_:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2ef2d89288e588565a66d5146d97573ba69a365c50f3e922a70df2e86a92a6aa0 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#ratifiedBy> .
 _:cb2ef3af8ccbd0f8ecf5bab0ea88b0e83c9fe023e760fec48bb55c29154c6ecd624 <http://www.w3.org/ns/shacl#in> _:cb44e80cc761f0b54b64b9c0a83d2f61913940b713213560bda80f05bff87d6ab9 .
 _:cb2ef3af8ccbd0f8ecf5bab0ea88b0e83c9fe023e760fec48bb55c29154c6ecd624 <http://www.w3.org/ns/shacl#message> "Custody event toState must be a valid lifecycle state." .
 _:cb2ef3af8ccbd0f8ecf5bab0ea88b0e83c9fe023e760fec48bb55c29154c6ecd624 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1561,6 +1569,10 @@ _:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173 <http://ww
 _:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173 <http://www.w3.org/ns/shacl#message> "A DatabaseUnlock must record a documented cr:unlockReason." .
 _:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#unlockReason> .
+_:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769 <http://www.w3.org/ns/shacl#class> <https://top.scientix.ai/v1#Attestation> .
+_:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769 <http://www.w3.org/ns/shacl#message> "A DataTransferAgreement must be ratified by >=1 signatory Attestation (a signature is a fact, not a boolean)." .
+_:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb312d130f76b897201d6c47cbb2575722656bc2d35ceabaca1150ac2e09f34d769 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#ratifiedBy> .
 _:cb31402137456d696cd62043361ae58af7f92380469eee8be2f26884c81e975560c <http://www.w3.org/ns/shacl#class> <https://top.scientix.ai/cr/v1#TransferSpecification> .
 _:cb31402137456d696cd62043361ae58af7f92380469eee8be2f26884c81e975560c <http://www.w3.org/ns/shacl#message> "A DataTransferAgreement must package >=1 TransferSpecification (the content it governs)." .
 _:cb31402137456d696cd62043361ae58af7f92380469eee8be2f26884c81e975560c <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
