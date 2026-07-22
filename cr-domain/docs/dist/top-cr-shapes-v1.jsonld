@@ -129,6 +129,25 @@
     ]
   },
   {
+    "@id": "_:cb1266f5bede0dc08c2ab23b1d375007c08004632994e9834503ee9ced0241eaec5",
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#declaredUnitConcept"
+      }
+    ]
+  },
+  {
     "@id": "_:cb12728f7cbc1e90c625b7791593fbb13da76d42e13f3eec64f594fca32a6a2645b",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -149,6 +168,20 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#performedBy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb12f1f082a55754cc8e04f434c9603c0db6d3648f7f398ff896052b098dae995d4",
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
       }
     ]
   },
@@ -299,7 +332,44 @@
     ]
   },
   {
-    "@id": "_:cb16f0f29c1e55db9195062d632381c6ce7342fc410c670abaf5623ee7eb005818c",
+    "@id": "_:cb16e484b6b4f82bd5961096d411e8afbad60719c624c02fafddaa002d3e1834e01",
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#boundConcept"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb172c1aef25a2c9c5c00053ab5015ec0f9493e2a8a7b6eae90c06b0751474b051b",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this a cr:eCTDSubmission .\n              FILTER ( NOT EXISTS { $this cr:includesDataset ?d }\n                       || NOT EXISTS { $this cr:includesDefine ?x } )\n            }\n        "
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1736ae1416c9c0f87d07050b3cacae9ffcb1a853e6c0348bd4cacf254750b3164",
     "http://www.w3.org/ns/shacl#in": [
       {
         "@list": [
@@ -326,24 +396,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#breachDisposition"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb172c1aef25a2c9c5c00053ab5015ec0f9493e2a8a7b6eae90c06b0751474b051b",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "An eCTDSubmission carries a CSR but not the analysis datasets (cr:includesDataset) and/or the Define-XML (cr:includesDefine). Module 5 datasets should ship with the report a reviewer reads them against."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#select": [
-      {
-        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this a cr:eCTDSubmission .\n              FILTER ( NOT EXISTS { $this cr:includesDataset ?d }\n                       || NOT EXISTS { $this cr:includesDefine ?x } )\n            }\n        "
-      }
-    ],
-    "http://www.w3.org/ns/shacl#severity": [
-      {
-        "@id": "http://www.w3.org/ns/shacl#Warning"
       }
     ]
   },
@@ -648,45 +700,6 @@
     ]
   },
   {
-    "@id": "_:cb197d63efd5d86d77353d1141eb21517c8e3a71486640ab8c115288ad948346123",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "efficacy"
-          },
-          {
-            "@value": "qol"
-          },
-          {
-            "@value": "safety"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#followUpType"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#severity": [
-      {
-        "@id": "http://www.w3.org/ns/shacl#Warning"
-      }
-    ]
-  },
-  {
     "@id": "_:cb19c606734300bc9522eea904839da358903257c9fe5e22dfefeca19571c8ad1d4",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -714,30 +727,6 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            SELECT $this WHERE {\n              $this cr:valueRangeLow ?lo ; cr:valueRangeHigh ?hi .\n              FILTER ( ?lo > ?hi )\n            }\n        "
-      }
-    ]
-  },
-  {
-    "@id": "_:cb19d0e03ffe2a52cfb5a8e39246b8eba83ad440589082fa8cf6ef70d4be651981e",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "A DataElementSpecification with no bound BiomedicalConcept is non-conformant: the SDTM target is a projection of the concept binding, so an unbound element can never be rendered."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#nodeKind": [
-      {
-        "@id": "http://www.w3.org/ns/shacl#IRI"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#boundConcept"
       }
     ]
   },
@@ -793,6 +782,42 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#integratesStudy"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1a8eb3a218435c1a569b7cee6fe9978c871a6facbf1e9d14f4695c02e9aafe35c",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "collected"
+          },
+          {
+            "@value": "derived"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A DataElementSpecification should declare cr:elementOrigin (collected | derived) \u2014 the template's 'Origin' column, rendered from this binding rather than left empty."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#elementOrigin"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
       }
     ]
   },
@@ -1089,30 +1114,6 @@
     ]
   },
   {
-    "@id": "_:cb1c5dddf1085bccb02e00f57c935040a9a5f184cd16cecd22f72739f7b5ec3a626",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "A DataElementSpecification must declare its unit as a dereferenceable UCUM IRI (cr:declaredUnitConcept). A unit that does not resolve to UCUM is non-conformant \u2014 canonical conversion depends on it."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#nodeKind": [
-      {
-        "@id": "http://www.w3.org/ns/shacl#IRI"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#declaredUnitConcept"
-      }
-    ]
-  },
-  {
     "@id": "_:cb1c63404da48fbe2bf911f96dfe28605618fecd09f6dfccf87164d5656ebc39e0b",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -1170,40 +1171,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#excursionOnLot"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb1c7cbc419462e756ba4aa219c3fdd6f16e655e0f40cfbb43b7f26e6054b480d3a",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "figure"
-          },
-          {
-            "@value": "listing"
-          },
-          {
-            "@value": "table"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "TableListingFigure.tlfType must be 'table', 'listing', or 'figure'."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#tlfType"
       }
     ]
   },
@@ -1358,6 +1325,40 @@
     ]
   },
   {
+    "@id": "_:cb1d557aa08ab7859bcae65e875e51fc6bab4e9a7598c12d8baf4c21fce758c3894",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "figure"
+          },
+          {
+            "@value": "listing"
+          },
+          {
+            "@value": "table"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "TableListingFigure.tlfType must be 'table', 'listing', or 'figure'."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#tlfType"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1d5c87f9e95fd3b602cfbc8500c5d9e3655f18ffbe1cdb7de812447d95bd7f597",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1459,43 +1460,6 @@
     ]
   },
   {
-    "@id": "_:cb1dc9cc789e0635590d35f834a5208029273e7e5e9343d354110ef3ba99fac7703",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "definite"
-          },
-          {
-            "@value": "possible"
-          },
-          {
-            "@value": "probable"
-          },
-          {
-            "@value": "unrelated"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "cr:causalityVerdict must be one of: unrelated, possible, probable, definite."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#causalityVerdict"
-      }
-    ]
-  },
-  {
     "@id": "_:cb1de4b7ac2a1bc63d04e5fb708a59fbe2165b5a85194d54e742667fc76684c872b",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1529,80 +1493,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#codingDictionaryVersion"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb1de9929065dd5cc2f48c8c42e72739ea7a327203dbca79500be7677ab961e17f3",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "efficacy"
-          },
-          {
-            "@value": "safety"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#maxCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "cr:summaryKind must be 'safety' (ISS) or 'efficacy' (ISE)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#summaryKind"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb1e333bcb43eb43a5bb97cb8cff4a886f509077f8519c3b5ee223deff2a967d5b6",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "data-quality"
-          },
-          {
-            "@value": "protocol-compliance"
-          },
-          {
-            "@value": "safety-reporting"
-          },
-          {
-            "@value": "site-performance"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "KRI category must be one of: site-performance | data-quality | protocol-compliance | safety-reporting."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#kriCategory"
       }
     ]
   },
@@ -1685,6 +1575,45 @@
     ]
   },
   {
+    "@id": "_:cb1e5d388273619b2d182504589740c876e316cc9753f2bc7c9d1ae53fabd36c885",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "efficacy"
+          },
+          {
+            "@value": "qol"
+          },
+          {
+            "@value": "safety"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "A FollowUpVisit should declare cr:followUpType (safety | efficacy | qol)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#followUpType"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Warning"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1eb1aa2e68ee1f474e67a2c18bd64ebdae998a6729bb840c62fbe300584558430",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -1711,46 +1640,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/v1#recordedAt"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb1eb264aa0c4edecfc19d21bec94a7189a310c06be21813f7bc631c8c1c0e85a11",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "quarantined"
-          },
-          {
-            "@value": "rejected"
-          },
-          {
-            "@value": "released"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#maxCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "cr:excursionDisposition must be one of: quarantined, released, rejected."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#excursionDisposition"
       }
     ]
   },
@@ -1810,6 +1699,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#registryName"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1ef5085a63105c43c452e3a500689f73d207dd03dfb5bb45cd0ffddb133dbb97a",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#unboundRationale"
       }
     ]
   },
@@ -1994,6 +1902,46 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#activates"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2007ada1765f124354cea9434cb9373e0d5b5df0449297e6755ba2df59ff27d7c",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "quarantined"
+          },
+          {
+            "@value": "rejected"
+          },
+          {
+            "@value": "released"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:excursionDisposition must be one of: quarantined, released, rejected."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#excursionDisposition"
       }
     ]
   },
@@ -2305,40 +2253,6 @@
     ]
   },
   {
-    "@id": "_:cb21f6bc46899999f7a96720f80f0df411dac6dc2ebceeb085c477aa33cda906bdc",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "answered"
-          },
-          {
-            "@value": "closed"
-          },
-          {
-            "@value": "open"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "Query must carry a resolution status (open/answered/closed)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#resolutionStatus"
-      }
-    ]
-  },
-  {
     "@id": "_:cb2209935c7b08a5c795f7c6d90b0da55ff6b2ecaaf28935e053ef755ff1ac757cb",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -2640,43 +2554,6 @@
     ]
   },
   {
-    "@id": "_:cb236d9b6ccb816c3746594b5ae45fe2c2715342abacdb99a0aa8f5f1270846d896",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "AE"
-          },
-          {
-            "@value": "lost-to-follow-up"
-          },
-          {
-            "@value": "other"
-          },
-          {
-            "@value": "subject-decision"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "cr:withdrawalReason must be one of: subject-decision, AE, lost-to-follow-up, other."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#withdrawalReason"
-      }
-    ]
-  },
-  {
     "@id": "_:cb23749afec7b75b9f0b1823980b19319e3b942bcd756bd12f4beab397835fdfa4f",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2764,37 +2641,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#hasProtocolVersion"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb241385ba5d1cf19e965b7a4d98b31bbf90917bd36f918a597cbe471eff553e897",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "hard"
-          },
-          {
-            "@value": "soft"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "DatabaseLock.lockType must be 'soft' (reversible, for review) or 'hard' (for analysis)."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/cr/v1#lockType"
       }
     ]
   },
@@ -3010,6 +2856,43 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/cr/v1#exercisesCapability> ?cap .\n              $this <https://top.scientix.ai/cr/v1#performedBy> ?p .\n              FILTER NOT EXISTS {\n                ?d a <https://top.scientix.ai/cr/v1#Delegation> ;\n                   <https://top.scientix.ai/cr/v1#delegate> ?p ;\n                   <https://top.scientix.ai/cr/v1#delegatedCapability> ?cap .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2559ee8ce97d7f41dedc649ed9df5b5f6c6ea90bd16cf815d9d2f67ae2a36f266",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "efficacy"
+          },
+          {
+            "@value": "safety"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:summaryKind must be 'safety' (ISS) or 'efficacy' (ISE)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#summaryKind"
       }
     ]
   },
@@ -3725,6 +3608,43 @@
     ]
   },
   {
+    "@id": "_:cb2a4da75c630b0cbc977e5358ea5b941ecfdc99df2a2bd46a7c076d4c77ff57d72",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "data-quality"
+          },
+          {
+            "@value": "protocol-compliance"
+          },
+          {
+            "@value": "safety-reporting"
+          },
+          {
+            "@value": "site-performance"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "KRI category must be one of: site-performance | data-quality | protocol-compliance | safety-reporting."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#kriCategory"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2a56229e201d68f273167d96078efa4413e3a25f28c730fb4dd10e0179d46d65a",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -3800,6 +3720,43 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#unblindsSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2a6d3dfb89dc99c5f6029523c21aec34ba9bbce7f9d6e06755751db2bc6969416",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "definite"
+          },
+          {
+            "@value": "possible"
+          },
+          {
+            "@value": "probable"
+          },
+          {
+            "@value": "unrelated"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:causalityVerdict must be one of: unrelated, possible, probable, definite."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#causalityVerdict"
       }
     ]
   },
@@ -4122,40 +4079,6 @@
     ]
   },
   {
-    "@id": "_:cb2c0940c4ea03be826d6296424cc0a35437ae7c1ca173d54e364a7cac0dc6ba5cf",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@value": "deprecated"
-          },
-          {
-            "@value": "unverified"
-          },
-          {
-            "@value": "verified"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "Mapping must carry a verification status."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/crosswalk/v1#verificationStatus"
-      }
-    ]
-  },
-  {
     "@id": "_:cb2c30b238d277327b37c0b930a1226990a90e5d9653dbe03a06b992a4c50206e42",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -4247,6 +4170,43 @@
     ]
   },
   {
+    "@id": "_:cb2ced914414f66b5f7fbdb25bf358d18e719ed511906840bfc96447a5e16e5d939",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "AE"
+          },
+          {
+            "@value": "lost-to-follow-up"
+          },
+          {
+            "@value": "other"
+          },
+          {
+            "@value": "subject-decision"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "cr:withdrawalReason must be one of: subject-decision, AE, lost-to-follow-up, other."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#withdrawalReason"
+      }
+    ]
+  },
+  {
     "@id": "_:cb2d032aae26c1c9b4942f0ea6fd012a6e302e7bc4d84459cfb76bed3cdfa8ed223",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -4267,6 +4227,40 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#requiresCredential"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2d36f18bbc5b03ff9bf4fdc151149bac1b0f774e6d19c839d9948e76378f252b1",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "answered"
+          },
+          {
+            "@value": "closed"
+          },
+          {
+            "@value": "open"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Query must carry a resolution status (open/answered/closed)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#resolutionStatus"
       }
     ]
   },
@@ -4315,6 +4309,37 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#closureRestsOnReconciliation"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2e04b909491090b9317b0ec9cadc2978b5bbdfde828b052b12f7a7c63f3510ba7",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "hard"
+          },
+          {
+            "@value": "soft"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "DatabaseLock.lockType must be 'soft' (reversible, for review) or 'hard' (for analysis)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#lockType"
       }
     ]
   },
@@ -4725,51 +4750,6 @@
     ]
   },
   {
-    "@id": "_:cb31213ab822551653b1dc47f8845d3246e4f661360493a5f798120c8355c747b8b",
-    "http://www.w3.org/ns/shacl#in": [
-      {
-        "@list": [
-          {
-            "@id": "http://www.w3.org/2004/02/skos/core#broadMatch"
-          },
-          {
-            "@id": "http://www.w3.org/2004/02/skos/core#closeMatch"
-          },
-          {
-            "@id": "http://www.w3.org/2004/02/skos/core#exactMatch"
-          },
-          {
-            "@id": "http://www.w3.org/2004/02/skos/core#narrowMatch"
-          },
-          {
-            "@id": "http://www.w3.org/2004/02/skos/core#relatedMatch"
-          }
-        ]
-      }
-    ],
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "Mapping predicate must be a SKOS match predicate."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#nodeKind": [
-      {
-        "@id": "http://www.w3.org/ns/shacl#IRI"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/crosswalk/v1#predicateId"
-      }
-    ]
-  },
-  {
     "@id": "_:cb3126aaeb8f5172d29e51ebc0a5237a5a49ddd896201d9205379194fe50771a173",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -4838,6 +4818,40 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#packagesSpecification"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb3151a970eebec36c2447f5e62aaa67980d81436eeac51acc196931479ab006cc2",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@value": "deprecated"
+          },
+          {
+            "@value": "unverified"
+          },
+          {
+            "@value": "verified"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Mapping must carry a verification status."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/crosswalk/v1#verificationStatus"
       }
     ]
   },
@@ -4953,6 +4967,51 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#metricsForSite"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb3243dbafbf24214fb44ada31b5ee129a4e7602731221030adad66db5e86594be1",
+    "http://www.w3.org/ns/shacl#in": [
+      {
+        "@list": [
+          {
+            "@id": "http://www.w3.org/2004/02/skos/core#broadMatch"
+          },
+          {
+            "@id": "http://www.w3.org/2004/02/skos/core#closeMatch"
+          },
+          {
+            "@id": "http://www.w3.org/2004/02/skos/core#exactMatch"
+          },
+          {
+            "@id": "http://www.w3.org/2004/02/skos/core#narrowMatch"
+          },
+          {
+            "@id": "http://www.w3.org/2004/02/skos/core#relatedMatch"
+          }
+        ]
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Mapping predicate must be a SKOS match predicate."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#nodeKind": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#IRI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/crosswalk/v1#predicateId"
       }
     ]
   },
@@ -5529,6 +5588,25 @@
     ]
   },
   {
+    "@id": "_:cb7065b5ec7c761a480bf7a48d1d81d8a101ea1ba123c2bdf5fa99fc3217f1489b",
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1266f5bede0dc08c2ab23b1d375007c08004632994e9834503ee9ced0241eaec5"
+      },
+      {
+        "@id": "_:cb16e484b6b4f82bd5961096d411e8afbad60719c624c02fafddaa002d3e1834e01"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb8e4156f582d3d228947db38d8c7e06d3eb26b76940d30c6849e2a7486ea4631a",
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1ef5085a63105c43c452e3a500689f73d207dd03dfb5bb45cd0ffddb133dbb97a"
+      }
+    ]
+  },
+  {
     "@id": "_:cb90b1a505a038831b9df7a16af04b2c6c731c4db823239d0820bb6671d8d25322",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -5564,20 +5642,6 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/v1#governedBy> <https://top.scientix.ai/v1#EU_GDPR> .\n              FILTER NOT EXISTS {\n                $this <https://top.scientix.ai/v1#governedBy> ?basis .\n                ?basis a <https://top.scientix.ai/cr/v1#LawfulBasis> .\n              }\n            }\n        "
-      }
-    ]
-  },
-  {
-    "@id": "_:cba0ddb134d2a17aa04bd18fbf0985ba07820f918eb2c5f321167009506c4532ba",
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "http://www.w3.org/ns/prov#wasDerivedFrom"
       }
     ]
   },
@@ -6070,7 +6134,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb1dc9cc789e0635590d35f834a5208029273e7e5e9343d354110ef3ba99fac7703"
+        "@id": "_:cb2a6d3dfb89dc99c5f6029523c21aec34ba9bbce7f9d6e06755751db2bc6969416"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -6390,20 +6454,50 @@
     ],
     "http://www.w3.org/2000/01/rdf-schema#label": [
       {
-        "@value": "Every data element must bind to a canonical concept (hard)"
+        "@value": "Every data element must bind or be explicitly unbound (hard)"
       }
     ],
-    "http://www.w3.org/ns/shacl#property": [
+    "http://www.w3.org/ns/shacl#message": [
       {
-        "@id": "_:cb19d0e03ffe2a52cfb5a8e39246b8eba83ad440589082fa8cf6ef70d4be651981e"
-      },
+        "@value": "A DataElementSpecification must RESOLVE its ambiguity: either BIND (cr:boundConcept + cr:declaredUnitConcept as a UCUM IRI) or be EXPLICITLY declared unbound (cr:unboundRationale). A prose-only element that does neither is non-conformant \u2014 bind, don't describe."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#or": [
       {
-        "@id": "_:cb1c5dddf1085bccb02e00f57c935040a9a5f184cd16cecd22f72739f7b5ec3a626"
+        "@list": [
+          {
+            "@id": "_:cb7065b5ec7c761a480bf7a48d1d81d8a101ea1ba123c2bdf5fa99fc3217f1489b"
+          },
+          {
+            "@id": "_:cb8e4156f582d3d228947db38d8c7e06d3eb26b76940d30c6849e2a7486ea4631a"
+          }
+        ]
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
       {
         "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#DataElementSpecification"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#DataElementOriginShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "A data element should declare its origin (warning)"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1a8eb3a218435c1a569b7cee6fe9978c871a6facbf1e9d14f4695c02e9aafe35c"
       }
     ],
     "http://www.w3.org/ns/shacl#targetClass": [
@@ -6501,7 +6595,7 @@
         "@id": "_:cb1f78639ae4550bffabd0da5071b7bf4fd2f7b606d290d8e3c6dc34696e0da7006"
       },
       {
-        "@id": "_:cb241385ba5d1cf19e965b7a4d98b31bbf90917bd36f918a597cbe471eff553e897"
+        "@id": "_:cb2e04b909491090b9317b0ec9cadc2978b5bbdfde828b052b12f7a7c63f3510ba7"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -6770,7 +6864,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb197d63efd5d86d77353d1141eb21517c8e3a71486640ab8c115288ad948346123"
+        "@id": "_:cb1e5d388273619b2d182504589740c876e316cc9753f2bc7c9d1ae53fabd36c885"
       }
     ],
     "http://www.w3.org/ns/shacl#targetClass": [
@@ -6897,10 +6991,10 @@
         "@id": "_:cb1a859de85ffab63aa198f81de272d8b110e652b219bfa4685a779458826602702"
       },
       {
-        "@id": "_:cb1de9929065dd5cc2f48c8c42e72739ea7a327203dbca79500be7677ab961e17f3"
+        "@id": "_:cb22272a8231e3e70d6f1e5d016e4db52d39621516511c704803076694c27945bab"
       },
       {
-        "@id": "_:cb22272a8231e3e70d6f1e5d016e4db52d39621516511c704803076694c27945bab"
+        "@id": "_:cb2559ee8ce97d7f41dedc649ed9df5b5f6c6ea90bd16cf815d9d2f67ae2a36f266"
       }
     ],
     "http://www.w3.org/ns/shacl#targetClass": [
@@ -6916,13 +7010,13 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb1e333bcb43eb43a5bb97cb8cff4a886f509077f8519c3b5ee223deff2a967d5b6"
-      },
-      {
         "@id": "_:cb23b01bcdbefa72be7e2c9132311a0a3720e2ac8c59b06766688bd4987462b658b"
       },
       {
         "@id": "_:cb27f744ac0c05d94a367408de28ae8e6cb749a4c4ae2e4707ae59663e0b5edeecb"
+      },
+      {
+        "@id": "_:cb2a4da75c630b0cbc977e5358ea5b941ecfdc99df2a2bd46a7c076d4c77ff57d72"
       },
       {
         "@id": "_:cb2c30b238d277327b37c0b930a1226990a90e5d9653dbe03a06b992a4c50206e42"
@@ -7043,7 +7137,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb16f0f29c1e55db9195062d632381c6ce7342fc410c670abaf5623ee7eb005818c"
+        "@id": "_:cb1736ae1416c9c0f87d07050b3cacae9ffcb1a853e6c0348bd4cacf254750b3164"
       },
       {
         "@id": "_:cb1c63404da48fbe2bf911f96dfe28605618fecd09f6dfccf87164d5656ebc39e0b"
@@ -7464,7 +7558,7 @@
         "@id": "_:cb1f859143603f709f9119ec0f138ee4d965f9388ea135ef3c96a62123ea33f8078"
       },
       {
-        "@id": "_:cb21f6bc46899999f7a96720f80f0df411dac6dc2ebceeb085c477aa33cda906bdc"
+        "@id": "_:cb2d36f18bbc5b03ff9bf4fdc151149bac1b0f774e6d19c839d9948e76378f252b1"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -7919,7 +8013,7 @@
             "@id": "_:cb1052552a5fac75bb8a01850f7330e4a327a2e7d8f997dcee69813672e31d2c0c5"
           },
           {
-            "@id": "_:cba0ddb134d2a17aa04bd18fbf0985ba07820f918eb2c5f321167009506c4532ba"
+            "@id": "_:cb12f1f082a55754cc8e04f434c9603c0db6d3648f7f398ff896052b098dae995d4"
           }
         ]
       }
@@ -8062,7 +8156,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb1c7cbc419462e756ba4aa219c3fdd6f16e655e0f40cfbb43b7f26e6054b480d3a"
+        "@id": "_:cb1d557aa08ab7859bcae65e875e51fc6bab4e9a7598c12d8baf4c21fce758c3894"
       },
       {
         "@id": "_:cb1e490ea782fbd65ee331a72cf6498a56ea9efc941964540af95e0f6a1ef74f4ba"
@@ -8092,7 +8186,7 @@
         "@id": "_:cb1c777141f9aeb37bebff18e2a274002fbcfd38d0eef81ad11228e863f2bf21109"
       },
       {
-        "@id": "_:cb1eb264aa0c4edecfc19d21bec94a7189a310c06be21813f7bc631c8c1c0e85a11"
+        "@id": "_:cb2007ada1765f124354cea9434cb9373e0d5b5df0449297e6755ba2df59ff27d7c"
       }
     ],
     "http://www.w3.org/ns/shacl#sparql": [
@@ -8548,7 +8642,7 @@
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb236d9b6ccb816c3746594b5ae45fe2c2715342abacdb99a0aa8f5f1270846d896"
+        "@id": "_:cb2ced914414f66b5f7fbdb25bf358d18e719ed511906840bfc96447a5e16e5d939"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -8637,9 +8731,6 @@
         "@id": "_:cb2af2637de685661c62d653398ef5778a295f6825425f80631c5ea71a190664228"
       },
       {
-        "@id": "_:cb2c0940c4ea03be826d6296424cc0a35437ae7c1ca173d54e364a7cac0dc6ba5cf"
-      },
-      {
         "@id": "_:cb2c675b2ca41066466c161670ea3ad722f81f92488d4e5689e7ab5902b0fdff359"
       },
       {
@@ -8649,7 +8740,10 @@
         "@id": "_:cb2ee76019f0da9918ae43278ada2912472dc31888bfad23777171e09fae8bdf265"
       },
       {
-        "@id": "_:cb31213ab822551653b1dc47f8845d3246e4f661360493a5f798120c8355c747b8b"
+        "@id": "_:cb3151a970eebec36c2447f5e62aaa67980d81436eeac51acc196931479ab006cc2"
+      },
+      {
+        "@id": "_:cb3243dbafbf24214fb44ada31b5ee129a4e7602731221030adad66db5e86594be1"
       },
       {
         "@id": "_:cb4a432b5decf363c1980c782074abbe9787002ca02e118594a278bb174dbe471ac"

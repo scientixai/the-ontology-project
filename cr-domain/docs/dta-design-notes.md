@@ -226,3 +226,43 @@ timestamps). Verified against the full `cr:` domain, the resolution:
   and requires it to ride an `hcls:Specimen` that carries a `cr:CustodyEvent` chain.
   Worked: `sodium-conformant.ttl` now shows the full chain; `custody-nochain-violation.ttl`
   is well-formed except its specimen has no chain — the shape bites (1 Violation).
+
+## Handoff G2 (2026-07-22) — bind, don't describe (Anthony's ambiguity ask)
+
+The template's Section-7 "Controlled Terminology" and "Origin" columns are empty
+prose slots in v0.11 — the ambiguity Anthony Chow asked the SMEs to remove. The
+mechanism already exists in the model (`cr:boundConcept` + `cr:codedAs` URIs +
+`cr:declaredUnitConcept` UCUM + `cr:elementOrigin` + `cr:requirementLevel`). G2
+closes the last gap and makes the discipline executable:
+
+- **Every element must RESOLVE its ambiguity.** `cr:DataElementConceptBoundShape`
+  is now `bind XOR explicitly-unbound`: either `boundConcept` + `declaredUnitConcept`,
+  or a documented `cr:unboundRationale`. A prose-only element that does neither is a
+  Violation. This also makes the template's **AUX/C\* passthrough** columns
+  representable — as an auditable "unbound, and here's why," not a silent blank.
+- **The empty Origin column becomes a Warning.** `cr:DataElementOriginShape` flags a
+  missing `cr:elementOrigin` — the same gap the template leaves blank, surfaced so the
+  projection can render the column.
+- **The column is a projection.** `projections/dta_data_structure.rq` renders the
+  template's Section-7 table from the bindings — a bound element shows its code, an
+  unbound one shows `UNBOUND` + rationale. Proof of "the document is a projection;
+  author in the model." Worked in `sodium-conformant.ttl` (a bound Sodium element +
+  an explicitly-unbound vendor passthrough).
+
+## Handoff G4 (2026-07-22) — payload-shape archetypes: DEFERRED (decision record)
+
+The discussion paper's strongest idea is separating the technical **payload shape**
+from the clinical **business domain**, so many domains inherit one transfer spec.
+Decision: **do not add archetype classes to the module now.** Rationale:
+- Bo's standing position is to stay in observer mode and not impose a meta-model on
+  the CDISC workstream mid-exercise (a taxonomy debate trades progress for structure).
+- The uncovered tail (imaging / eCOA / DHT / genomics) is already addressed in
+  design-note Q6 via transfer **profiles**, not a rigid parallel hierarchy.
+- Keeping the model lean while the workstream's own tiers are still blank is cheaper
+  to revise later than to unwind.
+
+Candidate payload-shape set, recorded for when/if it is adopted: `tabular-scheduled`,
+`binary-object-plus-metadata`, `waveform`, `questionnaire`, `time-series-stream`,
+`message-event`. If adopted, it enters as a `cr:payloadShape` partition on
+`cr:TransferSpecification` (a coded property, per P6 — not a subclass explosion),
+crosswalked to whatever the CDISC workstream ultimately names.

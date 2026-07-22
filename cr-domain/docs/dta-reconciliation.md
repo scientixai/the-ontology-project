@@ -63,9 +63,9 @@ provenance axis it currently only gestures at with loose timestamps.
 | # | Gap | Nature | Owner call needed? |
 |---|-----|--------|--------------------|
 | G1 | DTA specimen timestamps not connected to `hcls:Specimen` + `cr:CustodyEvent` | **DONE** ✅ — `cr:TransferCustodyChainShape` requires the transferred result to ride a specimen carrying a custody chain; timestamps kept as a convenience view; custody on the provenance axis, not a BC | — |
-| G2 | SME definitions authored as template prose ("Controlled Terminology"/"Origin" columns empty in v0.11) | **Bind, don't describe** — the `boundConcept`/`codedAs`/`declaredUnitConcept`/`VendorAlias` machinery already exists; drive the template columns from model bindings | No — mechanism exists; needs a binding pass |
+| G2 | SME definitions authored as template prose | **DONE** ✅ — `DataElementConceptBoundShape` now bind-XOR-explicitly-unbound (`cr:unboundRationale` for AUX/C\* escape hatches); `cr:DataElementOriginShape` warns on the empty Origin column; `dta_data_structure.rq` renders the Section-7 table from the model | — |
 | G3 | `LUDWIG` numeric `LBCODE` vs the code-as-URI rule | Reconciliation — is LUDWIG a URI-resolvable terminology (→ `codedAs`) or a vendor dictionary (→ `VendorAlias` resolution)? | **Yes** — needs LUDWIG's identity (research) |
-| G4 | No transfer-archetype / payload-shape partition | Modeling philosophy — adopt explicit payload-shape classes (tabular-scheduled, binary-object+metadata, waveform, questionnaire, time-series, message/event) or keep implicit? Partially pre-addressed by design-note Q6 | **Yes** — Bo's call |
+| G4 | No transfer-archetype / payload-shape partition | **DEFERRED** — decision record in dta-design-notes.md (candidate set kept; enters as a coded `cr:payloadShape` partition if/when adopted); don't impose a meta-model mid-exercise | — |
 | G5 | Template binds fine-grained USDM attribute paths (`[Study.StudyTitle]`, `[Encounter.Visit Name]`); `.ttl` anchors the study by IRI but not attribute-level | Enhancement — optional USDM attribute-path binding | Low priority |
 
 Out of the model, per the handoff: the A/B/C/D tiering and the prioritization

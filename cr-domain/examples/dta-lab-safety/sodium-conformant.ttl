@@ -102,8 +102,9 @@ ex:dts-labsafety a cr:TransferSpecification ;
     top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:vendor-centrallab ;
     cr:specForStudy ex:study-safety1 ;   # USDM study referenced by IRI, defined elsewhere
-    cr:hasDataElement ex:de-sodium .
+    cr:hasDataElement ex:de-sodium , ex:de-vendor-passthrough .
 
+# A BOUND element: concept + UCUM unit + origin (Origin/CT columns render from here).
 ex:de-sodium a cr:DataElementSpecification ;
     top:identifier "urn:de:sodium" ;
     rdfs:label "Sodium (safety lab)" ;
@@ -114,6 +115,16 @@ ex:de-sodium a cr:DataElementSpecification ;
     cr:elementOrigin "collected" ;
     cr:valueRangeLow "120"^^xsd:decimal ;
     cr:valueRangeHigh "160"^^xsd:decimal .
+
+# An EXPLICITLY-UNBOUND element: the template's vendor passthrough (C*) reality.
+# No canonical concept yet — but that is an auditable choice with a reason, not a
+# silent prose gap. Bind, don't describe; and when you can't bind, say why.
+ex:de-vendor-passthrough a cr:DataElementSpecification ;
+    top:identifier "urn:de:vendor-CTESTCD" ;
+    rdfs:label "Vendor passthrough (CTESTCD/CTEST) — no canonical concept yet" ;
+    cr:unboundRationale "Vendor-proprietary panel code with no LOINC/NCIt equivalent at transfer time; carried as passthrough pending concept curation (template AUX/C* escape hatch)." ;
+    cr:requirementLevel "permissible" ;
+    cr:elementOrigin "collected" .
 
 # ── Operational envelope (TransferProfile) + blinding ─────────────────────────
 ex:profile-labsafety a cr:TransferProfile ;

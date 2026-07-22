@@ -1,0 +1,29 @@
+# DTA template — Section 7 "Data Structure" table, projected from the model.
+# The handoff's central claim ("the document is a projection; author in the
+# model") made concrete: the template's per-variable columns are rendered from
+# the DataElementSpecification bindings, not authored as prose.
+#
+# Column mapping (template Section 7 → model):
+#   Variable              ← DataElementSpecification.rdfs:label
+#   Controlled Terminology← boundConcept.codedAs (the code URI) — or "UNBOUND"
+#   Origin                ← cr:elementOrigin (collected | derived)
+#   Core                  ← cr:requirementLevel (required | expected | permissible)
+#   (note)                ← cr:unboundRationale (why, when unbound)
+#
+# "Bind, don't describe": a bound element renders its code; an explicitly-unbound
+# element renders "UNBOUND" + its rationale — never a silent, ambiguous blank.
+PREFIX cr:   <https://top.scientix.ai/cr/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?variable ?ct ?origin ?core ?note
+WHERE {
+  ?spec a cr:TransferSpecification ; cr:hasDataElement ?de .
+  ?de rdfs:label ?variable .
+  OPTIONAL { ?de cr:elementOrigin ?origin }
+  OPTIONAL { ?de cr:requirementLevel ?core }
+  OPTIONAL { ?de cr:boundConcept ?c . ?c cr:codedAs ?code }
+  OPTIONAL { ?de cr:unboundRationale ?rat }
+  BIND( IF(BOUND(?code), STR(?code), "UNBOUND") AS ?ct )
+  BIND( COALESCE(?rat, "") AS ?note )
+}
+ORDER BY ?variable

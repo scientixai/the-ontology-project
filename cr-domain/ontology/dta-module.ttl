@@ -190,6 +190,13 @@ cr:declaredUnitConcept a owl:ObjectProperty ;
     rdfs:domain cr:DataElementSpecification ;
     top:flavor "Additive" .
 
+cr:unboundRationale a owl:DatatypeProperty ;
+    rdfs:label "unbound rationale" ;
+    rdfs:comment "The documented reason a DataElementSpecification is deliberately NOT bound to a BiomedicalConcept — e.g. a vendor passthrough / escape-hatch column (the template's AUX1–10, CTESTCD/CTEST/CUNIT/CSPEC) for which no canonical concept yet exists. Its presence makes 'unbound' an explicit, auditable choice rather than a silent prose gap: every element is either bound (concept + UCUM unit) or explicitly unbound WITH a reason. Bind, don't describe — and when you can't bind, say why." ;
+    rdfs:domain cr:DataElementSpecification ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:aliasResolvesTo a owl:ObjectProperty ;
     rdfs:label "alias resolves to" ;
     rdfs:comment "The canonical entity (BiomedicalConcept, cr:Visit/Encounter, or unit URI) a VendorAlias resolves to." ;

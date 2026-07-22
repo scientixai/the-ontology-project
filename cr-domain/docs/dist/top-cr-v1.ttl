@@ -3810,6 +3810,13 @@ cr:unblindsSubject a owl:ObjectProperty ;
     rdfs:range cr:StudySubject ;
     top:flavor "Additive" .
 
+cr:unboundRationale a owl:DatatypeProperty ;
+    rdfs:label "unbound rationale" ;
+    rdfs:comment "The documented reason a DataElementSpecification is deliberately NOT bound to a BiomedicalConcept — e.g. a vendor passthrough / escape-hatch column (the template's AUX1–10, CTESTCD/CTEST/CUNIT/CSPEC) for which no canonical concept yet exists. Its presence makes 'unbound' an explicit, auditable choice rather than a silent prose gap: every element is either bound (concept + UCUM unit) or explicitly unbound WITH a reason. Bind, don't describe — and when you can't bind, say why." ;
+    rdfs:domain cr:DataElementSpecification ;
+    rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
 cr:underDelegation a owl:ObjectProperty ;
     rdfs:label "under delegation" ;
     rdfs:comment "Links a performed act to the delegation authorizing it (delegation invariant)." ;
@@ -6752,12 +6759,6 @@ cr:Assessment a owl:Class ;
     rdfs:comment "A clinical assessment performed during the trial." ;
     rdfs:subClassOf top:Temporal .
 
-cr:DataElementSpecification a owl:Class ;
-    rdfs:label "Data Element Specification" ;
-    rdfs:comment "Grounded in MVP Inventory content rows and the LAB v2.0 LB variable list. The SDTM target is NEVER a stored attribute here — it is a crosswalk edge rendered on projection." ;
-    rdfs:subClassOf top:Scope ;
-    skos:definition "One expected data element in a TransferSpecification: it binds to a canonical BiomedicalConcept, declares its unit, value range, controlled terminology, mandatory-ness, significant digits and derived flag. The universal content pattern — one shape covers lab, ECG, imaging analytes; data-type specifics are typed extensions, not parallel hierarchies." .
-
 cr:EndpointResult a owl:Class ;
     rdfs:label "Endpoint Result" ;
     rdfs:comment "A measured efficacy/safety result; must trace to its endpoint, estimand, and SAP." ;
@@ -6804,6 +6805,12 @@ cr:CodeAssignment a owl:Class ;
         "term coding"@en ;
     skos:definition "The recorded judgment that a verbatim term (an investigator's words) corresponds to a dictionary code (MedDRA term, WHODrug record) — with its method, coder, and dictionary version." ;
     skos:prefLabel "Code Assignment"@en .
+
+cr:DataElementSpecification a owl:Class ;
+    rdfs:label "Data Element Specification" ;
+    rdfs:comment "Grounded in MVP Inventory content rows and the LAB v2.0 LB variable list. The SDTM target is NEVER a stored attribute here — it is a crosswalk edge rendered on projection." ;
+    rdfs:subClassOf top:Scope ;
+    skos:definition "One expected data element in a TransferSpecification: it binds to a canonical BiomedicalConcept, declares its unit, value range, controlled terminology, mandatory-ness, significant digits and derived flag. The universal content pattern — one shape covers lab, ECG, imaging analytes; data-type specifics are typed extensions, not parallel hierarchies." .
 
 cr:InformedConsent a owl:Class ;
     rdfs:label "Informed Consent" ;

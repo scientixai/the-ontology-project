@@ -371,16 +371,26 @@ cr:DTASignatoryAuthorizedShape a sh:NodeShape ;
     sh:targetClass cr:DataTransferAgreement .
 
 cr:DataElementConceptBoundShape a sh:NodeShape ;
-    rdfs:label "Every data element must bind to a canonical concept (hard)" ;
-    sh:property [ sh:message "A DataElementSpecification with no bound BiomedicalConcept is non-conformant: the SDTM target is a projection of the concept binding, so an unbound element can never be rendered." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path cr:boundConcept ],
-        [ sh:message "A DataElementSpecification must declare its unit as a dereferenceable UCUM IRI (cr:declaredUnitConcept). A unit that does not resolve to UCUM is non-conformant — canonical conversion depends on it." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path cr:declaredUnitConcept ] ;
+    rdfs:label "Every data element must bind or be explicitly unbound (hard)" ;
+    sh:message "A DataElementSpecification must RESOLVE its ambiguity: either BIND (cr:boundConcept + cr:declaredUnitConcept as a UCUM IRI) or be EXPLICITLY declared unbound (cr:unboundRationale). A prose-only element that does neither is non-conformant — bind, don't describe." ;
+    sh:or ( [ sh:property [ sh:minCount 1 ;
+                        sh:nodeKind sh:IRI ;
+                        sh:path cr:declaredUnitConcept ],
+                    [ sh:minCount 1 ;
+                        sh:nodeKind sh:IRI ;
+                        sh:path cr:boundConcept ] ] [ sh:property [ sh:datatype xsd:string ;
+                        sh:minCount 1 ;
+                        sh:path cr:unboundRationale ] ] ) ;
     sh:severity sh:Violation ;
+    sh:targetClass cr:DataElementSpecification .
+
+cr:DataElementOriginShape a sh:NodeShape ;
+    rdfs:label "A data element should declare its origin (warning)" ;
+    sh:property [ sh:in ( "collected" "derived" ) ;
+            sh:message "A DataElementSpecification should declare cr:elementOrigin (collected | derived) — the template's 'Origin' column, rendered from this binding rather than left empty." ;
+            sh:minCount 1 ;
+            sh:path cr:elementOrigin ;
+            sh:severity sh:Warning ] ;
     sh:targetClass cr:DataElementSpecification .
 
 cr:DataElementPHIShape a sh:NodeShape ;
@@ -701,28 +711,28 @@ cr:IntegratedSummaryShape a sh:NodeShape ;
     sh:property [ sh:message "An integrated summary must integrate >=1 study (by IRI)." ;
             sh:minCount 1 ;
             sh:path cr:integratesStudy ],
+        [ sh:message "Violation: an integrated summary that derives from nothing — the integrated number must be reproducible to the per-study datasets." ;
+            sh:minCount 1 ;
+            sh:path prov:wasDerivedFrom ],
         [ sh:in ( "safety" "efficacy" ) ;
             sh:maxCount 1 ;
             sh:message "cr:summaryKind must be 'safety' (ISS) or 'efficacy' (ISE)." ;
             sh:minCount 1 ;
-            sh:path cr:summaryKind ],
-        [ sh:message "Violation: an integrated summary that derives from nothing — the integrated number must be reproducible to the per-study datasets." ;
-            sh:minCount 1 ;
-            sh:path prov:wasDerivedFrom ] ;
+            sh:path cr:summaryKind ] ;
     sh:targetClass cr:IntegratedSummary .
 
 cr:KeyRiskIndicatorShape a sh:NodeShape ;
-    sh:property [ sh:in ( "site-performance" "data-quality" "protocol-compliance" "safety-reporting" ) ;
-            sh:message "KRI category must be one of: site-performance | data-quality | protocol-compliance | safety-reporting." ;
-            sh:minCount 1 ;
-            sh:path cr:kriCategory ],
-        [ sh:message "A KRI must carry an action threshold (the boundary at which intervention is mandatory)." ;
+    sh:property [ sh:message "A KRI must carry an action threshold (the boundary at which intervention is mandatory)." ;
             sh:minCount 1 ;
             sh:path cr:actionThreshold ],
         [ sh:class cr:CriticalToQualityFactor ;
             sh:message "A KRI with no critical-to-quality ancestry is measurement theater — it must inform a named CtQ factor." ;
             sh:minCount 1 ;
             sh:path cr:informsFactor ],
+        [ sh:in ( "site-performance" "data-quality" "protocol-compliance" "safety-reporting" ) ;
+            sh:message "KRI category must be one of: site-performance | data-quality | protocol-compliance | safety-reporting." ;
+            sh:minCount 1 ;
+            sh:path cr:kriCategory ],
         [ sh:message "A KRI must state, in operator language, what is measured." ;
             sh:minCount 1 ;
             sh:path cr:measuredParameter ] ;
@@ -1678,10 +1688,6 @@ cx:MappingShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
             sh:path prov:wasAttributedTo ],
-        [ sh:in ( "verified" "unverified" "deprecated" ) ;
-            sh:message "Mapping must carry a verification status." ;
-            sh:minCount 1 ;
-            sh:path cx:verificationStatus ],
         [ sh:message "Mapping must reference the external target term (IRI)." ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
@@ -1694,6 +1700,10 @@ cx:MappingShape a sh:NodeShape ;
             sh:message "Mapping must carry a mapping date." ;
             sh:minCount 1 ;
             sh:path cx:mappingDate ],
+        [ sh:in ( "verified" "unverified" "deprecated" ) ;
+            sh:message "Mapping must carry a verification status." ;
+            sh:minCount 1 ;
+            sh:path cx:verificationStatus ],
         [ sh:in ( skos:exactMatch skos:closeMatch skos:relatedMatch skos:broadMatch skos:narrowMatch ) ;
             sh:message "Mapping predicate must be a SKOS match predicate." ;
             sh:minCount 1 ;

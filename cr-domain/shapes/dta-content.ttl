@@ -7,18 +7,35 @@
 # DTA MVP Inventory marked "too complex — not included." Here they are executable.
 # All shapes target DTA classes only, so they are inert against non-DTA graphs.
 
-# ── DataElementSpecification: concept-first binding is mandatory ──────────────
+# ── DataElementSpecification: bind, or explicitly declare unbound (hard) ──────
+# "Bind, don't describe" made executable (handoff G2). Every element must RESOLVE
+# its ambiguity: either BIND to a canonical concept + UCUM unit, or be EXPLICITLY
+# declared unbound with a reason (cr:unboundRationale) — the auditable escape hatch
+# for the template's AUX/C* passthrough columns. Silent prose definitions (neither
+# bound nor rationalized) are non-conformant — that is the ambiguity this removes.
 cr:DataElementConceptBoundShape a sh:NodeShape ;
-    rdfs:label "Every data element must bind to a canonical concept (hard)" ;
+    rdfs:label "Every data element must bind or be explicitly unbound (hard)" ;
     sh:targetClass cr:DataElementSpecification ;
     sh:severity sh:Violation ;
+    sh:message "A DataElementSpecification must RESOLVE its ambiguity: either BIND (cr:boundConcept + cr:declaredUnitConcept as a UCUM IRI) or be EXPLICITLY declared unbound (cr:unboundRationale). A prose-only element that does neither is non-conformant — bind, don't describe." ;
+    sh:or (
+        [ sh:property [ sh:path cr:boundConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ] ;
+          sh:property [ sh:path cr:declaredUnitConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ] ]
+        [ sh:property [ sh:path cr:unboundRationale ; sh:minCount 1 ; sh:datatype xsd:string ] ]
+    ) .
+
+# ── Definition completeness: declare the element's origin (soft) ──────────────
+# The template's "Origin" column is empty in v0.11 — the ambiguity Anthony flagged.
+# In the model it is cr:elementOrigin (collected | derived); a missing origin is the
+# same gap, surfaced as a Warning so the projection can render the column.
+cr:DataElementOriginShape a sh:NodeShape ;
+    rdfs:label "A data element should declare its origin (warning)" ;
+    sh:targetClass cr:DataElementSpecification ;
     sh:property [
-        sh:path cr:boundConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
-        sh:message "A DataElementSpecification with no bound BiomedicalConcept is non-conformant: the SDTM target is a projection of the concept binding, so an unbound element can never be rendered." ;
-    ] ;
-    sh:property [
-        sh:path cr:declaredUnitConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
-        sh:message "A DataElementSpecification must declare its unit as a dereferenceable UCUM IRI (cr:declaredUnitConcept). A unit that does not resolve to UCUM is non-conformant — canonical conversion depends on it." ;
+        sh:path cr:elementOrigin ; sh:minCount 1 ;
+        sh:in ( "collected" "derived" ) ;
+        sh:severity sh:Warning ;
+        sh:message "A DataElementSpecification should declare cr:elementOrigin (collected | derived) — the template's 'Origin' column, rendered from this binding rather than left empty." ;
     ] .
 
 # ── BiomedicalConcept: must carry at least one dereferenceable code ───────────
