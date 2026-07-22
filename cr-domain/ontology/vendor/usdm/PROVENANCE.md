@@ -2,6 +2,16 @@
 
 Generated, **not authoritative**. The authoritative USDM source is CDISC DDF-RA.
 
+**Namespace status (`https://w3id.org/cdisc/usdm/v4/`).** CDISC has **no ratified
+official USDM-RDF**; the RDF representation is a community effort (championed by
+Kerstin Forsberg / the CDISC-RDF lineage), and the `w3id.org/cdisc/usdm/` namespace
+is that **aspirational community convention**, not an official CDISC artifact. This
+vendored file is therefore an **early, faithful implementation** of that convention —
+derived deterministically from the authoritative DDF-RA source below — not a mirror of
+a canonical RDF (none exists). If/when CDISC ratifies an official USDM-RDF, align this
+rendering (and our IRI-minting scheme — currently the `usdm:Class-property` pattern) to
+it. Coordinate the scheme with the CDISC-RDF effort so this stays forward-compatible.
+
 | field | value |
 |---|---|
 | model source | github.com/cdisc-org/DDF-RA `Deliverables/API/USDM_API.json` |
