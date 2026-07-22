@@ -90,6 +90,23 @@ ex:alias-visit-v3d29 a cr:VendorAlias ;
     prov:wasDerivedFrom ex:fhir-obs-visit ;
     cr:resolvedBy ex:pne-resolver .
 
+# The template's LBCODE is "populated with the LUDWIG numeric code" (handoff G3).
+# LUDWIG is not a public URI-resolvable terminology (LOINC/SNOMED/NCIt) — it is a
+# proprietary numeric lab dictionary. So the numeric code does NOT violate the
+# code-as-URI rule: it is captured as a VendorAlias RESOLUTION to the canonical
+# concept (which itself is cr:codedAs the LOINC URI), never stored as an
+# authoritative string. Resolve the proprietary code once; the corpus compounds.
+# (LUDWIG:8480 below is an illustrative vendor code, not a verified LUDWIG value.)
+ex:alias-ludwig-na a cr:VendorAlias ;
+    top:identifier "urn:alias:ludwig-8480" ; top:status "active" ;
+    cr:vendorTerm "LUDWIG:8480" ;                 # the vendor's numeric LBCODE
+    cr:aliasResolvesTo ex:concept-sodium ;        # -> canonical concept -> LOINC 2951-2
+    cr:resolutionConfidence "0.97"^^xsd:decimal ;
+    cr:resolvedAgainstVersion "cr/v1" ;
+    cr:resolvedFrom ex:vendor-centrallab ;
+    prov:wasDerivedFrom ex:fhir-obs-sodium ;
+    cr:resolvedBy ex:pne-resolver .
+
 ex:visit-3 a cr:Visit ;
     top:identifier "urn:visit:V3" ; top:status "active" ;
     top:observedAt "2026-02-15T00:00:00Z"^^xsd:dateTime ;
@@ -215,7 +232,7 @@ ex:result-sodium-001 a cr:AssayResult ;
     cr:forSubject ex:subj-001 ;
     cr:resultOfAssay ex:svc-sodium ;
     rdf:value "140" ;
-    cr:resolvedFrom ex:alias-sodium-col , ex:alias-visit-v3d29 ;
+    cr:resolvedFrom ex:alias-sodium-col , ex:alias-visit-v3d29 , ex:alias-ludwig-na ;
     cr:resolvedAgainstVersion "cr/v1" ;
     # transfer lifecycle — a convenience view over the cr:CustodyEvent chain above
     cr:specimenCollectedAt "2026-02-15T08:00:00Z"^^xsd:dateTime ;

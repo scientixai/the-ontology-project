@@ -266,3 +266,32 @@ Candidate payload-shape set, recorded for when/if it is adopted: `tabular-schedu
 `message-event`. If adopted, it enters as a `cr:payloadShape` partition on
 `cr:TransferSpecification` (a coded property, per P6 — not a subclass explosion),
 crosswalked to whatever the CDISC workstream ultimately names.
+
+## Handoff G3 (2026-07-22) — LUDWIG numeric LBCODE: resolved via VendorAlias
+
+The template's `LBCODE` is "populated with the LUDWIG numeric code." The worry was
+that a numeric code conflicts with the module's rule "codes are relationships to
+URIs, never string properties." It does not — and LUDWIG's exact identity does not
+change the answer.
+
+- **What LUDWIG is (best effort):** not a public, URI-resolvable terminology. Two
+  targeted web searches surfaced only LOINC / SNOMED / CPT — no public "LUDWIG" lab
+  dictionary — which indicates a **proprietary / vendor-internal numeric dictionary**
+  (or a transcription artifact; the handoff itself tagged it `[Guessing]`).
+  ludwig.guru is an English-writing tool and is unrelated.
+- **Why identity doesn't gate the model.** The DTA module already accommodates both
+  cases without violating the code-as-URI rule:
+  - *If LUDWIG ever resolves to real URIs* → it is a `cr:codedAs` target on a
+    BiomedicalConcept (like LOINC).
+  - *If LUDWIG is a proprietary numeric dictionary* (the evidence) → the numeric code
+    is a `cr:VendorAlias` that **resolves to** the canonical concept, carrying
+    confidence + PROV. The number is captured as a resolution edge, never stored as an
+    authoritative string. This is the same ENCOUNTER_MAPPING pattern VendorAlias was
+    built for: resolve the proprietary code once; the corpus compounds.
+  - *If it can't be mapped yet* → an explicitly-unbound passthrough (`cr:unboundRationale`, G2).
+- **Demonstrated.** `sodium-conformant.ttl` now carries `ex:alias-ludwig-na`
+  (`cr:vendorTerm "LUDWIG:8480"` → `ex:concept-sodium` → LOINC 2951-2) alongside the
+  column and visit aliases. The numeric LBCODE reconciles cleanly; the rule holds.
+
+Residual for the workstream (not blocking): confirm LUDWIG's real identity to set the
+resolution's confidence/provenance from the actual dictionary rather than an illustrative code.
