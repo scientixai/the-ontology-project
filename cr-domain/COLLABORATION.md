@@ -1,6 +1,6 @@
 # TOP — Collaboration & external-ontology principle
 
-> Ratified as [ADR-0029](../governance/decision-log.md#adr-0029-adopt-sound-external-ontologies-dont-reinvent--usdm-rdf-via-kerforsusdm-rdf).
+> Ratified as [ADR-0029](../governance/decision-log.md#adr-0029-adopt-sound-external-ontologies-dont-reinvent-usdm-rdf-via-kerforsusdm-rdf).
 
 TOP is a **collaborative** effort. It does not reinvent what already exists well.
 

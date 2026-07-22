@@ -32,7 +32,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | ADR-0022 | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Proposed (on `main`; this branch forked before it landed — see `main` for the full text) |
 | [ADR-0023](#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo) | 2026-07-07 | Hub-and-spoke domains — Core owns the contract and the registry; each domain owns its repo | Proposed (invokes ADR-0017's reassessment trigger) |
 | [ADR-0024](#adr-0024-operator-vocabulary-through-the-pipeline-bfo-at-core-participant-preflabel-promote-dont-subclass) | 2026-07-07 | Operator vocabulary through the pipeline — BFO-at-Core, Participant prefLabel, promote-don't-subclass | Accepted |
-| [ADR-0029](#adr-0029-adopt-sound-external-ontologies-dont-reinvent--usdm-rdf-via-kerforsusdm-rdf) | 2026-07-22 | Adopt sound external ontologies, don't reinvent — USDM-RDF via `kerfors/usdm-rdf` | Accepted |
+| [ADR-0029](#adr-0029-adopt-sound-external-ontologies-dont-reinvent-usdm-rdf-via-kerforsusdm-rdf) | 2026-07-22 | Adopt sound external ontologies, don't reinvent — USDM-RDF via `kerfors/usdm-rdf` | Accepted |
 
 ---
 
