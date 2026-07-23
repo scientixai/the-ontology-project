@@ -128,7 +128,7 @@ TOP is a reference knowledge graph, not a runtime graph. It is the ingredients a
 * **Opinionated, never prescriptive.** TOP offers reference views, an action catalog, an entity-view schema. A consumer adapts, reweights, or drops any of them. Two customers can weight the same concept differently; each chooses what matters.
 * **Consume by building, not by adopting wholesale.** A consumer projects the reference into its own namespace and runtime graph, extends it per Open Core (§8), and renders from the result.
 
-**Why it matters:** A reference graph that doubles as a runtime graph forces its opinions on every consumer and cannot serve two customers whose priorities differ. Keeping TOP a reference keeps the commons stable and neutral while each customer's runtime graph stays theirs. The opinionated artifacts carry this caveat in their headers; RFC 0001 and ADR-0025 record it for the entity-view schema.
+**Why it matters:** A reference graph that doubles as a runtime graph forces its opinions on every consumer and cannot serve two customers whose priorities differ. Keeping TOP a reference keeps the commons stable and neutral while each customer's runtime graph stays theirs. This is Open Core (§8) applied to consumption: a consumer extends and renders in its own namespace and never binds to the commons at runtime — see [ADR-0019](governance/decision-log.md#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) and the per-layer rulebook in [`governance/extension-contract.md`](governance/extension-contract.md). Workflow domains carry this caveat in their reference view and action-catalog headers.
 
 ---
 
