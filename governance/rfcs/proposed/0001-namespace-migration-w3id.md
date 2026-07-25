@@ -72,7 +72,7 @@ Prefix declarations (`@prefix top:`, `topcr:`, `topcd:`, `example:` …) update 
 
 w3id.org is **only** a redirector; it holds no content. It needs a target. Per the
 betting decision (2026-07-25), TOP moves off `top.scientix.ai` onto a **standalone domain
-`<TOP_DOMAIN>`** (to be provided — see Open Questions) served by GitHub Pages from this
+`the-ontology-project.org`** (to be provided — see Open Questions) served by GitHub Pages from this
 repo's `main`, exactly as today (ADR-0017, and the "GitHub Pages stays simple" note in
 the decision log). Only `CNAME` changes.
 
@@ -88,16 +88,16 @@ request lands on `.ttl` and a browser lands on the HTML spec page.
 The point of this RFC is that URIs never break, so the *old* URIs cannot break either:
 
 - **`top.scientix.ai` keeps serving and 301-redirects** to `w3id.org/top/**` (or
-  directly to `<TOP_DOMAIN>`), indefinitely. A permanent redirect, not a teardown. Any
+  directly to `the-ontology-project.org`), indefinitely. A permanent redirect, not a teardown. Any
   triple already published against `top.scientix.ai` continues to resolve.
 - The migration is a **major version boundary in identity but not in semantics**: the
   same concepts, same `v1`, new base. We document the base change prominently in the
   README, the Core spec page, and the decision log so downstream consumers re-point.
 
-### 4. Cutover recipe (ready to run once `<TOP_DOMAIN>` + the w3id PR are live)
+### 4. Cutover recipe (ready to run once `the-ontology-project.org` + the w3id PR are live)
 
 The rewrite is mechanical and must land as one coordinated cutover **after** the w3id
-`top/` redirect is registered and `<TOP_DOMAIN>` resolves — never before, or resolution
+`top/` redirect is registered and `the-ontology-project.org` resolves — never before, or resolution
 breaks in the gap. Files touched: `core/v1/*.ttl`, `core/v1/walkthroughs/*.ttl`,
 `taxonomy/taxonomy.ttl`, `taxonomy/taxonomy.csv`, `core/v1/index.html`, the
 `governance/planning/*.md` that carry example prefixes, and any JSON-LD `@context`.
@@ -109,7 +109,7 @@ grep -rlZ 'https://top\.scientix\.ai/' --include='*.ttl' --include='*.csv' \
   | xargs -0 sed -i 's#https://top\.scientix\.ai/#https://w3id.org/top/#g'
 
 # 2. Point hosting at the new domain
-echo '<TOP_DOMAIN>' > CNAME
+echo 'the-ontology-project.org' > CNAME
 
 # 3. Update display/branding text (README badge, index.html header chip) by hand —
 #    these read "top.scientix.ai" as a label, not a URL.
@@ -118,6 +118,22 @@ echo '<TOP_DOMAIN>' > CNAME
 A follow-up validation runs the existing SHACL/`pyshacl` and link checks (ADR-0010's
 four-layer enforcement) against the rewritten graph before merge.
 
+### Cutover order (must run in this order — do not rewrite IRIs first)
+
+1. **Register the domain.** Point `the-ontology-project.org` DNS at GitHub Pages
+   (`CNAME` → `<user>.github.io` / A records per GitHub's docs). *(Bo — registrar/DNS.)*
+2. **Register w3id.** Submit `governance/w3id/top/.htaccess` as a PR to
+   `perma-id/w3id.org` under `top/`; wait for merge. *(External community repo — Bo, or
+   Claude on request via a fork.)*
+3. **Verify resolution** before touching IRIs:
+   `curl -sIL https://the-ontology-project.org/` and
+   `curl -sIL -H 'Accept: text/turtle' https://w3id.org/top/core/v1`.
+4. **Merge the cutover PR** (IRI rewrite + `CNAME` + display text). Run SHACL/link checks.
+5. **Stand up the `top.scientix.ai` → `w3id.org/top` 301** in its new home (OQ4).
+
+Steps 1–2 are the only real blockers and are external; the cutover PR itself is prepared
+and validated ahead of them.
+
 ## Alternatives considered
 
 - **Do nothing — keep `top.scientix.ai`.** *Preserves* zero migration cost. *Changes*
@@ -125,8 +141,8 @@ four-layer enforcement) against the rewritten graph before merge.
   subdomain and leaves every URI hostage to that host. This is the status quo the RFC
   exists to end.
 - **Move to a standalone domain, but make the domain itself the namespace** (e.g.
-  `https://<TOP_DOMAIN>/v1#`). *Changes* the base once. *Preserves* nothing against the
-  next move — it just relocates the coupling from one host to another. If `<TOP_DOMAIN>`
+  `https://the-ontology-project.org/v1#`). *Changes* the base once. *Preserves* nothing against the
+  next move — it just relocates the coupling from one host to another. If `the-ontology-project.org`
   ever changes (foundation, rebrand), everything breaks again. w3id is the layer of
   indirection that makes the domain swappable. *Rejected.*
 - **PURL (`purl.org`).** Comparable indirection, but w3id is the de-facto standard in the
@@ -137,16 +153,19 @@ four-layer enforcement) against the rewritten graph before merge.
 
 ## Open questions
 
-1. **`<TOP_DOMAIN>` — the standalone hosting domain.** This is the one input the cutover
-   is blocked on. Bo to provide the domain he owns/registers (strawman candidates:
-   `theontologyproject.org`, `top-commons.org`). It becomes the `CNAME` and the w3id
-   redirect target.
-2. **Redirect chain shape.** Should `top.scientix.ai` 301 → `w3id.org/top` →
-   `<TOP_DOMAIN>` (single source of truth, one extra hop), or `top.scientix.ai` 301 →
-   `<TOP_DOMAIN>` directly (fewer hops, but two hosts must both know the redirect map)?
-   Recommendation: everything through w3id, so there is exactly one canonical form.
+1. ~~The standalone hosting domain.~~ **Resolved (2026-07-25): `the-ontology-project.org`.**
+   It becomes the `CNAME` and the w3id redirect target. The name reads as the commons,
+   not the company — reinforcing the independence this RFC is partly about.
+2. **Redirect chain shape.** Recommendation adopted: everything through w3id, so there is
+   exactly one canonical form. `top.scientix.ai` 301 → `https://w3id.org/top/…`, and w3id
+   → `the-ontology-project.org`. One extra hop, one source of truth.
 3. **Content negotiation granularity.** Confirm the `.htaccess` maps `Accept: text/turtle`
-   to `.ttl` and default to the HTML spec page at each `v1` path.
+   to `.ttl` and defaults to the HTML spec page at each `v1` path, against the live site.
+4. **Serving the `top.scientix.ai` 301 after CNAME moves.** GitHub Pages binds one custom
+   domain per repo, so once `CNAME` becomes `the-ontology-project.org`, this repo no longer
+   serves `top.scientix.ai`. The permanent 301 for the old URIs therefore needs a separate
+   home (a tiny redirect Pages repo, or a DNS/registrar/Cloudflare redirect rule). Cheap,
+   but it is a required migration step, not automatic — see the checklist below.
 
 ## Consequences
 
@@ -157,7 +176,7 @@ four-layer enforcement) against the rewritten graph before merge.
   established, but now in the critical path for resolution).
 - **Downstream consumers must adapt:** anyone who has cited `top.scientix.ai/...` should
   re-point to `w3id.org/top/...`. The 301 keeps them working in the meantime.
-- **Follow-on work:** submit the `perma-id/w3id.org` PR; stand up `<TOP_DOMAIN>` on GitHub
+- **Follow-on work:** submit the `perma-id/w3id.org` PR; stand up `the-ontology-project.org` on GitHub
   Pages; run the cutover recipe; append ADR-0023; **all new work (starting with the
   clinical-research v1 seed directory) authors against `w3id.org/top` from the start** so
   nothing is written against the old base.
@@ -173,9 +192,10 @@ four-layer enforcement) against the rewritten graph before merge.
 
 ## Notes for reviewers
 
-Bo: the parts I most want your read on are **Open Question 1 (the domain)** — the cutover
-is blocked only on that — and **Open Question 2 (redirect chain shape)**. Everything else
-is mechanical once those are settled.
+Bo: the domain (OQ1) and redirect shape (OQ2) are now settled —
+`the-ontology-project.org`, everything routed through w3id. The remaining external
+blockers are DNS registration and the upstream w3id PR (cutover checklist above). The
+mechanical rewrite is prepared as a separate, validated cutover PR gated on those two.
 
 ---
 

@@ -13,7 +13,7 @@ with the ontology it serves.
 
 ## To register (one-time) or update
 
-1. Set `<TOP_DOMAIN>` in [`top/.htaccess`](top/.htaccess) to the live hosting domain.
+1. Set `the-ontology-project.org` in [`top/.htaccess`](top/.htaccess) to the live hosting domain.
 2. Copy it to `top/.htaccess` in a pull request against
    [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org). Their CONTRIBUTING asks
    for a short description and a maintainer contact.
@@ -22,5 +22,5 @@ with the ontology it serves.
 
 ## Order of operations (from RFC-0001)
 
-Register w3id **and** stand up `<TOP_DOMAIN>` **before** rewriting the ontology's IRIs —
+Register w3id **and** stand up `the-ontology-project.org` **before** rewriting the ontology's IRIs —
 never rewrite first, or resolution breaks in the gap.
