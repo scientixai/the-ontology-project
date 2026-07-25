@@ -77,9 +77,9 @@ The stubs are honest about the dependency. They are not hidden; they are a docum
 Pharmacovigilance is where the four-tier external-vocabulary alignment (per `top-hcls-strategy.md`) matters most. A single adverse event participates in at least five vocabularies simultaneously.
 
 ```turtle
-@prefix topcr: <https://top.scientix.ai/hcls/clinical-research/v1#> .
-@prefix topcd: <https://top.scientix.ai/hcls/clinical-care/v1#> .
-@prefix top: <https://top.scientix.ai/v1#> .
+@prefix topcr: <https://w3id.org/top/hcls/clinical-research/v1#> .
+@prefix topcd: <https://w3id.org/top/hcls/clinical-care/v1#> .
+@prefix top: <https://w3id.org/top/v1#> .
 @prefix ncit: <http://purl.obolibrary.org/obo/NCIT_> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
@@ -244,7 +244,7 @@ One-line operator-grounded justification accompanies every cross-workflow declar
 #   NCIT: http://purl.obolibrary.org/obo/NCIT_
 #   MEDDRA: https://meddra.org/
 # license: https://www.nlm.nih.gov/databases/umls.html (MedDRA license required for use)
-# mapping_set_id: https://top.scientix.ai/hcls/clinical-research/v1/crosswalks/ncit-to-meddra
+# mapping_set_id: https://w3id.org/top/hcls/clinical-research/v1/crosswalks/ncit-to-meddra
 # mapping_set_version: NCIt-26.04d
 # mapping_set_source: https://api-evsrest.nci.nih.gov/api/v1/mapset/NCIt_Maps_To_MedDRA
 # mapping_date: 2026-05-14

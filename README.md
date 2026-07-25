@@ -73,7 +73,7 @@ Apache License 2.0. See [LICENSE](LICENSE).
 
 The Ontology Project is convened by Bo Lora at Scientix.ai Inc.
 
-- Project: [top.scientix.ai](https://top.scientix.ai)
+- Project: [the-ontology-project.org](https://the-ontology-project.org)
 - Manifesto: [manifesto.html](manifesto.html)
 - Roadmap: [roadmap.md](roadmap.md)
 - Convener: [bolora.me](https://bolora.me)

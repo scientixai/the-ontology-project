@@ -17,7 +17,7 @@ The HCLS bucket follows the brief's commitment to keep buckets as governance and
 HCLS is a domain bucket. It coordinates the working groups that ship reference graphs for the operational work of medicine, clinical research, public health, and adjacent regulated life-sciences activities. The bucket is:
 
 - A directory grouping in the repository: `hcls/clinical-research/`, `hcls/clinical-care/`, `hcls/pharmacovigilance/`, etc.
-- A URI grouping: `https://top.scientix.ai/hcls/clinical-research/v1`, etc.
+- A URI grouping: `https://w3id.org/top/hcls/clinical-research/v1`, etc.
 - A WG umbrella for cross-workflow coordination (the HCLS stewards or HCLS umbrella WG).
 - A governance scope for HCLS-specific RFCs (the four-tier alignment, the oncology Pattern-C escalation, etc.).
 
@@ -80,7 +80,7 @@ The architectural commitment for HCLS: **anchor HCLS workflow classes to NCIt co
 Every HCLS workflow class that has an NCIt peer declares it in the workflow's SKOS taxonomy file. Same pattern as the schema.org alignment in ADR-0016.
 
 ```turtle
-@prefix topcr: <https://top.scientix.ai/hcls/clinical-research/v1#> .
+@prefix topcr: <https://w3id.org/top/hcls/clinical-research/v1#> .
 @prefix ncit: <http://purl.obolibrary.org/obo/NCIT_> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 

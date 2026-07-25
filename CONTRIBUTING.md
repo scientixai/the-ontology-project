@@ -76,6 +76,6 @@ Contributors and reviewers are expected to act with the seriousness this domain 
 
 ## Contact
 
-- Project: [top.scientix.ai](https://top.scientix.ai)
+- Project: [the-ontology-project.org](https://the-ontology-project.org)
 - Repository: [scientixai/the-ontology-project](https://github.com/scientixai/the-ontology-project)
 - Convener: [bolora.me](https://bolora.me)
