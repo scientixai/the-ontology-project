@@ -1,0 +1,30 @@
+# w3id.org/top — The Ontology Project (TOP) permanent namespace
+#
+# This file is the SOURCE OF TRUTH for TOP's w3id.org registration. To register or
+# update it, copy this file to `top/.htaccess` in a PR against perma-id/w3id.org.
+# Keeping the canonical copy here means the redirect config is version-controlled with
+# the ontology it serves. See RFC-0001.
+#
+# Replace <TOP_DOMAIN> with the standalone hosting domain before submitting upstream.
+
+Options +FollowSymLinks
+RewriteEngine on
+
+# --- Content negotiation -----------------------------------------------------
+# Turtle clients get the .ttl serialization.
+RewriteCond %{HTTP_ACCEPT} text/turtle [OR]
+RewriteCond %{HTTP_ACCEPT} application/x-turtle
+RewriteRule ^(.*)$ https://<TOP_DOMAIN>/$1.ttl [R=302,L]
+
+# JSON-LD clients get the .jsonld serialization.
+RewriteCond %{HTTP_ACCEPT} application/ld\+json
+RewriteRule ^(.*)$ https://<TOP_DOMAIN>/$1.jsonld [R=302,L]
+
+# --- Default -----------------------------------------------------------------
+# Everything else (browsers, asset requests, the HTML spec pages) passes through
+# to the host, which serves the right file for the path.
+RewriteRule ^(.*)$ https://<TOP_DOMAIN>/$1 [R=302,L]
+
+# NOTE: redirects are 302 during setup so the mapping can be tuned without cache
+# poisoning. Promote to 301 (permanent) once the path/content-negotiation mapping in
+# RFC-0001 Open Question 3 is confirmed against the live site.
