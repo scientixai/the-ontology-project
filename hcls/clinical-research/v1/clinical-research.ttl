@@ -1,0 +1,128 @@
+@prefix topcr: <https://w3id.org/top/hcls/clinical-research/v1#> .
+@prefix topcd: <https://w3id.org/top/hcls/clinical-care/v1#> .
+@prefix top:   <https://w3id.org/top/v1#> .
+@prefix ncit:  <http://purl.obolibrary.org/obo/NCIT_> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+
+#################################################################
+#  TOP HCLS — Clinical-Research v1
+#
+#  The first workflow extension. Authored against the w3id namespace
+#  (RFC-0001). Anchor classes from the three worked examples are real;
+#  the remaining functional areas are marked TODO and ship area-by-area
+#  in subsequent PRs (see ../README.md Definition of Done, and the seed
+#  governance/planning/top-hcls-clinical-research.md).
+#################################################################
+
+<https://w3id.org/top/hcls/clinical-research/v1> a owl:Ontology ;
+    dct:title "TOP HCLS Clinical-Research v1"@en ;
+    rdfs:comment "Clinical-research workflow extension: designing, conducting, and reporting clinical trials. Composes on TOP Core; anchors to NCIt (Tier 1); crosses into clinical-care via Pattern B stubs." ;
+    rdfs:seeAlso <https://w3id.org/top/core/v1>,
+                 <https://w3id.org/top/hcls/clinical-research/v1/README.md> ;
+    owl:imports <https://w3id.org/top/core/v1> .
+
+#################################################################
+#  Area 1 — Study Design   (worked example: USDM alignment)
+#################################################################
+
+topcr:Protocol
+    a owl:Class ;
+    rdfs:subClassOf top:Document ;
+    rdfs:subClassOf prov:Plan ;
+    skos:exactMatch ncit:C42775 ;
+    skos:prefLabel "Protocol"@en ;
+    rdfs:comment "USDM aligned via NCIt:C42775 within the CDISC subset (C61410). DDF-aligned attributes (schedule of activities, eligibility criteria, endpoints) attach as separate workflow classes specializing top:Activity, top:Constraint, top:Outcome." .
+
+topcr:ScheduleOfActivities
+    a owl:Class ;
+    rdfs:subClassOf top:Schedule ;
+    rdfs:subClassOf prov:Plan ;
+    skos:exactMatch ncit:C156088 ;
+    skos:prefLabel "Schedule of Activities"@en ;
+    skos:altLabel "SoA"@en, "Schedule of Assessments"@en .
+
+topcr:EligibilityCriterion
+    a owl:Class ;
+    rdfs:subClassOf top:Constraint ;
+    skos:exactMatch ncit:C25303 ;
+    skos:prefLabel "Eligibility Criterion"@en ;
+    skos:altLabel "Inclusion Criterion"@en, "Exclusion Criterion"@en ;
+    rdfs:comment "ADR-0015: inclusion vs exclusion is a property of the criterion, not a separate class." .
+
+#################################################################
+#  Area 2 — Regulatory Affairs      TODO (subsequent PR)
+#  Area 3 — Finance                 TODO
+#  Area 4 — Setup                   TODO
+#  Area 5 — Site Management         TODO
+#  Area 6 — Clinical Supply         TODO
+#################################################################
+
+#################################################################
+#  Area 7 — Recruitment   (reference pattern: single NCIt anchor)
+#################################################################
+
+topcr:InformedConsentForm
+    a owl:Class ;
+    rdfs:subClassOf top:Document ;
+    rdfs:subClassOf prov:Entity ;
+    skos:exactMatch ncit:C16735 ;
+    skos:prefLabel "Informed Consent Form"@en ;
+    skos:altLabel "ICF"@en, "Consent Form"@en .
+
+#################################################################
+#  Area 8 — Intervention   (worked example: oncology overlap, Pattern B)
+#################################################################
+
+topcr:StudyMedicationAdministration
+    a owl:Class ;
+    rdfs:subClassOf topcd:MedicationAdministration, top:Activity ;   # Pattern B: crosses to clinical-care
+    rdfs:subClassOf prov:Activity ;
+    skos:exactMatch ncit:C70770 ;
+    skos:prefLabel "Study Medication Administration"@en ;
+    rdfs:comment "Cross-workflow subClassOf justified: the same administration is documented in the EHR (clinical-care) and on the CRF (clinical-research). Operator documents once; downstream consumers project into their respective regulatory paths." .
+
+topcr:ConcomitantMedicationAdministration
+    a owl:Class ;
+    rdfs:subClassOf topcd:MedicationAdministration, top:Activity ;   # Pattern B
+    rdfs:subClassOf prov:Activity ;
+    skos:prefLabel "Concomitant Medication Administration"@en ;
+    rdfs:comment "Same cross-workflow rationale: the carboplatin administration is clinical-care primary, clinical-research observational. Operator documents the dose; both workflows project from it." .
+
+#################################################################
+#  Area 9 — Pharmacovigilance   (worked example: AE family, 5 vocabularies)
+#################################################################
+
+topcr:AdverseEvent
+    a owl:Class ;
+    rdfs:subClassOf top:Observation, topcd:AdverseEvent ;   # Pattern B: crosses to clinical-care
+    rdfs:subClassOf prov:Entity ;
+    skos:exactMatch ncit:C41331 ;
+    skos:prefLabel "Adverse Event"@en ;
+    skos:altLabel "AE"@en ;
+    skos:definition "Any untoward medical occurrence in a clinical investigation subject administered a pharmaceutical product, which does not necessarily have a causal relationship with the treatment." ;
+    rdfs:comment "Inherits CDISC SDTM AE domain alignment via NCIt:C41331 within the CDISC subset (C61410). Inherits ICH E2A definition via the ICH subset (C217022). MedDRA coding via crosswalks/ncit-to-meddra.sssom.tsv; ICD-10-CM via ncit-to-icd10cm.sssom.tsv." .
+
+topcr:SeriousAdverseEvent
+    a owl:Class ;
+    rdfs:subClassOf topcr:AdverseEvent ;
+    skos:exactMatch ncit:C41332 ;
+    skos:prefLabel "Serious Adverse Event"@en ;
+    skos:altLabel "SAE"@en ;
+    skos:definition "An adverse event that meets one or more seriousness criteria (death, life-threatening, hospitalization, disability, congenital anomaly, or other medically important condition)." .
+
+topcr:SUSAR
+    a owl:Class ;
+    rdfs:subClassOf topcr:SeriousAdverseEvent ;
+    skos:exactMatch ncit:C99613 ;
+    skos:prefLabel "Suspected Unexpected Serious Adverse Reaction"@en ;
+    skos:altLabel "SUSAR"@en .
+
+#################################################################
+#  Area 10 — Data Management        TODO (subsequent PR)
+#  Area 11 — Monitoring             TODO
+#  Area 12 — Quality Management     TODO
+#################################################################

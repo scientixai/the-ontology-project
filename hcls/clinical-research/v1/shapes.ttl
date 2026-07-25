@@ -1,0 +1,53 @@
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix topcr: <https://w3id.org/top/hcls/clinical-research/v1#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+#  TOP HCLS — Clinical-Research v1 · SHACL shapes
+#
+#  Strawman per top-workflows-strategy.md: one shape section per
+#  functional area. This skeleton ships the cross-cutting alignment
+#  shape (every class NCIt-anchored) plus one worked shape; the
+#  per-area shapes fill in as each area's classes land.
+#  Part of ADR-0010's four-layer enforcement.
+#################################################################
+
+# --- Cross-cutting: every clinical-research class must be NCIt-anchored ---
+topcr:NcitAnchorShape
+    a sh:NodeShape ;
+    sh:targetClass topcr:AdverseEvent, topcr:Protocol, topcr:StudyMedicationAdministration ;
+    sh:message "Every clinical-research class must carry exactly one skos:exactMatch NCIt anchor and a skos:prefLabel." ;
+    sh:property [
+        sh:path skos:exactMatch ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path skos:prefLabel ;
+        sh:minCount 1 ;
+        sh:datatype rdf:langString ;
+    ] .
+
+# --- Area 1  Study Design            TODO
+# --- Area 2  Regulatory Affairs      TODO
+# --- Area 3  Finance                 TODO
+# --- Area 4  Setup                   TODO
+# --- Area 5  Site Management         TODO
+# --- Area 6  Clinical Supply         TODO
+# --- Area 7  Recruitment             TODO
+# --- Area 8  Intervention            TODO
+# --- Area 9  Pharmacovigilance (worked shape below)
+topcr:AdverseEventShape
+    a sh:NodeShape ;
+    sh:targetClass topcr:AdverseEvent ;
+    sh:message "An AdverseEvent must have a definition and cross into clinical-care (Pattern B)." ;
+    sh:property [
+        sh:path skos:definition ;
+        sh:minCount 1 ;
+    ] .
+
+# --- Area 10 Data Management         TODO
+# --- Area 11 Monitoring              TODO
+# --- Area 12 Quality Management      TODO
