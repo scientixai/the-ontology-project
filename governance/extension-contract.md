@@ -175,7 +175,7 @@ The rule is enforced by [`tools/lint_layering.py`](../tools/lint_layering.py) (w
 A workflow extension or customer building on TOP reads, in order:
 
 1. **`first-principles.md`** — the design rules (especially § 7 "Build the Pipeline in Order" and § 8 "Open Core, Constrained Extension").
-2. **`taxonomy.md`** — the three-layer architecture (1 root, 8 categories, 29 leaves).
+2. **`taxonomy.md`** — the three-layer architecture (1 root, 8 categories, 28 leaves).
 3. **`core/v1/shapes.ttl`** — the SHACL property shapes with `top:flavor` annotations.
 4. **This document** — the per-layer extension rules.
 5. **`governance/decision-log.md` ADR-0018, ADR-0019** — the decisions this document operationalizes.

@@ -49,7 +49,7 @@
 # Concept URIs:
 #   top.scientix.ai/v1#   — single namespace for everything in The Ontology
 #                           Project: the TaxonomyV1 scheme, the top concept
-#                           Core, the eight L1 categories, the twenty-nine
+#                           Core, the eight L1 categories, the twenty-eight
 #                           L2 leaves, and the SHACL invariant properties
 #                           (top:identifier, top:observedAt, top:status).
 #                           Hash-form URIs in PROV-O / SKOS idiom;
@@ -79,7 +79,7 @@
 
 top:TaxonomyV1 a skos:ConceptScheme ;
     dct:title "TOP Taxonomy v1"@en ;
-    dct:description "Classification scheme for The Ontology Project. The Core layer is organized in a two-level structure: eight Category-Level Objects (L1) and twenty-nine universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
+    dct:description "Classification scheme for The Ontology Project. The Core layer is organized in a two-level structure: eight Category-Level Objects (L1) and twenty-eight universal leaves (L2) that operators across every domain and industry recognize as first-class concepts. The provenance contract (identifier, observedAt, status) is enforced underneath as SHACL, not modeled here as vocabulary."@en ;
     dct:creator "The Ontology Project — convener: Bo Lora, Scientix.ai Inc." ;
     dct:created "2026-05-09"^^xsd:date ;
     dct:license "Apache-2.0" ;
@@ -98,7 +98,7 @@ top:Core a skos:Concept ;
     skos:topConceptOf top:TaxonomyV1 ;
     skos:prefLabel "TOP Core"@en ;
     skos:altLabel "Core"@en, "Universal Core"@en ;
-    skos:definition "The eight categories and twenty-nine leaves of universal first-class entities that operators across every domain and industry recognize as foundational concepts in The Ontology Project. The eight categories are Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, and Constraint. Workflow extensions for clinical research, care delivery, manufacturing, and supply chain compose on top of this layer rather than living inside it, keeping the universal layer free of domain-specific concerns and reusable across every industry."@en ;
+    skos:definition "The eight categories and twenty-eight leaves of universal first-class entities that operators across every domain and industry recognize as foundational concepts in The Ontology Project. The eight categories are Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, and Constraint. Workflow extensions for clinical research, care delivery, manufacturing, and supply chain compose on top of this layer rather than living inside it, keeping the universal layer free of domain-specific concerns and reusable across every industry."@en ;
     skos:scopeNote "Membership test: do operators across multiple domains and industries (clinical research, care delivery, manufacturing, supply chain, energy, defense, anywhere) recognize this concept as a first-class thing? If yes, it lives here. If it is specific to one domain, it lives in that domain's workflow extension and does not pollute the universal layer."@en ;
     skos:notation "top:" ;
     rdfs:seeAlso <https://top.scientix.ai/first-principles.md> .
@@ -221,14 +221,12 @@ top:AutonomousAgent a skos:Concept ;
     skos:scopeNote "Property hints: softwareVersion, modelReference, apiEndpoint. Distinct from System: a member of this leaf acts; a System is operated. The same software may appear as either, depending on whether it is the entity acting in a given transaction or the tool another entity uses."@en ;
     skos:notation "top:AutonomousAgent" .
 
-top:Organism a skos:Concept ;
-    skos:inScheme top:TaxonomyV1 ;
-    skos:broader top:Agent ;
-    skos:prefLabel "Organism"@en ;
-    skos:altLabel "Living Subject"@en, "Specimen"@en, "Subject (life-sciences)"@en ;
-    skos:definition "An Agent that is a living biological entity acting or being acted upon in an operational context — laboratory animals in research, livestock under veterinary care, plants in agricultural trials, microbial cultures in fermentation, model organisms in biology studies. Members of this leaf hold an identity, can have observations recorded against them over time, and participate in operations as the subject of work or as the source of biological material. Distinct from Person: members of this leaf are non-human biological entities; Person is reserved for the individual human actor. Distinct from Material: an Organism has agency-like presence and a lifecycle of its own; Material is a substance consumed or transformed in operations."@en ;
-    skos:scopeNote "Inclusion test: is the entity a living biological non-human that operations track as a subject or actor (not as a consumed substance)? Common operator vocabulary: 'animal subject,' 'lab animal,' 'study organism,' 'specimen' (when alive), 'model organism,' 'plant subject,' 'culture.' Property hints: species, taxonomicId (NCBI Taxonomy, GBIF), lifecycleStage, identifier (RFID, ear-tag, etc.). The 'Subject' homonym in life-sciences vocabularies routes to top:Person in human research and to top:Organism in animal/plant/microbial research; the CV-layer context-routing block disambiguates by source vocabulary."@en ;
-    skos:notation "top:Organism" .
+# NOTE (per ADR-0022): top:Organism is no longer an Agent leaf. Agency is
+# a role, not a kind — a living non-human bears no accountability, so it
+# does not belong under Agent. The "Organism" vocabulary anchor is
+# retained below (see "Alignment anchors"), de-homed from Agent, for
+# domain kinds to map to. Domain living kinds specialize top:CommonEntity
+# directly and bind into operations via top:hasSubject / top:denotes.
 
 
 # ====================================================================
@@ -483,6 +481,27 @@ top:SafetyGuardrail a skos:Concept ;
 
 
 # ====================================================================
+# Alignment anchors (not Core leaves) — per ADR-0022
+# ====================================================================
+# Shared vocabulary anchors retained so domain kinds across industries
+# (agriculture, energy, veterinary, pharma) map their aliases to ONE
+# term, keeping the commons alias corpus from fragmenting. These are NOT
+# Core categories or leaves and carry no skos:broader into the Core tree
+# (the orphan placement is deliberate): they assert no shared OWL shape,
+# only a shared name. In core/v1/shapes.ttl there is no owl:Class for
+# them; a domain living/molecular kind is rdfs:subClassOf top:CommonEntity
+# and binds into operations via top:hasSubject / top:denotes.
+
+top:Organism a skos:Concept ;
+    skos:inScheme top:TaxonomyV1 ;
+    skos:prefLabel "Organism"@en ;
+    skos:altLabel "Living Subject"@en, "Specimen"@en, "Subject (life-sciences)"@en ;
+    skos:definition "An alignment anchor for living biological non-human entities that domains track — laboratory animals in research, livestock under veterinary care, plants in agricultural trials, microbial cultures in fermentation, model organisms in biology studies. Not a Core category or leaf: agency is a role, not a kind, and a living non-human bears no accountability, so it does not belong under Agent. Domains specialize top:CommonEntity directly (a lab animal is a topcr:StudyAnimal, a remediation microbe a topen:RemediationMicrobe) and align their kind's aliases to this shared term. The entity's role in an operation is bound through top:hasSubject (the study or procedure it is performed upon) rather than through this concept."@en ;
+    skos:scopeNote "Anchor test: is the entity a living biological non-human that a domain tracks as a subject of care or study (not as a consumed substance)? Common operator vocabulary: 'animal subject,' 'lab animal,' 'study organism,' 'specimen' (when alive), 'model organism,' 'plant subject,' 'culture.' Property hints for domain kinds: species, taxonomicId (NCBI Taxonomy, GBIF), lifecycleStage, identifier (RFID, ear-tag). The 'Subject' role — a Person in human research, a domain living kind in animal/plant/microbial research — is one role borne by different kinds, bound uniformly via top:hasSubject; it is not a homonym needing type-routing (per ADR-0022)."@en ;
+    skos:notation "top:Organism" .
+
+
+# ====================================================================
 # PROV-O alignment (skos:exactMatch / skos:closeMatch)
 # ====================================================================
 # SKOS-level signaling that each Core concept aligns to a PROV-O peer.
@@ -513,7 +532,11 @@ top:Person            skos:exactMatch  prov:Person .
 top:Organization      skos:exactMatch  prov:Organization .
 top:Group             skos:closeMatch  prov:Agent .
 top:AutonomousAgent   skos:closeMatch  prov:SoftwareAgent .
-top:Organism          skos:closeMatch  prov:Agent .
+
+# Alignment anchor (not an Agent leaf; per ADR-0022). Organism was never
+# an agent — it acts causally but bears no accountability. Its former
+# skos:closeMatch prov:Agent is dropped; it aligns to prov:Entity.
+top:Organism          skos:closeMatch  prov:Entity .
 
 # Activity (the Temporal performance leaf, not the Temporal category)
 top:Activity          skos:exactMatch  prov:Activity .
@@ -585,7 +608,6 @@ top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
 # model regulated-industry concepts cleanly; reinventing them here is
 # justified per ADR-0016:
 #   top:AutonomousAgent  (schema.org has no agency concept; prov:SoftwareAgent fits)
-#   top:Organism         (schema.org has no top-level Organism class; bioschemas.org has one but it's an extension)
 #   top:Storage          (schema:Place + type=storage; not a first-class concept)
 #   top:Portfolio        (schema.org has no portfolio concept)
 #   top:Program          (schema.org has no program concept)
@@ -604,8 +626,8 @@ top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
 # Top concept: 1 (top:Core)
 # L1 — Category-Level Objects: 8
 #       Agent, Location, Resource, Scope, Temporal, Evidence, Outcome, Constraint
-# L2 — TOP Core leaves: 29
-#       Agent: Person, Organization, Group, AutonomousAgent, Organism (5)
+# L2 — TOP Core leaves: 28
+#       Agent: Person, Organization, Group, AutonomousAgent (4)
 #       Location: Physical, Virtual, Storage (3)
 #       Resource: System, Equipment, Material (3)
 #       Scope: Portfolio, Program, Project (3)
@@ -613,7 +635,7 @@ top:RegulatoryLaw     skos:closeMatch  schema:Legislation .
 #       Evidence: Document, Log, Attestation, Credential (4)
 #       Outcome: Observation, StatusChange, Artifact, Conclusion (4)
 #       Constraint: PhysicalLimit, RegulatoryLaw, SafetyGuardrail (3)
-# Total SKOS concepts: 1 + 8 + 29 = 38
+# Total SKOS concepts: 1 + 8 + 28 = 37
 #
 # The provenance contract (top:identifier, top:observedAt, top:status)
 # is SHACL in core/v1/shapes.ttl, not a SKOS concept here.
