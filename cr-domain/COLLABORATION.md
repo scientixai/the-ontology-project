@@ -24,6 +24,13 @@ registered target), not generated in-house — see `ontology/vendor/usdm/PROVENA
 Our earlier local generator is retired. Related: NCIt anchors, LOINC/UCUM/QUDT, FHIR,
 CDISC SDTM, MedDRA are all consumed as inputs/crosswalk targets, never re-authored.
 
+**Second worked instance (proposed, ADR-0030):** CDISC COSMoS
+(`github.com/cdisc-org/COSMoS`) is the canonical catalog of Biomedical Concepts and
+per-instrument SDTM Dataset Specializations. `cr:BiomedicalConcept` carries the
+*reference* (NCIt C-code anchor via `cr:codedAs`, plus the COSMoS `conceptId`), never
+the definition; the vendored Dataset Specializations seed the alias corpus with
+standards-body-published resolutions. See ADR-0030 and backlog US-700-005.
+
 ## TOP as a testing ground that feeds upstream
 
 The adopt-and-crosswalk posture makes a **two-way** relationship possible, not just

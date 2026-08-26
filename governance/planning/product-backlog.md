@@ -805,6 +805,31 @@
 
 ---
 
+### US-700-005: COSMoS adoption — BC catalog vendoring and alias-corpus seeding
+
+**type:** net-new | **tier:** crosswalk | **status:** todo | **ref:** ADR-0030 (proposed)
+
+> As a data manager onboarding a vendor, I want TOP's Biomedical Concept references anchored to the COSMoS catalog and the alias corpus pre-seeded from COSMoS's per-instrument SDTM Dataset Specializations so that standard instruments (EQ-5D-5L, 6MWT, ADAS-Cog, ...) resolve out of the box instead of requiring sponsor-by-sponsor mapping.
+
+#### Tasks
+- T-700-005-001: Vendor the COSMoS BC catalog + SDTM Dataset Specialization exports under `ontology/vendor/cosmos/` — verbatim, sha-pinned, with `PROVENANCE.md` (source repo, release tag, retrieval date, license)
+- T-700-005-002: Add `upstream-pin.json` + a `check_upstream.py`-style watch for new COSMoS releases, mirroring `ontology/vendor/usdm/`; wire into the scheduled CI watch workflow
+- T-700-005-003: Document the BC anchoring convention on `cr:BiomedicalConcept` (in `dta-module.ttl` comments + `interop.html`): `cr:codedAs` → NCIt C-code URI as primary anchor; LOINC/SNOMED where COSMoS `coding` provides them; COSMoS `conceptId` carried as reference — TOP never carries the definition
+- T-700-005-004: Build a deterministic importer rendering each vendored per-instrument Dataset Specialization as `cr:DataElementSpecification` bindings (+ `cr:VendorAlias` entries where applicable), each with `cr:resolvedFrom` provenance to the pinned COSMoS artifact; byte-reproducible, stdlib-only, in the style of `generate_ct.py`
+- T-700-005-005: Extend `examples/dta-lab-safety/` with one COSMoS-seeded instrument example validating green against the DTA shapes
+- T-700-005-006: Add SSSOM crosswalk entries for TOP classes corresponding to COSMoS model classes (BiomedicalConcept, SDTMGroup/Dataset Specialization); update `registry.md`
+- T-700-005-007: Document the sponsor-defined-mapping fallback for instruments without a COSMoS specialization
+- T-700-005-008: Rebuild dist; add a COSMoS section to `interop.html` (catalog role, anchoring convention, corpus seeding, pin/watch discipline)
+
+#### Success Criteria
+- [ ] `ontology/vendor/cosmos/` exists, sha-pinned, with provenance and upstream watch
+- [ ] BC anchoring convention documented; no TOP-authored BC definitions anywhere
+- [ ] Importer emits byte-reproducible seed entries with `cr:resolvedFrom` provenance; test harness parses and validates them
+- [ ] At least one instrument example resolves end-to-end from COSMoS seed data
+- [ ] `registry.md` and `interop.html` updated
+
+---
+
 ## Epic AI-800: Inference & Provenance Model
 
 *Completing the AI provenance design: prompt capture, model identity, reproducibility, and design documentation.*

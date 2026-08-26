@@ -33,6 +33,8 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0023](#adr-0023-hub-and-spoke-domains-core-owns-the-contract-and-the-registry-each-domain-owns-its-repo) | 2026-07-07 | Hub-and-spoke domains — Core owns the contract and the registry; each domain owns its repo | Proposed (invokes ADR-0017's reassessment trigger) |
 | [ADR-0024](#adr-0024-operator-vocabulary-through-the-pipeline-bfo-at-core-participant-preflabel-promote-dont-subclass) | 2026-07-07 | Operator vocabulary through the pipeline — BFO-at-Core, Participant prefLabel, promote-don't-subclass | Accepted |
 | [ADR-0029](#adr-0029-adopt-sound-external-ontologies-dont-reinvent-usdm-rdf-via-kerforsusdm-rdf) | 2026-07-22 | Adopt sound external ontologies, don't reinvent — USDM-RDF via `kerfors/usdm-rdf` | Accepted |
+| [ADR-0030](#adr-0030-adopt-cosmos-as-the-canonical-biomedical-concept-catalog-second-worked-instance-of-adr-0029) | 2026-08-25 | Adopt COSMoS as the canonical Biomedical Concept catalog — second worked instance of ADR-0029 | Proposed |
+| [ADR-0031](#adr-0031-stay-custom-on-the-schema-toolchain-record-the-linkml-decision-with-re-evaluation-triggers) | 2026-08-25 | Stay custom on the schema toolchain — record the LinkML decision, with re-evaluation triggers | Proposed |
 
 ---
 
@@ -1343,6 +1345,66 @@ This generalizes the posture already set by ADR-0006 (adopt SKOS) and ADR-0016 (
 - **TOP gains her shapes + JSON-LD context** it did not previously have, at no cost.
 - **A two-way relationship becomes possible.** Because TOP is not bound to a standards body's ballot cycle, it can model and *test* the adjacent, unmodeled space (transfer cadence, chain of custody, closeout, submission — where USDM stops) under its regression-gated shape suite, then **feed proven extensions back upstream** as evidence the standard can ratify. TOP moves ahead *so that* the standard can follow with evidence — the measure of success is one shared model reached faster, not TOP owning it.
 - **Adoption is a relationship, not a dependency.** It creates the natural opening to invite the upstream author into the adjacent work.
+
+---
+
+## ADR-0030: Adopt COSMoS as the canonical Biomedical Concept catalog — second worked instance of ADR-0029
+
+**Date:** 2026-08-25 · **Status:** Proposed · **Refs:** [`cr-domain/COLLABORATION.md`](../cr-domain/COLLABORATION.md), [`cr-domain/ontology/dta-module.ttl`](../cr-domain/ontology/dta-module.ttl) (`cr:BiomedicalConcept`, `cr:VendorAlias`, `cr:DataElementSpecification`), [github.com/cdisc-org/COSMoS](https://github.com/cdisc-org/COSMoS), backlog US-700-005 · applies ADR-0029; recovers the COSMoS touch-points from the pre-restructure survey (`legacy/reference-graphs/clinical-trials/docs/cdisc-ecosystem-alignment.md`)
+
+> Numbering note: ADR-0022 and ADR-0025–0028 live on `main`; this branch forked before they landed. Verify 0030/0031 are still the next free numbers before merge.
+
+### Context
+
+The May 2026 CDISC ecosystem survey (now under `legacy/`) established that CDISC COSMoS — not TOP — is the canonical catalog of Biomedical Concepts, and that COSMoS's per-instrument SDTM Dataset Specializations are CDISC's own published projections of standard instruments into SDTM. The repository restructure carried the *spirit* of that survey into the DTA module (`cr:BiomedicalConcept` is deliberately a thin binding class: "CDISC Biomedical Concept anchors as an INPUT, not a rival") but dropped every concrete COSMoS touch-point: no reference to COSMoS exists outside `legacy/`, no anchoring convention is documented, and Dataset Specializations are unmentioned.
+
+The omission matters more now than in May. The DTA module's central thesis is the compounding alias corpus: `cr:VendorAlias` resolves vendor terms to canonical concepts once, so the next sponsor auto-resolves. COSMoS Dataset Specializations are exactly that resolution, pre-computed and published by the standards body itself (e.g. the EQ-5D-5L and Six-Minute Walk Test specializations state precisely how those instruments' values populate SDTM variables). Leaving them unconsumed means the corpus starts empty where authority-grade seed content already exists.
+
+### Decision
+
+Apply the ADR-0029 posture ("adopt sound external ontologies, don't reinvent") to COSMoS:
+
+1. **Vendor the COSMoS BC catalog and SDTM Dataset Specialization exports** verbatim, sha-pinned, with provenance (source repo, release tag, retrieval date, license), under `ontology/vendor/cosmos/` — mirroring the `ontology/vendor/usdm/` pattern, including an `upstream-pin.json` and a watch-and-assess check for new COSMoS releases.
+2. **Document the BC anchoring convention** on `cr:BiomedicalConcept`: instances are anchored to external terminologies via `cr:codedAs` Relationships to dereferenceable URIs (NCIt C-code URI as the primary anchor, since COSMoS BCs are NCIt-backed; LOINC/SNOMED where COSMoS's `coding` slot provides them), and carry the COSMoS `conceptId` as a reference. TOP carries the *reference*, never the definition — COSMoS remains the catalog.
+3. **Seed the alias corpus from Dataset Specializations.** Build an importer that renders each vendored per-instrument specialization as `cr:DataElementSpecification` bindings (and `cr:VendorAlias` entries where the specialization names instrument-level terms), each carrying `cr:resolvedFrom` provenance pointing at the pinned COSMoS artifact. Deterministic and byte-reproducible, in the style of the existing CT generators.
+4. **Crosswalk, don't fork**: any TOP-side class that corresponds to a COSMoS model class maps via SSSOM in the crosswalk registry, with confidence and justification.
+
+For instruments without a COSMoS specialization, sponsor-defined mappings remain the fallback (as the original survey concluded).
+
+### Consequences
+
+- The alias corpus stops starting from zero: standards-body-published resolutions become its first entries, with provenance that names CDISC as the source. The corpus compounds *on top of* the commons instead of beside it.
+- The COSMoS adoption is actively maintained, not a one-time copy — same pin/watch discipline as the USDM adoption.
+- The gap between "reuses CDISC BC anchors as an INPUT" (currently an rdfs:comment aspiration) and practice closes: the convention becomes documented, vendored, and tested.
+- A second worked instance hardens ADR-0029 from a one-off into a repeatable pattern, and opens the same two-way relationship with the COSMoS team that the USDM adoption opened upstream.
+
+---
+
+## ADR-0031: Stay custom on the schema toolchain — record the LinkML decision, with re-evaluation triggers
+
+**Date:** 2026-08-25 · **Status:** Proposed · **Refs:** [`core/v1/build_core_dist.py`](../core/v1/build_core_dist.py), [`cr-domain/tools/`](../cr-domain/tools/), ADR-0029, ADR-0023 · resolves the open architectural question from the pre-restructure survey (`legacy/reference-graphs/clinical-trials/docs/cdisc-ecosystem-alignment.md`)
+
+### Context
+
+The May 2026 CDISC ecosystem survey flagged one architectural question for deliberate decision: should TOP migrate its source intermediate to LinkML (the schema language COSMoS publishes in), gaining generated JSON-LD context, JSON Schema, OWL, SHACL, and Pydantic for free? The survey recommended scheduling the evaluation rather than deciding by default. The restructure dropped the question entirely — no reference to LinkML exists outside `legacy/`, which left the decision state as silence. Silence is the one wrong state: a contributor finding COSMoS's LinkML schemas could reasonably conclude TOP *should* migrate, with no record that the question was ever weighed.
+
+Two things changed since May. First, the hand-rolled toolchain already produces most of what LinkML promised: the dist pipeline emits Turtle, N-Triples, JSON-LD (including the NGSI-LD context), and SHACL, byte-reproducibly. Second, ADR-0029 removed the largest would-be beneficiary — TOP no longer generates the USDM model at all; it vendors the canonical upstream artifact.
+
+### Decision
+
+**Stay custom.** TOP's authored modules remain hand-written Turtle with TOP-owned deterministic build tooling. LinkML is not adopted as the source language now.
+
+The decision is recorded with explicit re-evaluation triggers, any of which reopens it as a new ADR:
+
+1. **Round-trip pressure**: TOP begins *authoring* content that must round-trip with LinkML-native upstreams — e.g. contributing candidate BCs or specializations back to COSMoS (the ADR-0030 relationship maturing into two-way flow).
+2. **Federation pressure**: the hub-and-spoke split (ADR-0023) lands and domain repos need a shared, machine-checkable schema contract that hand-rolled tooling can't cheaply provide.
+3. **Toolchain pressure**: the custom generators grow a maintenance burden that LinkML's generators would demonstrably absorb, including NGSI-LD-specific emitters (Property/Relationship typing) that LinkML currently lacks.
+
+### Consequences
+
+- The decision state moves from silence to recorded-with-triggers. Contributors get the "why is it shaped this way?" answer this log exists to give.
+- TOP keeps authorial control of NGSI-LD-specific patterns (bitemporal properties, Property/Relationship/GeoProperty typing, three-axis annotations) that would need an expressivity audit under LinkML.
+- The cost is accepted consciously: TOP speaks a different schema language than COSMoS and the NIH/OBO LinkML ecosystem, and interop happens at the artifact level (vendored exports, crosswalks), not the schema level.
 
 ---
 
