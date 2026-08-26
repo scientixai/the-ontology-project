@@ -42,12 +42,13 @@ curl -L https://raw.githubusercontent.com/scientixai/the-ontology-project/main/t
 Validate a concrete entity against the Universal DNA SHACL contract (requires `pyshacl` and `rdflib`).
 
 ```bash
-python3 -m pyshacl --advanced \
+python3 -m pyshacl --advanced --imports --inference rdfs \
   -s core/v1/shapes.ttl \
+  -e core/v1/shapes.ttl \
   -d core/v1/walkthroughs/person.ttl
 ```
 
-The `--advanced` flag enables SHACL-SPARQL processing. The walkthrough conforms cleanly; modifying it (removing `top:identifier`, `top:observedAt`, or `top:status`) surfaces a violation against the `top:UniversalDNAShape`.
+`--imports` follows the aggregator's local `owl:imports` into `core/v1/modules/`. `--inference rdfs` and `-e` close `rdfs:subClassOf` so `top:UniversalDNAShape` (target `top:CommonEntity`) sees leaf instances. The walkthrough conforms; removing `top:identifier`, `top:observedAt`, or `top:status` surfaces a violation against `top:UniversalDNAShape`.
 
 ## What problem this solves
 
