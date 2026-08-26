@@ -2,10 +2,13 @@
 #
 # This file is the single entry point for tools that need the complete
 # TOP Core OWL/SHACL graph. It imports each per-category module so that
-# loading this file is equivalent to loading all ten modules.
+# loading this file is equivalent to loading all eleven modules.
 #
 # Per-category modules live in modules/. Each is independently parseable.
 # Edit ontology content in the modules; edit this file only to add/remove modules.
+#
+# owl:imports use repo-relative file IRIs so a local pyshacl --imports run
+# loads the modules. Published module IRIs remain inside each module file.
 
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
@@ -21,13 +24,14 @@
     rdfs:seeAlso <https://top.scientix.ai/v1#TaxonomyV1>,
                  <https://top.scientix.ai/core/v1/index.html>,
                  <https://top.scientix.ai/governance/decision-log.md> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-root> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-agent> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-location> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-resource> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-scope> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-temporal> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-evidence> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-outcome> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-constraint> ;
-    owl:imports <https://top.scientix.ai/core/v1/modules/top-bitemporal> .
+    owl:imports <modules/top-root.ttl> ;
+    owl:imports <modules/top-agent.ttl> ;
+    owl:imports <modules/top-location.ttl> ;
+    owl:imports <modules/top-resource.ttl> ;
+    owl:imports <modules/top-scope.ttl> ;
+    owl:imports <modules/top-temporal.ttl> ;
+    owl:imports <modules/top-evidence.ttl> ;
+    owl:imports <modules/top-outcome.ttl> ;
+    owl:imports <modules/top-constraint.ttl> ;
+    owl:imports <modules/top-bitemporal.ttl> ;
+    owl:imports <modules/top-ai.ttl> .

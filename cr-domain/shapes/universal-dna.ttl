@@ -1,25 +1,34 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix top:  <https://top.scientix.ai/v1#> .
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
 
-# TOP Core's Universal DNA: every entity carries identity, time, and lifecycle state.
-# observedAt (the time strand) is enforced by top:BitemporalProvShape; this shape
-# enforces the other two strands — identifier and status — on the same entities.
-#
-# This is the CR domain's GRADED APPLICATION of the Universal DNA contract, so it
-# carries a cr: IRI. The authoritative top:UniversalDNAShape lives in
-# core/v1/shapes.ttl and targets top:CommonEntity enforcing all three strands at
-# once; this domain shape targets top:Versioned (the bitemporally-opted-in
-# entities) and delegates the time strand to top:BitemporalProvShape. One IRI per
-# contract: the two shapes must never share the top:UniversalDNAShape name.
+# CR application of Core Universal DNA. Same three strands as
+# top:UniversalDNAShape (core/v1/modules/top-root.ttl). This shape keeps a
+# cr: IRI and targets top:Versioned so CR entities cannot satisfy the
+# contract with identifier+status only. Time is not delegated away.
+# Do not reuse the top:UniversalDNAShape name.
 cr:UniversalDNAShape a sh:NodeShape ;
     sh:targetClass top:Versioned ;
     sh:severity sh:Violation ;
     sh:property [
-        sh:path top:identifier ; sh:minCount 1 ;
-        sh:message "Universal DNA: every entity must carry a top:identifier." ;
+        sh:path top:identifier ;
+        sh:datatype xsd:anyURI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Universal DNA: every entity must carry exactly one top:identifier (xsd:anyURI)." ;
     ] ;
     sh:property [
-        sh:path top:status ; sh:minCount 1 ;
-        sh:message "Universal DNA: every entity must carry a top:status." ;
+        sh:path top:observedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Universal DNA: every entity must carry exactly one top:observedAt (xsd:dateTime)." ;
+    ] ;
+    sh:property [
+        sh:path top:status ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Universal DNA: every entity must carry exactly one top:status (xsd:string)." ;
     ] .

@@ -96,14 +96,14 @@ topcr:AdverseEvent
 topcr:SeriousAdverseEvent
     a owl:Class ;
     rdfs:subClassOf topcr:AdverseEvent ;
-    skos:exactMatch ncit:C41332 ;
+    skos:exactMatch ncit:C41335 ;                              # NCIt 26.07d: Serious Adverse Event (C41332 is Adverse Reaction)
     skos:prefLabel "Serious Adverse Event"@en ;
     skos:definition "An adverse event that meets one or more seriousness criteria..." .
 
 topcr:SUSAR
     a owl:Class ;
     rdfs:subClassOf topcr:SeriousAdverseEvent ;
-    skos:exactMatch ncit:C99613 ;
+    skos:closeMatch ncit:C142685 ;                             # Serious Adverse Drug Reaction. No NCIt class named SUSAR; C99613 is a protein.
     skos:prefLabel "Suspected Unexpected Serious Adverse Reaction"@en .
 ```
 
@@ -118,7 +118,7 @@ topcr:StudyMedicationAdministration
     a owl:Class ;
     rdfs:subClassOf topcd:MedicationAdministration, top:Activity ;   # Pattern B: crosses to clinical-care
     rdfs:subClassOf prov:Activity ;
-    skos:exactMatch ncit:C70770 ;
+    skos:closeMatch ncit:C128534 ;                             # Medication Administration (broader). C70770 is a lab original-unit concept.
     skos:prefLabel "Study Medication Administration"@en ;
     rdfs:comment "Cross-workflow subClassOf justified: the same administration is documented in the EHR (clinical-care) and on the CRF (clinical-research). Operator (research nurse, oncology infusion RN) documents once; downstream consumers project into their respective regulatory paths." .
 
@@ -126,6 +126,7 @@ topcr:ConcomitantMedicationAdministration
     a owl:Class ;
     rdfs:subClassOf topcd:MedicationAdministration, top:Activity ;   # Pattern B again
     rdfs:subClassOf prov:Activity ;
+    skos:closeMatch ncit:C128534 ;                             # same grain caveat as StudyMedicationAdministration
     skos:prefLabel "Concomitant Medication Administration"@en ;
     rdfs:comment "Same cross-workflow rationale: the carboplatin administration is clinical-care primary, clinical-research observational. Operator documents the dose; both workflows project from it." .
 ```
@@ -141,22 +142,22 @@ topcr:Protocol
     a owl:Class ;
     rdfs:subClassOf top:Document ;
     rdfs:subClassOf prov:Plan ;                                # PROV-O alignment: a Protocol is a Plan
-    skos:exactMatch ncit:C42775 ;                              # NCIt: Clinical Trial Protocol
+    skos:exactMatch ncit:C142451 ;                             # NCIt 26.07d: Clinical Trial Protocol (C42775 is E-mail Address)
     skos:prefLabel "Protocol"@en ;
-    rdfs:comment "USDM aligned via NCIt:C42775 within the CDISC subset (C61410). DDF-aligned attributes (schedule of activities, eligibility criteria, endpoints) attach as separate workflow classes specializing top:Activity, top:Constraint, top:Outcome." .
+    rdfs:comment "USDM aligned via NCIt:C142451 within the CDISC subset (C61410). DDF-aligned attributes (schedule of activities, eligibility criteria, endpoints) attach as separate workflow classes specializing top:Activity, top:Constraint, top:Outcome." .
 
 topcr:ScheduleOfActivities
     a owl:Class ;
     rdfs:subClassOf top:Schedule ;
     rdfs:subClassOf prov:Plan ;
-    skos:exactMatch ncit:C156088 ;
+    skos:exactMatch ncit:C132349 ;                             # NCIt 26.07d: Schedule of Activities (C156088 is Metastatic Lip Carcinoma)
     skos:prefLabel "Schedule of Activities"@en ;
     skos:altLabel "SoA"@en, "Schedule of Assessments"@en .
 
 topcr:EligibilityCriterion
     a owl:Class ;
     rdfs:subClassOf top:Constraint ;
-    skos:exactMatch ncit:C25303 ;
+    skos:exactMatch ncit:C215506 ;                             # Eligibility Criterion Item. C25303 is Multicentric.
     skos:prefLabel "Eligibility Criterion"@en ;
     skos:altLabel "Inclusion Criterion"@en, "Exclusion Criterion"@en .
 ```
@@ -220,7 +221,7 @@ topcr:InformedConsentForm
     a owl:Class ;
     rdfs:subClassOf top:Document ;
     rdfs:subClassOf prov:Entity ;
-    skos:exactMatch ncit:C16735 ;                # NCIt: Informed Consent Form
+    skos:exactMatch ncit:C16468 ;                # NCIt: Consent Form (document). C16735 is the Informed Consent process.
     skos:prefLabel "Informed Consent Form"@en ;
     skos:altLabel "ICF"@en, "Consent Form"@en .
 ```
@@ -251,7 +252,7 @@ One-line operator-grounded justification accompanies every cross-workflow declar
 
 subject_id  subject_label                  predicate_id        object_id           object_label                       mapping_justification
 NCIT:C41331  Adverse Event                  skos:exactMatch     MEDDRA:10000001     <preferred-term>                   semapv:LexicalMatching
-NCIT:C41332  Serious Adverse Event          skos:exactMatch     MEDDRA:10000002     <preferred-term>                   semapv:LexicalMatching
+NCIT:C41335  Serious Adverse Event          skos:exactMatch     MEDDRA:10000002     <preferred-term>                   semapv:LexicalMatching
 ```
 
 Version, source, date in the metadata block; the body is auditable and downstream-tool-compatible.
