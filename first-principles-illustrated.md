@@ -110,11 +110,7 @@
 
 **TOP's approach.** TOP is a reference graph, not a runtime graph: the ingredients and the recipes, not the dish. A consumer builds its own customer runtime graph from TOP, extends it per Open Core, and drives every rendering decision from that graph. The reference views, action catalog, and entity-view schema are recipes to adapt or drop, never runtime dependencies. Each customer keeps its own dish.
 
-<<<<<<< HEAD
-**See it.** The reference-not-runtime caveat headers on [`cr-domain/views/operator-views.ttl`](cr-domain/views/operator-views.ttl) and [`cr-domain/ontology/cr-core-actions.ttl`](cr-domain/ontology/cr-core-actions.ttl); the entity-view schema in [RFC 0001](governance/rfcs/accepted/0001-ooux-catalog-and-entity-view-schema.md) and [ADR-0025](governance/decision-log.md).
-=======
-**See it.** This is Open Core applied to consumption — [ADR-0019](governance/decision-log.md#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) and the per-layer rulebook in [`governance/extension-contract.md`](governance/extension-contract.md). Workflow domains carry the reference-not-runtime caveat in their reference view and action-catalog headers.
->>>>>>> origin/main
+**See it.** This is Open Core applied to consumption — [ADR-0019](governance/decision-log.md#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) and the per-layer rulebook in [`governance/extension-contract.md`](governance/extension-contract.md); the reference-not-runtime caveat headers on [`cr-domain/views/operator-views.ttl`](cr-domain/views/operator-views.ttl) and [`cr-domain/ontology/cr-core-actions.ttl`](cr-domain/ontology/cr-core-actions.ttl); the entity-view schema in [RFC 0001](governance/rfcs/accepted/0001-ooux-catalog-and-entity-view-schema.md) and [ADR-0025](governance/decision-log.md).
 
 ---
 

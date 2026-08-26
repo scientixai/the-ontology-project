@@ -11,7 +11,7 @@
 top:Agent a owl:Class ;
     rdfs:label "Agent"@en ;
     rdfs:subClassOf top:CommonEntity, prov:Agent, bfo:IndependentContinuant ;
-    rdfs:comment "The entity with capacity to act, hold authority, or carry responsibility."@en .
+    rdfs:comment "The entity that holds authority or bears responsibility for what is done: it signs, owns, authorizes, enforces, and can be attributed an action. Persons, Organizations, Groups, Autonomous Agents (software with delegated authority). Capacity to act is not sufficient. A thing that merely acts causally (a pathogen, a compound, a river) is not an Agent unless it can be held to account."@en .
 
 top:hasCredential a owl:ObjectProperty ;
     rdfs:label "has credential"@en ;
@@ -55,7 +55,12 @@ top:AutonomousAgent a owl:Class ;
     rdfs:subClassOf top:Agent, prov:SoftwareAgent ;
     rdfs:comment "A software entity acting on delegated authority — robotic process, AI agent, automated decision system, scheduler, monitor."@en .
 
-top:Organism a owl:Class ;
-    rdfs:label "Organism"@en ;
-    rdfs:subClassOf top:Agent, prov:Agent ;
-    rdfs:comment "A living biological non-human entity acting or being acted upon in an operational context — laboratory animal, livestock under veterinary care, plant in an agricultural trial, microbial culture, model organism in a biology study."@en .
+# NOTE (per ADR-0022): top:Organism was removed from Core. Agency is a
+# role, not a kind: a living non-human (lab animal, microbe, plant) acts
+# causally but bears no accountability, so it cannot inherit the Agent
+# authority wiring (signedBy / ownedBy / enforcedBy / hasCredential).
+# Biological kinds now live in the domains as rdfs:subClassOf
+# top:CommonEntity (e.g. topcr:StudyAnimal); the "who or what the work is
+# performed upon" role attaches via top:hasSubject (modules/top-root.ttl).
+# The shared "Organism" vocabulary anchor is retained in
+# taxonomy/taxonomy.ttl.

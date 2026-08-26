@@ -61,6 +61,27 @@ top:Resource owl:disjointWith top:Scope, top:Temporal, top:Constraint .
 top:Scope owl:disjointWith top:Temporal, top:Constraint .
 top:Temporal owl:disjointWith top:Constraint .
 
+# Cross-category role bindings (per ADR-0022).
+# Two role bindings that cut across the eight functional categories.
+# Neither mints a type; each attaches a role by relation (per ADR-0002).
+# Domain and range are top:CommonEntity because the role is borne by
+# different kinds in different contexts — the same Person is an Agent
+# when they consent and a subject when they are observed.
+
+top:hasSubject a owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:CommonEntity ;   # typically a Scope (a study) or a Temporal (a procedure)
+    rdfs:range top:CommonEntity ;    # the entity the work is about (a Person, or a domain living/molecular kind)
+    rdfs:comment "Binds an operation (a Scope such as a study, or a Temporal such as a procedure) to the entity it is performed upon, cares for, or studies: its subject. A role binding, not a type. The same Person is an Agent when they consent and a subject when they are observed; the same virion is a subject in the sequencing lab and a causal participant in an infection. No PROV-O peer (prov:used denotes a tool or consumed entity, not the subject-of-care)."@en .
+
+top:denotes a owl:ObjectProperty ;
+    rdfs:label "denotes"@en ;
+    top:flavor "Tightenable" ;
+    rdfs:domain top:CommonEntity ;   # an information artifact: a Document / Observation
+    rdfs:range top:CommonEntity ;    # the entity it stands for
+    rdfs:comment "Links a representation (a sequence record, a SMILES string, an identifier) to the entity it stands for. A SMILES string (a top:Document) denotes a molecular entity; the string is data, the molecule is the referent. Semiotic relation, no PROV-O peer (declared absence)."@en .
+
 top:UniversalDNAShape a sh:NodeShape ;
     rdfs:label "Universal DNA Shape"@en ;
     rdfs:comment "The minimum every TOP entity must carry: a unique identifier, an observation timestamp, and a current status."@en ;
