@@ -19,9 +19,15 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 ex:sponsor-b1 a hcls:Organization ;
-    top:identifier "urn:org:sponsor-b1"^^xsd:anyURI ; top:status "active" ;
+    top:identifier "urn:org:sponsor-b1"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     rdfs:label "Sponsor regulatory affairs" .
-ex:biostat-b1 a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
+ex:biostat-b1 a hcls:Practitioner ;
+    rdfs:label "Femi Balogun" ;
+    hcls:actsAs "Lead Biostatistician" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── A1: the hard database lock the submission rests on ────────────────────────
 ex:hardlock-b1 a cr:DatabaseLock ;
@@ -50,14 +56,26 @@ ex:csr-b1 a cr:ClinicalStudyReport ; rdfs:label "OPP-201 Clinical Study Report" 
     cr:csrForStudy ex:study-opp201 ;
     cr:hasSection ex:csr-b1-syn ;
     top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-09-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:csr-b1-series ;
     prov:wasAttributedTo ex:sponsor-b1 .
-ex:csr-b1-syn a cr:CSRSection ; rdfs:label "Synopsis" ;
-    cr:sectionNumber "2" ; cr:sectionTitle "Synopsis" ; cr:sectionKind "synopsis" .
+ex:csr-b1-series a top:VersionSeries ;
+    top:identifier "urn:csr:OPP-201-b1:series"^^xsd:anyURI .
+ex:csr-b1-syn a cr:CSRSection ;
+    rdfs:label "Synopsis" ;
+    cr:sectionNumber "2" ;
+    cr:sectionTitle "Synopsis" ;
+    cr:sectionKind "synopsis" ;
+    top:identifier "urn:csr-b1-syn"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Define-XML: the map a reviewer reads the datasets against ──────────────────
 ex:define-b1 a cr:DataDefinition ;
-    top:identifier "urn:define:OPP-201"^^xsd:anyURI ; top:status "active" ;
+    top:identifier "urn:define:OPP-201"^^xsd:anyURI ;
+    top:observedAt "2026-08-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     rdfs:label "Define-XML v2.1 (ADaM data definition)" .
 
 # ── B1: the terminal eCTD manifest — every arrow points at locked content ─────
@@ -70,8 +88,12 @@ ex:ectd-b1 a cr:eCTDSubmission ; rdfs:label "OPP-201 NDA (eCTD Module 5)" ;
     cr:includesDataset ex:adsl-b1 ;              # Module 5.3.x
     cr:includesDefine ex:define-b1 ;
     top:observedAt "2026-10-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-10-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-10-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ectd-b1-series ;
     prov:wasAttributedTo ex:sponsor-b1 .
+ex:ectd-b1-series a top:VersionSeries ;
+    top:identifier "urn:ectd:OPP-201-NDA:series"^^xsd:anyURI .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:biostat-b1 top:identifier "person:femi-balogun"^^xsd:anyURI .
