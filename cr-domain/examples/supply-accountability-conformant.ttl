@@ -18,15 +18,32 @@
 # CONFORMANT: 0 violations, 0 warnings.
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:sp-site a cr:StudySite ; rdfs:label "Denver Cancer Center" .
-ex:sp-pharmacist a hcls:Person ; rdfs:label "Priya Rao, Unblinded Pharmacist" .
-ex:sp-sponsor a hcls:Organization ; rdfs:label "Sponsor clinical supplies" .
+ex:sp-site a cr:StudySite ;
+    rdfs:label "Denver Cancer Center" ;
+    top:identifier "urn:sp-site"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sp-pharmacist a hcls:Person ;
+    rdfs:label "Priya Rao, Unblinded Pharmacist" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sp-sponsor a hcls:Organization ;
+    rdfs:label "Sponsor clinical supplies" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
-ex:sp-lot a hcls:Lot ; rdfs:label "Lot L-2209 (active, 2-8°C)" .
+ex:sp-lot a hcls:Lot ;
+    rdfs:label "Lot L-2209 (active, 2-8°C)" ;
+    top:identifier "urn:sp-lot"^^xsd:anyURI ;
+    top:observedAt "2025-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:sp-subject a cr:StudySubject ;
     rdfs:label "OPP-201 S-042 (pseudonymous)" ;
     cr:subjectId "S-042" ;
+    top:identifier "urn:sp-subject"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
     top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime .
 
 # ── Shipment: depot -> site, dispatched then received ─────────────────────────
@@ -59,8 +76,14 @@ ex:sp-dispense a cr:DispensingEvent ;
     cr:dispensesFromLot ex:sp-lot ;
     cr:quantityDispensed 30 ;
     top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-02T11:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-02T11:02:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:sp-dispense-series ;
     prov:wasAttributedTo ex:sp-pharmacist .
+ex:sp-dispense-series a top:VersionSeries ;
+    top:identifier "urn:dispense:S-042-C1:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Partial return at the next visit ──────────────────────────────────────────
 ex:sp-return a cr:ReturnEvent ;
@@ -81,8 +104,14 @@ ex:sp-destruction a cr:DestructionEvent ;
     cr:quantityDestroyed 4 ;
     cr:destructionAuthorizedBy ex:sp-pharmacist ;
     top:observedAt "2026-06-15T09:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-06-15T09:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-15T09:10:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:sp-destruction-series ;
     prov:wasAttributedTo ex:sp-pharmacist .
+ex:sp-destruction-series a top:VersionSeries ;
+    top:identifier "urn:destroy:L-2209-1:series"^^xsd:anyURI ;
+    top:observedAt "2026-06-15T09:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:sp-pharmacist top:identifier "person:priya-rao"^^xsd:anyURI .
