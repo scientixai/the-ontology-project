@@ -17,54 +17,137 @@
 ###############################################################################
 
 # --- Organizations & people ---
-ex:oppentix     a cr:Sponsor ;   rdfs:label "Oppentix Bio" .
-ex:cro-clinova  a cr:CRO ;       rdfs:label "Clinova CRO" .
-ex:facility-aor a hcls:HealthcareFacility ; rdfs:label "Austin Oncology Research — Bldg A" .
-ex:site-aor     a cr:StudySite ; rdfs:label "Austin Oncology Research" ;
+ex:oppentix a cr:Sponsor ;
+    rdfs:label "Oppentix Bio" ;
+    top:identifier "org:oppentix"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cro-clinova a cr:CRO ;
+    rdfs:label "Clinova CRO" ;
+    top:identifier "org:clinova"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:facility-aor a hcls:HealthcareFacility ;
+    rdfs:label "Austin Oncology Research — Bldg A" ;
+    top:identifier "urn:facility:aor"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:site-aor a cr:StudySite ;
+    rdfs:label "Austin Oncology Research" ;
+    top:identifier "urn:site:aor"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     hcls:locatedAt ex:facility-aor ;
     cr:principalInvestigator ex:person-rivera .
 
-ex:person-rivera a hcls:Practitioner ; rdfs:label "Dr. A. Rivera (PI)" ;
+ex:person-rivera a hcls:Practitioner ;
+    rdfs:label "Dr. A. Rivera (PI)" ;
+    top:identifier "person:ana-rivera"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     hcls:affiliatedWith ex:site-aor .
-ex:person-nguyen a hcls:Practitioner ; rdfs:label "Nurse T. Nguyen (study nurse)" ;
+
+ex:person-nguyen a hcls:Practitioner ;
+    rdfs:label "Nurse T. Nguyen (study nurse)" ;
+    top:identifier "person:tom-nguyen"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     hcls:affiliatedWith ex:site-aor .
 
 # --- Study design (Scope) ---
-ex:study-opp101 a cr:Study ; rdfs:label "OPP-101 (Phase 1 FIH, oncology)" ;
+ex:study-opp101 a cr:Study ;
+    rdfs:label "OPP-101 (Phase 1 FIH, oncology)" ;
+    top:identifier "urn:study:opp101"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:sponsoredBy ex:oppentix ;
     cr:conductedAt ex:site-aor ;
     cr:hasArm ex:arm-escalation ;
     cr:hasProtocolVersion ex:protocol-opp101-v1 .
 
-ex:arm-escalation a cr:Arm ; rdfs:label "Dose-escalation arm" .
-ex:dl1 a cr:DoseLevel ; rdfs:label "Dose level 1 (10 mg)" .
-ex:ip-opp1234 a cr:InvestigationalProduct ; rdfs:label "OPP-1234" .
+ex:arm-escalation a cr:Arm ;
+    rdfs:label "Dose-escalation arm" ;
+    top:identifier "urn:arm:escalation"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:dl1 a cr:DoseLevel ;
+    rdfs:label "Dose level 1 (10 mg)" ;
+    top:identifier "urn:dose-level:1"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:ip-opp1234 a cr:InvestigationalProduct ;
+    rdfs:label "OPP-1234" ;
+    top:identifier "urn:ip:opp1234"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Effective-dated protocol (bitemporal Evidence) + an eligibility constraint ---
-ex:protocol-opp101-v1 a cr:ProtocolVersion ; rdfs:label "OPP-101 protocol v1.0" ;
-    top:observedAt  "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+ex:protocol-opp101-v1-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for OPP-101 Protocol" .
+
+ex:protocol-opp101-v1 a cr:ProtocolVersion ;
+    rdfs:label "OPP-101 protocol v1.0" ;
+    top:identifier "urn:protocol-opp101-v1"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-01-20T14:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:protocol-opp101-v1-vs ;
     prov:wasAttributedTo ex:oppentix ;
     cr:hasEligibilityCriterion ex:elig-ecog .
-ex:elig-ecog a cr:EligibilityCriterion ; rdfs:label "ECOG performance status 0-1" .
+
+ex:elig-ecog a cr:EligibilityCriterion ;
+    rdfs:label "ECOG performance status 0-1" ;
+    top:identifier "urn:elig:ecog"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Delegation: PI delegates 'obtain informed consent' to the nurse ---------
 # Credential gate (the nurse's GCP/consent training), then the delegation act,
 # created by the PI's attestation. The DOA log is a projection of this.
-ex:cap-consent a cr:Capability ; rdfs:label "Obtain informed consent" .
+ex:cap-consent a cr:Capability ;
+    rdfs:label "Obtain informed consent" ;
+    top:identifier "urn:cap:consent"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
-ex:cred-nguyen-gcp a cr:Credential ; rdfs:label "GCP + consent training — Nguyen" ;
+ex:cred-nguyen-gcp a cr:Credential ;
+    rdfs:label "GCP + consent training — Nguyen" ;
+    top:identifier "urn:cred:nguyen-gcp"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:credentialOf ex:person-nguyen .
 
-ex:attest-deleg-001 a top:Attestation ; rdfs:label "PI attestation of delegation (via SMS round-trip)" ;
-    top:observedAt  "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+ex:attest-deleg-001-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for PI attestation" .
+
+ex:attest-deleg-001 a top:Attestation ;
+    rdfs:label "PI attestation of delegation (via SMS round-trip)" ;
+    top:identifier "urn:attest-deleg-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-03T08:30:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-03T08:31:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:attest-deleg-001-vs ;
     prov:wasAttributedTo ex:person-rivera ;
     cr:attestedBy ex:person-rivera .
 
-ex:deleg-consent-001 a cr:Delegation ; rdfs:label "Delegation: consent -> Nguyen" ;
-    top:observedAt  "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+ex:deleg-consent-001-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for consent delegation" .
+
+ex:deleg-consent-001 a cr:Delegation ;
+    rdfs:label "Delegation: consent -> Nguyen" ;
+    top:identifier "urn:deleg-consent-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-03T08:30:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-03T08:31:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:deleg-consent-001-vs ;
     prov:wasAttributedTo ex:person-rivera ;
     prov:wasGeneratedBy ex:attest-deleg-001 ;
     cr:delegator ex:person-rivera ;
@@ -76,21 +159,47 @@ ex:deleg-consent-001 a cr:Delegation ; rdfs:label "Delegation: consent -> Nguyen
 ex:person-nguyen prov:actedOnBehalfOf ex:person-rivera .
 
 # --- Enrollment: the Person -> Subject bitemporal bridge --------------------
-ex:person-doe a hcls:Person ; rdfs:label "Jane Doe (real person; PII layer)" .
-ex:subj-001   a cr:StudySubject ; rdfs:label "OPP-101 S-001 (pseudonymous)" .
+ex:person-doe a hcls:Person ;
+    rdfs:label "Jane Doe (real person; PII layer)" ;
+    top:identifier "person:jane-doe"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
-ex:enroll-001 a cr:Enrollment ; rdfs:label "Enrollment of S-001" ;
-    top:observedAt  "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+ex:subj-001 a cr:StudySubject ;
+    rdfs:label "OPP-101 S-001 (pseudonymous)" ;
+    top:identifier "urn:subject:opp101-s001"^^xsd:anyURI ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
+    cr:subjectId "OPP-101-S-001" .
+
+ex:enroll-001-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for S-001 enrollment" .
+
+ex:enroll-001 a cr:Enrollment ;
+    rdfs:label "Enrollment of S-001" ;
+    top:identifier "urn:enroll-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-05T10:05:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:enroll-001-vs ;
     prov:wasAttributedTo ex:person-nguyen ;
     cr:enrolledPerson ex:person-doe ;
     cr:asSubject ex:subj-001 ;
     cr:intoStudy ex:study-opp101 .
 
 # --- Consent performed BY the nurse, UNDER the delegation, valid-time after it
-ex:consent-001 a cr:InformedConsent ; rdfs:label "Informed consent — S-001" ;
-    top:observedAt  "2026-02-05T09:45:00Z"^^xsd:dateTime ;
+ex:consent-001-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for S-001 consent" .
+
+ex:consent-001 a cr:InformedConsent ;
+    rdfs:label "Informed consent — S-001" ;
+    top:identifier "urn:consent-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-05T09:45:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-05T09:50:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-02-05T09:45:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:consent-001-vs ;
     prov:wasAttributedTo ex:person-nguyen ;
     cr:forSubject ex:subj-001 ;
     cr:performedBy ex:person-nguyen ;
@@ -98,30 +207,22 @@ ex:consent-001 a cr:InformedConsent ; rdfs:label "Informed consent — S-001" ;
     cr:underDelegation ex:deleg-consent-001 .
 
 # --- Dosing at dose level 1, then a dose-limiting toxicity (oncology) --------
-ex:admin-001 a cr:Administration ; rdfs:label "Dose 1 administration — S-001" ;
-    top:observedAt  "2026-02-06T11:00:00Z"^^xsd:dateTime ;
+ex:admin-001 a cr:Administration ;
+    rdfs:label "Dose 1 administration — S-001" ;
+    top:identifier "urn:admin-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-06T11:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-06T11:10:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     prov:wasAttributedTo ex:person-nguyen ;
     cr:forSubject ex:subj-001 ;
     cr:administersProduct ex:ip-opp1234 ;
     cr:atDoseLevel ex:dl1 .
 
-ex:ae-001 a cr:DoseLimitingToxicity ; rdfs:label "Grade 3 neutropenia (DLT)" ;
-    top:observedAt  "2026-02-09T00:00:00Z"^^xsd:dateTime ;
+ex:ae-001 a cr:DoseLimitingToxicity ;
+    rdfs:label "Grade 3 neutropenia (DLT)" ;
+    top:identifier "urn:ae-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-09T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-09T16:20:00Z"^^xsd:dateTime ;
+    top:status "reported" ;
     prov:wasAttributedTo ex:person-rivera ;
     cr:forSubject ex:subj-001 .
-
-# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/admin-001> top:identifier "urn:admin-001"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/ae-001> top:identifier "urn:ae-001"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/attest-deleg-001> top:identifier "urn:attest-deleg-001"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/consent-001> top:identifier "urn:consent-001"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/deleg-consent-001> top:identifier "urn:deleg-consent-001"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/enroll-001> top:identifier "urn:enroll-001"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/protocol-opp101-v1> top:identifier "urn:protocol-opp101-v1"^^xsd:anyURI ; top:status "active" .
-
-# Provenance identity — attribution targets are identified agents, not bare roles.
-ex:person-rivera top:identifier "person:ana-rivera"^^xsd:anyURI .
-ex:person-nguyen top:identifier "person:tom-nguyen"^^xsd:anyURI .
-ex:oppentix top:identifier "org:oppentix"^^xsd:anyURI .
