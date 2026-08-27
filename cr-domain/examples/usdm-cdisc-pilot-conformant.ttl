@@ -24,77 +24,226 @@
 #     scope for this reference). ***
 # ============================================================================
 
-ex:cp-curator a hcls:Person, prov:Agent ; rdfs:label "Ravi Shankar" ; top:identifier "person:ravi-shankar"^^xsd:anyURI ; hcls:actsAs "Data Curator" .
+ex:cp-curator a hcls:Person, prov:Agent ;
+    rdfs:label "Ravi Shankar" ;
+    top:identifier "person:ravi-shankar"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Data Curator" .
 
 # --- Study identification (USDM Study / Organization / StudySite) ---
-ex:cp-sponsor a cr:Sponsor   ; rdfs:label "Sponsor (illustrative)" .          # <- usdm:Organization
-ex:cp-site    a cr:StudySite ; rdfs:label "Investigative site 701" .          # <- usdm:StudySite
-ex:cp-study a cr:Study ; rdfs:label "CDISC Pilot (LZZT) — xanomeline in Alzheimer's" ;  # <- usdm:Study
-    cr:sponsoredBy ex:cp-sponsor ; cr:conductedAt ex:cp-site ;
+ex:cp-sponsor a cr:Sponsor ;
+    rdfs:label "Sponsor (illustrative)" ;
+    top:identifier "urn:org:cdiscpilot-sponsor"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-site a cr:StudySite ;
+    rdfs:label "Investigative site 701" ;
+    top:identifier "urn:site:701"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-study a cr:Study ;
+    rdfs:label "CDISC Pilot (LZZT) — xanomeline in Alzheimer's" ;
+    top:identifier "urn:study:cdiscpilot01"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:sponsoredBy ex:cp-sponsor ;
+    cr:conductedAt ex:cp-site ;
     cr:hasArm ex:cp-arm-pbo, ex:cp-arm-low, ex:cp-arm-high ;
     cr:hasProtocolVersion ex:cp-pv .
 
 # --- Protocol version (USDM StudyVersion) — bitemporal evidence ---
-ex:cp-pv a cr:ProtocolVersion ; rdfs:label "CDISCPILOT01 protocol v1.0" ;     # <- usdm:StudyVersion
+ex:cp-pv-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for CDISCPILOT01 Protocol" .
+
+ex:cp-pv a cr:ProtocolVersion ;
+    rdfs:label "CDISCPILOT01 protocol v1.0" ;
+    top:identifier "urn:cdiscpilot01:pv1"^^xsd:anyURI ;
     cr:hasEligibilityCriterion ex:cp-elig-dx, ex:cp-elig-age ;
     top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:cp-pv-vs ;
     prov:wasAttributedTo ex:cp-curator .
 
 # --- Arms (USDM StudyArm) ---
-ex:cp-arm-pbo  a cr:Arm ; rdfs:label "Placebo" .                              # <- usdm:StudyArm
-ex:cp-arm-low  a cr:Arm ; rdfs:label "Xanomeline low dose" .
-ex:cp-arm-high a cr:Arm ; rdfs:label "Xanomeline high dose" .
+ex:cp-arm-pbo a cr:Arm ;
+    rdfs:label "Placebo" ;
+    top:identifier "urn:arm:placebo"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-arm-low a cr:Arm ;
+    rdfs:label "Xanomeline low dose" ;
+    top:identifier "urn:arm:low"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-arm-high a cr:Arm ;
+    rdfs:label "Xanomeline high dose" ;
+    top:identifier "urn:arm:high"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Eligibility (USDM EligibilityCriterion) ---
-ex:cp-elig-dx  a cr:EligibilityCriterion ; rdfs:label "Mild-to-moderate Alzheimer's (MMSE 10–23)" . # <- usdm:EligibilityCriterion
-ex:cp-elig-age a cr:EligibilityCriterion ; rdfs:label "Age >= 50 years" .
+ex:cp-elig-dx a cr:EligibilityCriterion ;
+    rdfs:label "Mild-to-moderate Alzheimer's (MMSE 10–23)" ;
+    top:identifier "urn:elig:mmse"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-elig-age a cr:EligibilityCriterion ;
+    rdfs:label "Age >= 50 years" ;
+    top:identifier "urn:elig:age50"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Objective / analysis (USDM Endpoint / Estimand) ---
-ex:cp-endpoint a cr:Endpoint ; rdfs:label "ADAS-Cog change from baseline at Week 24" .  # <- usdm:Endpoint
-ex:cp-estimand a cr:Estimand ; rdfs:label "Difference vs placebo in mean ADAS-Cog change (treatment-policy)" . # <- usdm:Estimand
+ex:cp-endpoint a cr:Endpoint ;
+    rdfs:label "ADAS-Cog change from baseline at Week 24" ;
+    top:identifier "urn:endpoint:adascog"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-estimand a cr:Estimand ;
+    rdfs:label "Difference vs placebo in mean ADAS-Cog change (treatment-policy)" ;
+    top:identifier "urn:estimand:adascog-pbo"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Schedule of Activities (USDM ScheduleTimeline / Encounter / ScheduledActivityInstance / Timing) ---
-ex:cp-tl a cr:ScheduleTimeline ; rdfs:label "CDISCPILOT01 SoA (v1)" ;         # <- usdm:ScheduleTimeline
+ex:cp-tl a cr:ScheduleTimeline ;
+    rdfs:label "CDISCPILOT01 SoA (v1)" ;
+    top:identifier "urn:cdiscpilot01:soa1"^^xsd:anyURI ;
     cr:ofProtocolVersion ex:cp-pv ;
     cr:hasPlannedEncounter ex:cp-enc-scrn, ex:cp-enc-base, ex:cp-enc-w24 ;
     top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     prov:wasAttributedTo ex:cp-curator .
 
-ex:cp-enc-scrn a cr:PlannedEncounter ; rdfs:label "Screening" ; cr:timing ex:cp-t-scrn .   # <- usdm:Encounter
-ex:cp-enc-base a cr:PlannedEncounter ; rdfs:label "Baseline (Week 0)" ; cr:timing ex:cp-t-base .
-ex:cp-enc-w24  a cr:PlannedEncounter ; rdfs:label "Week 24 (primary)" ; cr:timing ex:cp-t-w24 ;
+ex:cp-enc-scrn a cr:PlannedEncounter ;
+    rdfs:label "Screening" ;
+    top:identifier "urn:enc:scrn"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:timing ex:cp-t-scrn .
+
+ex:cp-enc-base a cr:PlannedEncounter ;
+    rdfs:label "Baseline (Week 0)" ;
+    top:identifier "urn:enc:base"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:timing ex:cp-t-base .
+
+ex:cp-enc-w24 a cr:PlannedEncounter ;
+    rdfs:label "Week 24 (primary)" ;
+    top:identifier "urn:enc:w24"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:timing ex:cp-t-w24 ;
     cr:hasPlannedActivity ex:cp-pa-adas .
 
-ex:cp-pa-adas a cr:PlannedActivity ; rdfs:label "ADAS-Cog assessment" ; cr:timing ex:cp-t-adas . # <- usdm:ScheduledActivityInstance
+ex:cp-pa-adas a cr:PlannedActivity ;
+    rdfs:label "ADAS-Cog assessment" ;
+    top:identifier "urn:pa:adascog"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:timing ex:cp-t-adas .
 
-ex:cp-t-scrn a cr:Timing ; cr:timingType "before" ; cr:offsetDays 14 ; cr:relativeTo ex:cp-enc-base ; cr:window ex:cp-w3 . # <- usdm:Timing
-ex:cp-t-base a cr:Timing ; cr:timingType "fixed"  ; cr:offsetDays 0   ; cr:relativeTo ex:cp-enc-base ; cr:window ex:cp-w0 .
-ex:cp-t-w24  a cr:Timing ; cr:timingType "after"  ; cr:offsetDays 168 ; cr:relativeTo ex:cp-enc-base ; cr:window ex:cp-w7 .
-ex:cp-t-adas a cr:Timing ; cr:timingType "fixed"  ; cr:offsetDays 0   ; cr:relativeTo ex:cp-enc-w24 .
-ex:cp-w0 a cr:TimingWindow ; cr:windowLowerDays 0  ; cr:windowUpperDays 0 .
-ex:cp-w3 a cr:TimingWindow ; cr:windowLowerDays -3 ; cr:windowUpperDays 3 .
-ex:cp-w7 a cr:TimingWindow ; cr:windowLowerDays -7 ; cr:windowUpperDays 7 .
+ex:cp-t-scrn a cr:Timing ;
+    cr:timingType "before" ;
+    cr:offsetDays 14 ;
+    top:identifier "urn:timing:scrn"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:relativeTo ex:cp-enc-base ;
+    cr:window ex:cp-w3 .
+
+ex:cp-t-base a cr:Timing ;
+    cr:timingType "fixed" ;
+    cr:offsetDays 0 ;
+    top:identifier "urn:timing:base"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:relativeTo ex:cp-enc-base ;
+    cr:window ex:cp-w0 .
+
+ex:cp-t-w24 a cr:Timing ;
+    cr:timingType "after" ;
+    cr:offsetDays 168 ;
+    top:identifier "urn:timing:w24"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:relativeTo ex:cp-enc-base ;
+    cr:window ex:cp-w7 .
+
+ex:cp-t-adas a cr:Timing ;
+    cr:timingType "fixed" ;
+    cr:offsetDays 0 ;
+    top:identifier "urn:timing:adas"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:relativeTo ex:cp-enc-w24 .
+
+ex:cp-w0 a cr:TimingWindow ;
+    cr:windowLowerDays 0 ;
+    cr:windowUpperDays 0 ;
+    top:identifier "urn:window:zero"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-w3 a cr:TimingWindow ;
+    cr:windowLowerDays -3 ;
+    cr:windowUpperDays 3 ;
+    top:identifier "urn:window:plus-minus-3"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:cp-w7 a cr:TimingWindow ;
+    cr:windowLowerDays -7 ;
+    cr:windowUpperDays 7 ;
+    top:identifier "urn:window:plus-minus-7"^^xsd:anyURI ;
+    top:observedAt "2025-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Participant projection (one subject; windows resolved off the baseline anchor) ---
-ex:cp-subj a cr:StudySubject ; rdfs:label "CDISCPILOT01-701-0001" .
-ex:cp-sched a cr:ParticipantSchedule ; rdfs:label "Subject 0001 schedule" ;
-    cr:fromTimeline ex:cp-tl ; cr:scheduleForSubject ex:cp-subj ;
+ex:cp-subj a cr:StudySubject ;
+    rdfs:label "CDISCPILOT01-701-0001" ;
+    top:identifier "urn:subject:701-0001"^^xsd:anyURI ;
+    top:observedAt "2025-10-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
+    cr:subjectId "CDISCPILOT01-701-0001" .
+
+ex:cp-sched a cr:ParticipantSchedule ;
+    rdfs:label "Subject 0001 schedule" ;
+    top:identifier "urn:cdiscpilot01:sched-0001"^^xsd:anyURI ;
+    cr:fromTimeline ex:cp-tl ;
+    cr:scheduleForSubject ex:cp-subj ;
     cr:anchorDate "2025-10-06T00:00:00Z"^^xsd:dateTime ;
     cr:hasPlannedVisit ex:cp-pvis-base, ex:cp-pvis-w24 ;
     top:observedAt "2025-10-06T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     prov:wasAttributedTo ex:cp-curator .
 
-ex:cp-pvis-base a cr:PlannedVisit ; cr:projectsEncounter ex:cp-enc-base ;
+ex:cp-pvis-base a cr:PlannedVisit ;
+    cr:projectsEncounter ex:cp-enc-base ;
+    top:identifier "urn:pvis:base"^^xsd:anyURI ;
+    top:observedAt "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     cr:targetDate "2025-10-06T00:00:00Z"^^xsd:dateTime ;
-    cr:windowStart "2025-10-06T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2025-10-06T23:59:59Z"^^xsd:dateTime .
-ex:cp-pvis-w24 a cr:PlannedVisit ; cr:projectsEncounter ex:cp-enc-w24 ;
-    cr:targetDate "2026-03-23T00:00:00Z"^^xsd:dateTime ;
-    cr:windowStart "2026-03-16T00:00:00Z"^^xsd:dateTime ; cr:windowEnd "2026-03-30T23:59:59Z"^^xsd:dateTime .
+    cr:windowStart "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    cr:windowEnd "2025-10-06T23:59:59Z"^^xsd:dateTime .
 
-# --- Universal DNA (TOP Core): identifier + status for the bitemporal entities ---
-ex:cp-pv    top:identifier "urn:cdiscpilot01:pv1"^^xsd:anyURI   ; top:status "active" .
-ex:cp-tl    top:identifier "urn:cdiscpilot01:soa1"^^xsd:anyURI  ; top:status "active" .
-ex:cp-sched top:identifier "urn:cdiscpilot01:sched-0001"^^xsd:anyURI ; top:status "active" .
+ex:cp-pvis-w24 a cr:PlannedVisit ;
+    cr:projectsEncounter ex:cp-enc-w24 ;
+    top:identifier "urn:pvis:w24"^^xsd:anyURI ;
+    top:observedAt "2025-10-06T00:00:00Z"^^xsd:dateTime ;
+    top:status "scheduled" ;
+    cr:targetDate "2026-03-23T00:00:00Z"^^xsd:dateTime ;
+    cr:windowStart "2026-03-16T00:00:00Z"^^xsd:dateTime ;
+    cr:windowEnd "2026-03-30T23:59:59Z"^^xsd:dateTime .
