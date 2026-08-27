@@ -127,7 +127,7 @@ These classes are operational events or data points where correction is a new ob
 
 ---
 
-## AMBIGUOUS (4 classes)
+## AMBIGUOUS (3 classes)
 
 Classes where the architectural need is unclear from the class definition alone. Left Versioned pending domain-expert ruling:
 
@@ -140,8 +140,8 @@ Classes where the architectural need is unclear from the class definition alone.
 ## Summary
 - **KEEP**: 45 classes (regulatory/locked documents, append-only judgments, GCP audit, IMP accountability)
 - **DEMOTE**: 35 classes (operational events, metrics, planning specs)
-- **AMBIGUOUS**: 4 classes (pending domain-expert ruling)
-- **Total audited**: 84 classes
+- **AMBIGUOUS**: 3 classes (pending domain-expert ruling)
+- **Total audited**: 83 classes
 
 ## Implementation Notes
 - Demoting a class: remove `top:Versioned` from its `rdfs:subClassOf` list in the ontology
