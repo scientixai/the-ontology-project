@@ -51,7 +51,9 @@ ex:elig201 a cr:EligibilityCriterion ;
     rdfs:label "Measurable disease per RECIST 1.1" ;
     top:identifier "urn:elig:opp201-recist"^^xsd:anyURI ;
     top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
-    top:status "active" .
+    top:status "active" ;
+    cr:criterionType "inclusion" ;
+    cr:criterionText "Subjects must have measurable disease per RECIST 1.1 criteria." .
 
 ex:ep-orr a cr:Endpoint ;
     rdfs:label "Objective Response Rate (ORR)" ;
@@ -96,11 +98,25 @@ ex:biostat a hcls:Practitioner ;
     hcls:actsAs "Lead Biostatistician" .
 
 # Project Optimus: the proposed Phase 3 dose rests on dose-optimization work.
+ex:doseopt-visit a cr:Visit ;
+    rdfs:label "Dose optimization review visit" ;
+    top:identifier "urn:visit:doseopt"^^xsd:anyURI ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" .
+
+ex:doseopt-instr a cr:AssessmentInstrument ;
+    rdfs:label "Dose optimization instrument" ;
+    top:identifier "urn:instr:doseopt"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
 ex:doseopt a cr:Assessment ;
     rdfs:label "Dose optimization analysis (Project Optimus)" ;
     top:identifier "urn:assessment:doseopt"^^xsd:anyURI ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
-    top:status "completed" .
+    top:status "completed" ;
+    cr:assessedAt ex:doseopt-visit ;
+    cr:assessmentInstrument ex:doseopt-instr .
 
 ex:p3design a cr:Phase3Design ;
     rdfs:label "Proposed Phase 3 design (RP2D)" ;
@@ -115,6 +131,7 @@ ex:eop2 a cr:RegulatoryInteraction ;
     top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
     top:status "completed" ;
     cr:meetingType "EOP2" ;
+    cr:meetingDate "2026-09-01"^^xsd:date ;
     cr:concernsStudy ex:study-opp201 ;
     cr:reviewsResult ex:res-orr ;
     cr:producedAgreement ex:agree1 ;
