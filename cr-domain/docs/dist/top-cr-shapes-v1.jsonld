@@ -2728,6 +2728,24 @@
     ]
   },
   {
+    "@id": "_:cb23ccad76116bf9f04278125ad7dda9f115f2c75502612e73ab951b9e5b6aef94e",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/traceability-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n            PREFIX cx: <https://top.scientix.ai/crosswalk/v1#>\n            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n            SELECT $this WHERE {\n              # $this has at least one SKOS match predicate (guaranteed by targetSubjectsOf)\n              {\n                $this skos:exactMatch ?x .\n              } UNION {\n                $this skos:closeMatch ?x .\n              } UNION {\n                $this skos:relatedMatch ?x .\n              } UNION {\n                $this skos:broadMatch ?x .\n              } UNION {\n                $this skos:narrowMatch ?x .\n              }\n              \n              # Exclude cx:Mapping instances (they may legitimately use SKOS predicates as cx:predicateId)\n              FILTER NOT EXISTS { $this rdf:type cx:Mapping }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb23cf6980fa77a0dc6ce1a80975d85838dc4337a04e1c4f5145b082313d0154f49",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -3906,24 +3924,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#causalityVerdict"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#prefixes": [
-      {
-        "@id": "https://top.scientix.ai/shapes/traceability-v1"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#select": [
-      {
-        "@value": "\n            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n            SELECT $this WHERE {\n              {\n                $this skos:exactMatch ?x .\n              } UNION {\n                $this skos:closeMatch ?x .\n              } UNION {\n                $this skos:relatedMatch ?x .\n              } UNION {\n                $this skos:broadMatch ?x .\n              } UNION {\n                $this skos:narrowMatch ?x .\n              }\n            }\n        "
       }
     ]
   },
@@ -8696,12 +8696,24 @@
     ],
     "http://www.w3.org/ns/shacl#sparql": [
       {
-        "@id": "_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6"
+        "@id": "_:cb23ccad76116bf9f04278125ad7dda9f115f2c75502612e73ab951b9e5b6aef94e"
       }
     ],
-    "http://www.w3.org/ns/shacl#targetClass": [
+    "http://www.w3.org/ns/shacl#targetSubjectsOf": [
       {
-        "@id": "https://top.scientix.ai/v1#CommonEntity"
+        "@id": "http://www.w3.org/2004/02/skos/core#broadMatch"
+      },
+      {
+        "@id": "http://www.w3.org/2004/02/skos/core#closeMatch"
+      },
+      {
+        "@id": "http://www.w3.org/2004/02/skos/core#exactMatch"
+      },
+      {
+        "@id": "http://www.w3.org/2004/02/skos/core#narrowMatch"
+      },
+      {
+        "@id": "http://www.w3.org/2004/02/skos/core#relatedMatch"
       }
     ]
   },

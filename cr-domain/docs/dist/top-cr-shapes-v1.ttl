@@ -1627,7 +1627,10 @@ cr:UngovernedMatchShape a sh:NodeShape ;
             sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
             sh:select """
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            PREFIX cx: <https://top.scientix.ai/crosswalk/v1#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             SELECT $this WHERE {
+              # $this has at least one SKOS match predicate (guaranteed by targetSubjectsOf)
               {
                 $this skos:exactMatch ?x .
               } UNION {
@@ -1639,9 +1642,16 @@ cr:UngovernedMatchShape a sh:NodeShape ;
               } UNION {
                 $this skos:narrowMatch ?x .
               }
+              
+              # Exclude cx:Mapping instances (they may legitimately use SKOS predicates as cx:predicateId)
+              FILTER NOT EXISTS { $this rdf:type cx:Mapping }
             }
         """ ] ;
-    sh:targetClass top:CommonEntity .
+    sh:targetSubjectsOf skos:broadMatch,
+        skos:closeMatch,
+        skos:exactMatch,
+        skos:narrowMatch,
+        skos:relatedMatch .
 
 cr:UniversalDNAShape a sh:NodeShape ;
     sh:property [ sh:datatype xsd:anyURI ;

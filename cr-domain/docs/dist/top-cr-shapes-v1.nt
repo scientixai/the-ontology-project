@@ -559,8 +559,12 @@
 <https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 <https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/2000/01/rdf-schema#label> "Ungoverned SKOS match trap" .
 <https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#severity> <http://www.w3.org/ns/shacl#Violation> .
-<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#sparql> _:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6 .
-<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#targetClass> <https://top.scientix.ai/v1#CommonEntity> .
+<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#sparql> _:cb23ccad76116bf9f04278125ad7dda9f115f2c75502612e73ab951b9e5b6aef94e .
+<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://www.w3.org/2004/02/skos/core#broadMatch> .
+<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://www.w3.org/2004/02/skos/core#closeMatch> .
+<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://www.w3.org/2004/02/skos/core#exactMatch> .
+<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://www.w3.org/2004/02/skos/core#narrowMatch> .
+<https://top.scientix.ai/cr/v1#UngovernedMatchShape> <http://www.w3.org/ns/shacl#targetSubjectsOf> <http://www.w3.org/2004/02/skos/core#relatedMatch> .
 <https://top.scientix.ai/cr/v1#UniversalDNAShape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 <https://top.scientix.ai/cr/v1#UniversalDNAShape> <http://www.w3.org/ns/shacl#property> _:cb20c4543a05f0d66c8dc3c567cf62637b91a581e9b56f92717e54e753b1053122c .
 <https://top.scientix.ai/cr/v1#UniversalDNAShape> <http://www.w3.org/ns/shacl#property> _:cb238de56db9126808e105f5a4fca6291abc6590fa29a5b66abfa3253c6bbfef48a .
@@ -1287,6 +1291,9 @@ _:cb239de394eaac95994620f7414895c68f8e7ca076016ca6cb8df00757e9000b4d6 <http://ww
 _:cb23b01bcdbefa72be7e2c9132311a0a3720e2ac8c59b06766688bd4987462b658b <http://www.w3.org/ns/shacl#message> "A KRI must carry an action threshold (the boundary at which intervention is mandatory)." .
 _:cb23b01bcdbefa72be7e2c9132311a0a3720e2ac8c59b06766688bd4987462b658b <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb23b01bcdbefa72be7e2c9132311a0a3720e2ac8c59b06766688bd4987462b658b <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#actionThreshold> .
+_:cb23ccad76116bf9f04278125ad7dda9f115f2c75502612e73ab951b9e5b6aef94e <http://www.w3.org/ns/shacl#message> "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this." .
+_:cb23ccad76116bf9f04278125ad7dda9f115f2c75502612e73ab951b9e5b6aef94e <http://www.w3.org/ns/shacl#prefixes> <https://top.scientix.ai/shapes/traceability-v1> .
+_:cb23ccad76116bf9f04278125ad7dda9f115f2c75502612e73ab951b9e5b6aef94e <http://www.w3.org/ns/shacl#select> "\n            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n            PREFIX cx: <https://top.scientix.ai/crosswalk/v1#>\n            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n            SELECT $this WHERE {\n              # $this has at least one SKOS match predicate (guaranteed by targetSubjectsOf)\n              {\n                $this skos:exactMatch ?x .\n              } UNION {\n                $this skos:closeMatch ?x .\n              } UNION {\n                $this skos:relatedMatch ?x .\n              } UNION {\n                $this skos:broadMatch ?x .\n              } UNION {\n                $this skos:narrowMatch ?x .\n              }\n              \n              # Exclude cx:Mapping instances (they may legitimately use SKOS predicates as cx:predicateId)\n              FILTER NOT EXISTS { $this rdf:type cx:Mapping }\n            }\n        " .
 _:cb23cf6980fa77a0dc6ce1a80975d85838dc4337a04e1c4f5145b082313d0154f49 <http://www.w3.org/ns/shacl#class> <https://top.scientix.ai/cr/v1#StudySubject> .
 _:cb23cf6980fa77a0dc6ce1a80975d85838dc4337a04e1c4f5145b082313d0154f49 <http://www.w3.org/ns/shacl#message> "Consent must reference the StudySubject." .
 _:cb23cf6980fa77a0dc6ce1a80975d85838dc4337a04e1c4f5145b082313d0154f49 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1495,9 +1502,6 @@ _:cb2a6d3dfb89dc99c5f6029523c21aec34ba9bbce7f9d6e06755751db2bc6969416 <http://ww
 _:cb2a6d3dfb89dc99c5f6029523c21aec34ba9bbce7f9d6e06755751db2bc6969416 <http://www.w3.org/ns/shacl#message> "cr:causalityVerdict must be one of: unrelated, possible, probable, definite." .
 _:cb2a6d3dfb89dc99c5f6029523c21aec34ba9bbce7f9d6e06755751db2bc6969416 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2a6d3dfb89dc99c5f6029523c21aec34ba9bbce7f9d6e06755751db2bc6969416 <http://www.w3.org/ns/shacl#path> <https://top.scientix.ai/cr/v1#causalityVerdict> .
-_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6 <http://www.w3.org/ns/shacl#message> "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this." .
-_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6 <http://www.w3.org/ns/shacl#prefixes> <https://top.scientix.ai/shapes/traceability-v1> .
-_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6 <http://www.w3.org/ns/shacl#select> "\n            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n            SELECT $this WHERE {\n              {\n                $this skos:exactMatch ?x .\n              } UNION {\n                $this skos:closeMatch ?x .\n              } UNION {\n                $this skos:relatedMatch ?x .\n              } UNION {\n                $this skos:broadMatch ?x .\n              } UNION {\n                $this skos:narrowMatch ?x .\n              }\n            }\n        " .
 _:cb2a7cbe457cadb8ee14d7b097624085e3c03f5bbb73a7a3342f4c6424a7e793863 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Define-XML" .
 _:cb2a7cbe457cadb8ee14d7b097624085e3c03f5bbb73a7a3342f4c6424a7e793863 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2263def715911a7452750a1b7a4c546019ca2231dddf6a43d16ab09816f3c0512 .
 _:cb2a92a73be6fcd04ed8666aeecce1266e99bd83be880f0de96680ae5b706a27cc6 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .

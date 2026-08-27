@@ -17,14 +17,21 @@
 # not a bare SKOS triple on a clinical object.
 cr:UngovernedMatchShape a sh:NodeShape ;
     rdfs:label "Ungoverned SKOS match trap" ;
-    sh:targetClass top:CommonEntity ;
+    sh:targetSubjectsOf skos:exactMatch ;
+    sh:targetSubjectsOf skos:closeMatch ;
+    sh:targetSubjectsOf skos:relatedMatch ;
+    sh:targetSubjectsOf skos:broadMatch ;
+    sh:targetSubjectsOf skos:narrowMatch ;
     sh:severity sh:Violation ;
     sh:sparql [
         sh:message "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this." ;
         sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
         sh:select """
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            PREFIX cx: <https://top.scientix.ai/crosswalk/v1#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             SELECT $this WHERE {
+              # $this has at least one SKOS match predicate (guaranteed by targetSubjectsOf)
               {
                 $this skos:exactMatch ?x .
               } UNION {
@@ -36,6 +43,9 @@ cr:UngovernedMatchShape a sh:NodeShape ;
               } UNION {
                 $this skos:narrowMatch ?x .
               }
+              
+              # Exclude cx:Mapping instances (they may legitimately use SKOS predicates as cx:predicateId)
+              FILTER NOT EXISTS { $this rdf:type cx:Mapping }
             }
         """ ;
     ] .
