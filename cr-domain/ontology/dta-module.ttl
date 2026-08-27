@@ -47,8 +47,7 @@ cr:TransferSpecification a owl:Class ;
     rdfs:label "Transfer Specification" ;
     skos:definition "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act." ;
     rdfs:comment "Grounded in the info-model TRANSFER_SPECIFICATION entity and CDISC LAB Model v2.0 content. Placed under top:Scope (a specification/plan), bitemporal so amendments supersede cleanly." ;
-    rdfs:subClassOf top:Scope,
-        top:Versioned .
+    rdfs:subClassOf top:Scope .
 
 cr:DataElementSpecification a owl:Class ;
     rdfs:label "Data Element Specification" ;
@@ -96,15 +95,13 @@ cr:TransferAmendment a owl:Class ;
     rdfs:label "Transfer Amendment" ;
     skos:definition "A status change on a protocol/spec version that carries effectiveFrom/To and MUST reference the TransferSpecifications it affects. Propagation is a graph update + re-validation, not N manual DTA re-authorings." ;
     rdfs:comment "Amendment as event (Outcome:StatusChange). Bitemporal; drives the cross-entity shape that forces amendment propagation to be explicit." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned .
+    rdfs:subClassOf top:Outcome .
 
 cr:TransferFile a owl:Class ;
     rdfs:label "Transfer File" ;
     skos:definition "An actual delivered file instance (as distinct from its TransferSpecification). Carries its own transfer lifecycle timestamps and PROV attribution to the vendor org." ;
     rdfs:comment "Grounded in the info-model TRANSFER_FILE entity. The specification is the plan; the file is the Outcome:Artifact." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned .
+    rdfs:subClassOf top:Outcome .
 
 # ───────────────────────────────────────────────────────────────────────────
 # 2. Structural relationships (all Additive per ADR-0019)
