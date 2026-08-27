@@ -9,26 +9,64 @@
 # WORKED EXAMPLE — RBQM. High-risk factor gets intensive SDV; low-risk factor gets
 # reduced, risk-based monitoring. Risk targeted, not blanket 100% SDV.
 
-ex:rbqm-mgr a hcls:Practitioner ; rdfs:label "Sofia Marino" ; hcls:actsAs "RBQM Lead" .
+ex:rbqm-mgr a hcls:Practitioner ;
+    rdfs:label "Sofia Marino" ;
+    hcls:actsAs "RBQM Lead" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # High risk -> mitigated with intensive (100%) SDV (appropriate).
-ex:ctq-pe a cr:CriticalToQualityFactor ; rdfs:label "Primary endpoint integrity" .
+ex:ctq-pe a cr:CriticalToQualityFactor ;
+    rdfs:label "Primary endpoint integrity" ;
+    top:identifier "urn:ctq-pe"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:ra-pe a cr:RiskAssessment ; cr:assessesFactor ex:ctq-pe ; cr:riskLevel "high" ;
     cr:riskScore "0.80"^^xsd:decimal ;
-    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ra-pe-series ;
     prov:wasAttributedTo ex:rbqm-mgr .
-ex:mp-pe a cr:MitigationPlan ; rdfs:label "Targeted 100% SDV on primary endpoint" ;
-    cr:mitigates ex:ra-pe ; cr:monitoringStrategy "targeted-SDV" ; cr:sdvIntensity "1.0"^^xsd:decimal .
+ex:ra-pe-series a top:VersionSeries ;
+    top:identifier "urn:ra-pe:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:mp-pe a cr:MitigationPlan ;
+    rdfs:label "Targeted 100% SDV on primary endpoint" ;
+    cr:mitigates ex:ra-pe ;
+    cr:monitoringStrategy "targeted-SDV" ;
+    cr:sdvIntensity "1.0"^^xsd:decimal ;
+    top:identifier "urn:mp-pe"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:ra-pe cr:hasMitigationPlan ex:mp-pe .
 
 # Low risk -> reduced SDV + central monitoring (the RBQM efficiency).
-ex:ctq-demo a cr:CriticalToQualityFactor ; rdfs:label "Demographics accuracy" .
+ex:ctq-demo a cr:CriticalToQualityFactor ;
+    rdfs:label "Demographics accuracy" ;
+    top:identifier "urn:ctq-demo"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:ra-demo a cr:RiskAssessment ; cr:assessesFactor ex:ctq-demo ; cr:riskLevel "low" ;
     cr:riskScore "0.15"^^xsd:decimal ;
-    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ra-demo-series ;
     prov:wasAttributedTo ex:rbqm-mgr .
-ex:mp-demo a cr:MitigationPlan ; rdfs:label "Central monitoring + 10% SDV" ;
-    cr:mitigates ex:ra-demo ; cr:monitoringStrategy "central-monitoring" ; cr:sdvIntensity "0.1"^^xsd:decimal .
+ex:ra-demo-series a top:VersionSeries ;
+    top:identifier "urn:ra-demo:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:mp-demo a cr:MitigationPlan ;
+    rdfs:label "Central monitoring + 10% SDV" ;
+    cr:mitigates ex:ra-demo ;
+    cr:monitoringStrategy "central-monitoring" ;
+    cr:sdvIntensity "0.1"^^xsd:decimal ;
+    top:identifier "urn:mp-demo"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:ra-demo cr:hasMitigationPlan ex:mp-demo .
 
 # --- Q9(R1) decomposition on the assessments (auditable, not opaque) ---
@@ -38,25 +76,36 @@ ex:mp-pe   cr:controlApproach "reduce" .
 ex:mp-demo cr:controlApproach "accept" .
 
 # --- Trial-level guardrail: a QTL protecting the primary endpoint ---
-ex:qtl-endpoint a cr:QualityToleranceLimit ; rdfs:label "Primary endpoint completeness QTL" ;
+ex:qtl-endpoint a cr:QualityToleranceLimit ;
+    rdfs:label "Primary endpoint completeness QTL" ;
     cr:protectsFactor ex:ctq-pe ;
     cr:measuredParameter "percent of subjects with missing or incomplete primary endpoint data" ;
     cr:qtlThreshold "10.0"^^xsd:decimal ;
     cr:qtlSecondaryLimit "7.5"^^xsd:decimal ;
-    cr:thresholdRationale "95th percentile of missingness across 12 historical phase-3 trials in this indication; statistical power holds to 12% missing under the SAP's imputation model." .
+    cr:thresholdRationale "95th percentile of missingness across 12 historical phase-3 trials in this indication; statistical power holds to 12% missing under the SAP's imputation model." ;
+    top:identifier "urn:qtl-endpoint"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Site-level leading metric: a KRI informing the same factor ---
-ex:kri-entry-lag a cr:KeyRiskIndicator ; rdfs:label "eCRF entry cycle time KRI" ;
+ex:kri-entry-lag a cr:KeyRiskIndicator ;
+    rdfs:label "eCRF entry cycle time KRI" ;
     cr:informsFactor ex:ctq-pe ;
     cr:kriCategory "data-quality" ;
     cr:measuredParameter "mean days from visit to eCRF data entry, per site" ;
     cr:warningThreshold "7.0"^^xsd:decimal ;
     cr:actionThreshold "14.0"^^xsd:decimal ;
-    cr:thresholdRationale "2 SD (warning) and 3 SD (action) above the program's historical site benchmark of 3.1 days." .
+    cr:thresholdRationale "2 SD (warning) and 3 SD (action) above the program's historical site benchmark of 3.1 days." ;
+    top:identifier "urn:kri-entry-lag"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Centralized-monitoring output: an observation crossing the action limit ---
-ex:cm-engine a prov:SoftwareAgent, top:Agent ; rdfs:label "Central statistical monitoring engine" ;
-    top:identifier "system:csm-engine"^^xsd:anyURI .
+ex:cm-engine a prov:SoftwareAgent, top:Agent ;
+    rdfs:label "Central statistical monitoring engine" ;
+    top:identifier "system:csm-engine"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:obs-site7 a cr:MetricObservation ; rdfs:label "Site 7 entry lag, March run" ;
     cr:observesLimit ex:kri-entry-lag ; cr:metricValue "16.4"^^xsd:decimal ;
     top:observedAt "2026-03-31T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-04-01T02:00:00Z"^^xsd:dateTime ;
@@ -66,19 +115,40 @@ ex:obs-site7 a cr:MetricObservation ; rdfs:label "Site 7 entry lag, March run" ;
 ex:breach-site7 a cr:LimitBreach ; rdfs:label "Site 7 KRI action-limit breach" ;
     cr:breachedLimit ex:kri-entry-lag ; cr:breachEvidence ex:obs-site7 ;
     cr:breachDisposition "isolated" ;
-    top:observedAt "2026-04-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-04-01T09:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-04-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-04-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-04-01T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:breach-site7-series ;
     prov:wasAttributedTo ex:rbqm-mgr .
+ex:breach-site7-series a top:VersionSeries ;
+    top:identifier "urn:breach-site7:series"^^xsd:anyURI ;
+    top:observedAt "2026-04-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- The living plan and the review that closes the cycle ---
 ex:rmp a cr:RiskManagementPlan ; rdfs:label "OPP-101 Risk Management Plan v2" ;
     cr:documentsAssessment ex:ra-pe , ex:ra-demo ;
     cr:reviewCadence "quarterly, and on any QTL secondary-limit crossing" ;
-    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rmp-series ;
     prov:wasAttributedTo ex:rbqm-mgr .
+ex:rmp-series a top:VersionSeries ;
+    top:identifier "urn:rmp-opp101-v2:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:review-q1 a cr:RiskReview ; rdfs:label "Q1 risk review — primary endpoint assessment confirmed" ;
     cr:reviewsAssessment ex:ra-pe ; cr:reviewOutcome "confirmed" ;
-    top:observedAt "2026-04-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-04-05T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-04-05T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-04-05T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-04-05T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:review-q1-series ;
     prov:wasAttributedTo ex:rbqm-mgr .
+ex:review-q1-series a top:VersionSeries ;
+    top:identifier "urn:review-q1:series"^^xsd:anyURI ;
+    top:observedAt "2026-04-05T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
 <https://top.scientix.ai/examples/ra-demo> top:identifier "urn:ra-demo"^^xsd:anyURI ; top:status "active" .
