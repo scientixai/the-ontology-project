@@ -18,42 +18,82 @@
 
 ex:rf-study a cr:Study ; rdfs:label "OPP-101 (Phase 1 FIH)" ;
     cr:sponsoredBy ex:rf-sponsor ; cr:conductedAt ex:rf-site ;
-    cr:hasProtocolVersion ex:rf-proto .
-ex:rf-sponsor a cr:Sponsor ; rdfs:label "Oppentix Bio" .
-ex:rf-site a cr:StudySite ; rdfs:label "Denver Cancer Center" .
+    cr:hasProtocolVersion ex:rf-proto ;
+    top:identifier "urn:rf-study"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:rf-sponsor a cr:Sponsor ;
+    rdfs:label "Oppentix Bio" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:rf-site a cr:StudySite ;
+    rdfs:label "Denver Cancer Center" ;
+    top:identifier "urn:rf-site"^^xsd:anyURI ;
+    top:observedAt "2025-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:rf-proto a cr:ProtocolVersion ; rdfs:label "OPP-101 protocol v1.0" ;
     top:identifier "urn:proto:OPP-101-v1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-05T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rf-proto-series ;
     prov:wasAttributedTo ex:rf-sponsor ;
     cr:hasEligibilityCriterion ex:rf-elig .
-ex:rf-elig a cr:EligibilityCriterion ; rdfs:label "ECOG performance status 0-1" ;
-    cr:criterionType "inclusion" ; cr:criterionText "ECOG performance status 0-1" .
-ex:rf-arm a cr:Arm ; rdfs:label "Arm A" .
-ex:rf-crc a hcls:Practitioner ; rdfs:label "Jo Santos, CRC" .
+ex:rf-proto-series a top:VersionSeries ;
+    top:identifier "urn:proto:OPP-101-v1:series"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:rf-elig a cr:EligibilityCriterion ;
+    rdfs:label "ECOG performance status 0-1" ;
+    cr:criterionType "inclusion" ;
+    cr:criterionText "ECOG performance status 0-1" ;
+    top:identifier "urn:rf-elig"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:rf-arm a cr:Arm ;
+    rdfs:label "Arm A" ;
+    top:identifier "urn:rf-arm"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:rf-crc a hcls:Practitioner ;
+    rdfs:label "Jo Santos, CRC" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Top of funnel: the campaign ───────────────────────────────────────────────
 ex:rf-campaign a cr:RecruitmentCampaign ;
     rdfs:label "OPP-101 community-oncology referral program" ;
     cr:recruitsForStudy ex:rf-study ;
-    cr:campaignChannel "referral" .
+    cr:campaignChannel "referral" ;
+    top:identifier "urn:rf-campaign"^^xsd:anyURI ;
+    top:observedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The candidate — a SITE-BOUNDARY identity (PII-side, like hcls:Person) ─────
-ex:rf-person a hcls:Person ; rdfs:label "Maria Gonzalez (PII — stays at site)" .
+ex:rf-person a hcls:Person ;
+    rdfs:label "Maria Gonzalez (PII — stays at site)" ;
+    top:identifier "urn:rf-person"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:rf-recruit a cr:Recruit ;
     rdfs:label "Candidate R-014" ;
     cr:candidatePerson ex:rf-person ;
     cr:respondedToCampaign ex:rf-campaign ;
     cr:hasScreening ex:rf-screening ;
-    cr:convertedBy ex:rf-enroll .
+    cr:convertedBy ex:rf-enroll ;
+    top:identifier "urn:rf-recruit"^^xsd:anyURI ;
+    top:observedAt "2026-01-30T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Pre-screening: proceed to full screening ──────────────────────────────────
 ex:rf-prescreen a cr:PreScreening ;
     rdfs:label "Phone pre-screen against I/E summary" ;
     cr:prescreens ex:rf-recruit ;
     cr:prescreenOutcome "proceed" ;
-    top:observedAt "2026-02-01T09:00:00Z"^^xsd:dateTime .
+    top:identifier "urn:rf-prescreen"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T09:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Screening: eligible (the gate that authorizes conversion) ─────────────────
 ex:rf-screening a cr:ScreeningRecord ;
@@ -62,13 +102,22 @@ ex:rf-screening a cr:ScreeningRecord ;
     cr:screensRecruit ex:rf-recruit ;
     cr:screeningOutcome "eligible" ;
     top:observedAt "2026-02-04T14:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-04T14:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-04T14:10:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rf-screening-series ;
     prov:wasAttributedTo ex:rf-crc .
+ex:rf-screening-series a top:VersionSeries ;
+    top:identifier "urn:screening:R-014:series"^^xsd:anyURI ;
+    top:observedAt "2026-02-04T14:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Conversion: the attested Enrollment bridge to the pseudonymous Participant ─
 ex:rf-subject a cr:StudySubject ;
     rdfs:label "OPP-101 S-014 (pseudonymous)" ;
     cr:subjectId "S-014" ;
+    top:identifier "urn:rf-subject"^^xsd:anyURI ;
+    top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
     top:validFrom "2026-02-05T10:00:00Z"^^xsd:dateTime .
 
 ex:rf-enroll a cr:Enrollment ;
@@ -82,7 +131,12 @@ ex:rf-enroll a cr:Enrollment ;
     top:validFrom "2026-02-05T10:00:00Z"^^xsd:dateTime ;
     top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-05T10:05:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rf-enroll-series ;
     prov:wasAttributedTo ex:rf-crc .
+ex:rf-enroll-series a top:VersionSeries ;
+    top:identifier "urn:enroll:S-014:series"^^xsd:anyURI ;
+    top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:rf-crc top:identifier "person:jo-santos"^^xsd:anyURI .
