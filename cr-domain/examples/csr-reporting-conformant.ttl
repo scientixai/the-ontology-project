@@ -19,8 +19,16 @@
 # Study referenced by IRI (defined in the set-up graph, not re-typed).
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:biostat-a3 a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
-ex:medwriter a hcls:Practitioner ; rdfs:label "Aisha Khan" ; hcls:actsAs "Medical Writer" .
+ex:biostat-a3 a hcls:Practitioner ;
+    rdfs:label "Femi Balogun" ;
+    hcls:actsAs "Lead Biostatistician" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:medwriter a hcls:Practitioner ;
+    rdfs:label "Aisha Khan" ;
+    hcls:actsAs "Medical Writer" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Native source + ADaM dataset (reproducible-to-source) ─────────────────────
 ex:native-a3 a prov:Entity ;
@@ -31,13 +39,31 @@ ex:adeff-a3 a cr:AnalysisDataset ; rdfs:label "ADEFF (efficacy analysis dataset)
     top:identifier "urn:adam:ADEFF-a3"^^xsd:anyURI ; top:status "active" ;
     prov:wasDerivedFrom ex:native-a3 ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:adeff-a3-series ;
     prov:wasAttributedTo ex:biostat-a3 .
+ex:adeff-a3-series a top:VersionSeries ;
+    top:identifier "urn:adam:ADEFF-a3:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Endpoint + estimand + SAP + the reproducible endpoint result ──────────────
-ex:ep-orr-a3 a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
-ex:est-orr-a3 a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed, RECIST 1.1)" .
-ex:sap-a3 a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+ex:ep-orr-a3 a cr:Endpoint ;
+    rdfs:label "Objective Response Rate (ORR)" ;
+    top:identifier "urn:ep-orr-a3"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:est-orr-a3 a cr:Estimand ;
+    rdfs:label "ORR estimand (ITT, confirmed, RECIST 1.1)" ;
+    top:identifier "urn:est-orr-a3"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sap-a3 a cr:StatisticalAnalysisPlan ;
+    rdfs:label "OPP-201 SAP v1.0" ;
+    top:identifier "urn:sap-a3"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:res-orr-a3 a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
     top:identifier "urn:result:orr-a3"^^xsd:anyURI ; top:status "active" ;
@@ -46,8 +72,14 @@ ex:res-orr-a3 a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
     cr:analyzedUnder ex:sap-a3 ;
     prov:wasDerivedFrom ex:adeff-a3 ;
     top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-02T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:res-orr-a3-series ;
     prov:wasAttributedTo ex:biostat-a3 .
+ex:res-orr-a3-series a top:VersionSeries ;
+    top:identifier "urn:result:orr-a3:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The pre-specified TLF the section presents ────────────────────────────────
 ex:tlf-1431-a3 a cr:TableListingFigure ; rdfs:label "Table 14.3.1 — ORR by treatment arm" ;
@@ -57,28 +89,51 @@ ex:tlf-1431-a3 a cr:TableListingFigure ; rdfs:label "Table 14.3.1 — ORR by tre
     cr:prespecifiedIn ex:sap-a3 ;
     cr:presentsResult ex:res-orr-a3 ;
     top:observedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-03T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:tlf-1431-a3-series ;
     prov:wasAttributedTo ex:biostat-a3 .
+ex:tlf-1431-a3-series a top:VersionSeries ;
+    top:identifier "urn:tlf:14.3.1-a3:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The Clinical Study Report + its sections ──────────────────────────────────
 ex:csr-opp201 a cr:ClinicalStudyReport ; rdfs:label "OPP-201 Clinical Study Report (ICH E3)" ;
     top:identifier "urn:csr:OPP-201"^^xsd:anyURI ; top:status "active" ;
-    cr:csrForStudy ex:study-opp201 ;            # study referenced by IRI
+    cr:csrForStudy ex:study-opp201 ;
     cr:hasSection ex:csr-sec-synopsis , ex:csr-sec-efficacy ;
     top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-09-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:csr-opp201-series ;
     prov:wasAttributedTo ex:medwriter .
+ex:csr-opp201-series a top:VersionSeries ;
+    top:identifier "urn:csr:OPP-201:series"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Synopsis — narrative, nothing to trace (exempt).
-ex:csr-sec-synopsis a cr:CSRSection ; rdfs:label "Synopsis" ;
-    cr:sectionNumber "2" ; cr:sectionTitle "Synopsis" ; cr:sectionKind "synopsis" .
+ex:csr-sec-synopsis a cr:CSRSection ;
+    rdfs:label "Synopsis" ;
+    cr:sectionNumber "2" ;
+    cr:sectionTitle "Synopsis" ;
+    cr:sectionKind "synopsis" ;
+    top:identifier "urn:csr-sec-synopsis"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Efficacy results (§11.4) — presents the TLF AND reports the result it concludes from.
-ex:csr-sec-efficacy a cr:CSRSection ; rdfs:label "Efficacy Results" ;
-    cr:sectionNumber "11.4" ; cr:sectionTitle "Efficacy Results" ;
+ex:csr-sec-efficacy a cr:CSRSection ;
+    rdfs:label "Efficacy Results" ;
+    cr:sectionNumber "11.4" ;
+    cr:sectionTitle "Efficacy Results" ;
     cr:sectionKind "efficacy-results" ;
     cr:presentsTLF ex:tlf-1431-a3 ;
-    cr:reportsResult ex:res-orr-a3 .
+    cr:reportsResult ex:res-orr-a3 ;
+    top:identifier "urn:csr-sec-efficacy"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:medwriter top:identifier "person:aisha-khan"^^xsd:anyURI .
