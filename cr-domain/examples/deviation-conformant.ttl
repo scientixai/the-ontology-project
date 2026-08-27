@@ -11,10 +11,18 @@
 # manifests as a major deviation; the deviation triggers a CAPA. The "missing middle"
 # (the antecedent) is captured, so nothing warns and nothing violates.
 
-ex:dev-mgr a hcls:Practitioner ; rdfs:label "Rosa Alvarez" ; hcls:actsAs "Quality Lead" .
+ex:dev-mgr a hcls:Practitioner ;
+    rdfs:label "Rosa Alvarez" ;
+    hcls:actsAs "Quality Lead" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # The critical-to-quality factor at stake (RBQM module; not bitemporal).
-ex:ctq-sched a cr:CriticalToQualityFactor ; rdfs:label "Visit-schedule adherence" .
+ex:ctq-sched a cr:CriticalToQualityFactor ;
+    rdfs:label "Visit-schedule adherence" ;
+    top:identifier "urn:ctq-sched"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # The leading indicator — a late-visit trend across sites (low-trust, but provenance-tagged).
 ex:sig-late a cr:RiskSignal ; rdfs:label "Late-visit trend (3 sites, 4 weeks)" ;
