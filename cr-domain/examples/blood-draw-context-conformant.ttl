@@ -26,61 +26,154 @@
 ###############################################################################
 
 # --- People (always a name + a role) ----------------------------------------
-ex:bd-pi    a hcls:Practitioner ; rdfs:label "Dr. Ana Rivera, PI" .
-ex:bd-nurse a hcls:Practitioner ; rdfs:label "Tom Nguyen, RN" .
-ex:bd-phleb a hcls:Practitioner ; rdfs:label "Mary Smith, Phlebotomist" .
-ex:bd-labtech a hcls:Practitioner ; rdfs:label "Raj Patel, Lab Technician" .
+ex:bd-pi a hcls:Practitioner ;
+    rdfs:label "Dr. Ana Rivera, PI" ;
+    top:identifier "person:ana-rivera"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-nurse a hcls:Practitioner ;
+    rdfs:label "Tom Nguyen, RN" ;
+    top:identifier "person:tom-nguyen"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-phleb a hcls:Practitioner ;
+    rdfs:label "Mary Smith, Phlebotomist" ;
+    top:identifier "person:mary-smith"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-labtech a hcls:Practitioner ;
+    rdfs:label "Raj Patel, Lab Technician" ;
+    top:identifier "person:raj-patel"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Subject (pseudonymous) --------------------------------------------------
-ex:bd-subj a cr:StudySubject ; rdfs:label "BD-S-001" .
+ex:bd-subj a cr:StudySubject ;
+    rdfs:label "BD-S-001" ;
+    top:identifier "urn:subject:bd-s-001"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
+    cr:subjectId "BD-S-001" .
 
 # --- Capabilities + credentials ---------------------------------------------
-ex:bd-cap-consent a cr:Capability ; rdfs:label "Obtain informed consent" .
-ex:bd-cap-venip   a cr:Capability ; rdfs:label "Venipuncture / specimen collection" .
+ex:bd-cap-consent a cr:Capability ;
+    rdfs:label "Obtain informed consent" ;
+    top:identifier "urn:cap:consent"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
-ex:bd-cred-nurse a cr:Credential ; rdfs:label "GCP + consent training — Nguyen" ;
+ex:bd-cap-venip a cr:Capability ;
+    rdfs:label "Venipuncture / specimen collection" ;
+    top:identifier "urn:cap:venip"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-cred-nurse a cr:Credential ;
+    rdfs:label "GCP + consent training — Nguyen" ;
+    top:identifier "urn:cred:nurse-nguyen"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:credentialOf ex:bd-nurse .
-ex:bd-cred-phleb a cr:Credential ; rdfs:label "Phlebotomy certification + GCP — Smith" ;
+
+ex:bd-cred-phleb a cr:Credential ;
+    rdfs:label "Phlebotomy certification + GCP — Smith" ;
+    top:identifier "urn:cred:phleb-smith"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:credentialOf ex:bd-phleb .
 
 # --- Delegations (PI -> nurse for consent; PI -> phlebotomist for venipuncture)
-ex:bd-deleg-consent a cr:Delegation ; rdfs:label "Delegation: consent -> Nguyen" ;
+ex:bd-deleg-consent-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for consent delegation" .
+
+ex:bd-deleg-consent a cr:Delegation ;
+    rdfs:label "Delegation: consent -> Nguyen" ;
     top:observedAt "2026-02-03T08:30:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-03T08:31:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:bd-deleg-consent-vs ;
     prov:wasAttributedTo ex:bd-pi ;
-    cr:delegator ex:bd-pi ; cr:delegate ex:bd-nurse ;
-    cr:delegatedCapability ex:bd-cap-consent ; cr:requiresCredential ex:bd-cred-nurse ;
-    top:identifier "urn:bd-deleg-consent"^^xsd:anyURI ; top:status "active" .
+    cr:delegator ex:bd-pi ;
+    cr:delegate ex:bd-nurse ;
+    cr:delegatedCapability ex:bd-cap-consent ;
+    cr:requiresCredential ex:bd-cred-nurse ;
+    top:identifier "urn:bd-deleg-consent"^^xsd:anyURI ;
+    top:status "active" .
 
-ex:bd-deleg-venip a cr:Delegation ; rdfs:label "Delegation: venipuncture -> Smith" ;
+ex:bd-deleg-venip-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for venipuncture delegation" .
+
+ex:bd-deleg-venip a cr:Delegation ;
+    rdfs:label "Delegation: venipuncture -> Smith" ;
     top:observedAt "2026-01-28T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-01-28T09:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-28T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:bd-deleg-venip-vs ;
     prov:wasAttributedTo ex:bd-pi ;
-    cr:delegator ex:bd-pi ; cr:delegate ex:bd-phleb ;
-    cr:delegatedCapability ex:bd-cap-venip ; cr:requiresCredential ex:bd-cred-phleb ;
-    top:identifier "urn:bd-deleg-venip"^^xsd:anyURI ; top:status "active" .
+    cr:delegator ex:bd-pi ;
+    cr:delegate ex:bd-phleb ;
+    cr:delegatedCapability ex:bd-cap-venip ;
+    cr:requiresCredential ex:bd-cred-phleb ;
+    top:identifier "urn:bd-deleg-venip"^^xsd:anyURI ;
+    top:status "active" .
 
 # --- Consent (current; obtained under the consent delegation) ----------------
-ex:bd-consent a cr:InformedConsent ; rdfs:label "Informed consent — BD-S-001" ;
+ex:bd-consent-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for BD-S-001 consent" .
+
+ex:bd-consent a cr:InformedConsent ;
+    rdfs:label "Informed consent — BD-S-001" ;
     top:observedAt "2026-02-05T09:45:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-05T09:50:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-05T09:45:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:bd-consent-vs ;
     prov:wasAttributedTo ex:bd-nurse ;
-    cr:forSubject ex:bd-subj ; cr:performedBy ex:bd-nurse ;
-    cr:exercisesCapability ex:bd-cap-consent ; cr:underDelegation ex:bd-deleg-consent ;
-    top:identifier "urn:bd-consent"^^xsd:anyURI ; top:status "active" .
+    cr:forSubject ex:bd-subj ;
+    cr:performedBy ex:bd-nurse ;
+    cr:exercisesCapability ex:bd-cap-consent ;
+    cr:underDelegation ex:bd-deleg-consent ;
+    top:identifier "urn:bd-consent"^^xsd:anyURI ;
+    top:status "active" .
 
 # --- SoA ordering (bloods must follow the ECG) + the actual acts -------------
-ex:bd-pa-ecg   a cr:PlannedActivity ; rdfs:label "ECG (planned)" ; cr:precedes ex:bd-pa-blood .
-ex:bd-pa-blood a cr:PlannedActivity ; rdfs:label "Blood draw (planned)" .
+ex:bd-pa-ecg a cr:PlannedActivity ;
+    rdfs:label "ECG (planned)" ;
+    top:identifier "urn:pa:ecg"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:precedes ex:bd-pa-blood .
 
-ex:bd-visit a cr:Visit ; rdfs:label "Cycle 1 Day 1 visit" ; cr:forSubject ex:bd-subj ;
-    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime .
-ex:bd-ecg-act   a cr:Assessment ; rdfs:label "ECG performed" ;
-    cr:realizes ex:bd-pa-ecg ; cr:atVisit ex:bd-visit ;
-    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime .
-ex:bd-blood-act a cr:Assessment ; rdfs:label "Blood drawn" ;
-    cr:realizes ex:bd-pa-blood ; cr:atVisit ex:bd-visit ;
-    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime .
+ex:bd-pa-blood a cr:PlannedActivity ;
+    rdfs:label "Blood draw (planned)" ;
+    top:identifier "urn:pa:blood"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-visit a cr:Visit ;
+    rdfs:label "Cycle 1 Day 1 visit" ;
+    top:identifier "urn:visit:c1d1"^^xsd:anyURI ;
+    cr:forSubject ex:bd-subj ;
+    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
+    top:status "completed" .
+
+ex:bd-ecg-act a cr:Assessment ;
+    rdfs:label "ECG performed" ;
+    top:identifier "urn:act:ecg"^^xsd:anyURI ;
+    cr:realizes ex:bd-pa-ecg ;
+    cr:atVisit ex:bd-visit ;
+    top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
+    top:status "completed" .
+
+ex:bd-blood-act a cr:Assessment ;
+    rdfs:label "Blood drawn" ;
+    top:identifier "urn:act:blood"^^xsd:anyURI ;
+    cr:realizes ex:bd-pa-blood ;
+    cr:atVisit ex:bd-visit ;
+    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
+    top:status "completed" .
 
 # --- THE HUB: the collection act ---------------------------------------------
 # Performed by the phlebotomist, exercising the venipuncture capability (so the
@@ -104,33 +197,70 @@ ex:bd-coll a cr:StudyEvent ; rdfs:label "Blood draw — Cycle 1 Day 1, BD-S-001"
 # --- Specimen -> custody -> aliquot -> result --------------------------------
 # Forward nav edges (cr:hasCustodyEvent / cr:hasAliquot) sit alongside the
 # back-edges (cr:specimen / cr:aliquotOf) so a forward `join` reaches the chain.
-ex:bd-spec a hcls:Specimen ; rdfs:label "Whole blood (primary)" ;
-    cr:forSubject ex:bd-subj ; cr:collectedAt ex:bd-coll ;
+ex:bd-spec a hcls:Specimen ;
+    rdfs:label "Whole blood (primary)" ;
+    top:identifier "urn:spec:bd-primary"^^xsd:anyURI ;
+    top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
+    top:status "available" ;
+    cr:forSubject ex:bd-subj ;
+    cr:collectedAt ex:bd-coll ;
     cr:hasCustodyEvent ex:bd-ce-recv, ex:bd-ce-verif, ex:bd-ce-pub ;
     cr:hasAliquot ex:bd-aliquot .
 
-ex:bd-ce-recv a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "SampleDue" ; cr:toState "Received" ;
-    top:observedAt "2026-03-02T11:30:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T11:31:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-recv"^^xsd:anyURI ; top:status "superseded" .
-ex:bd-ce-verif a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "ToBeVerified" ; cr:toState "Verified" ;
-    top:observedAt "2026-03-03T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-03T10:01:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-verif"^^xsd:anyURI ; top:status "superseded" .
-ex:bd-ce-pub a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "Verified" ; cr:toState "Published" ;
-    top:observedAt "2026-03-04T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-04T09:01:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-pub"^^xsd:anyURI ; top:status "active" .
+ex:bd-ce-recv a cr:CustodyEvent ;
+    cr:specimen ex:bd-spec ;
+    cr:fromState "SampleDue" ;
+    cr:toState "Received" ;
+    top:observedAt "2026-03-02T11:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T11:31:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:bd-labtech ;
+    top:identifier "urn:bd-ce-recv"^^xsd:anyURI ;
+    top:status "superseded" .
 
-ex:bd-aliquot a hcls:Specimen ; rdfs:label "Serum aliquot -P01" ;
-    cr:forSubject ex:bd-subj ; cr:aliquotOf ex:bd-spec ; prov:wasDerivedFrom ex:bd-spec .
+ex:bd-ce-verif a cr:CustodyEvent ;
+    cr:specimen ex:bd-spec ;
+    cr:fromState "ToBeVerified" ;
+    cr:toState "Verified" ;
+    top:observedAt "2026-03-03T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-03T10:01:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:bd-labtech ;
+    top:identifier "urn:bd-ce-verif"^^xsd:anyURI ;
+    top:status "superseded" .
 
-ex:bd-svc a cr:AssayDefinition ; rdfs:label "TZM-bl Neutralization (NAb) assay" .
-ex:bd-result a cr:AssayResult ; rdfs:label "NAb titer = 1:320" ; rdf:value "1:320" ;
-    cr:onSpecimen ex:bd-aliquot ; cr:forSubject ex:bd-subj ; cr:resultOfAssay ex:bd-svc ;
+ex:bd-ce-pub a cr:CustodyEvent ;
+    cr:specimen ex:bd-spec ;
+    cr:fromState "Verified" ;
+    cr:toState "Published" ;
+    top:observedAt "2026-03-04T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-04T09:01:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:bd-labtech ;
+    top:identifier "urn:bd-ce-pub"^^xsd:anyURI ;
+    top:status "active" .
+
+ex:bd-aliquot a hcls:Specimen ;
+    rdfs:label "Serum aliquot -P01" ;
+    top:identifier "urn:spec:bd-aliquot-p01"^^xsd:anyURI ;
+    top:observedAt "2026-03-03T00:00:00Z"^^xsd:dateTime ;
+    top:status "available" ;
+    cr:forSubject ex:bd-subj ;
+    cr:aliquotOf ex:bd-spec ;
+    prov:wasDerivedFrom ex:bd-spec .
+
+ex:bd-svc a cr:AssayDefinition ;
+    rdfs:label "TZM-bl Neutralization (NAb) assay" ;
+    top:identifier "urn:assay:tzm-nab"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-result a cr:AssayResult ;
+    rdfs:label "NAb titer = 1:320" ;
+    rdf:value "1:320" ;
+    top:identifier "urn:bd-result"^^xsd:anyURI ;
+    cr:onSpecimen ex:bd-aliquot ;
+    cr:forSubject ex:bd-subj ;
+    cr:resultOfAssay ex:bd-svc ;
     cr:derivedFromCollection ex:bd-coll ;
-    top:observedAt "2026-03-04T12:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-04T14:00:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-result"^^xsd:anyURI ; top:status "active" .
-
-# Provenance identity — attribution targets are identified agents, not bare roles.
-ex:bd-phleb top:identifier "person:mary-smith"^^xsd:anyURI .
-ex:bd-nurse top:identifier "person:tom-nguyen"^^xsd:anyURI .
-ex:bd-pi top:identifier "person:ana-rivera"^^xsd:anyURI .
-ex:bd-labtech top:identifier "person:raj-patel"^^xsd:anyURI .
+    top:observedAt "2026-03-04T12:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-04T14:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:bd-labtech ;
+    top:status "active" .
