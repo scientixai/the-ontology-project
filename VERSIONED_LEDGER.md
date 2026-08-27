@@ -17,7 +17,7 @@ Otherwise, DEMOTE: the class remains `top:CommonEntity` (carries DNA: identifier
 
 ---
 
-## KEEP (45 classes)
+## KEEP (46 classes)
 
 ### Regulatory/Locked Documents
 1. **cr:AnalysisDataset** → KEEP — locked for regulatory submission, signed/hashed for Define-XML
@@ -70,13 +70,15 @@ Otherwise, DEMOTE: the class remains `top:CommonEntity` (carries DNA: identifier
 40. **cr:TableListingFigure** → KEEP — analysis output artifact, locked for CSR/submission
 41. **cr:SiteActivation** → KEEP — regulatory gate (site ready to enroll), approval decision
 42. **cr:SiteClosure** → KEEP — regulatory closeout milestone
-43. **cr:CloseOutVisit** → KEEP — GCP closeout COV, regulatory requirement
-44. **cr:InvestigatorSiteFile** → KEEP — ISF archival, GCP essential document
-45. **cr:ArchivalEvent** → KEEP — long-term retention event, regulatory requirement (21 CFR 312.62)
+43. **cr:InvestigatorSiteFile** → KEEP — ISF archival, GCP essential document
+44. **cr:ArchivalEvent** → KEEP — long-term retention event, regulatory requirement (21 CFR 312.62)
+
+### HCLS-wide Consent Framework (Bo ruling, 27 Aug 2026)
+45. **hcls:Consent** → KEEP — promotion to HCLS deliberate; consent has HCLS-wide specializations (research ICF, HIPAA authorization, e-sign, treatment). Durable auditable authorization with valid and transaction time; withdrawal/correction must stay reconstructable. (Bo)
 
 ---
 
-## DEMOTE (35 classes)
+## DEMOTE (38 classes)
 
 These classes are operational events or data points where correction is a new observation/event, not a version supersession:
 
@@ -125,25 +127,26 @@ These classes are operational events or data points where correction is a new ob
 34. **cr:StudySubject** → DEMOTE — should not be Versioned at all (it's an Agent/identity, not a time-based record; the Enrollment is what versions)
 35. **hcls:Specimen** → DEMOTE — specimen identity/instance; the custody chain events are separate
 
+### Operational Site Visit Events (Bo rulings, 27 Aug 2026)
+36. **cr:SiteInitiationVisit** → DEMOTE — cr:SiteActivation is the Versioned green-light; the activation shape requires an SIV as evidence. The SIV is the operational visit, not the gate. (Bo)
+37. **cr:CloseOutVisit** → DEMOTE — cr:SiteClosure is the Versioned gate (parallel to SiteActivation). The class comment in cr-core-site-closeout.ttl states CloseOutVisit is "the same shape as cr:SiteInitiationVisit." No distinction exists. Demote both visits or document a real distinction — both are operational. (Bo)
+38. **cr:Reconciliation** → DEMOTE — the class is an act; reconciliationOutcome says a discrepancy is resolved by a later balanced reconciliation (a new event/computation, not a revision of the same act). SiteClosure stays Versioned. A signed reconciliation certificate, if needed later, is a Versioned attestation/report, not Versioning the activity. (Bo)
+
 ---
 
-## AMBIGUOUS (3 classes)
+## AMBIGUOUS (0 classes)
 
-Classes where the architectural need is unclear from the class definition alone. Left Versioned pending domain-expert ruling:
-
-1. **cr:Reconciliation** → AMBIGUOUS — site closeout reconciliation; could be a locked accounting record (KEEP) or operational tally (DEMOTE)
-2. **cr:SiteInitiationVisit** → AMBIGUOUS — SIV completion; could be regulatory gate (KEEP) or operational milestone (DEMOTE)
-3. **hcls:Consent** → AMBIGUOUS — general HCLS consent (sibling to cr:InformedConsent); may need versioning for HIPAA/data-use consents, or may be out of CR scope
+All classes have been ruled KEEP or DEMOTE by domain-expert review (Bo, 27 Aug 2026).
 
 ---
 
 ## Summary
-- **KEEP**: 45 classes (regulatory/locked documents, append-only judgments, GCP audit, IMP accountability)
-- **DEMOTE**: 35 classes (operational events, metrics, planning specs)
-- **AMBIGUOUS**: 3 classes (pending domain-expert ruling)
-- **Total audited**: 83 classes
+- **KEEP**: 46 classes (regulatory/locked documents, append-only judgments, GCP audit, IMP accountability, HCLS consent framework)
+- **DEMOTE**: 38 classes (operational events, metrics, planning specs, operational site visits)
+- **AMBIGUOUS**: 0 classes
+- **Total audited**: 84 classes
 
 ## Implementation Notes
 - Demoting a class: remove `top:Versioned` from its `rdfs:subClassOf` list in the ontology
 - Update examples: demoted classes drop validFrom + prov:specializationOf → VersionSeries; keep DNA (identifier + observedAt + status)
-- AMBIGUOUS classes: leave Versioned until resolved in a future PR
+- All classes ruled: implementation deferred to follow-on PR
