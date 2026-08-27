@@ -120,15 +120,37 @@ def main() -> int:
         return 1
 
     # Load Core shapes + CR shapes (merged into shapes_graph)
+    # Core shapes.ttl uses owl:imports, which rdflib doesn't follow automatically.
+    # Load each Core module explicitly to match the advertised --imports behavior.
     shapes_graph = rdflib.Graph()
-    shapes_graph.parse(str(CORE_SHAPES_FILE), format="turtle")
+    core_modules = [
+        "modules/top-root.ttl",
+        "modules/top-agent.ttl",
+        "modules/top-location.ttl",
+        "modules/top-resource.ttl",
+        "modules/top-scope.ttl",
+        "modules/top-temporal.ttl",
+        "modules/top-evidence.ttl",
+        "modules/top-outcome.ttl",
+        "modules/top-constraint.ttl",
+        "modules/top-bitemporal.ttl",
+        "modules/top-ai.ttl",
+    ]
+    for module in core_modules:
+        module_path = CORE_SHAPES_FILE.parent / module
+        shapes_graph.parse(str(module_path), format="turtle")
+    # Load Core disjoint shapes
+    shapes_graph.parse(str(CORE_SHAPES_FILE.parent / "shapes" / "top-disjoint.ttl"), format="turtle")
+    # Load CR shapes
     shapes_graph.parse(str(SHAPES_FILE), format="turtle")
     
     # Load Core ontology (via imports) + CR ontology for RDFS inference (ont_graph)
     # This ensures CR instances are retyped to Core superclasses, so Core DNA/
     # BitemporalShape/SPARQL constraints see them.
     ont_graph = rdflib.Graph()
-    ont_graph.parse(str(CORE_SHAPES_FILE), format="turtle")
+    for module in core_modules:
+        module_path = CORE_SHAPES_FILE.parent / module
+        ont_graph.parse(str(module_path), format="turtle")
     ont_graph.parse(str(CR_ONTOLOGY_FILE), format="turtle")
 
     with open(MANIFEST_FILE) as f:
