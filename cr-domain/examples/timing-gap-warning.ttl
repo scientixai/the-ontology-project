@@ -9,8 +9,18 @@
 # RISK-PROPORTIONATE (Warning, not Violation): consent obtained 2026-02-02, but the
 # nurse's delegation only became effective 2026-02-05. The capability and credential
 # DO exist — this is the user's "consented before delegated" case: reviewable, not fatal.
-ex:tg-pi    a hcls:Person, prov:Agent ; rdfs:label "Dr. Susan Hale" ; top:identifier "person:susan-hale"^^xsd:anyURI ; hcls:actsAs "Principal Investigator" .
-ex:tg-nurse a hcls:Person, prov:Agent ; rdfs:label "Mark Ellis" ; top:identifier "person:mark-ellis"^^xsd:anyURI ; hcls:actsAs "Research Nurse" .
+ex:tg-pi    a hcls:Person, prov:Agent ;
+    rdfs:label "Dr. Susan Hale" ;
+    top:identifier "person:susan-hale"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Principal Investigator" .
+ex:tg-nurse a hcls:Person, prov:Agent ;
+    rdfs:label "Mark Ellis" ;
+    top:identifier "person:mark-ellis"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Research Nurse" .
 
 ex:tg-subj  a cr:StudySubject ;
     cr:subjectId "TG-S-001" ;
@@ -37,9 +47,12 @@ ex:tg-deleg a cr:Delegation ;
     top:recordedAt "2026-02-05T08:01:00Z"^^xsd:dateTime ;
     top:validFrom "2026-02-05T08:01:00Z"^^xsd:dateTime ;
     top:status "active" ;
+    prov:specializationOf ex:tg-deleg-series ;
     prov:wasAttributedTo ex:tg-pi ;
     cr:delegator ex:tg-pi ; cr:delegate ex:tg-nurse ;
     cr:delegatedCapability ex:tg-cap ; cr:requiresCredential ex:tg-cred .
+ex:tg-deleg-series a top:VersionSeries ;
+    top:identifier "urn:tg-deleg:series"^^xsd:anyURI .
 
 ex:tg-consent a cr:InformedConsent ;
     top:identifier "urn:tg-consent"^^xsd:anyURI ;
@@ -47,6 +60,7 @@ ex:tg-consent a cr:InformedConsent ;
     top:recordedAt "2026-02-02T09:05:00Z"^^xsd:dateTime ;
     top:validFrom "2026-02-02T09:05:00Z"^^xsd:dateTime ;
     top:status "active" ;
+    prov:specializationOf ex:tg-consent-series ;
     cr:consentDate "2026-02-02"^^xsd:date ;
     cr:consentVersion "ICF-v1.0" ;
     cr:consentStatus "active" ;
@@ -54,3 +68,5 @@ ex:tg-consent a cr:InformedConsent ;
     prov:wasAttributedTo ex:tg-nurse ;
     cr:forSubject ex:tg-subj ; cr:performedBy ex:tg-nurse ;
     cr:exercisesCapability ex:tg-cap ; cr:underDelegation ex:tg-deleg .
+ex:tg-consent-series a top:VersionSeries ;
+    top:identifier "urn:tg-consent:series"^^xsd:anyURI .
