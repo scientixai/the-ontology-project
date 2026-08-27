@@ -14,6 +14,74 @@
     top:observedAt "2026-01-01T10:00:00Z"^^xsd:dateTime ;
     top:status "ACTIVE" .
 
+<urn:ngsi-ld:Person:mary-smith>
+    a hcls:Person ;
+    top:identifier "urn:ngsi-ld:Person:mary-smith"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:Sponsor:acme-pharma>
+    a cr:Sponsor ;
+    top:identifier "urn:ngsi-ld:Sponsor:acme-pharma"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:Practitioner:pi-001>
+    a hcls:Practitioner ;
+    top:identifier "urn:ngsi-ld:Practitioner:pi-001"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:Capability:consent-capability>
+    a cr:Capability ;
+    top:identifier "urn:ngsi-ld:Capability:consent-capability"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:Credential:nurse-credential>
+    a cr:Credential ;
+    top:identifier "urn:ngsi-ld:Credential:nurse-credential"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:ProtocolVersion:ONCO-423-v1>
+    a cr:ProtocolVersion ;
+    top:identifier "urn:ngsi-ld:ProtocolVersion:ONCO-423-v1"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-05T10:05:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    prov:wasAttributedTo <urn:ngsi-ld:Practitioner:nurse-001> ;
+    prov:specializationOf <urn:ngsi-ld:ProtocolVersion:ONCO-423-vs> .
+
+<urn:ngsi-ld:ProtocolVersion:ONCO-423-vs>
+    a top:VersionSeries ;
+    top:identifier "urn:ngsi-ld:ProtocolVersion:ONCO-423"^^xsd:anyURI ;
+    top:observedAt "2026-01-05T10:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+<urn:ngsi-ld:Delegation:consent-deleg>
+    a cr:Delegation ;
+    cr:delegator <urn:ngsi-ld:Practitioner:pi-001> ;
+    cr:delegate <urn:ngsi-ld:Practitioner:nurse-001> ;
+    cr:delegatedCapability <urn:ngsi-ld:Capability:consent-capability> ;
+    cr:requiresCredential <urn:ngsi-ld:Credential:nurse-credential> ;
+    top:identifier "urn:ngsi-ld:Delegation:consent-deleg"^^xsd:anyURI ;
+    top:observedAt "2026-01-10T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-10T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-10T10:05:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    prov:wasAttributedTo <urn:ngsi-ld:Practitioner:pi-001> ;
+    prov:specializationOf <urn:ngsi-ld:Delegation:consent-deleg-vs> .
+
+<urn:ngsi-ld:Delegation:consent-deleg-vs>
+    a top:VersionSeries ;
+    top:identifier "urn:ngsi-ld:Delegation:consent-deleg"^^xsd:anyURI ;
+    top:observedAt "2026-01-10T10:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
 <urn:ngsi-ld:StudySite:mskcc-onco423>
     a cr:StudySite ;
     cr:forStudy <urn:ngsi-ld:Study:ONCO-423> ;
@@ -26,6 +94,8 @@
     cr:studyId "ONCO-423" ;
     cr:hasArm <urn:ngsi-ld:Arm:ONCO-423-arm-a> ;
     cr:conductedAt <urn:ngsi-ld:StudySite:mskcc-onco423> ;
+    cr:hasProtocolVersion <urn:ngsi-ld:ProtocolVersion:ONCO-423-v1> ;
+    cr:sponsoredBy <urn:ngsi-ld:Sponsor:acme-pharma> ;
     top:identifier "urn:ngsi-ld:Study:ONCO-423"^^xsd:anyURI ;
     top:observedAt "2026-01-10T10:00:00Z"^^xsd:dateTime ;
     top:status "ACTIVE" .
@@ -79,10 +149,14 @@
     cr:consentDate "2026-02-05"^^xsd:date ;
     cr:consentMethod "IN_PERSON" ;
     cr:consentStatus "active" ;
+    cr:consentFormIRI "urn:icf:ONCO-423-v3.1"^^xsd:anyURI ;
     cr:performedBy <urn:ngsi-ld:Practitioner:nurse-001> ;
+    cr:forSubject <urn:ngsi-ld:StudySubject:onco-423-mskcc-p001> ;
+    cr:underDelegation <urn:ngsi-ld:Delegation:consent-deleg> ;
     top:identifier "urn:ngsi-ld:InformedConsentAct:c-p001-v1"^^xsd:anyURI ;
     top:observedAt "2026-02-05T09:45:00Z"^^xsd:dateTime ;
     top:validFrom "2026-02-05T09:45:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T09:50:00Z"^^xsd:dateTime ;
     top:status "active" ;
     prov:wasAttributedTo <urn:ngsi-ld:Practitioner:nurse-001> ;
     prov:specializationOf <urn:ngsi-ld:InformedConsentAct:c-p001-vs> .
@@ -90,7 +164,8 @@
 <urn:ngsi-ld:ScreeningRecord:sr-p001-1>
     a cr:ScreeningRecord ;
     cr:screeningStartDate "2026-02-05"^^xsd:date ;
-    cr:screeningOutcome "ENROLLED" ;
+    cr:screeningOutcome "eligible" ;
+    cr:screensRecruit <urn:ngsi-ld:Recruit:onco-423-r001> ;
     top:identifier "urn:ngsi-ld:ScreeningRecord:sr-p001-1"^^xsd:anyURI ;
     top:observedAt "2026-02-05T10:00:00Z"^^xsd:dateTime ;
     top:status "ACTIVE" .
@@ -107,9 +182,13 @@
     cr:enrollmentMethod "ON_SITE" ;
     cr:protocolVersionAtEnrollment "v3.1" ;
     cr:enrolledInArm <urn:ngsi-ld:Arm:ONCO-423-arm-a> ;
+    cr:asSubject <urn:ngsi-ld:StudySubject:onco-423-mskcc-p001> ;
+    cr:intoStudy <urn:ngsi-ld:Study:ONCO-423> ;
+    cr:enrolledPerson <urn:ngsi-ld:Person:mary-smith> ;
     top:identifier "urn:ngsi-ld:Enrollment:er-p001-1"^^xsd:anyURI ;
     top:observedAt "2026-02-05T10:05:00Z"^^xsd:dateTime ;
     top:validFrom "2026-02-05T10:05:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T10:10:00Z"^^xsd:dateTime ;
     top:status "active" ;
     prov:wasAttributedTo <urn:ngsi-ld:Practitioner:nurse-001> ;
     prov:specializationOf <urn:ngsi-ld:Enrollment:er-p001-vs> .
