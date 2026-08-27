@@ -11,47 +11,100 @@
 # Primary blood draw -> custody states (Received->Verified->Published, bitemporal) ->
 # serum aliquot (derived) -> NAb assay result. The result traces back to the blood draw.
 
-ex:spec-subj a cr:StudySubject ; rdfs:label "LIMS-S-001" .
-ex:draw-event a cr:StudyEvent ; rdfs:label "Cycle 1 Day 1 visit (blood draw)" ;
+ex:spec-subj a cr:StudySubject ;
+    rdfs:label "LIMS-S-001" ;
+    top:identifier "urn:subject:lims-s-001"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
+    cr:subjectId "LIMS-S-001" .
+
+ex:draw-event a cr:StudyEvent ;
+    rdfs:label "Cycle 1 Day 1 visit (blood draw)" ;
+    top:identifier "urn:event:c1d1-draw"^^xsd:anyURI ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     cr:forSubject ex:spec-subj .
 
 # Primary specimen, collected at the blood-draw event.
-ex:spec-1 a hcls:Specimen ; rdfs:label "Whole blood (primary)" ;
-    cr:forSubject ex:spec-subj ; cr:collectedAt ex:draw-event .
+ex:spec-1 a hcls:Specimen ;
+    rdfs:label "Whole blood (primary)" ;
+    top:identifier "urn:specimen:spec-1"^^xsd:anyURI ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "available" ;
+    cr:forSubject ex:spec-subj ;
+    cr:collectedAt ex:draw-event .
 
-ex:labtech a hcls:Practitioner ; rdfs:label "Kenji Sato" ; hcls:actsAs "Lab Technician" .
+ex:labtech a hcls:Practitioner ;
+    rdfs:label "Kenji Sato" ;
+    top:identifier "person:kenji-sato"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Lab Technician" .
 
 # Chain of custody — each transition bitemporal + attested.
-ex:ce-recv a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "SampleDue" ; cr:toState "Received" ;
-    top:observedAt "2026-03-10T13:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T13:02:00Z"^^xsd:dateTime ;
+ex:ce-recv a cr:CustodyEvent ;
+    cr:specimen ex:spec-1 ;
+    cr:fromState "SampleDue" ;
+    cr:toState "Received" ;
+    top:identifier "urn:ce-recv"^^xsd:anyURI ;
+    top:observedAt "2026-03-10T13:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T13:02:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     prov:wasAttributedTo ex:labtech .
-ex:ce-verif a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "ToBeVerified" ; cr:toState "Verified" ;
-    top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-11T10:01:00Z"^^xsd:dateTime ;
+
+ex:ce-verif a cr:CustodyEvent ;
+    cr:specimen ex:spec-1 ;
+    cr:fromState "ToBeVerified" ;
+    cr:toState "Verified" ;
+    top:identifier "urn:ce-verif"^^xsd:anyURI ;
+    top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-11T10:01:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     prov:wasAttributedTo ex:labtech .
-ex:ce-pub a cr:CustodyEvent ; cr:specimen ex:spec-1 ; cr:fromState "Verified" ; cr:toState "Published" ;
-    top:observedAt "2026-03-12T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T09:01:00Z"^^xsd:dateTime ;
+
+ex:ce-pub a cr:CustodyEvent ;
+    cr:specimen ex:spec-1 ;
+    cr:fromState "Verified" ;
+    cr:toState "Published" ;
+    top:identifier "urn:ce-pub"^^xsd:anyURI ;
+    top:observedAt "2026-03-12T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-12T09:01:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     prov:wasAttributedTo ex:labtech .
 
 # Aliquot derived from the primary (partition lineage).
-ex:spec-aliquot a hcls:Specimen ; rdfs:label "Serum aliquot -P01" ;
-    cr:forSubject ex:spec-subj ; cr:aliquotOf ex:spec-1 ; prov:wasDerivedFrom ex:spec-1 .
+ex:spec-aliquot a hcls:Specimen ;
+    rdfs:label "Serum aliquot -P01" ;
+    top:identifier "urn:specimen:spec-aliquot-p01"^^xsd:anyURI ;
+    top:observedAt "2026-03-11T00:00:00Z"^^xsd:dateTime ;
+    top:status "available" ;
+    cr:forSubject ex:spec-subj ;
+    cr:aliquotOf ex:spec-1 ;
+    prov:wasDerivedFrom ex:spec-1 .
 
 # Analysis: catalog service, request on the aliquot, result joined to the subject.
-ex:svc-nab a cr:AssayDefinition ; rdfs:label "TZM-bl Neutralization (NAb) assay" .
-ex:ar-1 a cr:LabOrder ; cr:onSpecimen ex:spec-aliquot ; cr:ordersAssay ex:svc-nab ;
-    top:observedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:labtech .
-ex:res-nab a cr:AssayResult ; rdfs:label "NAb titer = 1:320" ; rdf:value "1:320" ;
-    cr:onSpecimen ex:spec-aliquot ; cr:forSubject ex:spec-subj ; cr:resultOfAssay ex:svc-nab ;
-    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-13T14:00:00Z"^^xsd:dateTime ;
+ex:svc-nab a cr:AssayDefinition ;
+    rdfs:label "TZM-bl Neutralization (NAb) assay" ;
+    top:identifier "urn:assay-def:tzm-nab"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:ar-1 a cr:LabOrder ;
+    cr:onSpecimen ex:spec-aliquot ;
+    cr:ordersAssay ex:svc-nab ;
+    top:identifier "urn:ar-1"^^xsd:anyURI ;
+    top:observedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-12T10:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     prov:wasAttributedTo ex:labtech .
 
-# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/ar-1> top:identifier "urn:ar-1"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/ce-pub> top:identifier "urn:ce-pub"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/ce-recv> top:identifier "urn:ce-recv"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/ce-verif> top:identifier "urn:ce-verif"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/res-nab> top:identifier "urn:res-nab"^^xsd:anyURI ; top:status "active" .
-
-# Provenance identity — attribution targets are identified agents, not bare roles.
-ex:labtech top:identifier "person:kenji-sato"^^xsd:anyURI .
+ex:res-nab a cr:AssayResult ;
+    rdfs:label "NAb titer = 1:320" ;
+    rdf:value "1:320" ;
+    top:identifier "urn:res-nab"^^xsd:anyURI ;
+    cr:onSpecimen ex:spec-aliquot ;
+    cr:forSubject ex:spec-subj ;
+    cr:resultOfAssay ex:svc-nab ;
+    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-13T14:00:00Z"^^xsd:dateTime ;
+    top:status "final" ;
+    prov:wasAttributedTo ex:labtech .
