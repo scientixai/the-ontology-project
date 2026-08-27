@@ -15,7 +15,12 @@
 # EXPECT: warning.
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:cdw-coder a hcls:Person, prov:Agent ; rdfs:label "Noor Haddad" ; top:identifier "person:noor-haddad"^^xsd:anyURI ; hcls:actsAs "Medical Coder" .
+ex:cdw-coder a hcls:Person, prov:Agent ;
+    rdfs:label "Noor Haddad" ;
+    top:identifier "person:noor-haddad"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Medical Coder" .
 
 ex:cdw-ae a cr:AdverseEvent ;
     rdfs:label "AE: headache" ;
@@ -35,5 +40,9 @@ ex:cdw-assign a cr:CodeAssignment ;
     cr:codingMethod "autocoder" ;
     cr:codedBy ex:cdw-coder ;
     top:observedAt "2026-03-11T09:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-11T09:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-11T09:00:02Z"^^xsd:dateTime ;
+    prov:specializationOf ex:cdw-assign-series ;
     prov:wasAttributedTo ex:cdw-coder .
+ex:cdw-assign-series a top:VersionSeries ;
+    top:identifier "urn:coding:ae-headache:series"^^xsd:anyURI .
