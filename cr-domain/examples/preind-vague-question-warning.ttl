@@ -1,12 +1,29 @@
 @prefix ex:   <https://top.scientix.ai/examples/> .
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 # RISK-PROPORTIONATE (Warning): briefing book + question present (readiness ok), but the
 # question is vague — no proposed position. Reviewable, not fatal.
 ex:preind2 a cr:RegulatoryInteraction ;
     cr:meetingType "Pre-IND" ;
     cr:hasBriefingBook ex:bb2 ;
-    cr:hasQuestion ex:q2 .
-ex:bb2 a cr:BriefingBook .
-ex:q2 a cr:RegulatoryQuestion ; rdfs:label "Is our overall development plan promising?" .
+    cr:hasQuestion ex:q2 ;
+    top:identifier "ex:preind2"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-20T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+ex:bb2 a cr:BriefingBook ;
+    top:identifier "ex:bb2"^^xsd:anyURI ;
+    top:observedAt "2026-01-19T09:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-19T09:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+ex:q2 a cr:RegulatoryQuestion ; 
+    rdfs:label "Is our overall development plan promising?" ;
+    top:identifier "ex:q2"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T09:30:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-20T09:30:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
