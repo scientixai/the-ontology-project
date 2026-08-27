@@ -15,7 +15,7 @@
 # EXPECT: violation.
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:spv-pharmacist a hcls:Person, prov:Agent ; rdfs:label "Hannah Cole" ; top:identifier "person:hannah-cole" ; hcls:actsAs "Unblinded Pharmacist" .
+ex:spv-pharmacist a hcls:Person, prov:Agent ; rdfs:label "Hannah Cole" ; top:identifier "person:hannah-cole"^^xsd:anyURI ; hcls:actsAs "Unblinded Pharmacist" .
 ex:spv-lot a hcls:Lot ; rdfs:label "Lot L-3301" .
 
 ex:spv-subject a cr:StudySubject ;
@@ -25,7 +25,7 @@ ex:spv-subject a cr:StudySubject ;
 
 ex:spv-excursion a cr:TemperatureExcursion ;
     rdfs:label "Excursion on L-3301 — STILL QUARANTINED" ;
-    top:identifier "urn:excursion:L-3301-1" ; top:status "active" ;
+    top:identifier "urn:excursion:L-3301-1"^^xsd:anyURI ; top:status "active" ;
     cr:excursionOnLot ex:spv-lot ;
     cr:excursionRange "12.1°C for 9h; required 2-8°C" ;
     cr:excursionDisposition "quarantined" ;
@@ -36,7 +36,7 @@ ex:spv-excursion a cr:TemperatureExcursion ;
 # Dispensed AFTER the excursion, while still quarantined  ← Violation (a)
 ex:spv-dispense a cr:DispensingEvent ;
     rdfs:label "Dispense from quarantined lot" ;
-    top:identifier "urn:dispense:S-099-C1" ; top:status "active" ;
+    top:identifier "urn:dispense:S-099-C1"^^xsd:anyURI ; top:status "active" ;
     cr:dispensesToSubject ex:spv-subject ;
     cr:dispensesFromLot ex:spv-lot ;
     cr:quantityDispensed 30 ;
@@ -47,7 +47,7 @@ ex:spv-dispense a cr:DispensingEvent ;
 # Destroyed with no authorizer  ← Violation (b)
 ex:spv-destruction a cr:DestructionEvent ;
     rdfs:label "Destruction with no recorded authorizer" ;
-    top:identifier "urn:destroy:L-3301-1" ; top:status "active" ;
+    top:identifier "urn:destroy:L-3301-1"^^xsd:anyURI ; top:status "active" ;
     cr:destroysLot ex:spv-lot ;
     cr:quantityDestroyed 12 ;
     top:observedAt "2026-06-15T09:00:00Z"^^xsd:dateTime ;

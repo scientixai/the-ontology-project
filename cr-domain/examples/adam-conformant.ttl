@@ -19,33 +19,68 @@ ex:src-ae a cr:AdverseEvent ; rdfs:label "Grade 2 rash (source)" ;
     prov:wasAttributedTo ex:inv-adam .
 ex:s-adam a cr:StudySubject ;
     cr:subjectId "LY900018-001" ;
+    top:identifier "urn:s-adam"^^xsd:anyURI ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
     top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
-ex:inv-adam a hcls:Practitioner ; rdfs:label "Dr. Nadia Rahman" ; hcls:actsAs "Investigator" .
+ex:inv-adam a hcls:Practitioner ;
+    rdfs:label "Dr. Nadia Rahman" ;
+    hcls:actsAs "Investigator" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ADaM analysis dataset, derived from the native source.
 ex:adae a cr:AnalysisDataset ; rdfs:label "ADAE" ;
     prov:wasDerivedFrom ex:src-ae ;
     top:observedAt  "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:adae-series ;
     prov:wasAttributedTo ex:biostat-adam .
-ex:biostat-adam a hcls:Practitioner ; rdfs:label "Wei Zhang" ; hcls:actsAs "Biostatistician" .
+ex:adae-series a top:VersionSeries ;
+    top:identifier "urn:adae:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:biostat-adam a hcls:Practitioner ;
+    rdfs:label "Wei Zhang" ;
+    hcls:actsAs "Biostatistician" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Analysis result, derived from the ADaM dataset, and traceable to estimand + SAP.
 ex:res-adam a cr:EndpointResult ; rdfs:label "AE incidence = 1" ; rdf:value "1" ;
     cr:measuresEndpoint ex:ep-adam ; cr:perEstimand ex:est-adam ; cr:analyzedUnder ex:sap-adam ;
     prov:wasDerivedFrom ex:adae ;
     top:observedAt  "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-02T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:res-adam-series ;
     prov:wasAttributedTo ex:biostat-adam .
-ex:ep-adam a cr:Endpoint ; rdfs:label "AE incidence" .
-ex:est-adam a cr:Estimand ; rdfs:label "AE incidence estimand (safety population)" .
-ex:sap-adam a cr:StatisticalAnalysisPlan ; rdfs:label "Safety SAP v1.0" .
+ex:res-adam-series a top:VersionSeries ;
+    top:identifier "urn:res-adam:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:ep-adam a cr:Endpoint ;
+    rdfs:label "AE incidence" ;
+    top:identifier "urn:ep-adam"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:est-adam a cr:Estimand ;
+    rdfs:label "AE incidence estimand (safety population)" ;
+    top:identifier "urn:est-adam"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sap-adam a cr:StatisticalAnalysisPlan ;
+    rdfs:label "Safety SAP v1.0" ;
+    top:identifier "urn:sap-adam"^^xsd:anyURI ;
+    top:observedAt "2025-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/adae> top:identifier "urn:adae" ; top:status "active" .
-<https://top.scientix.ai/examples/res-adam> top:identifier "urn:res-adam" ; top:status "active" .
-<https://top.scientix.ai/examples/src-ae> top:identifier "urn:src-ae" ; top:status "active" .
+<https://top.scientix.ai/examples/adae> top:identifier "urn:adae"^^xsd:anyURI ; top:status "active" .
+<https://top.scientix.ai/examples/res-adam> top:identifier "urn:res-adam"^^xsd:anyURI ; top:status "active" .
+<https://top.scientix.ai/examples/src-ae> top:identifier "urn:src-ae"^^xsd:anyURI ; top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:biostat-adam top:identifier "person:wei-zhang" .
-ex:inv-adam top:identifier "person:nadia-rahman" .
+ex:biostat-adam top:identifier "person:wei-zhang"^^xsd:anyURI .
+ex:inv-adam top:identifier "person:nadia-rahman"^^xsd:anyURI .

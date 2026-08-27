@@ -534,17 +534,26 @@ cr:FlagForSponsorReport a hcls:Action ;
 cr:GDPR_Art6_1_a a owl:NamedIndividual,
         cr:LawfulBasis ;
     rdfs:label "GDPR Art 6(1)(a) — Consent" ;
-    cr:lawfulBasisDescription "Processing is based on the data subject's consent (Art 6(1)(a) GDPR)." .
+    cr:lawfulBasisDescription "Processing is based on the data subject's consent (Art 6(1)(a) GDPR)." ;
+    top:identifier "urn:lawful-basis:gdpr-art6-1-a"^^xsd:anyURI ;
+    top:observedAt "2018-05-25T00:00:00+00:00"^^xsd:dateTime ;
+    top:status "active" .
 
 cr:GDPR_Art9_2_a a owl:NamedIndividual,
         cr:LawfulBasis ;
     rdfs:label "GDPR Art 9(2)(a) — Explicit Consent (special categories)" ;
-    cr:lawfulBasisDescription "Processing of special category data with explicit consent of the data subject (Art 9(2)(a) GDPR)." .
+    cr:lawfulBasisDescription "Processing of special category data with explicit consent of the data subject (Art 9(2)(a) GDPR)." ;
+    top:identifier "urn:lawful-basis:gdpr-art9-2-a"^^xsd:anyURI ;
+    top:observedAt "2018-05-25T00:00:00+00:00"^^xsd:dateTime ;
+    top:status "active" .
 
 cr:GDPR_Art9_2_j a owl:NamedIndividual,
         cr:LawfulBasis ;
     rdfs:label "GDPR Art 9(2)(j) — Scientific Research" ;
-    cr:lawfulBasisDescription "Processing necessary for scientific or historical research purposes (Art 9(2)(j) GDPR)." .
+    cr:lawfulBasisDescription "Processing necessary for scientific or historical research purposes (Art 9(2)(j) GDPR)." ;
+    top:identifier "urn:lawful-basis:gdpr-art9-2-j"^^xsd:anyURI ;
+    top:observedAt "2018-05-25T00:00:00+00:00"^^xsd:dateTime ;
+    top:status "active" .
 
 cr:GenerateBudgetForecast a hcls:Action ;
     rdfs:label "Generate Budget Forecast" ;
@@ -2664,6 +2673,12 @@ cr:meddraDictionaryVersion a owl:DatatypeProperty ;
     rdfs:comment "Version of MedDRA used for coding (e.g. '26.0')." ;
     rdfs:domain cr:AdverseEvent ;
     rdfs:range xsd:string ;
+    top:flavor "Additive" .
+
+cr:meddraLowestLevelTerm a owl:ObjectProperty ;
+    rdfs:label "MedDRA lowest level term" ;
+    rdfs:comment "IRI reference to a MedDRA Lowest Level Term (LLT). Required alongside PT for submission-ready coding. Does not reproduce licensed content." ;
+    rdfs:domain cr:AdverseEvent ;
     top:flavor "Additive" .
 
 cr:meddraPreferredTerm a owl:ObjectProperty ;
@@ -4905,8 +4920,7 @@ cr:AddLogEntry a hcls:Action ;
 cr:Administration a owl:Class ;
     rdfs:label "Administration" ;
     rdfs:comment "A dosing event." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
+    rdfs:subClassOf top:Temporal .
 
 cr:AnalysisVariable a owl:Class ;
     rdfs:label "Analysis Variable" ;
@@ -5285,8 +5299,7 @@ cr:SignCRF a hcls:Action ;
 cr:SiteInitiationVisit a owl:Class ;
     rdfs:label "Site Initiation Visit (SIV)" ;
     rdfs:comment "The visit that prepares and activates a site for enrollment." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "SIV"@en,
         "initiation visit"@en ;
     skos:prefLabel "Site Initiation Visit"@en .
@@ -5323,8 +5336,7 @@ cr:SubmitExpeditedReport a hcls:Action ;
 cr:TransferFile a owl:Class ;
     rdfs:label "Transfer File" ;
     rdfs:comment "Grounded in the info-model TRANSFER_FILE entity. The specification is the plan; the file is the Outcome:Artifact." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned ;
+    rdfs:subClassOf top:Outcome ;
     skos:definition "An actual delivered file instance (as distinct from its TransferSpecification). Carries its own transfer lifecycle timestamps and PROV attribution to the vendor org." .
 
 cr:TrialMasterFile a owl:Class ;
@@ -5810,8 +5822,7 @@ cr:InvestigatorSiteFile a owl:Class ;
 cr:LabOrder a owl:Class ;
     rdfs:label "Lab Order" ;
     rdfs:comment "The order binding an assay to a specimen — what the operator calls 'the order'. Renamed from cr:AnalysisRequest: 'analysis request' collides with every non-lab sense of analysis (e.g. a manager asking for a site-performance analysis) — first-principles P2, ADR-0024 ambiguity gate." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "lab request"@en,
         "order"@en,
         "test order"@en ;
@@ -5858,8 +5869,7 @@ cr:RetentionPolicy a owl:Class ;
 cr:RiskManagementPlan a owl:Class ;
     rdfs:label "Risk Management Plan" ;
     rdfs:comment "A living document — updated as circumstances change; versions supersede bitemporally. Aggregates via cr:documentsAssessment." ;
-    rdfs:subClassOf top:Constraint,
-        top:Versioned ;
+    rdfs:subClassOf top:Constraint ;
     skos:altLabel "RBQM plan"@en,
         "RMP"@en,
         "quality management plan"@en ;
@@ -5869,8 +5879,7 @@ cr:RiskManagementPlan a owl:Class ;
 cr:RiskReview a owl:Class ;
     rdfs:label "Risk Review" ;
     rdfs:comment "RBQM is a cycle, not a checklist: identification, evaluation, control, communication, review — and review feeds back into identification. The review is the entity that makes the cycle auditable." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
+    rdfs:subClassOf top:Evidence ;
     skos:altLabel "periodic risk review"@en,
         "risk re-assessment"@en ;
     skos:definition "A periodic re-examination of a risk assessment against accumulated trial experience — the ICH E6(R3) risk review step. Each review confirms, revises, or retires the assessment it reviews." ;
@@ -5879,8 +5888,7 @@ cr:RiskReview a owl:Class ;
 cr:RiskSignal a owl:Class ;
     rdfs:label "Risk Signal" ;
     rdfs:comment "A leading indicator (a trend or metric) that flags a deviation antecedent before it manifests — the signal a provenance-native graph can hold as low-trust, provenance-tagged evidence." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
+    rdfs:subClassOf top:Evidence ;
     skos:altLabel "KRI"@en,
         "KRI signal"@en,
         "key risk indicator"@en ;
@@ -5993,8 +6001,7 @@ cr:AssayDefinition a owl:Class ;
 cr:AssayResult a owl:Class ;
     rdfs:label "Assay Result" ;
     rdfs:comment "A measured laboratory result on a Specimen, joined to the StudySubject." ;
-    rdfs:subClassOf hcls:Observation,
-        top:Versioned ;
+    rdfs:subClassOf hcls:Observation ;
     skos:altLabel "lab result"@en,
         "lab value"@en,
         "test result"@en ;
@@ -6010,8 +6017,7 @@ cr:CaseReportForm a owl:Class ;
 cr:CloseOutVisit a owl:Class ;
     rdfs:label "Close-Out Visit" ;
     rdfs:comment "The closing bracket of the SIV — same shape as cr:SiteInitiationVisit, at the other end of the site's life." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "COV"@en,
         "closeout visit"@en,
         "final monitoring visit"@en ;
@@ -6100,8 +6106,7 @@ cr:RecruitmentCampaign a owl:Class ;
 
 cr:ReturnEvent a owl:Class ;
     rdfs:label "Return Event" ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "drug return"@en,
         "returned units"@en ;
     skos:definition "The return of unused or partially used investigational product from a participant or site back into custody, with the returned quantity." ;
@@ -6133,8 +6138,7 @@ cr:SeriousAdverseEvent a owl:Class ;
 
 cr:Shipment a owl:Class ;
     rdfs:label "Shipment" ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "consignment"@en,
         "drug shipment"@en,
         "resupply"@en ;
@@ -6175,8 +6179,7 @@ cr:SubmitMonitoringReport a hcls:Action ;
 
 cr:TemperatureExcursion a owl:Class ;
     rdfs:label "Temperature Excursion" ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned ;
+    rdfs:subClassOf top:Outcome ;
     skos:altLabel "cold-chain excursion"@en,
         "excursion"@en,
         "temp excursion"@en ;
@@ -6191,8 +6194,7 @@ cr:TimingWindow a owl:Class ;
 cr:TransferAmendment a owl:Class ;
     rdfs:label "Transfer Amendment" ;
     rdfs:comment "Amendment as event (Outcome:StatusChange). Bitemporal; drives the cross-entity shape that forces amendment propagation to be explicit." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned ;
+    rdfs:subClassOf top:Outcome ;
     skos:definition "A status change on a protocol/spec version that carries effectiveFrom/To and MUST reference the TransferSpecifications it affects. Propagation is a graph update + re-validation, not N manual DTA re-authorings." .
 
 cr:TransferScope a owl:Class ;
@@ -6278,8 +6280,7 @@ cr:CodingReview a owl:Class ;
 cr:CustodyEvent a owl:Class ;
     rdfs:label "Custody Event" ;
     rdfs:comment "A specimen state transition (SampleDue->Received->ToBeVerified->Verified->Published) — chain of custody." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned .
+    rdfs:subClassOf top:Temporal .
 
 cr:DataProcessingAgreement a owl:Class ;
     rdfs:label "Data Processing Agreement" ;
@@ -6350,8 +6351,7 @@ cr:KitAssignment a owl:Class ;
 cr:MetricObservation a owl:Class ;
     rdfs:label "Metric Observation" ;
     rdfs:comment "The bitemporal envelope is what answers the inspector's question 'why didn't the algorithm flag the March 1 event on March 3?' — because recordedAt shows the event had not yet arrived." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
+    rdfs:subClassOf top:Evidence ;
     skos:altLabel "CSM metric"@en,
         "KRI reading"@en,
         "centralized monitoring output"@en ;
@@ -6361,8 +6361,7 @@ cr:MetricObservation a owl:Class ;
 cr:ParticipantSchedule a owl:Class ;
     rdfs:label "Participant Schedule" ;
     rdfs:comment "The schedule projected for a specific subject from a ScheduleTimeline once an anchor date (e.g. enrollment) is known. Bitemporal: re-projected when the governing protocol version changes." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned .
+    rdfs:subClassOf top:Evidence .
 
 cr:PlannedActivity a owl:Class ;
     rdfs:label "Planned Activity" ;
@@ -6382,8 +6381,7 @@ cr:QualityToleranceLimit a owl:Class ;
 cr:Reconciliation a owl:Class ;
     rdfs:label "Reconciliation" ;
     rdfs:comment "One class, four scopes (ADR-0024 one-question gate: drug vs document reconciliation is a classification of the act, not a different kind of act). The IMP scope reconciles against the accountability-log projection (supply module) — arithmetic over events, not a spreadsheet." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "device reconciliation"@en,
         "document reconciliation"@en,
         "drug reconciliation"@en ;
@@ -6394,8 +6392,7 @@ cr:Reconciliation a owl:Class ;
 cr:ScheduleTimeline a owl:Class ;
     rdfs:label "Schedule Timeline" ;
     rdfs:comment "The planned Schedule of Activities for a protocol version, as a timeline of planned encounters and activities. Bitemporal: a protocol amendment supersedes it, so the schedule is reconstructable as-of any date." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned .
+    rdfs:subClassOf top:Evidence .
 
 cr:StartupArtifact a owl:Class ;
     rdfs:label "Start-up Artifact" ;
@@ -6612,8 +6609,12 @@ cr:DataTransferAgreement a owl:Class ;
 cr:DeviationAntecedent a owl:Class ;
     rdfs:label "Deviation Antecedent" ;
     rdfs:comment "A latent operational condition that predisposes a deviation (e.g. a visit window too tight for the site's staffing). The missing middle between a critical-to-quality factor and the deviation event it manifests as; bitemporal (it exists, and is detected, over time)." ;
-    rdfs:subClassOf top:Constraint,
-        top:Versioned .
+    rdfs:subClassOf top:Constraint .
+
+cr:InformedConsentAct a owl:Class ;
+    rdfs:label "Informed Consent Act" ;
+    rdfs:comment "The CR permutation of hcls:Consent — the enrollment/consent act. Declared so Versioned/Consent inheritance and bitemporal enforcement reach the instances already typed this way." ;
+    rdfs:subClassOf cr:InformedConsent .
 
 cr:MitigationPlan a owl:Class ;
     rdfs:label "Mitigation Plan" ;
@@ -6623,8 +6624,7 @@ cr:MitigationPlan a owl:Class ;
 cr:Query a owl:Class ;
     rdfs:label "Query" ;
     rdfs:comment "A discrepancy note / data query anchored to a data point or other entity; threaded." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned ;
+    rdfs:subClassOf top:Evidence ;
     skos:altLabel "DCF"@en,
         "data clarification"@en,
         "data query"@en,
@@ -6646,8 +6646,7 @@ cr:RegistryRecord a owl:Class ;
 cr:SiteMetrics a owl:Class ;
     rdfs:label "Site Metrics" ;
     rdfs:comment "A periodic KPI snapshot for a study site; bitemporal (top:observedAt = snapshot date, top:validFrom = reporting period start)." ;
-    rdfs:subClassOf top:Evidence,
-        top:Versioned .
+    rdfs:subClassOf top:Evidence .
 
 cr:StartupStage a cr:TrialStage ;
     rdfs:label "Startup" ;
@@ -6666,8 +6665,7 @@ cr:Timing a owl:Class ;
 cr:TransferSpecification a owl:Class ;
     rdfs:label "Transfer Specification" ;
     rdfs:comment "Grounded in the info-model TRANSFER_SPECIFICATION entity and CDISC LAB Model v2.0 content. Placed under top:Scope (a specification/plan), bitemporal so amendments supersede cleanly." ;
-    rdfs:subClassOf top:Scope,
-        top:Versioned ;
+    rdfs:subClassOf top:Scope ;
     skos:definition "The content layer (the DTS): the set of DataElementSpecifications to be delivered for a given data type/vendor under a DataTransferAgreement. A plan for content, not an act." .
 
 cr:TrialPhase a owl:Class ;
@@ -6718,8 +6716,7 @@ cr:ReportingStage a cr:TrialStage ;
 cr:ScreeningRecord a owl:Class ;
     rdfs:label "Screening Record" ;
     rdfs:comment "Screen failure is cr:screeningOutcome \"screen-failure\", not a subclass (ADR-0024). The screen-failure reason cites the failed cr:EligibilityCriterion by IRI." ;
-    rdfs:subClassOf top:Temporal,
-        top:Versioned ;
+    rdfs:subClassOf top:Temporal ;
     skos:altLabel "screening"@en,
         "screening visit"@en ;
     skos:definition "The record of formally screening a consented candidate against the protocol's eligibility criteria, with a coded outcome (eligible / screen-failure / withdrew)." ;
@@ -6812,20 +6809,6 @@ cr:DataElementSpecification a owl:Class ;
     rdfs:subClassOf top:Scope ;
     skos:definition "One expected data element in a TransferSpecification: it binds to a canonical BiomedicalConcept, declares its unit, value range, controlled terminology, mandatory-ness, significant digits and derived flag. The universal content pattern — one shape covers lab, ECG, imaging analytes; data-type specifics are typed extensions, not parallel hierarchies." .
 
-cr:InformedConsent a owl:Class ;
-    rdfs:label "Informed Consent" ;
-    rdfs:comment "The act of obtaining a subject's informed consent." ;
-    rdfs:subClassOf hcls:Consent,
-        top:Temporal,
-        top:Versioned ;
-    skos:altLabel "consent"@en,
-        "consenting"@en,
-        "eConsent"@en ;
-    skos:definition "The act and record of a study participant voluntarily agreeing to participate after being informed of all relevant aspects of the study." ;
-    skos:hiddenLabel "ICF"@en ;
-    skos:prefLabel "Informed Consent"@en ;
-    skos:scopeNote "'ICF' (the form) is routed here but names the document; this class is the ACT of consenting. The customized consent form itself is a startup artifact typed via the TMF scheme."@en .
-
 top:Document a owl:Class ;
     rdfs:label "Document"@en ;
     rdfs:comment "A formal artifact carrying recorded content — protocol, SOP, IB, ICF, CAPA report, batch record, regulatory submission."@en ;
@@ -6840,6 +6823,20 @@ cr:Credential a owl:Class ;
         "qualification"@en,
         "training record"@en ;
     skos:prefLabel "Credential"@en .
+
+cr:InformedConsent a owl:Class ;
+    rdfs:label "Informed Consent" ;
+    rdfs:comment "The act of obtaining a subject's informed consent." ;
+    rdfs:subClassOf hcls:Consent,
+        top:Temporal,
+        top:Versioned ;
+    skos:altLabel "consent"@en,
+        "consenting"@en,
+        "eConsent"@en ;
+    skos:definition "The act and record of a study participant voluntarily agreeing to participate after being informed of all relevant aspects of the study." ;
+    skos:hiddenLabel "ICF"@en ;
+    skos:prefLabel "Informed Consent"@en ;
+    skos:scopeNote "'ICF' (the form) is routed here but names the document; this class is the ACT of consenting. The customized consent form itself is a startup artifact typed via the TMF scheme."@en .
 
 cr:PharmacovigilianceSpecialist a owl:Class ;
     rdfs:label "Pharmacovigilance Specialist" ;
@@ -6933,8 +6930,7 @@ cr:ActivityOccurrence a owl:Class ;
     rdfs:label "Activity Occurrence" ;
     rdfs:comment "One performed activity within a VisitOccurrence. Uses the universal substrate pattern: any assessment (vitals, MRI, ePRO, biopsy, IP administration) uses the same entity shape; content specialisation is via biomedicalConceptCode and taskValueType. FHIR R5: Procedure / Observation / MedicationAdministration (per activity type). SDTM: domain depends on type (VS, LB, EG, EX, PE, etc.)." ;
     rdfs:subClassOf prov:Activity,
-        top:Temporal,
-        top:Versioned ;
+        top:Temporal ;
     skos:altLabel "assessment performed"@en,
         "procedure"@en,
         "study task"@en ;
@@ -6944,8 +6940,7 @@ cr:ActivityOccurrence a owl:Class ;
 cr:ClinicalObservation a owl:Class ;
     rdfs:label "Clinical Observation" ;
     rdfs:comment "A recorded value (ItemData) for a StudySubject at a StudyEvent, defined by a DataElementDef." ;
-    rdfs:subClassOf hcls:Observation,
-        top:Versioned ;
+    rdfs:subClassOf hcls:Observation ;
     skos:altLabel "CRF value"@en,
         "captured value"@en,
         "data point"@en ;
@@ -7108,8 +7103,7 @@ cr:VisitOccurrence a owl:Class ;
     rdfs:label "Visit Occurrence" ;
     rdfs:comment "An actual protocol visit: what DID happen. Anchored at Participant (1..1) and StudySite (1..1). Optionally definedBy a VisitDefinition (absent for unscheduled visits). FHIR R5: Encounter. SDTM: SV domain (SVSTDTC / SVENDTC / VISITNUM / VISIT). OMOP: VISIT_OCCURRENCE." ;
     rdfs:subClassOf prov:Activity,
-        top:Temporal,
-        top:Versioned ;
+        top:Temporal ;
     skos:altLabel "encounter"@en,
         "patient visit"@en,
         "study visit"@en,
@@ -7132,11 +7126,15 @@ top:Outcome a owl:Class ;
         top:Scope,
         top:Temporal .
 
+hcls:JobToBeDone a owl:Class ;
+    rdfs:label "Job to Be Done" ;
+    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a lifecycle stage. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
+    rdfs:subClassOf top:Scope .
+
 cr:AdverseEvent a owl:Class ;
     rdfs:label "Adverse Event" ;
     rdfs:comment "An untoward medical occurrence in a trial subject." ;
-    rdfs:subClassOf top:Outcome,
-        top:Versioned ;
+    rdfs:subClassOf top:Outcome ;
     skos:altLabel "AE"@en,
         "adverse experience"@en,
         "safety event"@en ;
@@ -7144,11 +7142,6 @@ cr:AdverseEvent a owl:Class ;
         "side effect"@en ;
     skos:prefLabel "Adverse Event"@en ;
     skos:scopeNote "'Side effect' (lay) and 'adverse reaction' (implies causality) are routed here but not promoted: an AE makes no causality claim — that is cr:CausalityAssessment."@en .
-
-hcls:JobToBeDone a owl:Class ;
-    rdfs:label "Job to Be Done" ;
-    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a lifecycle stage. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
-    rdfs:subClassOf top:Scope .
 
 cr:ConductStage a cr:TrialStage ;
     rdfs:label "Conduct" ;
@@ -7184,6 +7177,10 @@ top:Constraint a owl:Class ;
     rdfs:comment "Non-negotiable boundaries — physical, legal, regulatory, contractual, safety. Inclusion criteria, dose limits, regulatory deadlines, blinding rules, biosafety floors, SLAs."@en ;
     rdfs:subClassOf prov:Entity,
         top:CommonEntity .
+
+top:Versioned a owl:Class ;
+    rdfs:label "Versioned"@en ;
+    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
 
 cr:SiteCoordinator a owl:Class ;
     rdfs:label "Site Coordinator" ;
@@ -7238,10 +7235,6 @@ top:Evidence a owl:Class ;
         top:Resource,
         top:Scope,
         top:Temporal .
-
-top:Versioned a owl:Class ;
-    rdfs:label "Versioned"@en ;
-    rdfs:comment "Marker for an immutable, bitemporally-tracked value-version — an attribute-value-at-a-time (or whole-entity snapshot) carrying valid time and a stable identity via prov:specializationOf. Applied where Tier-1 entailment fires or where a workflow opts an attribute in. Not every TOP entity is Versioned; only those that need full bitemporal history."@en .
 
 hcls:Action a owl:Class ;
     rdfs:label "Action" ;

@@ -11,45 +11,74 @@
 # manifests as a major deviation; the deviation triggers a CAPA. The "missing middle"
 # (the antecedent) is captured, so nothing warns and nothing violates.
 
-ex:dev-mgr a hcls:Practitioner ; rdfs:label "Rosa Alvarez" ; hcls:actsAs "Quality Lead" .
+ex:dev-mgr a hcls:Practitioner ;
+    rdfs:label "Rosa Alvarez" ;
+    hcls:actsAs "Quality Lead" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # The critical-to-quality factor at stake (RBQM module; not bitemporal).
-ex:ctq-sched a cr:CriticalToQualityFactor ; rdfs:label "Visit-schedule adherence" .
+ex:ctq-sched a cr:CriticalToQualityFactor ;
+    rdfs:label "Visit-schedule adherence" ;
+    top:identifier "urn:ctq-sched"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # The leading indicator — a late-visit trend across sites (low-trust, but provenance-tagged).
 ex:sig-late a cr:RiskSignal ; rdfs:label "Late-visit trend (3 sites, 4 weeks)" ;
     cr:flags ex:ante-window ;
-    top:identifier "urn:sig-late" ; top:status "active" ;
+    top:identifier "urn:sig-late"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T08:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:dev-mgr .
 
 # The latent condition — the missing middle.
 ex:ante-window a cr:DeviationAntecedent ; rdfs:label "Visit window too tight for site staffing" ;
     cr:threatens ex:ctq-sched ; cr:manifestsAs ex:dev-1 ; cr:flaggedBy ex:sig-late ;
-    top:identifier "urn:ante-window" ; top:status "active" ;
+    top:identifier "urn:ante-window"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:dev-mgr .
 
 # RBQM risk assessment identifies the antecedent (integration with the RBQM module).
 ex:ra-sched a cr:RiskAssessment ; cr:assessesFactor ex:ctq-sched ; cr:riskLevel "medium" ;
     cr:riskScore "0.45"^^xsd:decimal ; cr:identifiesAntecedent ex:ante-window ;
-    top:identifier "urn:ra-sched" ; top:status "active" ;
-    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
+    top:identifier "urn:ra-sched"^^xsd:anyURI ; top:status "active" ;
+    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ra-sched-series ;
     prov:wasAttributedTo ex:dev-mgr .
+ex:ra-sched-series a top:VersionSeries ;
+    top:identifier "urn:ra-sched:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-02T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # The deviation it manifested as — a major deviation requiring a CAPA.
 ex:dev-1 a cr:DeviationEvent ; rdfs:label "Subject seen at Day 31 (window Day 28 +/- 3)" ;
     cr:deviationCategory "major" ; cr:triggers ex:capa-1 ; cr:fromAntecedent ex:ante-window ;
-    top:identifier "urn:dev-1" ; top:status "active" ;
-    top:observedAt "2026-03-19T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-19T16:00:00Z"^^xsd:dateTime ;
+    top:identifier "urn:dev-1"^^xsd:anyURI ; top:status "active" ;
+    top:observedAt "2026-03-19T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-19T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-19T16:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dev-1-series ;
     prov:wasAttributedTo ex:dev-mgr .
+ex:dev-1-series a top:VersionSeries ;
+    top:identifier "urn:dev-1:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-19T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # The CAPA — corrective (this occurrence) and preventive (recurrence).
 ex:capa-1 a cr:CAPA ; rdfs:label "Widen window via amendment + add visit coordinator" ;
     cr:capaType "corrective-and-preventive" ; cr:capaStatus "open" ;
-    top:identifier "urn:capa-1" ; top:status "active" ;
-    top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-20T10:00:00Z"^^xsd:dateTime ;
+    top:identifier "urn:capa-1"^^xsd:anyURI ; top:status "active" ;
+    top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-20T10:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:capa-1-series ;
     prov:wasAttributedTo ex:dev-mgr .
+ex:capa-1-series a top:VersionSeries ;
+    top:identifier "urn:capa-1:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:dev-mgr top:identifier "person:rosa-alvarez" .
+ex:dev-mgr top:identifier "person:rosa-alvarez"^^xsd:anyURI .

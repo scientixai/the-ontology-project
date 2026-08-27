@@ -14,11 +14,16 @@ ex:pii-ok-ae a cr:AdverseEvent ;
     prov:wasAttributedTo ex:pii-inv .
 ex:pii-subj a cr:StudySubject ;
     cr:subjectId "PII-001" ;
+    top:identifier "urn:pii-subj"^^xsd:anyURI ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
     top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
-ex:pii-inv a hcls:Practitioner .
+ex:pii-inv a hcls:Practitioner ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/pii-ok-ae> top:identifier "urn:pii-ok-ae" ; top:status "active" .
+<https://top.scientix.ai/examples/pii-ok-ae> top:identifier "urn:pii-ok-ae"^^xsd:anyURI ; top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:pii-inv rdfs:label "Dr. Ana Rivera" ; top:identifier "person:ana-rivera" ; hcls:actsAs "Principal Investigator" .
+ex:pii-inv rdfs:label "Dr. Ana Rivera" ; top:identifier "person:ana-rivera"^^xsd:anyURI ; hcls:actsAs "Principal Investigator" .

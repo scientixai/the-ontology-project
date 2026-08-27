@@ -8,10 +8,30 @@
 # lineage back to the document it was built from. Structurally fine, but the data trail is
 # broken: a governance Warning, not a hard failure.
 
-ex:wl-site a cr:StudySite ; rdfs:label "Site 903" .
-ex:wl-in   a cr:StartupArtifact ; rdfs:label "Protocol v1.0" ; cr:ofArtifactType tmf:Protocol .
-ex:wl-out  a cr:StartupArtifact ; rdfs:label "Delegation-of-Authority log" ; cr:ofArtifactType tmf:DelegationOfAuthorityLog .
+ex:wl-site a cr:StudySite ;
+    rdfs:label "Site 903" ;
+    <https://top.scientix.ai/v1#identifier> "urn:wl-site"^^<http://www.w3.org/2001/XMLSchema#anyURI> ;
+    <https://top.scientix.ai/v1#observedAt> "2025-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+    <https://top.scientix.ai/v1#status> "active" .
+ex:wl-in   a cr:StartupArtifact ;
+    rdfs:label "Protocol v1.0" ;
+    cr:ofArtifactType tmf:Protocol ;
+    <https://top.scientix.ai/v1#identifier> "urn:wl-in"^^<http://www.w3.org/2001/XMLSchema#anyURI> ;
+    <https://top.scientix.ai/v1#observedAt> "2025-12-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+    <https://top.scientix.ai/v1#status> "active" .
+ex:wl-out  a cr:StartupArtifact ;
+    rdfs:label "Delegation-of-Authority log" ;
+    cr:ofArtifactType tmf:DelegationOfAuthorityLog ;
+    <https://top.scientix.ai/v1#identifier> "urn:wl-out"^^<http://www.w3.org/2001/XMLSchema#anyURI> ;
+    <https://top.scientix.ai/v1#observedAt> "2026-01-15T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+    <https://top.scientix.ai/v1#status> "active" .
 # (note: ex:wl-out has no prov:wasDerivedFrom -> lineage warning)
 
-ex:wl-ws a cr:RegulatoryWorkStream ; cr:streamForSite ex:wl-site ;
-    cr:consumes ex:wl-in ; cr:produces ex:wl-out ; cr:streamStatus "complete" .
+ex:wl-ws a cr:RegulatoryWorkStream ;
+    cr:streamForSite ex:wl-site ;
+    cr:consumes ex:wl-in ;
+    cr:produces ex:wl-out ;
+    cr:streamStatus "complete" ;
+    <https://top.scientix.ai/v1#identifier> "urn:wl-ws"^^<http://www.w3.org/2001/XMLSchema#anyURI> ;
+    <https://top.scientix.ai/v1#observedAt> "2026-01-20T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+    <https://top.scientix.ai/v1#status> "active" .

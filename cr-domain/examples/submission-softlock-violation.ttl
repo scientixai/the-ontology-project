@@ -17,13 +17,13 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 ex:sponsor-bad a hcls:Organization ;
-    top:identifier "urn:org:sponsor-bad" ; top:status "active" ;
+    top:identifier "urn:org:sponsor-bad"^^xsd:anyURI ; top:status "active" ;
     rdfs:label "Sponsor regulatory affairs" .
 ex:biostat-bad a hcls:Practitioner ; rdfs:label "Carla Mendes" ; hcls:actsAs "Biostatistician" .
 
 # A SOFT lock — for review, reversible. Not a basis for a filing.
 ex:softlock-bad a cr:DatabaseLock ;
-    top:identifier "urn:dblock:soft-bad" ; top:status "active" ;
+    top:identifier "urn:dblock:soft-bad"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-20T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:sponsor-bad ;
@@ -34,14 +34,14 @@ ex:softlock-bad a cr:DatabaseLock ;
 ex:native-bad a prov:Entity ;
     cr:sourceSystem "EDC / native clinical facts" ; rdfs:label "Native source facts" .
 ex:adsl-bad a cr:AnalysisDataset ; rdfs:label "ADSL" ;
-    top:identifier "urn:adam:ADSL-bad" ; top:status "active" ;
+    top:identifier "urn:adam:ADSL-bad"^^xsd:anyURI ; top:status "active" ;
     prov:wasDerivedFrom ex:native-bad ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:biostat-bad .
 
 ex:csr-bad-b1 a cr:ClinicalStudyReport ; rdfs:label "CSR" ;
-    top:identifier "urn:csr:bad-b1" ; top:status "active" ;
+    top:identifier "urn:csr:bad-b1"^^xsd:anyURI ; top:status "active" ;
     cr:csrForStudy ex:study-bad ;
     cr:hasSection ex:csr-bad-syn ;
     top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
@@ -51,11 +51,11 @@ ex:csr-bad-syn a cr:CSRSection ; rdfs:label "Synopsis" ;
     cr:sectionNumber "2" ; cr:sectionTitle "Synopsis" ; cr:sectionKind "synopsis" .
 
 ex:define-bad a cr:DataDefinition ;
-    top:identifier "urn:define:bad" ; top:status "active" ; rdfs:label "Define-XML v2.1" .
+    top:identifier "urn:define:bad"^^xsd:anyURI ; top:status "active" ; rdfs:label "Define-XML v2.1" .
 
 # The submission — well-formed except that it rests on a soft lock.
 ex:ectd-bad a cr:eCTDSubmission ; rdfs:label "NDA built on soft-locked data" ;
-    top:identifier "urn:ectd:bad-NDA" ; top:status "active" ;
+    top:identifier "urn:ectd:bad-NDA"^^xsd:anyURI ; top:status "active" ;
     cr:submissionType "NDA" ;
     cr:submissionForStudy ex:study-bad ;
     cr:builtOnLock ex:softlock-bad ;             # SOFT lock -> cr:SubmissionLockHardShape (Violation)
@@ -67,4 +67,4 @@ ex:ectd-bad a cr:eCTDSubmission ; rdfs:label "NDA built on soft-locked data" ;
     prov:wasAttributedTo ex:sponsor-bad .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:biostat-bad top:identifier "person:carla-mendes" .
+ex:biostat-bad top:identifier "person:carla-mendes"^^xsd:anyURI .

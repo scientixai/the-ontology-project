@@ -10,12 +10,23 @@
 # carries the bitemporal + PROV envelope (so it IS reconstructable), but the auditor-facing
 # cr:AuditTrail assertion is absent. cr:SourceDataAuditTrailShape raises a reviewable Warning.
 
-ex:coordinator a hcls:Practitioner ; rdfs:label "Tom Reyes" ; hcls:actsAs "Site Coordinator" .
+ex:coordinator a hcls:Practitioner ;
+    rdfs:label "Tom Reyes" ;
+    hcls:actsAs "Site Coordinator" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:sd-noat a cr:SourceData ; rdfs:label "Lab values, no audit-trail node asserted" ;
-    top:identifier "urn:sd-noat" ; top:status "active" ;
-    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    top:identifier "urn:sd-noat"^^xsd:anyURI ; top:status "active" ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:sd-noat-series ;
     prov:wasAttributedTo ex:coordinator .
+ex:sd-noat-series a top:VersionSeries ;
+    top:identifier "urn:sd-noat:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:coordinator top:identifier "person:tom-reyes" .
+ex:coordinator top:identifier "person:tom-reyes"^^xsd:anyURI .

@@ -1,0 +1,140 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix cx:   <https://top.scientix.ai/crosswalk/v1#> .
+
+<https://top.scientix.ai/shapes/traceability-v1> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dct:title "SHACL shapes — traceability and identity traps" ;
+    dct:description "Trap-closing shapes for external alignment (T2), identity stability (T6), and submission-ready coding (T3)." .
+
+# T2: Ungoverned SKOS match trap — external alignment must be a provenanced cx:Mapping,
+# not a bare SKOS triple on a clinical object.
+cr:UngovernedMatchShape a sh:NodeShape ;
+    rdfs:label "Ungoverned SKOS match trap" ;
+    sh:targetSubjectsOf skos:exactMatch ;
+    sh:targetSubjectsOf skos:closeMatch ;
+    sh:targetSubjectsOf skos:relatedMatch ;
+    sh:targetSubjectsOf skos:broadMatch ;
+    sh:targetSubjectsOf skos:narrowMatch ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this." ;
+        sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            PREFIX cx: <https://top.scientix.ai/crosswalk/v1#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT $this WHERE {
+              # $this has at least one SKOS match predicate (guaranteed by targetSubjectsOf)
+              {
+                $this skos:exactMatch ?x .
+              } UNION {
+                $this skos:closeMatch ?x .
+              } UNION {
+                $this skos:relatedMatch ?x .
+              } UNION {
+                $this skos:broadMatch ?x .
+              } UNION {
+                $this skos:narrowMatch ?x .
+              }
+              
+              # Exclude cx:Mapping instances (they may legitimately use SKOS predicates as cx:predicateId)
+              FILTER NOT EXISTS { $this rdf:type cx:Mapping }
+            }
+        """ ;
+    ] .
+
+# T6: Identity stability — where an ADAE (cr:AnalysisDataset) or CSR (cr:ClinicalStudyReport)
+# prov:wasDerivedFrom a coded AE, the chain must resolve to ONE stable identity 
+# (same VersionSeries, or same IRI where not Versioned). Reminting a second SAE IRI 
+# for the same subject/event fails.
+cr:IdentityStabilityShape a sh:NodeShape ;
+    rdfs:label "Identity stability in derivation chains" ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT ?this WHERE {
+              ?this rdf:type ?t .
+              FILTER ( ?t IN ( cr:AnalysisDataset, cr:ClinicalStudyReport ) )
+            }
+        """ ;
+    ] ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "T6: Identity stability violated — the derivation chain from $this traces back to multiple distinct identities (different IRIs and different VersionSeries) for what should be the same source event. A reminted SAE IRI breaks traceability." ;
+        sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            PREFIX top: <https://top.scientix.ai/v1#>
+            SELECT $this WHERE {
+              # Find all source events this derives from (transitive)
+              $this prov:wasDerivedFrom+ ?source .
+              ?source a ?sourceType .
+              FILTER ( ?sourceType IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )
+              
+              # Get the stable identity (VersionSeries if Versioned, else the IRI itself)
+              OPTIONAL { ?source prov:specializationOf ?vs1 }
+              BIND ( COALESCE(?vs1, ?source) AS ?identity1 )
+              
+              # Check if there's a DIFFERENT source with a DIFFERENT identity
+              ?another a ?sourceType2 .
+              FILTER ( ?sourceType2 IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )
+              FILTER ( ?another != ?source )
+              OPTIONAL { ?another prov:specializationOf ?vs2 }
+              BIND ( COALESCE(?vs2, ?another) AS ?identity2 )
+              
+              # If both are about the same subject but have different identities, fail
+              ?source cr:forSubject ?subj .
+              ?another cr:forSubject ?subj .
+              FILTER ( ?identity1 != ?identity2 )
+            }
+        """ ;
+    ] .
+
+# T3: Submission-ready MedDRA coding — an AE claimed submission-ready (coded AND 
+# appearing in an ADAE or SafetyReport) must carry BOTH LLT and PT.
+cr:SubmissionReadyMedDRAShape a sh:NodeShape ;
+    rdfs:label "Submission-ready MedDRA coding requires LLT + PT" ;
+    sh:targetClass cr:AdverseEvent ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "T3: Submission-ready AE must carry BOTH cr:meddraLowestLevelTerm (LLT) and cr:meddraPreferredTerm (PT). This AE is submission-ready (it is codesEntity of a CodeAssignment AND appears in a derivation chain to an AnalysisDataset or reportsEvent of a SafetyReport)." ;
+        sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            SELECT $this WHERE {
+              # This AE has been coded
+              ?assignment a cr:CodeAssignment ;
+                          cr:codesEntity $this .
+              
+              # AND it appears in submission artifacts
+              {
+                # Either: an AnalysisDataset derives from it
+                ?adae a cr:AnalysisDataset ;
+                      prov:wasDerivedFrom+ $this .
+              } UNION {
+                # Or: a SafetyReport reports it
+                ?report a cr:SafetyReport ;
+                        cr:reportsEvent $this .
+              }
+              
+              # But it lacks LLT or PT
+              {
+                FILTER NOT EXISTS { $this cr:meddraLowestLevelTerm ?llt }
+              } UNION {
+                FILTER NOT EXISTS { $this cr:meddraPreferredTerm ?pt }
+              }
+            }
+        """ ;
+    ] .

@@ -4,32 +4,58 @@
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 # Conformant: Mary's Visit 1 (Cycle 1 Day 1) at MSKCC.
-# Demonstrates: VisitOccurrence anchored at Participant + StudySite,
+# Demonstrates: VisitOccurrence anchored at StudySubject + StudySite,
 # definedBy VisitDefinition, with two ActivityOccurrences and
 # one ClinicalObservation (vitals). PII containment: observation
 # links to cr:StudySubject, not hcls:Person.
 
 <urn:ngsi-ld:StudySite:mskcc-onco423>
     a cr:StudySite ;
-    cr:forStudy <urn:ngsi-ld:Study:ONCO-423> .
+    cr:forStudy <urn:ngsi-ld:Study:ONCO-423> ;
+    top:identifier "urn:ngsi-ld:StudySite:mskcc-onco423"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
-<urn:ngsi-ld:Participant:onco-423-mskcc-p001>
-    a cr:Participant ;
+<urn:ngsi-ld:StudySubject:onco-423-mskcc-p001>
+    a cr:StudySubject ;
+    cr:subjectId "ONCO-423-P001" ;
     cr:forStudySite <urn:ngsi-ld:StudySite:mskcc-onco423> ;
-    cr:forStudy <urn:ngsi-ld:Study:ONCO-423> .
+    cr:forStudy <urn:ngsi-ld:Study:ONCO-423> ;
+    top:identifier "urn:ngsi-ld:StudySubject:onco-423-mskcc-p001"^^xsd:anyURI ;
+    top:observedAt "2026-02-07T08:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
 <urn:ngsi-ld:StudySubject:onco-423-s001>
-    a cr:StudySubject .
+    a cr:StudySubject ;
+    cr:subjectId "ONCO-423-S001" ;
+    top:identifier "urn:ngsi-ld:StudySubject:onco-423-s001"^^xsd:anyURI ;
+    top:observedAt "2026-02-07T08:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
 <urn:ngsi-ld:VisitDefinition:onco-423-v1>
     a cr:VisitDefinition ;
     cr:visitNumber 1 ;
     cr:visitName "Cycle 1 Day 1" ;
-    cr:plannedStudyDay 1 .
+    cr:plannedStudyDay 1 ;
+    top:identifier "urn:ngsi-ld:VisitDefinition:onco-423-v1"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:StudyEvent:visit-v1>
+    a cr:StudyEvent ;
+    top:identifier "urn:ngsi-ld:StudyEvent:visit-v1"^^xsd:anyURI ;
+    top:observedAt "2026-02-07T08:30:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
+
+<urn:ngsi-ld:DataElementDef:sbp-def>
+    a cr:DataElementDef ;
+    top:identifier "urn:ngsi-ld:DataElementDef:sbp-def"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
 <urn:ngsi-ld:VisitOccurrence:onco-423-p001-v1>
     a cr:VisitOccurrence ;
-    cr:forParticipant <urn:ngsi-ld:Participant:onco-423-mskcc-p001> ;
+    cr:forParticipant <urn:ngsi-ld:StudySubject:onco-423-mskcc-p001> ;
     cr:atStudySite <urn:ngsi-ld:StudySite:mskcc-onco423> ;
     cr:perVisitDefinition <urn:ngsi-ld:VisitDefinition:onco-423-v1> ;
     cr:visitType "SCHEDULED" ;
@@ -41,8 +67,10 @@
     cr:hasActivityOccurrence
         <urn:ngsi-ld:ActivityOccurrence:onco-423-p001-v1-vitals> ,
         <urn:ngsi-ld:ActivityOccurrence:onco-423-p001-v1-ip-admin> ;
+    top:identifier "urn:ngsi-ld:VisitOccurrence:onco-423-p001-v1"^^xsd:anyURI ;
     top:observedAt "2026-02-07T08:30:00Z"^^xsd:dateTime ;
-    top:recordedAt "2026-02-07T08:35:00Z"^^xsd:dateTime .
+    top:validFrom "2026-02-07T08:35:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
 <urn:ngsi-ld:ActivityOccurrence:onco-423-p001-v1-vitals>
     a cr:ActivityOccurrence ;
@@ -52,18 +80,25 @@
     cr:actualStartDate "2026-02-07T08:45:00Z"^^xsd:dateTime ;
     cr:performedInVisit <urn:ngsi-ld:VisitOccurrence:onco-423-p001-v1> ;
     cr:hasObservation <urn:ngsi-ld:ClinicalObservation:onco-423-p001-v1-sbp> ;
-    top:observedAt "2026-02-07T08:45:00Z"^^xsd:dateTime .
+    top:identifier "urn:ngsi-ld:ActivityOccurrence:onco-423-p001-v1-vitals"^^xsd:anyURI ;
+    top:observedAt "2026-02-07T08:45:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
 <urn:ngsi-ld:ClinicalObservation:onco-423-p001-v1-sbp>
     a cr:ClinicalObservation ;
+    cr:forSubject <urn:ngsi-ld:StudySubject:onco-423-s001> ;
     cr:observationForSubject <urn:ngsi-ld:StudySubject:onco-423-s001> ;
+    cr:capturedDuring <urn:ngsi-ld:StudyEvent:visit-v1> ;
+    cr:definedBy <urn:ngsi-ld:DataElementDef:sbp-def> ;
     cr:parameterCode "SYSBP" ;
     cr:numericValue 118 ;
     cr:unit "mmHg" ;
     cr:referenceRangeLow 90 ;
     cr:referenceRangeHigh 140 ;
     cr:interpretation "NORMAL" ;
-    top:observedAt "2026-02-07T08:45:00Z"^^xsd:dateTime .
+    top:identifier "urn:ngsi-ld:ClinicalObservation:onco-423-p001-v1-sbp"^^xsd:anyURI ;
+    top:observedAt "2026-02-07T08:45:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .
 
 <urn:ngsi-ld:ActivityOccurrence:onco-423-p001-v1-ip-admin>
     a cr:ActivityOccurrence ;
@@ -72,4 +107,6 @@
     cr:activityStatus "PERFORMED" ;
     cr:actualStartDate "2026-02-07T10:00:00Z"^^xsd:dateTime ;
     cr:performedInVisit <urn:ngsi-ld:VisitOccurrence:onco-423-p001-v1> ;
-    top:observedAt "2026-02-07T10:00:00Z"^^xsd:dateTime .
+    top:identifier "urn:ngsi-ld:ActivityOccurrence:onco-423-p001-v1-ip-admin"^^xsd:anyURI ;
+    top:observedAt "2026-02-07T10:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" .

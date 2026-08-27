@@ -11,45 +11,86 @@
 # Event -> CRF -> ItemGroup -> DataElementDef (definition) -> ClinicalObservation (value),
 # with ODM OIDs, PHI classification, SDV status, and an open data query on the value.
 
-ex:edc-subj a cr:StudySubject ; rdfs:label "EDC-S-001" .
+ex:edc-subj a cr:StudySubject ;
+    rdfs:label "EDC-S-001" ;
+    top:identifier "urn:subject:edc-s-001"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
+    cr:subjectId "EDC-S-001" .
 
-ex:se1 a cr:StudyEvent ; rdfs:label "Cycle 1 Day 1 visit" ; cr:odmOID "SE.C1D1" ;
+ex:se1 a cr:StudyEvent ;
+    rdfs:label "Cycle 1 Day 1 visit" ;
+    cr:odmOID "SE.C1D1" ;
+    top:identifier "urn:event:c1d1"^^xsd:anyURI ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     cr:forSubject ex:edc-subj .
 
-ex:crf1 a cr:eCRF ; rdfs:label "Vitals CRF" ; cr:odmOID "F.VITALS" ;
+ex:crf1 a cr:eCRF ;
+    rdfs:label "Vitals CRF" ;
+    cr:odmOID "F.VITALS" ;
+    top:identifier "urn:crf:vitals"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:hasItemGroup ex:ig1 .
-ex:ig1 a cr:ItemGroup ; rdfs:label "Vital signs" ; cr:odmOID "IG.VS" ;
-    cr:onForm ex:crf1 ; cr:hasItem ex:item-sbp .
+
+ex:ig1 a cr:ItemGroup ;
+    rdfs:label "Vital signs" ;
+    cr:odmOID "IG.VS" ;
+    top:identifier "urn:ig:vs"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    cr:onForm ex:crf1 ;
+    cr:hasItem ex:item-sbp .
 
 # Variable DEFINITION — independent of the form version; carries a PHI classification.
-ex:item-sbp a cr:DataElementDef ; rdfs:label "Systolic Blood Pressure" ; cr:odmOID "I.SBP" ;
+ex:item-sbp a cr:DataElementDef ;
+    rdfs:label "Systolic Blood Pressure" ;
+    cr:odmOID "I.SBP" ;
+    top:identifier "urn:item:sbp"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:phiClassification "NotPHI" .
 
 # The recorded VALUE (ItemData) — bitemporal + PROV, attached to the pseudonymous subject.
-ex:obs1 a cr:ClinicalObservation ; rdf:value "128" ;
+ex:obs1 a cr:ClinicalObservation ;
+    rdf:value "128" ;
+    top:identifier "urn:obs1"^^xsd:anyURI ;
     cr:definedBy ex:item-sbp ;
     cr:inItemGroup ex:ig1 ;
     cr:capturedDuring ex:se1 ;
     cr:forSubject ex:edc-subj ;
-    cr:sdvStatus "verified" ; cr:verifiedBy ex:cra1 ;
+    cr:observationForSubject ex:edc-subj ;
+    cr:sdvStatus "verified" ;
+    cr:verifiedBy ex:cra1 ;
     cr:hasQuery ex:q1 ;
-    top:observedAt  "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     prov:wasAttributedTo ex:crc1 .
-ex:crc1 a hcls:Practitioner ; rdfs:label "Tom Reyes" ; hcls:actsAs "Site Coordinator" .
-ex:cra1 a hcls:Practitioner ; rdfs:label "Ingrid Bauer" ; hcls:actsAs "Clinical Research Associate" .
+
+ex:crc1 a hcls:Practitioner ;
+    rdfs:label "Tom Reyes" ;
+    top:identifier "person:tom-reyes"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Site Coordinator" .
+
+ex:cra1 a hcls:Practitioner ;
+    rdfs:label "Ingrid Bauer" ;
+    top:identifier "person:ingrid-bauer"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Clinical Research Associate" .
 
 # A data query (discrepancy note) anchored to the value.
-ex:q1 a cr:Query ; rdfs:label "Confirm SBP units (mmHg)" ;
-    cr:queryOn ex:obs1 ; cr:severity "minor" ; cr:resolutionStatus "open" ;
-    top:observedAt  "2026-03-12T00:00:00Z"^^xsd:dateTime ;
+ex:q1 a cr:Query ;
+    rdfs:label "Confirm SBP units (mmHg)" ;
+    top:identifier "urn:q1"^^xsd:anyURI ;
+    cr:queryOn ex:obs1 ;
+    cr:severity "minor" ;
+    cr:resolutionStatus "open" ;
+    top:observedAt "2026-03-12T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-12T08:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     prov:wasAttributedTo ex:cra1 .
-
-# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/obs1> top:identifier "urn:obs1" ; top:status "active" .
-<https://top.scientix.ai/examples/q1> top:identifier "urn:q1" ; top:status "active" .
-
-# Provenance identity — attribution targets are identified agents, not bare roles.
-ex:cra1 top:identifier "person:ingrid-bauer" .
-ex:crc1 top:identifier "person:tom-reyes" .

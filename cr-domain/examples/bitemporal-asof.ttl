@@ -11,8 +11,13 @@
 
 ex:subj-bt   a cr:StudySubject ;
     cr:subjectId "BT-001" ;
+    top:identifier "urn:subj-bt"^^xsd:anyURI ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "enrolled" ;
     top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
-ex:agent-lab a top:Agent, prov:Agent .
+ex:agent-lab a top:Agent, prov:Agent ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # A lab value for valid-date 2026-02-14, first recorded 02-16 as 4.2 ...
 ex:obs-100 a hcls:Observation ;
@@ -34,15 +39,28 @@ ex:obs-100-corr a hcls:Observation ;
 # A suspicious attestation: claims effective 2026-01-01 but was only entered 2026-03-15
 # (~73-day valid/transaction gap). Structurally valid, but the back-dating is detectable.
 ex:attest-suspicious a top:Attestation ;
+    top:identifier "urn:attest-suspicious"^^xsd:anyURI ;
+    top:status "active" ;
     top:observedAt  "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-15T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:attest-suspicious-series ;
     prov:wasAttributedTo ex:person-late .
-ex:person-late a hcls:Person, prov:Agent ; rdfs:label "Dana Whitfield" ; top:identifier "person:dana-whitfield" ; hcls:actsAs "Data Manager" .
+ex:attest-suspicious-series a top:VersionSeries ;
+    top:identifier "urn:attest-suspicious:series"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:person-late a hcls:Person, prov:Agent ;
+    rdfs:label "Dana Whitfield" ;
+    top:identifier "person:dana-whitfield"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Data Manager" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/attest-suspicious> top:identifier "urn:attest-suspicious" ; top:status "active" .
-<https://top.scientix.ai/examples/obs-100> top:identifier "urn:obs-100" ; top:status "superseded" .
-<https://top.scientix.ai/examples/obs-100-corr> top:identifier "urn:obs-100-corr" ; top:status "active" .
+<https://top.scientix.ai/examples/attest-suspicious> top:identifier "urn:attest-suspicious"^^xsd:anyURI ; top:status "active" .
+<https://top.scientix.ai/examples/obs-100> top:identifier "urn:obs-100"^^xsd:anyURI ; top:status "superseded" .
+<https://top.scientix.ai/examples/obs-100-corr> top:identifier "urn:obs-100-corr"^^xsd:anyURI ; top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:agent-lab rdfs:label "Acme Central Laboratory" ; top:identifier "org:acme-central-lab" .
+ex:agent-lab rdfs:label "Acme Central Laboratory" ; top:identifier "org:acme-central-lab"^^xsd:anyURI .

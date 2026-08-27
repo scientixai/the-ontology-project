@@ -9,30 +9,65 @@
 # WORKED EXAMPLE — site start-up to activation. IRB approval -> executed CTA ->
 # coverage analysis -> SIV -> activation (green-light), each milestone dated (bitemporal).
 
-ex:site-act a cr:StudySite ; rdfs:label "Denver Cancer Center" ; cr:targetAccrual 20 .
-ex:su-mgr a hcls:Practitioner ; rdfs:label "Marta Kowalski" ; hcls:actsAs "Start-up Manager" .
+ex:site-act a cr:StudySite ;
+    rdfs:label "Denver Cancer Center" ;
+    cr:targetAccrual 20 ;
+    top:identifier "urn:site-act"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:su-mgr a hcls:Practitioner ;
+    rdfs:label "Marta Kowalski" ;
+    hcls:actsAs "Start-up Manager" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:irb1 a cr:IRBApproval ; cr:forStudySite ex:site-act ;
-    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-15T12:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-15T12:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:irb1-series ;
     prov:wasAttributedTo ex:su-mgr .
+ex:irb1-series a top:VersionSeries ;
+    top:identifier "urn:irb1:series"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:cta1 a cr:ClinicalTrialAgreement ; rdfs:label "Executed CTA" ; cr:forStudySite ex:site-act ;
-    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-01-20T12:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-20T12:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:cta1-series ;
     prov:wasAttributedTo ex:su-mgr .
-ex:mca1 a cr:CoverageAnalysis ; rdfs:label "Medicare coverage analysis" ; cr:forStudySite ex:site-act .
+ex:cta1-series a top:VersionSeries ;
+    top:identifier "urn:cta1:series"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:mca1 a cr:CoverageAnalysis ;
+    rdfs:label "Medicare coverage analysis" ;
+    cr:forStudySite ex:site-act ;
+    top:identifier "urn:mca1"^^xsd:anyURI ;
+    top:observedAt "2026-01-25T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:siv1 a cr:SiteInitiationVisit ; cr:forStudySite ex:site-act ;
     top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-01T16:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:su-mgr .
 
 ex:act1 a cr:SiteActivation ; rdfs:label "Denver site activated" ;
     cr:activates ex:site-act ; cr:irbApproval ex:irb1 ; cr:cta ex:cta1 ; cr:siv ex:siv1 ;
-    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-02-05T09:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-05T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:act1-series ;
     prov:wasAttributedTo ex:su-mgr .
+ex:act1-series a top:VersionSeries ;
+    top:identifier "urn:act1:series"^^xsd:anyURI ;
+    top:observedAt "2026-02-05T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/act1> top:identifier "urn:act1" ; top:status "active" .
-<https://top.scientix.ai/examples/cta1> top:identifier "urn:cta1" ; top:status "active" .
-<https://top.scientix.ai/examples/irb1> top:identifier "urn:irb1" ; top:status "active" .
-<https://top.scientix.ai/examples/siv1> top:identifier "urn:siv1" ; top:status "active" .
+<https://top.scientix.ai/examples/act1> top:identifier "urn:act1"^^xsd:anyURI ; top:status "active" .
+<https://top.scientix.ai/examples/cta1> top:identifier "urn:cta1"^^xsd:anyURI ; top:status "active" .
+<https://top.scientix.ai/examples/irb1> top:identifier "urn:irb1"^^xsd:anyURI ; top:status "active" .
+<https://top.scientix.ai/examples/siv1> top:identifier "urn:siv1"^^xsd:anyURI ; top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:su-mgr top:identifier "person:marta-kowalski" .
+ex:su-mgr top:identifier "person:marta-kowalski"^^xsd:anyURI .

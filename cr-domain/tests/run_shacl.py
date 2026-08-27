@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 """US-900-001: pyshacl test harness for all CR-domain example files.
 
+Pinned command (Path A, Bo 27 Aug 2026):
+    python3 -m pyshacl --advanced --imports --inference rdfs \\
+        -s core/v1/shapes.ttl \\
+        -e cr-domain/docs/dist/top-cr-v1.ttl \\
+        -d <file>
+
+This harness replicates that command. ont_graph loads Core (via imports in
+core/v1/shapes.ttl) + CR ontology so RDFS inference retypes CR instances to
+Core superclasses, ensuring Core DNA/BitemporalShape/SPARQL see them.
+
 Usage:
     python3 tests/run_shacl.py
 
@@ -18,10 +28,12 @@ import rdflib
 
 BASE = Path(__file__).parent.parent
 SHAPES_FILE = BASE / "docs" / "dist" / "top-cr-shapes-v1.ttl"
+CR_ONTOLOGY_FILE = BASE / "docs" / "dist" / "top-cr-v1.ttl"
+CORE_SHAPES_FILE = BASE.parent / "core" / "v1" / "shapes.ttl"
 MANIFEST_FILE = Path(__file__).parent / "manifest.json"
 
 
-def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
+def check(entry: dict, shapes_graph: rdflib.Graph, ont_graph: rdflib.Graph) -> tuple[bool, str]:
     path = BASE / entry["file"]
     expect = entry["expect"]
 
@@ -37,9 +49,11 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
     conforms, _, _ = pyshacl.validate(
         data_graph,
         shacl_graph=shapes_graph,
+        ont_graph=ont_graph,
         abort_on_first=False,
         allow_warnings=True,
-        inference="none",
+        advanced=True,
+        inference="rdfs",
     )
 
     # Gather result severities
@@ -48,9 +62,11 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
     _, results_graph_text, _ = pyshacl.validate(
         data_graph,
         shacl_graph=shapes_graph,
+        ont_graph=ont_graph,
         abort_on_first=False,
         allow_warnings=True,
-        inference="none",
+        advanced=True,
+        inference="rdfs",
         serialize_report_graph="turtle",
     )
     results_graph.parse(data=results_graph_text, format="turtle")
@@ -89,12 +105,53 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
 
 def main() -> int:
     if not SHAPES_FILE.exists():
-        print(f"ERROR: shapes file not found at {SHAPES_FILE}")
+        print(f"ERROR: CR shapes file not found at {SHAPES_FILE}")
         print("Run python3 docs/build_dist.py first.")
         return 1
+    
+    if not CR_ONTOLOGY_FILE.exists():
+        print(f"ERROR: CR ontology file not found at {CR_ONTOLOGY_FILE}")
+        print("Run python3 docs/build_dist.py first.")
+        return 1
+    
+    if not CORE_SHAPES_FILE.exists():
+        print(f"ERROR: Core shapes file not found at {CORE_SHAPES_FILE}")
+        print("Core shapes must be present at ../../core/v1/shapes.ttl")
+        return 1
 
+    # Load Core shapes + CR shapes (merged into shapes_graph)
+    # Core shapes.ttl uses owl:imports, which rdflib doesn't follow automatically.
+    # Load each Core module explicitly to match the advertised --imports behavior.
     shapes_graph = rdflib.Graph()
+    core_modules = [
+        "modules/top-root.ttl",
+        "modules/top-agent.ttl",
+        "modules/top-location.ttl",
+        "modules/top-resource.ttl",
+        "modules/top-scope.ttl",
+        "modules/top-temporal.ttl",
+        "modules/top-evidence.ttl",
+        "modules/top-outcome.ttl",
+        "modules/top-constraint.ttl",
+        "modules/top-bitemporal.ttl",
+        "modules/top-ai.ttl",
+    ]
+    for module in core_modules:
+        module_path = CORE_SHAPES_FILE.parent / module
+        shapes_graph.parse(str(module_path), format="turtle")
+    # Load Core disjoint shapes
+    shapes_graph.parse(str(CORE_SHAPES_FILE.parent / "shapes" / "top-disjoint.ttl"), format="turtle")
+    # Load CR shapes
     shapes_graph.parse(str(SHAPES_FILE), format="turtle")
+    
+    # Load Core ontology (via imports) + CR ontology for RDFS inference (ont_graph)
+    # This ensures CR instances are retyped to Core superclasses, so Core DNA/
+    # BitemporalShape/SPARQL constraints see them.
+    ont_graph = rdflib.Graph()
+    for module in core_modules:
+        module_path = CORE_SHAPES_FILE.parent / module
+        ont_graph.parse(str(module_path), format="turtle")
+    ont_graph.parse(str(CR_ONTOLOGY_FILE), format="turtle")
 
     with open(MANIFEST_FILE) as f:
         manifest = json.load(f)
@@ -102,7 +159,7 @@ def main() -> int:
     rows = []
     failures = 0
     for entry in manifest:
-        ok, status = check(entry, shapes_graph)
+        ok, status = check(entry, shapes_graph, ont_graph)
         if not ok:
             failures += 1
         rows.append((entry["file"], entry["expect"], status))

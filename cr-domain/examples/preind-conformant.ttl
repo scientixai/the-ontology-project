@@ -9,30 +9,65 @@
 # WITH a proposed position; an animal toxicity that IS addressed by a clinical safety
 # assessment (unbroken narrative); the IND traces to its nonclinical evidence.
 
-ex:preind a cr:RegulatoryInteraction ; rdfs:label "Pre-IND meeting" ;
+ex:preind a cr:RegulatoryInteraction ;
+    rdfs:label "Pre-IND meeting" ;
+    top:identifier "urn:preind:opp"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     cr:meetingType "Pre-IND" ;
+    cr:meetingDate "2025-12-15"^^xsd:date ;
     cr:hasBriefingBook ex:bb ;
     cr:hasQuestion ex:q1 .
-ex:bb a cr:BriefingBook ; rdfs:label "Pre-IND briefing book" .
+
+ex:bb a cr:BriefingBook ;
+    rdfs:label "Pre-IND briefing book" ;
+    top:identifier "urn:briefing-book:preind"^^xsd:anyURI ;
+    top:observedAt "2025-12-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "submitted" .
+
 ex:q1 a cr:RegulatoryQuestion ;
     rdfs:label "Is the proposed FIH starting dose acceptable?" ;
+    top:identifier "urn:question:fih-dose"^^xsd:anyURI ;
+    top:observedAt "2025-12-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "answered" ;
     cr:proposedPosition "Propose 10 mg based on MABEL; request FDA concurrence." .
 
-ex:tox a cr:GLPToxReport ; rdfs:label "13-week GLP toxicology (rat)" .
-ex:finding-neutropenia a cr:NonclinicalFinding ; rdfs:label "Reversible neutropenia in rat" ;
+ex:tox a cr:GLPToxReport ;
+    rdfs:label "13-week GLP toxicology (rat)" ;
+    top:identifier "urn:tox:rat-13wk"^^xsd:anyURI ;
+    top:observedAt "2025-10-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "final" .
+
+ex:finding-neutropenia a cr:NonclinicalFinding ;
+    rdfs:label "Reversible neutropenia in rat" ;
+    top:identifier "urn:finding:neutropenia-rat"^^xsd:anyURI ;
+    top:observedAt "2025-10-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "reported" ;
     cr:identifiedIn ex:tox .
-ex:sa-cbc a cr:SafetyAssessment ; rdfs:label "Weekly CBC monitoring + dose-hold rule" ;
+
+ex:sa-cbc a cr:SafetyAssessment ;
+    rdfs:label "Weekly CBC monitoring + dose-hold rule" ;
+    top:identifier "urn:safety-assessment:cbc"^^xsd:anyURI ;
+    top:observedAt "2025-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "implemented" ;
     cr:addressesFinding ex:finding-neutropenia .
 
-ex:ind a cr:INDApplication ; rdfs:label "IND 123456" ;
+ex:ind-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for IND 123456" .
+
+ex:ind a cr:INDApplication ;
+    rdfs:label "IND 123456" ;
+    top:identifier "urn:ind"^^xsd:anyURI ;
     cr:tracesToNonclinical ex:tox ;
-    top:observedAt  "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ind-vs ;
     prov:wasAttributedTo ex:sponsor-pre .
-ex:sponsor-pre a cr:Sponsor ; rdfs:label "Oppentix Bio" .
 
-# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/ind> top:identifier "urn:ind" ; top:status "active" .
-
-# Provenance identity — attribution targets are identified agents, not bare roles.
-ex:sponsor-pre top:identifier "org:oppentix" .
+ex:sponsor-pre a cr:Sponsor ;
+    rdfs:label "Oppentix Bio" ;
+    top:identifier "org:oppentix"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .

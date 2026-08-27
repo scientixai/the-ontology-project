@@ -2,6 +2,8 @@
 @prefix cr:  <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix top: <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 # Conformant: cr:DataProcessingAgreement with all required fields (US-600-003).
@@ -17,11 +19,18 @@ ex:cro-parexel a cr:CRO ;
     top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
     top:status "active" .
 
+ex:dpa-ly900018-parexel-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for DPA LY900018-PAREXEL" .
+
 ex:dpa-ly900018-parexel a cr:DataProcessingAgreement ;
     top:identifier "urn:dpa:LY900018-PAREXEL-2025"^^xsd:anyURI ;
     top:observedAt "2025-03-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2025-03-01T08:00:00Z"^^xsd:dateTime ;
     top:status "active" ;
+    top:validFrom "2025-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dpa-ly900018-parexel-vs ;
     cr:processorOrg ex:cro-parexel ;
     cr:controllerOrg ex:sponsor-ly ;
     cr:dpaEffectiveDate "2025-03-01"^^xsd:date ;
-    cr:processingPurposes cr:GDPR_Art9_2_j .
+    cr:processingPurposes cr:GDPR_Art9_2_j ;
+    prov:wasAttributedTo ex:sponsor-ly .

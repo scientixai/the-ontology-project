@@ -18,22 +18,22 @@
 #   5. TransferAmendment that names no affected specification       (dta-agreement)
 
 ex:vendor-b a hcls:Organization ;
-    top:identifier "urn:org:VendorB" ; top:status "active" .
+    top:identifier "urn:org:VendorB"^^xsd:anyURI ; top:status "active" .
 
 # (4) signatory attestation with NO cr:backedByCredential
 ex:attest-bad a top:Attestation ;
-    top:identifier "urn:attest:bad" ; top:status "active" ;
+    top:identifier "urn:attest:bad"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-02-01T09:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-01T09:00:05Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:vendor-b .
 
 # (1) data element with no cr:boundConcept and no cr:declaredUnitConcept
 ex:de-bad a cr:DataElementSpecification ;
-    top:identifier "urn:de:bad" ;
+    top:identifier "urn:de:bad"^^xsd:anyURI ;
     rdfs:label "Unbound element (no concept, no unit)" .
 
 ex:dts-bad a cr:TransferSpecification ;
-    top:identifier "urn:dts:bad" ; top:status "active" ;
+    top:identifier "urn:dts:bad"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:vendor-b ;
@@ -41,26 +41,26 @@ ex:dts-bad a cr:TransferSpecification ;
 
 # (2) profile with a fileFormat outside CT + non-CT transmission fields
 ex:profile-bad a cr:TransferProfile ;
-    top:identifier "urn:profile:bad" ; top:status "active" ;
+    top:identifier "urn:profile:bad"^^xsd:anyURI ; top:status "active" ;
     cr:fileFormat "ProprietaryBlob" ;
     cr:transmissionMethod "carrier-pigeon" ;
     cr:transmissionType "whenever" .
 
 # (3) vendor alias that neither resolves nor is attested
 ex:alias-bad a cr:VendorAlias ;
-    top:identifier "urn:alias:bad" ; top:status "active" ;
+    top:identifier "urn:alias:bad"^^xsd:anyURI ; top:status "active" ;
     cr:vendorTerm "NA_MYSTERY_COLUMN" .
 
 # (3b) auto-resolved alias with NO provenance — can't be traced back
 ex:alias-noprov a cr:VendorAlias ;
-    top:identifier "urn:alias:noprov" ; top:status "active" ;
+    top:identifier "urn:alias:noprov"^^xsd:anyURI ; top:status "active" ;
     cr:vendorTerm "MYSTERY" ;
     cr:aliasResolvesTo ex:concept-x ;
     cr:resolutionConfidence "0.95"^^xsd:decimal .
     # no prov:wasDerivedFrom, no cr:resolvedBy -> cr:ResolutionProvenanceShape (Violation)
 
 ex:dta-bad a cr:DataTransferAgreement ;
-    top:identifier "urn:dta:bad" ; top:status "active" ;
+    top:identifier "urn:dta:bad"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:vendor-b ;
@@ -70,7 +70,7 @@ ex:dta-bad a cr:DataTransferAgreement ;
 
 # (5) amendment that names no affected specification
 ex:amend-bad a cr:TransferAmendment ;
-    top:identifier "urn:amend:bad" ; top:status "active" ;
+    top:identifier "urn:amend:bad"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:vendor-b ;
