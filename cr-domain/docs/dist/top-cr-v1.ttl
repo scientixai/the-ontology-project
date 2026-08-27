@@ -4516,12 +4516,6 @@ top:Observation a owl:Class ;
         prov:Entity,
         top:Outcome .
 
-top:Organism a owl:Class ;
-    rdfs:label "Organism"@en ;
-    rdfs:comment "A living biological non-human entity acting or being acted upon in an operational context — laboratory animal, livestock under veterinary care, plant in an agricultural trial, microbial culture, model organism in a biology study."@en ;
-    rdfs:subClassOf prov:Agent,
-        top:Agent .
-
 top:Organization a owl:Class ;
     rdfs:label "Organization"@en ;
     rdfs:comment "A legal or business entity — corporate parent, operating company, hospital, academic institution, regulator, vendor, sponsor."@en ;
@@ -4680,6 +4674,13 @@ top:containsActivity a owl:ObjectProperty ;
     rdfs:range top:Temporal ;
     top:flavor "Tightenable" .
 
+top:denotes a owl:ObjectProperty ;
+    rdfs:label "denotes"@en ;
+    rdfs:comment "Links a representation (a sequence record, a SMILES string, an identifier) to the entity it stands for. A SMILES string (a top:Document) denotes a molecular entity; the string is data, the molecule is the referent. Semiotic relation, no PROV-O peer (declared absence)."@en ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range top:CommonEntity ;
+    top:flavor "Tightenable" .
+
 top:endTime a owl:DatatypeProperty ;
     rdfs:label "end time"@en ;
     rdfs:comment "Actual or planned end. May be open (null) for ongoing activities."@en ;
@@ -4726,6 +4727,13 @@ top:hasMaintenanceLog a owl:ObjectProperty ;
     rdfs:comment "Links the Resource to its history of maintenance / calibration / validation Log."@en ;
     rdfs:domain top:Resource ;
     rdfs:range top:Log ;
+    top:flavor "Tightenable" .
+
+top:hasSubject a owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Binds an operation (a Scope such as a study, or a Temporal such as a procedure) to the entity it is performed upon, cares for, or studies: its subject. A role binding, not a type. The same Person is an Agent when they consent and a subject when they are observed; the same virion is a subject in the sequencing lab and a causal participant in an infection. No PROV-O peer (prov:used denotes a tool or consumed entity, not the subject-of-care)."@en ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range top:CommonEntity ;
     top:flavor "Tightenable" .
 
 top:measuredBy a owl:ObjectProperty ;
@@ -6991,10 +6999,6 @@ cr:SafetyStage a cr:TrialStage ;
     rdfs:label "Safety" ;
     rdfs:comment "Adverse event reporting, SAE expedited reporting, investigator causality assessment, pharmacovigilance line listing, safety signal detection. Always concurrent with other sub-stages." .
 
-top:CommonEntity a owl:Class ;
-    rdfs:label "Common Entity"@en ;
-    rdfs:comment "The root of every TOP entity. Carries Universal DNA — top:identifier, top:observedAt, top:status — that every Category and every Leaf inherits. Not directly instantiated; serves as the type lattice that lets queries reach across every Category."@en .
-
 top:Location a owl:Class ;
     rdfs:label "Location"@en ;
     rdfs:comment "The spatial or logical context where an Activity occurs or a Resource resides."@en ;
@@ -7021,6 +7025,20 @@ cr:DataManager a owl:Class ;
         "clinical data manager"@en ;
     skos:prefLabel "Data Manager"@en .
 
+top:Agent a owl:Class ;
+    rdfs:label "Agent"@en ;
+    rdfs:comment "The entity that holds authority or bears responsibility for what is done: it signs, owns, authorizes, enforces, and can be attributed an action. Persons, Organizations, Groups, Autonomous Agents (software with delegated authority). Capacity to act is not sufficient. A thing that merely acts causally (a pathogen, a compound, a river) is not an Agent unless it can be held to account."@en ;
+    rdfs:subClassOf <http://purl.obolibrary.org/obo/bfo#IndependentContinuant>,
+        prov:Agent,
+        top:CommonEntity ;
+    owl:disjointWith top:Constraint,
+        top:Evidence,
+        top:Location,
+        top:Outcome,
+        top:Resource,
+        top:Scope,
+        top:Temporal .
+
 top:Resource a owl:Class ;
     rdfs:label "Resource"@en ;
     rdfs:comment "Physical or digital assets used to execute tasks or produce outcomes. Equipment, instruments, software systems, samples, kits, raw materials, consumables."@en ;
@@ -7035,20 +7053,6 @@ cr:SponsorQualityStaff a owl:Class ;
     rdfs:comment "Classifies, approves, and closes deviations. Conducts audits and risk assessments; manages CAPAs. OOUX persona aliases: Sponsor Quality, Quality, Auditor." ;
     rdfs:subClassOf hcls:Person .
 
-top:Agent a owl:Class ;
-    rdfs:label "Agent"@en ;
-    rdfs:comment "The entity with capacity to act, hold authority, or carry responsibility."@en ;
-    rdfs:subClassOf <http://purl.obolibrary.org/obo/bfo#IndependentContinuant>,
-        prov:Agent,
-        top:CommonEntity ;
-    owl:disjointWith top:Constraint,
-        top:Evidence,
-        top:Location,
-        top:Outcome,
-        top:Resource,
-        top:Scope,
-        top:Temporal .
-
 cr:RegulatoryInteraction a owl:Class ;
     rdfs:label "Regulatory Interaction" ;
     rdfs:comment "Pre-IND / EOP2 meeting." ;
@@ -7058,6 +7062,10 @@ cr:SponsorOperationsStaff a owl:Class ;
     rdfs:label "Sponsor Operations" ;
     rdfs:comment "Manages protocol amendments, site network structure, regions, country configuration, site activation mechanics, and system configuration. OOUX persona aliases: Sponsor Operations, Sponsor Ops, Site Activation Manager." ;
     rdfs:subClassOf hcls:Person .
+
+top:CommonEntity a owl:Class ;
+    rdfs:label "Common Entity"@en ;
+    rdfs:comment "The root of every TOP entity. Carries Universal DNA — top:identifier, top:observedAt, top:status — that every Category and every Leaf inherits. Not directly instantiated; serves as the type lattice that lets queries reach across every Category."@en .
 
 cr:eCRF a owl:Class ;
     rdfs:label "eCRF" ;

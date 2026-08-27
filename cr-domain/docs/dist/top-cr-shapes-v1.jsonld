@@ -3412,24 +3412,6 @@
     ]
   },
   {
-    "@id": "_:cb27721a763856e884a393c70c779e956ee50c3da880d12d290631354cfd238d65f",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "T6: Identity stability violated \u2014 the derivation chain from $this traces back to multiple distinct identities (different IRIs and different VersionSeries) for what should be the same source event. A reminted SAE IRI breaks traceability."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#prefixes": [
-      {
-        "@id": "https://top.scientix.ai/shapes/traceability-v1"
-      }
-    ],
-    "http://www.w3.org/ns/shacl#select": [
-      {
-        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            PREFIX top: <https://top.scientix.ai/v1#>\n            SELECT $this WHERE {\n              # Find all source events this derives from (transitive)\n              $this prov:wasDerivedFrom+ ?source .\n              ?source a ?sourceType .\n              FILTER ( ?sourceType IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )\n              \n              # Get the stable identity (VersionSeries if Versioned, else the IRI itself)\n              OPTIONAL { ?source prov:specializationOf ?vs1 }\n              BIND ( COALESCE(?vs1, ?source) AS ?identity1 )\n              \n              # Check if there's a DIFFERENT source with a DIFFERENT identity\n              ?another a ?sourceType2 .\n              FILTER ( ?sourceType2 IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )\n              FILTER ( ?another != ?source )\n              OPTIONAL { ?another prov:specializationOf ?vs2 }\n              BIND ( COALESCE(?vs2, ?another) AS ?identity2 )\n              \n              # If both are about the same subject but have different identities, fail\n              ?source cr:forSubject ?subj .\n              ?another cr:forSubject ?subj .\n              FILTER ( ?identity1 != ?identity2 )\n            }\n        "
-      }
-    ]
-  },
-  {
     "@id": "_:cb278c8bd3f1f55f948d7dabeef9f889557f2236bc831b7f88c96006ab374bf1739",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -5560,6 +5542,24 @@
     ]
   },
   {
+    "@id": "_:cb39a64d7c1324e5a7a2fd5c3b80c65ddb00aa2b4f2632d4904341d628e55bf4459",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T6: Identity stability violated \u2014 the derivation chain from $this traces back to multiple distinct identities (different IRIs and different VersionSeries) for what should be the same source event. A reminted SAE/AssayResult IRI breaks traceability."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/traceability-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            PREFIX top: <https://top.scientix.ai/v1#>\n            SELECT $this WHERE {\n              # Find all source events this derives from (transitive)\n              $this prov:wasDerivedFrom+ ?source .\n              ?source a ?sourceType .\n              FILTER ( ?sourceType IN ( cr:AdverseEvent, cr:SeriousAdverseEvent, cr:AssayResult ) )\n              \n              # Get the stable identity (VersionSeries if Versioned, else the IRI itself)\n              OPTIONAL { ?source prov:specializationOf ?vs1 }\n              BIND ( COALESCE(?vs1, ?source) AS ?identity1 )\n              \n              # Check if there's a DIFFERENT source with a DIFFERENT identity\n              ?another a ?sourceType2 .\n              FILTER ( ?sourceType2 IN ( cr:AdverseEvent, cr:SeriousAdverseEvent, cr:AssayResult ) )\n              FILTER ( ?another != ?source )\n              OPTIONAL { ?another prov:specializationOf ?vs2 }\n              BIND ( COALESCE(?vs2, ?another) AS ?identity2 )\n              \n              # If both are about the same subject but have different identities, fail\n              ?source cr:forSubject ?subj .\n              ?another cr:forSubject ?subj .\n              FILTER ( ?identity1 != ?identity2 )\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb39b4891b67e08a58d9c3cc5c902348c0ae89c679b80d8a0b76d9b9095ca7614d8",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -7174,7 +7174,7 @@
     ],
     "http://www.w3.org/ns/shacl#sparql": [
       {
-        "@id": "_:cb27721a763856e884a393c70c779e956ee50c3da880d12d290631354cfd238d65f"
+        "@id": "_:cb39a64d7c1324e5a7a2fd5c3b80c65ddb00aa2b4f2632d4904341d628e55bf4459"
       }
     ],
     "http://www.w3.org/ns/shacl#target": [

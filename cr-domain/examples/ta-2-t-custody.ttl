@@ -1,0 +1,86 @@
+@prefix ex:   <https://top.scientix.ai/examples/ta-2/> .
+@prefix ex1:  <https://top.scientix.ai/examples/ta-1/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix qudt: <http://qudt.org/vocab/unit/> .
+@prefix loinc: <https://loinc.org/> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TA-2 T-CUSTODY — NO CUSTODY EVENT / NO PARENT SPECIMEN (Violation)
+#
+# The AssayResult references a specimen that has NO parent (no cr:collectedAt,
+# no prov:wasDerivedFrom) AND no custody events recorded.
+#
+# VIOLATION: cr:SpecimenOriginShape
+# Every specimen must have an origin: a collection event (cr:collectedAt) or
+# a parent (prov:wasDerivedFrom).
+#
+# Expected: VIOLATION (SpecimenOriginShape)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Reused TA-1 entities ───────────────────────────────────────────────────
+
+ex1:participant a cr:StudySubject ;
+    rdfs:label "Participant P-042" ;
+    top:identifier "urn:participant:P-042"^^xsd:anyURI ;
+    top:status "enrolled" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    cr:subjectId "P-042" .
+
+# ── TA-2 specific entities ─────────────────────────────────────────────────
+
+ex:lab-tech a hcls:Person, prov:Agent ;
+    rdfs:label "Lab Technician Maria Santos" ;
+    top:identifier "urn:person:maria-santos"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    hcls:actsAs "Lab Technician" .
+
+ex:concept-sodium a cr:BiomedicalConcept ;
+    rdfs:label "Serum Sodium" ;
+    top:identifier "urn:concept:sodium"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    cr:codedAs loinc:2951-2 .
+
+# ── ORPHAN specimen: no cr:collectedAt, no prov:wasDerivedFrom (VIOLATION) ─
+
+ex:specimen-p042-na-orphan a hcls:Specimen ;
+    rdfs:label "ORPHAN specimen (no origin)" ;
+    top:identifier "urn:specimen:p042-na-orphan"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T09:00:00Z"^^xsd:dateTime .
+    # VIOLATION: no cr:collectedAt, no prov:wasDerivedFrom
+
+# ── AssayDefinition ─────────────────────────────────────────────────────────
+
+ex:assay-sodium a cr:AssayDefinition ;
+    rdfs:label "Serum Sodium Assay" ;
+    top:identifier "urn:assay:sodium"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+# ── AssayResult (references the orphan specimen) ───────────────────────────
+
+ex:result-p042-na-001 a cr:AssayResult ;
+    rdfs:label "Serum sodium result: 128 mmol/L (low)" ;
+    top:identifier "urn:result:p042-na-001"^^xsd:anyURI ;
+    top:status "final" ;
+    top:observedAt "2026-03-15T14:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    cr:onSpecimen ex:specimen-p042-na-orphan ;
+    cr:forSubject ex1:participant ;
+    cr:resultOfAssay ex:assay-sodium ;
+    hcls:value "128"^^xsd:decimal ;
+    hcls:hasUnit qudt:MilliMOL-PER-L ;
+    prov:wasAttributedTo ex:lab-tech .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# VIOLATION SUMMARY:
+# - Specimen has no origin (no cr:collectedAt, no prov:wasDerivedFrom) ✗
+# - cr:SpecimenOriginShape violated ✗
+# ═══════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,247 @@
+@prefix ex:   <https://top.scientix.ai/examples/ta-2/> .
+@prefix ex1:  <https://top.scientix.ai/examples/ta-1/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix qudt: <http://qudt.org/vocab/unit/> .
+@prefix loinc: <https://loinc.org/> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TA-2 THREAD — CONFORMANT regression fixture (Phase C, lab thread)
+#
+# One serum sodium lab result on the same participant as TA-1 (P-042),
+# drawn on 2026-03-15 (same date as TA-1 SAE, adjacent but not itself an SAE).
+# Thread identity: ex:result-p042-na-001 (stable through ADLB).
+#
+# DEMONSTRATES:
+# - Parent specimen (hcls:Specimen) with cr:collectedAt
+# - Aliquot specimen (hcls:Specimen) with cr:aliquotOf / cr:hasAliquot
+# - LabOrder: cr:ordersAssay, cr:onSpecimen
+# - AssayDefinition: catalog test definition
+# - AssayResult: cr:onSpecimen, cr:forSubject, cr:resultOfAssay (required)
+# - CustodyEvent: chain of custody (SampleDue → Received → Verified → Published)
+# - ADLB: cr:AnalysisDataset Versioned, prov:wasDerivedFrom the result IRI
+# - BiomedicalConcept: cr:codedAs https://loinc.org/2951-2 (serum sodium)
+# - Unit: QUDT http://qudt.org/vocab/unit/MilliMOL-PER-L (mmol/L)
+# - Value: 128 mmol/L (low)
+# - DNA on every entity (identifier, observedAt, status)
+# - No bare skos:exactMatch (T2)
+# - Identity stability: one result IRI through ADLB (T6)
+#
+# Expected: CONFORMANT (0 violations, 0 warnings)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Reused TA-1 entities (same graph, same people) ────────────────────────
+# Minimal declarations for validation (full DNA in TA-1)
+
+ex1:participant a cr:StudySubject ;
+    rdfs:label "Participant P-042" ;
+    top:identifier "urn:participant:P-042"^^xsd:anyURI ;
+    top:status "enrolled" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    cr:subjectId "P-042" .
+
+ex1:study a cr:Study ;
+    rdfs:label "Study OPP-101" ;
+    top:identifier "urn:study:opp101"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    cr:conductedAt ex1:site ;
+    cr:sponsoredBy ex1:sponsor ;
+    cr:hasProtocolVersion ex1:protocol .
+
+ex1:site a cr:StudySite ;
+    rdfs:label "Site 001" ;
+    top:identifier "urn:site:001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+ex1:sponsor a cr:Sponsor ;
+    rdfs:label "Sponsor Inc" ;
+    top:identifier "urn:sponsor:inc"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+ex1:protocol-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for Protocol OPP-101" .
+
+ex1:protocol a cr:ProtocolVersion ;
+    rdfs:label "Protocol v1.0" ;
+    top:identifier "urn:protocol:v1"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-01T08:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex1:protocol-vs ;
+    prov:wasAttributedTo ex1:sponsor .
+
+# ── TA-2 specific entities ─────────────────────────────────────────────────
+
+ex:lab-tech a hcls:Person, prov:Agent ;
+    rdfs:label "Lab Technician Maria Santos" ;
+    top:identifier "urn:person:maria-santos"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    hcls:actsAs "Lab Technician" .
+
+# ── BiomedicalConcept: Serum Sodium ────────────────────────────────────────
+
+ex:concept-sodium a cr:BiomedicalConcept ;
+    rdfs:label "Serum Sodium" ;
+    top:identifier "urn:concept:sodium"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    cr:codedAs loinc:2951-2 .
+
+# ── Collection event (blood draw on 2026-03-15) ────────────────────────────
+
+ex:collection-p042-na a cr:StudyEvent ;
+    rdfs:label "Blood draw for P-042 on 2026-03-15" ;
+    top:identifier "urn:collection:p042-na-001"^^xsd:anyURI ;
+    top:status "completed" ;
+    top:observedAt "2026-03-15T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T09:05:00Z"^^xsd:dateTime .
+
+# ── Parent specimen (primary collection) ───────────────────────────────────
+
+ex:specimen-p042-na-parent a hcls:Specimen ;
+    rdfs:label "Parent serum specimen P-042-NA" ;
+    top:identifier "urn:specimen:p042-na-parent"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T09:00:00Z"^^xsd:dateTime ;
+    cr:collectedAt ex:collection-p042-na .
+
+# ── Aliquot specimen (second hcls:Specimen, derived from parent) ───────────
+
+ex:specimen-p042-na-aliquot a hcls:Specimen ;
+    rdfs:label "Aliquot serum specimen P-042-NA-A1" ;
+    top:identifier "urn:specimen:p042-na-aliquot"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T10:00:00Z"^^xsd:dateTime ;
+    cr:aliquotOf ex:specimen-p042-na-parent ;
+    prov:wasDerivedFrom ex:specimen-p042-na-parent .
+
+ex:specimen-p042-na-parent cr:hasAliquot ex:specimen-p042-na-aliquot .
+
+# ── Chain of custody (LIMS custody state machine) ──────────────────────────
+
+ex:custody-sampledue a cr:CustodyEvent ;
+    rdfs:label "Custody: SampleDue" ;
+    top:identifier "urn:custody:p042-na-sampledue"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T09:00:00Z"^^xsd:dateTime ;
+    cr:specimen ex:specimen-p042-na-aliquot ;
+    cr:toState "SampleDue" ;
+    prov:wasAttributedTo ex:lab-tech .
+
+ex:custody-received a cr:CustodyEvent ;
+    rdfs:label "Custody: Received" ;
+    top:identifier "urn:custody:p042-na-received"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T11:05:00Z"^^xsd:dateTime ;
+    cr:specimen ex:specimen-p042-na-aliquot ;
+    cr:fromState "SampleDue" ;
+    cr:toState "Received" ;
+    prov:wasAttributedTo ex:lab-tech .
+
+ex:custody-verified a cr:CustodyEvent ;
+    rdfs:label "Custody: Verified" ;
+    top:identifier "urn:custody:p042-na-verified"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T14:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T14:05:00Z"^^xsd:dateTime ;
+    cr:specimen ex:specimen-p042-na-aliquot ;
+    cr:fromState "ToBeVerified" ;
+    cr:toState "Verified" ;
+    prov:wasAttributedTo ex:lab-tech .
+
+ex:custody-published a cr:CustodyEvent ;
+    rdfs:label "Custody: Published" ;
+    top:identifier "urn:custody:p042-na-published"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T16:05:00Z"^^xsd:dateTime ;
+    cr:specimen ex:specimen-p042-na-aliquot ;
+    cr:fromState "Verified" ;
+    cr:toState "Published" ;
+    prov:wasAttributedTo ex:lab-tech .
+
+# ── AssayDefinition (catalog test definition) ──────────────────────────────
+
+ex:assay-sodium a cr:AssayDefinition ;
+    rdfs:label "Serum Sodium Assay" ;
+    top:identifier "urn:assay:sodium"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+# ── LabOrder ────────────────────────────────────────────────────────────────
+
+ex:order-p042-na a cr:LabOrder ;
+    rdfs:label "Lab order for P-042 serum sodium" ;
+    top:identifier "urn:order:p042-na-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T09:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T09:32:00Z"^^xsd:dateTime ;
+    cr:ordersAssay ex:assay-sodium ;
+    cr:onSpecimen ex:specimen-p042-na-aliquot ;
+    prov:wasAttributedTo ex:lab-tech .
+
+# ── AssayResult (the thread identity, stable through ADLB) ─────────────────
+
+ex:result-p042-na-001 a cr:AssayResult ;
+    rdfs:label "Serum sodium result: 128 mmol/L (low)" ;
+    top:identifier "urn:result:p042-na-001"^^xsd:anyURI ;
+    top:status "final" ;
+    top:observedAt "2026-03-15T14:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    # Required by AssayResultShape
+    cr:onSpecimen ex:specimen-p042-na-aliquot ;
+    cr:forSubject ex1:participant ;
+    cr:resultOfAssay ex:assay-sodium ;
+    # Value and unit
+    hcls:value "128"^^xsd:decimal ;
+    hcls:hasUnit qudt:MilliMOL-PER-L ;
+    prov:wasAttributedTo ex:lab-tech .
+
+# ── ADLB (Versioned analysis dataset, derived from result) ─────────────────
+
+ex:adlb-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for ADLB OPP-101" ;
+    top:identifier "urn:adlb:opp101-vs"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime .
+
+ex:adlb a cr:AnalysisDataset ;
+    rdfs:label "ADLB for study OPP-101" ;
+    top:identifier "urn:adlb:opp101-v1"^^xsd:anyURI ;
+    top:status "locked" ;
+    top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-01T12:00:00Z"^^xsd:dateTime ;
+    # Versioned envelope (required for AnalysisDataset)
+    top:validFrom "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:adlb-vs ;
+    # ADLB properties
+    cr:datasetName "ADLB" ;
+    cr:datasetStructure "BDS" ;
+    prov:wasDerivedFrom ex:result-p042-na-001 ;  # T6: traces to same result IRI
+    prov:wasAttributedTo ex:lab-tech .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONFORMANCE SUMMARY:
+# - All entities carry DNA (identifier ^^xsd:anyURI + observedAt + status) ✓
+# - Parent specimen has cr:collectedAt ✓
+# - Aliquot is a second hcls:Specimen with cr:aliquotOf / cr:hasAliquot ✓
+# - LabOrder has cr:ordersAssay and cr:onSpecimen ✓
+# - AssayResult has cr:onSpecimen, cr:forSubject, cr:resultOfAssay ✓
+# - CustodyEvent chain: SampleDue → Received → Verified → Published ✓
+# - ADLB is Versioned (validFrom + specializationOf) ✓
+# - ADLB prov:wasDerivedFrom the result IRI (T6: identity stability) ✓
+# - BiomedicalConcept cr:codedAs LOINC 2951-2 ✓
+# - No bare skos:exactMatch (T2) ✓
+# ═══════════════════════════════════════════════════════════════════════════
