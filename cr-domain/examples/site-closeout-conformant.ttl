@@ -17,9 +17,19 @@
 # CONFORMANT: 0 violations, 0 warnings.
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:sc-site a cr:StudySite ; rdfs:label "Denver Cancer Center" .
-ex:sc-cra a hcls:Person ; rdfs:label "Silvia Rodriguez, CRA" .
-ex:sc-sponsor a hcls:Organization ; rdfs:label "Sponsor clinical operations" .
+ex:sc-site a cr:StudySite ;
+    rdfs:label "Denver Cancer Center" ;
+    top:identifier "urn:sc-site"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sc-cra a hcls:Person ;
+    rdfs:label "Silvia Rodriguez, CRA" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sc-sponsor a hcls:Organization ;
+    rdfs:label "Sponsor clinical operations" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The Close-Out Visit ───────────────────────────────────────────────────────
 ex:sc-cov a cr:CloseOutVisit ;
@@ -55,7 +65,10 @@ ex:sc-recon-docs a cr:Reconciliation ;
 # ── The ISF, archived with a retention horizon ────────────────────────────────
 ex:sc-isf a cr:InvestigatorSiteFile ;
     rdfs:label "Denver ISF (regulatory binder)" ;
-    cr:isfForSite ex:sc-site .
+    cr:isfForSite ex:sc-site ;
+    top:identifier "urn:sc-isf"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:sc-archival a cr:ArchivalEvent ;
     rdfs:label "Archival of the Denver ISF" ;
@@ -63,8 +76,12 @@ ex:sc-archival a cr:ArchivalEvent ;
     cr:archivesISF ex:sc-isf ;
     cr:retentionUntil "2051-08-15"^^xsd:date ;
     top:observedAt "2026-08-15T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-15T10:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-15T10:05:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:sc-archival-series ;
     prov:wasAttributedTo ex:sc-sponsor .
+ex:sc-archival-series a top:VersionSeries ;
+    top:identifier "urn:archive:denver-isf:series"^^xsd:anyURI .
 
 # ── The closure — resting on its evidence ─────────────────────────────────────
 ex:sc-closure a cr:SiteClosure ;
