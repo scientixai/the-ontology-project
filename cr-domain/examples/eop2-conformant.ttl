@@ -11,48 +11,124 @@
 # ORR result traces to endpoint + estimand + SAP; EOP2 meeting produces a binding
 # agreement + risk register; proposed Phase 3 design rests on dose-optimization (Optimus).
 
-ex:study-opp201 a cr:Study ; rdfs:label "OPP-201 (Phase 2 oncology)" ;
-    cr:sponsoredBy ex:oppentix2 ; cr:conductedAt ex:site2 ;
-    cr:hasProtocolVersion ex:proto201 ; cr:hasEndpoint ex:ep-orr .
-ex:oppentix2 a cr:Sponsor ; rdfs:label "Oppentix Bio" .
-ex:site2 a cr:StudySite ; rdfs:label "Austin Oncology Research" .
-ex:proto201 a cr:ProtocolVersion ; rdfs:label "OPP-201 protocol v1.0" ;
+ex:study-opp201 a cr:Study ;
+    rdfs:label "OPP-201 (Phase 2 oncology)" ;
+    top:identifier "urn:study:opp201"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
+    cr:sponsoredBy ex:oppentix2 ;
+    cr:conductedAt ex:site2 ;
+    cr:hasProtocolVersion ex:proto201 ;
+    cr:hasEndpoint ex:ep-orr .
+
+ex:oppentix2 a cr:Sponsor ;
+    rdfs:label "Oppentix Bio" ;
+    top:identifier "org:oppentix"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:site2 a cr:StudySite ;
+    rdfs:label "Austin Oncology Research" ;
+    top:identifier "urn:site:austin-oncology"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:proto201-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for OPP-201 Protocol" .
+
+ex:proto201 a cr:ProtocolVersion ;
+    rdfs:label "OPP-201 protocol v1.0" ;
+    top:identifier "urn:proto201"^^xsd:anyURI ;
     top:observedAt "2026-03-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-03-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:proto201-vs ;
     prov:wasAttributedTo ex:oppentix2 ;
     cr:hasEligibilityCriterion ex:elig201 .
-ex:elig201 a cr:EligibilityCriterion ; rdfs:label "Measurable disease per RECIST 1.1" .
 
-ex:ep-orr a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
-ex:est-orr a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed responses, RECIST 1.1)" .
-ex:sap201 a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+ex:elig201 a cr:EligibilityCriterion ;
+    rdfs:label "Measurable disease per RECIST 1.1" ;
+    top:identifier "urn:elig:opp201-recist"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
-ex:res-orr a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
-    cr:measuresEndpoint ex:ep-orr ; cr:perEstimand ex:est-orr ; cr:analyzedUnder ex:sap201 ;
+ex:ep-orr a cr:Endpoint ;
+    rdfs:label "Objective Response Rate (ORR)" ;
+    top:identifier "urn:endpoint:orr"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:est-orr a cr:Estimand ;
+    rdfs:label "ORR estimand (ITT, confirmed responses, RECIST 1.1)" ;
+    top:identifier "urn:estimand:orr-itt"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:sap201 a cr:StatisticalAnalysisPlan ;
+    rdfs:label "OPP-201 SAP v1.0" ;
+    top:identifier "urn:sap:opp201-v1"^^xsd:anyURI ;
+    top:observedAt "2026-05-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "locked" .
+
+ex:res-orr-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for ORR Result" .
+
+ex:res-orr a cr:EndpointResult ;
+    rdfs:label "ORR = 0.42" ;
+    rdf:value "0.42" ;
+    top:identifier "urn:res-orr"^^xsd:anyURI ;
+    cr:measuresEndpoint ex:ep-orr ;
+    cr:perEstimand ex:est-orr ;
+    cr:analyzedUnder ex:sap201 ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:res-orr-vs ;
     prov:wasAttributedTo ex:biostat .
-ex:biostat a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
+
+ex:biostat a hcls:Practitioner ;
+    rdfs:label "Femi Balogun" ;
+    top:identifier "person:femi-balogun"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
+    hcls:actsAs "Lead Biostatistician" .
 
 # Project Optimus: the proposed Phase 3 dose rests on dose-optimization work.
-ex:doseopt a cr:Assessment ; rdfs:label "Dose optimization analysis (Project Optimus)" .
-ex:p3design a cr:Phase3Design ; rdfs:label "Proposed Phase 3 design (RP2D)" ;
+ex:doseopt a cr:Assessment ;
+    rdfs:label "Dose optimization analysis (Project Optimus)" ;
+    top:identifier "urn:assessment:doseopt"^^xsd:anyURI ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" .
+
+ex:p3design a cr:Phase3Design ;
+    rdfs:label "Proposed Phase 3 design (RP2D)" ;
+    top:identifier "urn:design:opp3-rp2d"^^xsd:anyURI ;
+    top:observedAt "2026-07-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "proposed" ;
     cr:basedOnDoseOptimization ex:doseopt .
 
-ex:eop2 a cr:RegulatoryInteraction ; rdfs:label "End-of-Phase-2 meeting" ;
+ex:eop2 a cr:RegulatoryInteraction ;
+    rdfs:label "End-of-Phase-2 meeting" ;
+    top:identifier "urn:eop2:opp201"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "completed" ;
     cr:meetingType "EOP2" ;
     cr:concernsStudy ex:study-opp201 ;
     cr:reviewsResult ex:res-orr ;
     cr:producedAgreement ex:agree1 ;
     cr:hasRiskRegister ex:rr1 ;
     cr:proposesDesign ex:p3design .
-ex:agree1 a cr:RegulatoryAgreement ; rdfs:label "FDA agreement: primary endpoint = OS" .
-ex:rr1 a cr:RiskRegister ; rdfs:label "EOP2 risk register" .
 
-# --- Universal DNA (TOP Core): identifier + status (observedAt already present above) ---
-<https://top.scientix.ai/examples/proto201> top:identifier "urn:proto201"^^xsd:anyURI ; top:status "active" .
-<https://top.scientix.ai/examples/res-orr> top:identifier "urn:res-orr"^^xsd:anyURI ; top:status "active" .
+ex:agree1 a cr:RegulatoryAgreement ;
+    rdfs:label "FDA agreement: primary endpoint = OS" ;
+    top:identifier "urn:agreement:eop2-os"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "binding" .
 
-# Provenance identity — attribution targets are identified agents, not bare roles.
-ex:biostat top:identifier "person:femi-balogun"^^xsd:anyURI .
-ex:oppentix2 top:identifier "org:oppentix"^^xsd:anyURI .
+ex:rr1 a cr:RiskRegister ;
+    rdfs:label "EOP2 risk register" ;
+    top:identifier "urn:risk-register:eop2"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
