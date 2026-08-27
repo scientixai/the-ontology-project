@@ -1,33 +1,35 @@
 ## Path A Honest Fixture Completion Status
 
 **Branch:** cursor/cr-dna-versioned-traps-4d20  
-**Latest commit:** f173254
+**Latest commit:** a97eaf1
 
-### Completed (4/19 files - 21%)
+### Completed (7/19 files - 37%)
 
 1. ✅ `dpa-conformant.ttl` - Added Versioned envelope to DataProcessingAgreement
 2. ✅ `dna-missing-status-violation.ttl` - Completed agent DNA, file violates as intended
 3. ✅ `smoke-violation.ttl` - Removed status to make it violate DNA requirement
 4. ✅ `lims-specimen-conformant.ttl` - Completed DNA on all 11 entities
+5. ✅ `eop2-conformant.ttl` - Completed DNA on all 13 entities + Versioned envelopes (ProtocolVersion, EndpointResult)
+6. ✅ `preind-conformant.ttl` - Completed DNA on all 8 entities + Versioned envelope (INDApplication)
+7. ✅ `edc-conformant.ttl` - Completed DNA on all 9 entities
 
-### Remaining (15/19 files - 79%)
+### Remaining (12/19 files - 63%)
 
-All remaining files primarily need DNA completion (identifier + observedAt + status on all CommonEntity/Agent instances). Some also need Versioned envelopes on KEEP classes.
-
-**Conformant files needing DNA:**
-- `blood-draw-context-conformant.ttl` - Also needs Versioned envelope on Delegation + InformedConsent
-- `edc-conformant.ttl` - DNA completion only
-- `oncology-fih-conformant.ttl` - DNA completion only
-- `preind-conformant.ttl` - DNA completion only
-- `schedule-conformant.ttl` - DNA completion, ~15 entities
+**High priority conformant files (simpler DNA fixes):**
+- `schedule-conformant.ttl` - ~15 entities need DNA
 - `usdm-cdisc-pilot-conformant.ttl` - DNA completion
-- `visit-execution-conformant.ttl` - DNA completion
 - `tmf-onboarding-conformant.ttl` - DNA + Versioned envelope on ProtocolVersion
-- `tmf-recommended-gap-warning.ttl` - DNA + Versioned envelope on ProtocolVersion
-- `participant-conformant.ttl` - Complex: uses retired cr:Participant, needs retargeting to cr:StudySubject
 
-**Warning files currently showing violations (need DNA fixed first):**
-- `eop2-conformant.ttl` - Should be conformant per filename
+**Medium priority (DNA + Versioned):**
+- `blood-draw-context-conformant.ttl` - DNA + Versioned envelope on Delegation + InformedConsent (KEEP classes)
+- `oncology-fih-conformant.ttl` - 127 lines, DNA completion
+
+**Complex (retired cr:Participant class):**
+- `participant-conformant.ttl` - Uses retired cr:Participant, needs retargeting to cr:StudySubject
+- `visit-execution-conformant.ttl` - Also uses retired cr:Participant
+
+**Warning files (DNA first, then verify warning-only):**
+- `tmf-recommended-gap-warning.ttl` - DNA + verify warning behavior
 - `eop2-incomplete-warning.ttl` - DNA completion, then verify warning-only
 - `preind-vague-question-warning.ttl` - DNA completion, then verify warning-only
 - `timing-gap-warning.ttl` - DNA completion, then verify warning-only
@@ -43,10 +45,10 @@ Most files follow same pattern:
 
 ### Next Steps
 
-1. Continue DNA completion on remaining files
+1. Continue DNA completion on remaining conformant files
 2. Add Versioned envelopes where needed (Delegation, InformedConsent, ProtocolVersion instances)
-3. Verify warning files only warn (no violations)
-4. Fix participant-conformant (retarget retired cr:Participant to cr:StudySubject)
+3. Fix participant/visit-execution files (retarget retired cr:Participant to cr:StudySubject)
+4. Fix all warning files (DNA first, then verify they only warn)
 5. Run full suite validation
 6. Only then claim Path A complete
 
@@ -56,3 +58,6 @@ Most files follow same pattern:
 - `129047a` - Fixed dpa-conformant.ttl
 - `45670a1` - Fixed dna-missing-status-violation.ttl
 - `f173254` - Fixed smoke-violation.ttl + lims-specimen-conformant.ttl
+- `6c64968` - Documented status
+- `c9864c0` - Fixed eop2-conformant.ttl + preind-conformant.ttl
+- `a97eaf1` - Fixed edc-conformant.ttl
