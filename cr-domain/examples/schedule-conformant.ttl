@@ -227,9 +227,29 @@ ex:visit-v3 a cr:Visit ;
     top:observedAt "2026-03-23T09:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
 
+ex:instr-qs2 a cr:AssessmentInstrument ;
+    rdfs:label "PHQ-9 questionnaire" ;
+    top:identifier "urn:instr:qs2"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:instr-ecg a cr:AssessmentInstrument ;
+    rdfs:label "12-lead ECG" ;
+    top:identifier "urn:instr:ecg"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:instr-blood a cr:AssessmentInstrument ;
+    rdfs:label "Blood collection kit" ;
+    top:identifier "urn:instr:blood"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
 ex:qs2-act a cr:Assessment ;
     cr:realizes ex:pa-qs2 ;
     cr:atVisit ex:visit-v1 ;
+    cr:assessedAt ex:visit-v1 ;
+    cr:assessmentInstrument ex:instr-qs2 ;
     top:identifier "urn:act:qs2"^^xsd:anyURI ;
     top:observedAt "2026-03-02T08:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
@@ -237,6 +257,8 @@ ex:qs2-act a cr:Assessment ;
 ex:ecg-act a cr:Assessment ;
     cr:realizes ex:pa-ecg ;
     cr:atVisit ex:visit-v1 ;
+    cr:assessedAt ex:visit-v1 ;
+    cr:assessmentInstrument ex:instr-ecg ;
     top:identifier "urn:act:ecg"^^xsd:anyURI ;
     top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
@@ -244,6 +266,8 @@ ex:ecg-act a cr:Assessment ;
 ex:blood-act a cr:Assessment ;
     cr:realizes ex:pa-blood ;
     cr:atVisit ex:visit-v1 ;
+    cr:assessedAt ex:visit-v1 ;
+    cr:assessmentInstrument ex:instr-blood ;
     top:identifier "urn:act:blood"^^xsd:anyURI ;
     top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
