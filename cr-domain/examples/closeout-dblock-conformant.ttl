@@ -22,7 +22,9 @@
 
 # ── Parties ──────────────────────────────────────────────────────────────────
 ex:sponsor a hcls:Organization ;
-    top:identifier "urn:org:sponsor"^^xsd:anyURI ; top:status "active" ;
+    top:identifier "urn:org:sponsor"^^xsd:anyURI ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     rdfs:label "Sponsor data-management (lock authority)" .
 
 # ── The last-patient-last-visit milestone — opens closeout ────────────────────
@@ -65,21 +67,30 @@ ex:unlock a cr:DatabaseUnlock ;
 
 # ── The subject + the variable definition ─────────────────────────────────────
 ex:subj a cr:StudySubject ;
-    top:identifier "urn:subject:S-207"^^xsd:anyURI ; top:status "active" ;
+    top:identifier "urn:subject:S-207"^^xsd:anyURI ;
+    top:observedAt "2026-01-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:subjectId "S-207" ;
     top:validFrom "2026-01-10T00:00:00Z"^^xsd:dateTime .
 
 ex:de-ae a cr:DataElementDef ;
     rdfs:label "Late safety follow-up finding" ;
-    cr:phiClassification "NotPHI" .
+    cr:phiClassification "NotPHI" ;
+    top:identifier "urn:de-ae"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Long-term follow-up: the programme + a safety follow-up visit ─────────────
 ex:ltfu a cr:LongTermFollowUp ;
-    top:identifier "urn:ltfu:survival"^^xsd:anyURI ; top:status "active" ;
+    top:identifier "urn:ltfu:survival"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     rdfs:label "Long-term safety follow-up programme" .
 
 ex:fuv a cr:FollowUpVisit ;
+    top:identifier "urn:fuv"^^xsd:anyURI ;
     top:observedAt "2026-07-11T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" ;
     cr:followUpType "safety" ;
     cr:followsUp ex:ltfu ;
     rdfs:label "Follow-up visit (safety) — beyond the treatment period" .
