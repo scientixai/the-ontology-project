@@ -105,7 +105,9 @@ ex:elig-ecog a cr:EligibilityCriterion ;
     rdfs:label "ECOG performance status 0-1" ;
     top:identifier "urn:elig:ecog"^^xsd:anyURI ;
     top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
-    top:status "active" .
+    top:status "active" ;
+    cr:criterionType "inclusion" ;
+    cr:criterionText "Subjects must have ECOG performance status of 0 or 1." .
 
 # --- Delegation: PI delegates 'obtain informed consent' to the nurse ---------
 # Credential gate (the nurse's GCP/consent training), then the delegation act,
@@ -186,7 +188,9 @@ ex:enroll-001 a cr:Enrollment ;
     prov:wasAttributedTo ex:person-nguyen ;
     cr:enrolledPerson ex:person-doe ;
     cr:asSubject ex:subj-001 ;
-    cr:intoStudy ex:study-opp101 .
+    cr:intoStudy ex:study-opp101 ;
+    cr:enrollmentDate "2026-02-05"^^xsd:date ;
+    cr:enrolledInArm ex:arm-escalation .
 
 # --- Consent performed BY the nurse, UNDER the delegation, valid-time after it
 ex:consent-001-vs a top:VersionSeries ;
@@ -204,7 +208,11 @@ ex:consent-001 a cr:InformedConsent ;
     cr:forSubject ex:subj-001 ;
     cr:performedBy ex:person-nguyen ;
     cr:exercisesCapability ex:cap-consent ;
-    cr:underDelegation ex:deleg-consent-001 .
+    cr:underDelegation ex:deleg-consent-001 ;
+    cr:consentDate "2026-02-05"^^xsd:date ;
+    cr:consentVersion "ICF-v1.0" ;
+    cr:consentFormIRI "urn:icf:opp101-v1.0"^^xsd:anyURI ;
+    cr:consentStatus "active" .
 
 # --- Dosing at dose level 1, then a dose-limiting toxicity (oncology) --------
 ex:admin-001 a cr:Administration ;
@@ -225,4 +233,5 @@ ex:ae-001 a cr:DoseLimitingToxicity ;
     top:recordedAt "2026-02-09T16:20:00Z"^^xsd:dateTime ;
     top:status "reported" ;
     prov:wasAttributedTo ex:person-rivera ;
-    cr:forSubject ex:subj-001 .
+    cr:forSubject ex:subj-001 ;
+    cr:ctcaeGrade 3 .
