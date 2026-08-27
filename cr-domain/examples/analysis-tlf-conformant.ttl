@@ -25,27 +25,60 @@ ex:src-orr a cr:AdverseEvent ; rdfs:label "Confirmed response (source record)" ;
     top:identifier "urn:src:orr-a2"^^xsd:anyURI ; top:status "active" ;
     cr:forSubject ex:subj-a2 ;
     top:observedAt "2026-05-15T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-05-15T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-05-15T12:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:src-orr-series ;
     prov:wasAttributedTo ex:inv-a2 .
+ex:src-orr-series a top:VersionSeries ;
+    top:identifier "urn:src:orr-a2:series"^^xsd:anyURI ;
+    top:observedAt "2026-05-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:subj-a2 a cr:StudySubject ;
     top:identifier "urn:subject:A2-001"^^xsd:anyURI ; top:status "active" ;
     cr:subjectId "A2-001" ;
+    top:observedAt "2025-06-01T00:00:00Z"^^xsd:dateTime ;
     top:validFrom "2025-06-01T00:00:00Z"^^xsd:dateTime .
-ex:inv-a2 a hcls:Practitioner ; rdfs:label "Dr. Elena Petrova" ; hcls:actsAs "Investigator" .
-ex:biostat-a2 a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
+ex:inv-a2 a hcls:Practitioner ;
+    rdfs:label "Dr. Elena Petrova" ;
+    hcls:actsAs "Investigator" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:biostat-a2 a hcls:Practitioner ;
+    rdfs:label "Femi Balogun" ;
+    hcls:actsAs "Lead Biostatistician" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── ADaM analysis dataset, derived from the native source ─────────────────────
 ex:adeff a cr:AnalysisDataset ; rdfs:label "ADEFF (efficacy analysis dataset)" ;
     top:identifier "urn:adam:ADEFF"^^xsd:anyURI ; top:status "active" ;
     prov:wasDerivedFrom ex:src-orr ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:adeff-series ;
     prov:wasAttributedTo ex:biostat-a2 .
+ex:adeff-series a top:VersionSeries ;
+    top:identifier "urn:adam:ADEFF:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The pre-specified statistical plan + endpoint + estimand ──────────────────
-ex:ep-orr-a2 a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
-ex:est-orr-a2 a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed responses, RECIST 1.1)" .
-ex:sap-a2 a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+ex:ep-orr-a2 a cr:Endpoint ;
+    rdfs:label "Objective Response Rate (ORR)" ;
+    top:identifier "urn:ep-orr-a2"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:est-orr-a2 a cr:Estimand ;
+    rdfs:label "ORR estimand (ITT, confirmed responses, RECIST 1.1)" ;
+    top:identifier "urn:est-orr-a2"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:sap-a2 a cr:StatisticalAnalysisPlan ;
+    rdfs:label "OPP-201 SAP v1.0" ;
+    top:identifier "urn:sap-a2"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The endpoint result, reproducible to the ADaM dataset ─────────────────────
 ex:res-orr-a2 a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
@@ -55,31 +88,59 @@ ex:res-orr-a2 a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
     cr:analyzedUnder ex:sap-a2 ;
     prov:wasDerivedFrom ex:adeff ;
     top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-02T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:res-orr-a2-series ;
     prov:wasAttributedTo ex:biostat-a2 .
+ex:res-orr-a2-series a top:VersionSeries ;
+    top:identifier "urn:result:orr-a2:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The TLF: pre-specified, reproducible-to-source, presents the result ───────
 ex:tlf-1431 a cr:TableListingFigure ; rdfs:label "Table 14.3.1 — ORR by treatment arm" ;
     top:identifier "urn:tlf:14.3.1"^^xsd:anyURI ; top:status "active" ;
     cr:tlfType "table" ;
-    prov:wasDerivedFrom ex:adeff ;         # reproducible to the ADaM dataset
-    cr:prespecifiedIn ex:sap-a2 ;          # grounded in the SAP (not post-hoc)
+    prov:wasDerivedFrom ex:adeff ;
+    cr:prespecifiedIn ex:sap-a2 ;
     cr:presentsResult ex:res-orr-a2 ;
     top:observedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-03T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:tlf-1431-series ;
     prov:wasAttributedTo ex:biostat-a2 .
+ex:tlf-1431-series a top:VersionSeries ;
+    top:identifier "urn:tlf:14.3.1:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-03T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The EOP2 gate (meeting) — required fields + agreement + risk register ─────
-ex:agree-a2 a cr:RegulatoryAgreement ; rdfs:label "FDA agreement: primary endpoint = OS" .
-ex:rr-a2 a cr:RiskRegister ; rdfs:label "EOP2 risk register" .
-ex:eop2-a2 a cr:RegulatoryInteraction ; rdfs:label "End-of-Phase-2 meeting" ;
+ex:agree-a2 a cr:RegulatoryAgreement ;
+    rdfs:label "FDA agreement: primary endpoint = OS" ;
+    top:identifier "urn:agree-a2"^^xsd:anyURI ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:rr-a2 a cr:RiskRegister ;
+    rdfs:label "EOP2 risk register" ;
+    top:identifier "urn:rr-a2"^^xsd:anyURI ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:eop2-a2 a cr:RegulatoryInteraction ;
+    rdfs:label "End-of-Phase-2 meeting" ;
     cr:meetingType "EOP2" ;
     cr:meetingDate "2026-09-15"^^xsd:date ;
     cr:producedAgreement ex:agree-a2 ;
-    cr:hasRiskRegister ex:rr-a2 .
+    cr:hasRiskRegister ex:rr-a2 ;
+    top:identifier "urn:eop2-a2"^^xsd:anyURI ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The Phase 3 design the go-decision yields (RP2D, dose-optimized per Optimus) ─
-ex:p3design-a2 a cr:Phase3Design ; rdfs:label "Proposed Phase 3 design (RP2D, dose-optimized)" .
+ex:p3design-a2 a cr:Phase3Design ;
+    rdfs:label "Proposed Phase 3 design (RP2D, dose-optimized)" ;
+    top:identifier "urn:p3design-a2"^^xsd:anyURI ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The decision node: a coded verdict resting on the TLF evidence ────────────
 ex:eop2-decision a cr:AnalysisDecision ; rdfs:label "EOP2 decision — GO to Phase 3" ;
@@ -87,11 +148,17 @@ ex:eop2-decision a cr:AnalysisDecision ; rdfs:label "EOP2 decision — GO to Pha
     cr:decisionOutcome "go" ;
     cr:restsOn ex:tlf-1431 , ex:res-orr-a2 ;
     cr:decisionAtGate ex:eop2-a2 ;
-    cr:decidesStudy ex:study-opp201 ;      # study referenced by IRI
+    cr:decidesStudy ex:study-opp201 ;
     cr:yieldsDesign ex:p3design-a2 ;
     top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-09-15T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-09-15T16:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:eop2-decision-series ;
     prov:wasAttributedTo ex:biostat-a2 .
+ex:eop2-decision-series a top:VersionSeries ;
+    top:identifier "urn:decision:eop2:series"^^xsd:anyURI ;
+    top:observedAt "2026-09-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:biostat-a2 top:identifier "person:femi-balogun"^^xsd:anyURI .
