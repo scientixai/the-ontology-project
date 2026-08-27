@@ -16,7 +16,10 @@
 # CONFORMANT: 0 violations, 0 warnings.
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:cd-coder a hcls:Person ; rdfs:label "Sam Okafor, Medical Coder" .
+ex:cd-coder a hcls:Person ;
+    rdfs:label "Sam Okafor, Medical Coder" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:cd-ae a cr:AdverseEvent ;
     rdfs:label "AE: achy joints" ;
@@ -38,23 +41,32 @@ ex:cd-assign-ae a cr:CodeAssignment ;
     cr:codedBy ex:cd-coder ;
     cr:hasReview ex:cd-review ;
     top:observedAt "2026-03-11T09:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-11T09:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-11T09:00:02Z"^^xsd:dateTime ;
+    prov:specializationOf ex:cd-assign-ae-series ;
     prov:wasAttributedTo ex:cd-coder .
+ex:cd-assign-ae-series a top:VersionSeries ;
+    top:identifier "urn:coding:ae-achy-joints:series"^^xsd:anyURI .
 
 ex:cd-review a cr:CodingReview ;
     rdfs:label "Review of the Arthralgia assignment — approved" ;
     cr:reviewsAssignment ex:cd-assign-ae ;
     cr:reviewVerdict "approved" ;
     cr:reviewedBy ex:cd-coder ;
-    top:observedAt "2026-03-12T14:00:00Z"^^xsd:dateTime .
+    top:observedAt "2026-03-12T14:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Manual WHODrug assignment for a conmed ────────────────────────────────────
 ex:cd-conmed a top:Versioned ;
     rdfs:label "ConMed: baby aspirin" ;
     top:identifier "urn:conmed:S-042-1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-10T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:cd-conmed-series ;
     prov:wasAttributedTo ex:cd-coder .
+ex:cd-conmed-series a top:VersionSeries ;
+    top:identifier "urn:conmed:S-042-1:series"^^xsd:anyURI .
 
 ex:cd-assign-cm a cr:CodeAssignment ;
     rdfs:label "Coding of 'baby aspirin' -> WHODrug Acetylsalicylic acid" ;
