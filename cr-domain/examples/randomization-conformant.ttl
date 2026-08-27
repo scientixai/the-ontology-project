@@ -47,8 +47,12 @@ ex:rz-event a cr:RandomizationEvent ;
     cr:randomizationNumber "R-0042" ;
     cr:stratumKey "ECOG:0-1|prior-lines:<=1" ;
     top:observedAt "2026-03-02T10:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-02T10:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-02T10:00:05Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rz-event-series ;
     prov:wasAttributedTo ex:rz-system .
+ex:rz-event-series a top:VersionSeries ;
+    top:identifier "urn:rand:S-042:series"^^xsd:anyURI .
 
 # ── The blinded kit that operationalizes it ───────────────────────────────────
 ex:rz-kit a cr:KitAssignment ;
@@ -58,8 +62,12 @@ ex:rz-kit a cr:KitAssignment ;
     cr:assignsKitTo ex:rz-subject ;
     cr:kitNumber "K-1187" ;
     top:observedAt "2026-03-02T10:00:10Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-02T10:00:10Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-02T10:00:12Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rz-kit-series ;
     prov:wasAttributedTo ex:rz-system .
+ex:rz-kit-series a top:VersionSeries ;
+    top:identifier "urn:kit:K-1187:series"^^xsd:anyURI .
 
 # ── The blind broken the RIGHT way: reasoned, authorized, audited ─────────────
 ex:rz-unblinding a cr:UnblindingEvent ;
@@ -70,8 +78,12 @@ ex:rz-unblinding a cr:UnblindingEvent ;
     cr:unblindingReason "Grade 4 SAE management required knowledge of treatment assignment (anticoagulation decision)." ;
     cr:unblindingAuthorizedBy ex:rz-medmonitor ;
     top:observedAt "2026-05-18T02:40:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-05-18T02:40:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-05-18T02:41:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:rz-unblinding-series ;
     prov:wasAttributedTo ex:rz-medmonitor .
+ex:rz-unblinding-series a top:VersionSeries ;
+    top:identifier "urn:unblind:S-042:series"^^xsd:anyURI .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:rz-medmonitor top:identifier "person:lena-fischer"^^xsd:anyURI .
