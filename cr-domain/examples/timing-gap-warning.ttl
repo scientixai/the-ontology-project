@@ -13,6 +13,7 @@ ex:tg-pi    a hcls:Person, prov:Agent ; rdfs:label "Dr. Susan Hale" ; top:identi
 ex:tg-nurse a hcls:Person, prov:Agent ; rdfs:label "Mark Ellis" ; top:identifier "person:mark-ellis"^^xsd:anyURI ; hcls:actsAs "Research Nurse" .
 
 ex:tg-subj  a cr:StudySubject ;
+    cr:subjectId "TG-S-001" ;
     top:identifier "ex:tg-subj"^^xsd:anyURI ;
     top:observedAt "2026-02-01T10:00:00Z"^^xsd:dateTime ;
     top:status "ACTIVE" .
@@ -33,6 +34,7 @@ ex:tg-cred  a cr:Credential ;
 ex:tg-deleg a cr:Delegation ;
     top:identifier "urn:tg-deleg"^^xsd:anyURI ;
     top:observedAt  "2026-02-05T08:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-05T08:01:00Z"^^xsd:dateTime ;
     top:validFrom "2026-02-05T08:01:00Z"^^xsd:dateTime ;
     top:status "active" ;
     prov:wasAttributedTo ex:tg-pi ;
@@ -42,8 +44,13 @@ ex:tg-deleg a cr:Delegation ;
 ex:tg-consent a cr:InformedConsent ;
     top:identifier "urn:tg-consent"^^xsd:anyURI ;
     top:observedAt  "2026-02-02T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-02-02T09:05:00Z"^^xsd:dateTime ;
     top:validFrom "2026-02-02T09:05:00Z"^^xsd:dateTime ;
     top:status "active" ;
+    cr:consentDate "2026-02-02"^^xsd:date ;
+    cr:consentVersion "ICF-v1.0" ;
+    cr:consentStatus "active" ;
+    cr:consentFormIRI "urn:icf:v1.0"^^xsd:anyURI ;
     prov:wasAttributedTo ex:tg-nurse ;
     cr:forSubject ex:tg-subj ; cr:performedBy ex:tg-nurse ;
     cr:exercisesCapability ex:tg-cap ; cr:underDelegation ex:tg-deleg .
