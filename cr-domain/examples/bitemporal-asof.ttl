@@ -39,9 +39,17 @@ ex:obs-100-corr a hcls:Observation ;
 # A suspicious attestation: claims effective 2026-01-01 but was only entered 2026-03-15
 # (~73-day valid/transaction gap). Structurally valid, but the back-dating is detectable.
 ex:attest-suspicious a top:Attestation ;
+    top:identifier "urn:attest-suspicious"^^xsd:anyURI ;
+    top:status "active" ;
     top:observedAt  "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-15T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:attest-suspicious-series ;
     prov:wasAttributedTo ex:person-late .
+ex:attest-suspicious-series a top:VersionSeries ;
+    top:identifier "urn:attest-suspicious:series"^^xsd:anyURI ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:person-late a hcls:Person, prov:Agent ;
     rdfs:label "Dana Whitfield" ;
     top:identifier "person:dana-whitfield"^^xsd:anyURI ;

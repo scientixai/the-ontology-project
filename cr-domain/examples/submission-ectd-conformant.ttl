@@ -33,11 +33,17 @@ ex:biostat-b1 a hcls:Practitioner ;
 ex:hardlock-b1 a cr:DatabaseLock ;
     top:identifier "urn:dblock:hard-b1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-07-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-01T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:hardlock-b1-series ;
     prov:wasAttributedTo ex:sponsor-b1 ;
     cr:locksStudy ex:study-opp201 ;
     cr:lockType "hard" ;
     rdfs:label "Hard lock — database frozen for the submission analysis" .
+ex:hardlock-b1-series a top:VersionSeries ;
+    top:identifier "urn:dblock:hard-b1:series"^^xsd:anyURI ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── A2: an ADaM dataset (reproducible to source) ──────────────────────────────
 ex:native-b1 a prov:Entity ;
@@ -47,8 +53,14 @@ ex:adsl-b1 a cr:AnalysisDataset ; rdfs:label "ADSL (subject-level analysis datas
     top:identifier "urn:adam:ADSL-b1"^^xsd:anyURI ; top:status "active" ;
     prov:wasDerivedFrom ex:native-b1 ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:adsl-b1-series ;
     prov:wasAttributedTo ex:biostat-b1 .
+ex:adsl-b1-series a top:VersionSeries ;
+    top:identifier "urn:adam:ADSL-b1:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── A3: the Clinical Study Report (synopsis section — narrative, exempt) ───────
 ex:csr-b1 a cr:ClinicalStudyReport ; rdfs:label "OPP-201 Clinical Study Report" ;

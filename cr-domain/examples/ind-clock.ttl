@@ -11,14 +11,26 @@ ex:sp-clock a cr:Sponsor .
 # Submitted 02-01, no hold -> may proceed after 30 days.
 ex:ind-ok a cr:INDApplication ;
     top:observedAt  "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ind-ok-series ;
     prov:wasAttributedTo ex:sp-clock .
+ex:ind-ok-series a top:VersionSeries ;
+    top:identifier "urn:ind-ok:series"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Submitted 02-01, clinical hold placed 02-20 (within the 30-day window) -> on hold.
 ex:ind-hold a cr:INDApplication ;
     top:observedAt  "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:ind-hold-series ;
     prov:wasAttributedTo ex:sp-clock .
+ex:ind-hold-series a top:VersionSeries ;
+    top:identifier "urn:ind-hold:series"^^xsd:anyURI ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 ex:hold-1 a cr:ClinicalHold ; cr:placedOn ex:ind-hold ;
     top:observedAt "2026-02-20T00:00:00Z"^^xsd:dateTime .
 
