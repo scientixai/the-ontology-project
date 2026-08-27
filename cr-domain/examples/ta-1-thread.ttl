@@ -46,7 +46,6 @@ ex:participant a cr:StudySubject, prov:Agent ;
     top:identifier "urn:participant:P-042"^^xsd:anyURI ;
     top:status "enrolled" ;
     top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
-    top:validFrom "2026-02-01T00:00:00Z"^^xsd:dateTime ;
     cr:subjectId "P-042" .
 
 # ── The SAE (one stable identity through the entire chain) ───────────────────
@@ -151,12 +150,17 @@ ex:causality a cr:CausalityAssessment ;
 
 # ── Safety report (expedited submission) ─────────────────────────────────────
 
+ex:safety-report-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for Safety Report P-042-001" .
+
 ex:safety-report a cr:SafetyReport ;
     rdfs:label "15-day SAE report for P-042-001" ;
     top:identifier "urn:safety-report:p042-001"^^xsd:anyURI ;
     top:status "active" ;
     top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-03-20T08:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-20T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:safety-report-vs ;
     cr:reportsEvent ex:ae-p042-001 ;  # Links to the same SAE IRI
     cr:submittedAt "2026-03-20T10:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:assessor .
@@ -187,8 +191,10 @@ ex:protocol a cr:ProtocolVersion ;
     top:identifier "urn:protocol:v1"^^xsd:anyURI ;
     top:status "active" ;
     top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-01-01T08:00:00Z"^^xsd:dateTime ;
     top:validFrom "2026-01-01T00:00:00Z"^^xsd:dateTime ;
-    prov:specializationOf ex:protocol-vs .
+    prov:specializationOf ex:protocol-vs ;
+    prov:wasAttributedTo ex:sponsor .
 
 ex:protocol-vs a top:VersionSeries ;
     rdfs:label "VersionSeries for Protocol OPP-101" .
@@ -204,12 +210,17 @@ ex:sap a cr:StatisticalAnalysisPlan ;
 
 # ── Analysis dataset (ADAE derived from the SAE) ──────────────────────────────
 
+ex:adae-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for ADAE OPP-101" .
+
 ex:adae a cr:AnalysisDataset ;
     rdfs:label "ADAE for study OPP-101" ;
     top:identifier "urn:adae:opp101-v1"^^xsd:anyURI ;
     top:status "locked" ;
     top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-01T12:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:adae-vs ;
     prov:wasDerivedFrom ex:ae-p042-001 ;  # T6: traces to same SAE IRI
     cr:datasetStructure "BDS" ;  # BDS (Basic Data Structure) for ADAE
     prov:wasAttributedTo ex:assessor .
@@ -229,14 +240,19 @@ ex:tlf a cr:TableListingFigure ;
     top:identifier "urn:tlf:safety"^^xsd:anyURI ;
     top:status "locked" ;
     top:observedAt "2026-06-15T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-15T10:00:00Z"^^xsd:dateTime ;
     top:validFrom "2026-06-15T00:00:00Z"^^xsd:dateTime ;
     prov:specializationOf ex:tlf-vs ;
     cr:tlfType "table" ;
     cr:prespecifiedIn ex:sap ;
-    prov:wasDerivedFrom ex:adae .
+    prov:wasDerivedFrom ex:adae ;
+    prov:wasAttributedTo ex:assessor .
 
 ex:tlf-vs a top:VersionSeries ;
     rdfs:label "VersionSeries for TLF safety" .
+
+ex:csr-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for CSR OPP-101" .
 
 ex:csr a cr:ClinicalStudyReport ;
     rdfs:label "CSR for study OPP-101" ;
@@ -244,6 +260,8 @@ ex:csr a cr:ClinicalStudyReport ;
     top:status "final" ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T14:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:csr-vs ;
     prov:wasDerivedFrom ex:adae ;  # T6: indirect chain to same SAE
     cr:csrForStudy ex:study ;
     cr:hasSection ex:csr-section ;
