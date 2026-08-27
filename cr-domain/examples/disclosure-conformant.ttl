@@ -18,8 +18,15 @@
 # CONFORMANT: 0 violations, 0 warnings.
 # ═══════════════════════════════════════════════════════════════════════════
 
-ex:dc-biostat a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
-ex:dc-sponsor a hcls:Organization ; rdfs:label "Sponsor regulatory affairs" .
+ex:dc-biostat a hcls:Practitioner ;
+    rdfs:label "Femi Balogun" ;
+    hcls:actsAs "Lead Biostatistician" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:dc-sponsor a hcls:Organization ;
+    rdfs:label "Sponsor regulatory affairs" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Per-study analysis datasets (structures declared) ─────────────────────────
 ex:dc-native1 a prov:Entity ; rdfs:label "OPP-101 native facts" .
@@ -30,31 +37,61 @@ ex:dc-adsl1 a cr:AnalysisDataset ; rdfs:label "OPP-101 ADSL" ;
     cr:datasetName "ADSL" ; cr:datasetStructure "ADSL" ;
     prov:wasDerivedFrom ex:dc-native1 ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-07-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dc-adsl1-series ;
     prov:wasAttributedTo ex:dc-biostat .
+ex:dc-adsl1-series a top:VersionSeries ;
+    top:identifier "urn:adam:ADSL-101:series"^^xsd:anyURI ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:dc-adae2 a cr:AnalysisDataset ; rdfs:label "OPP-201 ADAE" ;
     top:identifier "urn:adam:ADAE-201"^^xsd:anyURI ; top:status "active" ;
     cr:datasetName "ADAE" ; cr:datasetStructure "OCCDS" ;
     prov:wasDerivedFrom ex:dc-native2 ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dc-adae2-series ;
     prov:wasAttributedTo ex:dc-biostat .
+ex:dc-adae2-series a top:VersionSeries ;
+    top:identifier "urn:adam:ADAE-201:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The ISS: cross-study, reproducible to each study's source ─────────────────
 ex:dc-iss a cr:IntegratedSummary ; rdfs:label "ISS — OPP-101 + OPP-201" ;
     top:identifier "urn:iss:OPP-program"^^xsd:anyURI ; top:status "active" ;
     cr:summaryKind "safety" ;
-    cr:integratesStudy ex:study-opp101 , ex:study-opp201 ;   # by IRI, never re-typed
+    cr:integratesStudy ex:study-opp101 , ex:study-opp201 ;
     prov:wasDerivedFrom ex:dc-adsl1 , ex:dc-adae2 ;
     top:observedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-09-10T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dc-iss-series ;
     prov:wasAttributedTo ex:dc-biostat .
+ex:dc-iss-series a top:VersionSeries ;
+    top:identifier "urn:iss:OPP-program:series"^^xsd:anyURI ;
+    top:observedAt "2026-09-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The endpoint result the disclosures cite (fully pre-specified) ────────────
-ex:dc-endpoint a cr:Endpoint ; rdfs:label "Objective Response Rate (ORR)" .
-ex:dc-estimand a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed, RECIST 1.1)" .
-ex:dc-sap a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
+ex:dc-endpoint a cr:Endpoint ;
+    rdfs:label "Objective Response Rate (ORR)" ;
+    top:identifier "urn:dc-endpoint"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:dc-estimand a cr:Estimand ;
+    rdfs:label "ORR estimand (ITT, confirmed, RECIST 1.1)" ;
+    top:identifier "urn:dc-estimand"^^xsd:anyURI ;
+    top:observedAt "2025-12-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+ex:dc-sap a cr:StatisticalAnalysisPlan ;
+    rdfs:label "OPP-201 SAP v1.0" ;
+    top:identifier "urn:dc-sap"^^xsd:anyURI ;
+    top:observedAt "2025-12-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:dc-result a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
     top:identifier "urn:result:orr-dc"^^xsd:anyURI ; top:status "active" ;
@@ -63,8 +100,14 @@ ex:dc-result a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
     cr:analyzedUnder ex:dc-sap ;
     prov:wasDerivedFrom ex:dc-adae2 ;
     top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-08-02T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dc-result-series ;
     prov:wasAttributedTo ex:dc-biostat .
+ex:dc-result-series a top:VersionSeries ;
+    top:identifier "urn:result:orr-dc:series"^^xsd:anyURI ;
+    top:observedAt "2026-08-02T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Registry record: registered, results posted citing the result by IRI ──────
 ex:dc-registry a cr:RegistryRecord ; rdfs:label "NCT05123456 — OPP-201" ;
@@ -76,8 +119,14 @@ ex:dc-registry a cr:RegistryRecord ; rdfs:label "NCT05123456 — OPP-201" ;
     cr:resultsPostedAt "2026-10-15T00:00:00Z"^^xsd:dateTime ;
     cr:postsResult ex:dc-result ;
     top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-20T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-01-20T00:05:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dc-registry-series ;
     prov:wasAttributedTo ex:dc-sponsor .
+ex:dc-registry-series a top:VersionSeries ;
+    top:identifier "urn:registry:NCT05123456:series"^^xsd:anyURI ;
+    top:observedAt "2026-01-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The paper reports the same result — same leaf fact, same graph walk ───────
 ex:dc-paper a cr:Publication ; rdfs:label "Phase 2 results of OPP-201 (J Clin Oncol)" ;
@@ -86,8 +135,14 @@ ex:dc-paper a cr:Publication ; rdfs:label "Phase 2 results of OPP-201 (J Clin On
     cr:publicationDOI "10.1200/JCO.2026.44.001" ;
     cr:disclosesResult ex:dc-result ;
     top:observedAt "2026-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-11-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-11-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dc-paper-series ;
     prov:wasAttributedTo ex:dc-sponsor .
+ex:dc-paper-series a top:VersionSeries ;
+    top:identifier "urn:pub:opp201-jco:series"^^xsd:anyURI ;
+    top:observedAt "2026-11-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:dc-biostat top:identifier "person:femi-balogun"^^xsd:anyURI .
