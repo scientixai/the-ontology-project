@@ -135,6 +135,10 @@ ex:bd-consent a cr:InformedConsent ;
     cr:performedBy ex:bd-nurse ;
     cr:exercisesCapability ex:bd-cap-consent ;
     cr:underDelegation ex:bd-deleg-consent ;
+    cr:consentDate "2026-02-05"^^xsd:date ;
+    cr:consentVersion "ICF-v2.0" ;
+    cr:consentFormIRI "urn:icf:bd-study-v2.0"^^xsd:anyURI ;
+    cr:consentStatus "active" ;
     top:identifier "urn:bd-consent"^^xsd:anyURI ;
     top:status "active" .
 
@@ -159,11 +163,31 @@ ex:bd-visit a cr:Visit ;
     top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
 
+ex:bd-instr-ecg a cr:AssessmentInstrument ;
+    rdfs:label "12-lead ECG device" ;
+    top:identifier "urn:instr:ecg"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-instr-blood a cr:AssessmentInstrument ;
+    rdfs:label "Blood collection kit" ;
+    top:identifier "urn:instr:blood"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
+ex:bd-instr-coll a cr:AssessmentInstrument ;
+    rdfs:label "Specimen collection instrument" ;
+    top:identifier "urn:instr:coll"^^xsd:anyURI ;
+    top:observedAt "2026-01-15T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
+
 ex:bd-ecg-act a cr:Assessment ;
     rdfs:label "ECG performed" ;
     top:identifier "urn:act:ecg"^^xsd:anyURI ;
     cr:realizes ex:bd-pa-ecg ;
     cr:atVisit ex:bd-visit ;
+    cr:assessedAt ex:bd-visit ;
+    cr:assessmentInstrument ex:bd-instr-ecg ;
     top:observedAt "2026-03-02T09:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
 
@@ -172,6 +196,8 @@ ex:bd-blood-act a cr:Assessment ;
     top:identifier "urn:act:blood"^^xsd:anyURI ;
     cr:realizes ex:bd-pa-blood ;
     cr:atVisit ex:bd-visit ;
+    cr:assessedAt ex:bd-visit ;
+    cr:assessmentInstrument ex:bd-instr-blood ;
     top:observedAt "2026-03-02T11:00:00Z"^^xsd:dateTime ;
     top:status "completed" .
 
@@ -188,6 +214,8 @@ ex:bd-coll a cr:StudyEvent ; rdfs:label "Blood draw — Cycle 1 Day 1, BD-S-001"
     cr:exercisesCapability ex:bd-cap-venip ;
     cr:underDelegation ex:bd-deleg-venip ;
     cr:atVisit ex:bd-visit ;
+    cr:assessedAt ex:bd-visit ;
+    cr:assessmentInstrument ex:bd-instr-coll ;
     cr:hasConsent ex:bd-consent ;
     cr:precededByAct ex:bd-ecg-act ;
     cr:producesSpecimen ex:bd-spec ;
