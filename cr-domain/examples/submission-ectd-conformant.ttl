@@ -19,13 +19,13 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 ex:sponsor-b1 a hcls:Organization ;
-    top:identifier "urn:org:sponsor-b1" ; top:status "active" ;
+    top:identifier "urn:org:sponsor-b1"^^xsd:anyURI ; top:status "active" ;
     rdfs:label "Sponsor regulatory affairs" .
 ex:biostat-b1 a hcls:Practitioner ; rdfs:label "Femi Balogun" ; hcls:actsAs "Lead Biostatistician" .
 
 # ── A1: the hard database lock the submission rests on ────────────────────────
 ex:hardlock-b1 a cr:DatabaseLock ;
-    top:identifier "urn:dblock:hard-b1" ; top:status "active" ;
+    top:identifier "urn:dblock:hard-b1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-01T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:sponsor-b1 ;
@@ -38,7 +38,7 @@ ex:native-b1 a prov:Entity ;
     cr:sourceSystem "EDC / native clinical facts" ;
     rdfs:label "Native clinical source facts" .
 ex:adsl-b1 a cr:AnalysisDataset ; rdfs:label "ADSL (subject-level analysis dataset)" ;
-    top:identifier "urn:adam:ADSL-b1" ; top:status "active" ;
+    top:identifier "urn:adam:ADSL-b1"^^xsd:anyURI ; top:status "active" ;
     prov:wasDerivedFrom ex:native-b1 ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
@@ -46,7 +46,7 @@ ex:adsl-b1 a cr:AnalysisDataset ; rdfs:label "ADSL (subject-level analysis datas
 
 # ── A3: the Clinical Study Report (synopsis section — narrative, exempt) ───────
 ex:csr-b1 a cr:ClinicalStudyReport ; rdfs:label "OPP-201 Clinical Study Report" ;
-    top:identifier "urn:csr:OPP-201-b1" ; top:status "active" ;
+    top:identifier "urn:csr:OPP-201-b1"^^xsd:anyURI ; top:status "active" ;
     cr:csrForStudy ex:study-opp201 ;
     cr:hasSection ex:csr-b1-syn ;
     top:observedAt "2026-09-01T00:00:00Z"^^xsd:dateTime ;
@@ -57,12 +57,12 @@ ex:csr-b1-syn a cr:CSRSection ; rdfs:label "Synopsis" ;
 
 # ── Define-XML: the map a reviewer reads the datasets against ──────────────────
 ex:define-b1 a cr:DataDefinition ;
-    top:identifier "urn:define:OPP-201" ; top:status "active" ;
+    top:identifier "urn:define:OPP-201"^^xsd:anyURI ; top:status "active" ;
     rdfs:label "Define-XML v2.1 (ADaM data definition)" .
 
 # ── B1: the terminal eCTD manifest — every arrow points at locked content ─────
 ex:ectd-b1 a cr:eCTDSubmission ; rdfs:label "OPP-201 NDA (eCTD Module 5)" ;
-    top:identifier "urn:ectd:OPP-201-NDA" ; top:status "active" ;
+    top:identifier "urn:ectd:OPP-201-NDA"^^xsd:anyURI ; top:status "active" ;
     cr:submissionType "NDA" ;
     cr:submissionForStudy ex:study-opp201 ;      # study referenced by IRI
     cr:builtOnLock ex:hardlock-b1 ;              # rests on the HARD lock
@@ -74,4 +74,4 @@ ex:ectd-b1 a cr:eCTDSubmission ; rdfs:label "OPP-201 NDA (eCTD Module 5)" ;
     prov:wasAttributedTo ex:sponsor-b1 .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:biostat-b1 top:identifier "person:femi-balogun" .
+ex:biostat-b1 top:identifier "person:femi-balogun"^^xsd:anyURI .

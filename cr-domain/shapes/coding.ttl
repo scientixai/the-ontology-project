@@ -2,9 +2,11 @@
 @prefix cr:   <https://top.scientix.ai/cr/v1#> .
 @prefix hcls: <https://top.scientix.ai/hcls/v1#> .
 @prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix dct:  <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <https://top.scientix.ai/shapes/coding-v1> a owl:Ontology ;
     owl:versionInfo "1.0" ;
@@ -48,6 +50,11 @@ cr:CodeAssignmentShape a sh:NodeShape ;
         sh:minCount 1 ; sh:maxCount 1 ;
         sh:in ( "autocoder" "manual" ) ;
         sh:message "cr:codingMethod must be autocoder or manual." ;
+    ] ;
+    sh:property [
+        sh:path cr:codedBy ;
+        sh:minCount 1 ;
+        sh:message "T4: A code assignment must identify who coded it (cr:codedBy). The autocoder owner, never an anonymous role." ;
     ] .
 
 # Autocoded ≠ unreviewed: an autocoder assignment with no human coding review
@@ -66,4 +73,53 @@ cr:AutocodedReviewShape a sh:NodeShape ;
                 FILTER NOT EXISTS { ?r cr:reviewsAssignment $this }
             }
         """ ;
+    ] .
+
+# T5: Judgment attribution — every promoted judgment must be attributed
+# (via prov:wasAttributedTo OR the domain-specific edge like codedBy/assessedBy/reviewedBy).
+cr:JudgmentAttributionShape a sh:NodeShape ;
+    rdfs:label "Judgment attribution" ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:prefixes <https://top.scientix.ai/shapes/coding-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT ?this WHERE {
+              ?this rdf:type ?t .
+              FILTER ( ?t IN ( cr:CodeAssignment, cr:CausalityAssessment, 
+                               cr:ExpectednessAssessment, cr:CodingReview ) )
+            }
+        """ ;
+    ] ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        sh:message "T5: A promoted judgment (CodeAssignment, CausalityAssessment, ExpectednessAssessment, CodingReview) must carry attribution: prov:wasAttributedTo OR the domain edge (cr:codedBy, cr:assessedBy, cr:reviewedBy)." ;
+        sh:prefixes <https://top.scientix.ai/shapes/coding-v1> ;
+        sh:select """
+            PREFIX cr: <https://top.scientix.ai/cr/v1#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            SELECT $this WHERE {
+              FILTER NOT EXISTS { $this prov:wasAttributedTo ?agent }
+              FILTER NOT EXISTS { $this cr:codedBy ?coder }
+              FILTER NOT EXISTS { $this cr:assessedBy ?assessor }
+              FILTER NOT EXISTS { $this cr:reviewedBy ?reviewer }
+            }
+        """ ;
+    ] .
+
+# T5b: CodingReview completeness — a review must state its verdict and reviewer.
+cr:CodingReviewShape a sh:NodeShape ;
+    rdfs:label "Coding review completeness" ;
+    sh:targetClass cr:CodingReview ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path cr:reviewVerdict ;
+        sh:minCount 1 ;
+        sh:message "T5b: A coding review must state its verdict (cr:reviewVerdict)." ;
+    ] ;
+    sh:property [
+        sh:path cr:reviewedBy ;
+        sh:minCount 1 ;
+        sh:message "T5b: A coding review must identify the reviewer (cr:reviewedBy)." ;
     ] .

@@ -2666,6 +2666,12 @@ cr:meddraDictionaryVersion a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     top:flavor "Additive" .
 
+cr:meddraLowestLevelTerm a owl:ObjectProperty ;
+    rdfs:label "MedDRA lowest level term" ;
+    rdfs:comment "IRI reference to a MedDRA Lowest Level Term (LLT). Required alongside PT for submission-ready coding. Does not reproduce licensed content." ;
+    rdfs:domain cr:AdverseEvent ;
+    top:flavor "Additive" .
+
 cr:meddraPreferredTerm a owl:ObjectProperty ;
     rdfs:label "MedDRA preferred term" ;
     rdfs:comment "IRI reference to a MedDRA Preferred Term (PT). Does not reproduce licensed content." ;
@@ -7132,6 +7138,11 @@ top:Outcome a owl:Class ;
         top:Scope,
         top:Temporal .
 
+hcls:JobToBeDone a owl:Class ;
+    rdfs:label "Job to Be Done" ;
+    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a lifecycle stage. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
+    rdfs:subClassOf top:Scope .
+
 cr:AdverseEvent a owl:Class ;
     rdfs:label "Adverse Event" ;
     rdfs:comment "An untoward medical occurrence in a trial subject." ;
@@ -7144,11 +7155,6 @@ cr:AdverseEvent a owl:Class ;
         "side effect"@en ;
     skos:prefLabel "Adverse Event"@en ;
     skos:scopeNote "'Side effect' (lay) and 'adverse reaction' (implies causality) are routed here but not promoted: an AE makes no causality claim — that is cr:CausalityAssessment."@en .
-
-hcls:JobToBeDone a owl:Class ;
-    rdfs:label "Job to Be Done" ;
-    rdfs:comment "A bounded unit of operator intent: the goal an agent type is trying to achieve, with a trigger condition and measurable success signals. Scoped to an agent type (OWL class) and a lifecycle stage. References the object graph and authorized Actions involved. Derived from OOUX JTBD blocks." ;
-    rdfs:subClassOf top:Scope .
 
 cr:ConductStage a cr:TrialStage ;
     rdfs:label "Conduct" ;

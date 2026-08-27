@@ -50,7 +50,7 @@ ex:bd-deleg-consent a cr:Delegation ; rdfs:label "Delegation: consent -> Nguyen"
     prov:wasAttributedTo ex:bd-pi ;
     cr:delegator ex:bd-pi ; cr:delegate ex:bd-nurse ;
     cr:delegatedCapability ex:bd-cap-consent ; cr:requiresCredential ex:bd-cred-nurse ;
-    top:identifier "urn:bd-deleg-consent" ; top:status "active" .
+    top:identifier "urn:bd-deleg-consent"^^xsd:anyURI ; top:status "active" .
 
 ex:bd-deleg-venip a cr:Delegation ; rdfs:label "Delegation: venipuncture -> Smith" ;
     top:observedAt "2026-01-28T00:00:00Z"^^xsd:dateTime ;
@@ -58,7 +58,7 @@ ex:bd-deleg-venip a cr:Delegation ; rdfs:label "Delegation: venipuncture -> Smit
     prov:wasAttributedTo ex:bd-pi ;
     cr:delegator ex:bd-pi ; cr:delegate ex:bd-phleb ;
     cr:delegatedCapability ex:bd-cap-venip ; cr:requiresCredential ex:bd-cred-phleb ;
-    top:identifier "urn:bd-deleg-venip" ; top:status "active" .
+    top:identifier "urn:bd-deleg-venip"^^xsd:anyURI ; top:status "active" .
 
 # --- Consent (current; obtained under the consent delegation) ----------------
 ex:bd-consent a cr:InformedConsent ; rdfs:label "Informed consent — BD-S-001" ;
@@ -67,7 +67,7 @@ ex:bd-consent a cr:InformedConsent ; rdfs:label "Informed consent — BD-S-001" 
     prov:wasAttributedTo ex:bd-nurse ;
     cr:forSubject ex:bd-subj ; cr:performedBy ex:bd-nurse ;
     cr:exercisesCapability ex:bd-cap-consent ; cr:underDelegation ex:bd-deleg-consent ;
-    top:identifier "urn:bd-consent" ; top:status "active" .
+    top:identifier "urn:bd-consent"^^xsd:anyURI ; top:status "active" .
 
 # --- SoA ordering (bloods must follow the ECG) + the actual acts -------------
 ex:bd-pa-ecg   a cr:PlannedActivity ; rdfs:label "ECG (planned)" ; cr:precedes ex:bd-pa-blood .
@@ -99,7 +99,7 @@ ex:bd-coll a cr:StudyEvent ; rdfs:label "Blood draw — Cycle 1 Day 1, BD-S-001"
     cr:precededByAct ex:bd-ecg-act ;
     cr:producesSpecimen ex:bd-spec ;
     cr:yieldsResult ex:bd-result ;
-    top:identifier "urn:bd-coll" ; top:status "active" .
+    top:identifier "urn:bd-coll"^^xsd:anyURI ; top:status "active" .
 
 # --- Specimen -> custody -> aliquot -> result --------------------------------
 # Forward nav edges (cr:hasCustodyEvent / cr:hasAliquot) sit alongside the
@@ -111,13 +111,13 @@ ex:bd-spec a hcls:Specimen ; rdfs:label "Whole blood (primary)" ;
 
 ex:bd-ce-recv a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "SampleDue" ; cr:toState "Received" ;
     top:observedAt "2026-03-02T11:30:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-02T11:31:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-recv" ; top:status "superseded" .
+    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-recv"^^xsd:anyURI ; top:status "superseded" .
 ex:bd-ce-verif a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "ToBeVerified" ; cr:toState "Verified" ;
     top:observedAt "2026-03-03T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-03T10:01:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-verif" ; top:status "superseded" .
+    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-verif"^^xsd:anyURI ; top:status "superseded" .
 ex:bd-ce-pub a cr:CustodyEvent ; cr:specimen ex:bd-spec ; cr:fromState "Verified" ; cr:toState "Published" ;
     top:observedAt "2026-03-04T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-04T09:01:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-pub" ; top:status "active" .
+    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-ce-pub"^^xsd:anyURI ; top:status "active" .
 
 ex:bd-aliquot a hcls:Specimen ; rdfs:label "Serum aliquot -P01" ;
     cr:forSubject ex:bd-subj ; cr:aliquotOf ex:bd-spec ; prov:wasDerivedFrom ex:bd-spec .
@@ -127,10 +127,10 @@ ex:bd-result a cr:AssayResult ; rdfs:label "NAb titer = 1:320" ; rdf:value "1:32
     cr:onSpecimen ex:bd-aliquot ; cr:forSubject ex:bd-subj ; cr:resultOfAssay ex:bd-svc ;
     cr:derivedFromCollection ex:bd-coll ;
     top:observedAt "2026-03-04T12:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-04T14:00:00Z"^^xsd:dateTime ;
-    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-result" ; top:status "active" .
+    prov:wasAttributedTo ex:bd-labtech ; top:identifier "urn:bd-result"^^xsd:anyURI ; top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:bd-phleb top:identifier "person:mary-smith" .
-ex:bd-nurse top:identifier "person:tom-nguyen" .
-ex:bd-pi top:identifier "person:ana-rivera" .
-ex:bd-labtech top:identifier "person:raj-patel" .
+ex:bd-phleb top:identifier "person:mary-smith"^^xsd:anyURI .
+ex:bd-nurse top:identifier "person:tom-nguyen"^^xsd:anyURI .
+ex:bd-pi top:identifier "person:ana-rivera"^^xsd:anyURI .
+ex:bd-labtech top:identifier "person:raj-patel"^^xsd:anyURI .

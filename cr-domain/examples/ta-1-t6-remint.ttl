@@ -1,0 +1,87 @@
+@prefix ex:   <https://top.scientix.ai/examples/ta-1/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TA-1 T6 REMINT — Violation fixture
+#
+# Two SAE IRIs (ex:ae-p042-001 and ex:ae-p042-001-REMINT) for the same subject,
+# where the ADAE derives from one but the SafetyReport references the other.
+# Violates IdentityStabilityShape (T6) — reminting breaks traceability.
+#
+# Expected: FAIL (T6: IdentityStabilityShape violation)
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:assessor a hcls:Person, prov:Agent ;
+    rdfs:label "Dr. James Chen, Safety Physician" ;
+    top:identifier "person:james-chen"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    hcls:actsAs "Safety Physician" .
+
+ex:participant a cr:StudySubject, prov:Agent ;
+    rdfs:label "Participant P-042" ;
+    top:identifier "urn:participant:P-042"^^xsd:anyURI ;
+    top:status "enrolled" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+# Original SAE IRI
+ex:ae-p042-001 a cr:SeriousAdverseEvent ;
+    rdfs:label "SAE: myocardial infarction (original)" ;
+    top:identifier "urn:sae:p042-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T14:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    cr:forSubject ex:participant ;
+    cr:meddraPreferredTerm <https://identifiers.org/meddra:10028596> ;
+    cr:meddraLowestLevelTerm <https://identifiers.org/meddra:10019273> ;
+    cr:meddraDictionaryVersion "27.0" ;
+    prov:wasAttributedTo ex:assessor .
+
+# T6 VIOLATION: REMINTED SAE IRI for the same subject/event
+ex:ae-p042-001-REMINT a cr:SeriousAdverseEvent ;
+    rdfs:label "SAE: myocardial infarction (REMINTED — identity instability)" ;
+    top:identifier "urn:sae:p042-001-REMINT"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T14:30:00Z"^^xsd:dateTime ;  # Same event time
+    top:recordedAt "2026-03-16T08:00:00Z"^^xsd:dateTime ;  # Later recording
+    cr:forSubject ex:participant ;  # SAME SUBJECT
+    cr:meddraPreferredTerm <https://identifiers.org/meddra:10028596> ;
+    cr:meddraLowestLevelTerm <https://identifiers.org/meddra:10019273> ;
+    cr:meddraDictionaryVersion "27.0" ;
+    prov:wasAttributedTo ex:assessor .
+
+# ADAE derives from the ORIGINAL SAE IRI
+ex:adae a cr:AnalysisDataset ;
+    rdfs:label "ADAE for study OPP-101" ;
+    top:identifier "urn:adae:opp101-remint"^^xsd:anyURI ;
+    top:status "locked" ;
+    top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-01T12:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ex:ae-p042-001 ;  # References ORIGINAL
+    cr:datasetStructure "ADAE" ;
+    prov:wasAttributedTo ex:assessor .
+
+# But SafetyReport references the REMINTED IRI
+ex:safety-report a cr:SafetyReport ;
+    rdfs:label "Safety report for P-042" ;
+    top:identifier "urn:safety-report:p042-remint"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-20T08:00:00Z"^^xsd:dateTime ;
+    cr:reportsEvent ex:ae-p042-001-REMINT ;  # References REMINTED
+    cr:submittedAt "2026-03-20T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:assessor .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Expected violation: T6 IdentityStabilityShape
+# Message: "Identity stability violated — the derivation chain traces back to 
+#           multiple distinct identities for the same source event."
+#
+# The ADAE/SafetyReport point at different SAE IRIs for the same subject — 
+# a reminting that breaks traceability.
+# ═══════════════════════════════════════════════════════════════════════════

@@ -24,7 +24,7 @@ ex:sc-sponsor a hcls:Organization ; rdfs:label "Sponsor clinical operations" .
 # ── The Close-Out Visit ───────────────────────────────────────────────────────
 ex:sc-cov a cr:CloseOutVisit ;
     rdfs:label "Close-Out Visit at Denver" ;
-    top:identifier "urn:cov:denver" ; top:status "active" ;
+    top:identifier "urn:cov:denver"^^xsd:anyURI ; top:status "active" ;
     cr:covAtSite ex:sc-site ;
     cr:conductedByCRA ex:sc-cra ;
     top:observedAt "2026-08-10T09:00:00Z"^^xsd:dateTime ;
@@ -34,7 +34,7 @@ ex:sc-cov a cr:CloseOutVisit ;
 # ── Reconciliations: one act, different scopes — both balanced ────────────────
 ex:sc-recon-imp a cr:Reconciliation ;
     rdfs:label "IMP reconciliation at Denver — balanced" ;
-    top:identifier "urn:recon:denver-imp" ; top:status "active" ;
+    top:identifier "urn:recon:denver-imp"^^xsd:anyURI ; top:status "active" ;
     cr:reconciliationScope "IMP" ;
     cr:reconcilesSite ex:sc-site ;
     cr:reconciliationOutcome "balanced" ;
@@ -44,7 +44,7 @@ ex:sc-recon-imp a cr:Reconciliation ;
 
 ex:sc-recon-docs a cr:Reconciliation ;
     rdfs:label "Essential-documents reconciliation at Denver — balanced" ;
-    top:identifier "urn:recon:denver-docs" ; top:status "active" ;
+    top:identifier "urn:recon:denver-docs"^^xsd:anyURI ; top:status "active" ;
     cr:reconciliationScope "documents" ;
     cr:reconcilesSite ex:sc-site ;
     cr:reconciliationOutcome "balanced" ;
@@ -59,7 +59,7 @@ ex:sc-isf a cr:InvestigatorSiteFile ;
 
 ex:sc-archival a cr:ArchivalEvent ;
     rdfs:label "Archival of the Denver ISF" ;
-    top:identifier "urn:archive:denver-isf" ; top:status "active" ;
+    top:identifier "urn:archive:denver-isf"^^xsd:anyURI ; top:status "active" ;
     cr:archivesISF ex:sc-isf ;
     cr:retentionUntil "2051-08-15"^^xsd:date ;
     top:observedAt "2026-08-15T10:00:00Z"^^xsd:dateTime ;
@@ -69,7 +69,7 @@ ex:sc-archival a cr:ArchivalEvent ;
 # ── The closure — resting on its evidence ─────────────────────────────────────
 ex:sc-closure a cr:SiteClosure ;
     rdfs:label "Closure of Denver Cancer Center" ;
-    top:identifier "urn:closure:denver" ; top:status "active" ;
+    top:identifier "urn:closure:denver"^^xsd:anyURI ; top:status "active" ;
     cr:closesSite ex:sc-site ;
     cr:closureRestsOnCOV ex:sc-cov ;
     cr:closureRestsOnReconciliation ex:sc-recon-imp , ex:sc-recon-docs ;
@@ -78,5 +78,5 @@ ex:sc-closure a cr:SiteClosure ;
     prov:wasAttributedTo ex:sc-sponsor .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:sc-cra top:identifier "person:silvia-rodriguez" .
-ex:sc-sponsor top:identifier "org:oppentix-clinical-operations" .
+ex:sc-cra top:identifier "person:silvia-rodriguez"^^xsd:anyURI .
+ex:sc-sponsor top:identifier "org:oppentix-clinical-operations"^^xsd:anyURI .

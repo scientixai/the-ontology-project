@@ -26,7 +26,7 @@ ex:dc-native1 a prov:Entity ; rdfs:label "OPP-101 native facts" .
 ex:dc-native2 a prov:Entity ; rdfs:label "OPP-201 native facts" .
 
 ex:dc-adsl1 a cr:AnalysisDataset ; rdfs:label "OPP-101 ADSL" ;
-    top:identifier "urn:adam:ADSL-101" ; top:status "active" ;
+    top:identifier "urn:adam:ADSL-101"^^xsd:anyURI ; top:status "active" ;
     cr:datasetName "ADSL" ; cr:datasetStructure "ADSL" ;
     prov:wasDerivedFrom ex:dc-native1 ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
@@ -34,7 +34,7 @@ ex:dc-adsl1 a cr:AnalysisDataset ; rdfs:label "OPP-101 ADSL" ;
     prov:wasAttributedTo ex:dc-biostat .
 
 ex:dc-adae2 a cr:AnalysisDataset ; rdfs:label "OPP-201 ADAE" ;
-    top:identifier "urn:adam:ADAE-201" ; top:status "active" ;
+    top:identifier "urn:adam:ADAE-201"^^xsd:anyURI ; top:status "active" ;
     cr:datasetName "ADAE" ; cr:datasetStructure "OCCDS" ;
     prov:wasDerivedFrom ex:dc-native2 ;
     top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
@@ -43,7 +43,7 @@ ex:dc-adae2 a cr:AnalysisDataset ; rdfs:label "OPP-201 ADAE" ;
 
 # ── The ISS: cross-study, reproducible to each study's source ─────────────────
 ex:dc-iss a cr:IntegratedSummary ; rdfs:label "ISS — OPP-101 + OPP-201" ;
-    top:identifier "urn:iss:OPP-program" ; top:status "active" ;
+    top:identifier "urn:iss:OPP-program"^^xsd:anyURI ; top:status "active" ;
     cr:summaryKind "safety" ;
     cr:integratesStudy ex:study-opp101 , ex:study-opp201 ;   # by IRI, never re-typed
     prov:wasDerivedFrom ex:dc-adsl1 , ex:dc-adae2 ;
@@ -57,7 +57,7 @@ ex:dc-estimand a cr:Estimand ; rdfs:label "ORR estimand (ITT, confirmed, RECIST 
 ex:dc-sap a cr:StatisticalAnalysisPlan ; rdfs:label "OPP-201 SAP v1.0" .
 
 ex:dc-result a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
-    top:identifier "urn:result:orr-dc" ; top:status "active" ;
+    top:identifier "urn:result:orr-dc"^^xsd:anyURI ; top:status "active" ;
     cr:measuresEndpoint ex:dc-endpoint ;
     cr:perEstimand ex:dc-estimand ;
     cr:analyzedUnder ex:dc-sap ;
@@ -68,7 +68,7 @@ ex:dc-result a cr:EndpointResult ; rdfs:label "ORR = 0.42" ; rdf:value "0.42" ;
 
 # ── Registry record: registered, results posted citing the result by IRI ──────
 ex:dc-registry a cr:RegistryRecord ; rdfs:label "NCT05123456 — OPP-201" ;
-    top:identifier "urn:registry:NCT05123456" ; top:status "active" ;
+    top:identifier "urn:registry:NCT05123456"^^xsd:anyURI ; top:status "active" ;
     cr:registryName "ClinicalTrials.gov" ;
     cr:registryIdentifier "NCT05123456" ;
     cr:registersStudy ex:study-opp201 ;
@@ -81,7 +81,7 @@ ex:dc-registry a cr:RegistryRecord ; rdfs:label "NCT05123456 — OPP-201" ;
 
 # ── The paper reports the same result — same leaf fact, same graph walk ───────
 ex:dc-paper a cr:Publication ; rdfs:label "Phase 2 results of OPP-201 (J Clin Oncol)" ;
-    top:identifier "urn:pub:opp201-jco" ; top:status "active" ;
+    top:identifier "urn:pub:opp201-jco"^^xsd:anyURI ; top:status "active" ;
     cr:publicationKind "journal-article" ;
     cr:publicationDOI "10.1200/JCO.2026.44.001" ;
     cr:disclosesResult ex:dc-result ;
@@ -90,5 +90,5 @@ ex:dc-paper a cr:Publication ; rdfs:label "Phase 2 results of OPP-201 (J Clin On
     prov:wasAttributedTo ex:dc-sponsor .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:dc-biostat top:identifier "person:femi-balogun" .
-ex:dc-sponsor top:identifier "org:oppentix-regulatory-affairs" .
+ex:dc-biostat top:identifier "person:femi-balogun"^^xsd:anyURI .
+ex:dc-sponsor top:identifier "org:oppentix-regulatory-affairs"^^xsd:anyURI .

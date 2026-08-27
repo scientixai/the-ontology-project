@@ -16,14 +16,14 @@ ex:tmf-001 a cr:TrialMasterFile ; rdfs:label "OPP-101 Trial Master File" .
 
 # The audit trail node (the auditor-facing assertion; the envelope realizes it by construction).
 ex:at-001 a cr:AuditTrail ; rdfs:label "Audit trail for source document SD-001" ;
-    top:identifier "urn:at-001" ; top:status "active" ;
+    top:identifier "urn:at-001"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:coordinator .
 
 # Source data, with its audit trail.
 ex:sd-001 a cr:SourceData ; rdfs:label "Vitals worksheet values, Cycle 1 Day 1" ;
     cr:hasAuditTrail ex:at-001 ;
-    top:identifier "urn:sd-001" ; top:status "active" ;
+    top:identifier "urn:sd-001"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:coordinator .
 
@@ -31,16 +31,16 @@ ex:sd-001 a cr:SourceData ; rdfs:label "Vitals worksheet values, Cycle 1 Day 1" 
 ex:doc-001 a cr:SourceDocument ; rdfs:label "Signed vitals worksheet SD-001" ;
     cr:containsSourceData ex:sd-001 ; cr:recordedInTMF ex:tmf-001 ; cr:hasAuditTrail ex:at-001 ;
     cr:hasCertifiedCopy ex:cc-001 ;
-    top:identifier "urn:doc-001" ; top:status "active" ;
+    top:identifier "urn:doc-001"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-10T09:05:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:coordinator .
 
 # A certified copy of the source document.
 ex:cc-001 a cr:CertifiedCopy ; rdfs:label "Scanned certified copy of SD-001" ;
     cr:certifiedCopyOf ex:doc-001 ;
-    top:identifier "urn:cc-001" ; top:status "active" ;
+    top:identifier "urn:cc-001"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-11T10:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:coordinator .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:coordinator top:identifier "person:tom-reyes" .
+ex:coordinator top:identifier "person:tom-reyes"^^xsd:anyURI .

@@ -1,0 +1,51 @@
+@prefix ex:   <https://top.scientix.ai/examples/ta-1/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ncit: <http://purl.obolibrary.org/obo/> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TA-1 T2 FALSE EXACTMATCH — Violation fixture
+#
+# Adds a bare skos:exactMatch on the AE, which violates UngovernedMatchShape (T2).
+# External alignment must be a fully-provenanced cx:Mapping, not a direct triple.
+#
+# Expected: FAIL (T2: UngovernedMatchShape violation)
+# ═══════════════════════════════════════════════════════════════════════════
+
+ex:coder a hcls:Person, prov:Agent ;
+    rdfs:label "Dr. Elena Kovač, Medical Coder" ;
+    top:identifier "person:elena-kovac"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    hcls:actsAs "Medical Coder" .
+
+ex:participant a cr:StudySubject, prov:Agent ;
+    rdfs:label "Participant P-042" ;
+    top:identifier "urn:participant:P-042"^^xsd:anyURI ;
+    top:status "enrolled" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+ex:ae-p042-001 a cr:SeriousAdverseEvent ;
+    rdfs:label "SAE: myocardial infarction" ;
+    top:identifier "urn:sae:p042-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T14:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    cr:forSubject ex:participant ;
+    cr:meddraPreferredTerm <https://identifiers.org/meddra:10028596> ;
+    cr:meddraLowestLevelTerm <https://identifiers.org/meddra:10019273> ;
+    cr:meddraDictionaryVersion "27.0" ;
+    prov:wasAttributedTo ex:coder ;
+    # T2 VIOLATION: bare SKOS match on a clinical object
+    skos:exactMatch ncit:C27996 .  # NCIt: Myocardial Infarction
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Expected violation: T2 UngovernedMatchShape
+# Message: "External alignment must be a fully-provenanced cx:Mapping, not a 
+#           bare SKOS triple on a clinical object."
+# ═══════════════════════════════════════════════════════════════════════════

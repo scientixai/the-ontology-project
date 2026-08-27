@@ -22,12 +22,12 @@
 
 # ── Parties ──────────────────────────────────────────────────────────────────
 ex:sponsor a hcls:Organization ;
-    top:identifier "urn:org:sponsor" ; top:status "active" ;
+    top:identifier "urn:org:sponsor"^^xsd:anyURI ; top:status "active" ;
     rdfs:label "Sponsor data-management (lock authority)" .
 
 # ── The last-patient-last-visit milestone — opens closeout ────────────────────
 ex:lplv a cr:LastPatientLastVisit ;
-    top:identifier "urn:lplv:closeout1" ; top:status "active" ;
+    top:identifier "urn:lplv:closeout1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-01T12:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:sponsor ;
@@ -36,7 +36,7 @@ ex:lplv a cr:LastPatientLastVisit ;
 
 # ── Soft lock (reversible, for review) then hard lock (for analysis) ──────────
 ex:softlock a cr:DatabaseLock ;
-    top:identifier "urn:dblock:soft-1" ; top:status "active" ;
+    top:identifier "urn:dblock:soft-1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-20T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:sponsor ;
@@ -45,7 +45,7 @@ ex:softlock a cr:DatabaseLock ;
     rdfs:label "Soft lock — database frozen for final review" .
 
 ex:hardlock a cr:DatabaseLock ;
-    top:identifier "urn:dblock:hard-1" ; top:status "active" ;
+    top:identifier "urn:dblock:hard-1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-01T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:sponsor ;
@@ -55,7 +55,7 @@ ex:hardlock a cr:DatabaseLock ;
 
 # ── A controlled reopening: the audit gate that legitimizes a late value ──────
 ex:unlock a cr:DatabaseUnlock ;
-    top:identifier "urn:dbunlock:1" ; top:status "active" ;
+    top:identifier "urn:dbunlock:1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-07-10T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-10T09:00:00Z"^^xsd:dateTime ;
     prov:wasAttributedTo ex:sponsor ;
@@ -65,7 +65,7 @@ ex:unlock a cr:DatabaseUnlock ;
 
 # ── The subject + the variable definition ─────────────────────────────────────
 ex:subj a cr:StudySubject ;
-    top:identifier "urn:subject:S-207" ; top:status "active" ;
+    top:identifier "urn:subject:S-207"^^xsd:anyURI ; top:status "active" ;
     cr:subjectId "S-207" ;
     top:validFrom "2026-01-10T00:00:00Z"^^xsd:dateTime .
 
@@ -75,7 +75,7 @@ ex:de-ae a cr:DataElementDef ;
 
 # ── Long-term follow-up: the programme + a safety follow-up visit ─────────────
 ex:ltfu a cr:LongTermFollowUp ;
-    top:identifier "urn:ltfu:survival" ; top:status "active" ;
+    top:identifier "urn:ltfu:survival"^^xsd:anyURI ; top:status "active" ;
     rdfs:label "Long-term safety follow-up programme" .
 
 ex:fuv a cr:FollowUpVisit ;
@@ -87,7 +87,7 @@ ex:fuv a cr:FollowUpVisit ;
 # ── The post-lock value: recorded AFTER the hard lock, but UNDER the unlock ────
 # PostLockDataShape passes precisely because cr:underUnlock is present.
 ex:postlock-obs a cr:ClinicalObservation ; rdf:value "grade 1 rash (resolved)" ;
-    top:identifier "urn:obs:S-207-ltfu-safety" ; top:status "active" ;
+    top:identifier "urn:obs:S-207-ltfu-safety"^^xsd:anyURI ; top:status "active" ;
     cr:definedBy ex:de-ae ;
     cr:forSubject ex:subj ;
     cr:observationForSubject ex:subj ;

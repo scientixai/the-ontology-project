@@ -18,10 +18,11 @@ import rdflib
 
 BASE = Path(__file__).parent.parent
 SHAPES_FILE = BASE / "docs" / "dist" / "top-cr-shapes-v1.ttl"
+CORE_SHAPES_FILE = BASE.parent / "core" / "v1" / "shapes.ttl"
 MANIFEST_FILE = Path(__file__).parent / "manifest.json"
 
 
-def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
+def check(entry: dict, shapes_graph: rdflib.Graph, ont_graph: rdflib.Graph) -> tuple[bool, str]:
     path = BASE / entry["file"]
     expect = entry["expect"]
 
@@ -37,9 +38,11 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
     conforms, _, _ = pyshacl.validate(
         data_graph,
         shacl_graph=shapes_graph,
+        ont_graph=ont_graph,
         abort_on_first=False,
         allow_warnings=True,
-        inference="none",
+        advanced=True,
+        inference="rdfs",
     )
 
     # Gather result severities
@@ -48,9 +51,11 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
     _, results_graph_text, _ = pyshacl.validate(
         data_graph,
         shacl_graph=shapes_graph,
+        ont_graph=ont_graph,
         abort_on_first=False,
         allow_warnings=True,
-        inference="none",
+        advanced=True,
+        inference="rdfs",
         serialize_report_graph="turtle",
     )
     results_graph.parse(data=results_graph_text, format="turtle")
@@ -89,12 +94,23 @@ def check(entry: dict, shapes_graph: rdflib.Graph) -> tuple[bool, str]:
 
 def main() -> int:
     if not SHAPES_FILE.exists():
-        print(f"ERROR: shapes file not found at {SHAPES_FILE}")
+        print(f"ERROR: CR shapes file not found at {SHAPES_FILE}")
         print("Run python3 docs/build_dist.py first.")
         return 1
+    
+    if not CORE_SHAPES_FILE.exists():
+        print(f"ERROR: Core shapes file not found at {CORE_SHAPES_FILE}")
+        print("Core shapes must be present at ../../core/v1/shapes.ttl")
+        return 1
 
+    # Load Core shapes + CR shapes (merged into shapes_graph)
     shapes_graph = rdflib.Graph()
+    shapes_graph.parse(str(CORE_SHAPES_FILE), format="turtle")
     shapes_graph.parse(str(SHAPES_FILE), format="turtle")
+    
+    # Load Core ontology for inference (ont_graph)
+    ont_graph = rdflib.Graph()
+    ont_graph.parse(str(CORE_SHAPES_FILE), format="turtle")
 
     with open(MANIFEST_FILE) as f:
         manifest = json.load(f)
@@ -102,7 +118,7 @@ def main() -> int:
     rows = []
     failures = 0
     for entry in manifest:
-        ok, status = check(entry, shapes_graph)
+        ok, status = check(entry, shapes_graph, ont_graph)
         if not ok:
             failures += 1
         rows.append((entry["file"], entry["expect"], status))

@@ -1,0 +1,261 @@
+@prefix ex:   <https://top.scientix.ai/examples/ta-1/> .
+@prefix cr:   <https://top.scientix.ai/cr/v1#> .
+@prefix hcls: <https://top.scientix.ai/hcls/v1#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TA-1 THREAD — CONFORMANT regression fixture
+#
+# One SAE IRI (ex:ae-p042-001) traced through the full chain:
+# EDC capture → medical coding → causality assessment → safety report → 
+# analysis dataset (ADAE) → clinical study report (CSR).
+#
+# DEMONSTRATES:
+# - Honest DNA (identifier + observedAt + status) on every entity
+# - Versioned envelope (validFrom + specializationOf → VersionSeries) on CodeAssignment
+# - Proper attribution (codedBy on CodeAssignment, assessedBy on CausalityAssessment)
+# - No bare SKOS matches (MedDRA/WHODrug referenced as BYOL IRIs only)
+# - Identity stability (one SAE IRI, no reminting)
+# - Submission-ready MedDRA (both PT and LLT present)
+#
+# Expected: CONFORMANT (0 violations, 0 warnings)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Agents ───────────────────────────────────────────────────────────────────
+
+ex:coder a hcls:Person, prov:Agent ;
+    rdfs:label "Dr. Elena Kovač, Medical Coder" ;
+    top:identifier "person:elena-kovac"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    hcls:actsAs "Medical Coder" .
+
+ex:assessor a hcls:Person, prov:Agent ;
+    rdfs:label "Dr. James Chen, Safety Physician" ;
+    top:identifier "person:james-chen"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    hcls:actsAs "Safety Physician" .
+
+ex:participant a cr:StudySubject, prov:Agent ;
+    rdfs:label "Participant P-042" ;
+    top:identifier "urn:participant:P-042"^^xsd:anyURI ;
+    top:status "enrolled" ;
+    top:observedAt "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-02-01T00:00:00Z"^^xsd:dateTime ;
+    cr:subjectId "P-042" .
+
+# ── The SAE (one stable identity through the entire chain) ───────────────────
+
+ex:ae-p042-001 a cr:SeriousAdverseEvent ;
+    rdfs:label "SAE: myocardial infarction (heart attack)" ;
+    top:identifier "urn:sae:p042-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T14:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    cr:forSubject ex:participant ;
+    cr:sponsorAwareAt "2026-03-15T18:00:00Z"^^xsd:dateTime ;
+    # MedDRA coding (BYOL IRIs, illustrative — not verified licensed codes)
+    cr:meddraPreferredTerm <https://identifiers.org/meddra:10028596> ;  # PT: Myocardial infarction
+    cr:meddraLowestLevelTerm <https://identifiers.org/meddra:10019273> ;  # LLT: Heart attack
+    cr:meddraSystemOrganClass <https://identifiers.org/meddra:10007541> ;  # SOC: Cardiac disorders
+    cr:meddraDictionaryVersion "27.0" ;
+    prov:wasAttributedTo ex:assessor .
+
+# ── EDC capture (verbatim investigator term) ─────────────────────────────────
+
+ex:edc-obs a hcls:Observation ;
+    rdfs:label "EDC observation: 'heart attack'" ;
+    top:identifier "urn:edc:p042-ae-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T14:30:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-15T14:35:00Z"^^xsd:dateTime ;
+    hcls:value "heart attack" ;
+    hcls:observedEntity ex:ae-p042-001 ;
+    prov:wasAttributedTo ex:assessor .
+
+# ── Medical coding (versioned judgment) ──────────────────────────────────────
+
+# VersionSeries for the CodeAssignment (stable identity root)
+ex:coding-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for CodeAssignment of SAE P-042-001" .
+
+ex:code-assign a cr:CodeAssignment ;
+    rdfs:label "MedDRA coding of 'heart attack'" ;
+    top:identifier "urn:coding:p042-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-16T09:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-16T09:02:00Z"^^xsd:dateTime ;
+    # Versioned envelope (required for CodeAssignment per instructions)
+    top:validFrom "2026-03-16T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:coding-vs ;
+    # CodeAssignment properties
+    cr:codesEntity ex:ae-p042-001 ;
+    cr:verbatimTerm "heart attack" ;
+    cr:assignedCode <https://identifiers.org/meddra:10028596> ;  # PT
+    cr:codingDictionary "MedDRA" ;
+    cr:codingDictionaryVersion "27.0" ;
+    cr:codingMethod "manual" ;
+    cr:codedBy ex:coder ;  # T4: required
+    prov:wasAttributedTo ex:coder .  # T5: attribution present
+
+# ── Concomitant medication (WHODrug coding example) ──────────────────────────
+
+ex:conmed a cr:ConcomitantMedication ;
+    rdfs:label "Concomitant medication: aspirin" ;
+    top:identifier "urn:conmed:p042-aspirin"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-10T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-10T09:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:coder .
+
+# VersionSeries for conmed CodeAssignment
+ex:conmed-coding-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for conmed CodeAssignment" .
+
+ex:conmed-code-assign a cr:CodeAssignment ;
+    rdfs:label "WHODrug coding of 'baby aspirin'" ;
+    top:identifier "urn:coding:p042-conmed"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-16T10:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-16T10:01:00Z"^^xsd:dateTime ;
+    # Versioned envelope
+    top:validFrom "2026-03-16T10:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:conmed-coding-vs ;
+    # CodeAssignment properties
+    cr:codesEntity ex:conmed ;
+    cr:verbatimTerm "baby aspirin" ;
+    cr:assignedCode <https://identifiers.org/whodrug:000200.01.005> ;  # BYOL WHODrug IRI
+    cr:codingDictionary "WHODrug" ;
+    cr:codingDictionaryVersion "GLOBAL B3 Mar 2026" ;
+    cr:codingMethod "manual" ;
+    cr:codedBy ex:coder ;
+    prov:wasAttributedTo ex:coder .
+
+# ── Causality assessment (top:Conclusion, NOT Versioned) ─────────────────────
+
+ex:causality a cr:CausalityAssessment ;
+    rdfs:label "Causality: possible relationship to study drug" ;
+    top:identifier "urn:causality:p042-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-16T11:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-16T11:05:00Z"^^xsd:dateTime ;
+    top:concludesAbout ex:ae-p042-001 ;
+    cr:causalityVerdict "possible" ;
+    cr:assessedBy ex:assessor ;  # T5: domain edge for attribution
+    prov:wasAttributedTo ex:assessor .  # T5: alternative attribution present
+
+# ── Safety report (expedited submission) ─────────────────────────────────────
+
+ex:safety-report a cr:SafetyReport ;
+    rdfs:label "15-day SAE report for P-042-001" ;
+    top:identifier "urn:safety-report:p042-001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-20T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-20T08:00:00Z"^^xsd:dateTime ;
+    cr:reportsEvent ex:ae-p042-001 ;  # Links to the same SAE IRI
+    cr:submittedAt "2026-03-20T10:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex:assessor .
+
+ex:study a cr:Study ;
+    rdfs:label "Study OPP-101" ;
+    top:identifier "urn:study:opp101"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    cr:conductedAt ex:site ;
+    cr:sponsoredBy ex:sponsor ;
+    cr:hasProtocolVersion ex:protocol .
+
+ex:site a cr:StudySite ;
+    rdfs:label "Site 001" ;
+    top:identifier "urn:site:001"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+ex:sponsor a cr:Sponsor ;
+    rdfs:label "Sponsor Inc" ;
+    top:identifier "urn:sponsor:inc"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+ex:protocol a cr:ProtocolVersion ;
+    rdfs:label "Protocol v1.0" ;
+    top:identifier "urn:protocol:v1"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:protocol-vs .
+
+ex:protocol-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for Protocol OPP-101" .
+
+# ── Statistical Analysis Plan ─────────────────────────────────────────────────
+
+ex:sap a cr:StatisticalAnalysisPlan ;
+    rdfs:label "SAP for OPP-101" ;
+    top:identifier "urn:sap:opp101-v1"^^xsd:anyURI ;
+    top:status "locked" ;
+    top:observedAt "2026-05-01T00:00:00Z"^^xsd:dateTime ;
+    cr:sapForStudy ex:study .
+
+# ── Analysis dataset (ADAE derived from the SAE) ──────────────────────────────
+
+ex:adae a cr:AnalysisDataset ;
+    rdfs:label "ADAE for study OPP-101" ;
+    top:identifier "urn:adae:opp101-v1"^^xsd:anyURI ;
+    top:status "locked" ;
+    top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-06-01T12:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ex:ae-p042-001 ;  # T6: traces to same SAE IRI
+    cr:datasetStructure "BDS" ;  # BDS (Basic Data Structure) for ADAE
+    prov:wasAttributedTo ex:assessor .
+
+# ── Clinical Study Report (CSR derived from ADAE) ─────────────────────────────
+
+ex:csr-section a cr:CSRSection ;
+    rdfs:label "CSR Safety Results Section" ;
+    top:identifier "urn:csr-section:opp101-safety"^^xsd:anyURI ;
+    top:status "final" ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    cr:sectionKind "safety-results" ;
+    cr:presentsTLF ex:tlf .
+
+ex:tlf a cr:TableListingFigure ;
+    rdfs:label "TLF for safety results" ;
+    top:identifier "urn:tlf:safety"^^xsd:anyURI ;
+    top:status "locked" ;
+    top:observedAt "2026-06-15T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-06-15T00:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:tlf-vs ;
+    cr:tlfType "table" ;
+    cr:prespecifiedIn ex:sap ;
+    prov:wasDerivedFrom ex:adae .
+
+ex:tlf-vs a top:VersionSeries ;
+    rdfs:label "VersionSeries for TLF safety" .
+
+ex:csr a cr:ClinicalStudyReport ;
+    rdfs:label "CSR for study OPP-101" ;
+    top:identifier "urn:csr:opp101-v1"^^xsd:anyURI ;
+    top:status "final" ;
+    top:observedAt "2026-08-01T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-08-01T14:00:00Z"^^xsd:dateTime ;
+    prov:wasDerivedFrom ex:adae ;  # T6: indirect chain to same SAE
+    cr:csrForStudy ex:study ;
+    cr:hasSection ex:csr-section ;
+    prov:wasAttributedTo ex:assessor .
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONFORMANCE SUMMARY:
+# - All entities carry DNA (identifier ^^xsd:anyURI + observedAt + status) ✓
+# - CodeAssignments carry Versioned envelope (validFrom + specializationOf) ✓
+# - T4: CodeAssignments have codedBy ✓
+# - T5: All judgments have attribution (codedBy/assessedBy/wasAttributedTo) ✓
+# - T2: No bare skos:exactMatch (MedDRA/WHODrug are BYOL IRIs only) ✓
+# - T6: One SAE IRI throughout chain (no reminting) ✓
+# - T3: SAE has both meddraPreferredTerm and meddraLowestLevelTerm ✓
+# ═══════════════════════════════════════════════════════════════════════════

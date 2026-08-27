@@ -32,7 +32,7 @@ ex:sp-subject a cr:StudySubject ;
 # ── Shipment: depot -> site, dispatched then received ─────────────────────────
 ex:sp-shipment a cr:Shipment ;
     rdfs:label "Shipment SH-88 to Denver" ;
-    top:identifier "urn:ship:SH-88" ; top:status "active" ;
+    top:identifier "urn:ship:SH-88"^^xsd:anyURI ; top:status "active" ;
     cr:shipsLot ex:sp-lot ;
     cr:shippedTo ex:sp-site ;
     cr:receivedAt "2026-03-01T15:00:00Z"^^xsd:dateTime ;
@@ -43,7 +43,7 @@ ex:sp-shipment a cr:Shipment ;
 # ── An excursion in transit — dispositioned RELEASED before any dispensing ────
 ex:sp-excursion a cr:TemperatureExcursion ;
     rdfs:label "Excursion on L-2209 in transit (released after review)" ;
-    top:identifier "urn:excursion:L-2209-1" ; top:status "active" ;
+    top:identifier "urn:excursion:L-2209-1"^^xsd:anyURI ; top:status "active" ;
     cr:excursionOnLot ex:sp-lot ;
     cr:excursionRange "9.4°C for 2h during transit; required 2-8°C" ;
     cr:excursionDisposition "released" ;
@@ -54,7 +54,7 @@ ex:sp-excursion a cr:TemperatureExcursion ;
 # ── Dispensing to the participant, under the blinded kit ──────────────────────
 ex:sp-dispense a cr:DispensingEvent ;
     rdfs:label "Dispense 30 units of K-1187 to S-042" ;
-    top:identifier "urn:dispense:S-042-C1" ; top:status "active" ;
+    top:identifier "urn:dispense:S-042-C1"^^xsd:anyURI ; top:status "active" ;
     cr:dispensesToSubject ex:sp-subject ;
     cr:dispensesFromLot ex:sp-lot ;
     cr:quantityDispensed 30 ;
@@ -65,7 +65,7 @@ ex:sp-dispense a cr:DispensingEvent ;
 # ── Partial return at the next visit ──────────────────────────────────────────
 ex:sp-return a cr:ReturnEvent ;
     rdfs:label "Return of 4 unused units from S-042" ;
-    top:identifier "urn:return:S-042-C1" ; top:status "active" ;
+    top:identifier "urn:return:S-042-C1"^^xsd:anyURI ; top:status "active" ;
     cr:returnsFromSubject ex:sp-subject ;
     cr:returnsToLotCustody ex:sp-lot ;
     cr:quantityReturned 4 ;
@@ -76,7 +76,7 @@ ex:sp-return a cr:ReturnEvent ;
 # ── Authorized destruction closes the chain ───────────────────────────────────
 ex:sp-destruction a cr:DestructionEvent ;
     rdfs:label "Destruction of returned units (authorized)" ;
-    top:identifier "urn:destroy:L-2209-1" ; top:status "active" ;
+    top:identifier "urn:destroy:L-2209-1"^^xsd:anyURI ; top:status "active" ;
     cr:destroysLot ex:sp-lot ;
     cr:quantityDestroyed 4 ;
     cr:destructionAuthorizedBy ex:sp-pharmacist ;
@@ -85,5 +85,5 @@ ex:sp-destruction a cr:DestructionEvent ;
     prov:wasAttributedTo ex:sp-pharmacist .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
-ex:sp-pharmacist top:identifier "person:priya-rao" .
-ex:sp-sponsor top:identifier "org:oppentix-clinical-supplies" .
+ex:sp-pharmacist top:identifier "person:priya-rao"^^xsd:anyURI .
+ex:sp-sponsor top:identifier "org:oppentix-clinical-supplies"^^xsd:anyURI .

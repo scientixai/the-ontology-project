@@ -61,6 +61,24 @@
     ]
   },
   {
+    "@id": "_:cb110929f34f774f75708a3492caee312b2a203e9a5a0e3f4823aa6c08e50c49e6c",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T5: A promoted judgment (CodeAssignment, CausalityAssessment, ExpectednessAssessment, CodingReview) must carry attribution: prov:wasAttributedTo OR the domain edge (cr:codedBy, cr:assessedBy, cr:reviewedBy)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/coding-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            SELECT $this WHERE {\n              FILTER NOT EXISTS { $this prov:wasAttributedTo ?agent }\n              FILTER NOT EXISTS { $this cr:codedBy ?coder }\n              FILTER NOT EXISTS { $this cr:assessedBy ?assessor }\n              FILTER NOT EXISTS { $this cr:reviewedBy ?reviewer }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb11334cb11ddf71ee5550f23e888f6dc1d69f871a4d0abf482bedddfe5dc286703",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -106,25 +124,6 @@
     "http://www.w3.org/ns/shacl#select": [
       {
         "@value": "\n            SELECT $this WHERE {\n              $this <https://top.scientix.ai/crosswalk/v1#inferredBy> ?agent .\n              FILTER NOT EXISTS { $this <https://top.scientix.ai/crosswalk/v1#confirmedBy> ?curator . }\n            }\n        "
-      }
-    ]
-  },
-  {
-    "@id": "_:cb11c0e0d79b5789a44a80d7e1222c61856718db5d0adea203544bb47d56981aa55",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "Universal DNA: every entity must carry a top:identifier."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/v1#identifier"
       }
     ]
   },
@@ -309,25 +308,6 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#assessedAt"
-      }
-    ]
-  },
-  {
-    "@id": "_:cb16936133d3262b8175662ffb61daf42d93e328cd8e4c9cf6ea082145affbefb60",
-    "http://www.w3.org/ns/shacl#message": [
-      {
-        "@value": "Universal DNA: every entity must carry a top:status."
-      }
-    ],
-    "http://www.w3.org/ns/shacl#minCount": [
-      {
-        "@type": "http://www.w3.org/2001/XMLSchema#integer",
-        "@value": 1
-      }
-    ],
-    "http://www.w3.org/ns/shacl#path": [
-      {
-        "@id": "https://top.scientix.ai/v1#status"
       }
     ]
   },
@@ -650,6 +630,24 @@
     ]
   },
   {
+    "@id": "_:cb18aabf10c816f6f370ad9917ddd48468d14e4b99ca855846a99344d1c6fafb40b",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T3: Submission-ready AE must carry BOTH cr:meddraLowestLevelTerm (LLT) and cr:meddraPreferredTerm (PT). This AE is submission-ready (it is codesEntity of a CodeAssignment AND appears in a derivation chain to an AnalysisDataset or reportsEvent of a SafetyReport)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/traceability-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            SELECT $this WHERE {\n              # This AE has been coded\n              ?assignment a cr:CodeAssignment ;\n                          cr:codesEntity $this .\n              \n              # AND it appears in submission artifacts\n              {\n                # Either: an AnalysisDataset derives from it\n                ?adae a cr:AnalysisDataset ;\n                      prov:wasDerivedFrom+ $this .\n              } UNION {\n                # Or: a SafetyReport reports it\n                ?report a cr:SafetyReport ;\n                        cr:reportsEvent $this .\n              }\n              \n              # But it lacks LLT or PT\n              {\n                FILTER NOT EXISTS { $this cr:meddraLowestLevelTerm ?llt }\n              } UNION {\n                FILTER NOT EXISTS { $this cr:meddraPreferredTerm ?pt }\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb194636ed1df1b9624583ed72da6d2ce4779af147cd7e53c43420024f84c152b7e",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -842,6 +840,25 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#irbApproval"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb1ac4dc39d5fac31ecad83b4d4b92e50d045b6675b0fec6d97fc45ea63d7871fa7",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T5b: A coding review must state its verdict (cr:reviewVerdict)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#reviewVerdict"
       }
     ]
   },
@@ -1644,6 +1661,25 @@
     ]
   },
   {
+    "@id": "_:cb1ec13d5297ee5135edf621a1fb8439b2c730788e36a42d1a4b0ac8593cdbd5d66",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T4: A code assignment must identify who coded it (cr:codedBy). The autocoder owner, never an anonymous role."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#codedBy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1ecac955daf0f01fa8f8e563cebe59e298466158b9fb91cd2790e8ebc4058f260",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -1882,6 +1918,25 @@
     ]
   },
   {
+    "@id": "_:cb1f9d635586359bb7e4277f87696a17463e32286c6095ebacd5b749a91e8cab800",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T5b: A coding review must identify the reviewer (cr:reviewedBy)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#reviewedBy"
+      }
+    ]
+  },
+  {
     "@id": "_:cb1fe86d963d061bbfdef186fb16ad409a4dea911b1c19ddb7692ff760ca85533ff",
     "http://www.w3.org/ns/shacl#class": [
       {
@@ -2051,6 +2106,36 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#hasSection"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb20c4543a05f0d66c8dc3c567cf62637b91a581e9b56f92717e54e753b1053122c",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#anyURI"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Universal DNA: every entity must carry exactly one top:identifier (xsd:anyURI)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/v1#identifier"
       }
     ]
   },
@@ -2574,6 +2659,52 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#delegate"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb238de56db9126808e105f5a4fca6291abc6590fa29a5b66abfa3253c6bbfef48a",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#dateTime"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Universal DNA: every entity must carry exactly one top:observedAt (xsd:dateTime)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/v1#observedAt"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb239de394eaac95994620f7414895c68f8e7ca076016ca6cb8df00757e9000b4d6",
+    "@type": [
+      "http://www.w3.org/ns/shacl#SPARQLTarget"
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/coding-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n            SELECT ?this WHERE {\n              ?this rdf:type ?t .\n              FILTER ( ?t IN ( cr:CodeAssignment, cr:CausalityAssessment, \n                               cr:ExpectednessAssessment, cr:CodingReview ) )\n            }\n        "
       }
     ]
   },
@@ -3263,6 +3394,24 @@
     ]
   },
   {
+    "@id": "_:cb27721a763856e884a393c70c779e956ee50c3da880d12d290631354cfd238d65f",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T6: Identity stability violated \u2014 the derivation chain from $this traces back to multiple distinct identities (different IRIs and different VersionSeries) for what should be the same source event. A reminted SAE IRI breaks traceability."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/traceability-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX prov: <http://www.w3.org/ns/prov#>\n            PREFIX top: <https://top.scientix.ai/v1#>\n            SELECT $this WHERE {\n              # Find all source events this derives from (transitive)\n              $this prov:wasDerivedFrom+ ?source .\n              ?source a ?sourceType .\n              FILTER ( ?sourceType IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )\n              \n              # Get the stable identity (VersionSeries if Versioned, else the IRI itself)\n              OPTIONAL { ?source prov:specializationOf ?vs1 }\n              BIND ( COALESCE(?vs1, ?source) AS ?identity1 )\n              \n              # Check if there's a DIFFERENT source with a DIFFERENT identity\n              ?another a ?sourceType2 .\n              FILTER ( ?sourceType2 IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )\n              FILTER ( ?another != ?source )\n              OPTIONAL { ?another prov:specializationOf ?vs2 }\n              BIND ( COALESCE(?vs2, ?another) AS ?identity2 )\n              \n              # If both are about the same subject but have different identities, fail\n              ?source cr:forSubject ?subj .\n              ?another cr:forSubject ?subj .\n              FILTER ( ?identity1 != ?identity2 )\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb278c8bd3f1f55f948d7dabeef9f889557f2236bc831b7f88c96006ab374bf1739",
     "http://www.w3.org/ns/shacl#message": [
       {
@@ -3761,6 +3910,24 @@
     ]
   },
   {
+    "@id": "_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6",
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "T2: External alignment must be a fully-provenanced cx:Mapping, not a bare SKOS triple on a clinical object. Found skos:exactMatch, skos:closeMatch, skos:relatedMatch, skos:broadMatch, or skos:narrowMatch directly on $this."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/traceability-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n            SELECT $this WHERE {\n              {\n                $this skos:exactMatch ?x .\n              } UNION {\n                $this skos:closeMatch ?x .\n              } UNION {\n                $this skos:relatedMatch ?x .\n              } UNION {\n                $this skos:broadMatch ?x .\n              } UNION {\n                $this skos:narrowMatch ?x .\n              }\n            }\n        "
+      }
+    ]
+  },
+  {
     "@id": "_:cb2a92a73be6fcd04ed8666aeecce1266e99bd83be880f0de96680ae5b706a27cc6",
     "http://www.w3.org/ns/shacl#datatype": [
       {
@@ -4227,6 +4394,36 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#requiresCredential"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb2d0bcacff5faf530bde07bc07633422a13fffb42b314217f99f26456e86b7e561",
+    "http://www.w3.org/ns/shacl#datatype": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#maxCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#message": [
+      {
+        "@value": "Universal DNA: every entity must carry exactly one top:status (xsd:string)."
+      }
+    ],
+    "http://www.w3.org/ns/shacl#minCount": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": 1
+      }
+    ],
+    "http://www.w3.org/ns/shacl#path": [
+      {
+        "@id": "https://top.scientix.ai/v1#status"
       }
     ]
   },
@@ -5036,6 +5233,22 @@
     "http://www.w3.org/ns/shacl#path": [
       {
         "@id": "https://top.scientix.ai/cr/v1#forSubject"
+      }
+    ]
+  },
+  {
+    "@id": "_:cb32b508d743b7cffcc7e1cee2e1bdfa8fc64c41a95a8e5ac3f7cffb9be36a34390",
+    "@type": [
+      "http://www.w3.org/ns/shacl#SPARQLTarget"
+    ],
+    "http://www.w3.org/ns/shacl#prefixes": [
+      {
+        "@id": "https://top.scientix.ai/shapes/traceability-v1"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#select": [
+      {
+        "@value": "\n            PREFIX cr: <https://top.scientix.ai/cr/v1#>\n            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n            SELECT ?this WHERE {\n              ?this rdf:type ?t .\n              FILTER ( ?t IN ( cr:AnalysisDataset, cr:ClinicalStudyReport ) )\n            }\n        "
       }
     ]
   },
@@ -6241,6 +6454,9 @@
         "@id": "_:cb1de62641bc5072250b593a7d43947ca31458b7db51126173c792504afcab7235e"
       },
       {
+        "@id": "_:cb1ec13d5297ee5135edf621a1fb8439b2c730788e36a42d1a4b0ac8593cdbd5d66"
+      },
+      {
         "@id": "_:cb1f8b62c8c7dff30c6d5a0f9a7af10c5bdf40a8f2181830f19a4591e76cd7411b8"
       },
       {
@@ -6253,6 +6469,35 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#CodeAssignment"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#CodingReviewShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Coding review completeness"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#property": [
+      {
+        "@id": "_:cb1ac4dc39d5fac31ecad83b4d4b92e50d045b6675b0fec6d97fc45ea63d7871fa7"
+      },
+      {
+        "@id": "_:cb1f9d635586359bb7e4277f87696a17463e32286c6095ebacd5b749a91e8cab800"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#CodingReview"
       }
     ]
   },
@@ -6937,6 +7182,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#IdentityStabilityShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Identity stability in derivation chains"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb27721a763856e884a393c70c779e956ee50c3da880d12d290631354cfd238d65f"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#target": [
+      {
+        "@id": "_:cb32b508d743b7cffcc7e1cee2e1bdfa8fc64c41a95a8e5ac3f7cffb9be36a34390"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#InformedConsentShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -7000,6 +7271,32 @@
     "http://www.w3.org/ns/shacl#targetClass": [
       {
         "@id": "https://top.scientix.ai/cr/v1#IntegratedSummary"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/cr/v1#JudgmentAttributionShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Judgment attribution"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb110929f34f774f75708a3492caee312b2a203e9a5a0e3f4823aa6c08e50c49e6c"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#target": [
+      {
+        "@id": "_:cb239de394eaac95994620f7414895c68f8e7ca076016ca6cb8df00757e9000b4d6"
       }
     ]
   },
@@ -8145,6 +8442,32 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#SubmissionReadyMedDRAShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Submission-ready MedDRA coding requires LLT + PT"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb18aabf10c816f6f370ad9917ddd48468d14e4b99ca855846a99344d1c6fafb40b"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/cr/v1#AdverseEvent"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#TLFTraceabilityShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
@@ -8357,16 +8680,45 @@
     ]
   },
   {
+    "@id": "https://top.scientix.ai/cr/v1#UngovernedMatchShape",
+    "@type": [
+      "http://www.w3.org/ns/shacl#NodeShape"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Ungoverned SKOS match trap"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#severity": [
+      {
+        "@id": "http://www.w3.org/ns/shacl#Violation"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#sparql": [
+      {
+        "@id": "_:cb2a6f5089fbfe04b5464abae46766f939672ae85b6f54f6bee40532af299f3e9a6"
+      }
+    ],
+    "http://www.w3.org/ns/shacl#targetClass": [
+      {
+        "@id": "https://top.scientix.ai/v1#CommonEntity"
+      }
+    ]
+  },
+  {
     "@id": "https://top.scientix.ai/cr/v1#UniversalDNAShape",
     "@type": [
       "http://www.w3.org/ns/shacl#NodeShape"
     ],
     "http://www.w3.org/ns/shacl#property": [
       {
-        "@id": "_:cb11c0e0d79b5789a44a80d7e1222c61856718db5d0adea203544bb47d56981aa55"
+        "@id": "_:cb20c4543a05f0d66c8dc3c567cf62637b91a581e9b56f92717e54e753b1053122c"
       },
       {
-        "@id": "_:cb16936133d3262b8175662ffb61daf42d93e328cd8e4c9cf6ea082145affbefb60"
+        "@id": "_:cb238de56db9126808e105f5a4fca6291abc6590fa29a5b66abfa3253c6bbfef48a"
+      },
+      {
+        "@id": "_:cb2d0bcacff5faf530bde07bc07633422a13fffb42b314217f99f26456e86b7e561"
       }
     ],
     "http://www.w3.org/ns/shacl#severity": [
@@ -8864,6 +9216,27 @@
     "http://purl.org/dc/terms/title": [
       {
         "@value": "SHACL shapes \u2014 drug supply & IMP accountability"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#versionInfo": [
+      {
+        "@value": "1.0"
+      }
+    ]
+  },
+  {
+    "@id": "https://top.scientix.ai/shapes/traceability-v1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://purl.org/dc/terms/description": [
+      {
+        "@value": "Trap-closing shapes for external alignment (T2), identity stability (T6), and submission-ready coding (T3)."
+      }
+    ],
+    "http://purl.org/dc/terms/title": [
+      {
+        "@value": "SHACL shapes \u2014 traceability and identity traps"
       }
     ],
     "http://www.w3.org/2002/07/owl#versionInfo": [
