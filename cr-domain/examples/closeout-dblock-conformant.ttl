@@ -31,39 +31,63 @@ ex:sponsor a hcls:Organization ;
 ex:lplv a cr:LastPatientLastVisit ;
     top:identifier "urn:lplv:closeout1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-06-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-01T12:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:lplv-series ;
     prov:wasAttributedTo ex:sponsor ;
     cr:lplvForStudy ex:study-closeout1 ;         # study referenced by IRI
     rdfs:label "LPLV — last active participant's final protocol visit" .
+ex:lplv-series a top:VersionSeries ;
+    top:identifier "urn:lplv:closeout1:series"^^xsd:anyURI ;
+    top:observedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── Soft lock (reversible, for review) then hard lock (for analysis) ──────────
 ex:softlock a cr:DatabaseLock ;
     top:identifier "urn:dblock:soft-1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-06-20T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-06-20T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:softlock-series ;
     prov:wasAttributedTo ex:sponsor ;
     cr:locksStudy ex:study-closeout1 ;
     cr:lockType "soft" ;
     rdfs:label "Soft lock — database frozen for final review" .
+ex:softlock-series a top:VersionSeries ;
+    top:identifier "urn:dblock:soft-1:series"^^xsd:anyURI ;
+    top:observedAt "2026-06-20T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:hardlock a cr:DatabaseLock ;
     top:identifier "urn:dblock:hard-1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-07-01T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-01T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:hardlock-series ;
     prov:wasAttributedTo ex:sponsor ;
     cr:locksStudy ex:study-closeout1 ;
     cr:lockType "hard" ;
     rdfs:label "Hard lock — database frozen for primary analysis" .
+ex:hardlock-series a top:VersionSeries ;
+    top:identifier "urn:dblock:hard-1:series"^^xsd:anyURI ;
+    top:observedAt "2026-07-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── A controlled reopening: the audit gate that legitimizes a late value ──────
 ex:unlock a cr:DatabaseUnlock ;
     top:identifier "urn:dbunlock:1"^^xsd:anyURI ; top:status "active" ;
     top:observedAt "2026-07-10T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-07-10T00:00:00Z"^^xsd:dateTime ;
     top:recordedAt "2026-07-10T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:unlock-series ;
     prov:wasAttributedTo ex:sponsor ;
     cr:reopens ex:hardlock ;
     cr:unlockReason "Late-arriving long-term safety follow-up value; correction approved by DM lead per closeout SOP." ;
     rdfs:label "Controlled unlock — scoped to the safety follow-up correction" .
+ex:unlock-series a top:VersionSeries ;
+    top:identifier "urn:dbunlock:1:series"^^xsd:anyURI ;
+    top:observedAt "2026-07-10T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # ── The subject + the variable definition ─────────────────────────────────────
 ex:subj a cr:StudySubject ;
