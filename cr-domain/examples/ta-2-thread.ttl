@@ -81,12 +81,12 @@ ex1:protocol a cr:ProtocolVersion ;
 
 # ── TA-2 specific entities ─────────────────────────────────────────────────
 
-ex:lab-tech a hcls:Person, prov:Agent ;
-    rdfs:label "Lab Technician Maria Santos" ;
-    top:identifier "urn:person:maria-santos"^^xsd:anyURI ;
+ex1:assessor a hcls:Person, prov:Agent ;
+    rdfs:label "Dr. James Chen, Safety Physician" ;
+    top:identifier "person:james-chen"^^xsd:anyURI ;
     top:status "active" ;
     top:observedAt "2026-01-01T00:00:00Z"^^xsd:dateTime ;
-    hcls:actsAs "Lab Technician" .
+    hcls:actsAs "Safety Physician" .
 
 # ── BiomedicalConcept: Serum Sodium ────────────────────────────────────────
 
@@ -137,7 +137,7 @@ ex:custody-sampledue a cr:CustodyEvent ;
     top:recordedAt "2026-03-15T09:00:00Z"^^xsd:dateTime ;
     cr:specimen ex:specimen-p042-na-aliquot ;
     cr:toState "SampleDue" ;
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 ex:custody-received a cr:CustodyEvent ;
     rdfs:label "Custody: Received" ;
@@ -148,7 +148,7 @@ ex:custody-received a cr:CustodyEvent ;
     cr:specimen ex:specimen-p042-na-aliquot ;
     cr:fromState "SampleDue" ;
     cr:toState "Received" ;
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 ex:custody-verified a cr:CustodyEvent ;
     rdfs:label "Custody: Verified" ;
@@ -159,7 +159,7 @@ ex:custody-verified a cr:CustodyEvent ;
     cr:specimen ex:specimen-p042-na-aliquot ;
     cr:fromState "ToBeVerified" ;
     cr:toState "Verified" ;
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 ex:custody-published a cr:CustodyEvent ;
     rdfs:label "Custody: Published" ;
@@ -170,7 +170,7 @@ ex:custody-published a cr:CustodyEvent ;
     cr:specimen ex:specimen-p042-na-aliquot ;
     cr:fromState "Verified" ;
     cr:toState "Published" ;
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 # ── AssayDefinition (catalog test definition) ──────────────────────────────
 
@@ -190,7 +190,7 @@ ex:order-p042-na a cr:LabOrder ;
     top:recordedAt "2026-03-15T09:32:00Z"^^xsd:dateTime ;
     cr:ordersAssay ex:assay-sodium ;
     cr:onSpecimen ex:specimen-p042-na-aliquot ;
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 # ── AssayResult (the thread identity, stable through ADLB) ─────────────────
 
@@ -207,7 +207,7 @@ ex:result-p042-na-001 a cr:AssayResult ;
     # Value and unit
     hcls:value "128"^^xsd:decimal ;
     hcls:hasUnit qudt:MilliMOL-PER-L ;
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 # ── ADLB (Versioned analysis dataset, derived from result) ─────────────────
 
@@ -230,7 +230,7 @@ ex:adlb a cr:AnalysisDataset ;
     cr:datasetName "ADLB" ;
     cr:datasetStructure "BDS" ;
     prov:wasDerivedFrom ex:result-p042-na-001 ;  # T6: traces to same result IRI
-    prov:wasAttributedTo ex:lab-tech .
+    prov:wasAttributedTo ex1:assessor .
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONFORMANCE SUMMARY:
