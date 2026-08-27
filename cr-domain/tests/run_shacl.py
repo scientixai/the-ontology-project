@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 """US-900-001: pyshacl test harness for all CR-domain example files.
 
+Pinned command (Path A, Bo 27 Aug 2026):
+    python3 -m pyshacl --advanced --imports --inference rdfs \\
+        -s core/v1/shapes.ttl \\
+        -e cr-domain/docs/dist/top-cr-v1.ttl \\
+        -d <file>
+
+This harness replicates that command. ont_graph loads Core (via imports in
+core/v1/shapes.ttl) + CR ontology so RDFS inference retypes CR instances to
+Core superclasses, ensuring Core DNA/BitemporalShape/SPARQL see them.
+
 Usage:
     python3 tests/run_shacl.py
 
@@ -18,6 +28,7 @@ import rdflib
 
 BASE = Path(__file__).parent.parent
 SHAPES_FILE = BASE / "docs" / "dist" / "top-cr-shapes-v1.ttl"
+CR_ONTOLOGY_FILE = BASE / "docs" / "dist" / "top-cr-v1.ttl"
 CORE_SHAPES_FILE = BASE.parent / "core" / "v1" / "shapes.ttl"
 MANIFEST_FILE = Path(__file__).parent / "manifest.json"
 
@@ -98,6 +109,11 @@ def main() -> int:
         print("Run python3 docs/build_dist.py first.")
         return 1
     
+    if not CR_ONTOLOGY_FILE.exists():
+        print(f"ERROR: CR ontology file not found at {CR_ONTOLOGY_FILE}")
+        print("Run python3 docs/build_dist.py first.")
+        return 1
+    
     if not CORE_SHAPES_FILE.exists():
         print(f"ERROR: Core shapes file not found at {CORE_SHAPES_FILE}")
         print("Core shapes must be present at ../../core/v1/shapes.ttl")
@@ -108,9 +124,12 @@ def main() -> int:
     shapes_graph.parse(str(CORE_SHAPES_FILE), format="turtle")
     shapes_graph.parse(str(SHAPES_FILE), format="turtle")
     
-    # Load Core ontology for inference (ont_graph)
+    # Load Core ontology (via imports) + CR ontology for RDFS inference (ont_graph)
+    # This ensures CR instances are retyped to Core superclasses, so Core DNA/
+    # BitemporalShape/SPARQL constraints see them.
     ont_graph = rdflib.Graph()
     ont_graph.parse(str(CORE_SHAPES_FILE), format="turtle")
+    ont_graph.parse(str(CR_ONTOLOGY_FILE), format="turtle")
 
     with open(MANIFEST_FILE) as f:
         manifest = json.load(f)
