@@ -11,19 +11,37 @@
 # latent cause was never captured. cr:UncapturedAntecedentShape raises a reviewable Warning,
 # not a Violation: the graph nudges the operator to model the missing middle.
 
-ex:dm a hcls:Practitioner ; rdfs:label "Priya Nair" ; hcls:actsAs "Data Manager" .
+ex:dm a hcls:Practitioner ;
+    rdfs:label "Priya Nair" ;
+    hcls:actsAs "Data Manager" ;
+    top:observedAt "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:dev-min a cr:DeviationEvent ; rdfs:label "Source document filed 2 days late" ;
     cr:deviationCategory "minor" ; cr:triggers ex:capa-min ;
     top:identifier "urn:dev-min"^^xsd:anyURI ; top:status "active" ;
-    top:observedAt "2026-03-12T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-12T14:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-03-12T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-12T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-12T14:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:dev-min-series ;
     prov:wasAttributedTo ex:dm .
+ex:dev-min-series a top:VersionSeries ;
+    top:identifier "urn:dev-min:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-12T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 ex:capa-min a cr:CAPA ; rdfs:label "Filing reminder added to site checklist" ;
     cr:capaType "preventive" ; cr:capaStatus "closed" ;
     top:identifier "urn:capa-min"^^xsd:anyURI ; top:status "active" ;
-    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ; top:recordedAt "2026-03-13T09:00:00Z"^^xsd:dateTime ;
+    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ;
+    top:validFrom "2026-03-13T00:00:00Z"^^xsd:dateTime ;
+    top:recordedAt "2026-03-13T09:00:00Z"^^xsd:dateTime ;
+    prov:specializationOf ex:capa-min-series ;
     prov:wasAttributedTo ex:dm .
+ex:capa-min-series a top:VersionSeries ;
+    top:identifier "urn:capa-min:series"^^xsd:anyURI ;
+    top:observedAt "2026-03-13T00:00:00Z"^^xsd:dateTime ;
+    top:status "active" .
 
 # Provenance identity — attribution targets are identified agents, not bare roles.
 ex:dm top:identifier "person:priya-nair"^^xsd:anyURI .
