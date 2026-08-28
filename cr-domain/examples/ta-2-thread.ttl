@@ -7,8 +7,9 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix qudt: <http://qudt.org/vocab/unit/> .
 @prefix loinc: <https://loinc.org/> .
+@prefix cx: <https://top.scientix.ai/crosswalk/v1#> .
+@prefix semapv: <https://w3id.org/semapv/vocab/> .
 
 # ═══════════════════════════════════════════════════════════════════════════
 # TA-2 THREAD — CONFORMANT regression fixture (Phase C, lab thread)
@@ -204,9 +205,9 @@ ex:result-p042-na-001 a cr:AssayResult ;
     cr:onSpecimen ex:specimen-p042-na-aliquot ;
     cr:forSubject ex1:participant ;
     cr:resultOfAssay ex:assay-sodium ;
-    # Value and unit
+    # Value and unit (UCUM mmol/L)
     hcls:value "128"^^xsd:decimal ;
-    hcls:hasUnit qudt:MilliMOL-PER-L ;
+    hcls:hasUnit <https://unitsofmeasure.org/ucum#mmol/L> ;  # UCUM code mmol/L (BYOL, no content vendored)
     prov:wasAttributedTo ex1:assessor .
 
 # ── ADLB (Versioned analysis dataset, derived from result) ─────────────────
@@ -231,6 +232,28 @@ ex:adlb a cr:AnalysisDataset ;
     cr:datasetStructure "BDS" ;
     prov:wasDerivedFrom ex:result-p042-na-001 ;  # T6: traces to same result IRI
     prov:wasAttributedTo ex1:assessor .
+
+# ── Unit mapping: vendor mEq/L → UCUM mmol/L (positive control) ────────────
+# T2 positive control: fully-provenanced cx:Mapping with skos:closeMatch.
+# The vendor string mEq/L (milliequivalents per liter) maps to the canonical
+# UCUM unit mmol/L (millimoles per liter) with closeMatch (not exactMatch).
+
+ex:mapping-meql-to-mmol a cx:Mapping ;
+    rdfs:label "Unit mapping: mEq/L → mmol/L" ;
+    top:identifier "urn:mapping:meql-to-mmol"^^xsd:anyURI ;
+    top:status "active" ;
+    top:observedAt "2026-03-15T00:00:00Z"^^xsd:dateTime ;
+    cx:subjectId <https://unitsofmeasure.org/ucum#mEq/L> ;  # Vendor unit (UCUM mEq/L)
+    cx:predicateId skos:closeMatch ;  # closeMatch, not exactMatch
+    cx:objectId <https://unitsofmeasure.org/ucum#mmol/L> ;  # Canonical UCUM mmol/L
+    cx:justification semapv:ManualMappingCuration ;
+    cx:confidence "0.95"^^xsd:decimal ;
+    cx:mappingDate "2026-03-15"^^xsd:date ;
+    cx:author ex1:assessor ;
+    cx:verificationStatus "verified" ;
+    top:recordedAt "2026-03-15T16:00:00Z"^^xsd:dateTime ;
+    prov:wasAttributedTo ex1:assessor ;
+    rdfs:comment "Vendor delivers mEq/L; canonical unit is UCUM mmol/L. For sodium (Na+, valence 1), mEq/L equals mmol/L numerically, but closeMatch (not exactMatch) documents the unit conversion step." .
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONFORMANCE SUMMARY:
