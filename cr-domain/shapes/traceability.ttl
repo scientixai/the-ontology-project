@@ -51,8 +51,8 @@ cr:UngovernedMatchShape a sh:NodeShape ;
     ] .
 
 # T6: Identity stability — where an ADAE (cr:AnalysisDataset) or CSR (cr:ClinicalStudyReport)
-# prov:wasDerivedFrom a coded AE, the chain must resolve to ONE stable identity 
-# (same VersionSeries, or same IRI where not Versioned). Reminting a second SAE IRI 
+# prov:wasDerivedFrom a coded AE or lab result, the chain must resolve to ONE stable identity 
+# (same VersionSeries, or same IRI where not Versioned). Reminting a second SAE/AssayResult IRI 
 # for the same subject/event fails.
 cr:IdentityStabilityShape a sh:NodeShape ;
     rdfs:label "Identity stability in derivation chains" ;
@@ -70,7 +70,7 @@ cr:IdentityStabilityShape a sh:NodeShape ;
     ] ;
     sh:severity sh:Violation ;
     sh:sparql [
-        sh:message "T6: Identity stability violated — the derivation chain from $this traces back to multiple distinct identities (different IRIs and different VersionSeries) for what should be the same source event. A reminted SAE IRI breaks traceability." ;
+        sh:message "T6: Identity stability violated — the derivation chain from $this traces back to multiple distinct identities (different IRIs and different VersionSeries) for what should be the same source event. A reminted SAE/AssayResult IRI breaks traceability." ;
         sh:prefixes <https://top.scientix.ai/shapes/traceability-v1> ;
         sh:select """
             PREFIX cr: <https://top.scientix.ai/cr/v1#>
@@ -80,7 +80,7 @@ cr:IdentityStabilityShape a sh:NodeShape ;
               # Find all source events this derives from (transitive)
               $this prov:wasDerivedFrom+ ?source .
               ?source a ?sourceType .
-              FILTER ( ?sourceType IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )
+              FILTER ( ?sourceType IN ( cr:AdverseEvent, cr:SeriousAdverseEvent, cr:AssayResult ) )
               
               # Get the stable identity (VersionSeries if Versioned, else the IRI itself)
               OPTIONAL { ?source prov:specializationOf ?vs1 }
@@ -88,7 +88,7 @@ cr:IdentityStabilityShape a sh:NodeShape ;
               
               # Check if there's a DIFFERENT source with a DIFFERENT identity
               ?another a ?sourceType2 .
-              FILTER ( ?sourceType2 IN ( cr:AdverseEvent, cr:SeriousAdverseEvent ) )
+              FILTER ( ?sourceType2 IN ( cr:AdverseEvent, cr:SeriousAdverseEvent, cr:AssayResult ) )
               FILTER ( ?another != ?source )
               OPTIONAL { ?another prov:specializationOf ?vs2 }
               BIND ( COALESCE(?vs2, ?another) AS ?identity2 )
