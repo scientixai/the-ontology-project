@@ -48,7 +48,7 @@
 
 **How it's done today, and why it hurts.** Most systems keep one current value and overwrite on correction; history lives in a separate audit-log table, reconstructed afterward by joining logs — if they captured it at all. The two timelines collapse into one timestamp or vanish, and every boundary crossing (EDC → warehouse → submission) drops the trail. Provenance becomes forensics.
 
-**TOP's approach.** Two clocks, native: `observedAt` (when the system recorded it — transaction time) and `validFrom`/`validUntil` (when it was true — valid time). A correction never overwrites; it appends an immutable version (`prov:wasRevisionOf`) and closes the old one. Both auditor questions become a one-line query, not a reconstruction. And a signed or hashed value *cannot* be left mutable — SHACL refuses it — so the trail can't be silently broken.
+**TOP's approach.** Two clocks, native: `observedAt` + `validFrom`/`validUntil` (when it was true in the world — valid time) and `recordedAt` (when the system first knew it — transaction time). A correction never overwrites; it appends an immutable version (`prov:wasRevisionOf`) and closes the old one. Both auditor questions become a one-line query, not a reconstruction. And a signed or hashed value *cannot* be left mutable — SHACL refuses it — so the trail can't be silently broken.
 
 **See it run.** [`core/v1/walkthroughs/consent-bitemporal.ttl`](core/v1/walkthroughs/consent-bitemporal.ttl) — a signed consent corrected through an append-only version chain. Validate it; try to mutate it; watch it fail closed. ([ADR-0021](governance/decision-log.md#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core).)
 

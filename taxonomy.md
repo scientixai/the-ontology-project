@@ -24,7 +24,7 @@ The fix is the three-layer architecture below, with Universal DNA at the root an
 Three properties every TOP entity carries, no exceptions:
 
 - **`top:identifier`** — globally unique URI / URN. Functional.
-- **`top:observedAt`** — when the entity-state was observed or recorded.
+- **`top:observedAt`** — when the entity-state was observed to hold in the world (valid time).
 - **`top:status`** — current lifecycle / health state.
 
 These are the three an operator universally encounters: *what is this thing, when was it captured, is it current.* The earlier draft listed seven Universal DNA properties (identifier, wasAttributedTo, wasGeneratedBy, observedAt, status, value, unit). ADR-0013 trimmed to three because the other four overreached — they were universal in the engineering sense, not in the practitioner sense, and forced the taxonomy into record-level vs. domain-level provenance gymnastics.
