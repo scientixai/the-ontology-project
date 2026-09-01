@@ -1066,8 +1066,9 @@ def foundation_body():
         "string key. In NGSI-LD the entity <code>id</code> is always "
         "<code>urn:ngsi-ld:top-cr:{Type}:{localId}</code>.</li>"
         "<li><b>Time</b> &mdash; <code>top:observedAt</code>: the NGSI-LD core "
-        "<code>observedAt</code> term. Transaction time — when this assertion entered the system. "
-        "Always present, set by the ingest pipeline, not editable after write.</li>"
+        "<code>observedAt</code> term. Valid time — when this state was observed to hold in the "
+        "world (ADR-0021 erratum; the transaction record is <code>top:recordedAt</code>). "
+        "Always present, set at ingestion from the source's observation time.</li>"
         "<li><b>Lifecycle</b> &mdash; <code>top:status</code>: a named individual from the "
         "relevant codelist (e.g. <code>cr:SiteStatusActive</code>). "
         "Referenced by IRI so SHACL and OWL rules can reason over it, not just filter strings.</li>"
@@ -1639,7 +1640,7 @@ def roles_body():  # noqa: C901
         role_iri = MERGED.value(jtbd, p_job_of)
         role_label = str(MERGED.value(role_iri, RDFS.label) or qn(role_iri)) if role_iri else "—"
         trigger = str(MERGED.value(jtbd, p_trigger) or "")
-        signals = [str(s) for s in MERGED.objects(jtbd, p_signal)]
+        signals = sorted(str(s) for s in MERGED.objects(jtbd, p_signal))
         sig_html = "<ul>" + "".join(f"<li>{esc(s)}</li>" for s in signals) + "</ul>" if signals else ""
         if role_label != current_role:
             current_role = role_label

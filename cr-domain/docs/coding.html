@@ -294,6 +294,10 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
     &quot;type&quot;: &quot;Property&quot;,
     &quot;value&quot;: &quot;active&quot;
   },
+  &quot;validFrom&quot;: {
+    &quot;type&quot;: &quot;Property&quot;,
+    &quot;value&quot;: &quot;2026-03-11T09:00:00+00:00&quot;
+  },
   &quot;codes&quot;: {
     &quot;type&quot;: &quot;Relationship&quot;,
     &quot;object&quot;: &quot;urn:cd-ae&quot;,
@@ -336,6 +340,11 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
       &quot;identifier&quot;: {
         &quot;type&quot;: &quot;Property&quot;,
         &quot;value&quot;: &quot;person:sam-okafor&quot;
+      },
+      &quot;observedAt&quot;: &quot;2025-01-01T00:00:00+00:00&quot;,
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
       }
     }
   },
@@ -353,7 +362,15 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
         &quot;type&quot;: &quot;Property&quot;,
         &quot;value&quot;: &quot;approved&quot;
       },
+      &quot;identifier&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;urn:cd-review&quot;
+      },
       &quot;observedAt&quot;: &quot;2026-03-12T14:00:00+00:00&quot;,
+      &quot;status&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: &quot;active&quot;
+      },
       &quot;reviewedBy&quot;: {
         &quot;type&quot;: &quot;Relationship&quot;,
         &quot;object&quot;: &quot;urn:cd-coder&quot;,
@@ -367,12 +384,17 @@ Link: &lt;https://top.scientix.ai/cr/v1/ngsi-context.jsonld&gt;; rel=&quot;http:
           &quot;identifier&quot;: {
             &quot;type&quot;: &quot;Property&quot;,
             &quot;value&quot;: &quot;person:sam-okafor&quot;
+          },
+          &quot;observedAt&quot;: &quot;2025-01-01T00:00:00+00:00&quot;,
+          &quot;status&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: &quot;active&quot;
           }
         }
       }
     }
   }
-}</pre></div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Verbatim captured</span><span class="vtl-time">2026-03-10</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> &lsquo;achy joints&rsquo; &mdash; the investigator's words, preserved</li></ul></div></div><div class="vtl-stop warn"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Autocoder pass</span><span class="vtl-time">2026-03-11</span><span class="vtl-who">system</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> &rarr; MedDRA PT Arthralgia (27.0), by IRI</li><li><span class="ck-warn">!</span> unreviewed at this point &mdash; a suggestion</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Human review</span><span class="vtl-time">2026-03-12</span><span class="vtl-who">medical coder</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> approved &mdash; now a judgment with authority</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">ConMed coding</span><span class="vtl-time">2026-03-11</span><span class="vtl-who">medical coder</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> &lsquo;baby aspirin&rsquo; &rarr; WHODrug (manual), version carried</li></ul></div></div></div><p class='note'>MedDRA and WHODrug are licensed terminologies referenced by IRI only (bring-your-own-license) &mdash; the model carries the coding <i>workflow</i> and never reproduces dictionary content. The assignment has the same promoted-fact shape as <code>cr:CausalityAssessment</code> (ADR-0024).</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:CodeAssignment</code></td><td>Code Assignment</td><td class='clo'>Outcome</td><td>A promoted fact (first-principles P6, ADR-0024): &#x27;is coded&#x27; is never a flag. The same shape as cr:CausalityAssessment — a judgment with authority, time, and rationale. The target code is a BYOL IRI reference.</td></tr><tr><td><code>cr:CodingReview</code></td><td>Coding Review</td><td class='clo'>Temporal</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:CodeAssignmentShape</code></td><td><code>cr:CodeAssignment</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A code assignment must preserve the verbatim term it coded.</li><li>A code assignment must reference the assigned dictionary code by IRI (BYOL).</li><li>A code assignment must say what it codes (cr:codesEntity).</li><li>Violation: a code assignment without its dictionary version is meaningless at reconciliation and at submission (Define-XML external codelist versioning).</li><li>cr:codingDictionary must be MedDRA or WHODrug.</li><li>cr:codingMethod must be autocoder or manual.</li></ul></td></tr><tr><td><code>cr:AutocodedReviewShape</code></td><td><code>cr:CodeAssignment</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Warning: autocoded assignment has no human cr:CodingReview — the autocoder&#x27;s output is a suggestion, not a judgment, until a coder reviews it.</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
+}</pre></div><h2>How the flow runs &mdash; step by step</h2><div class="vtl"><div class="vtl-stop done"><div class="vtl-num">1</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Verbatim captured</span><span class="vtl-time">2026-03-10</span><span class="vtl-who">site</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> &lsquo;achy joints&rsquo; &mdash; the investigator's words, preserved</li></ul></div></div><div class="vtl-stop warn"><div class="vtl-num">2</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Autocoder pass</span><span class="vtl-time">2026-03-11</span><span class="vtl-who">system</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> &rarr; MedDRA PT Arthralgia (27.0), by IRI</li><li><span class="ck-warn">!</span> unreviewed at this point &mdash; a suggestion</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">3</div><div class="vtl-line"></div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">Human review</span><span class="vtl-time">2026-03-12</span><span class="vtl-who">medical coder</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> approved &mdash; now a judgment with authority</li></ul></div></div><div class="vtl-stop done"><div class="vtl-num">4</div><div class="vtl-body"><div class="vtl-head"><span class="vtl-name">ConMed coding</span><span class="vtl-time">2026-03-11</span><span class="vtl-who">medical coder</span></div><ul class="vtl-checks"><li><span class="ck-ok">&#10003;</span> &lsquo;baby aspirin&rsquo; &rarr; WHODrug (manual), version carried</li></ul></div></div></div><p class='note'>MedDRA and WHODrug are licensed terminologies referenced by IRI only (bring-your-own-license) &mdash; the model carries the coding <i>workflow</i> and never reproduces dictionary content. The assignment has the same promoted-fact shape as <code>cr:CausalityAssessment</code> (ADR-0024).</p><h2>Entities</h2><table class='ref'><tr><th>entity</th><th>label</th><th>category</th><th>meaning</th></tr><tr><td><code>cr:CodeAssignment</code></td><td>Code Assignment</td><td class='clo'>Outcome</td><td>A promoted fact (first-principles P6, ADR-0024): &#x27;is coded&#x27; is never a flag. The same shape as cr:CausalityAssessment — a judgment with authority, time, and rationale. The target code is a BYOL IRI reference.</td></tr><tr><td><code>cr:CodingReview</code></td><td>Coding Review</td><td class='clo'>Temporal</td><td></td></tr></table><h2>What it validates</h2><table><tr><th>rule</th><th>applies to</th><th>severity</th><th>requires</th></tr><tr><td><code>cr:CodeAssignmentShape</code></td><td><code>cr:CodeAssignment</code></td><td><span class='sev violation'>Violation</span></td><td><ul><li>A code assignment must preserve the verbatim term it coded.</li><li>A code assignment must reference the assigned dictionary code by IRI (BYOL).</li><li>A code assignment must say what it codes (cr:codesEntity).</li><li>T4: A code assignment must identify who coded it (cr:codedBy). The autocoder owner, never an anonymous role.</li><li>Violation: a code assignment without its dictionary version is meaningless at reconciliation and at submission (Define-XML external codelist versioning).</li><li>cr:codingDictionary must be MedDRA or WHODrug.</li><li>cr:codingMethod must be autocoder or manual.</li></ul></td></tr><tr><td><code>cr:AutocodedReviewShape</code></td><td><code>cr:CodeAssignment</code></td><td><span class='sev warning'>Warning</span></td><td><ul><li>Warning: autocoded assignment has no human cr:CodingReview — the autocoder&#x27;s output is a suggestion, not a judgment, until a coder reviews it.</li></ul></td></tr></table><footer><b>Draft / pre-release</b> &mdash; not finalized. Built by <code>cr-domain/docs/build_docs.py</code> &mdash; the rich shell + model tables for every page, with hand-authored scenarios slotted in where present.</footer></main></div><script>(function(){document.querySelectorAll('[role="tablist"]').forEach(function(l){l.addEventListener('click',function(e){var b=e.target.closest('[role="tab"]');if(!b)return;l.querySelectorAll('[role="tab"]').forEach(function(t){t.setAttribute('aria-selected','false');var p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.hidden=true;});b.setAttribute('aria-selected','true');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.hidden=false;});});})();</script>
 <script>(function(){
  var m=document.getElementById('recModal'), sm=document.getElementById('sdtmModal');
  var sel=document.getElementById('rm-select'), inp=document.getElementById('rm-input');

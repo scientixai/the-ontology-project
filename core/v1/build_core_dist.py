@@ -22,6 +22,10 @@ from rdflib.namespace import DCTERMS, OWL, RDF, RDFS, XSD
 
 V1 = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(V1, "dist")
+# Base for resolving relative IRIs (the aggregator's owl:imports) during parse.
+# Without it rdflib resolves them against the local file path, baking the build
+# machine's absolute file:// paths into the published dist (issue #54).
+CANON_BASE = "https://top.scientix.ai/core/v1/"
 
 MAST = dict(
     title="TOP Core",
@@ -47,7 +51,8 @@ def _merge(patterns):
     g = Graph()
     for pat in patterns:
         for f in sorted(glob.glob(os.path.join(V1, pat))):
-            g.parse(f, format="turtle")
+            public_id = CANON_BASE + os.path.relpath(f, V1).replace(os.sep, "/")
+            g.parse(f, format="turtle", publicID=public_id)
     return g
 
 

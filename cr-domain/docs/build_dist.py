@@ -82,6 +82,8 @@ def _bind(g):
     g.bind("cr", Namespace("https://top.scientix.ai/cr/v1#"))
     g.bind("cx", Namespace("https://top.scientix.ai/crosswalk/v1#"))
     g.bind("prov", Namespace("http://www.w3.org/ns/prov#"))
+    g.bind("tmf", Namespace("https://top.scientix.ai/tmf/v1#"))
+    g.bind("skosxl", Namespace("http://www.w3.org/2008/05/skos-xl#"))
     g.bind("dcterms", DCTERMS)
     g.bind("owl", OWL)
 
