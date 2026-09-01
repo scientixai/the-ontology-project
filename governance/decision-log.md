@@ -908,6 +908,8 @@ Accepted. The Organism leaf lands in `taxonomy/taxonomy.ttl` and `core/v1/shapes
 
 > **Accepted 2026-06-20.** The maintainer ratified all four sign-off questions as recommended (see *Ratified decision*, below). The bitemporal vocabulary and Tier-1 enforcement land in `core/v1/shapes.ttl` alongside this acceptance. The proposal text below is retained as the reasoning of record.
 
+> **Erratum 2026-09-01 (Issue [#52](https://github.com/scientixai/the-ontology-project/issues/52)).** ADR-0021 assigned `top:observedAt` transaction time throughout (decision item 1: "Transaction time stays the universal anchor; top:observedAt is disambiguated to mean it"; also decision item 3, the shape note, and sign-off answer 2: "observedAt stays the always-on transaction-time anchor"). That reading became false when `top:recordedAt` (transaction time: when the system first knew a fact) was promoted to Core from the CR domain (2026-07). With two distinct temporal properties now at Core, they cannot share one semantic role. The corrected reading: `top:observedAt` is valid time (when the fact was observed to hold in the world), and `top:recordedAt` is transaction time (when the system first knew it). Two clocks, two properties. Universal DNA cardinality (exactly one `top:observedAt` per entity) is unchanged.
+
 ### Context
 
 ADR-0001 made temporal and PROV-O semantics native. What Core carries today is one timestamp axis, not two:
