@@ -208,7 +208,7 @@
   <li><strong>Workflow-bound entity boundaries.</strong> We model entities that represent real-world events or "moments in time," ensuring the digital twin mirrors the physical process.</li>
   <li><strong>Aggressive simplification of the foundation.</strong> We follow the rule that <strong>"Less is the win."</strong> A smaller, more general foundation is easier for humans to navigate and easier for AI to ground.</li>
   <li><strong>Standards alignment as a Projection.</strong> We treat regulatory standards (CDISC, FHIR, ISO, GS1) as "outputs" or "views" rather than constraints on the data's internal shape.</li>
-  <li><strong>Bitemporal, provenance-native by construction.</strong> We bake two clocks &mdash; valid time (<span class="inline">validFrom</span>/<span class="inline">validUntil</span>) and transaction time (<span class="inline">observedAt</span>) &mdash; and origin (W3C PROV) into the property itself, making history a first-class, non-repudiable citizen.</li>
+  <li><strong>Bitemporal, provenance-native by construction.</strong> We bake two clocks &mdash; valid time (<span class="inline">observedAt</span>, <span class="inline">validFrom</span>/<span class="inline">validUntil</span>) and transaction time (<span class="inline">recordedAt</span>) &mdash; and origin (W3C PROV) into the property itself, making history a first-class, non-repudiable citizen.</li>
   <li><strong>Specialization as Content, not Shape.</strong> We use universal patterns (e.g., <span class="inline">Activity</span> + <span class="inline">Task</span>) to handle industry-specific data, rather than creating hundreds of custom entity types.</li>
 </ul>
 
@@ -279,7 +279,8 @@
   <li><strong>NGSI-LD Temporal Properties.</strong> Every attribute that an operator sees change (Status, Phase, Location) is a temporal stream, not a flat value.
     <ul>
       <li><span class="inline">validFrom</span> / <span class="inline">validUntil</span>: The "Real World" clock. When was this participant <em>actually</em> on treatment?</li>
-      <li><span class="inline">observedAt</span>: The "Sensor/System" clock. When did we <em>record</em> the blood pressure?</li>
+      <li><span class="inline">observedAt</span>: The "Observation" clock. When was the blood pressure <em>observed</em>?</li>
+      <li><span class="inline">recordedAt</span>: The "System" clock. When did we <em>record</em> it?</li>
     </ul>
     <div class="yes-no">
       <span class="label">Result:</span> "Trajectory queries" work out of the box. You can ask for the state of any entity at any point in history without searching an external log file.
