@@ -1083,6 +1083,10 @@ All four questions accepted as recommended:
 
 Accepted 2026-06-20. The bitemporal vocabulary (`top:validFrom`, `top:validUntil`, `top:Versioned`), `top:BitemporalShape`, and the Tier-1 enforcement shapes land in `core/v1/shapes.ttl` alongside this acceptance, with a versioned walkthrough under `core/v1/walkthroughs/`. The first-principles § 4 "(Proposed)" marker is removed. Out of scope here (follow-on work): Tier-2 propagation and the Tier-3 linter rule, the temporal query layer, and the Broker ingestion lift.
 
+### Erratum (2026-09-01)
+
+**Issue [#52](https://github.com/scientixai/the-ontology-project/issues/52)** — Ratified decision item 2 stated "`observedAt` stays the always-on transaction-time anchor." That reading became false when `top:recordedAt` (transaction time: when the system first knew a fact) was promoted to Core from the CR domain (2026-07). With two distinct temporal properties now at Core, they cannot share one semantic role. The corrected reading: **`top:observedAt` is valid time** (when the fact was observed to hold in the world), and **`top:recordedAt` is transaction time** (when the system first knew it). Two clocks, two properties. The `top:observedAt` comment in `core/v1/modules/top-root.ttl` is amended accordingly. Universal DNA cardinality (exactly one `top:observedAt` per entity) is unchanged.
+
 ---
 
 ## ADR-0022: Agency is a role, not a kind (tighten Agent, add the Subject binding, keep biological kinds in domains)
