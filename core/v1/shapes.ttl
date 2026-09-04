@@ -700,12 +700,13 @@ top:SafetyGuardrail a owl:Class ;
 # ====================================================================
 # Bitemporal model (per ADR-0021)
 # ====================================================================
-# Core carries two clocks. TRANSACTION TIME — top:observedAt (above),
-# Universal DNA, always required — is when the system recorded an
-# entity-version. VALID TIME — top:validFrom / top:validUntil (here) —
-# is when that recorded state was true in the world. The two are
-# independently queryable ("as we knew it at T1" vs. "as it was true at
-# T2").
+# Core carries two clocks. VALID TIME: top:observedAt (above, Universal
+# DNA, always required) is the instant a fact was observed to hold in the
+# world, and top:validFrom / top:validUntil (here) carry the valid-time
+# interval on versioned values. TRANSACTION TIME: top:recordedAt (here)
+# is when the system first recorded an entity or entity-version. The two
+# are independently queryable ("as we knew it at T1" vs. "as it was true
+# at T2"). ADR-0021 as corrected by the 2026-09-01 erratum.
 #
 # Valid time is OPT-IN: it attaches to versioned nodes (top:Versioned)
 # via top:BitemporalShape and is NOT folded into the always-on
@@ -742,6 +743,13 @@ top:validUntil a owl:DatatypeProperty ;
     rdfs:domain top:Versioned ;
     rdfs:range xsd:dateTime ;
     rdfs:comment "End of the valid-time interval; open (absent) for the currently-valid version. Invariant per ADR-0019."@en .
+
+top:recordedAt a owl:DatatypeProperty ;
+    rdfs:label "recorded at"@en ;
+    top:flavor "Invariant" ;
+    rdfs:domain top:CommonEntity ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Transaction time: when the system first recorded this entity or entity-version (as we knew it at T1). Complements top:observedAt (valid time: the instant the fact was observed to hold in the world) and top:validFrom / top:validUntil (the valid-time interval on versioned values). ADR-0021 as corrected by the 2026-09-01 erratum; declared per RFC 0001. Optional at Universal DNA: the cardinality of the always-on contract is unchanged, and workflows and consumers may require it by tightening (ADR-0019)."@en .
 
 
 # --- The opt-in bitemporal contract ---
