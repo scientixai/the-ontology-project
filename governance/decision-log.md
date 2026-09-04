@@ -29,7 +29,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property) | 2026-05-13 | Open Core, constrained extension — three flavors per Core property | Accepted |
 | [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Superseded by ADR-0022 |
 | [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
-| [ADR-0022](#adr-0022-agency-is-a-role-not-a-kind-tighten-agent-add-the-subject-binding-keep-biological-kinds-in-domains) | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Proposed (supersedes ADR-0020) |
+| [ADR-0022](#adr-0022-agency-is-a-role-not-a-kind-tighten-agent-add-the-subject-binding-keep-biological-kinds-in-domains) | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Accepted 2026-07-02, recorded 2026-09-04 (supersedes ADR-0020) |
 
 ---
 
@@ -1081,7 +1081,9 @@ Accepted 2026-06-20. The bitemporal vocabulary (`top:validFrom`, `top:validUntil
 
 ## ADR-0022: Agency is a role, not a kind (tighten Agent, add the Subject binding, keep biological kinds in domains)
 
-**Date:** 2026-07-02 · **Status:** Proposed · **PR:** _TBD_ · **Refs:** [core/v1/shapes.ttl](../core/v1/shapes.ttl), [ADR-0002](#adr-0002-universal-foundation-posture-no-specialized-entity-types-for-cross-cutting-shapes), [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof), [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), W3C Holon CG thread "After the Inaugural" (Jun to Jul 2026) · **Status note:** Supersedes [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf).
+**Date:** 2026-07-02 · **Status:** Accepted (2026-07-02; recorded 2026-09-04) · **PR:** implemented by commit `e5bd659` (2026-07-02) · **Refs:** [core/v1/shapes.ttl](../core/v1/shapes.ttl), [ADR-0002](#adr-0002-universal-foundation-posture-no-specialized-entity-types-for-cross-cutting-shapes), [ADR-0009](#adr-0009-specialization-pattern-workflow-concepts-extend-commons-primitives-via-subclassof), [ADR-0012](#adr-0012-three-level-architecture-universal-dna-eight-categories-leaves), [ADR-0013](#adr-0013-practitioner-first-tops-primary-customer), [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), W3C Holon CG thread "After the Inaugural" (Jun to Jul 2026) · **Status note:** Supersedes [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf).
+
+> **Accepted 2026-07-02, recorded 2026-09-04.** The four Core changes below were implemented in `core/v1/shapes.ttl` by commit `e5bd659` ("Core: implement ADR-0022") on 2026-07-02: `top:Agent` tightened, `top:Organism` removed, `top:hasSubject` and `top:denotes` added. The decision log was not updated at the time, so the shipped artifact and the log disagreed on this ADR's status for two months. This note records the ratification at the convener's direction so that the two agree; the proposal text below is retained as the reasoning of record.
 
 ### Context
 
