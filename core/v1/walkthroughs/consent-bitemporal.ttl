@@ -9,10 +9,11 @@
 # Demonstrates valid time and append-only correction:
 #   - valid time = top:observedAt (observation instant) +
 #                  top:validFrom / top:validUntil (in-force interval)
-#   - transaction time is append-only via the revision chain
-#     (prov:invalidatedAtTime closes a superseded version); the explicit
-#     record clock, top:recordedAt, arrives with the modular Core
-#     (ADR-0021 erratum, 2026-09-01: observedAt is valid time)
+#   - transaction time = top:recordedAt on each version (when the system
+#     recorded it), append-only via the revision chain
+#     (prov:invalidatedAtTime closes a superseded version)
+#     (ADR-0021 erratum, 2026-09-01: observedAt is valid time; RFC 0001
+#     declares top:recordedAt)
 #
 # Tier-1 entailment: each version carries top:signedBy and is a
 # top:Attestation, so each MUST be top:Versioned (top:validFrom +
@@ -48,6 +49,7 @@ ex:consent-0042-v1 a top:Attestation, top:Versioned ;
     top:identifier         "urn:top:consent:0042#v1"^^xsd:anyURI ;
     top:observedAt         "2026-04-12T14:25:00Z"^^xsd:dateTime ;   # observed at capture
     top:status             "SUPERSEDED" ;
+    top:recordedAt         "2026-04-12T14:25:00Z"^^xsd:dateTime ;   # transaction time: when v1 was recorded
     top:signedBy           ex:dr-jin-park ;
     prov:specializationOf  ex:consent-0042 ;
     top:validFrom          "2026-04-11T00:00:00Z"^^xsd:dateTime ;   # wrong valid date
@@ -59,6 +61,7 @@ ex:consent-0042-v2 a top:Attestation, top:Versioned ;
     top:identifier        "urn:top:consent:0042#v2"^^xsd:anyURI ;
     top:observedAt        "2026-04-12T14:40:00Z"^^xsd:dateTime ;    # observed at correction
     top:status            "ACTIVE" ;
+    top:recordedAt        "2026-04-12T14:40:00Z"^^xsd:dateTime ;    # transaction time: when the correction was recorded
     top:signedBy          ex:dr-jin-park ;
     prov:specializationOf ex:consent-0042 ;
     prov:wasRevisionOf    ex:consent-0042-v1 ;

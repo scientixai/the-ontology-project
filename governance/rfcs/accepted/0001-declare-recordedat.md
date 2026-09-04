@@ -1,12 +1,12 @@
 # RFC 0001: Declare `top:recordedAt` in Core (reconcile the shipped artifact with ADR-0021's erratum)
 
-- **Status:** Proposed
+- **Status:** Accepted (RFC pull request #58 merged 2026-09-04)
 - **Date:** 2026-09-04
 - **Authors:** @bo-lora (convener); drafted with Claude Code at the convener's direction
 - **Affected groups:** Core Stewards
 - **Required quorum:** Core steward (the convener is the review pool of one today)
 - **Supersedes:** n/a
-- **ADR on acceptance:** to be assigned by the convener (a ratification note under ADR-0021, or a short ADR citing this RFC)
+- **ADR on acceptance:** ADR-0023
 
 ## Motivation
 
@@ -39,7 +39,7 @@ Properties of the declaration:
 - **Cardinality at Core:** optional. The erratum keeps Universal DNA unchanged (exactly one `top:observedAt` per entity); this RFC adds no requirement to `top:UniversalDNAShape` or `top:BitemporalShape`. A consumer that needs transaction time on every object requires it by tightening in its own shapes, which is the ADR-0019 path.
 - **Demonstration:** the consent walkthrough gains `top:recordedAt` on both versions so the artifact shows both clocks side by side, and its header comment stops saying the record clock is still to come.
 
-The Core pull request implementing this is prepared on branch `core/declare-recordedat` and is opened only if this RFC is accepted.
+The Core pull request implementing this was prepared on branch `core/declare-recordedat` and opened on acceptance.
 
 ## Alternatives considered
 
