@@ -30,6 +30,7 @@ This log is the answer to "why is it shaped this way?" When a contributor propos
 | [ADR-0020](#adr-0020-add-toporganism-as-the-fifth-agent-leaf) | 2026-05-13 | Add `top:Organism` as the fifth Agent leaf | Superseded by ADR-0022 |
 | [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) | 2026-06-19 | Bitemporal model — valid time and transaction time on Core | Accepted |
 | [ADR-0022](#adr-0022-agency-is-a-role-not-a-kind-tighten-agent-add-the-subject-binding-keep-biological-kinds-in-domains) | 2026-07-02 | Agency is a role, not a kind — tighten Agent, add the Subject binding, keep biological kinds in domains | Accepted 2026-07-02, recorded 2026-09-04 (supersedes ADR-0020) |
+| [ADR-0023](#adr-0023-declare-toprecordedat-in-core-rfc-0001) | 2026-09-04 | Declare `top:recordedAt` in Core (RFC 0001) | Accepted |
 
 ---
 
@@ -1198,3 +1199,31 @@ Proposed 2026-07-02, ahead of the 3 July W3C Holon CG discussion. The four `core
 3. Required fields: Date, Status (Proposed / Accepted / Superseded by ADR-N), Context, Decision, Consequences. Refs to artifacts and PRs are encouraged.
 4. If the ADR supersedes a prior one, mark the prior ADR's status as `Superseded by ADR-N` in the same PR. Don't delete it.
 5. Quoting the conversation that forced the decision is welcome — the operator's actual words usually capture the question better than any rewrite.
+
+---
+
+## ADR-0023: Declare `top:recordedAt` in Core (RFC 0001)
+
+**Date:** 2026-09-04 · **Status:** Accepted · **RFC:** [0001](rfcs/accepted/0001-declare-recordedat.md) (pull request #58, merged 2026-09-04) · **Refs:** [ADR-0021](#adr-0021-bitemporal-model-valid-time-and-transaction-time-on-core) and its erratum of 2026-09-01, [ADR-0019](#adr-0019-open-core-constrained-extension-three-flavors-per-core-property), [core/v1/shapes.ttl](../core/v1/shapes.ttl), [core/v1/walkthroughs/consent-bitemporal.ttl](../core/v1/walkthroughs/consent-bitemporal.ttl)
+
+### Context
+
+ADR-0021's erratum of 2026-09-01 assigned valid time to `top:observedAt` and transaction time to `top:recordedAt`, stating that the latter had been promoted to Core. The shipped `core/v1/shapes.ttl` referenced `top:recordedAt` in two comments and never declared it; the consent walkthrough said the record clock was still to arrive; and the bitemporal section comment still assigned transaction time to `top:observedAt`. A downstream consumer needing both clocks from day one (a private, TOP-compatible operational-management vocabulary incubated by Scientix.AI) had a decided semantics and no property to bind. RFC 0001 proposed the reconciliation.
+
+### Decision
+
+Declare `top:recordedAt` in Core exactly as RFC 0001 proposed: `owl:DatatypeProperty`, domain `top:CommonEntity`, range `xsd:dateTime`, flavor Invariant, optional at Universal DNA (the always-on contract's cardinality is unchanged; consumers and workflows may require it by tightening per ADR-0019). Correct the bitemporal section comment to the erratum's reading. Show both clocks on both versions of the consent walkthrough.
+
+### Open questions raised by the RFC, and their disposition here
+
+1. **PROV-O alignment** (`rdfs:subPropertyOf prov:generatedAtTime`): not declared by this ADR. PROV models system time, so an alignment is plausible, unlike `top:validFrom`, whose absence is principled. Deferred to a follow-on decision rather than decided in a reconciliation.
+2. **Tightening at Core** (require `top:recordedAt` on `top:Versioned` through `top:BitemporalShape`): not done by this ADR. Deferred to a follow-on RFC, where "an immutable version without a record clock is half a version" is the case to make.
+3. **Flavor count:** ADR-0019's list of Invariant properties grows from five to six with this declaration.
+
+### Consequences
+
+- Two clocks, two declared properties; the artifact and the log agree.
+- No existing instance or walkthrough changes validity: the property is optional. Both Core walkthroughs conform under `pyshacl --advanced --inference rdfs` with the declaration in place.
+- A consumer that declared its own transaction-time property maps it by `owl:equivalentProperty`.
+- Follow-on: the spec page (`core/v1/index.html`) property list; the controlled-vocabulary record for the property when the CV layer lands (ADR-0018); the two deferred questions above.
+- The RFC file moves from `governance/rfcs/proposed/` to `governance/rfcs/accepted/` with this ADR, per the RFC process.
