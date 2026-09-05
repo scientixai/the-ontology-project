@@ -24,9 +24,32 @@ The default and only long-lived branch. All work merges to `main` via pull reque
 | Lock branch | Off | Main is editable via PR. |
 | Do not allow bypassing the above settings | On | Admins included. The convener follows the same rules as contributors. |
 
-## Working-group branches
+## Public working-branch practice
 
-Working groups may use their own branch naming conventions (e.g., `clinical-research/feature-x`). No special protection on these — they are working surfaces. Promotion to `main` requires the rules above.
+`main` is the only long-lived branch on the public remote. All other branches exist solely as short-lived collaboration surfaces for pull requests.
+
+### Branch lifecycle rules
+
+1. **Purpose:** Contributors may push branches to the public remote only to open or update a pull request against `main`.
+
+2. **Naming:** Use `<scope>/<short-topic>` where scope is one of:
+   - `core` — changes to `/core/`
+   - `cr` or `clinical-research` — clinical-research workflow
+   - `governance` — governance, RFCs, decision log, working groups
+   - `rfc` — RFC proposals (e.g., `rfc/0002-topic`)
+   - `docs` — documentation improvements
+   - `chore` — maintenance, tooling, build
+   - A registered working-group short name (see [`working-groups.md`](working-groups.md))
+   
+   Examples: `cr/cq-shape-trace`, `rfc/0002-alignment`, `governance/branch-practice`
+   
+   Tool or agent prefixes (`claude/`, `cursor/`, etc.) are not a substitute for scope. A branch named `cursor/fix-typo` is incorrectly scoped; `docs/fix-typo` is correct.
+
+3. **Lifetime:** Delete the remote branch within **7 days** of merge or explicit abandon. No standing integration branches or second-trunk branches on the public remote.
+
+4. **Forks:** External contributors may fork this repository and follow the same naming preference when opening pull requests.
+
+5. **No secrets or designated material:** Do not store credentials, unpublished designated information, or anything sensitive on any branch. The public remote means public. Per [ADR-0024](#adr-0024-public-working-branches-are-short-lived-pr-surfaces-main-is-the-only-long-lived-branch), this practice resolves the drift where working-group branches were understood as indefinite surfaces.
 
 ## Release tags
 

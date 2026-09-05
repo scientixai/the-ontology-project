@@ -59,6 +59,10 @@ While working groups are forming, the convener (Bo Lora, [@bo-lora](https://gith
   - `python3 -c "from rdflib import Graph; Graph().parse('<your-file>.ttl')"` to catch Turtle syntax errors before review.
 - Link to any external documents, standards, or prior art your change relies on.
 
+### Branch hygiene
+
+Branch from the latest `main`, name your branch `<scope>/<short-topic>` (e.g., `governance/branch-practice`, `cr/cq-shape-trace`), open a PR, and delete the remote branch within 7 days of merge or abandon. The public remote is for short-lived PR collaboration only; `main` is the only long-lived branch. See [`governance/branch-protection.md`](governance/branch-protection.md) for the complete branch lifecycle rules and scope list.
+
 ## Quality discipline
 
 TOP is built for high-consequence regulated environments. The discipline you'd expect in those environments applies here:
