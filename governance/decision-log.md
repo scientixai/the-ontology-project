@@ -1227,3 +1227,36 @@ Declare `top:recordedAt` in Core exactly as RFC 0001 proposed: `owl:DatatypeProp
 - A consumer that declared its own transaction-time property maps it by `owl:equivalentProperty`.
 - Follow-on: the spec page (`core/v1/index.html`) property list; the controlled-vocabulary record for the property when the CV layer lands (ADR-0018); the two deferred questions above.
 - The RFC file moves from `governance/rfcs/proposed/` to `governance/rfcs/accepted/` with this ADR, per the RFC process.
+
+---
+
+## ADR-0024: Public working branches are short-lived PR surfaces; main is the only long-lived branch
+
+**Date:** 2026-09-05 · **Status:** Accepted · **Refs:** [governance/branch-protection.md](branch-protection.md), [CONTRIBUTING.md](../CONTRIBUTING.md)
+
+### Context
+
+TOP is a public commons under Apache 2.0. Anything pushed to the public remote is immediately public, which is acceptable for reviewable pull-request work but inappropriate for a second trunk or indefinite WIP archive.
+
+`governance/branch-protection.md` has stated since early versions that `main` is the only long-lived branch and that working-group branches are collaboration surfaces, not persistent integration branches. Practice drifted: as of this decision, nine non-main branches sit on the public remote (`claude/clinical-research`, `claude/clinical-research-v1-seed`, `claude/observedat-prose-sweep`, `claude/rfc-0001-w3id-namespace`, `claude/w3id-cutover`, `cursor/ta-2-lab-thread-5087`, `governance/adr-0022-status`, `rfc/0001-declare-recordedat`, `sophia/cr-v1-five-file-remedies`), several stale or diverged from `main`. A marker scan found no designated or sensitive material on them, but indefinite lifetime itself is the defect.
+
+Protected `main` already requires pull requests; remote branches are necessary for that workflow (or forks — remote PR branches on this repository remain the practical default for regular contributors). The issue is not the existence of short-lived PR branches but their persistence after merge or abandonment.
+
+### Decision
+
+**Public working branches may live on the public remote only as short-lived collaboration surfaces for pull requests. `main` is the only long-lived branch.**
+
+Contributors may push branches to the public remote solely to open or update a pull request against `main`. Branch naming must follow `<scope>/<short-topic>` where scope is one of `core`, `cr` (or `clinical-research`), `governance`, `rfc`, `docs`, `chore`, or a registered working-group short name. Tool or agent prefixes (`claude/`, `cursor/`) are not substitutes for functional scope.
+
+Remote branches must be deleted within **7 days** of merge or explicit abandon. No standing integration branches or second-trunk branches on the public remote. Forks remain the alternative for external contributors; the same naming preference applies when opening PRs into this repository.
+
+No credentials, unpublished designated information, or secrets may be stored on any branch — public remote means public.
+
+### Consequences
+
+- **Operational follow-up:** Prune the nine existing non-main remote branches after open work is PR'd or abandoned (see prune checklist in the implementing PR). This ADR documents the rule; branch deletion is a separate operational act.
+- **CI and PR workflow unchanged:** Pull requests still require remote branches; this decision mandates their deletion post-merge, not their avoidance.
+- **Governance documentation alignment:** `governance/branch-protection.md` now explicitly states the branch lifecycle rules that resolve the "working-group branches" ambiguity. `CONTRIBUTING.md` points contributors at the full rule.
+- **No second trunk:** Long-running feature branches that parallel `main` are explicitly disallowed. All work lands on `main` through short-lived PRs, per the monorepo discipline adopted in ADR-0017.
+- **Marking drift as resolved:** This decision formalizes the originally intended practice and closes the gap between documentation and behavior. Future remote branches that outlive their PRs are protocol violations, not ambiguous interpretation.
+
