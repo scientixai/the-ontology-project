@@ -110,6 +110,7 @@ The Core pull request implementing this will be prepared on branch `core/partof`
 - FPF (First Principles Framework) Advanced Mereology (A.14) at [github.com/ailev/FPF](https://github.com/ailev/FPF) — prior art for the four-way mereology typology (credited as design vocabulary; not imported as runtime taxonomy).
 - ADR-0013 (practitioner-first) and ADR-0012 (three-level architecture) in [`../decision-log.md`](../decision-log.md) — the design posture that keeps Core minimal and domain-neutral.
 - RFC 0001 (declare `top:recordedAt`) in [`accepted/0001-declare-recordedat.md`](../accepted/0001-declare-recordedat.md) — parallel structure (reconciliation of a known-needed property, Tightenable flavor, optional at Core).
+- Related: shared acts vocabulary uses `tophcls:` namespace (`https://top.scientix.ai/hcls/v1#`) per RFC 0002 (Bo 2026-09-10).
 
 ## Notes for reviewers
 
