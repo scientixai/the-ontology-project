@@ -1,42 +1,35 @@
 # RFC 0004: DID as additive identity for TOP Core (PROV-aligned; no mint)
 
-- **Status:** Proposed (draft PR; no mint until Core stewards accept)
+- **Status:** Proposed
 - **Date:** 2026-09-22
-- **Authors:** Sophia Briet (Acting CKO, digital) <sophia@scientix.ai> (drafted at Bo Lora's direction)
+- **Authors:** @bo-lora (convener); drafted with Sophia Briet (Acting CKO, digital) at the convener's direction
 - **Affected groups:** Core Stewards
 - **Required quorum:** Core steward (convener)
 - **Supersedes:** n/a
 - **ADR on acceptance:** ADR-NNNN (filled when the RFC ratifies)
-- **No mint** of TOP classes or properties in this RFC. Guidance + optional annotation posture only.
+- **No mint** of TOP classes or properties in this RFC. Guidance + walkthrough only.
 
 ## Motivation
 
-TOP Core already answers *what something means* in the shared commons (concepts, shapes, Universal DNA, PROV-native provenance posture — see `governance/planning/composition-projection-provenance.md`). Operators and autonomous or semi-autonomous actors additionally need a portable answer to *who or what controls an identity that may act, sign, amend, or publish* against those meanings — without inventing a second meaning layer or minting concept URIs from runtime ids.
+TOP Core already answers *what something means* in the shared commons (concepts, shapes, Universal DNA, PROV-native provenance posture — see [`governance/planning/composition-projection-provenance.md`](../../planning/composition-projection-provenance.md)). Operators still need a portable answer to *which agent identity signed, authorized, or published* when that answer must survive an organizational boundary.
 
-W3C Decentralized Identifiers ([DIDs](https://www.w3.org/TR/did-1.1/)) supply that layer: a `did:` URI that resolves to a DID document carrying `controller`, verification methods, and verification relationships (`assertionMethod`, `authentication`, `keyAgreement`, …). The document is a **public key directory and control surface**, not a secret store and not a domain ontology.
+The forcing case is already in-repo. The composition–projection–provenance note names Tier-1 integrity across a lab or sponsor boundary: a consent `top:Attestation` (or other Evidence) carries `top:signedBy` to the signing `top:Agent` and may carry `top:integrityHash`. No-copy projection keeps that cryptographic anchor meaningful end to end; ETL that rewrites identifiers breaks it. 21 CFR Part 11 (and related GxP audit-trail discipline) requires that *who* attested be answerable from the data. Today `top:signedBy` ranges over `top:Agent`, and every agent already carries exactly one `top:identifier` (`xsd:anyURI`). When the signer is outside the publisher's HTTPS namespace — a CRO investigator, a partner QA lead, a contracted medical monitor — a portable, rotatable agent URI is the operator cost this RFC addresses.
 
-A practical pattern: an organizational **mandate** (charter, role, or policy instrument) is often the **controller** of an actor identity that may act under that authority. Sketch:
+ADR-0013 (practitioner-first) sends autonomous-actor convenience to the edge. This RFC does **not** motivate Core guidance from an AI agent's preference for a DID. Autonomous or semi-autonomous actors MAY reuse the same additive pattern; they are not the primary customer of this decision.
 
-```json
-{
-  "@context": "https://www.w3.org/ns/did/v1",
-  "id": "did:example:agent:operator-a",
-  "controller": "did:example:mandate:123"
-}
-```
-
-The same pattern applies across trust domains: company overlay packs, pack amends, gated evidence packets, and cross-org handoffs need stable subject ids and rotatable keys under clear controller authority — while TOP URIs continue to name the *claim type* and PROV continues to name the *trail*.
+W3C Decentralized Identifiers ([DIDs](https://www.w3.org/TR/did-1.1/)) supply a portable `did:` URI that resolves to a DID document carrying `controller`, verification methods, and verification relationships (`assertionMethod`, `authentication`, `keyAgreement`, …). The document is a **public key directory and control surface**, not a secret store and not a domain ontology.
 
 ## Non-goals
 
 This RFC does **not**:
 
 1. Replace TOP concept URIs with DIDs (anything can be a DID subject; that does not make a DID a shared-meaning URI).
-2. Mint TOP classes, properties, or namespaces from DID documents or Jev runs.
+2. Mint TOP classes, properties, or namespaces from DID documents or from any extractor's output.
 3. Define a new DID method (`did:mandate` remains an illustrative sketch, not a method registration).
 4. Make DID resolution a Core runtime requirement for reading TOP graphs.
-5. Conflate cryptographic standing (key authorized under a DID) with correctness of reasoning or quality of Evidence (Agent-DID and related work already draw this line; we adopt it).
-6. Treat Jev (or any extractor) as a system of record.
+5. Conflate cryptographic standing (key authorized under a DID) with correctness of reasoning or quality of Evidence.
+6. Treat any extractor as a system of record.
+7. Claim that a DID alone makes a TOP graph cryptographically verifiable end to end. Core today has `top:integrityHash` and `top:signedBy` but no proof / Data Integrity slot; verifiable signed claims in-graph wait on a follow-on.
 
 ## Proposal
 
@@ -46,90 +39,115 @@ This RFC does **not**:
 | --- | --- | --- |
 | **TOP Core / WG vocab** | What does this mean? | `top:` / WG prefixes (HTTP URIs in the TOP commons) |
 | **DID** | Who/what is the identity, who controls it, which keys may act? | `did:` |
-| **PROV** | What happened, who was responsible, what was derived? | `prov:` (already native to TOP's provenance posture) |
+| **PROV-O (binding) / PROV-DM (conceptual)** | What happened, who was responsible, what was derived? | `prov:` as already aligned in Core |
 
-Additive rule: a single artifact may carry all three. Example: a gated eligibility claim is typed by a TOP concept URI, attributed in PROV to a `prov:Agent` whose id is a DID, and signed with a key listed under that DID's `assertionMethod`.
+Additive rule: a single artifact may carry all three. Example: an eligibility attestation is typed by a TOP concept URI, linked with `top:signedBy` to a `top:Agent` whose `top:identifier` is a DID, and recorded in the PROV trail via the Core⊑PROV class and property alignments already in `core/v1/shapes.ttl`.
 
-**PROV-DM adjacency.** [PROV-DM](https://www.w3.org/TR/prov-dm/) is adjacent to DID in the sense that matters for Core: both are about *agency and control*, not about shared meaning. DID answers *who controls an identity and which keys may act*. PROV-DM answers *what happened under that agency* (Entity / Activity / Agent, attribution, association, delegation). They compose; neither substitutes for TOP concept URIs.
+**PROV binding.** Per ADR-0013 and the Core shapes, **PROV-O is the binding vocabulary** for trail alignment (`rdfs:subClassOf` / `rdfs:subPropertyOf` into `prov:*`). [PROV-DM](https://www.w3.org/TR/prov-dm/) is cited only as the conceptual model (Entity / Activity / Agent; attribution, association, delegation). DID answers *who controls an identity and which keys may act*; PROV answers *what happened under that agency*. Neither substitutes for TOP concept URIs.
 
-### 2. DID subjects and controllers as PROV agents (the join)
+### 2. Engage Core terms already in `shapes.ttl` (not bare PROV)
 
-Adopt the compositional join already latent in the standards (no new ontology required for v0), with PROV-DM as the trail model and DID as the portable agent/controller identifier:
+This RFC sits on the compositional join **already shipped** in [`core/v1/shapes.ttl`](../../../core/v1/shapes.ttl). Guidance MUST be written against these Core terms; bare `prov:*` appears only as the alignment target Core already declares.
 
-- A DID **subject** MAY be typed / used as a `prov:Agent` (person, organization, software agent).
-- A DID **controller** MAY be a distinct `prov:Agent` that the subject `prov:actedOnBehalfOf` (or that is `prov:wasAssociatedWith` activities that mutate the subject's DID document).
-- Activities (resolve, rotate key, amend pack, gate evidence) are `prov:Activity` nodes; outputs are `prov:Entity` nodes; responsibility uses `prov:wasAssociatedWith` / `prov:wasAttributedTo` / qualified forms with `prov:hadRole` when role matters.
+| Core term | Alignment already in shapes | Role in this RFC |
+| --- | --- | --- |
+| `top:Agent` | `⊑ prov:Agent` | Accountable actor that may sign, authorize, or be attributed |
+| `top:Person` / `top:Organization` / `top:Group` | `⊑ top:Agent` (+ PROV peers where declared) | Ordinary operator and org identities |
+| `top:AutonomousAgent` | `⊑ top:Agent`, `⊑ prov:SoftwareAgent` | Software with delegated authority — edge-primary per ADR-0013; same DID pattern allowed, not the forcing case |
+| `top:identifier` | Functional `xsd:anyURI` on Universal DNA | **Where the DID attaches** (see §5) |
+| `top:memberOf` | `⊑ prov:actedOnBehalfOf` | Org / group hierarchy; delegation path in Core terms |
+| `top:authorizedBy` | Agent → Agent | Who granted permission to act in a scope |
+| `top:signedBy` | `⊑ prov:wasAttributedTo`; Evidence → Agent | Part 11–shaped attestation link — primary operator join |
+| `top:hasCredential` | Agent → `top:Credential` | Qualification / identity proof already modeled as Evidence |
+| `top:integrityHash` | on Evidence | Fingerprint; with `top:signedBy` forces Versioned immutability shapes |
 
-Illustrative Turtle (informative):
+Illustrative Turtle (informative; Core terms first):
 
 ```turtle
-@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix top:  <https://top.scientix.ai/v1#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ex:   <https://example.org/> .
 
-<did:example:agent:operator-a> a prov:Agent ;
-    prov:actedOnBehalfOf <did:example:mandate:123> .
+ex:investigator-a a top:Person ;
+    top:identifier "did:web:research.example:investigators:a"^^xsd:anyURI ;
+    top:memberOf ex:cro-org ;
+    top:authorizedBy ex:sponsor-qa .
 
-ex:amend-pack-a1 a prov:Activity ;
-    prov:wasAssociatedWith <did:example:agent:operator-a> .
+ex:cro-org a top:Organization ;
+    top:identifier "did:web:cro.example"^^xsd:anyURI .
 
-ex:pack-a1-v2 a prov:Entity ;
-    prov:wasGeneratedBy ex:amend-pack-a1 ;
-    prov:wasAttributedTo <did:example:agent:operator-a> .
+ex:consent-v1 a top:Attestation ;
+    top:signedBy ex:investigator-a ;
+    top:integrityHash "sha256-…" .
 ```
+
+`top:Person ⊑ top:Agent ⊑ prov:Agent` and `top:signedBy ⊑ prov:wasAttributedTo` supply the PROV view without authors writing bare PROV as if Core were empty.
 
 ### 3. Verification relationships → act classes (informative mapping)
 
-| DID verification relationship | Typical TOP / evidence use |
+| DID verification relationship | Typical TOP use |
 | --- | --- |
-| `assertionMethod` | Sign pack amends, gated Evidence packets, published overlays |
-| `authentication` | Prove control of the identity at a boundary |
+| `assertionMethod` | Keys that may produce material attested via `top:signedBy` / published Evidence |
+| `authentication` | Prove control of the agent identity at a boundary |
 | `keyAgreement` | Confidential handoff / encryption to the subject |
-| `capabilityInvocation` / `capabilityDelegation` | Future: capability tokens; out of scope for v0 beyond naming |
+| `capabilityInvocation` / `capabilityDelegation` | Future capability tokens; out of scope for v0 beyond naming |
 
-Keys appear as **pointers or embedded verification methods** in the DID document. Private material stays in the operator's secret store (SoR for secrets is outside TOP). Rotation updates the DID document under controller authority; the DID itself stays stable.
+Keys appear as pointers or embedded verification methods in the DID document. Private material stays in the operator's secret store (out of TOP). Rotation updates the DID document under controller authority; the DID URI used as `top:identifier` stays stable.
 
-### 4. Controller / mandate pattern
+### 4. Controller / mandate pattern (DID document side)
 
-RECOMMENDED pattern for autonomous or semi-autonomous actors:
+RECOMMENDED pattern when organizational standing matters:
 
-1. Actor has a stable DID.
-2. `controller` points at a mandate identity (organization DID, charter DID, or other mandate DID) — not at an unbound personal key alone when organizational standing matters.
-3. PROV records delegation (`prov:actedOnBehalfOf`) so "under what authority" is queryable, not tribal knowledge.
+1. Actor `top:Agent` has a stable DID as `top:identifier` (per §5).
+2. In the DID document, `controller` points at a mandate identity (organization DID, charter DID, or other mandate DID) — not at an unbound personal key alone.
+3. In the TOP graph, org relationship and permission use Core properties (`top:memberOf`, `top:authorizedBy`); PROV delegation is inherited via existing subProperty alignments.
 
-Method choice is deferred: `did:web` / `did:webvh` are sufficient defaults to think with; ledger-native methods are optional deployment profiles, not Core doctrine.
+### 5. Load-bearing design: DID **is** the agent's `top:identifier` (no mint)
 
-### 5. What lands in the TOP repo if this RFC accepts
+`top:identifier` is an `owl:FunctionalProperty` with range `xsd:anyURI`. A `did:` URI is already a legal value **with zero mint**.
 
-On acceptance, Core stewards add a short **interop guidance** page (path strawman: `core/v1/docs/did-additive-identity.md` or under `governance/planning/` if preferred) that:
+**Decision (this RFC):** When an adopter uses a DID for an agent, that DID **is** the agent's `top:identifier`. This RFC does **not** mint a second Core property (e.g. `top:did`).
 
-- States the three-layer posture and non-goals above.
-- Shows the PROV join examples.
-- Links W3C DID Core, PROV-O, and this RFC.
-- Explicitly says: no TOP mint from DID documents.
+**Consequence of functionality:** an entity has exactly one `top:identifier`. An agent that already carries an HTTPS (or other) identifier cannot also store a DID in Core under this property. Options for that case:
 
-No change to `shapes.ttl` is required for v0 unless a later RFC proposes optional annotation properties (e.g., documenting a `top:controlledByDid` style tip). Prefer reuse of DID JSON-LD + PROV before minting.
+1. **Migrate** the agent's sole `top:identifier` to the DID and treat the former HTTPS URI as a non-Core alias at the edge (recommended when Part 11 cross-org signing is the driver).
+2. **Keep** the existing HTTPS `top:identifier` and leave DID correlation to edge/overlay indexes until a future mint RFC proposes an optional second property.
+
+v0 guidance and the walkthrough demonstrate option 1 for greenfield and cross-org signer agents. Option 2 is acknowledged, not solved by minting here.
+
+### 6. What lands in the TOP repo if this RFC accepts
+
+On acceptance, Core stewards land:
+
+1. This RFC under `governance/rfcs/accepted/` (the durable record per [`governance/rfcs/README.md`](../README.md)).
+2. Walkthrough **`core/v1/walkthroughs/agent-did.ttl`** that validates with `pyshacl` against `core/v1/shapes.ttl` (draft ships with this PR). There is no `core/v1/docs/` tree; do not add a separate guidance page for v0.
+
+No change to `shapes.ttl` in v0. Prefer DID documents + existing Core/PROV join before any mint.
+
+**Method posture:** method-agnostic prose with **`did:web` examples only**. Do not recommend `did:webvh` (or other methods) in TOP prose in this RFC.
 
 ## Alternatives considered
 
-1. **Do nothing (HTTP agent URIs only).** Preserves simplicity. Rejected as the long-term answer for cross-org signing and key rotation; kept as the valid interim for single-trust-domain deployments that already have stable HTTPS agent URIs.
-2. **Mint DID-shaped classes into Core now.** Rejected: premature; violates no-mint discipline; DID Core already defines the document graph.
-3. **Replace TOP URIs with DIDs for concepts.** Rejected: collapses meaning into identity control; breaks the commons thesis.
-4. **Require DID on every `prov:Agent`.** Rejected for v0: optional additive; tighten in deployment profiles / customer overlays when needed.
+1. **Do nothing (HTTPS agent URIs only).** Preserves simplicity. Rejected as the long-term answer for cross-org Part 11 signing and key rotation; kept as valid for single-trust-domain deployments that already have stable HTTPS agent URIs as `top:identifier`.
+2. **Mint a second property for DIDs.** Would allow HTTPS `top:identifier` and DID to coexist in Core. Rejected for v0: premature mint; functional `top:identifier` already accepts `did:` URIs; revisit only with a concrete multi-identifier operator requirement.
+3. **Replace TOP concept URIs with DIDs.** Rejected: collapses meaning into identity control.
+4. **Require a DID on every `top:Agent`.** Rejected for v0: optional additive.
+5. **Motivate from autonomous-agent portability.** Rejected as primary motivation per ADR-0013; edge may still reuse the pattern.
 
 ## Open questions (for Core stewards)
 
-1. Guidance page under `core/v1/docs/` vs `governance/planning/` for the accepted artifact?
-2. Should a follow-on RFC propose any optional Core annotation properties, or stay documentation-only indefinitely?
-3. Is `did:webvh` the recommended default method in TOP prose, or method-agnostic with `did:web` examples only?
-4. How concrete should the public mandate-controller worked example be (abstract sketch only vs richer illustrative DID documents)?
+1. After acceptance, any follow-on mint of an optional second identifier property for dual HTTPS+DID agents, or keep edge aliases indefinitely?
+2. How concrete should public DID-document examples be beyond the walkthrough (abstract sketch vs richer controller documents)?
+3. Should a later RFC add a Data Integrity / proof slot so `top:signedBy` + DID keys become verifiable in-graph?
 
 ## Consequences
 
-- **Easier:** Clear story for identity + meaning + trail; portable signer identity for amends and gated packets; key rotation without renaming TOP concepts.
-- **Harder:** Authors must keep the three layers distinct; reviewers must reject DID-as-ontology creep.
-- **Downstream:** Evidence infrastructure and company overlays MAY attach DIDs; TOP graphs remain readable without DID resolution.
+- **Easier:** Portable signer identity for cross-org `top:signedBy` without renaming TOP concepts; key rotation without minting Core terms; clear three-layer story (TOP meaning ‖ DID control ‖ PROV trail via Core alignments).
+- **Harder:** Authors must keep the layers distinct; reviewers must reject DID-as-ontology creep; functional `top:identifier` forces an explicit migrate-or-edge-alias choice when an HTTPS id already exists.
+- **Scope honesty:** This RFC gives the signer a portable **identifier**. It does not by itself make signed claims in a TOP graph cryptographically verifiable; that waits on a proof / Data Integrity follow-on. `top:integrityHash` + Versioned immutability remain the in-Core integrity tools today.
+- **Downstream:** Evidence tooling and overlays MAY use DIDs as `top:identifier`; TOP graphs remain readable without DID resolution.
 - **Follow-on:** Optional method profile note; possible VC Data Integrity pairing RFC; operator-local DID issuance runbooks (out of TOP Core scope).
-- **Forecloses:** Treating DID documents as a substitute for TOP WG vocabularies.
+- **Forecloses:** Treating DID documents as a substitute for TOP WG vocabularies; minting DID-shaped Core terms in this RFC.
 
 ## Prior art (DID ∩ PROV)
 
@@ -138,22 +156,25 @@ There is **no single W3C Recommendation** titled "DID+PROV." The productive join
 | Source | Claim strength | One-line |
 | --- | --- | --- |
 | [DID Core 1.1](https://www.w3.org/TR/did-1.1/) | Normative (identity) | Subject, controller, verification methods/relationships |
-| [PROV-O](https://www.w3.org/TR/prov-o/) | Normative (trail) | `Agent` / `Activity` / `Entity` + attribution/association/delegation |
-| [PROV-DM](https://www.w3.org/TR/prov-dm/) | Normative | Agents bear responsibility; bundles for provenance-of-provenance |
-| [Agent-DID RFC-001](https://github.com/edisonduran/agent-did/blob/main/docs/RFC-001-Agent-DID-Specification.md) | Community pattern | Agent DID + required `controller`; explicit split: identity standing ≠ decision provenance (signed receipts separate) |
-| [GenesisGraph](https://github.com/Semantic-Infrastructure-Lab/genesisgraph) | Spec draft | Maps PROV Entity/Activity/Agent; "verifiable" tier = signatures tied to DIDs/VCs |
-| STAC liability extension (`liability:prov` + VCs) | Domain practice | PROV-JSON alongside Verifiable Credentials (DID-bearing issuers typical in VC stack) |
-| [PAV](https://pmc.ncbi.nlm.nih.gov/articles/PMC4177195/) | Related | Authoring/versioning specialization of PROV-O (roles); not DID-specific |
+| [PROV-O](https://www.w3.org/TR/prov-o/) | Normative (binding trail vocab) | Agent / Activity / Entity + attribution/association/delegation |
+| [PROV-DM](https://www.w3.org/TR/prov-dm/) | Conceptual model | Agents bear responsibility; bundles for provenance-of-provenance |
 
-**Finding for reviewers:** prior art supports *using DIDs as agent identifiers inside PROV graphs* and *pairing VCs for signed claims*; it does not support collapsing TOP meaning into DID documents.
+**Finding for reviewers:** standards support *using DIDs as agent identifiers inside PROV-aligned graphs* and *pairing VCs for signed claims*; they do not support collapsing TOP meaning into DID documents. Non-normative community drafts are omitted here until they have stable, citable URLs and access dates.
 
 ## References
 
-- This conversation's layering: TOP meaning ‖ DID identity/control/keys ‖ PROV trail
-- `governance/planning/composition-projection-provenance.md` (copy-free provenance posture)
-- TOP RFC process: `governance/rfcs/README.md`
+- [`core/v1/shapes.ttl`](../../../core/v1/shapes.ttl) — Core⊑PROV join this RFC engages
+- [`core/v1/walkthroughs/agent-did.ttl`](../../../core/v1/walkthroughs/agent-did.ttl) — acceptance artifact (draft)
+- [`governance/planning/composition-projection-provenance.md`](../../planning/composition-projection-provenance.md) — Tier-1 `top:signedBy` / no-copy boundary cost
+- [ADR-0013](../../decision-log.md#adr-0013-practitioner-first-tops-primary-customer) — practitioner-first; autonomous convenience to the edge
+- TOP RFC process: [`governance/rfcs/README.md`](../README.md)
 - Related open Core RFCs: 0002 (HCLS shared acts), 0003 (`top:partOf`) — orthogonal; no conflict expected
 
 ## Notes for reviewers
 
-Load-bearing asks for Core stewards: (1) is guidance-only (no Core mint) the right acceptance bar for 0004? (2) keep PROV-DM named explicitly as the adjacent trail model beside DID (this draft's posture)? (3) method-agnostic prose with `did:web` examples, or a recommended default method in TOP guidance?
+Load-bearing asks answered in this draft per review:
+
+1. **Guidance bar:** yes — accepted RFC is the durable record; land `core/v1/walkthroughs/agent-did.ttl` that passes `pyshacl` against `shapes.ttl` (no `core/v1/docs/` page).
+2. **PROV:** PROV-O binding; PROV-DM conceptual only.
+3. **Method:** method-agnostic with `did:web` examples; do not recommend `did:webvh` in TOP prose yet.
+4. **Attachment:** DID **is** `top:identifier` (no second-property mint); migrate-or-edge-alias when an HTTPS id already exists.
