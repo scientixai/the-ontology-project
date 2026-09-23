@@ -11,21 +11,21 @@
 
 ## Motivation
 
-TOP Core already answers *what something means* in the shared commons (concepts, shapes, Universal DNA, PROV-native provenance posture — see `governance/planning/composition-projection-provenance.md`). Operators additionally need a portable answer to *who or what controls an identity that may act, sign, amend, or publish* against those meanings — without inventing a second meaning layer or minting concept URIs from runtime ids.
+TOP Core already answers *what something means* in the shared commons (concepts, shapes, Universal DNA, PROV-native provenance posture — see `governance/planning/composition-projection-provenance.md`). Operators and autonomous or semi-autonomous actors additionally need a portable answer to *who or what controls an identity that may act, sign, amend, or publish* against those meanings — without inventing a second meaning layer or minting concept URIs from runtime ids.
 
 W3C Decentralized Identifiers ([DIDs](https://www.w3.org/TR/did-1.1/)) supply that layer: a `did:` URI that resolves to a DID document carrying `controller`, verification methods, and verification relationships (`assertionMethod`, `authentication`, `keyAgreement`, …). The document is a **public key directory and control surface**, not a secret store and not a domain ontology.
 
-A key structural insight: an organizational mandate or charter is structurally a **controller** of an actor identity. Sketch:
+A practical pattern: an organizational **mandate** (charter, role, or policy instrument) is often the **controller** of an actor identity that may act under that authority. Sketch:
 
 ```json
 {
   "@context": "https://www.w3.org/ns/did/v1",
-  "id": "did:example:agent:alice",
+  "id": "did:example:agent:operator-a",
   "controller": "did:example:mandate:123"
 }
 ```
 
-This pattern applies broadly: company overlay packs, pack amends, gated evidence packets, and cross-org handoffs need stable subject ids and rotatable keys under clear controller authority — while TOP URIs continue to name the *claim type* and PROV continues to name the *trail*.
+The same pattern applies across trust domains: company overlay packs, pack amends, gated evidence packets, and cross-org handoffs need stable subject ids and rotatable keys under clear controller authority — while TOP URIs continue to name the *claim type* and PROV continues to name the *trail*.
 
 ## Non-goals
 
@@ -33,7 +33,7 @@ This RFC does **not**:
 
 1. Replace TOP concept URIs with DIDs (anything can be a DID subject; that does not make a DID a shared-meaning URI).
 2. Mint TOP classes, properties, or namespaces from DID documents or Jev runs.
-3. Define a new DID method (illustrative examples remain non-normative, not method registrations).
+3. Define a new DID method (`did:mandate` remains an illustrative sketch, not a method registration).
 4. Make DID resolution a Core runtime requirement for reading TOP graphs.
 5. Conflate cryptographic standing (key authorized under a DID) with correctness of reasoning or quality of Evidence (Agent-DID and related work already draw this line; we adopt it).
 6. Treat Jev (or any extractor) as a system of record.
@@ -66,15 +66,15 @@ Illustrative Turtle (informative):
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix ex:   <https://example.org/> .
 
-<did:example:agent:alice> a prov:Agent ;
+<did:example:agent:operator-a> a prov:Agent ;
     prov:actedOnBehalfOf <did:example:mandate:123> .
 
 ex:amend-pack-a1 a prov:Activity ;
-    prov:wasAssociatedWith <did:example:agent:alice> .
+    prov:wasAssociatedWith <did:example:agent:operator-a> .
 
 ex:pack-a1-v2 a prov:Entity ;
     prov:wasGeneratedBy ex:amend-pack-a1 ;
-    prov:wasAttributedTo <did:example:agent:alice> .
+    prov:wasAttributedTo <did:example:agent:operator-a> .
 ```
 
 ### 3. Verification relationships → act classes (informative mapping)
@@ -93,7 +93,7 @@ Keys appear as **pointers or embedded verification methods** in the DID document
 RECOMMENDED pattern for autonomous or semi-autonomous actors:
 
 1. Actor has a stable DID.
-2. `controller` points at a mandate identity (organization DID, charter DID, or other organizational authority) — not at an unbound personal key alone when organizational standing matters.
+2. `controller` points at a mandate identity (organization DID, charter DID, or other mandate DID) — not at an unbound personal key alone when organizational standing matters.
 3. PROV records delegation (`prov:actedOnBehalfOf`) so "under what authority" is queryable, not tribal knowledge.
 
 Method choice is deferred: `did:web` / `did:webvh` are sufficient defaults to think with; ledger-native methods are optional deployment profiles, not Core doctrine.
@@ -116,18 +116,19 @@ No change to `shapes.ttl` is required for v0 unless a later RFC proposes optiona
 3. **Replace TOP URIs with DIDs for concepts.** Rejected: collapses meaning into identity control; breaks the commons thesis.
 4. **Require DID on every `prov:Agent`.** Rejected for v0: optional additive; tighten in deployment profiles / customer overlays when needed.
 
-## Open questions (for Bo / Core stewards)
+## Open questions (for Core stewards)
 
 1. Guidance page under `core/v1/docs/` vs `governance/planning/` for the accepted artifact?
 2. Should a follow-on RFC propose any optional Core annotation properties, or stay documentation-only indefinitely?
 3. Is `did:webvh` the recommended default method in TOP prose, or method-agnostic with `did:web` examples only?
+4. How concrete should the public mandate-controller worked example be (abstract sketch only vs richer illustrative DID documents)?
 
 ## Consequences
 
 - **Easier:** Clear story for identity + meaning + trail; portable signer identity for amends and gated packets; key rotation without renaming TOP concepts.
 - **Harder:** Authors must keep the three layers distinct; reviewers must reject DID-as-ontology creep.
 - **Downstream:** Evidence infrastructure and company overlays MAY attach DIDs; TOP graphs remain readable without DID resolution.
-- **Follow-on:** Optional method profile note; possible VC Data Integrity pairing RFC; operator-private DID issuance runbooks (out of TOP Core scope).
+- **Follow-on:** Optional method profile note; possible VC Data Integrity pairing RFC; operator-local DID issuance runbooks (out of TOP Core scope).
 - **Forecloses:** Treating DID documents as a substitute for TOP WG vocabularies.
 
 ## Prior art (DID ∩ PROV)
@@ -155,4 +156,4 @@ There is **no single W3C Recommendation** titled "DID+PROV." The productive join
 
 ## Notes for reviewers
 
-Load-bearing asks for Bo / Core stewards: (1) is guidance-only (no Core mint) the right acceptance bar for 0004? (2) keep PROV-DM named explicitly as the adjacent trail model beside DID (this draft's posture).
+Load-bearing asks for Core stewards: (1) is guidance-only (no Core mint) the right acceptance bar for 0004? (2) keep PROV-DM named explicitly as the adjacent trail model beside DID (this draft's posture)? (3) method-agnostic prose with `did:web` examples, or a recommended default method in TOP guidance?
