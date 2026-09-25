@@ -143,7 +143,7 @@ No change to `shapes.ttl` in v0. Prefer DID documents + existing Core/PROV join 
 ## Consequences
 
 - **Easier:** Portable signer identity for cross-org `top:signedBy` without renaming TOP concepts; key rotation without minting Core terms; clear three-layer story (TOP meaning ‖ DID control ‖ PROV trail via Core alignments).
-- **Harder:** Authors must keep the layers distinct; reviewers must reject DID-as-ontology creep; functional `top:identifier` forces an explicit migrate-or-edge-alias choice when an HTTPS id already exists.
+- **Harder:** Authors must keep the layers distinct; reviewers must reject DID-as-ontology creep; functional `top:identifier` is never rewritten, so existing agents with HTTPS identifiers keep them and use edge aliases for DID correlation.
 - **Scope honesty:** This RFC gives the signer a portable **identifier**. It does not by itself make signed claims in a TOP graph cryptographically verifiable; that waits on a proof / Data Integrity follow-on. `top:integrityHash` + Versioned immutability remain the in-Core integrity tools today.
 - **Downstream:** Evidence tooling and overlays MAY use DIDs as `top:identifier`; TOP graphs remain readable without DID resolution.
 - **Follow-on:** Optional method profile note; possible VC Data Integrity pairing RFC; operator-local DID issuance runbooks (out of TOP Core scope).
