@@ -177,4 +177,4 @@ Load-bearing asks answered per review:
 1. **Guidance bar:** yes — accepted RFC is the durable record; land `core/v1/walkthroughs/agent-did.ttl` that passes `pyshacl` against `shapes.ttl` (no `core/v1/docs/` page).
 2. **PROV:** PROV-O binding; PROV-DM conceptual only.
 3. **Method:** method-agnostic with `did:web` examples; do not recommend `did:webvh` in TOP prose yet.
-4. **Attachment:** DID **is** `top:identifier` (no second-property mint; never rewritten); an existing `top:identifier` is never rewritten, and agents with an HTTPS id take DID correlation at the edge.
+4. **Attachment:** DID **is** `top:identifier` (no second-property mint); an existing `top:identifier` is never rewritten, and agents with an HTTPS id take DID correlation at the edge.
