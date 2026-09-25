@@ -1,0 +1,80 @@
+# TOP Core — Agent DID walkthrough (RFC 0004)
+#
+# Shows a cross-org Part 11–shaped signer whose top:identifier is a did:web
+# URI (no Core mint). Validate:
+#   python3 -m pyshacl --advanced -s core/v1/shapes.ttl -d core/v1/walkthroughs/agent-did.ttl
+#
+# Per RFC 0004 §5: the DID *is* the agent's top:identifier (functional anyURI).
+# Per ADR-0013: operator signer is the forcing case; AutonomousAgent may reuse
+# the pattern but is not demonstrated as primary here.
+#
+# What this file shows:
+#   - top:Person investigator with did:web as top:identifier
+#   - top:Organization CRO / sponsor with did:web as top:identifier
+#   - top:memberOf (as Core mirror of DID document controller) in Core terms
+#   - top:Attestation with top:signedBy + top:integrityHash (Versioned)
+
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+@prefix top:     <https://top.scientix.ai/v1#> .
+@prefix example: <https://top.scientix.ai/example/v1#> .
+
+
+# --------------------------------------------------------------------
+# Organizations
+# --------------------------------------------------------------------
+
+example:sponsor-org a top:Organization ;
+    top:identifier "did:web:sponsor.example"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T12:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    rdfs:label "Example Sponsor" ;
+    dcterms:created "2026-09-01T12:00:00Z"^^xsd:dateTime .
+
+example:cro-org a top:Organization ;
+    top:identifier "did:web:cro.example"^^xsd:anyURI ;
+    top:observedAt "2026-09-01T12:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    rdfs:label "Example CRO" ;
+    dcterms:created "2026-09-01T12:00:00Z"^^xsd:dateTime .
+
+
+# --------------------------------------------------------------------
+# Cross-org investigator — DID is top:identifier
+# --------------------------------------------------------------------
+
+example:investigator-a a top:Person ;
+    top:identifier "did:web:cro.example:investigators:a"^^xsd:anyURI ;
+    top:observedAt "2026-09-15T09:00:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    rdfs:label "Investigator A (CRO)" ;
+    rdfs:comment "Portable signer identity for Part 11 attestation across the sponsor/CRO boundary. DID used as the sole top:identifier (RFC 0004 §5). The investigator's DID document controller points to example:cro-org; top:memberOf is the Core mirror of that organizational mandate (RFC 0004 §4)." ;
+    top:memberOf example:cro-org ;
+    dcterms:created "2026-09-15T09:00:00Z"^^xsd:dateTime .
+
+
+# --------------------------------------------------------------------
+# Signed consent attestation (Tier-1 path)
+# --------------------------------------------------------------------
+
+# Stable identity (not Versioned itself)
+example:consent-identity a prov:Entity ;
+    top:identifier "https://top.scientix.ai/example/v1/consent/study-1/subj-42"^^xsd:anyURI ;
+    top:observedAt "2026-09-20T16:30:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    rdfs:label "Consent attestation (stable identity)" .
+
+example:consent-v1 a top:Attestation , top:Versioned ;
+    top:identifier "https://top.scientix.ai/example/v1/consent/study-1/subj-42/v1"^^xsd:anyURI ;
+    top:observedAt "2026-09-20T16:30:00Z"^^xsd:dateTime ;
+    top:status "ACTIVE" ;
+    top:validFrom "2026-09-20T16:30:00Z"^^xsd:dateTime ;
+    prov:specializationOf example:consent-identity ;
+    top:signedBy example:investigator-a ;
+    top:integrityHash "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" ;
+    rdfs:label "Consent attestation v1" ;
+    dcterms:created "2026-09-20T16:30:00Z"^^xsd:dateTime .
