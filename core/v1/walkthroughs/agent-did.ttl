@@ -11,7 +11,7 @@
 # What this file shows:
 #   - top:Person investigator with did:web as top:identifier
 #   - top:Organization CRO / sponsor with did:web as top:identifier
-#   - top:memberOf / top:authorizedBy in Core terms
+#   - top:memberOf (as Core mirror of DID document controller) in Core terms
 #   - top:Attestation with top:signedBy + top:integrityHash (Versioned)
 
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -52,9 +52,8 @@ example:investigator-a a top:Person ;
     top:observedAt "2026-09-15T09:00:00Z"^^xsd:dateTime ;
     top:status "ACTIVE" ;
     rdfs:label "Investigator A (CRO)" ;
-    rdfs:comment "Portable signer identity for Part 11 attestation across the sponsor/CRO boundary. DID used as the sole top:identifier (RFC 0004 §5)." ;
+    rdfs:comment "Portable signer identity for Part 11 attestation across the sponsor/CRO boundary. DID used as the sole top:identifier (RFC 0004 §5). The investigator's DID document controller points to example:cro-org; top:memberOf is the Core mirror of that organizational mandate (RFC 0004 §4)." ;
     top:memberOf example:cro-org ;
-    top:authorizedBy example:sponsor-org ;
     dcterms:created "2026-09-15T09:00:00Z"^^xsd:dateTime .
 
 

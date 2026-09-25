@@ -70,8 +70,7 @@ Illustrative Turtle (informative; Core terms first):
 
 ex:investigator-a a top:Person ;
     top:identifier "did:web:research.example:investigators:a"^^xsd:anyURI ;
-    top:memberOf ex:cro-org ;
-    top:authorizedBy ex:sponsor-qa .
+    top:memberOf ex:cro-org .
 
 ex:cro-org a top:Organization ;
     top:identifier "did:web:cro.example"^^xsd:anyURI .
@@ -100,7 +99,8 @@ RECOMMENDED pattern when organizational standing matters:
 
 1. Actor `top:Agent` has a stable DID as `top:identifier` (per §5).
 2. In the DID document, `controller` points at a mandate identity (organization DID, charter DID, or other mandate DID) — not at an unbound personal key alone.
-3. In the TOP graph, org relationship and permission use Core properties (`top:memberOf`, `top:authorizedBy`); PROV delegation is inherited via existing subProperty alignments.
+3. **Controller mapping:** DID document `controller` maps to `top:memberOf` when the mandate is the organization the agent belongs to, and to `top:authorizedBy` when the mandate is a scoped grant from another agent.
+4. In the TOP graph, org relationship and permission use Core properties (`top:memberOf`, `top:authorizedBy`); PROV delegation is inherited via existing subProperty alignments.
 
 ### 5. Load-bearing design: DID **is** the agent's `top:identifier` (no mint)
 
@@ -108,10 +108,10 @@ RECOMMENDED pattern when organizational standing matters:
 
 **Decision (this RFC):** When an adopter uses a DID for an agent, that DID **is** the agent's `top:identifier`. This RFC does **not** mint a second Core property (e.g. `top:did`).
 
-**Consequence of functionality:** an entity has exactly one `top:identifier`. An agent that already carries an HTTPS (or other) identifier cannot also store a DID in Core under this property. Options for that case:
+**Consequence of functionality:** an entity has exactly one `top:identifier`. **An agent's `top:identifier` is never rewritten.** The RDF subject IRI and `top:identifier` literal already coexist separately (an agent may have an HTTPS subject IRI and a DID as `top:identifier`), so coexistence requires no identifier migration. Options for adopters:
 
-1. **Migrate** the agent's sole `top:identifier` to the DID and treat the former HTTPS URI as a non-Core alias at the edge (recommended when Part 11 cross-org signing is the driver).
-2. **Keep** the existing HTTPS `top:identifier` and leave DID correlation to edge/overlay indexes until a future mint RFC proposes an optional second property.
+1. **New agents:** Use a DID as `top:identifier` when minting agents after adoption (recommended when Part 11 cross-org signing is the driver).
+2. **Existing agents:** Keep the existing HTTPS (or other) `top:identifier` and leave DID correlation to edge/overlay indexes or non-Core aliases until a future mint RFC proposes an optional second property.
 
 v0 guidance and the walkthrough demonstrate option 1 for greenfield and cross-org signer agents. Option 2 is acknowledged, not solved by minting here.
 
