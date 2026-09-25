@@ -120,7 +120,7 @@ v0 guidance and the walkthrough demonstrate option 1 for greenfield and cross-or
 On acceptance, Core stewards land:
 
 1. This RFC under `governance/rfcs/accepted/` (the durable record per [`governance/rfcs/README.md`](../README.md)).
-2. Walkthrough **`core/v1/walkthroughs/agent-did.ttl`** that validates with `pyshacl` against `core/v1/shapes.ttl` (draft ships with this PR). There is no `core/v1/docs/` tree; do not add a separate guidance page for v0.
+2. Walkthrough **`core/v1/walkthroughs/agent-did.ttl`** that validates with `pyshacl` against `core/v1/shapes.ttl` (ships with this PR). There is no `core/v1/docs/` tree; do not add a separate guidance page for v0.
 
 No change to `shapes.ttl` in v0. Prefer DID documents + existing Core/PROV join before any mint.
 
@@ -143,7 +143,7 @@ No change to `shapes.ttl` in v0. Prefer DID documents + existing Core/PROV join 
 ## Consequences
 
 - **Easier:** Portable signer identity for cross-org `top:signedBy` without renaming TOP concepts; key rotation without minting Core terms; clear three-layer story (TOP meaning ‖ DID control ‖ PROV trail via Core alignments).
-- **Harder:** Authors must keep the layers distinct; reviewers must reject DID-as-ontology creep; functional `top:identifier` is never rewritten, so existing agents with HTTPS identifiers keep them and use edge aliases for DID correlation.
+- **Harder:** Authors must keep the layers distinct; reviewers must reject DID-as-ontology creep; functional `top:identifier` means an existing agent keeps its identifier and takes DID correlation at the edge; a DID becomes `top:identifier` only for agents minted after adoption.
 - **Scope honesty:** This RFC gives the signer a portable **identifier**. It does not by itself make signed claims in a TOP graph cryptographically verifiable; that waits on a proof / Data Integrity follow-on. `top:integrityHash` + Versioned immutability remain the in-Core integrity tools today.
 - **Downstream:** Evidence tooling and overlays MAY use DIDs as `top:identifier`; TOP graphs remain readable without DID resolution.
 - **Follow-on:** Optional method profile note; possible VC Data Integrity pairing RFC; operator-local DID issuance runbooks (out of TOP Core scope).
@@ -164,7 +164,7 @@ There is **no single W3C Recommendation** titled "DID+PROV." The productive join
 ## References
 
 - [`core/v1/shapes.ttl`](../../../core/v1/shapes.ttl) — Core⊑PROV join this RFC engages
-- [`core/v1/walkthroughs/agent-did.ttl`](../../../core/v1/walkthroughs/agent-did.ttl) — acceptance artifact (draft)
+- [`core/v1/walkthroughs/agent-did.ttl`](../../../core/v1/walkthroughs/agent-did.ttl) — acceptance artifact
 - [`governance/planning/composition-projection-provenance.md`](../../planning/composition-projection-provenance.md) — Tier-1 `top:signedBy` / no-copy boundary cost
 - [ADR-0013](../../decision-log.md#adr-0013-practitioner-first-tops-primary-customer) — practitioner-first; autonomous convenience to the edge
 - TOP RFC process: [`governance/rfcs/README.md`](../README.md)
@@ -172,9 +172,9 @@ There is **no single W3C Recommendation** titled "DID+PROV." The productive join
 
 ## Notes for reviewers
 
-Load-bearing asks answered in this draft per review:
+Load-bearing asks answered per review:
 
 1. **Guidance bar:** yes — accepted RFC is the durable record; land `core/v1/walkthroughs/agent-did.ttl` that passes `pyshacl` against `shapes.ttl` (no `core/v1/docs/` page).
 2. **PROV:** PROV-O binding; PROV-DM conceptual only.
 3. **Method:** method-agnostic with `did:web` examples; do not recommend `did:webvh` in TOP prose yet.
-4. **Attachment:** DID **is** `top:identifier` (no second-property mint; never rewritten); new agents use DIDs, existing agents keep their identifier and use edge aliases.
+4. **Attachment:** DID **is** `top:identifier` (no second-property mint; never rewritten); an existing `top:identifier` is never rewritten, and agents with an HTTPS id take DID correlation at the edge.
