@@ -494,4 +494,4 @@ The scenarios that need to validate cleanly:
 - [`ooux-hierarchy.html`](ooux-hierarchy.html) — Site OOUX entry at lines 214–224.
 - [`top-strawman.json`](../source/top-strawman.json) — Site entry at line 134, partial scaffold.
 - [`sponsor-spec.html`](sponsor-spec.html) — template the Site spec follows.
-- [`roadmap.md`](../../../roadmap.md) — Site listed as the next top-level to lift.
+- [`roadmap.md`](/roadmap.md) — Site listed as the next top-level to lift.
