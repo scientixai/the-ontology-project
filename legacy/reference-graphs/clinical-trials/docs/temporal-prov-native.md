@@ -495,7 +495,7 @@ This PR is purely annotative + emitter-aware — no entity-shape changes. Safe t
 
 ## Pointers
 
-- [`first-principles.md`](../../../first-principles.md) — to be updated with this audit's conventions.
+- [`first-principles.md`](/first-principles.html) — to be updated with this audit's conventions.
 - [`participant-planning.md`](participant-planning.md) — Decision 10 (twin-queryability) explicitly invokes NGSI-LD temporal properties; this audit makes that machine-readable.
 - [`visit-planning.md`](visit-planning.md) — Visit lift will apply both conventions at lift time (Task uses `observedAt`; Visit/Activity declare prov:Activity).
 - [`cdisc-dependency-pipeline.md`](cdisc-dependency-pipeline.md) — the dependency pipeline's assessment-PR record IS a PROV chain natively; this audit makes that explicit.
